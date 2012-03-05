@@ -19,13 +19,11 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
 import eu.isas.peptideshaker.pride.util.BinaryArrayImpl;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.JOptionPane;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -480,19 +478,39 @@ public class PRIDEExport {
             ModificationMatch modMatch = peptide.getModificationMatches().get(i);
             String modName = modMatch.getTheoreticPtm();
             PTM ptm = pTMFactory.getPTM(modName);
-            String cvTerm = ptmToPrideMap.getCVTerm(modName);
+            
+            CvTerm cvTerm = ptmToPrideMap.getCVTerm(modName);
+            String cvTermName;
+            String ptmMass;
+            
             if (cvTerm == null) {
-                cvTerm = modName;
+                cvTermName = modName;
+                ptmMass = "" + ptm.getMass();
+            } else {
+                cvTermName = cvTerm.getName();
+                ptmMass = cvTerm.getValue();
             }
-
+            
             br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>\n");
-            br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm + "</ModAccession>\n");
-            br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>\n");
-            br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptm.getMass() + "</ModMonoDelta>\n");
+            
+            if (cvTerm == null) {
+                // @TODO: perhaps this should be handled differently? as there is no real mapping...
+                br.write(getCurrentTabSpace() + "<ModAccession>" + cvTermName + "</ModAccession>\n");
+                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>\n");
+            } else {
+                br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm.getAccession() + "</ModAccession>\n");
+                br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>\n");
+            }
+            
+            br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptmMass + "</ModMonoDelta>\n");
 
             br.write(getCurrentTabSpace() + "<additional>\n");
             tabCounter++;
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + "unknown" + "\" name=\"" + ptm.getName() + "\" value=\"" + ptm.getMass() + "\" />\n"); // @TODO: add PSI-MOD term!!
+            if (cvTerm == null) {
+                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + "unknown" + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />\n");
+            } else {
+                br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MOD\" accession=\"" + cvTerm.getAccession() + "\" name=\"" + cvTermName + "\" value=\"" + ptmMass + "\" />\n");  
+            }
             tabCounter--;
             br.write(getCurrentTabSpace() + "</additional>\n");
 

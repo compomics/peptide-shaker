@@ -1,36 +1,31 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.pride;
 
-import eu.isas.peptideshaker.preferences.ModificationProfile;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Map linking user modification names to MOD PSI CV terms
  *
- * @author marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PtmToPrideMap implements Serializable {
 
     /**
-     * serialization number for backward compatibility
+     * Serialization number for backward compatibility.
      */
     static final long serialVersionUID = 5849284645982876968L;
     /**
-     * The name of the file to save
+     * The name of the file to save.
      */
     public static String fileName = "modMap.cus";
     /**
-     * Map of the cv terms indexed by modification user name
+     * Map of the cv terms indexed by modification user name.
      */
-    private HashMap<String, String> modToCvMap = new HashMap<String, String>();
+    private HashMap<String, CvTerm> modToCvMap = new HashMap<String, CvTerm>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PtmToPrideMap() {
     }
@@ -42,7 +37,7 @@ public class PtmToPrideMap implements Serializable {
      * @param ptmName the ptm name
      * @return the corresponding cv term
      */
-    public String getCVTerm(String ptmName) {
+    public CvTerm getCVTerm(String ptmName) {
         return modToCvMap.get(ptmName);
     }
 
@@ -53,40 +48,39 @@ public class PtmToPrideMap implements Serializable {
      * @param modName the modification name
      * @param cvTerm the corresponding cvTerm
      */
-    public void putCVTerm(String modName, String cvTerm) {
+    public void putCVTerm(String modName, CvTerm cvTerm) {
         modToCvMap.put(modName, cvTerm);
     }
 
     /**
-     * Returns the default cvTerm of a modification when it exists
-     * //@TODO: find a way to fill the map with the crappy data in OLs. Just for Oxidation I have more than 10 candidates...
+     * Returns the default cvTerm of a modification when it exists.
      *
      * @param ptmName the ptm Name according to the xml file
      * @return a default CV term
      */
-    public static String getDefaultCVTerm(String ptmName) {
+    public static CvTerm getDefaultCVTerm(String ptmName) {
         if (ptmName.equalsIgnoreCase("methylation of K")) {
-            return null;
+            return new CvTerm("MOD", "MOD:01681", "Methylation", "14.015650");
         } else if (ptmName.equalsIgnoreCase("oxidation of M")) {
-            return null;
+            return new CvTerm("MOD", "MOD:01047", "Oxidation", "15.994915");
         } else if (ptmName.equalsIgnoreCase("carboxymethyl C")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("carbamidomethyl C")) {
-            return null;
+            return new CvTerm("MOD", "MOD:010900", "Carbamidomethyl", "57.021464");
         } else if (ptmName.equalsIgnoreCase("deamidation of N and Q")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("propionamide C")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("phosphorylation of S")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00696", "phosphorylated residue", "79.966331");
         } else if (ptmName.equalsIgnoreCase("phosphorylation of T")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00696", "phosphorylated residue", "79.966331");
         } else if (ptmName.equalsIgnoreCase("phosphorylation of Y")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00696", "phosphorylated residue", "79.966331");
         } else if (ptmName.equalsIgnoreCase("M cleavage from protein n-term")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("acetylation of protein n-term")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00394", "acetylated residue", "42.010565");
         } else if (ptmName.equalsIgnoreCase("methylation of protein n-term")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("tri-methylation of protein n-term")) {
@@ -114,7 +108,7 @@ public class PtmToPrideMap implements Serializable {
         } else if (ptmName.equalsIgnoreCase("2-amino-3-oxo-butanoic acid T")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("acetylation of K")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00394", "acetylated residue", "42.010565");
         } else if (ptmName.equalsIgnoreCase("amidation of peptide c-term")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("beta-methylthiolation of D (duplicate of 13)")) {
@@ -282,11 +276,11 @@ public class PtmToPrideMap implements Serializable {
         } else if (ptmName.equalsIgnoreCase("pyridyl peptide n-term")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("pyro-cmC")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00040", "2-pyrrolidone-5-carboxylic acid (Gln)", "-17.026549");
         } else if (ptmName.equalsIgnoreCase("pyro-glu from n-term E")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00420", "2-pyrrolidone-5-carboxylic acid (Gln)", "-18.010565");
         } else if (ptmName.equalsIgnoreCase("pyro-glu from n-term Q")) {
-            return null;
+            return new CvTerm("MOD", "MOD:00040", "2-pyrrolidone-5-carboxylic acid (Gln)", "-17.026549");
         } else if (ptmName.equalsIgnoreCase("oxidation of P to pyroglutamic acid")) {
             return null;
         } else if (ptmName.equalsIgnoreCase("s-pyridylethylation of C")) {

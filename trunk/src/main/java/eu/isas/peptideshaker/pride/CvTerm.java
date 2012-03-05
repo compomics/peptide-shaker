@@ -1,13 +1,20 @@
 
 package eu.isas.peptideshaker.pride;
 
+import java.io.Serializable;
+
 /**
  * A simple CvTerm object.
  * 
  * @author Harald Barsnes
  */
-public class CvTerm {
+public class CvTerm implements Serializable {
     
+    // @TODO: add serialVersionUID!
+//    /**
+//     * serialization number for backward compatibility
+//     */
+//    static final long serialVersionUID = 5849284645982876968L;
     /**
      * The ontology.
      */

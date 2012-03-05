@@ -299,6 +299,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         experimentLabel.setForeground(new java.awt.Color(255, 0, 0));
         experimentLabel.setText("Label*");
 
+        labelJTextField.setText("my label");
         labelJTextField.setToolTipText("Allows experiments to be grouped or organized under projects");
         labelJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         labelJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -310,6 +311,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         projectLabel.setForeground(new java.awt.Color(255, 0, 0));
         projectLabel.setText("Project*");
 
+        projectJTextField.setText("my project");
         projectJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         projectJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -323,6 +325,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         descriptionJTextArea.setColumns(10);
         descriptionJTextArea.setLineWrap(true);
         descriptionJTextArea.setRows(2);
+        descriptionJTextArea.setText("my description");
         descriptionJTextArea.setToolTipText("A general free-text description of the experiment");
         descriptionJTextArea.setWrapStyleWord(true);
         descriptionJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -584,7 +587,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         });
 
         helpLabel.setFont(helpLabel.getFont().deriveFont((helpLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        helpLabel.setText("Insert the required information (*) and click Convert to convert the project to PRIDE XML.");
+        helpLabel.setText("Insert the required information (*) and click Convert to export the project to PRIDE XML.");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Folder"));
         jPanel1.setOpaque(false);
@@ -639,7 +642,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                         .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(helpLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
                         .addComponent(convertJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
