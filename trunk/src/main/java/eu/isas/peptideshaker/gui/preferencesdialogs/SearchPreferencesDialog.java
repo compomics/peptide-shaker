@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -32,6 +33,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 
 /**
@@ -104,6 +106,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         ptmToPrideMap = peptideShakerGUI.loadPrideToPtmMap();
         initComponents();
 
+        expectedModificationsTable.getColumn("PRIDE").setCellRenderer(new HtmlLinksRenderer(
+                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+
         // set table properties
         expectedModificationsTable.getTableHeader().setReorderingAllowed(false);
         availableModificationsTable.getTableHeader().setReorderingAllowed(false);
@@ -125,6 +130,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         expectedVariableModsTableToolTips.add("Modification Name");
         expectedVariableModsTableToolTips.add("Modification Family Name");
         expectedVariableModsTableToolTips.add("Modification Short Name");
+        expectedVariableModsTableToolTips.add("The PRIDE CV Term Mapping");
 
         modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
         Collections.sort(modificationList);
@@ -150,7 +156,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         backgroundPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
-        jPanel5 = new javax.swing.JPanel();
+        enzymeAndFragmentIonsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         fragmentIonAccuracyTxt = new javax.swing.JTextField();
         enzymesCmb = new javax.swing.JComboBox();
@@ -165,10 +171,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         precursorAccuracy = new javax.swing.JTextField();
         precursorUnit = new javax.swing.JComboBox();
         jLabel10 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
+        modProfilePanel = new javax.swing.JPanel();
         addModifications = new javax.swing.JButton();
         removeModification = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        expectedModsScrollPane = new javax.swing.JScrollPane();
         expectedModificationsTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
@@ -182,17 +188,17 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 };
             }
         };
-        jLabel3 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        expectedModsLabel = new javax.swing.JLabel();
+        availableModsLabel = new javax.swing.JLabel();
         profileTxt = new javax.swing.JTextField();
         clearProfileBtn = new javax.swing.JButton();
         saveAsProfileBtn = new javax.swing.JButton();
         saveProfileBtn = new javax.swing.JButton();
         loadProfileBtn = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        availableModsScrollPane = new javax.swing.JScrollPane();
         availableModificationsTable = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        loadAvailableModsButton = new javax.swing.JButton();
+        searchGuiParamsPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         fileTxt = new javax.swing.JTextField();
         loadButton = new javax.swing.JButton();
@@ -219,8 +225,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Enzyme and Fragment Ions"));
-        jPanel5.setOpaque(false);
+        enzymeAndFragmentIonsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Enzyme and Fragment Ions"));
+        enzymeAndFragmentIonsPanel.setOpaque(false);
 
         jLabel1.setText("Fragment Ion Accuracy:");
 
@@ -251,67 +257,67 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         jLabel10.setText("Da");
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout enzymeAndFragmentIonsPanelLayout = new javax.swing.GroupLayout(enzymeAndFragmentIonsPanel);
+        enzymeAndFragmentIonsPanel.setLayout(enzymeAndFragmentIonsPanelLayout);
+        enzymeAndFragmentIonsPanelLayout.setHorizontalGroup(
+            enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
+                        .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel9))
                         .addGap(37, 37, 37)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
                                 .addComponent(precursorAccuracy, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(enzymesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(fragmentIonAccuracyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel10)))
                 .addGap(71, 71, 71)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
                         .addComponent(ion2Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
+                        .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel7))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(missedCleavagesTxt)
                             .addComponent(ion1Cmb, 0, 286, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
-        jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {ion1Cmb, ion2Cmb});
+        enzymeAndFragmentIonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {ion1Cmb, ion2Cmb});
 
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        enzymeAndFragmentIonsPanelLayout.setVerticalGroup(
+            enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(enzymeAndFragmentIonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(enzymesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(precursorAccuracy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(fragmentIonAccuracyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
@@ -320,8 +326,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Modification Profile"));
-        jPanel6.setOpaque(false);
+        modProfilePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Modification Profile"));
+        modProfilePanel.setOpaque(false);
 
         addModifications.setText("<<");
         addModifications.setToolTipText("Add");
@@ -341,14 +347,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         expectedModificationsTable.setModel(new ModificationTable());
         expectedModificationsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                expectedModificationsTableMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                expectedModificationsTableMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 expectedModificationsTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                expectedModificationsTableMouseReleased(evt);
             }
         });
         expectedModificationsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -356,13 +359,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 expectedModificationsTableMouseMoved(evt);
             }
         });
-        jScrollPane1.setViewportView(expectedModificationsTable);
+        expectedModsScrollPane.setViewportView(expectedModificationsTable);
 
-        jLabel3.setFont(jLabel3.getFont().deriveFont((jLabel3.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel3.setText("Expected Variable Modifications");
+        expectedModsLabel.setFont(expectedModsLabel.getFont().deriveFont((expectedModsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        expectedModsLabel.setText("Expected Variable Modifications");
 
-        jLabel6.setFont(jLabel6.getFont().deriveFont((jLabel6.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel6.setText("Available Modifications");
+        availableModsLabel.setFont(availableModsLabel.getFont().deriveFont((availableModsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        availableModsLabel.setText("Available Modifications");
 
         profileTxt.setEditable(false);
         profileTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -422,25 +425,25 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(availableModificationsTable);
+        availableModsScrollPane.setViewportView(availableModificationsTable);
 
-        jButton1.setText("Load");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        loadAvailableModsButton.setText("Load");
+        loadAvailableModsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                loadAvailableModsButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout modProfilePanelLayout = new javax.swing.GroupLayout(modProfilePanel);
+        modProfilePanel.setLayout(modProfilePanelLayout);
+        modProfilePanelLayout.setHorizontalGroup(
+            modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(modProfilePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(modProfilePanelLayout.createSequentialGroup()
+                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modProfilePanelLayout.createSequentialGroup()
                                 .addComponent(profileTxt)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(loadProfileBtn)
@@ -450,53 +453,53 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                                 .addComponent(saveAsProfileBtn)
                                 .addGap(63, 63, 63))
                             .addComponent(clearProfileBtn, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(modProfilePanelLayout.createSequentialGroup()
+                                .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                 .addGap(2, 2, 2)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(removeModification)
                             .addComponent(addModifications)))
-                    .addComponent(jLabel3))
+                    .addComponent(expectedModsLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1))
+                .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(availableModsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(availableModsLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(loadAvailableModsButton))
                 .addContainerGap())
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+        modProfilePanelLayout.setVerticalGroup(
+            modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modProfilePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(modProfilePanelLayout.createSequentialGroup()
                         .addGap(71, 71, 71)
                         .addComponent(addModifications)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeModification))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel6))
+                    .addGroup(modProfilePanelLayout.createSequentialGroup()
+                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(expectedModsLabel)
+                            .addComponent(availableModsLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
+                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                            .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(saveAsProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(saveProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(loadProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(clearProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1))
+                                .addComponent(loadAvailableModsButton))
                             .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("SearchGUI Parameters File"));
-        jPanel2.setOpaque(false);
+        searchGuiParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("SearchGUI Parameters File"));
+        searchGuiParamsPanel.setOpaque(false);
 
         jLabel4.setText("SearchGUI File:");
 
@@ -510,11 +513,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout searchGuiParamsPanelLayout = new javax.swing.GroupLayout(searchGuiParamsPanel);
+        searchGuiParamsPanel.setLayout(searchGuiParamsPanelLayout);
+        searchGuiParamsPanelLayout.setHorizontalGroup(
+            searchGuiParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchGuiParamsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -523,11 +526,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        searchGuiParamsPanelLayout.setVerticalGroup(
+            searchGuiParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchGuiParamsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(searchGuiParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(fileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadButton))
@@ -564,13 +567,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(enzymeAndFragmentIonsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(modProfilePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(searchGuiParamsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(helpLineLabel)
@@ -589,11 +592,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(enzymeAndFragmentIonsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(modProfilePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchGuiParamsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpLineLabel)
@@ -625,7 +628,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             peptideShakerGUI.savePtmToPrideMap(ptmToPrideMap);
-            //@TODO the displayed data ought to be updated here if any change was made
+            //@TODO: the displayed data ought to be updated here if any change was made
             searchParameters.setFragmentIonAccuracy(new Double(fragmentIonAccuracyTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
@@ -973,7 +976,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void searchPreferencesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchPreferencesHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-}//GEN-LAST:event_searchPreferencesHelpJButtonMouseEntered
+    }//GEN-LAST:event_searchPreferencesHelpJButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
@@ -982,7 +985,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void searchPreferencesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchPreferencesHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_searchPreferencesHelpJButtonMouseExited
+    }//GEN-LAST:event_searchPreferencesHelpJButtonMouseExited
 
     /**
      * Open the help dialog.
@@ -993,126 +996,150 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/SearchPreferencesDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_searchPreferencesHelpJButtonActionPerformed
+    }//GEN-LAST:event_searchPreferencesHelpJButtonActionPerformed
 
     /**
      * Changes the cursor to a hand cursor if over the color column.
      *
      * @param evt
      */
-private void expectedModificationsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseMoved
+    private void expectedModificationsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseMoved
 
-    int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
-    int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
+        int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
+        int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
 
-    if (row != -1 && (column == 1 || column == 5)) {
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    } else {
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }
-}//GEN-LAST:event_expectedModificationsTableMouseMoved
+        if (row != -1) {
+
+            if (column == 1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else if (column == 5 && expectedModificationsTable.getValueAt(row, column) != null) {
+
+                String tempValue = (String) expectedModificationsTable.getValueAt(row, column);
+
+                if (tempValue.lastIndexOf("<html>") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        }
+    }//GEN-LAST:event_expectedModificationsTableMouseMoved
 
     /**
      * Changes the cursor back to the default cursor.
      *
      * @param evt
      */
-private void expectedModificationsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseExited
-    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_expectedModificationsTableMouseExited
+    private void expectedModificationsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_expectedModificationsTableMouseExited
+
+    /**
+     * Load the available modifications from file.
+     * 
+     * @param evt 
+     */
+    private void loadAvailableModsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadAvailableModsButtonActionPerformed
+        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("usermods.xml") || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(user modification file) *usermods.xml";
+            }
+        };
+
+        fc.setFileFilter(filter);
+
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            try {
+                ptmFactory.importModifications(file, true);
+                loadModifications();
+                updateModificationLists();
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "An error occurred while importing " + file.getName() + ".", "User Modification File Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_loadAvailableModsButtonActionPerformed
 
     /**
      * Opens a file chooser where the color for the ptm can be changed.
      *
      * @param evt
      */
-private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
+    private void expectedModificationsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseReleased
+        int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
+        int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
 
-    int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
-    int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
+        if (row != -1) {
+            if (column == 1) {
+                Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(row, column));
 
-    if (row != -1) {
-        if (column == 1) {
-        Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(row, column));
+                if (newColor != null) {
+                    searchParameters.getModificationProfile().setColor(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), newColor);
+                    expectedModificationsTable.repaint();
+                }
+            } else if (column == 5) {
+                //@TODO allow the user to select a MOD cv term
 
-        if (newColor != null) {
-            searchParameters.getModificationProfile().setColor(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), newColor);
-            expectedModificationsTable.repaint();
+                // open protein link in web browser
+                if (column == expectedModificationsTable.getColumn("PRIDE").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                        && ((String) expectedModificationsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                    String link = (String) expectedModificationsTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+            }
         }
-        } else if (column == 5) {
-            //@TODO allow the user to select a MOD cv term
-        }
-    } 
-}//GEN-LAST:event_expectedModificationsTableMouseClicked
-
-private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-
-    FileFilter filter = new FileFilter() {
-
-        @Override
-        public boolean accept(File myFile) {
-            return myFile.getName().toLowerCase().endsWith("usermods.xml") || myFile.isDirectory();
-        }
-
-        @Override
-        public String getDescription() {
-            return "(user modification file) *usermods.xml";
-        }
-    };
-
-    fc.setFileFilter(filter);
-
-    int result = fc.showOpenDialog(this);
-    if (result == JFileChooser.APPROVE_OPTION) {
-        File file = fc.getSelectedFile();
-        try {
-            ptmFactory.importModifications(file, true);
-            loadModifications();
-            updateModificationLists();
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occurred while importing " + file.getName() + ".", "User Modification File Error", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-}//GEN-LAST:event_jButton1ActionPerformed
-
-    private void expectedModificationsTableMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_expectedModificationsTableMouseEntered
-
+    }//GEN-LAST:event_expectedModificationsTableMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
+    private javax.swing.JLabel availableModsLabel;
+    private javax.swing.JScrollPane availableModsScrollPane;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearProfileBtn;
+    private javax.swing.JPanel enzymeAndFragmentIonsPanel;
     private javax.swing.JComboBox enzymesCmb;
     private javax.swing.JTable expectedModificationsTable;
+    private javax.swing.JLabel expectedModsLabel;
+    private javax.swing.JScrollPane expectedModsScrollPane;
     private javax.swing.JTextField fileTxt;
     private javax.swing.JTextField fragmentIonAccuracyTxt;
     private javax.swing.JLabel helpLineLabel;
     private javax.swing.JComboBox ion1Cmb;
     private javax.swing.JComboBox ion2Cmb;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton loadAvailableModsButton;
     private javax.swing.JButton loadButton;
     private javax.swing.JButton loadProfileBtn;
     private javax.swing.JTextField missedCleavagesTxt;
+    private javax.swing.JPanel modProfilePanel;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField precursorAccuracy;
     private javax.swing.JComboBox precursorUnit;
@@ -1120,6 +1147,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JButton removeModification;
     private javax.swing.JButton saveAsProfileBtn;
     private javax.swing.JButton saveProfileBtn;
+    private javax.swing.JPanel searchGuiParamsPanel;
     private javax.swing.JButton searchPreferencesHelpJButton;
     // End of variables declaration//GEN-END:variables
 
@@ -1530,10 +1558,19 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 5:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
+
                     CvTerm cvTerm = ptmToPrideMap.getCVTerm(psName);
+
                     if (cvTerm != null) {
-                        return cvTerm.getAccession();
+                        return getOlsAccessionLink(cvTerm.getAccession());
+                    } else {
+                        cvTerm = PtmToPrideMap.getDefaultCVTerm(psName);
                     }
+
+                    if (cvTerm != null) {
+                        return getOlsAccessionLink(cvTerm.getAccession());
+                    }
+
                     return "";
                 default:
                     return "";
@@ -1579,5 +1616,20 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                 return false;
             }
         }
+    }
+
+    /**
+     * Returns the protein accession number as a web link to the given PSI-MOD
+     * at http://www.ebi.ac.uk/ontology-lookup.
+     *
+     * @param modAccession the PSI-MOD accession number
+     * @return the OLS web link
+     */
+    public String getOlsAccessionLink(String modAccession) {
+
+        String accessionNumberWithLink = "<html><a href=\"http://www.ebi.ac.uk/ontology-lookup/?termId=" + modAccession + "\""
+                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + modAccession + "</font></a></html>";
+        return accessionNumberWithLink;
     }
 }
