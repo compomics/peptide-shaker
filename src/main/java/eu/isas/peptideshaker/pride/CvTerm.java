@@ -10,11 +10,10 @@ import java.io.Serializable;
  */
 public class CvTerm implements Serializable {
     
-    // @TODO: add serialVersionUID!
-//    /**
-//     * serialization number for backward compatibility
-//     */
-//    static final long serialVersionUID = 5849284645982876968L;
+    /**
+     * serialization number for backward compatibility
+     */
+    static final long serialVersionUID = -2890434198335005181L;
     /**
      * The ontology.
      */

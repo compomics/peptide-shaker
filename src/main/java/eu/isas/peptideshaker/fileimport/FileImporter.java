@@ -460,6 +460,14 @@ public class FileImporter {
          * The input map
          */
         private InputMap inputMap = new InputMap();
+        /**
+         * List of one hit wonders
+         */
+        private ArrayList<String> singleProteinList = new ArrayList<String>();
+        /**
+         * Map of proteins found several times with the number of times they appeared as first hit
+         */
+        private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
 
         /**
          * Constructor of the worker
@@ -541,8 +549,9 @@ public class FileImporter {
                     }
                 }
 
-                // clear the sequence to protein map as it is no longer needed
+                // clear the objects not needed anymore
                 sharedPeptides.clear();
+                singleProteinList.clear();
 
                 if (nRetained == 0) {
                     waitingDialog.appendReport("No identifications retained.");
@@ -553,6 +562,7 @@ public class FileImporter {
                 waitingDialog.appendReport("Files import completed. "
                         + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra. " + nRetained + " first hits passed the initial filtering.");
                 waitingDialog.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
+                peptideShaker.setProteinCountMap(proteinCount);
                 peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences, idFilter);
 
             } catch (Exception e) {
@@ -622,6 +632,7 @@ public class FileImporter {
             ArrayList<Integer> charges = new ArrayList<Integer>();
             int currentCharge;
             double precursorMz, error, maxErrorPpm = 0, maxErrorDa = 0;
+            Integer count;
 
             while (matchIt.hasNext()) {
 
@@ -662,6 +673,9 @@ public class FileImporter {
 
                 for (PeptideAssumption assumption : allAssumptions) {
                     if (idFilter.validateId(assumption, spectrumKey)) {
+                        if (!goodFirstHit) {
+                            match.setFirstHit(searchEngine, assumption);
+                        }
                         precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
                         goodFirstHit = true;
                         error = assumption.getDeltaMass(precursorMz, true);
@@ -679,6 +693,30 @@ public class FileImporter {
 
                         if (!charges.contains(currentCharge)) {
                             charges.add(currentCharge);
+                        }
+                        
+                        peptide = assumption.getPeptide();
+                        String sequence = peptide.getSequence();
+                        if (searchEngine == Advocate.XTANDEM) {
+                            ArrayList<String> proteins = getProteins(sequence, waitingDialog);
+                            if (!proteins.isEmpty()) {
+                                peptide.setParentProteins(proteins);
+                            }
+                        }
+                        
+                        for (String protein : peptide.getParentProteins()) {
+                            count = proteinCount.get(protein);
+                            if (count != null) {
+                                proteinCount.put(protein, count+1);
+                            } else {
+                                int index = singleProteinList.indexOf(protein);
+                                if (index != -1) {
+                                    singleProteinList.remove(index);
+                                    proteinCount.put(protein, 2);
+                                } else {
+                                    singleProteinList.add(protein);
+                                }
+                            }
                         }
                     }
                 }
@@ -699,12 +737,6 @@ public class FileImporter {
                                 }
                             }
                             seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters));
-                        }
-                        if (searchEngine == Advocate.XTANDEM) {
-                            ArrayList<String> proteins = getProteins(sequence, waitingDialog);
-                            if (!proteins.isEmpty()) {
-                                peptide.setParentProteins(proteins);
-                            }
                         }
                     }
 

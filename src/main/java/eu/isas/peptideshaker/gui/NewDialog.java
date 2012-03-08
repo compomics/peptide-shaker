@@ -613,7 +613,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             progressCounter++; // the FASTA file
             progressCounter++; // the peptide to protein map
-            progressCounter += 7; // computing probabilities etc
+            progressCounter += 6; // computing probabilities etc
             progressCounter += 1; // resolving protein inference
             progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
 

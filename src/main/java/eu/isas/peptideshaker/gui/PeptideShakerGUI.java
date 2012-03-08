@@ -2866,6 +2866,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         tempPreferences.setShowSliders(userPreferences.showSliders());
         userPreferences = tempPreferences;
+        
+        // Copy Pride default files
+        
+        
     }
 
     /**

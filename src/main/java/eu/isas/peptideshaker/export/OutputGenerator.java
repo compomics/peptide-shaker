@@ -285,18 +285,18 @@ public class OutputGenerator {
                                                     }
                                                 }
                                             }
-                                            if (emPAI) {
+                                            if (nSpectra) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey, SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + SEPARATOR);
+                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     if (nPeptides) {
                                                         writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                     }
                                                 }
                                             }
-                                            if (nSpectra) {
+                                            if (emPAI) {
                                                 try {
-                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey, SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     if (nPeptides) {
                                                         writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
