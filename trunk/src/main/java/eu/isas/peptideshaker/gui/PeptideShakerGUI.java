@@ -2874,6 +2874,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         tempPreferences.setShowSliders(userPreferences.showSliders());
         tempPreferences.setDeltaScoreThreshold(userPreferences.getDeltaScoreThreshold());
         tempPreferences.setaScoreThreshold(userPreferences.getAScoreThreshold());
+        tempPreferences.setMemoryPreference(userPreferences.getMemoryPreference());
         userPreferences = tempPreferences;
         
         // Copy Pride default files
