@@ -29,14 +29,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.BugReport;
-import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectDetailsDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.SpectrumCountingPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
@@ -577,6 +570,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         findJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
@@ -1146,6 +1140,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(spectrumCountingMenuItem);
+
+        jMenuItem1.setText("PTM Scoring");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        editMenu.add(jMenuItem1);
         editMenu.add(jSeparator12);
 
         findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
@@ -2513,6 +2515,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         new BugReport(this);
     }//GEN-LAST:event_logReportMenuActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new PtmPreferencesDialog(this);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2659,6 +2665,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -2865,6 +2872,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         tempPreferences.setShowSliders(userPreferences.showSliders());
+        tempPreferences.setDeltaScoreThreshold(userPreferences.getDeltaScoreThreshold());
+        tempPreferences.setaScoreThreshold(userPreferences.getAScoreThreshold());
         userPreferences = tempPreferences;
         
         // Copy Pride default files

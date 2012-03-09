@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
@@ -70,7 +70,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                           <Component id="spectrumCountingHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace pref="165" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="2" min="-2" max="-2" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="2" min="-2" max="-2" attributes="1"/>
@@ -91,7 +91,7 @@
                           <Component id="cancelButton" alignment="0" max="32767" attributes="1"/>
                           <Component id="okButton" alignment="0" max="32767" attributes="1"/>
                       </Group>
-                      <Component id="spectrumCountingHelpJButton" pref="23" max="32767" attributes="1"/>
+                      <Component id="spectrumCountingHelpJButton" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -147,7 +147,7 @@
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="2">
-                    <StringItem index="0" value="NSAF"/>
+                    <StringItem index="0" value="NSAF+"/>
                     <StringItem index="1" value="emPAI"/>
                   </StringArray>
                 </Property>
