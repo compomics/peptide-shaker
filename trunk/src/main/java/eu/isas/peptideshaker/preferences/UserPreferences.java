@@ -48,6 +48,14 @@ public class UserPreferences implements Serializable {
      * The memory to use by PeptideShaker
      */
     private int memoryPreference = 4*1024;
+    /**
+     * The user preferred delta score threshold
+     */
+    private Double deltaScoreThreshold = 50.0;
+    /**
+     * The user preferred A-score threshold
+     */
+    private Double aScoreThreshold = 50.0;
 
     /**
      * Constructor
@@ -204,4 +212,43 @@ public class UserPreferences implements Serializable {
     public void setMemoryPreference(int memoryPreference) {
         this.memoryPreference = memoryPreference;
     }
+
+    /**
+     * Returns the user preferred A-score Threshold
+     * @return the user preferred A-score Threshold
+     */
+    public Double getAScoreThreshold() {
+        if (aScoreThreshold == null) {
+            aScoreThreshold = 50.0;
+        }
+        return aScoreThreshold;
+    }
+
+    /**
+     * Sets the user preferred A-score Threshold
+     * @param aScoreThreshold the user preferred A-score Threshold
+     */
+    public void setaScoreThreshold(Double aScoreThreshold) {
+        this.aScoreThreshold = aScoreThreshold;
+    }
+
+    /**
+     * Returns the user preferred delta score Threshold
+     * @return the user preferred delta score Threshold
+     */
+    public Double getDeltaScoreThreshold() {
+        if (deltaScoreThreshold == null) {
+            deltaScoreThreshold = 50.0;
+        }
+        return deltaScoreThreshold;
+    }
+
+    /**
+     * Sets the user preferred delta score Threshold
+     * @param deltaScoreThreshold the user preferred delta score Threshold
+     */
+    public void setDeltaScoreThreshold(Double deltaScoreThreshold) {
+        this.deltaScoreThreshold = deltaScoreThreshold;
+    }
+    
 }

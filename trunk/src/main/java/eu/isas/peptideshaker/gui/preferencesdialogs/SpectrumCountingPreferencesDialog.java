@@ -82,7 +82,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Method:");
 
-        methodCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NSAF", "emPAI" }));
+        methodCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "NSAF+", "emPAI" }));
 
         validatedCheck.setText("Count only validated hits");
         validatedCheck.setOpaque(false);
@@ -155,7 +155,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(spectrumCountingHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 165, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -174,7 +174,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(spectrumCountingHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
+                    .addComponent(spectrumCountingHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -266,7 +266,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Update the gui based on teh spectrum counting preferences
+     * Update the gui based on the spectrum counting preferences
      */
     private void updateGUI() {
         if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
