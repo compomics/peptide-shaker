@@ -816,7 +816,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                                 modificationFiles.add(file);
                             }
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
-                            if (!searchParametersFiles.contains(file)) {
+                            boolean found = false;
+                            for (File tempFile : searchParametersFiles) {
+                                if (tempFile.getName().equals(file.getName())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
                                 searchParametersFiles.add(file);
                             }
                         }

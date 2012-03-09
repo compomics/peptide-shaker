@@ -547,6 +547,9 @@ public class FileImporter {
                     for (File idFile : filesToProcess) {
                         importPsms(idFile);
                     }
+                    if (waitingDialog.isRunCanceled()) {
+                        return 1;
+                    }
                 }
 
                 // clear the objects not needed anymore

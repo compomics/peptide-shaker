@@ -354,7 +354,6 @@ public class CsvExporter {
         }
         line += SEPARATOR;
 
-        line += SEPARATOR;
         line += peptideMatch.getSpectrumCount() + SEPARATOR;
         PSParameter probabilities = new PSParameter();
         int nSpectraValidated = 0;
