@@ -1583,6 +1583,9 @@ public class QCPanel extends javax.swing.JPanel {
                     if (!psParameter.isHidden()) {
 
                         double value = peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                        if (value >0) {
+                        value = Math.log10(value);
+                        }
 
                         if (psParameter.isValidated()) {
                             if (value > 0) {
