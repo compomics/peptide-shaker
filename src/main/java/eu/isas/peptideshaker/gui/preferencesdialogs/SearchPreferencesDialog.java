@@ -12,8 +12,9 @@ import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.SearchParameters;
-import eu.isas.peptideshaker.pride.CvTerm;
-import eu.isas.peptideshaker.pride.PtmToPrideMap;
+import com.compomics.util.pride.CvTerm;
+import com.compomics.util.pride.PrideObjectsFactory;
+import com.compomics.util.pride.PtmToPrideMap;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -627,7 +628,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
-            peptideShakerGUI.savePtmToPrideMap(ptmToPrideMap);
+            try {
+            PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
+            prideObjectsFactory.setPtmToPrideMap(ptmToPrideMap);
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
             //@TODO: the displayed data ought to be updated here if any change was made
             searchParameters.setFragmentIonAccuracy(new Double(fragmentIonAccuracyTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
@@ -1559,8 +1565,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 case 5:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
 
-                    CvTerm cvTerm = ptmToPrideMap.getCVTerm(psName);
-
+                    CvTerm cvTerm = null;
+                    if (ptmToPrideMap != null) {
+                    cvTerm = ptmToPrideMap.getCVTerm(psName);
+                    }
                     if (cvTerm != null) {
                         return getOlsAccessionLink(cvTerm.getAccession());
                     } else {

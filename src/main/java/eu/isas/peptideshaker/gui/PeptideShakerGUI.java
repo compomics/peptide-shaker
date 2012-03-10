@@ -48,9 +48,10 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
-import eu.isas.peptideshaker.pride.CvTerm;
-import eu.isas.peptideshaker.pride.PtmToPrideMap;
-import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
+import com.compomics.util.pride.CvTerm;
+import com.compomics.util.pride.PrideObjectsFactory;
+import com.compomics.util.pride.PtmToPrideMap;
+import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
@@ -2876,10 +2877,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         tempPreferences.setaScoreThreshold(userPreferences.getAScoreThreshold());
         tempPreferences.setMemoryPreference(userPreferences.getMemoryPreference());
         userPreferences = tempPreferences;
-        
+
         // Copy Pride default files
-        
-        
+
+
     }
 
     /**
@@ -5185,8 +5186,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     newFolder.mkdir();
 
-                    experimentIO.save(currentPSFile, experiment);
                     identification.save(newFolder, progressDialog);
+                    progressDialog.setIndeterminate(true);
+                    experimentIO.save(currentPSFile, experiment);
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
@@ -5218,75 +5220,36 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Loads the Pride to Ptm map from the user folder or creates a new one if
      * the file is not present. Loads a default mapping if a ptm is not present.
-     * 
+     *
      * @return the Pride to Ptm map
      */
     public PtmToPrideMap loadPrideToPtmMap() {
-        
-        PtmToPrideMap ptmToPrideMap;
-        
-        File settingFile = new File(PrideExportDialog.prideFolder, PtmToPrideMap.fileName);
-        
-        if (settingFile.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(settingFile);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                ObjectInputStream in = new ObjectInputStream(bis);
-                ptmToPrideMap = (PtmToPrideMap) in.readObject();
-                fis.close();
-                bis.close();
-                in.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "An error occured while reading " + settingFile.getAbsolutePath() + ".\n", "File Import Error", JOptionPane.WARNING_MESSAGE);
-                ptmToPrideMap = null;
-            }
-        } else {
-            ptmToPrideMap = new PtmToPrideMap();
-        }
-        boolean changes = false;
-        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-        for (String psPtm : modificationProfile.getPeptideShakerNames()) {
-            if (ptmToPrideMap.getCVTerm(psPtm) == null) {
-                for (String utilitiesPtm : modificationProfile.getUtilitiesNames()) {
-                    if (modificationProfile.getPeptideShakerName(utilitiesPtm).equals(psPtm)) {
-                        CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(utilitiesPtm);
-                        if (defaultCVTerm != null) {
-                            ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
-                            changes = true;
-                            break;
+        try {
+            PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
+            PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
+            boolean changes = false;
+            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+            for (String psPtm : modificationProfile.getPeptideShakerNames()) {
+                if (ptmToPrideMap.getCVTerm(psPtm) == null) {
+                    for (String utilitiesPtm : modificationProfile.getUtilitiesNames()) {
+                        if (modificationProfile.getPeptideShakerName(utilitiesPtm).equals(psPtm)) {
+                            CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(utilitiesPtm);
+                            if (defaultCVTerm != null) {
+                                ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
+                                changes = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
-        }
-        if (changes) {
-            savePtmToPrideMap(ptmToPrideMap);
-        }
-        return ptmToPrideMap;
-    }
-
-    /**
-     * Saves the ptm to cv term map
-     *
-     * @param ptmToPrideMap the map to save
-     */
-    public void savePtmToPrideMap(PtmToPrideMap ptmToPrideMap) {
-        try {
-            File matchFile = new File(PrideExportDialog.prideFolder, PtmToPrideMap.fileName);
-            if (!matchFile.getParentFile().exists()) {
-                matchFile.getParentFile().mkdir();
+            if (changes) {
+                prideObjectsFactory.setPtmToPrideMap(ptmToPrideMap);
             }
-            FileOutputStream fos = new FileOutputStream(matchFile);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(ptmToPrideMap);
-            oos.close();
-            bos.close();
-            fos.close();
+            return ptmToPrideMap;
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while saving the pride preferences.\n", "File Export Error", JOptionPane.WARNING_MESSAGE);
+            catchException(e);
+            return null;
         }
     }
 
