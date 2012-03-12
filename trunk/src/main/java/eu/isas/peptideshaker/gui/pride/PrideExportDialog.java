@@ -1120,10 +1120,14 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
                 Instrument instrument = prideObjectsFactory.getInstruments().get(selectedInstrument);
 
-                PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
-                        references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()));
+                try {
+                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
+                            references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()));
 
-                prideExport.createPrideXmlFile(progressDialog);
+                    prideExport.createPrideXmlFile(progressDialog);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
                 progressDialog.dispose();
 
                 // return the peptide shaker icon to the standard version
@@ -1131,6 +1135,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
                 // @TODO: improve info message below!!
                 JOptionPane.showMessageDialog(prideExportDialog, "PRIDE XML file created.", "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
+                
+                dispose();
             }
         }.start();
     }//GEN-LAST:event_convertJButtonActionPerformed

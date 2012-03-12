@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.io.*;
 import java.util.ArrayList;
@@ -37,32 +38,109 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PRIDEExport {
 
+    /**
+     * The main instance of the GUI
+     */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The experiment title
+     */
     private String experimentTitle;
+    /**
+     * The experiment label
+     */
     private String experimentLabel;
+    /**
+     * The experiment description
+     */
     private String experimentDescription;
+    /**
+     * The experiment project
+     */
     private String experimentProject;
+    /**
+     * The references to include in the pride xml file as utilities pride object
+     */
     private ArrayList<Reference> references;
+    /**
+     * The contact utilities pride object
+     */
     private Contact contact;
+    /**
+     * THe sample utilities pride object
+     */
     private Sample sample;
+    /**
+     * The protocol utilities pride object
+     */
     private Protocol protocol;
+    /**
+     * The instrument utilities pride object
+     */
     private Instrument instrument;
-    private File outputFolder;
+    /**
+     * The fileWriter
+     */
+    private FileWriter r;
+    /**
+     * The buffered writer which will write the results in the desired file
+     */
+    private BufferedWriter br;
+    /**
+     * integer keeping track of the number of tabs to include at the beginning
+     * of each line
+     */
     private int tabCounter = 0;
+    /**
+     * The spectrum factory
+     */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The PTM factory
+     */
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
      * The spectrum key to PRIDE spectrum index map - key: spectrum key,
      * element: PRIDE XML file spectrum index.
      */
-    private HashMap<String, Integer> spectrumIndexes;
+    private HashMap<String, Long> spectrumIndexes;
     /**
      * The ptm to pride map
      */
     private PtmToPrideMap ptmToPrideMap;
+    /**
+     * The length of the task
+     */
+    private long totalProgress;
+    /**
+     * The current progress;
+     */
+    private long progress = 0;
 
+    /**
+     * Constructor
+     *
+     * @param peptideShakerGUI Instance of the main GUI class
+     * @param experimentTitle Title of the experiment
+     * @param experimentLabel Label of the experiment
+     * @param experimentDescription Description of the experiment
+     * @param experimentProject project of the experiment
+     * @param references References for the experiment
+     * @param contact Contact for the experiment
+     * @param sample Samples in this experiment
+     * @param protocol Protocol used in this experiment
+     * @param instrument Instruments used in this experiment
+     * @param outputFolder Output folder
+     * @throws FileNotFoundException Exception thrown whenever a file was not
+     * found
+     * @throws IOException Exception thrown whenever an error occurred while
+     * reading/writing a file
+     * @throws ClassNotFoundException Exception thrown whenever an error
+     * occurred while deserializing a pride object
+     */
     public PRIDEExport(PeptideShakerGUI peptideShakerGUI, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
             ArrayList<Reference> references, Contact contact, Sample sample, Protocol protocol, Instrument instrument,
-            File outputFolder) {
+            File outputFolder) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerGUI = peptideShakerGUI;
         this.experimentTitle = experimentTitle;
         this.experimentLabel = experimentLabel;
@@ -73,79 +151,95 @@ public class PRIDEExport {
         this.sample = sample;
         this.protocol = protocol;
         this.instrument = instrument;
-        this.outputFolder = outputFolder;
-        try {
-            PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
-            ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
+        PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
+        ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
+        r = new FileWriter(new File(outputFolder, experimentTitle + ".xml"));
+        br = new BufferedWriter(r);
+
     }
 
-    public void createPrideXmlFile(ProgressDialogX progressDialog) {
+    /**
+     * Creates the pride xml file
+     *
+     * @param progressDialog a dialog displaying progress to the user
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/wrinting a file
+     * @throws MzMLUnmarshallerException exception thrown whenever a problem
+     * occurred while reading the mzML file
+     */
+    public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
-        try {
 
-            FileWriter r = new FileWriter(new File(outputFolder, experimentTitle + ".xml"));
-            BufferedWriter br = new BufferedWriter(r);
+        // the experiment start tag
+        writeExperimentCollectionStartTag();
 
-            // the experiment start tag
-            writeExperimentCollectionStartTag(br);
+        // the experiment title
+        writeTitle();
 
-            // the experiment title
-            writeTitle(br);
-
-            // the references, if any
-            if (references.size() > 0) {
-                writeReferences(br);
-            }
-
-            // the short label
-            writeShortLabel(br);
-
-            // the protocol
-            writeProtocol(br);
-
-            // the mzData element
-            writeMzData(br, progressDialog);
-
-            // the PSMs
-            writePsms(br, progressDialog);
-
-            // the additional tags
-            writeAdditionalTags(br);
-
-            // the experiment end tag
-            writeExperimentCollectionEndTag(br);
-
-            br.close();
-            r.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (MzMLUnmarshallerException e) {
-            e.printStackTrace();
+        // the references, if any
+        if (references.size() > 0) {
+            writeReferences();
         }
+
+        // the short label
+        writeShortLabel();
+
+        // the protocol
+        writeProtocol();
+
+        // get the spectrum count
+        totalProgress = 0;
+        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
+            totalProgress += spectrumFactory.getNSpectra(mgfFile);
+        }
+        totalProgress = 2*totalProgress;
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(100);
+        progressDialog.setValue(0);
+
+        // the mzData element
+        writeMzData(progressDialog);
+
+        // the PSMs
+        writePsms(progressDialog);
+
+        // the additional tags
+        writeAdditionalTags();
+
+        // the experiment end tag
+        writeExperimentCollectionEndTag();
+
+        br.close();
+        r.close();
+
     }
 
-    private void writePsms(BufferedWriter br, ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    /**
+     * Writes all psms
+     *
+     * @param progressDialog a progress dialog to display progress to the user
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     * @throws MzMLUnmarshallerException exception thrown whenever a problem
+     * occurred while reading the mzML file
+     */
+    private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-        PTMFactory pTMFactory = PTMFactory.getInstance();
         Identification identification = peptideShakerGUI.getIdentification();
         PSParameter probabilities = new PSParameter();
 
-        progressDialog.setTitle("Exporting PSMs. Please Wait. (Part 2/2)");
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMax(identification.getProteinIdentification().size());
-        progressDialog.setValue(0);
+        progressDialog.setTitle("Creating PrideXML file. Please Wait.  (Part 2 of 2: exporting PSMs)");
+        long increment = totalProgress / (2* identification.getProteinIdentification().size());
 
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        PsmSpecificMap targetDecoyMap = pSMaps.getPsmSpecificMap();
+        ProteinMap targetDecoyMap = pSMaps.getProteinMap();
 
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            probabilities = (PSParameter) identification.getMatchParameter(proteinKey, probabilities);
+            double confidenceThreshold = targetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
 
             br.write(getCurrentTabSpace() + "<GelFreeIdentification>\n");
             tabCounter++;
@@ -162,9 +256,6 @@ public class PRIDEExport {
                     PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
                     Peptide tempPeptide = bestAssumption.getPeptide();
-                    probabilities = (PSParameter) identification.getMatchParameter(tempPeptide.getKey(), probabilities);
-
-                    double confidenceThreshold = targetDecoyMap.getTargetDecoyMap(bestAssumption.getIdentificationCharge().value).getTargetDecoyResults().getConfidenceLimit();
 
                     // the peptide
                     br.write(getCurrentTabSpace() + "<PeptideItem>\n");
@@ -184,10 +275,10 @@ public class PRIDEExport {
                     br.write(getCurrentTabSpace() + "<SpectrumReference>" + spectrumIndexes.get(spectrumMatch.getKey()) + "</SpectrumReference>\n");
 
                     // modifications
-                    writePtms(br, tempPeptide, pTMFactory);
+                    writePtms(tempPeptide);
 
                     // fragment ions
-                    writeFragmentIons(br, tempPeptide, spectrumMatch);
+                    writeFragmentIons(spectrumMatch);
 
                     tabCounter--;
                     br.write(getCurrentTabSpace() + "</PeptideItem>\n");
@@ -202,7 +293,7 @@ public class PRIDEExport {
                     br.write(getCurrentTabSpace() + "</additional>\n");
 
                     // score
-                    br.write(getCurrentTabSpace() + "<Score>" + probabilities.getPsmConfidence() + "</Score>\n");
+                    br.write(getCurrentTabSpace() + "<Score>" + probabilities.getProteinConfidence() + "</Score>\n");
 
                     // threshold
                     br.write(getCurrentTabSpace() + "<Threshold>" + confidenceThreshold + "</Threshold>\n");
@@ -210,16 +301,27 @@ public class PRIDEExport {
                     // SearchEngine
                     br.write(getCurrentTabSpace() + "<SearchEngine>" + "PeptideShaker" + "</SearchEngine>\n"); // @TODO: is this correct??
                 }
-                tabCounter--;
-                br.write(getCurrentTabSpace() + "</GelFreeIdentification>\n");
             }
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</GelFreeIdentification>\n");
 
-            progressDialog.incrementValue();
+            progress += increment;
+            progressDialog.setValue((int) ((100 * progress) / totalProgress));
         }
     }
 
-    private void writeFragmentIons(BufferedWriter br, Peptide peptide, SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException {
+    /**
+     * Writes the fragment ions for a given spectrum match
+     *
+     * @param spectrumMatch the spectrum match considered
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     * @throws MzMLUnmarshallerException exception thrown whenever a problem
+     * occurred while reading the mzML file
+     */
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException {
 
+        Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
         SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
         annotationPreferences.setCurrentSettings(peptide, spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
@@ -234,235 +336,46 @@ public class PRIDEExport {
                 annotationPreferences.getFragmentIonAccuracy());
 
         for (int i = 0; i < annotations.size(); i++) {
-            writeFragmentIon(br, annotations.get(i));
+            writeFragmentIon(annotations.get(i));
         }
     }
 
-    private void writeFragmentIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
+    /**
+     * Writes the line corresponding to an ion match
+     *
+     * @param ionMatch the ion match considered
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeFragmentIon(IonMatch ionMatch) throws IOException {
 
         PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-        boolean standardFragmentIonAdded = false;
-        String ionNameLine = "";
 
         // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
 
-        if (fragmentIon.getType() == PeptideFragmentIonType.A_ION) {
-            if (fragmentIon.getNeutralLosses().isEmpty()) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000233\" name=\"a ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000234\" name=\"a ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000235\" name=\"a ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            }
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.B_ION) {
-            if (fragmentIon.getNeutralLosses().isEmpty()) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000194\" name=\"b ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000196\" name=\"b ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000195\" name=\"b ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            }
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.C_ION) {
-            if (fragmentIon.getNeutralLosses().isEmpty()) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000236\" name=\"c ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000237\" name=\"c ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000238\" name=\"c ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            }
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.X_ION) {
-            if (fragmentIon.getNeutralLosses().isEmpty()) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000227\" name=\"x ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000228\" name=\"x ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000229\" name=\"x ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            }
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.Y_ION) {
-            if (fragmentIon.getNeutralLosses().isEmpty()) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000193\" name=\"y ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000197\" name=\"y ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000198\" name=\"y ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            }
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.Z_ION) {
-            if (fragmentIon.getNeutralLosses().isEmpty()) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000230\" name=\"z ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000231\" name=\"z ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000232\" name=\"z ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
-                standardFragmentIonAdded = true;
-            }
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.IMMONIUM) {
-            writeImmoniumIon(br, ionMatch); // @TODO: the immonium type seems to be ignored by PRIDE Inspector!! and just listed as "immonium"...
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.PRECURSOR_ION) {
-            writePrecursorIon(br, ionMatch);
-        }
-
-        if (standardFragmentIonAdded) {
+        CvTerm fragmentIonTerm = fragmentIon.getPrideCvTerm();
+        if (fragmentIonTerm != null) {
             br.write(getCurrentTabSpace() + "<FragmentIon>\n");
             tabCounter++;
-            br.write(ionNameLine);
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge.value + "\" />\n"); // @TODO: assumes charge > 0!
+            writeCvTerm(fragmentIonTerm);
+            writeCvTerm(ionMatch.getMZPrideCvTerm());
+            writeCvTerm(ionMatch.getIntensityPrideCvTerm());
+            writeCvTerm(ionMatch.getIonMassErrorPrideCvTerm());
+            writeCvTerm(ionMatch.getChargePrideCvTerm());
             tabCounter--;
             br.write(getCurrentTabSpace() + "</FragmentIon>\n");
         }
     }
 
-    private void writePrecursorIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
-
-        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-
-        String ionNameLine = "";
-
-        boolean precursorAdded = false;
-
-        if (fragmentIon.getNeutralLosses().isEmpty()) {
-            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000263\" name=\"precursor ion\"/>\n";
-            //ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001523\" name=\"frag: precursor ion\"/>\n";
-            precursorAdded = true;
-        } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0) == NeutralLoss.H2O) {
-            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000262\" name=\"precursor ion -H2O\"/>\n";
-            //ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001521\" name=\"frag: precursor ion - H2O\"/>\n";
-            precursorAdded = true;
-        } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0) == NeutralLoss.NH3) {
-            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000261\" name=\"precursor ion -NH3\"/>\n";
-            //ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001522\" name=\"frag: precursor ion - NH3\"/>\n";
-            precursorAdded = true;
-        }
-
-        if (precursorAdded) {
-
-            // @TODO: the required precursor CV terms are missing... using product ion cv terms instead!!
-
-            br.write(getCurrentTabSpace() + "<FragmentIon>\n");
-            tabCounter++;
-            br.write(ionNameLine);
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n"); // @TODO: precursor cv term does not exist!!
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n"); // @TODO: precursor cv term does not exist!!
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n"); // @TODO: precursor cv term does not exist!!
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge + "\" />\n"); // @TODO: precursor cv term does not exist!!
-
-            // @TODO: use these instead of the PRIDE ones??
-//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000744\" name=\"selected ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
-//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000042\" name=\"peak intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
-//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:???????\" name=\"precursor ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n"); // @TODO: precursor cv term does not exist!!
-//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000041\" name=\"ChargeState\" value=\"" + ionMatch.charge + "\" />\n");
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</FragmentIon>\n");
-        }
-    }
-
-    private void writeImmoniumIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
-
-        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-
-        // retrieve iX and convert to X
-        char residue = fragmentIon.getIonType().charAt(1);
-
-        String ionNameLine = "";
-
-        switch (residue) {
-            case 'A':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000240\" name=\"immonium A\" />\n";
-                break;
-            case 'C':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000241\" name=\"immonium C\" />\n";
-                break;
-            case 'D':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000242\" name=\"immonium D\" />\n";
-                break;
-            case 'E':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000243\" name=\"immonium E\" />\n";
-                break;
-            case 'F':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000244\" name=\"immonium F\" />\n";
-                break;
-            case 'G':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000245\" name=\"immonium G\" />\n";
-                break;
-            case 'H':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000246\" name=\"immonium H\" />\n";
-                break;
-            case 'I':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000247\" name=\"immonium I\" />\n";
-                break;
-            case 'K':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000248\" name=\"immonium K\" />\n";
-                break;
-            case 'L':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000249\" name=\"immonium L\" />\n";
-                break;
-            case 'M':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000250\" name=\"immonium M\" />\n";
-                break;
-            case 'N':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000251\" name=\"immonium N\" />\n";
-                break;
-            case 'P':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000252\" name=\"immonium P\" />\n";
-                break;
-            case 'Q':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000253\" name=\"immonium Q\" />\n";
-                break;
-            case 'R':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000254\" name=\"immonium R\" />\n";
-                break;
-            case 'S':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000255\" name=\"immonium S\" />\n";
-                break;
-            case 'T':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000256\" name=\"immonium T\" />\n";
-                break;
-            case 'V':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000257\" name=\"immonium V\" />\n";
-                break;
-            case 'W':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000258\" name=\"immonium W\" />\n";
-                break;
-            case 'Y':
-                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000259\" name=\"immonium Y\" />\n";
-                break;
-        }
-
-        // @TODO: the immonium type seems to be ignored by PRIDE Inspector!! and just listed as "immonium"...
-
-        br.write(getCurrentTabSpace() + "<FragmentIon>\n");
-        tabCounter++;
-        br.write(ionNameLine);
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n");
-        //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge.value + "\" />\n"); // @TODO: assumes charge > 0!
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</FragmentIon>\n");
-    }
-
-    private void writePtms(BufferedWriter br, Peptide peptide, PTMFactory pTMFactory) throws IOException {
+    /**
+     * Writes the PTMs detected in a peptide
+     *
+     * @param peptide the peptide of interest
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writePtms(Peptide peptide) throws IOException {
 
         for (int i = 0; i < peptide.getModificationMatches().size(); i++) {
 
@@ -471,7 +384,7 @@ public class PRIDEExport {
 
             ModificationMatch modMatch = peptide.getModificationMatches().get(i);
             String modName = modMatch.getTheoreticPtm();
-            PTM ptm = pTMFactory.getPTM(modName);
+            PTM ptm = ptmFactory.getPTM(modName);
 
             CvTerm cvTerm = ptmToPrideMap.getCVTerm(modName);
             String cvTermName;
@@ -513,7 +426,16 @@ public class PRIDEExport {
         }
     }
 
-    private void writeMzData(BufferedWriter br, ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    /**
+     * Writes the spectra in the mzData format
+     *
+     * @param progressDialog a progress dialog to display progress to the user
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     * @throws MzMLUnmarshallerException exception thrown whenever a problem
+     * occurred while reading the mzML file
+     */
+    private void writeMzData(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
         br.write(getCurrentTabSpace() + "<mzData version=\"1.05\" accessionNumber=\"0\">\n");
         tabCounter++;
@@ -522,34 +444,36 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"MS\" fullName=\"PSI Mass Spectrometry Ontology\" version=\"1.0.0\" address=\"http://psidev.sourceforge.net/ontology\" />\n");
 
         // write the mzData description (project description, sample details, contact details, instrument details and software details)
-        writeMzDataDescription(br);
+        writeMzDataDescription();
 
         // write the spectra
-        writeSpectra(br, progressDialog);
+        writeSpectra(progressDialog);
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</mzData>\n");
     }
 
-    private void writeSpectra(BufferedWriter br, ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    /**
+     * Writes all spectra in the mzData format
+     *
+     * @param progressDialog a progress dialog to display progress to the user
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     * @throws MzMLUnmarshallerException exception thrown whenever a problem
+     * occurred while reading the mzML file
+     */
+    private void writeSpectra(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
-        progressDialog.setTitle("Exporting Spectra. Please Wait.  (Part 1/2)");
+        progressDialog.setTitle("Creating PrideXML file. Please Wait.  (Part 1 of 2: exporting spectra)");
 
-        spectrumIndexes = new HashMap<String, Integer>();
+        spectrumIndexes = new HashMap<String, Long>();
 
-        int spectrumCounter = 0;
-
-        // get the spectrum count
-        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-            spectrumCounter += spectrumFactory.getNSpectra(mgfFile);
-        }
+        long spectrumCounter = 0;
 
         br.write(getCurrentTabSpace() + "<spectrumList count=\"" + spectrumCounter + "\">\n");
         tabCounter++;
 
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(spectrumCounter);
-        spectrumCounter = 1;
 
         Identification identification = peptideShakerGUI.getIdentification();
 
@@ -558,14 +482,14 @@ public class PRIDEExport {
                 String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
                 MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey));
                 boolean identified = identification.matchExists(spectrumKey);
-                writeSpectrum(br, tempSpectrum, identified, spectrumCounter);
+                writeSpectrum(tempSpectrum, identified, spectrumCounter);
 
                 if (identified) {
                     spectrumIndexes.put(spectrumKey, spectrumCounter);
                 }
-
-                progressDialog.incrementValue();
                 spectrumCounter++;
+                progress++;
+                progressDialog.setValue((int) ((100 * progress) / totalProgress));
             }
         }
 
@@ -573,7 +497,16 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</spectrumList>\n");
     }
 
-    private void writeSpectrum(BufferedWriter br, MSnSpectrum spectrum, boolean matchExists, int spectrumCounter) throws IOException {
+    /**
+     * Writes a spectrum
+     *
+     * @param spectrum The spectrum
+     * @param matchExists boolean indicating whether the match exists
+     * @param spectrumCounter index of the spectrum
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeSpectrum(MSnSpectrum spectrum, boolean matchExists, long spectrumCounter) throws IOException {
 
         br.write(getCurrentTabSpace() + "<spectrum id=\"" + spectrumCounter + "\">\n");
         tabCounter++;
@@ -658,7 +591,13 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</spectrum>\n");
     }
 
-    private void writeMzDataDescription(BufferedWriter br) throws IOException {
+    /**
+     * Writes the mzData description
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeMzDataDescription() throws IOException {
 
         // write the project description
         br.write(getCurrentTabSpace() + "<description>\n");
@@ -668,25 +607,31 @@ public class PRIDEExport {
         tabCounter++;
 
         // write the sample details
-        writeSample(br);
+        writeSample();
 
         // write the contact details
-        writeContact(br);
+        writeContact();
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</admin>\n");
 
         // write the instrument details
-        writeInstrument(br);
+        writeInstrument();
 
         // write the software details
-        writeSoftware(br);
+        writeSoftware();
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</description>\n");
     }
 
-    private void writeSoftware(BufferedWriter br) throws IOException {
+    /**
+     * Writes the software information
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeSoftware() throws IOException {
 
         br.write(getCurrentTabSpace() + "<dataProcessing>\n");
         tabCounter++;
@@ -728,7 +673,13 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</dataProcessing>\n");
     }
 
-    private void writeInstrument(BufferedWriter br) throws IOException {
+    /**
+     * Writes the instrument description
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeInstrument() throws IOException {
 
         br.write(getCurrentTabSpace() + "<instrument>\n");
         tabCounter++;
@@ -739,7 +690,7 @@ public class PRIDEExport {
         // write the source
         br.write(getCurrentTabSpace() + "<source>\n");
         tabCounter++;
-        writeCvTerm(br, instrument.getSource());
+        writeCvTerm(instrument.getSource());
         tabCounter--;
         br.write(getCurrentTabSpace() + "</source>\n");
 
@@ -750,7 +701,7 @@ public class PRIDEExport {
         for (int i = 0; i < instrument.getCvTerms().size(); i++) {
             br.write(getCurrentTabSpace() + "<analyzer>\n");
             tabCounter++;
-            writeCvTerm(br, instrument.getCvTerms().get(i));
+            writeCvTerm(instrument.getCvTerms().get(i));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</analyzer>\n");
         }
@@ -762,7 +713,7 @@ public class PRIDEExport {
         // write the detector
         br.write(getCurrentTabSpace() + "<detector>\n");
         tabCounter++;
-        writeCvTerm(br, instrument.getDetector());
+        writeCvTerm(instrument.getDetector());
         tabCounter--;
         br.write(getCurrentTabSpace() + "</detector>\n");
 
@@ -770,7 +721,13 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</instrument>\n");
     }
 
-    private void writeContact(BufferedWriter br) throws IOException {
+    /**
+     * Writes the contact description
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeContact() throws IOException {
 
         br.write(getCurrentTabSpace() + "<contact>\n");
         tabCounter++;
@@ -783,7 +740,13 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</contact>\n");
     }
 
-    private void writeSample(BufferedWriter br) throws IOException {
+    /**
+     * Writes the sample description
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeSample() throws IOException {
 
         br.write(getCurrentTabSpace() + "<sampleName>" + sample.getName() + "</sampleName>\n");
 
@@ -791,14 +754,20 @@ public class PRIDEExport {
         tabCounter++;
 
         for (int i = 0; i < sample.getCvTerms().size(); i++) {
-            writeCvTerm(br, sample.getCvTerms().get(i));
+            writeCvTerm(sample.getCvTerms().get(i));
         }
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</sampleDescription>\n");
     }
 
-    private void writeAdditionalTags(BufferedWriter br) throws IOException {
+    /**
+     * Writes the additional tags
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeAdditionalTags() throws IOException {
         br.write(getCurrentTabSpace() + "<additional>\n");
         tabCounter++;
 
@@ -828,15 +797,33 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</additional>\n");
     }
 
-    private void writeTitle(BufferedWriter br) throws IOException {
+    /**
+     * Writes the title
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeTitle() throws IOException {
         br.write(getCurrentTabSpace() + "<Title>" + experimentTitle + "</Title>\n");
     }
 
-    private void writeShortLabel(BufferedWriter br) throws IOException {
+    /**
+     * Writes the short labeln
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeShortLabel() throws IOException {
         br.write(getCurrentTabSpace() + "<ShortLabel>" + experimentLabel + "</ShortLabel>\n");
     }
 
-    private void writeProtocol(BufferedWriter br) throws IOException {
+    /**
+     * Writes the protocol description
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeProtocol() throws IOException {
         br.write(getCurrentTabSpace() + "<Protocol>\n");
         tabCounter++;
 
@@ -849,7 +836,7 @@ public class PRIDEExport {
 
             br.write(getCurrentTabSpace() + "<StepDescription>\n");
             tabCounter++;
-            writeCvTerm(br, protocol.getCvTerms().get(i));
+            writeCvTerm(protocol.getCvTerms().get(i));
             tabCounter--;
             br.write(getCurrentTabSpace() + "</StepDescription>\n");
 
@@ -862,7 +849,13 @@ public class PRIDEExport {
         br.write(getCurrentTabSpace() + "</Protocol>\n");
     }
 
-    private void writeReferences(BufferedWriter br) throws IOException {
+    /**
+     * Writes the references
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeReferences() throws IOException {
         for (int i = 0; i < references.size(); i++) {
 
             Reference tempReference = references.get(i);
@@ -893,7 +886,13 @@ public class PRIDEExport {
         }
     }
 
-    private void writeExperimentCollectionStartTag(BufferedWriter br) throws IOException {
+    /**
+     * Writes the experiment collection start tag
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeExperimentCollectionStartTag() throws IOException {
         br.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>\n");
         br.write("<ExperimentCollection version=\"2.1\">\n");
         tabCounter++;
@@ -901,13 +900,25 @@ public class PRIDEExport {
         tabCounter++;
     }
 
-    private void writeExperimentCollectionEndTag(BufferedWriter br) throws IOException {
+    /**
+     * Writes the experiment collection end tag
+     *
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
+     */
+    private void writeExperimentCollectionEndTag() throws IOException {
         tabCounter--;
         br.write(getCurrentTabSpace() + "</Experiment>\n");
         tabCounter--;
         br.write("</ExperimentCollection>");
     }
 
+    /**
+     * Convenience method returning the tabs in the beginning of each line
+     * depending on the tabCounter
+     *
+     * @return the tabs in the beginning of each line as a string
+     */
     private String getCurrentTabSpace() {
 
         String tabSpace = "";
@@ -1046,20 +1057,13 @@ public class PRIDEExport {
     }
 
     /**
-     * @return the outputFolder
+     * Convenience method writing a cv Term
+     *
+     * @param cvTerm the cvTerm
+     * @throws IOException exception thrown whenever a problem occurred while
+     * reading/writing a file
      */
-    public File getOutputFolder() {
-        return outputFolder;
-    }
-
-    /**
-     * @param outputFolder the outputFolder to set
-     */
-    public void setOutputFolder(File outputFolder) {
-        this.outputFolder = outputFolder;
-    }
-
-    private void writeCvTerm(BufferedWriter br, CvTerm cvTerm) throws IOException {
+    private void writeCvTerm(CvTerm cvTerm) throws IOException {
 
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "cvLabel=\"" + cvTerm.getOntology() + "\" "
