@@ -51,6 +51,7 @@ import eu.isas.peptideshaker.preferences.UserPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
+import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -572,6 +573,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator13 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         findJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
@@ -1149,6 +1152,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(jMenuItem1);
+        editMenu.add(jSeparator13);
+
+        jMenuItem2.setText("Java Options");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        editMenu.add(jMenuItem2);
         editMenu.add(jSeparator12);
 
         findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
@@ -2520,6 +2532,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         new PtmPreferencesDialog(this);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        new JavaOptionsDialog(this);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2667,10 +2683,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
+    private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -3987,7 +4005,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
         }, "ProgressDialog").start();
 
-        new Thread("ExportThread") {
+        new Thread("CloseThread") {
 
             @Override
             public void run() {
@@ -4014,6 +4032,63 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                 progressDialog.dispose();
                 System.exit(0);
+            }
+        }.start();
+    }
+
+    /**
+     * Closes and restarts PeptideShaker. Does not work inside the IDE of course
+     */
+    public void restart() {
+
+        if (this.getExtendedState() == Frame.ICONIFIED || !this.isActive()) {
+            this.setExtendedState(Frame.MAXIMIZED_BOTH);
+        }
+
+        if (!dataSaved && experiment != null) {
+
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Do you want to save the changes to " + experiment.getReference() + "?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (value == JOptionPane.YES_OPTION) {
+                saveMenuItemActionPerformed(null);
+            } else if (value == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+        }
+
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Closing. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("RestartThread") {
+
+            @Override
+            public void run() {
+                try {
+                    spectrumFactory.closeFiles();
+                    sequenceFactory.closeFile();
+                    saveUserPreferences();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    catchException(e);
+                }
+                progressDialog.dispose();
+        PeptideShakerGUI.this.dispose();
+                // @TODO: pass the current project to the new instance of PeptideShaker.
+                new PeptideShakerWrapper();
+
             }
         }.start();
     }
