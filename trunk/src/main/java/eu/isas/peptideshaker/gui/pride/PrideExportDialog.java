@@ -10,13 +10,11 @@ import eu.isas.peptideshaker.export.PRIDEExport;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -81,7 +79,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 report += mod;
             }
             report += ".\nPlease add a CV term by clicking on the corresponding case in the PTM table.";
-            JOptionPane.showMessageDialog(this, report, "PTM cv term(s) missing.", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, report, "PTM CV term(s) missing.", JOptionPane.WARNING_MESSAGE);
             new SearchPreferencesDialog(peptideShakerGUI, modal);
         }
 
@@ -128,7 +126,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     }
 
     /**
-     * Verifies that all modifications have a pride cv term
+     * Verifies that all modifications have a PRIDE CV term.
      *
      * @return a boolean indicating that PTMs are configured correctly
      */

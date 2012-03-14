@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -20,7 +19,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -991,7 +989,7 @@ public class OutputGenerator {
             psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
             PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
-            if (!bestAssumption.isDecoy() && psParameter.isValidated()) {
+            if (!bestAssumption.isDecoy() && psParameter.isValidated()) { // note that the validation is for the psm and not for the peptide
 
                 for (int j = 0; j < bestAssumption.getPeptide().getParentProteins().size(); j++) {
 
