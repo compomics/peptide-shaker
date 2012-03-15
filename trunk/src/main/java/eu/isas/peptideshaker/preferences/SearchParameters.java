@@ -310,12 +310,4 @@ public class SearchParameters implements Serializable {
     public boolean isPrecursorAccuracyTypePpm() {
         return currentPrecursorAccuracyType == PrecursorAccuracyType.PPM;
     }
-    
-    /**
-     * Returns a boolean indicating whether a cleavage site was implemented for this enzyme
-     * @return a boolean indicating whether a cleavage site was implemented for this enzyme
-     */
-    public boolean enzymeCleaves() {
-        return !enzyme.getAminoAcidBefore().isEmpty() || !enzyme.getAminoAcidAfter().isEmpty();
-    }
 }
