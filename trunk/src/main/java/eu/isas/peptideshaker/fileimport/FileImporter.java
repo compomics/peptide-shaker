@@ -581,7 +581,7 @@ public class FileImporter {
                 waitingDialog.setRunCanceled();
                 JOptionPane.showMessageDialog(null,
                         "The task used up all the available memory and had to be stopped.\n"
-                        + "Memory boundaries are set in ../conf/JavaOptions.txt.",
+                        + "You can increase the memory allocated to PeptideShaker in the Edit -> java options menu. More help can be found in the troublesection of our website http://peptide-shaker.googlecode.com.",
                         "Out Of Memory Error",
                         JOptionPane.ERROR_MESSAGE);
                 error.printStackTrace();

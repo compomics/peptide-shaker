@@ -769,10 +769,10 @@ public class PeptideShaker {
             if (psParameter.isValidated() && Peptide.isModified(peptideKey)) {
                 peptideMath = identification.getPeptideMatch(peptideKey);
                 peptideSequence = Peptide.getSequence(peptideKey);
-                if (peptideMath.getUrParam(proteinScores) == null || scorePeptides) {
+                if (peptideMath.getUrParam(new PSPtmScores()) == null || scorePeptides) {
                     scorePTMs(peptideMath, searchParameters, annotationPreferences);
                 }
-                PSPtmScores peptideScores = (PSPtmScores) peptideMath.getUrParam(proteinScores);
+                PSPtmScores peptideScores = (PSPtmScores) peptideMath.getUrParam(new PSPtmScores());
                 if (peptideScores != null) {
                     for (String modification : peptideScores.getScoredPTMs()) {
                         if (proteinSequence == null) {
@@ -871,7 +871,7 @@ public class PeptideShaker {
                     if (!peptideScores.containsPtm(modification)) {
                         peptideScores.addPtmScoring(modification, new PtmScoring(modification));
                     }
-                    psmScores = (PSPtmScores) spectrumMatch.getUrParam(peptideScores);
+                    psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                     if (psmScores != null) {
                         PtmScoring spectrumScoring = psmScores.getPtmScoring(modification);
                         if (spectrumScoring != null) {
@@ -973,8 +973,8 @@ public class PeptideShaker {
         PtmScoring ptmScoring;
         ptmScores = new PSPtmScores();
 
-        if (spectrumMatch.getUrParam(ptmScores) != null) {
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+        if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
 
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
@@ -1051,8 +1051,8 @@ public class PeptideShaker {
         PtmScoring ptmScoring;
         ptmScores = new PSPtmScores();
 
-        if (spectrumMatch.getUrParam(ptmScores) != null) {
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+        if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
 
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);

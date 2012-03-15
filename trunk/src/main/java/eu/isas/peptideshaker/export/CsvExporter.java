@@ -324,7 +324,7 @@ public class CsvExporter {
             line += ")";
         }
         line += SEPARATOR;
-        PSPtmScores ptmScores = new PSPtmScores();
+        PSPtmScores ptmScores;
         first = true;
         for (String mod : modifications) {
             if (first) {
@@ -332,7 +332,7 @@ public class CsvExporter {
             } else {
                 line += ", ";
             }
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             line += mod + " (";
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                 int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
@@ -446,7 +446,7 @@ public class CsvExporter {
                 line += ", ";
             }
             if (spectrumMatch.getUrParam(ptmScores) != null) {
-                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 line += mod + " (";
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                     int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
