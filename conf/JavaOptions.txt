@@ -10,7 +10,7 @@
 #  To set the upper memory limit replace the stars on the second line below    #
 #  with the desired value in MB. Note that other units are not supported       #
 #  If the value set is not supported by your system (32 bits only),            #
-#  PeptideShaker will try to reduce it automatically                           #
+#  PeptideShaker will try to reduce it automatically.                          #
 #                                                                              #
 #  For example, if you computer has 2GB of RAM memory, you can change the      #
 #  second line to a maximum value of:                                          #

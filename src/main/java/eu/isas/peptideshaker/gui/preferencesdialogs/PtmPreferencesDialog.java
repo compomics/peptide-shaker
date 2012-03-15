@@ -1,12 +1,14 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import javax.swing.JOptionPane;
 
 /**
- * Dialog allowing the modification of PTM site scoring thresholds
+ * Dialog allowing the modification of PTM site scoring thresholds.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PtmPreferencesDialog extends javax.swing.JDialog {
 
@@ -22,11 +24,11 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
      */
     public PtmPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
-        this.peptideShakerGUI = peptideShakerGUI;
-        this.setLocationRelativeTo(peptideShakerGUI);
+        this.peptideShakerGUI = peptideShakerGUI; 
         initComponents();
         aScoreThresholdTxt.setText(peptideShakerGUI.getUserPreferences().getAScoreThreshold() + "");
         deltaThresholdTxt.setText(peptideShakerGUI.getUserPreferences().getDeltaScoreThreshold() + "");
+        this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
@@ -70,6 +72,7 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
         aScoreThresholdTxt = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
+        ptmScoringPreferencesHelpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PTM Scoring");
@@ -99,7 +102,7 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(deltaThresholdTxt)
-                    .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE))
+                    .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
                 .addContainerGap())
         );
         preferencesPanelLayout.setVerticalGroup(
@@ -130,6 +133,25 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        ptmScoringPreferencesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        ptmScoringPreferencesHelpJButton.setToolTipText("Help");
+        ptmScoringPreferencesHelpJButton.setBorder(null);
+        ptmScoringPreferencesHelpJButton.setBorderPainted(false);
+        ptmScoringPreferencesHelpJButton.setContentAreaFilled(false);
+        ptmScoringPreferencesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ptmScoringPreferencesHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ptmScoringPreferencesHelpJButtonMouseExited(evt);
+            }
+        });
+        ptmScoringPreferencesHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ptmScoringPreferencesHelpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -138,7 +160,9 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addComponent(ptmScoringPreferencesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 158, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
@@ -154,10 +178,14 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(preferencesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ptmScoringPreferencesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cancelButton)
+                            .addComponent(okButton))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -176,8 +204,8 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Closes the dialog and updates the preferences.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
@@ -190,12 +218,41 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Closes the dialog without saving the changes.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void ptmScoringPreferencesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmScoringPreferencesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_ptmScoringPreferencesHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void ptmScoringPreferencesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmScoringPreferencesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ptmScoringPreferencesHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     *
+     * @param evt
+     */
+    private void ptmScoringPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmScoringPreferencesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPreferencesDialog.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ptmScoringPreferencesHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel aScoreLabel;
     private javax.swing.JTextField aScoreThresholdTxt;
@@ -205,5 +262,6 @@ public class PtmPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField deltaThresholdTxt;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel preferencesPanel;
+    private javax.swing.JButton ptmScoringPreferencesHelpJButton;
     // End of variables declaration//GEN-END:variables
 }
