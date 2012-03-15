@@ -864,7 +864,7 @@ public class OutputGenerator {
                                                     } else {
                                                         writer.write(", ");
                                                     }
-                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                                     writer.write(mod + " (");
                                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                         int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
@@ -1408,7 +1408,7 @@ public class OutputGenerator {
             } else {
                 result += ", ";
             }
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             result += mod + " (";
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                 int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();

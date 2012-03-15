@@ -3505,17 +3505,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Selects a given tab.
-     *
-     * @param tabIndex the tab index to select
-     */
-    public void selectTab(int tabIndex) {
-        if (tabIndex < allTabsJTabbedPane.getTabCount()) {
-            allTabsJTabbedPane.setSelectedIndex(tabIndex);
-        }
-    }
-
-    /**
      * Clears the preferences.
      */
     public void clearPreferences() {
@@ -5398,5 +5387,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         return null;
+    }
+    
+    /**
+     * Jumps to the desired tab
+     * @param tabIndex index of the tab as indexed by the static fields
+     */
+    public void jumpToTab(int tabIndex) {
+        allTabsJTabbedPane.setSelectedIndex(tabIndex);
+        allTabsJTabbedPaneStateChanged(null);
     }
 }

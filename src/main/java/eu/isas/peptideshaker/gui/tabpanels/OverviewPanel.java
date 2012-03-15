@@ -1848,6 +1848,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.getStarHider().unStarPsm(key);
                 }
             }
+            if (column == 2) {
+                peptideShakerGUI.jumpToTab(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX);
+            }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -2157,6 +2160,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
             } else {
                 psmTable.setToolTipText(null);
+            }
+            if (column==2) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } else {
             psmTable.setToolTipText(null);
