@@ -46,7 +46,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     private Vector referenceTableColumnToolTips;
     /**
-     * The ptm to pride map
+     * The ptm to pride map.
      */
     private PrideObjectsFactory prideObjectsFactory = null;
 
@@ -105,7 +105,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         // insert project data
         insertProjectData();
 
-        validateInput();
+        // insert references
         for (Reference reference : Reference.getDefaultReferences()) {
             ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
                         referencesJTable.getRowCount() + 1,
@@ -121,6 +121,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()), "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
         insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()), "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
 
+        // validate the input
+        validateInput();
+        
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
