@@ -649,7 +649,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
             searchParameters.setPrecursorAccuracy(new Double(precursorAccuracy.getText()));
 
-            if (!searchParameters.enzymeCleaves()) {
+            if (!searchParameters.getEnzyme().enzymeCleaves()) {
                 JOptionPane.showMessageDialog(this, "The cleavage site of the selected enzyme is not configured. PeptideShaker functionalities will be limited.\n"
                         + "You can edit enzyme configuration in the file peptideshaker_enzymes.xml located in the conf folder.\n"
                         + "For more information on enzymes, contact us via the mailing list: http://groups.google.com/group/peptide-shaker.", "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);

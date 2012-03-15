@@ -166,7 +166,7 @@ public class IdentificationFeaturesGenerator {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
             String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
             boolean[] result = new boolean[sequence.length()];
-            if (peptideShakerGUI.getSearchParameters().enzymeCleaves()) {
+            if (peptideShakerGUI.getSearchParameters().getEnzyme().enzymeCleaves()) {
                 int pepMax = peptideShakerGUI.getIdFilter().getMaxPepLength();
                 Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
                 int cleavageAA = 0;
@@ -349,7 +349,16 @@ public class IdentificationFeaturesGenerator {
             }
             return result;
         } else {
-            return estimateSpectrumCounting(proteinMatchKey, method);
+            SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
+            tempPreferences.setSelectedMethod(method);
+            try {
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
+                Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), proteinMatchKey, mainMatch, tempPreferences, peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return 0.0;
+            }
         }
     }
 
@@ -360,97 +369,99 @@ public class IdentificationFeaturesGenerator {
      * @return the spectrum counting score
      */
     private double estimateSpectrumCounting(String proteinMatchKey) {
-        return estimateSpectrumCounting(proteinMatchKey, peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod());
+        try {
+            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
+            Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), proteinMatchKey, mainMatch, peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            return 0.0;
+        }
     }
 
     /**
-     * Returns the spectrum counting score for the given method.
+     * Returns the spectrum counting index based on the project settings
      *
-     * @param proteinMatch the inspected protein match
-     * @param method the method to use
-     * @return the spectrum counting score
+     * @param identification the identification
+     * @param proteinMatchKey the protein match key
+     * @param mainMatch the main protein of the match
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param enzyme the enzyme used
+     * @param maxPepLength the maximal length accepted for a peptide
+     * @return the spectrum counting index
      */
-    private double estimateSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
+    public static double estimateSpectrumCounting(Identification identification, String proteinMatchKey, Protein mainMatch, SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) {
 
         double ratio, result;
-        Enzyme enyzme = peptideShakerGUI.getSearchParameters().getEnzyme();
         PSParameter pSParameter = new PSParameter();
-        Identification identification = peptideShakerGUI.getIdentification();
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        try {
-            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-            if (method == SpectralCountingMethod.NSAF) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
 
-                // NSAF
+            // NSAF
 
-                if (currentProtein == null) {
-                    return 0.0;
-                }
-                result = 0;
-                PeptideMatch peptideMatch;
-                ArrayList<String> possibleProteinMatches;
-                for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                    peptideMatch = identification.getPeptideMatch(peptideKey);
-                    possibleProteinMatches = new ArrayList<String>();
-                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                        if (identification.getProteinMap().get(protein) != null) {
-                            for (String proteinKey : identification.getProteinMap().get(protein)) {
-                                if (!possibleProteinMatches.contains(proteinKey)) {
-                                    try {
-                                        testMatch = identification.getProteinMatch(proteinKey);
-                                        if (testMatch.getPeptideMatches().contains(peptideKey)) {
-                                            possibleProteinMatches.add(proteinKey);
-                                        }
-                                    } catch (Exception e) {
-                                        // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                        System.out.println("Non-existing protein key in protein map:" + proteinKey);
+            if (mainMatch == null) {
+                return 0.0;
+            }
+            result = 0;
+            PeptideMatch peptideMatch;
+            ArrayList<String> possibleProteinMatches;
+            for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                peptideMatch = identification.getPeptideMatch(peptideKey);
+                possibleProteinMatches = new ArrayList<String>();
+                for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                    if (identification.getProteinMap().get(protein) != null) {
+                        for (String proteinKey : identification.getProteinMap().get(protein)) {
+                            if (!possibleProteinMatches.contains(proteinKey)) {
+                                try {
+                                    testMatch = identification.getProteinMatch(proteinKey);
+                                    if (testMatch.getPeptideMatches().contains(peptideKey)) {
+                                        possibleProteinMatches.add(proteinKey);
                                     }
+                                } catch (Exception e) {
+                                    // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
+                                    System.out.println("Non-existing protein key in protein map:" + proteinKey);
                                 }
                             }
                         }
                     }
-                    if (possibleProteinMatches.isEmpty()) {
-                        System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of " + currentProtein + ".");
-                    }
-                    ratio = 1.0 / possibleProteinMatches.size();
-                    int cpt = 0;
-                    for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
-                        pSParameter = (PSParameter) identification.getMatchParameter(spectrumMatchKey, pSParameter);
-                        if (!peptideShakerGUI.getSpectrumCountingPreferences().isValidatedHits() || pSParameter.isValidated()) {
-                            result += ratio;
-                            cpt++;
-                        }
+                }
+                if (possibleProteinMatches.isEmpty()) {
+                    System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of " + mainMatch + ".");
+                }
+                ratio = 1.0 / possibleProteinMatches.size();
+                int cpt = 0;
+                for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
+                    pSParameter = (PSParameter) identification.getMatchParameter(spectrumMatchKey, pSParameter);
+                    if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.isValidated()) {
+                        result += ratio;
+                        cpt++;
                     }
                 }
+            }
 
-                if (peptideShakerGUI.getSearchParameters().enzymeCleaves()) {
-                    return result / currentProtein.getObservableLength(enyzme, peptideShakerGUI.getIdFilter().getMaxPepLength());
-                } else {
-                    return result / currentProtein.getLength();
+            if (enzyme.enzymeCleaves()) {
+                return result / mainMatch.getObservableLength(enzyme, maxPepLength);
+            } else {
+                return result / mainMatch.getLength();
+            }
+        } else {
+
+            // emPAI
+
+            if (spectrumCountingPreferences.isValidatedHits()) {
+                result = 0;
+
+                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
+                    if (pSParameter.isValidated()) {
+                        result++;
+                    }
                 }
             } else {
-
-                // emPAI
-
-                if (peptideShakerGUI.getSpectrumCountingPreferences().isValidatedHits()) {
-                    result = 0;
-
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                        pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
-                        if (pSParameter.isValidated()) {
-                            result++;
-                        }
-                    }
-                } else {
-                    result = proteinMatch.getPeptideCount();
-                }
-
-                return Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
+                result = proteinMatch.getPeptideCount();
             }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            e.printStackTrace();
-            return 0.0;
+
+            return Math.pow(10, result / mainMatch.getNPossiblePeptides(enzyme)) - 1;
         }
     }
 
@@ -505,8 +516,14 @@ public class IdentificationFeaturesGenerator {
         try {
             Enzyme enyzme = peptideShakerGUI.getSearchParameters().getEnzyme();
             Identification identification = peptideShakerGUI.getIdentification();
+            String mainMatch;
+            if (ProteinMatch.getNProteins(proteinMatchKey)== 1) {
+                mainMatch = proteinMatchKey;
+            } else {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            mainMatch = proteinMatch.getMainMatch();
+            }
+            Protein currentProtein = sequenceFactory.getProtein(mainMatch);
             return ((double) currentProtein.getObservableLength(enyzme, peptideShakerGUI.getIdFilter().getMaxPepLength())) / currentProtein.getLength();
         } catch (IOException e) {
             peptideShakerGUI.catchException(e);
@@ -692,8 +709,9 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns a summary of the PTMs present on the sequence confidently assigned to an amino acid.
-     * Example: SEQVEM<mox>CE gives Oxidation of M (M6)
+     * Returns a summary of the PTMs present on the sequence confidently
+     * assigned to an amino acid. Example: SEQVEM<mox>CE gives Oxidation of M
+     * (M6)
      *
      * @param proteinKey the key of the protein match of interest
      * @return a PTM summary for the given protein
@@ -713,15 +731,15 @@ public class IdentificationFeaturesGenerator {
                 if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
                     index = aa + 1;
                     for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
-                            if (!locations.containsKey(ptm)) {
-                                locations.put(ptm, new ArrayList<String>());
-                            }
-                            report = sequence.charAt(aa) + "" + index;
-                            if (!locations.get(ptm).contains(report)) {
-                                locations.get(ptm).add(report);
-                            }
+                        if (!locations.containsKey(ptm)) {
+                            locations.put(ptm, new ArrayList<String>());
+                        }
+                        report = sequence.charAt(aa) + "" + index;
+                        if (!locations.get(ptm).contains(report)) {
+                            locations.get(ptm).add(report);
                         }
                     }
+                }
             }
 
             String result = "";
@@ -729,21 +747,21 @@ public class IdentificationFeaturesGenerator {
             ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
             Collections.sort(ptms);
             for (String ptm : ptms) {
-                        if (ptm.equals("phosphorylation")) {
-                if (firstPtm) {
-                    firstPtm = false;
-                } else {
-                    result += "; ";
-                }
-                firstSite = true;
-                for (String site : locations.get(ptm)) {
-                    if (!firstSite) {
-                        result += ", ";
+                if (ptm.equals("phosphorylation")) {
+                    if (firstPtm) {
+                        firstPtm = false;
                     } else {
-                        firstSite = false;
+                        result += "; ";
                     }
-                    result += site;
-                }
+                    firstSite = true;
+                    for (String site : locations.get(ptm)) {
+                        if (!firstSite) {
+                            result += ", ";
+                        } else {
+                            firstSite = false;
+                        }
+                        result += site;
+                    }
                 }
             }
             result += "\t";
@@ -784,13 +802,13 @@ public class IdentificationFeaturesGenerator {
                     index = aa + 1;
                     for (String ptm : psPtmScores.getSecondaryModificationsAt(aa)) {
                         if (ptm.equals("phosphorylation")) {
-                        if (!locations.containsKey(ptm)) {
-                            locations.put(ptm, new ArrayList<String>());
-                        }
-                        report = sequence.charAt(aa) + "" + index;
-                        if (!locations.get(ptm).contains(report)) {
-                            locations.get(ptm).add(report);
-                        }
+                            if (!locations.containsKey(ptm)) {
+                                locations.put(ptm, new ArrayList<String>());
+                            }
+                            report = sequence.charAt(aa) + "" + index;
+                            if (!locations.get(ptm).contains(report)) {
+                                locations.get(ptm).add(report);
+                            }
                         }
                     }
                 }

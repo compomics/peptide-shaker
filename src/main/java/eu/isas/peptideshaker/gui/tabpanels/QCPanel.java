@@ -1656,18 +1656,24 @@ public class QCPanel extends javax.swing.JPanel {
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                    String mainMatch;
+                    if (ProteinMatch.getNProteins(proteinKey)==1) {
+                        mainMatch = proteinKey;
+                    } else {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    mainMatch = proteinMatch.getMainMatch();
+                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
 
                     if (!psParameter.isHidden()) {
 
-                        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                        Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                         double value = currentProtein.getSequence().length();
 
                         if (value > maxValue) {
                             maxValue = value;
                         }
-                        if (!proteinMatch.isDecoy()) {
+                        if (!ProteinMatch.isDecoy(proteinKey)) {
                             if (psParameter.isValidated()) {
                                 validatedValues.add(value);
                             } else {
