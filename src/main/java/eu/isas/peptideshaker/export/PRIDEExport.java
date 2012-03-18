@@ -1,12 +1,10 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.BinaryArrayImpl;
-import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -25,7 +23,6 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.ProteinMap;
-import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,68 +32,69 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * The class that takes care of converting the data to PRIDE XML.
  *
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class PRIDEExport {
 
     /**
-     * The main instance of the GUI
+     * The main instance of the GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The experiment title
+     * The experiment title.
      */
     private String experimentTitle;
     /**
-     * The experiment label
+     * The experiment label.
      */
     private String experimentLabel;
     /**
-     * The experiment description
+     * The experiment description.
      */
     private String experimentDescription;
     /**
-     * The experiment project
+     * The experiment project.
      */
     private String experimentProject;
     /**
-     * The references to include in the pride xml file as utilities pride object
+     * The references to include in the PRIDE xml file as utilities pride object
      */
     private ArrayList<Reference> references;
     /**
-     * The contact utilities pride object
+     * The contact utilities PRIDE object.
      */
     private Contact contact;
     /**
-     * THe sample utilities pride object
+     * THe sample utilities PRIDE object.
      */
     private Sample sample;
     /**
-     * The protocol utilities pride object
+     * The protocol utilities PRIDE object.
      */
     private Protocol protocol;
     /**
-     * The instrument utilities pride object
+     * The instrument utilities PRIDE object.
      */
     private Instrument instrument;
     /**
-     * The fileWriter
+     * The fileWriter.
      */
     private FileWriter r;
     /**
-     * The buffered writer which will write the results in the desired file
+     * The buffered writer which will write the results in the desired file.
      */
     private BufferedWriter br;
     /**
      * integer keeping track of the number of tabs to include at the beginning
-     * of each line
+     * of each line.
      */
     private int tabCounter = 0;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The PTM factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
@@ -105,20 +103,20 @@ public class PRIDEExport {
      */
     private HashMap<String, Long> spectrumIndexes;
     /**
-     * The ptm to pride map
+     * The ptm to PRIDE map.
      */
     private PtmToPrideMap ptmToPrideMap;
     /**
-     * The length of the task
+     * The length of the task.
      */
     private long totalProgress;
     /**
-     * The current progress;
+     * The current progress.
      */
     private long progress = 0;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param peptideShakerGUI Instance of the main GUI class
      * @param experimentTitle Title of the experiment
@@ -155,11 +153,10 @@ public class PRIDEExport {
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
         r = new FileWriter(new File(outputFolder, experimentTitle + ".xml"));
         br = new BufferedWriter(r);
-
     }
 
     /**
-     * Creates the pride xml file
+     * Creates the PRIDE xml file.
      *
      * @param progressDialog a dialog displaying progress to the user
      * @throws IOException exception thrown whenever a problem occurred while
@@ -168,7 +165,6 @@ public class PRIDEExport {
      * occurred while reading the mzML file
      */
     public void createPrideXmlFile(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
-
 
         // the experiment start tag
         writeExperimentCollectionStartTag();
@@ -192,7 +188,7 @@ public class PRIDEExport {
         for (String mgfFile : spectrumFactory.getMgfFileNames()) {
             totalProgress += spectrumFactory.getNSpectra(mgfFile);
         }
-        totalProgress = 2*totalProgress;
+        totalProgress = 2 * totalProgress;
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
         progressDialog.setValue(0);
@@ -211,11 +207,10 @@ public class PRIDEExport {
 
         br.close();
         r.close();
-
     }
 
     /**
-     * Writes all psms
+     * Writes all psms.
      *
      * @param progressDialog a progress dialog to display progress to the user
      * @throws IOException exception thrown whenever a problem occurred while
@@ -229,8 +224,8 @@ public class PRIDEExport {
         Identification identification = peptideShakerGUI.getIdentification();
         PSParameter probabilities = new PSParameter();
 
-        progressDialog.setTitle("Creating PrideXML file. Please Wait.  (Part 2 of 2: exporting PSMs)");
-        long increment = totalProgress / (2* identification.getProteinIdentification().size());
+        progressDialog.setTitle("Creating PrideXML File. Please Wait...  (Part 2 of 2: exporting IDs)");
+        long increment = totalProgress / (2 * identification.getProteinIdentification().size());
 
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
@@ -280,28 +275,36 @@ public class PRIDEExport {
                     // fragment ions
                     writeFragmentIons(spectrumMatch);
 
-                    tabCounter--;
-                    br.write(getCurrentTabSpace() + "</PeptideItem>\n");
-
-
-                    // additional parameters
+                    // additional peptide id parameters
                     br.write(getCurrentTabSpace() + "<additional>\n");
                     tabCounter++;
-                    // @TODO: add additional parameters
+                    // @TODO: add additional peptide id parameters
                     //br.write(getCurrentTabSpace() + "<userParam name=\"MascotConfidenceLevel\" value=\"95.0\" />");
                     tabCounter--;
                     br.write(getCurrentTabSpace() + "</additional>\n");
 
-                    // score
-                    br.write(getCurrentTabSpace() + "<Score>" + probabilities.getProteinConfidence() + "</Score>\n");
-
-                    // threshold
-                    br.write(getCurrentTabSpace() + "<Threshold>" + confidenceThreshold + "</Threshold>\n");
-
-                    // SearchEngine
-                    br.write(getCurrentTabSpace() + "<SearchEngine>" + "PeptideShaker" + "</SearchEngine>\n"); // @TODO: is this correct??
+                    tabCounter--;
+                    br.write(getCurrentTabSpace() + "</PeptideItem>\n");
                 }
             }
+
+            // additional protein id parameters
+            br.write(getCurrentTabSpace() + "<additional>\n");
+            tabCounter++;
+            // @TODO: add additional protein id parameters
+            //br.write(getCurrentTabSpace() + "<userParam name=\"MascotConfidenceLevel\" value=\"95.0\" />");
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</additional>\n");
+
+            // protein score
+            br.write(getCurrentTabSpace() + "<Score>" + probabilities.getProteinConfidence() + "</Score>\n");
+
+            // protein threshold
+            br.write(getCurrentTabSpace() + "<Threshold>" + confidenceThreshold + "</Threshold>\n");
+
+            // SearchEngine
+            br.write(getCurrentTabSpace() + "<SearchEngine>" + "PeptideShaker" + "</SearchEngine>\n"); // @TODO: add the search engines used!!
+
             tabCounter--;
             br.write(getCurrentTabSpace() + "</GelFreeIdentification>\n");
 
@@ -311,7 +314,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the fragment ions for a given spectrum match
+     * Writes the fragment ions for a given spectrum match.
      *
      * @param spectrumMatch the spectrum match considered
      * @throws IOException exception thrown whenever a problem occurred while
@@ -341,7 +344,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the line corresponding to an ion match
+     * Writes the line corresponding to an ion match.
      *
      * @param ionMatch the ion match considered
      * @throws IOException exception thrown whenever a problem occurred while
@@ -369,7 +372,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the PTMs detected in a peptide
+     * Writes the PTMs detected in a peptide.
      *
      * @param peptide the peptide of interest
      * @throws IOException exception thrown whenever a problem occurred while
@@ -427,7 +430,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the spectra in the mzData format
+     * Writes the spectra in the mzData format.
      *
      * @param progressDialog a progress dialog to display progress to the user
      * @throws IOException exception thrown whenever a problem occurred while
@@ -454,7 +457,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes all spectra in the mzData format
+     * Writes all spectra in the mzData format.
      *
      * @param progressDialog a progress dialog to display progress to the user
      * @throws IOException exception thrown whenever a problem occurred while
@@ -464,7 +467,7 @@ public class PRIDEExport {
      */
     private void writeSpectra(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
-        progressDialog.setTitle("Creating PrideXML file. Please Wait.  (Part 1 of 2: exporting spectra)");
+        progressDialog.setTitle("Creating PrideXML File. Please Wait...  (Part 1 of 2: exporting spectra)");
 
         spectrumIndexes = new HashMap<String, Long>();
 
@@ -498,7 +501,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes a spectrum
+     * Writes a spectrum.
      *
      * @param spectrum The spectrum
      * @param matchExists boolean indicating whether the match exists
@@ -592,7 +595,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the mzData description
+     * Writes the mzData description.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -626,7 +629,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the software information
+     * Writes the software information.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -674,7 +677,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the instrument description
+     * Writes the instrument description.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -722,7 +725,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the contact description
+     * Writes the contact description.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -741,7 +744,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the sample description
+     * Writes the sample description.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -762,7 +765,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the additional tags
+     * Writes the additional tags.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -798,7 +801,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the title
+     * Writes the title.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -808,7 +811,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the short labeln
+     * Writes the short label.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -818,7 +821,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the protocol description
+     * Writes the protocol description.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -850,7 +853,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the references
+     * Writes the references.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -887,7 +890,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the experiment collection start tag
+     * Writes the experiment collection start tag.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -901,7 +904,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the experiment collection end tag
+     * Writes the experiment collection end tag.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
@@ -915,7 +918,7 @@ public class PRIDEExport {
 
     /**
      * Convenience method returning the tabs in the beginning of each line
-     * depending on the tabCounter
+     * depending on the tabCounter.
      *
      * @return the tabs in the beginning of each line as a string
      */
@@ -1057,7 +1060,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Convenience method writing a cv Term
+     * Convenience method writing a cv Term.
      *
      * @param cvTerm the cvTerm
      * @throws IOException exception thrown whenever a problem occurred while
