@@ -1890,7 +1890,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     String key = proteinKeys.get(proteinIndex);
-                    if ((Boolean) proteinTable.getValueAt(row, column)) {
+                    PSParameter psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, new PSParameter());
+                    if (!psParameter.isStarred()) {
                         peptideShakerGUI.getStarHider().starProtein(key);
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(key);
@@ -4190,9 +4191,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                    peptideShakerGUI.getIdentificationFeaturesGenerator().setSortedProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedProteinKeys(progressDialog);
-                    peptideShakerGUI.getMetrics().setProteinKeys(proteinKeys);
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
+                    peptideShakerGUI.getMetrics().setProteinKeys(peptideShakerGUI.getIdentificationFeaturesGenerator().getProteinKeys(progressDialog));
                     ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
                     proteinTable.setModel(proteinTableModel);
 
@@ -4808,7 +4809,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             proteinRow = getProteinRow(proteinKey);
         }
-
+        if (proteinKeys.isEmpty()) {
+            // For the silly people like me who happen to hide all proteins
+            clearData();
+            return;
+        }
         if (proteinRow == -1) {
             peptideShakerGUI.resetSelectedItems();
         } else if (proteinTable.getSelectedRow() != proteinRow) {
