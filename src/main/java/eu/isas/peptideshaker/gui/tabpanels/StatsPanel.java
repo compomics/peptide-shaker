@@ -503,13 +503,13 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel6.setFont(jLabel6.getFont().deriveFont((jLabel6.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel6.setText("Dataset Properties");
 
-        jLabel20.setText("Nmax:");
-        jLabel20.setToolTipText("Maximum number of target hits between two subsequent decoy hits");
+        jLabel20.setText("Resolution:");
+        jLabel20.setToolTipText("Confidence estimation resolution");
 
         nMaxTxt.setBackground(new java.awt.Color(245, 245, 245));
         nMaxTxt.setEditable(false);
         nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        nMaxTxt.setToolTipText("Maximum number of target hits between two subsequent decoy hits");
+        nMaxTxt.setToolTipText("Confidence estimation resolution");
 
         jLabel7.setFont(jLabel7.getFont().deriveFont((jLabel7.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel7.setText("Validation Results");
@@ -1006,7 +1006,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane)
         );
 
         optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
@@ -1343,7 +1343,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane)
         );
 
         optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
@@ -1362,7 +1362,7 @@ public class StatsPanel extends javax.swing.JPanel {
         optimizationJPanelLayout.setVerticalGroup(
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optimizationJPanelLayout.createSequentialGroup()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
+                .addComponent(optimizationTabbedPane)
                 .addContainerGap())
         );
 
@@ -1539,11 +1539,10 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(thresholdInput)
-                            .addComponent(jLabel8))))
+                    .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(thresholdInput)
+                        .addComponent(jLabel8)))
                 .addGap(11, 11, 11)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -3041,8 +3040,12 @@ public class StatsPanel extends javax.swing.JPanel {
 
         applyButton.setEnabled(modifiedMaps.get(selectedGroup));
         pepWindowApplied = !modifiedMaps.get(selectedGroup);
+        double pmin = 0;
+        if (currentTargetDecoyMap.getnMax() != 0) {
+            pmin = 100.0/currentTargetDecoyMap.getnMax();
+        }
 
-        nMaxTxt.setText(currentTargetDecoyMap.getnMax() + "");
+        nMaxTxt.setText(Util.roundDouble(pmin, 2) + " %");
         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
         updateDisplayedComponents();
     }

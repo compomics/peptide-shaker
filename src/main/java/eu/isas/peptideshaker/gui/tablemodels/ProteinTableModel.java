@@ -46,7 +46,7 @@ public class ProteinTableModel extends DefaultTableModel {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         if (identification != null) {
-            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedProteinKeys(null);
+            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
         }
     }
     

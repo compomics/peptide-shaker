@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -81,7 +81,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="groupSelectionLayeredPane" pref="160" max="32767" attributes="0"/>
+                  <Component id="groupSelectionLayeredPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -387,8 +387,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel20">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Nmax:"/>
-            <Property name="toolTipText" type="java.lang.String" value="Maximum number of target hits between two subsequent decoy hits"/>
+            <Property name="text" type="java.lang.String" value="Resolution:"/>
+            <Property name="toolTipText" type="java.lang.String" value="Confidence estimation resolution"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="nMaxTxt">
@@ -398,7 +398,7 @@
             </Property>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="toolTipText" type="java.lang.String" value="Maximum number of target hits between two subsequent decoy hits"/>
+            <Property name="toolTipText" type="java.lang.String" value="Confidence estimation resolution"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
@@ -620,7 +620,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="optimizationTabbedPane" pref="516" max="32767" attributes="0"/>
+                  <Component id="optimizationTabbedPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -660,7 +660,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -993,7 +993,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -1551,7 +1551,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="thresholdHelpJButton" max="32767" attributes="1"/>
-                      <Component id="validateButton" alignment="0" pref="25" max="32767" attributes="0"/>
+                      <Component id="validateButton" alignment="0" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="thresholdInput" alignment="3" max="32767" attributes="1"/>
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
