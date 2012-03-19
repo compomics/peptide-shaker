@@ -52,19 +52,7 @@ public class PeptideSurroundingPreferencesDialog extends javax.swing.JDialog {
 
         surroundingAminoAcidsLabel.setText("#Surrounding Amino Acids:");
 
-        nAASpinner.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                nAASpinnerMouseReleased(evt);
-            }
-        });
-        nAASpinner.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-                nAASpinnerCaretPositionChanged(evt);
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                nAASpinnerInputMethodTextChanged(evt);
-            }
-        });
+        nAASpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(0), null, Integer.valueOf(1)));
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
@@ -146,17 +134,6 @@ public class PeptideSurroundingPreferencesDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Sets the spinner value.
-     * 
-     * @param evt 
-     */
-    private void nAASpinnerMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nAASpinnerMouseReleased
-        if (((Integer) nAASpinner.getValue()) < 0) {
-            nAASpinner.setValue(0);
-        }
-    }//GEN-LAST:event_nAASpinnerMouseReleased
-
-    /**
      * Closes the dialog.
      * 
      * @param evt 
@@ -180,27 +157,6 @@ public class PeptideSurroundingPreferencesDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_okJButtonActionPerformed
 
-    /**
-     * Sets the spinner value.
-     * 
-     * @param evt 
-     */
-    private void nAASpinnerCaretPositionChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_nAASpinnerCaretPositionChanged
-        if (((Integer) nAASpinner.getValue()) < 0) {
-            nAASpinner.setValue(0);
-        }
-    }//GEN-LAST:event_nAASpinnerCaretPositionChanged
-
-    /**
-     * Sets the spinner value.
-     * 
-     * @param evt 
-     */
-    private void nAASpinnerInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_nAASpinnerInputMethodTextChanged
-        if (((Integer) nAASpinner.getValue()) < 0) {
-            nAASpinner.setValue(0);
-        }
-    }//GEN-LAST:event_nAASpinnerInputMethodTextChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelJButton;
