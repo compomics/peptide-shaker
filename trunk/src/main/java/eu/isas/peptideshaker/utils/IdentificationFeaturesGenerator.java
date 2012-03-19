@@ -1196,7 +1196,7 @@ public class IdentificationFeaturesGenerator {
      * @return the sorted list of protein keys
      */
     public ArrayList<String> getProcessedProteinKeys(ProgressDialogX progressDialog) {
-        if (proteinListAfterHiding == null) {
+        if (proteinList == null) {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setTitle("Loading Protein Information. Please Wait...");
@@ -1337,7 +1337,7 @@ public class IdentificationFeaturesGenerator {
                 progressDialog.setIndeterminate(true);
             }
         }
-        if (hidingNeeded()) {
+        if (hidingNeeded() || proteinListAfterHiding == null) {
             proteinListAfterHiding = new ArrayList<String>();
             PSParameter psParameter = new PSParameter();
             int nValidatedProteins = 0;
