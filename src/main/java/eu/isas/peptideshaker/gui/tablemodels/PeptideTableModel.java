@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.data.StartIndexes;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
@@ -41,7 +42,7 @@ public class PeptideTableModel extends DefaultTableModel {
      *
      * @param peptideShakerGUI instance of the main GUI class
      * @param proteinAccession
-     * @param peptideKeys  
+     * @param peptideKeys
      */
     public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -126,7 +127,6 @@ public class PeptideTableModel extends DefaultTableModel {
                     return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
                 case 4:
                     peptideKey = peptideKeys.get(row);
-                    String report = "";
                     ArrayList<Integer> indexes;
                     try {
                         indexes = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideStart(proteinAccession, Peptide.getSequence(peptideKey));
@@ -134,17 +134,9 @@ public class PeptideTableModel extends DefaultTableModel {
                         peptideShakerGUI.catchException(e);
                         return "IO Exception";
                     }
-                    boolean first = true;
+
                     Collections.sort(indexes);
-                    for (int index : indexes) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            report += ", ";
-                        }
-                        report += index;
-                    }
-                    return report;
+                    return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort of the first index if multiple indexes
                 case 5:
                     int nValidated = 0;
                     peptideKey = peptideKeys.get(row);

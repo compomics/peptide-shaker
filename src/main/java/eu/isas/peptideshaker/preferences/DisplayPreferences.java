@@ -24,7 +24,7 @@ public class DisplayPreferences implements Serializable {
     /**
      * The number of aa surrounding a peptide
      */
-    private Integer nAASurroundingPeptides = 1;
+    private Integer nAASurroundingPeptides = 2;
 
     /**
      * Constructor
@@ -70,7 +70,7 @@ public class DisplayPreferences implements Serializable {
      */
     public int getnAASurroundingPeptides() {
         if (nAASurroundingPeptides == null) {
-            nAASurroundingPeptides = 1;
+            nAASurroundingPeptides = 2;
         }
         return nAASurroundingPeptides;
     }
