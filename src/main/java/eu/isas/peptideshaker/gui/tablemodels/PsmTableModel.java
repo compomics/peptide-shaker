@@ -1,25 +1,20 @@
 
 package eu.isas.peptideshaker.gui.tablemodels;
 
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import javax.swing.table.DefaultTableModel;
-import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * Table model for a set of peptide to spectrum matches.
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class PsmTableModel extends DefaultTableModel {
 
@@ -40,8 +35,7 @@ public class PsmTableModel extends DefaultTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param proteinAccession
-     * @param peptideKeys  
+     * @param psmKeys  
      */
     public PsmTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
         this.peptideShakerGUI = peptideShakerGUI;
