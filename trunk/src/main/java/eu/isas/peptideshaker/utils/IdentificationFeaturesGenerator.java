@@ -544,6 +544,66 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Returns the list of indexes where a peptide can be found in a protein
+     * sequence
+     *
+     * @param accession the protein accession
+     * @param peptide the sequence of the peptide of interest
+     * @return the list of indexes where a peptide can be found in a protein
+     * sequence
+     * @throws IOException Exception thrown whenever an error occurred while
+     * parsing the protein sequence
+     */
+    public ArrayList<Integer> getPeptideStart(String accession, String peptide) throws IOException {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        String tempSequence = sequenceFactory.getProtein(accession).getSequence();
+        while (tempSequence.lastIndexOf(peptide) >= 0) {
+            int startIndex = tempSequence.lastIndexOf(peptide);
+            result.add(startIndex + 1);
+            tempSequence = tempSequence.substring(0, startIndex);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the amino acids surrounding a peptide in the sequence of the
+     * given protein in a map: peptide start index -> (amino acids before, amino
+     * acids after) The number of amino acids is taken from the display
+     * preferences
+     *
+     * @param accession the protein accession
+     * @param peptide the sequence of the peptide of interest
+     * @return the amino acids surrounding a peptide in the protein sequence
+     * @throws IOException Exception thrown whenever an error occurred while
+     * parsing the protein sequence
+     */
+    public HashMap<Integer, String[]> getSurroundingAA(String accession, String peptide) throws IOException {
+        ArrayList<Integer> startIndexes = getPeptideStart(accession, peptide);
+        HashMap<Integer, String[]> result = new HashMap<Integer, String[]>();
+        String proteinSequence = sequenceFactory.getProtein(accession).getSequence();
+        String subsequence;
+        int nAA = peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides();
+        for (int startIndex : startIndexes) {
+            result.put(startIndex, new String[2]);
+            subsequence = "";
+            for (int aa = startIndex - nAA; aa < startIndex; aa++) {
+                if (aa >= 0 && aa < proteinSequence.length()) {
+                    subsequence += proteinSequence.charAt(aa);
+                }
+            }
+            result.get(startIndex)[0] = subsequence;
+            subsequence = "";
+            for (int aa = startIndex + peptide.length(); aa < startIndex + peptide.length() + nAA; aa++) {
+                if (aa >= 0 && aa < proteinSequence.length()) {
+                    subsequence += proteinSequence.charAt(aa);
+                }
+            }
+            result.get(startIndex)[1] = subsequence;
+        }
+        return result;
+    }
+
+    /**
      * Returns the amount of validated proteins. Note that this value is only
      * available after getSortedProteinKeys has been called.
      *
@@ -653,6 +713,27 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+    }
+
+    /**
+     * Returns the maximum number of spectra accounted by a single peptide Match
+     * all found in a protein match
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @return the maximum number of spectra accounted by a single peptide Match
+     * all found in a protein match
+     */
+    public int getMaxNSpectra(String proteinMatchKey) {
+        PeptideMatch peptideMatch;
+        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
+        int nSpectraMax = 0;
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+            if (peptideMatch.getSpectrumCount() > nSpectraMax) {
+                nSpectraMax = peptideMatch.getSpectrumCount();
+            }
+        }
+        return nSpectraMax;
     }
 
     /**
@@ -1269,9 +1350,10 @@ public class IdentificationFeaturesGenerator {
         }
         return proteinListAfterHiding;
     }
-    
+
     /**
      * Returns the ordered protein keys to display when no filtering is applied.
+     *
      * @param progressDialogX can be null
      * @return the ordered protein keys to display when no filtering is applied.
      */
@@ -1308,17 +1390,19 @@ public class IdentificationFeaturesGenerator {
 
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, probabilities);
-                peptideProbabilityScore = probabilities.getPeptideProbabilityScore();
+                if (!probabilities.isHidden()) {
+                    peptideProbabilityScore = probabilities.getPeptideProbabilityScore();
 
-                if (!peptideMap.containsKey(peptideProbabilityScore)) {
-                    peptideMap.put(peptideProbabilityScore, new HashMap<Integer, ArrayList<String>>());
+                    if (!peptideMap.containsKey(peptideProbabilityScore)) {
+                        peptideMap.put(peptideProbabilityScore, new HashMap<Integer, ArrayList<String>>());
+                    }
+                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    spectrumCount = -peptideMatch.getSpectrumCount();
+                    if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
+                        peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<String>());
+                    }
+                    peptideMap.get(peptideProbabilityScore).get(spectrumCount).add(peptideKey);
                 }
-                peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                spectrumCount = -peptideMatch.getSpectrumCount();
-                if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
-                    peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<String>());
-                }
-                peptideMap.get(peptideProbabilityScore).get(spectrumCount).add(peptideKey);
             }
 
             ArrayList<Double> scores = new ArrayList<Double>(peptideMap.keySet());
