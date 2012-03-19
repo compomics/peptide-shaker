@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;
 
@@ -134,6 +135,7 @@ public class PeptideTableModel extends DefaultTableModel {
                         return "IO Exception";
                     }
                     boolean first = true;
+                    Collections.sort(indexes);
                     for (int index : indexes) {
                         if (first) {
                             first = false;
@@ -159,9 +161,9 @@ public class PeptideTableModel extends DefaultTableModel {
                     peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                        return pSParameter.getProteinScore();
+                        return pSParameter.getPeptideScore();
                     } else {
-                        return pSParameter.getProteinConfidence();
+                        return pSParameter.getPeptideConfidence();
                     }
                 case 7:
                     peptideKey = peptideKeys.get(row);
