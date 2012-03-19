@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.io.*;
@@ -227,6 +228,7 @@ public class PRIDEExport {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         Identification identification = peptideShakerGUI.getIdentification();
         PSParameter proteinProbabilities = new PSParameter();
+        PSParameter peptideProbabilities = new PSParameter();
         PSParameter psmProbabilities = new PSParameter();
 
         progressDialog.setTitle("Creating PrideXML File. Please Wait...  (Part 2 of 2: exporting IDs)");
@@ -236,6 +238,7 @@ public class PRIDEExport {
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         ProteinMap proteinTargetDecoyMap = pSMaps.getProteinMap();
         PsmSpecificMap psmTargetDecoyMap = pSMaps.getPsmSpecificMap();
+        PeptideSpecificMap peptideTargetDecoyMap = pSMaps.getPeptideSpecificMap();
 
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -251,6 +254,8 @@ public class PRIDEExport {
 
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
+                
+                peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, peptideProbabilities);
 
                 for (String spectrumKey : currentMatch.getSpectrumMatches()) {
 
@@ -287,13 +292,14 @@ public class PRIDEExport {
                     // additional peptide id parameters
                     br.write(getCurrentTabSpace() + "<additional>\n");
                     tabCounter++;
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + peptideProbabilities.getPeptideConfidence() + "\" />\n");
+                    confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+                    br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + confidenceThreshold + "\" />\n");
                     br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + psmProbabilities.getPsmConfidence() + "\" />\n");
-                    int key = psmTargetDecoyMap.getCorrectedKey(bestAssumption.getIdentificationCharge().value);
-                    confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults().getConfidenceLimit();
+                    confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                     br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + confidenceThreshold + "\" />\n");
                     tabCounter--;
                     br.write(getCurrentTabSpace() + "</additional>\n");
-
                     tabCounter--;
                     br.write(getCurrentTabSpace() + "</PeptideItem>\n");
                 }
