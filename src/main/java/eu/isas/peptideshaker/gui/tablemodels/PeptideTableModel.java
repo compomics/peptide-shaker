@@ -1,11 +1,8 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.IOException;
@@ -14,11 +11,12 @@ import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
- * Table model for a set of peptide matches
+ * Table model for a set of peptide matches.
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class PeptideTableModel extends DefaultTableModel {
+
     /**
      * The main GUI class.
      */
@@ -32,7 +30,8 @@ public class PeptideTableModel extends DefaultTableModel {
      */
     private ArrayList<String> peptideKeys = null;
     /**
-     * The main accession of the protein match to which the list of peptides is attached
+     * The main accession of the protein match to which the list of peptides is
+     * attached.
      */
     private String proteinAccession;
 
@@ -40,6 +39,8 @@ public class PeptideTableModel extends DefaultTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
+     * @param proteinAccession
+     * @param peptideKeys  
      */
     public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -47,7 +48,10 @@ public class PeptideTableModel extends DefaultTableModel {
         this.peptideKeys = peptideKeys;
         this.proteinAccession = proteinAccession;
     }
-    
+
+    /**
+     * Resets the peptide keys.
+     */
     public void reset() {
         peptideKeys = null;
     }
@@ -124,8 +128,8 @@ public class PeptideTableModel extends DefaultTableModel {
                     String report = "";
                     ArrayList<Integer> indexes;
                     try {
-                    indexes = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideStart(proteinAccession, Peptide.getSequence(peptideKey));
-                    }catch (IOException e) {
+                        indexes = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideStart(proteinAccession, Peptide.getSequence(peptideKey));
+                    } catch (IOException e) {
                         peptideShakerGUI.catchException(e);
                         return "IO Exception";
                     }
@@ -144,24 +148,24 @@ public class PeptideTableModel extends DefaultTableModel {
                     peptideKey = peptideKeys.get(row);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                    pSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, new PSParameter());
-                    if (pSParameter.isValidated()) {
-                        nValidated++;
-                    }
+                        pSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, new PSParameter());
+                        if (pSParameter.isValidated()) {
+                            nValidated++;
+                        }
                     }
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
                     return new XYDataPoint(nValidated, nSpectra - nValidated, false);
                 case 6:
-                        peptideKey = peptideKeys.get(row);
-                        pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                    peptideKey = peptideKeys.get(row);
+                    pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getProteinScore();
                     } else {
                         return pSParameter.getProteinConfidence();
                     }
                 case 7:
-                        peptideKey = peptideKeys.get(row);
-                        pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                    peptideKey = peptideKeys.get(row);
+                    pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
                     return pSParameter.isValidated();
                 default:
                     return "";
@@ -186,5 +190,4 @@ public class PeptideTableModel extends DefaultTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-
 }

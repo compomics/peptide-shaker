@@ -573,7 +573,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         ptmScoringMenuItem = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        peptideSurroundingMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -1155,13 +1155,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(ptmScoringMenuItem);
 
-        jMenuItem1.setText("Peptide surrounding");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        peptideSurroundingMenuItem.setMnemonic('U');
+        peptideSurroundingMenuItem.setText("Peptide Surroundings");
+        peptideSurroundingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                peptideSurroundingMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem1);
+        editMenu.add(peptideSurroundingMenuItem);
         editMenu.add(jSeparator13);
 
         javaOptionsJMenuItem.setMnemonic('O');
@@ -2547,9 +2548,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         new JavaOptionsDialog(this);
     }//GEN-LAST:event_javaOptionsJMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void peptideSurroundingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideSurroundingMenuItemActionPerformed
         new PeptideSurroundingPreferencesDialog(this);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_peptideSurroundingMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -2697,7 +2698,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -2724,6 +2724,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu otherMenu;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
+    private javax.swing.JMenuItem peptideSurroundingMenuItem;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckBoxMenuItem;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
