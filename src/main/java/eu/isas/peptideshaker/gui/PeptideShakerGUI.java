@@ -5412,4 +5412,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         allTabsJTabbedPane.setSelectedIndex(tabIndex);
         allTabsJTabbedPaneStateChanged(null);
     }
+    
+    /**
+     * Returns true if the sparklines are to be shown.
+     * 
+     * @return true if the sparklines are to be show
+     */
+    public boolean showSparklines() {
+        return sparklinesJCheckBoxMenuItem.isSelected();
+    }
 }
