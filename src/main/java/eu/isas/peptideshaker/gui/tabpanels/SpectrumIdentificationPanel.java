@@ -3470,7 +3470,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     public static int isBestPsmEqualForAllSearchEngines(SpectrumMatch spectrumMatch) {
 
-        // @TODO: there's probably an easier more elegant way of doing all of this
+        // @TODO: there's probably an easier more elegant way of doing all of this (yes but it would ruin the backward compatibility, we'll wait a bit)
 
         String omssaMatch = null;
         String xtandemMatch = null;

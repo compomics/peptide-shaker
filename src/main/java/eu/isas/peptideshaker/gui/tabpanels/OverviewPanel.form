@@ -1012,21 +1012,6 @@
                                                       <Editor/>
                                                       <Renderer/>
                                                     </Column>
-                                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                                      <Title/>
-                                                      <Editor/>
-                                                      <Renderer/>
-                                                    </Column>
-                                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                                      <Title/>
-                                                      <Editor/>
-                                                      <Renderer/>
-                                                    </Column>
-                                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                                      <Title/>
-                                                      <Editor/>
-                                                      <Renderer/>
-                                                    </Column>
                                                   </TableColumnModel>
                                                 </Property>
                                                 <Property name="opaque" type="boolean" value="false"/>
