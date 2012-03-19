@@ -287,10 +287,10 @@ public class PRIDEExport {
                     // additional peptide id parameters
                     br.write(getCurrentTabSpace() + "<additional>\n");
                     tabCounter++;
-                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + psmProbabilities.getPsmConfidence() + " />\n");
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + psmProbabilities.getPsmConfidence() + "\" />\n");
                     int key = psmTargetDecoyMap.getCorrectedKey(bestAssumption.getIdentificationCharge().value);
                     confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults().getConfidenceLimit();
-                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + psmProbabilities.getPsmConfidence() + " />\n");
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + confidenceThreshold + "\" />\n");
                     tabCounter--;
                     br.write(getCurrentTabSpace() + "</additional>\n");
 
@@ -303,9 +303,9 @@ public class PRIDEExport {
             br.write(getCurrentTabSpace() + "<additional>\n");
             tabCounter++;
             if (SequenceFactory.isDecoy(proteinKey)) {
-                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />");
+                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />\n");
             } else {
-                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />");
+                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />\n");
             }
             tabCounter--;
             br.write(getCurrentTabSpace() + "</additional>\n");
