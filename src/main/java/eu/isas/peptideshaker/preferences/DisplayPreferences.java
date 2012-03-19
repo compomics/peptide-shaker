@@ -21,6 +21,10 @@ public class DisplayPreferences implements Serializable {
      * Show/hide the hidden proteins.
      */
     private boolean showScores = false;
+    /**
+     * The number of aa surrounding a peptide
+     */
+    private Integer nAASurroundingPeptides = 1;
 
     /**
      * Constructor
@@ -58,5 +62,24 @@ public class DisplayPreferences implements Serializable {
      */
     public boolean showScores() {
         return showScores;
+    }
+
+    /**
+     * Returns the number of amino acids surrounding a peptide sequence (1 by default)
+     * @return the number of amino acids surrounding a peptide sequence
+     */
+    public int getnAASurroundingPeptides() {
+        if (nAASurroundingPeptides == null) {
+            nAASurroundingPeptides = 1;
+        }
+        return nAASurroundingPeptides;
+    }
+
+    /**
+     * Sets the number of amino acids surrounding a peptide sequence
+     * @param nAASurroundingPeptides the number of amino acids surrounding a peptide sequence
+     */
+    public void setnAASurroundingPeptides(int nAASurroundingPeptides) {
+        this.nAASurroundingPeptides = nAASurroundingPeptides;
     }
 }

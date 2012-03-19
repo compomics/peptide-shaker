@@ -168,13 +168,11 @@ public class ProteinTableModel extends DefaultTableModel {
                         return null;
                     }
                 case 10:
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         proteinKey = proteinKeys.get(row);
                         pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getProteinScore();
                     } else {
-                        proteinKey = proteinKeys.get(row);
-                        pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
                         return pSParameter.getProteinConfidence();
                     }
                 case 11:
@@ -197,7 +195,7 @@ public class ProteinTableModel extends DefaultTableModel {
                 return getValueAt(i, columnIndex).getClass();
             }
         }
-        return (new Double(0.0)).getClass();
+        return String.class;
     }
 
     @Override

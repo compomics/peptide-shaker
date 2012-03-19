@@ -9,7 +9,9 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.*;
+import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -23,8 +25,10 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.ProteinMap;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -222,19 +226,21 @@ public class PRIDEExport {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         Identification identification = peptideShakerGUI.getIdentification();
-        PSParameter probabilities = new PSParameter();
+        PSParameter proteinProbabilities = new PSParameter();
+        PSParameter psmProbabilities = new PSParameter();
 
         progressDialog.setTitle("Creating PrideXML File. Please Wait...  (Part 2 of 2: exporting IDs)");
         long increment = totalProgress / (2 * identification.getProteinIdentification().size());
 
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        ProteinMap targetDecoyMap = pSMaps.getProteinMap();
+        ProteinMap proteinTargetDecoyMap = pSMaps.getProteinMap();
+        PsmSpecificMap psmTargetDecoyMap = pSMaps.getPsmSpecificMap();
 
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            probabilities = (PSParameter) identification.getMatchParameter(proteinKey, probabilities);
-            double confidenceThreshold = targetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
+            proteinProbabilities = (PSParameter) identification.getMatchParameter(proteinKey, proteinProbabilities);
+            double confidenceThreshold = proteinTargetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
 
             br.write(getCurrentTabSpace() + "<GelFreeIdentification>\n");
             tabCounter++;
@@ -247,6 +253,9 @@ public class PRIDEExport {
                 PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
 
                 for (String spectrumKey : currentMatch.getSpectrumMatches()) {
+
+                    psmProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psmProbabilities);
+
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
@@ -278,8 +287,10 @@ public class PRIDEExport {
                     // additional peptide id parameters
                     br.write(getCurrentTabSpace() + "<additional>\n");
                     tabCounter++;
-                    // @TODO: add additional peptide id parameters
-                    //br.write(getCurrentTabSpace() + "<userParam name=\"MascotConfidenceLevel\" value=\"95.0\" />");
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + psmProbabilities.getPsmConfidence() + " />\n");
+                    int key = psmTargetDecoyMap.getCorrectedKey(bestAssumption.getIdentificationCharge().value);
+                    confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults().getConfidenceLimit();
+                    br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + psmProbabilities.getPsmConfidence() + " />\n");
                     tabCounter--;
                     br.write(getCurrentTabSpace() + "</additional>\n");
 
@@ -291,19 +302,45 @@ public class PRIDEExport {
             // additional protein id parameters
             br.write(getCurrentTabSpace() + "<additional>\n");
             tabCounter++;
-            // @TODO: add additional protein id parameters
-            //br.write(getCurrentTabSpace() + "<userParam name=\"MascotConfidenceLevel\" value=\"95.0\" />");
+            if (SequenceFactory.isDecoy(proteinKey)) {
+                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />");
+            } else {
+                br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />");
+            }
             tabCounter--;
             br.write(getCurrentTabSpace() + "</additional>\n");
 
             // protein score
-            br.write(getCurrentTabSpace() + "<Score>" + probabilities.getProteinConfidence() + "</Score>\n");
+            br.write(getCurrentTabSpace() + "<Score>" + proteinProbabilities.getProteinConfidence() + "</Score>\n");
 
             // protein threshold
             br.write(getCurrentTabSpace() + "<Threshold>" + confidenceThreshold + "</Threshold>\n");
 
-            // SearchEngine
-            br.write(getCurrentTabSpace() + "<SearchEngine>" + "PeptideShaker" + "</SearchEngine>\n"); // @TODO: add the search engines used!!
+
+            // get the list of search engines used
+            IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
+            ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
+
+            ArrayList<Integer> seList = new ArrayList<Integer>();
+            int currentSE;
+            for (File file : idFiles) {
+                currentSE = idFileReaderFactory.getSearchEngine(file);
+                if (!seList.contains(currentSE)) {
+                    seList.add(currentSE);
+                }
+            }
+            Collections.sort(seList);
+            String seReport = SearchEngine.getName(seList.get(0));
+            for (int i = 1 ; i < seList.size() ; i++) {
+                if (i == seList.size()-1) {
+                    seReport += " and ";
+                } else {
+                    seReport += ", ";
+                }
+                seReport += SearchEngine.getName(seList.get(i));
+            }
+            seReport += " post-processed by PeptideShaker";
+            br.write(getCurrentTabSpace() + "<SearchEngine>" + seReport + "</SearchEngine>\n");
 
             tabCounter--;
             br.write(getCurrentTabSpace() + "</GelFreeIdentification>\n");
