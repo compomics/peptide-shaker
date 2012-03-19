@@ -124,8 +124,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(bestAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                    peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true), true);
+                    return bestAssumption.getPeptide().getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 case 4:
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey);

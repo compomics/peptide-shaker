@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -119,6 +120,18 @@ public class IdentificationFeaturesGenerator {
      * might need to be unhiden.
      */
     private boolean filtered = false;
+    /**
+     * the max m/z value across the selected spectra
+     */
+    private double maxPsmMzValue;
+    /**
+     * The maximum number of psms across all peptides of the last selected protein
+     */
+    private int maxSpectrumCount;
+    /**
+     * The number of calidated psms in the currently selected peptide
+     */
+    private int nValidatedPsms;
 
     /**
      * Constructor.
@@ -723,17 +736,8 @@ public class IdentificationFeaturesGenerator {
      * @return the maximum number of spectra accounted by a single peptide Match
      * all found in a protein match
      */
-    public int getMaxNSpectra(String proteinMatchKey) {
-        PeptideMatch peptideMatch;
-        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
-        int nSpectraMax = 0;
-        for (String peptideKey : proteinMatch.getPeptideMatches()) {
-            peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-            if (peptideMatch.getSpectrumCount() > nSpectraMax) {
-                nSpectraMax = peptideMatch.getSpectrumCount();
-            }
-        }
-        return nSpectraMax;
+    public int getMaxNSpectra() {
+        return maxSpectrumCount;
     }
 
     /**
@@ -1387,6 +1391,7 @@ public class IdentificationFeaturesGenerator {
             double peptideProbabilityScore;
             PeptideMatch peptideMatch;
             int spectrumCount;
+            maxSpectrumCount = 0;
 
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, probabilities);
@@ -1398,6 +1403,9 @@ public class IdentificationFeaturesGenerator {
                     }
                     peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                     spectrumCount = -peptideMatch.getSpectrumCount();
+                    if (peptideMatch.getSpectrumCount() > maxSpectrumCount) {
+                        maxSpectrumCount = peptideMatch.getSpectrumCount();
+                    }
                     if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
                         peptideMap.get(peptideProbabilityScore).put(spectrumCount, new ArrayList<String>());
                     }
@@ -1437,26 +1445,39 @@ public class IdentificationFeaturesGenerator {
             int charge;
             boolean hasRT = true;
             double rt = -1;
+            PSParameter psParameter = new PSParameter();
+            maxPsmMzValue = 0.0;
+            nValidatedPsms = 0;
             for (String spectrumKey : currentPeptideMatch.getSpectrumMatches()) {
-                spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
-                if (!orderingMap.containsKey(charge)) {
-                    orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());
-                }
-                if (hasRT) {
-                    rt = peptideShakerGUI.getPrecursor(spectrumKey).getRt();
-                    if (rt == -1) {
-                        hasRT = false;
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                if (!psParameter.isHidden()) {
+                    if (psParameter.isValidated()) {
+                        nValidatedPsms++;
                     }
+                    MSnSpectrum tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+                        if (tempSpectrum.getPeakList() != null && maxPsmMzValue < tempSpectrum.getMaxMz()) {
+                            maxPsmMzValue = tempSpectrum.getMaxMz();
+                        }
+                    spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                    if (!orderingMap.containsKey(charge)) {
+                        orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());
+                    }
+                    if (hasRT) {
+                        rt = peptideShakerGUI.getPrecursor(spectrumKey).getRt();
+                        if (rt == -1) {
+                            hasRT = false;
+                        }
+                    }
+                    if (!hasRT) {
+                        PSParameter pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, new PSParameter());
+                        rt = pSParameter.getPsmProbabilityScore();
+                    }
+                    if (!orderingMap.get(charge).containsKey(rt)) {
+                        orderingMap.get(charge).put(rt, new ArrayList<String>());
+                    }
+                    orderingMap.get(charge).get(rt).add(spectrumKey);
                 }
-                if (!hasRT) {
-                    PSParameter pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, new PSParameter());
-                    rt = pSParameter.getPsmProbabilityScore();
-                }
-                if (!orderingMap.get(charge).containsKey(rt)) {
-                    orderingMap.get(charge).put(rt, new ArrayList<String>());
-                }
-                orderingMap.get(charge).get(rt).add(spectrumKey);
             }
             ArrayList<Integer> charges = new ArrayList<Integer>(orderingMap.keySet());
             Collections.sort(charges);
@@ -1474,6 +1495,24 @@ public class IdentificationFeaturesGenerator {
             }
         }
         return psmList;
+    }
+    
+    /**
+     * Returns the max m/z value encountered across the selected spectra
+     * /!\ This value is only available after getSortedPsmKeys has been called
+     * @return the max m/z value encountered across the selected spectra
+     */
+    public double getMaxPsmMzValue() {
+        return maxPsmMzValue;
+    }
+    
+    /**
+     * Returns the number of validated psms for the last selected peptide
+     * /!\ This value is only available after getSortedPsmKeys has been called
+     * @return the number of validated psms for the last selected peptide
+     */
+    public int getNValidatedPsms() {
+        return nValidatedPsms;
     }
 
     /**
