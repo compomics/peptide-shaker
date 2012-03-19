@@ -52,7 +52,7 @@ public class PeptideSurroundingPreferencesDialog extends javax.swing.JDialog {
 
         surroundingAminoAcidsLabel.setText("#Surrounding Amino Acids:");
 
-        nAASpinner.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(0), null, Integer.valueOf(1)));
+        nAASpinner.setModel(new javax.swing.SpinnerNumberModel(2, 0, 5, 1));
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
