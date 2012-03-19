@@ -4613,9 +4613,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         try {
             PeptideAssumption peptideAssumption = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestAssumption();
 
+            if (!before.equals("")) {
+                before += "-";
+            }
+            if (!after.equals("")) {
+                after = "-" + after;
+            }
             String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
             ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                    "Spectrum & Fragment Ions (" + before + "-" + modifiedSequence + "-" + after
+                    "Spectrum & Fragment Ions (" + before + modifiedSequence + after
                     + "   " + peptideAssumption.getIdentificationCharge().toString() + "   "
                     + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
         } catch (Exception e) {
