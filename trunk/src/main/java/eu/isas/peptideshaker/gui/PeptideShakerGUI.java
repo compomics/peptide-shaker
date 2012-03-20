@@ -571,9 +571,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         importFilterMenu = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
-        spectrumCountingMenuItem = new javax.swing.JMenuItem();
-        ptmScoringMenuItem = new javax.swing.JMenuItem();
-        peptideSurroundingMenuItem = new javax.swing.JMenuItem();
+        preferencesMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -1136,33 +1134,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(annotationPreferencesMenu);
 
-        spectrumCountingMenuItem.setMnemonic('Q');
-        spectrumCountingMenuItem.setText("MS2 Quantification");
-        spectrumCountingMenuItem.setEnabled(false);
-        spectrumCountingMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        preferencesMenuItem.setMnemonic('P');
+        preferencesMenuItem.setText("Preferences");
+        preferencesMenuItem.setEnabled(false);
+        preferencesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumCountingMenuItemActionPerformed(evt);
+                preferencesMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(spectrumCountingMenuItem);
-
-        ptmScoringMenuItem.setMnemonic('P');
-        ptmScoringMenuItem.setText("PTM Scoring");
-        ptmScoringMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ptmScoringMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(ptmScoringMenuItem);
-
-        peptideSurroundingMenuItem.setMnemonic('U');
-        peptideSurroundingMenuItem.setText("Peptide Surroundings");
-        peptideSurroundingMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideSurroundingMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(peptideSurroundingMenuItem);
+        editMenu.add(preferencesMenuItem);
         editMenu.add(jSeparator13);
 
         javaOptionsJMenuItem.setMnemonic('O');
@@ -1895,13 +1875,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_openJMenuItemActionPerformed
 
     /**
-     * Open the spectrum counting preferences dialog.
+     * Open the GUI Settings dialog.
      *
      * @param evt
      */
-    private void spectrumCountingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumCountingMenuItemActionPerformed
-        new SpectrumCountingPreferencesDialog(this);
-    }//GEN-LAST:event_spectrumCountingMenuItemActionPerformed
+    private void preferencesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preferencesMenuItemActionPerformed
+        new PreferencesDialog(this, true);
+    }//GEN-LAST:event_preferencesMenuItemActionPerformed
 
     /**
      * Open the features export dialog.
@@ -2540,17 +2520,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         new BugReport(this);
     }//GEN-LAST:event_logReportMenuActionPerformed
 
-    private void ptmScoringMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmScoringMenuItemActionPerformed
-        new PtmPreferencesDialog(this);
-    }//GEN-LAST:event_ptmScoringMenuItemActionPerformed
-
     private void javaOptionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaOptionsJMenuItemActionPerformed
         new JavaOptionsDialog(this);
     }//GEN-LAST:event_javaOptionsJMenuItemActionPerformed
-
-    private void peptideSurroundingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideSurroundingMenuItemActionPerformed
-        new PeptideSurroundingPreferencesDialog(this);
-    }//GEN-LAST:event_peptideSurroundingMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -2603,7 +2575,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             exportProjectMenuItem.setEnabled(true);
             exportPrideXmlMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
-            spectrumCountingMenuItem.setEnabled(true);
+            preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
             starHideJMenuItem.setEnabled(true);
             ionsMenu.setEnabled(true);
@@ -2724,14 +2696,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu otherMenu;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
-    private javax.swing.JMenuItem peptideSurroundingMenuItem;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckBoxMenuItem;
+    private javax.swing.JMenuItem preferencesMenuItem;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
-    private javax.swing.JMenuItem ptmScoringMenuItem;
     private javax.swing.JPanel qcJPanel;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
@@ -2741,7 +2712,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu settingsMenu;
     private javax.swing.JCheckBoxMenuItem singleChargeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
-    private javax.swing.JMenuItem spectrumCountingMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JCheckBoxMenuItem spectrumSlidersCheckBoxMenuItem;
@@ -2909,7 +2879,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         tempPreferences.setShowSliders(userPreferences.showSliders());
         tempPreferences.setDeltaScoreThreshold(userPreferences.getDeltaScoreThreshold());
-        tempPreferences.setaScoreThreshold(userPreferences.getAScoreThreshold());
+        tempPreferences.setAScoreThreshold(userPreferences.getAScoreThreshold());
         tempPreferences.setMemoryPreference(userPreferences.getMemoryPreference());
         userPreferences = tempPreferences;
 
@@ -5420,5 +5390,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public boolean showSparklines() {
         return sparklinesJCheckBoxMenuItem.isSelected();
+    }
+    
+    /**
+     * Update the number of surrounding amino acids displayed.
+     */
+    public void updateSurroundingAminoAcids() {
+        overviewPanel.updateSurroundingAminoAcids();
     }
 }
