@@ -473,7 +473,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy());
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).setMaxValue(
                 (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
-        
+
         try {
             psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
             ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -3219,7 +3219,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-        
+
         try {
             ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         } catch (IllegalArgumentException e) {
@@ -4565,7 +4565,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         String peptideKey = peptideKeys.get(peptideIndex);
         String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-        HashMap<Integer, String[]> aaSurrounding = peptideShakerGUI.getIdentificationFeaturesGenerator().getSurroundingAA(proteinMatch.getMainMatch(), Peptide.getSequence(peptideKey));
+        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+        HashMap<Integer, String[]> aaSurrounding = currentProtein.getSurroundingAA(Peptide.getSequence(peptideKey), peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
 
         String before = "";
         String after = "";
@@ -4905,14 +4906,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         int proteinIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
         String proteinMatchKey = proteinKeys.get(proteinIndex);
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
-        String accession = proteinMatch.getMainMatch();
         int peptideEnd;
         String peptideSequence;
         PSParameter psParameter = new PSParameter();
-        for (String peptideKey : peptideKeys) {
-            peptideSequence = Peptide.getSequence(peptideKey);
-            try {
-                for (int peptideStart : peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideStart(accession, Peptide.getSequence(peptideKey))) {
+        try {
+            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            for (String peptideKey : peptideKeys) {
+                peptideSequence = Peptide.getSequence(peptideKey);
+                for (int peptideStart : currentProtein.getPeptideStart(peptideSequence)) {
                     peptideEnd = peptideStart + peptideSequence.length();
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
                     if (((startIndex <= peptideStart && peptideStart <= endIndex)
@@ -4923,9 +4924,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         annotations.add(new ResidueAnnotation(peptideStart + " - " + modifiedSequence + " - " + peptideEnd, peptideKey, true));
                     }
                 }
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
             }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
 
         return annotations;
