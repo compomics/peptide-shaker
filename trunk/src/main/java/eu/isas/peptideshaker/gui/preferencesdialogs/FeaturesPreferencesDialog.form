@@ -395,30 +395,37 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="peptidePosition" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Component id="peptideAccession" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="peptideModification" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="peptideNSpectra" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                          </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" attributes="0">
-                                                      <Component id="peptideAccession" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                      <Component id="peptideModification" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                      <Component id="peptideNSpectra" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Group type="102" attributes="0">
+                                                  <Group type="102" alignment="0" attributes="0">
                                                       <Component id="peptideSequence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                                       <Component id="peptideLocation" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="peptidePosition" linkSize="2" min="-2" max="-2" attributes="0"/>
                                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                      <Component id="precursorCharges" min="-2" pref="150" max="-2" attributes="0"/>
+                                                      <Component id="peptideSurroundingAA" min="-2" pref="150" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="peptideConfidence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                                  <Component id="peptideScore" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="peptideUniqueOnly" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="precursorCharges" min="-2" pref="150" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="peptideConfidence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="peptideScore" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -461,7 +468,11 @@
                                           <Component id="precursorCharges" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="peptidePosition" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="peptidePosition" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="peptideSurroundingAA" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                                          <Component id="peptideUniqueOnly" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="peptideValidated" min="-2" max="-2" attributes="0"/>
@@ -600,6 +611,20 @@
                     <Component class="javax.swing.JCheckBox" name="precursorCharges">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Precursor Charge(s)"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideSurroundingAA">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Surrounding AA"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideUniqueOnly">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Unique only"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>

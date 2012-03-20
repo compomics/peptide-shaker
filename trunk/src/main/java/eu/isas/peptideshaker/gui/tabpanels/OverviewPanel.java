@@ -3237,31 +3237,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Returns the index of the peptide at the given row in the peptide table.
-     *
-     * @param row the row of interest
-     * @return the index of the corresponding peptide
-     */
-    private Integer getPeptideIndex(int row) {
-
-        if (row != -1) {
-            return (Integer) peptideTable.getValueAt(row, 0);
-        } else {
-            return -1;
-        }
-    }
-
-    /**
-     * Returns the index of the psm at the given row in the psm table.
-     *
-     * @param row the row of interest
-     * @return the index of the corresponding psm
-     */
-    private Integer getPsmIndex(int row) {
-        return (Integer) psmTable.getValueAt(row, 0);
-    }
-
-    /**
      * Returns a list of keys of the displayed proteins
      *
      * @return a list of keys of the displayed proteins
@@ -4647,9 +4622,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             true, true, true, true, false, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
-                    outputGenerator.getPeptidesOutput(
-                            selectedPeptides, null, true, false, true, true,
-                            true, true, true, true, true, true, true, true, false, false);
+                    String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+                outputGenerator.getPeptidesOutput(
+                            selectedPeptides, null, true, false, true, true, true,
+                            true, true, true, true, true, true, true, true, false, false, false, proteinKey);
                 } else if (tableIndex == TableIndex.PSM_TABLE) {
                     ArrayList<String> selectedPsms = getDisplayedPsms();
                     outputGenerator.getPSMsOutput(

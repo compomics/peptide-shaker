@@ -101,6 +101,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideHidden = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
         precursorCharges = new javax.swing.JCheckBox();
+        peptideSurroundingAA = new javax.swing.JCheckBox();
+        peptideUniqueOnly = new javax.swing.JCheckBox();
         psmPanel = new javax.swing.JPanel();
         psmAccession = new javax.swing.JCheckBox();
         psmSequence = new javax.swing.JCheckBox();
@@ -407,6 +409,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         precursorCharges.setIconTextGap(10);
         precursorCharges.setOpaque(false);
 
+        peptideSurroundingAA.setText("Surrounding AA");
+        peptideSurroundingAA.setIconTextGap(10);
+        peptideSurroundingAA.setOpaque(false);
+
+        peptideUniqueOnly.setText("Unique only");
+        peptideUniqueOnly.setIconTextGap(10);
+        peptideUniqueOnly.setOpaque(false);
+
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
         peptidesPanelLayout.setHorizontalGroup(
@@ -416,25 +426,30 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
                         .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(peptidePosition)
+                            .addGroup(peptidesPanelLayout.createSequentialGroup()
+                                .addComponent(peptideAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(peptideModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(peptideNSpectra, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(peptidesPanelLayout.createSequentialGroup()
                                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(peptidesPanelLayout.createSequentialGroup()
-                                        .addComponent(peptideAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(peptideModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(peptideNSpectra, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(peptidesPanelLayout.createSequentialGroup()
                                         .addComponent(peptideSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(peptidesPanelLayout.createSequentialGroup()
+                                        .addComponent(peptidePosition)
                                         .addGap(18, 18, 18)
-                                        .addComponent(precursorCharges, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(peptideSurroundingAA, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
                                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(peptideScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(peptideUniqueOnly)
+                                    .addComponent(precursorCharges, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(peptideScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(peptideValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -473,7 +488,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(precursorCharges))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptidePosition))
+                        .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(peptidePosition)
+                            .addComponent(peptideSurroundingAA, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(peptideUniqueOnly)))
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
                         .addComponent(peptideValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1104,8 +1122,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         try {
             outputGenerator.getPeptidesOutput(null, null, peptideValidated.isSelected(), false,
                     peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                    peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
-                    peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected());
+                    peptideModification.isSelected(), peptideLocation.isSelected(), peptideSurroundingAA.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
+                    peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
 
         } catch (IOException e) {
             // change the peptide shaker icon back to the default version
@@ -1315,6 +1333,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton peptideSelectAll;
     private javax.swing.JCheckBox peptideSequence;
     private javax.swing.JCheckBox peptideStarred;
+    private javax.swing.JCheckBox peptideSurroundingAA;
+    private javax.swing.JCheckBox peptideUniqueOnly;
     private javax.swing.JButton peptideUnselectAll;
     private javax.swing.JCheckBox peptideValidated;
     private javax.swing.JPanel peptidesPanel;
