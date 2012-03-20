@@ -228,7 +228,7 @@ public class UserPreferences implements Serializable {
      * Sets the user preferred A-score Threshold
      * @param aScoreThreshold the user preferred A-score Threshold
      */
-    public void setaScoreThreshold(Double aScoreThreshold) {
+    public void setAScoreThreshold(Double aScoreThreshold) {
         this.aScoreThreshold = aScoreThreshold;
     }
 

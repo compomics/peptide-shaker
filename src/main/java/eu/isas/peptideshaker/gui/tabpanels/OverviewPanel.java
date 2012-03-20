@@ -3897,35 +3897,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             }
 
                             // update the panel border title
-                            if (psmTable.getSelectedRowCount() == 1) {
-                                updateSpectrumPanelBorderTitle(currentSpectrum);
-                            } else {
-
-                                // get the current charges
-                                ArrayList<Integer> currentCharges = new ArrayList<Integer>();
-                                int[] selectedRows = psmTable.getSelectedRows();
-
-                                for (int i = 0; i < selectedRows.length; i++) {
-                                    Integer tempCharge = (Integer) psmTable.getValueAt(selectedRows[i], psmTable.getColumn("Charge").getModelIndex());
-
-                                    if (!currentCharges.contains(tempCharge)) {
-                                        currentCharges.add(tempCharge);
-                                    }
-                                }
-
-                                Collections.sort(currentCharges);
-
-                                String chargeStates = currentCharges.get(0) + "+";
-
-                                for (int i = 1; i < currentCharges.size(); i++) {
-                                    chargeStates += " and " + currentCharges.get(i) + "+";
-                                }
-
-                                ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                                        "Spectrum & Fragment Ions (" + currentPeptide.getSequence()
-                                        + "   " + chargeStates
-                                        + "   " + selectedRows.length + " spectra)");
-                            }
+                            updateSpectrumPanelBorderTitle(currentSpectrum);
 
                             spectrumMainPanel.revalidate();
                             spectrumMainPanel.repaint();
@@ -4583,6 +4555,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     "Spectrum & Fragment Ions (" + before + modifiedSequence + after
                     + "   " + peptideAssumption.getIdentificationCharge().toString() + "   "
                     + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
+            spectrumMainPanel.repaint();
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             e.printStackTrace();
@@ -4863,10 +4836,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         secondarySpectrumPlotsJPanel.removeAll();
 
         ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins");
+        proteinsLayeredPanel.repaint();
         ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides");
+        peptidesPanel.repaint();
         ((TitledBorder) psmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches");
+        psmsPanel.repaint();
         ((TitledBorder) spectrumMainPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
+        spectrumMainPanel.repaint();
         ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle("Protein Sequence Coverage");
+        sequenceCoverageTitledPanel.repaint();
     }
 
     /**
@@ -4966,6 +4944,20 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
 
             peptidesPopupMenu.show(cme.getTrigger().getComponent(), cme.getTrigger().getX(), cme.getTrigger().getY());
+        }
+    }
+
+    /**
+     * Update the number of surrounding amino acids displayed.
+     */
+    public void updateSurroundingAminoAcids() {
+        if (!peptideShakerGUI.getSelectedPsmKey().equals(PeptideShakerGUI.NO_SELECTION)) {
+            try {
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(peptideShakerGUI.getSelectedPsmKey());
+                updateSpectrumPanelBorderTitle(currentSpectrum);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
