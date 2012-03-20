@@ -336,7 +336,7 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="ptmSummary">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="PTM summary"/>
+                        <Property name="text" type="java.lang.String" value="PTM Summary"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -624,7 +624,7 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="peptideUniqueOnly">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Unique only"/>
+                        <Property name="text" type="java.lang.String" value="Unique Only"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>

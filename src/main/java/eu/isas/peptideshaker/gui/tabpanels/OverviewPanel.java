@@ -4623,7 +4623,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
                     String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
-                outputGenerator.getPeptidesOutput(
+                    outputGenerator.getPeptidesOutput(
                             selectedPeptides, null, true, false, true, true, true,
                             true, true, true, true, true, true, true, true, false, false, false, proteinKey);
                 } else if (tableIndex == TableIndex.PSM_TABLE) {

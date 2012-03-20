@@ -217,7 +217,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSequenceCoverage.setIconTextGap(10);
         proteinSequenceCoverage.setOpaque(false);
 
-        ptmSummary.setText("PTM summary");
+        ptmSummary.setText("PTM Summary");
         ptmSummary.setIconTextGap(10);
         ptmSummary.setOpaque(false);
 
@@ -413,7 +413,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideSurroundingAA.setIconTextGap(10);
         peptideSurroundingAA.setOpaque(false);
 
-        peptideUniqueOnly.setText("Unique only");
+        peptideUniqueOnly.setText("Unique Only");
         peptideUniqueOnly.setIconTextGap(10);
         peptideUniqueOnly.setOpaque(false);
 
@@ -1002,6 +1002,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideSequence.setSelected(true);
         peptideModification.setSelected(true);
         peptideLocation.setSelected(true);
+        peptideSurroundingAA.setSelected(true);
         precursorCharges.setSelected(true);
         peptideNSpectra.setSelected(true);
         peptideScore.setSelected(true);
@@ -1021,6 +1022,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideSequence.setSelected(false);
         peptideModification.setSelected(false);
         peptideLocation.setSelected(false);
+        peptideSurroundingAA.setSelected(false);
+        peptideUniqueOnly.setSelected(false);
         precursorCharges.setSelected(false);
         peptideNSpectra.setSelected(false);
         peptideScore.setSelected(false);
