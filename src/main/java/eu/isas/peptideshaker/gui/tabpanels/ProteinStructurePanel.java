@@ -3424,9 +3424,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                             true, true, true, true, false, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
+        String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
                     outputGenerator.getPeptidesOutput(
-                            selectedPeptides, peptidePdbArray, true, false, true, true,
-                            true, true, true, true, true, true, true, true, false, false);
+                            selectedPeptides, peptidePdbArray, true, false, true, true, true,
+                            true, true, true, true, true, true, true, true, false, false, false, proteinKey);
                 } else if (tableIndex == TableIndex.PDB_MATCHES || tableIndex == TableIndex.PDB_CHAINS) {
 
                     // get the file to send the output to

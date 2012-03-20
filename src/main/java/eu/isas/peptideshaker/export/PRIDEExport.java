@@ -25,6 +25,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
@@ -345,6 +346,11 @@ public class PRIDEExport {
                 br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />\n");
             } else {
                 br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />\n");
+            }
+            if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
+                br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />\n");
+            } else {
+                br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />\n");
             }
             tabCounter--;
             br.write(getCurrentTabSpace() + "</additional>\n");
