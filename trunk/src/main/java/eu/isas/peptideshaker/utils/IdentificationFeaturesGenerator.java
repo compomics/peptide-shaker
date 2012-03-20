@@ -377,8 +377,7 @@ public class IdentificationFeaturesGenerator {
             tempPreferences.setSelectedMethod(method);
             try {
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
-                Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), proteinMatchKey, mainMatch, tempPreferences, peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
+                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey,tempPreferences, peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 return 0.0;
@@ -395,8 +394,7 @@ public class IdentificationFeaturesGenerator {
     private double estimateSpectrumCounting(String proteinMatchKey) {
         try {
             ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
-            Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), proteinMatchKey, mainMatch, peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
+            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return 0.0;
@@ -407,14 +405,14 @@ public class IdentificationFeaturesGenerator {
      * Returns the spectrum counting index based on the project settings
      *
      * @param identification the identification
+     * @param sequenceFactory the sequence factory
      * @param proteinMatchKey the protein match key
-     * @param mainMatch the main protein of the match
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
      * @return the spectrum counting index
      */
-    public static double estimateSpectrumCounting(Identification identification, String proteinMatchKey, Protein mainMatch, SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) {
+    public static double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException {
 
         double ratio, result;
         PSParameter pSParameter = new PSParameter();
@@ -423,12 +421,11 @@ public class IdentificationFeaturesGenerator {
 
             // NSAF
 
-            if (mainMatch == null) {
-                return 0.0;
-            }
             result = 0;
             PeptideMatch peptideMatch;
             ArrayList<String> possibleProteinMatches;
+            Protein currentProtein;
+            int peptideOccurrence=0;
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 peptideMatch = identification.getPeptideMatch(peptideKey);
                 possibleProteinMatches = new ArrayList<String>();
@@ -439,6 +436,8 @@ public class IdentificationFeaturesGenerator {
                                 try {
                                     testMatch = identification.getProteinMatch(proteinKey);
                                     if (testMatch.getPeptideMatches().contains(peptideKey)) {
+                                        currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
+                                        peptideOccurrence += currentProtein.getPeptideStart(Peptide.getSequence(peptideKey)).size();
                                         possibleProteinMatches.add(proteinKey);
                                     }
                                 } catch (Exception e) {
@@ -450,9 +449,9 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
                 if (possibleProteinMatches.isEmpty()) {
-                    System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of " + mainMatch + ".");
+                    System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of '" + proteinMatchKey + "'.");
                 }
-                ratio = 1.0 / possibleProteinMatches.size();
+                ratio = 1.0 / peptideOccurrence;
                 int cpt = 0;
                 for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
                     pSParameter = (PSParameter) identification.getMatchParameter(spectrumMatchKey, pSParameter);
@@ -462,11 +461,11 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
             }
-
+            currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             if (enzyme.enzymeCleaves()) {
-                return result / mainMatch.getObservableLength(enzyme, maxPepLength);
+                return result / currentProtein.getObservableLength(enzyme, maxPepLength);
             } else {
-                return result / mainMatch.getLength();
+                return result / currentProtein.getLength();
             }
         } else {
 
@@ -485,7 +484,8 @@ public class IdentificationFeaturesGenerator {
                 result = proteinMatch.getPeptideCount();
             }
 
-            return Math.pow(10, result / mainMatch.getNPossiblePeptides(enzyme)) - 1;
+            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            return Math.pow(10, result / currentProtein.getNPossiblePeptides(enzyme)) - 1;
         }
     }
 
@@ -554,66 +554,6 @@ public class IdentificationFeaturesGenerator {
             e.printStackTrace();
             return 1;
         }
-    }
-
-    /**
-     * Returns the list of indexes where a peptide can be found in a protein
-     * sequence
-     *
-     * @param accession the protein accession
-     * @param peptide the sequence of the peptide of interest
-     * @return the list of indexes where a peptide can be found in a protein
-     * sequence
-     * @throws IOException Exception thrown whenever an error occurred while
-     * parsing the protein sequence
-     */
-    public ArrayList<Integer> getPeptideStart(String accession, String peptide) throws IOException {
-        ArrayList<Integer> result = new ArrayList<Integer>();
-        String tempSequence = sequenceFactory.getProtein(accession).getSequence();
-        while (tempSequence.lastIndexOf(peptide) >= 0) {
-            int startIndex = tempSequence.lastIndexOf(peptide);
-            result.add(startIndex + 1);
-            tempSequence = tempSequence.substring(0, startIndex);
-        }
-        return result;
-    }
-
-    /**
-     * Returns the amino acids surrounding a peptide in the sequence of the
-     * given protein in a map: peptide start index -> (amino acids before, amino
-     * acids after) The number of amino acids is taken from the display
-     * preferences
-     *
-     * @param accession the protein accession
-     * @param peptide the sequence of the peptide of interest
-     * @return the amino acids surrounding a peptide in the protein sequence
-     * @throws IOException Exception thrown whenever an error occurred while
-     * parsing the protein sequence
-     */
-    public HashMap<Integer, String[]> getSurroundingAA(String accession, String peptide) throws IOException {
-        ArrayList<Integer> startIndexes = getPeptideStart(accession, peptide);
-        HashMap<Integer, String[]> result = new HashMap<Integer, String[]>();
-        String proteinSequence = sequenceFactory.getProtein(accession).getSequence();
-        String subsequence;
-        int nAA = peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides();
-        for (int startIndex : startIndexes) {
-            result.put(startIndex, new String[2]);
-            subsequence = "";
-            for (int aa = startIndex - nAA; aa < startIndex; aa++) {
-                if (aa >= 0 && aa < proteinSequence.length()) {
-                    subsequence += proteinSequence.charAt(aa);
-                }
-            }
-            result.get(startIndex)[0] = subsequence;
-            subsequence = "";
-            for (int aa = startIndex + peptide.length(); aa < startIndex + peptide.length() + nAA; aa++) {
-                if (aa >= 0 && aa < proteinSequence.length()) {
-                    subsequence += proteinSequence.charAt(aa);
-                }
-            }
-            result.get(startIndex)[1] = subsequence;
-        }
-        return result;
     }
 
     /**

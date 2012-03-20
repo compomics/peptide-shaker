@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -23,6 +25,10 @@ public class PeptideTableModel extends DefaultTableModel {
      * The main GUI class.
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The identification of this project.
      */
@@ -129,12 +135,12 @@ public class PeptideTableModel extends DefaultTableModel {
                     peptideKey = peptideKeys.get(row);
                     ArrayList<Integer> indexes;
                     try {
-                        indexes = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideStart(proteinAccession, Peptide.getSequence(peptideKey));
+                        Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
+                        indexes = currentProtein.getPeptideStart(Peptide.getSequence(peptideKey));
                     } catch (IOException e) {
                         peptideShakerGUI.catchException(e);
                         return "IO Exception";
                     }
-
                     Collections.sort(indexes);
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort of the first index if multiple indexes
                 case 5:
