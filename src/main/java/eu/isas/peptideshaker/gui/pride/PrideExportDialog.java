@@ -1,16 +1,18 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.pride.prideobjects.Reference;
 import com.compomics.util.pride.prideobjects.Contact;
 import com.compomics.util.pride.prideobjects.Sample;
 import com.compomics.util.pride.prideobjects.Instrument;
 import com.compomics.util.pride.prideobjects.Protocol;
 import com.compomics.util.pride.PtmToPrideMap;
-import eu.isas.peptideshaker.export.PRIDEExport;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
+import eu.isas.peptideshaker.export.PRIDEExport;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
@@ -23,6 +25,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
@@ -123,7 +127,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         // validate the input
         validateInput();
-        
+
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -1073,6 +1077,18 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
 
+        // check if the xml file already exists
+        if (new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").exists()) {
+            int selection = JOptionPane.showConfirmDialog(this, "The file \'"
+                    + new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").getAbsolutePath() + "\' already exists."
+                    + "\nOverwrite file?",
+                    "Overwrite?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (selection != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
         final PrideExportDialog prideExportDialog = this; // needed due to threading issues
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
@@ -1087,7 +1103,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         }, "ProgressDialog").start();
 
-        new Thread("ExportThread") {
+        new Thread("ConvertThread") {
 
             @Override
             public void run() {
@@ -1121,23 +1137,54 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
                 Instrument instrument = prideObjectsFactory.getInstruments().get(selectedInstrument);
 
+                boolean conversionCompleted = false;
+
                 try {
                     PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
                             references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()));
 
                     prideExport.createPrideXmlFile(progressDialog);
+                    conversionCompleted = true;
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
+
+                // close the progress dialog
                 progressDialog.dispose();
 
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                // @TODO: improve info message below!!
-                JOptionPane.showMessageDialog(prideExportDialog, "PRIDE XML file created.", "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
-                
-                dispose();
+                // display a conversion complete message to the user
+                if (conversionCompleted) {
+
+                    // create an empty label to put the message in
+                    JLabel label = new JLabel();
+
+                    // html content 
+                    JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                            + "PRIDE XML file \'"
+                            + new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").getAbsolutePath() + "\' created.<br><br>"
+                            + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE."
+                            + "</body></html>");
+
+                    // handle link events 
+                    ep.addHyperlinkListener(new HyperlinkListener() {
+
+                        @Override
+                        public void hyperlinkUpdate(HyperlinkEvent e) {
+                            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                                BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                            }
+                        }
+                    });
+
+                    ep.setBorder(null);
+                    ep.setEditable(false);
+
+                    JOptionPane.showMessageDialog(prideExportDialog, ep, "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                }
             }
         }.start();
     }//GEN-LAST:event_convertJButtonActionPerformed
