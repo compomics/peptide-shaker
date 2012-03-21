@@ -89,6 +89,10 @@ public class FileImporter {
      */
     private HashMap<String, ArrayList<String>> sharedPeptides = new HashMap<String, ArrayList<String>>();
     /**
+     * Peptide to protein map: peptide sequence -> protein accession
+     */
+    private HashMap<String, ArrayList<String>> foundSharedPeptides = new HashMap<String, ArrayList<String>>();
+    /**
      * db processing disabled if no X!Tandem file is selected
      */
     private boolean needPeptideMap = false;
@@ -233,7 +237,7 @@ public class FileImporter {
                             }
                         }
                         if (waitingDialog.isRunCanceled()) {
-                                return;
+                            return;
                         }
                     }
                     tempMap.clear();
@@ -283,33 +287,40 @@ public class FileImporter {
      * @return a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
-        ArrayList<String> result = sharedPeptides.get(peptideSequence);
-        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
+        ArrayList<String> result = foundSharedPeptides.get(peptideSequence);
 
         if (result == null) {
-            result = new ArrayList<String>();
-            if (inspectAll) {
-                try {
-                    for (String proteinKey : sequenceFactory.getAccessions()) {
-                        if (sequenceFactory.getProtein(proteinKey).getSequence().contains(peptideSequence)) {
-                            result.add(proteinKey);
+            result = sharedPeptides.get(peptideSequence);
+
+            boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
+
+            if (result == null) {
+                result = new ArrayList<String>();
+                if (inspectAll) {
+                    try {
+                        for (String proteinKey : sequenceFactory.getAccessions()) {
+                            if (sequenceFactory.getProtein(proteinKey).getSequence().contains(peptideSequence)) {
+                                result.add(proteinKey);
+                            }
+                            if (waitingDialog.isRunCanceled()) {
+                                return new ArrayList<String>();
+                            }
                         }
-                        if (waitingDialog.isRunCanceled()) {
-                            return new ArrayList<String>();
-                        }
+                    } catch (IOException e) {
+                        waitingDialog.appendReport("An error occured while accessing the FASTA file."
+                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
+                        e.printStackTrace();
+                        waitingDialog.setRunCanceled();
+                    } catch (IllegalArgumentException e) {
+                        waitingDialog.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
+                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
+                        e.printStackTrace();
+                        waitingDialog.setRunCanceled();
                     }
-                } catch (IOException e) {
-                    waitingDialog.appendReport("An error occured while accessing the FASTA file."
-                            + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
-                    e.printStackTrace();
-                    waitingDialog.setRunCanceled();
-                } catch (IllegalArgumentException e) {
-                    waitingDialog.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
-                            + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
-                    e.printStackTrace();
-                    waitingDialog.setRunCanceled();
+                    sharedPeptides.put(peptideSequence, result);
                 }
-                sharedPeptides.put(peptideSequence, result);
+            } else {
+                foundSharedPeptides.put(peptideSequence, result);
             }
         }
         return result;
@@ -465,7 +476,8 @@ public class FileImporter {
          */
         private ArrayList<String> singleProteinList = new ArrayList<String>();
         /**
-         * Map of proteins found several times with the number of times they appeared as first hit
+         * Map of proteins found several times with the number of times they
+         * appeared as first hit
          */
         private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
 
@@ -554,6 +566,7 @@ public class FileImporter {
 
                 // clear the objects not needed anymore
                 sharedPeptides.clear();
+                foundSharedPeptides.clear();
                 singleProteinList.clear();
 
                 if (nRetained == 0) {
@@ -697,7 +710,7 @@ public class FileImporter {
                         if (!charges.contains(currentCharge)) {
                             charges.add(currentCharge);
                         }
-                        
+
                         peptide = assumption.getPeptide();
                         String sequence = peptide.getSequence();
                         if (searchEngine == Advocate.XTANDEM) {
@@ -706,11 +719,11 @@ public class FileImporter {
                                 peptide.setParentProteins(proteins);
                             }
                         }
-                        
+
                         for (String protein : peptide.getParentProteins()) {
                             count = proteinCount.get(protein);
                             if (count != null) {
-                                proteinCount.put(protein, count+1);
+                                proteinCount.put(protein, count + 1);
                             } else {
                                 int index = singleProteinList.indexOf(protein);
                                 if (index != -1) {
