@@ -1,9 +1,7 @@
 package eu.isas.peptideshaker.gui.pride;
 
-import com.compomics.util.Util;
 import com.compomics.util.pride.prideobjects.Reference;
 import java.awt.Color;
-import javax.swing.JOptionPane;
 
 /**
  * A dialog for adding new references or editing old ones.
@@ -274,7 +272,7 @@ public class NewReferenceDialog extends javax.swing.JDialog {
 //        for (String forbiddenCharacter : Util.forbiddenCharacters) {
 //            if (input.contains(forbiddenCharacter)) {
 //                JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in reference name.",
-//                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+//                    "Forbidden Character", JOptionPane.ERROR_MESSAGE);
 //                nameJTextField.setText(lastNameInput);
 //                return;
 //            }

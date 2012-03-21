@@ -514,7 +514,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in protocol name.",
-                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+                    "Forbidden Character", JOptionPane.ERROR_MESSAGE);
                 protocolNameJTextField.setText(lastNameInput);
                 return;
             }

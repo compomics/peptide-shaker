@@ -63,6 +63,67 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     public PrideExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
+        
+        // update the ptm
+        updatePtmMap();
+
+        initComponents();
+        
+        // set gui properties
+        setGuiProperties();
+
+        // insert project data
+        insertProjectData();
+
+        // insert references
+//        for (Reference reference : Reference.getDefaultReferences()) {
+//            ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
+//                        referencesJTable.getRowCount() + 1,
+//                        reference.getReference(),
+//                        reference.getPmid(),
+//                        reference.getDoi()
+//                    });
+//        }
+
+        // insert available contacts, instruments, protocols and samples
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getContacts().keySet()), "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()), "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()), "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()), "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
+
+        // validate the input
+        validateInput();
+
+        setLocationRelativeTo(peptideShakerGUI);
+        setVisible(true);
+    }
+    
+    /**
+     * Set the GUI properties.
+     */
+    private void setGuiProperties() {
+        referenceTableColumnToolTips = new Vector();
+        referenceTableColumnToolTips.add(null);
+        referenceTableColumnToolTips.add("The reference tag");
+        referenceTableColumnToolTips.add("PubMed ID");
+        referenceTableColumnToolTips.add("Digital Object Identifier");
+
+        referencesJScrollPane.getViewport().setOpaque(false);
+        referencesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        referencesJTable.getTableHeader().setReorderingAllowed(false);
+        referencesJTable.getColumn(" ").setMaxWidth(30);
+        referencesJTable.getColumn(" ").setMinWidth(30);
+
+        contactsJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        sampleJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        protocolJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        instrumentJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+    }
+    
+    /**
+     * Update the ptm map.
+     */
+    private void updatePtmMap() {
         try {
             prideObjectsFactory = PrideObjectsFactory.getInstance();
         } catch (Exception e) {
@@ -83,53 +144,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 report += mod;
             }
             report += ".\nPlease add a CV term by clicking on the corresponding case in the PTM table.";
-            JOptionPane.showMessageDialog(this, report, "PTM CV term(s) missing.", JOptionPane.WARNING_MESSAGE);
-            new SearchPreferencesDialog(peptideShakerGUI, modal);
+            JOptionPane.showMessageDialog(peptideShakerGUI, report, "PTM CV Term(s) Missing.", JOptionPane.WARNING_MESSAGE);
+            new SearchPreferencesDialog(peptideShakerGUI, true);
         }
-
-        initComponents();
-
-        referenceTableColumnToolTips = new Vector();
-        referenceTableColumnToolTips.add(null);
-        referenceTableColumnToolTips.add("The reference tag");
-        referenceTableColumnToolTips.add("PubMed ID");
-        referenceTableColumnToolTips.add("Digital Object Identifier");
-
-        referencesJScrollPane.getViewport().setOpaque(false);
-        referencesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        referencesJTable.getTableHeader().setReorderingAllowed(false);
-        referencesJTable.getColumn(" ").setMaxWidth(40);
-        referencesJTable.getColumn(" ").setMinWidth(40);
-
-        contactsJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        sampleJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        protocolJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        instrumentJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-
-        // insert project data
-        insertProjectData();
-
-        // insert references
-        for (Reference reference : Reference.getDefaultReferences()) {
-            ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
-                        referencesJTable.getRowCount() + 1,
-                        reference.getReference(),
-                        reference.getPmid(),
-                        reference.getDoi()
-                    });
-        }
-
-        // insert available contacts, instruments, protocols and samples
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getContacts().keySet()), "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()), "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()), "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()), "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
-
-        // validate the input
-        validateInput();
-
-        setLocationRelativeTo(peptideShakerGUI);
-        setVisible(true);
     }
 
     /**
@@ -296,7 +313,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         experimentPropertiesLabel.setForeground(new java.awt.Color(255, 0, 0));
         experimentPropertiesLabel.setText("Title*");
+        experimentPropertiesLabel.setToolTipText("The title of the project");
 
+        titleJTextField.setToolTipText("The title of the project");
         titleJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         titleJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -306,9 +325,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         experimentLabel.setForeground(new java.awt.Color(255, 0, 0));
         experimentLabel.setText("Label*");
+        experimentLabel.setToolTipText("A (short) label for the project");
 
-        labelJTextField.setText("my label");
-        labelJTextField.setToolTipText("Allows experiments to be grouped or organized under projects");
+        labelJTextField.setToolTipText("A (short) label for the project");
         labelJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         labelJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -318,8 +337,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         projectLabel.setForeground(new java.awt.Color(255, 0, 0));
         projectLabel.setText("Project*");
+        projectLabel.setToolTipText("Allows experiments to be grouped or organized under a projects");
 
-        projectJTextField.setText("my project");
+        projectJTextField.setToolTipText("Allows experiments to be grouped or organized under a projects");
         projectJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         projectJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -329,11 +349,11 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         descriptionLabel.setForeground(new java.awt.Color(255, 0, 0));
         descriptionLabel.setText("Description*");
+        descriptionLabel.setToolTipText("A general free-text description of the experiment");
 
         descriptionJTextArea.setColumns(10);
         descriptionJTextArea.setLineWrap(true);
         descriptionJTextArea.setRows(2);
-        descriptionJTextArea.setText("my description");
         descriptionJTextArea.setToolTipText("A general free-text description of the experiment");
         descriptionJTextArea.setWrapStyleWord(true);
         descriptionJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -344,8 +364,10 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         descriptionJScrollPane.setViewportView(descriptionJTextArea);
 
         referencesLabel.setText("References");
+        referencesLabel.setToolTipText("<html>\nReferences to publications (if any).<br>\nRight click in the table to edit.\n</html>");
 
         addReferencesJButton.setText("Add");
+        addReferencesJButton.setToolTipText("Add a new reference.");
         addReferencesJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addReferencesJButtonActionPerformed(evt);
@@ -354,9 +376,11 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         contactLabel.setForeground(new java.awt.Color(255, 0, 0));
         contactLabel.setText("Contact*");
+        contactLabel.setToolTipText("The contact person for the PRIDE dataset");
 
         contactsJComboBox.setMaximumRowCount(20);
         contactsJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
+        contactsJComboBox.setToolTipText("The contact person for the PRIDE dataset");
         contactsJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 contactsJComboBoxActionPerformed(evt);
@@ -364,6 +388,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         });
 
         editContactJButton.setText("Edit");
+        editContactJButton.setToolTipText("Edit the selected contact");
         editContactJButton.setEnabled(false);
         editContactJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -373,9 +398,11 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         sampleLabel.setForeground(new java.awt.Color(255, 0, 0));
         sampleLabel.setText("Sample*");
+        sampleLabel.setToolTipText("Details about the sample used");
 
         sampleJComboBox.setMaximumRowCount(20);
         sampleJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
+        sampleJComboBox.setToolTipText("Details about the sample used");
         sampleJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sampleJComboBoxActionPerformed(evt);
@@ -383,6 +410,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         });
 
         editSampleJButton.setText("Edit");
+        editSampleJButton.setToolTipText("Edit the selected sample");
         editSampleJButton.setEnabled(false);
         editSampleJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -392,9 +420,11 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         protocolLabel.setForeground(new java.awt.Color(255, 0, 0));
         protocolLabel.setText("Protocol*");
+        protocolLabel.setToolTipText("Details about the protocol used");
 
         protocolJComboBox.setMaximumRowCount(20);
         protocolJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
+        protocolJComboBox.setToolTipText("Details about the protocol used");
         protocolJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 protocolJComboBoxActionPerformed(evt);
@@ -402,6 +432,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         });
 
         editProtocolJButton.setText("Edit");
+        editProtocolJButton.setToolTipText("Edit the selected protocol");
         editProtocolJButton.setEnabled(false);
         editProtocolJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -411,9 +442,11 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         instrumentLabel.setForeground(new java.awt.Color(255, 0, 0));
         instrumentLabel.setText("Instrument*");
+        instrumentLabel.setToolTipText("Details about the instrument used");
 
         instrumentJComboBox.setMaximumRowCount(20);
         instrumentJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
+        instrumentJComboBox.setToolTipText("Details about the instrument used");
         instrumentJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 instrumentJComboBoxActionPerformed(evt);
@@ -421,12 +454,15 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         });
 
         editInstrumentJButton.setText("Edit");
+        editInstrumentJButton.setToolTipText("Edit the selected instrument");
         editInstrumentJButton.setEnabled(false);
         editInstrumentJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editInstrumentJButtonActionPerformed(evt);
             }
         });
+
+        referencesJScrollPane.setToolTipText("<html>\nReferences to publications (if any).<br>\nRight click in the table to edit.\n</html>");
 
         referencesJTable.setFont(referencesJTable.getFont());
         referencesJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -568,6 +604,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         convertJButton.setFont(convertJButton.getFont().deriveFont(convertJButton.getFont().getStyle() | java.awt.Font.BOLD));
         convertJButton.setForeground(new java.awt.Color(255, 255, 255));
         convertJButton.setText("Convert!");
+        convertJButton.setToolTipText("Click here to start the conversion!");
         convertJButton.setEnabled(false);
         convertJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -602,6 +639,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         outpitFolderLabel.setForeground(new java.awt.Color(255, 0, 0));
         outpitFolderLabel.setText("Folder*");
+        outpitFolderLabel.setToolTipText("The folder where the PRIDE XML file will be saved");
 
         outputFolderJTextField.setEditable(false);
         outputFolderJTextField.setToolTipText("The folder where the PRIDE XML file will be saved");
@@ -729,9 +767,6 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         int returnVal = chooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            // @TOOD: check if file exists!!!
-
             String path = (chooser.getSelectedFile().getAbsoluteFile().getPath());
             peptideShakerGUI.setLastSelectedFolder(path);
             outputFolderJTextField.setText(path);
@@ -892,7 +927,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 referencesJTable.changeSelection(row, column, false, false);
             }
 
-            //makes sure that only valid "moving options" are enabled
+            // makes sure that only valid "moving options" are enabled
             this.refMoveUpJMenuItem.setEnabled(true);
             this.refMoveDownJMenuItem.setEnabled(true);
 
@@ -1140,9 +1175,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 boolean conversionCompleted = false;
 
                 try {
-                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
+                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), 
+                            labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
                             references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()));
-
                     prideExport.createPrideXmlFile(progressDialog);
                     conversionCompleted = true;
                 } catch (Exception e) {
