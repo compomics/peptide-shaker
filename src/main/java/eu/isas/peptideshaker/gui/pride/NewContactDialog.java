@@ -241,7 +241,7 @@ public class NewContactDialog extends javax.swing.JDialog {
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in contact name.",
-                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+                    "Forbidden Character", JOptionPane.ERROR_MESSAGE);
                 nameJTextField.setText(lastNameInput);
                 return;
             }

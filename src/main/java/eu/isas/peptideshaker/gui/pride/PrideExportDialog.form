@@ -262,10 +262,12 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Title*"/>
+                <Property name="toolTipText" type="java.lang.String" value="The title of the project"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="titleJTextField">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="The title of the project"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -280,12 +282,12 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Label*"/>
+                <Property name="toolTipText" type="java.lang.String" value="A (short) label for the project"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="labelJTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="my label"/>
-                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under projects"/>
+                <Property name="toolTipText" type="java.lang.String" value="A (short) label for the project"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -300,11 +302,12 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Project*"/>
+                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="projectJTextField">
               <Properties>
-                <Property name="text" type="java.lang.String" value="my project"/>
+                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under a projects"/>
                 <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                   <Insets value="[2, 4, 2, 2]"/>
                 </Property>
@@ -319,6 +322,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Description*"/>
+                <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="descriptionJScrollPane">
@@ -333,7 +337,6 @@
                     <Property name="columns" type="int" value="10"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="2"/>
-                    <Property name="text" type="java.lang.String" value="my description"/>
                     <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
@@ -346,11 +349,13 @@
             <Component class="javax.swing.JLabel" name="referencesLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="References"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;References to publications (if any).&lt;br&gt;&#xa;Right click in the table to edit.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="addReferencesJButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Add"/>
+                <Property name="toolTipText" type="java.lang.String" value="Add a new reference."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addReferencesJButtonActionPerformed"/>
@@ -362,6 +367,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Contact*"/>
+                <Property name="toolTipText" type="java.lang.String" value="The contact person for the PRIDE dataset"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="contactsJComboBox">
@@ -375,6 +381,7 @@
                     <StringItem index="3" value="Item 4"/>
                   </StringArray>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="The contact person for the PRIDE dataset"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="contactsJComboBoxActionPerformed"/>
@@ -383,6 +390,7 @@
             <Component class="javax.swing.JButton" name="editContactJButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="toolTipText" type="java.lang.String" value="Edit the selected contact"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -395,6 +403,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Sample*"/>
+                <Property name="toolTipText" type="java.lang.String" value="Details about the sample used"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="sampleJComboBox">
@@ -408,6 +417,7 @@
                     <StringItem index="3" value="Item 4"/>
                   </StringArray>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Details about the sample used"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sampleJComboBoxActionPerformed"/>
@@ -416,6 +426,7 @@
             <Component class="javax.swing.JButton" name="editSampleJButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="toolTipText" type="java.lang.String" value="Edit the selected sample"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -428,6 +439,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Protocol*"/>
+                <Property name="toolTipText" type="java.lang.String" value="Details about the protocol used"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="protocolJComboBox">
@@ -441,6 +453,7 @@
                     <StringItem index="3" value="Item 4"/>
                   </StringArray>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Details about the protocol used"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolJComboBoxActionPerformed"/>
@@ -449,6 +462,7 @@
             <Component class="javax.swing.JButton" name="editProtocolJButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="toolTipText" type="java.lang.String" value="Edit the selected protocol"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -461,6 +475,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Instrument*"/>
+                <Property name="toolTipText" type="java.lang.String" value="Details about the instrument used"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="instrumentJComboBox">
@@ -474,6 +489,7 @@
                     <StringItem index="3" value="Item 4"/>
                   </StringArray>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Details about the instrument used"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="instrumentJComboBoxActionPerformed"/>
@@ -482,6 +498,7 @@
             <Component class="javax.swing.JButton" name="editInstrumentJButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="toolTipText" type="java.lang.String" value="Edit the selected instrument"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -489,6 +506,9 @@
               </Events>
             </Component>
             <Container class="javax.swing.JScrollPane" name="referencesJScrollPane">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;References to publications (if any).&lt;br&gt;&#xa;Right click in the table to edit.&#xa;&lt;/html&gt;"/>
+              </Properties>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
@@ -534,6 +554,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Convert!"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click here to start the conversion!"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -613,6 +634,7 @@
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Folder*"/>
+                <Property name="toolTipText" type="java.lang.String" value="The folder where the PRIDE XML file will be saved"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="outputFolderJTextField">
