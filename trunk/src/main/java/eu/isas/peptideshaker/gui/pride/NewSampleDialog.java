@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Sample;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -57,6 +59,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * The species separator used in the species combobox.
      */
     private String speciesSeparator = "------------";
+    /**
+     * The last valid input for contact name
+     */
+    private String lastNameInput = "";
 
     /**
      * Creates a new NewSampleDialog.
@@ -729,7 +735,18 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * Enables the OK button if a valid sample set is selected.
      */
     private void validateInput() {
-
+        
+        String input = sampleNameJTextField.getText();
+        for (String forbiddenCharacter : Util.forbiddenCharacters) {
+            if (input.contains(forbiddenCharacter)) {
+                JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in sample name.",
+                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+                sampleNameJTextField.setText(lastNameInput);
+                return;
+            }
+        }
+        lastNameInput = input;
+        
         boolean allValidated = true;
 
         // highlight the fields that have not been filled

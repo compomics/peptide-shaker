@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.pride.prideobjects.Reference;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  * A dialog for adding new references or editing old ones.
@@ -18,6 +20,10 @@ public class NewReferenceDialog extends javax.swing.JDialog {
      * The row index of the references being edited.
      */
     private int rowIndex = -1 ;
+    /**
+     * The last valid input for contact name
+     */
+    private String lastNameInput = "";
 
     /**
      * Creates a new NewReferenceDialog dialog.
@@ -263,6 +269,18 @@ public class NewReferenceDialog extends javax.swing.JDialog {
      * Validate the input and enable/disable the OK button.
      */
     private void validateInput() {
+        
+//        String input = nameJTextField.getText();
+//        for (String forbiddenCharacter : Util.forbiddenCharacters) {
+//            if (input.contains(forbiddenCharacter)) {
+//                JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in reference name.",
+//                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+//                nameJTextField.setText(lastNameInput);
+//                return;
+//            }
+//        }
+//        lastNameInput = input;
+        
         okJButton.setEnabled(referenceJTextArea.getText().length() > 0);
         
         if (referenceJTextArea.getText().length() > 0) {
