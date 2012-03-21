@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.pride.prideobjects.Contact;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  * A dialog for creating new contacts and editing old ones.
@@ -14,6 +16,10 @@ public class NewContactDialog extends javax.swing.JDialog {
      * A reference to the PRIDE export dialog.
      */
     private PrideExportDialog prideExportDialog;
+    /**
+     * The last valid input for contact name
+     */
+    private String lastNameInput = "";
 
     /**
      * Creates a new NewContactDialog.
@@ -230,6 +236,18 @@ public class NewContactDialog extends javax.swing.JDialog {
      * OK button.
      */
     private void validateInput() {
+        
+        String input = nameJTextField.getText();
+        for (String forbiddenCharacter : Util.forbiddenCharacters) {
+            if (input.contains(forbiddenCharacter)) {
+                JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in contact name.",
+                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+                nameJTextField.setText(lastNameInput);
+                return;
+            }
+        }
+        lastNameInput = input;
+        
         if (nameJTextField.getText().length() > 0 
                 && eMailJTextField.getText().length() > 0
                 && institutionJTextArea.getText().length() > 0) {

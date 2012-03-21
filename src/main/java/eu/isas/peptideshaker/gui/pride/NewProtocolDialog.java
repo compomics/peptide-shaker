@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Protocol;
 import java.awt.Color;
@@ -9,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -30,6 +32,10 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * The PRIDE Export Dialog.
      */
     private PrideExportDialog prideExportDialog;
+    /**
+     * The last valid input for contact name
+     */
+    private String lastNameInput = "";
 
     /**
      * Creates a new NewProtocolDialog.
@@ -503,6 +509,18 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * Enables the OK button if a valid protocol set is selected.
      */
     private void validateInput() {
+        
+        String input = protocolNameJTextField.getText();
+        for (String forbiddenCharacter : Util.forbiddenCharacters) {
+            if (input.contains(forbiddenCharacter)) {
+                JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in protocol name.",
+                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+                protocolNameJTextField.setText(lastNameInput);
+                return;
+            }
+        }
+        lastNameInput = input;
+        
         if (protocolCvTermsJTable.getRowCount() > 0 && protocolNameJTextField.getText().length() > 0) {
             okButton.setEnabled(true);
         } else {

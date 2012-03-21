@@ -1,6 +1,7 @@
 
 package eu.isas.peptideshaker.gui.pride;
 
+import com.compomics.util.Util;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Instrument;
 import java.awt.Color;
@@ -10,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -31,6 +33,10 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      * The table column header tooltips.
      */
     private Vector columnToolTips;
+    /**
+     * The last valid input for contact name
+     */
+    private String lastNameInput = "";
     
     /**
      * Create a new NewInstrumentDialog.
@@ -694,6 +700,18 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      * Enables the OK button if a valid protocol set is selected.
      */
     private void validateInput() {
+        
+        String input = nameJTextField.getText();
+        for (String forbiddenCharacter : Util.forbiddenCharacters) {
+            if (input.contains(forbiddenCharacter)) {
+                JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in instrument name.",
+                    "Forbidden character", JOptionPane.ERROR_MESSAGE);
+                nameJTextField.setText(lastNameInput);
+                return;
+            }
+        }
+        lastNameInput = input;
+        
         if (analyzerCvTermsJTable.getRowCount() > 0 
                 && nameJTextField.getText().length() > 0
                 && instrumentSourceJTextField.getText().length() > 0
