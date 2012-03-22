@@ -3,6 +3,29 @@
 
 ----
 
+*Changes in PeptideShaker 0.15 (March 22. 2012):*
+ * NEW FEATURE: PRIDE Export is now supported.
+ * NEW FEATURE: Allowed the user to change the number of displayed aa before and after the sequence improved the sequence coverage panel for multiply detected peptides.
+ * NEW FEATURE: Made it possible to save the bug report to user defined file.
+ * NEW FEATURE: Allowed the user to change the PTM thresholds.
+ * NEW FEATURE: Allowed the user to tune the Java available memory directly from the user interface.
+ * FEATURE IMPROVEMENT: Improved the peptide output accounting for protein inference and adding surrounding amino acids.
+ * FEATURE IMPROVEMENT: Speed up fix for X!Tandem files loading.
+ * FEATURE IMPROVEMENT: Added the use of buffered IO wherever possible.
+ * FEATURE IMPROVEMENT: Square brackets are now allowed in the path were PeptideShaker is installed.
+ * FEATURE IMPROVEMENT: Improved the way shared peptides are handled when loading the file.
+ * FEATURE IMPROVEMENT: The SE column now points to the spectrum id tab to inspect search engine conflict.
+ * FEATURE IMPROVEMENT: The tables in the Overview tab now loads faster.
+ * FEATURE IMPROVEMENT: Improved cancel option of the import process.
+ * BUG FIX: Corrected two minor bugs occurring when importing files.
+ * BUG FIX: Corrected a very nasty bug in the export of ptm scores resulting in a null pointer exception. Preventing this bug from happening anywhere else.
+ * BUG FIX: Re-enabled the filters.
+ * BUG FIX: Corrected a bug in the modification position.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.51.
+ * LIBRARY UPDATE: Updated uniprotjapi to version 2012.02.
+
+----
+
 *Changes in PeptideShaker 0.14.7 (February 28. 2012):*
  * FEATURE IMPROVEMENT: Added progress bars when importing the PSMs in the id file readers.
  * FEATURE IMPROVEMENT: Improved the way missing or wrong mgf files are handled.
@@ -12,6 +35,8 @@
  * FEATURE IMPROVEMENT: Find feature: made the protein filtering non case sensitive on the description.
  * FEATURE IMPROVEMENT: Find feature: made it possible to jump to spectra in the Spectrum ID tab.
  * LIBRARY UPDATE: Updated utilities to version 3.3.42, fixing an issue with unknown protein expect values in X!Tandem files.
+
+Download Count: 59
 
 ----
 
