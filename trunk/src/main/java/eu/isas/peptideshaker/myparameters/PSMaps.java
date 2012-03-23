@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
+import eu.isas.peptideshaker.scoring.FractionsMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
@@ -28,6 +29,10 @@ public class PSMaps implements UrParameter {
      * The peptide map
      */
     private PeptideSpecificMap PeptideSpecificMap;
+    /**
+     * The fractions map
+     */
+    private FractionsMap fractionsMap;
 
     /**
      * constructor
@@ -69,6 +74,14 @@ public class PSMaps implements UrParameter {
      */
     public ProteinMap getProteinMap() {
         return proteinMap;
+    }
+    
+    /**
+     * Getter for the fractions map
+     * @return 
+     */
+    public FractionsMap getFractionsMap() {
+        return fractionsMap;
     }
 
     @Override

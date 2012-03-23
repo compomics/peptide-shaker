@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * PeptideShaker compomics utilities experiment customizable parameter.
@@ -84,6 +86,14 @@ public class PSParameter implements UrParameter {
      * 3- unrelated proteins proteins or peptide shared by unrelated proteins
      */
     public static final int UNRELATED = 3;
+    /**
+     * The fraction confidence map
+     */
+    private HashMap<String, Double> fractionPEP = new HashMap<String, Double>();
+    /**
+     * The fraction confidence map
+     */
+    private HashMap<String, Double> fractionScore = new HashMap<String, Double>();
 
     /**
      * Constructor
@@ -429,7 +439,57 @@ public class PSParameter implements UrParameter {
     public void setSecificMapKey(String secificMapKey) {
         this.secificMapKey = secificMapKey;
     }
-
+    
+    /**
+     * Sets the fraction confidence
+     * @param fraction      the fraction
+     * @param confidence    the confidence
+     */
+    public void setFractionScore(String fraction, double confidence) {
+        fractionScore.put(fraction, confidence);
+    }
+    
+    /**
+     * Returns the fraction score. null if not found
+     * @param fraction 
+     */
+    public double getFractionScore(String fraction) {
+        return fractionScore.get(fraction);
+    }
+    
+    /**
+     * Return the fractions where this match was found
+     * @return the fractions where this match was found
+     */
+    public Set<String> getFractions() {
+        return fractionScore.keySet();
+    }
+    
+    /**
+     * Sets the fraction confidence
+     * @param fraction      the fraction
+     * @param confidence    the confidence
+     */
+    public void setFractionPEP(String fraction, double confidence) {
+        fractionPEP.put(fraction, confidence);
+    }
+    
+    /**
+     * Returns the fraction confidence. null if not found.
+     * @param fraction 
+     */
+    public double getFractionPEP(String fraction) {
+        return fractionPEP.get(fraction);
+    }
+    
+    /**
+     * Returns the fraction confidence
+     * @param fraction 
+     */
+    public double getFractionConfidence(String fraction) {
+        return 100 * (1 - fractionPEP.get(fraction));
+    }
+ 
     @Override
     public String getFamilyName() {
         return "PeptideShaker";

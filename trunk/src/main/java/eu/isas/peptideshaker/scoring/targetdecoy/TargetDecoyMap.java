@@ -231,6 +231,9 @@ public class TargetDecoyMap implements Serializable {
             previousPoint = point;
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             }
         }
     }

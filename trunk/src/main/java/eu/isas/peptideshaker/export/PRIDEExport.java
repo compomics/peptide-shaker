@@ -140,6 +140,7 @@ public class PRIDEExport {
      * @param protocol Protocol used in this experiment
      * @param instrument Instruments used in this experiment
      * @param outputFolder Output folder
+     * @param fileName the file name without extension
      * @throws FileNotFoundException Exception thrown whenever a file was not
      * found
      * @throws IOException Exception thrown whenever an error occurred while
@@ -149,7 +150,7 @@ public class PRIDEExport {
      */
     public PRIDEExport(PeptideShakerGUI peptideShakerGUI, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
             ArrayList<Reference> references, Contact contact, Sample sample, Protocol protocol, Instrument instrument,
-            File outputFolder) throws FileNotFoundException, IOException, ClassNotFoundException {
+            File outputFolder, String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerGUI = peptideShakerGUI;
         this.experimentTitle = experimentTitle;
         this.experimentLabel = experimentLabel;
@@ -162,7 +163,7 @@ public class PRIDEExport {
         this.instrument = instrument;
         PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
         ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
-        r = new FileWriter(new File(outputFolder, experimentTitle + ".xml"));
+        r = new FileWriter(new File(outputFolder, fileName + ".xml"));
         br = new BufferedWriter(r);
     }
 
@@ -251,32 +252,32 @@ public class PRIDEExport {
         ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
 
         ArrayList<Integer> seList = new ArrayList<Integer>();
-        
+
         for (File file : idFiles) {
             int currentSE = idFileReaderFactory.getSearchEngine(file);
             if (!seList.contains(currentSE)) {
                 seList.add(currentSE);
             }
         }
-        
+
         Collections.sort(seList);
         String searchEngineReport = SearchEngine.getName(seList.get(0));
-        
+
         for (int i = 1; i < seList.size(); i++) {
-            
+
             if (i == seList.size() - 1) {
                 searchEngineReport += " and ";
             } else {
                 searchEngineReport += ", ";
             }
-            
+
             searchEngineReport += SearchEngine.getName(seList.get(i));
         }
-        
+
         searchEngineReport += " post-processed by PeptideShaker";
 
         for (String proteinKey : identification.getProteinIdentification()) {
-            
+
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
             proteinProbabilities = (PSParameter) identification.getMatchParameter(proteinKey, proteinProbabilities);
             double confidenceThreshold = proteinTargetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
@@ -289,7 +290,7 @@ public class PRIDEExport {
             br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>\n");
 
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                
+
                 PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
                 peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, peptideProbabilities);
 
@@ -417,7 +418,7 @@ public class PRIDEExport {
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
 
         CvTerm fragmentIonTerm = fragmentIon.getPrideCvTerm();
-        
+
         if (fragmentIonTerm != null) {
             br.write(getCurrentTabSpace() + "<FragmentIon>\n");
             tabCounter++;
@@ -544,13 +545,14 @@ public class PRIDEExport {
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
                 String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
                 MSnSpectrum tempSpectrum = ((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey));
-                boolean identified = identification.matchExists(spectrumKey);
-                writeSpectrum(tempSpectrum, identified, spectrumCounter);
-
-                if (identified) {
-                    spectrumIndexes.put(spectrumKey, spectrumCounter);
+                if (!tempSpectrum.getPeakList().isEmpty()) {
+                    boolean identified = identification.matchExists(spectrumKey);
+                    writeSpectrum(tempSpectrum, identified, spectrumCounter);
+                    if (identified) {
+                        spectrumIndexes.put(spectrumKey, spectrumCounter);
+                    }
+                    spectrumCounter++;
                 }
-                spectrumCounter++;
                 progress++;
                 progressDialog.setValue((int) ((100 * progress) / totalProgress));
             }
