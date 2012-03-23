@@ -194,65 +194,97 @@ public class PeptideShaker {
         if (!identification.memoryCheck()) {
             waitingDialog.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.");
         }
-        try {
-            waitingDialog.appendReport("Computing assumptions probabilities.");
-            inputMap.estimateProbabilities(waitingDialog);
-            waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Saving assumptions probabilities.");
-            attachAssumptionsProbabilities(inputMap, waitingDialog);
-            waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Selecting best peptide per spectrum.");
-            fillPsmMap(inputMap, waitingDialog);
-            psmMap.cure();
-            waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Computing PSM probabilities.");
-            psmMap.estimateProbabilities(waitingDialog);
-            waitingDialog.appendReport("Saving probabilities, building peptides and proteins.");
-            attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingDialog);
-            waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Generating peptide map.");
-            fillPeptideMaps(waitingDialog);
-            peptideMap.cure();
-            waitingDialog.appendReport("Computing peptide probabilities.");
-            peptideMap.estimateProbabilities(waitingDialog);
-            waitingDialog.appendReport("Saving peptide probabilities.");
-            attachPeptideProbabilities(waitingDialog);
-            waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Generating protein map.");
-            fillProteinMap(waitingDialog);
-            waitingDialog.increaseProgressValue();
-        } catch (Exception e) {
-            throw e;
+        if (waitingDialog.isRunCanceled()) {
+            return;
         }
-
-        try {
-            waitingDialog.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.");
-            cleanProteinGroups(waitingDialog);
-            waitingDialog.increaseProgressValue();
-        } catch (IllegalArgumentException e) {
-            waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
-            throw e;
-        } catch (IOException e) {
-            waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
-            throw e;
+        waitingDialog.appendReport("Computing assumptions probabilities.");
+        inputMap.estimateProbabilities(waitingDialog);
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
         }
-
+        waitingDialog.appendReport("Saving assumptions probabilities.");
+        attachAssumptionsProbabilities(inputMap, waitingDialog);
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Selecting best peptide per spectrum.");
+        fillPsmMap(inputMap, waitingDialog);
+        psmMap.cure();
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Computing PSM probabilities.");
+        psmMap.estimateProbabilities(waitingDialog);
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Saving probabilities, building peptides and proteins.");
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingDialog);
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Generating peptide map.");
+        fillPeptideMaps(waitingDialog);
+        peptideMap.cure();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Computing peptide probabilities.");
+        peptideMap.estimateProbabilities(waitingDialog);
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Saving peptide probabilities.");
+        attachPeptideProbabilities(waitingDialog);
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Generating protein map.");
+        fillProteinMap(waitingDialog);
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
+        waitingDialog.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.");
+        cleanProteinGroups(waitingDialog);
+        waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         waitingDialog.appendReport("Correcting protein probabilities.");
         proteinMap.estimateProbabilities(waitingDialog);
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         waitingDialog.appendReport("Saving protein probabilities.");
         attachProteinProbabilities(waitingDialog);
         waitingDialog.increaseProgressValue();
-
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
         fdrValidation(waitingDialog);
         waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         waitingDialog.appendReport("Scoring PTMs in peptides.");
         scorePeptidePtms(waitingDialog, searchParameters, annotationPreferences);
         waitingDialog.increaseProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         waitingDialog.appendReport("Scoring PTMs in proteins.");
         scoreProteinPtms(waitingDialog, searchParameters, annotationPreferences, idFilter);
         waitingDialog.increaseProgressValue();
-
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         String report = "Identification processing completed.\n\n";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
@@ -342,6 +374,9 @@ public class PeptideShaker {
         waitingDialog.setMaxSecondaryProgressValue(max);
 
         for (String mapKey : peptideMap.getKeys()) {
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             waitingDialog.increaseSecondaryProgressValue();
             currentMap = peptideMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
@@ -352,6 +387,9 @@ public class PeptideShaker {
         }
 
         for (int mapKey : psmMap.getKeys().keySet()) {
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             waitingDialog.increaseSecondaryProgressValue();
             currentMap = psmMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
@@ -576,6 +614,9 @@ public class PeptideShaker {
             identification.addMatchParameter(spectrumKey, psParameter);
             identification.setMatchChanged(spectrumMatch);
             waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         }
 
         // the protein count map is no longer needed
@@ -630,6 +671,9 @@ public class PeptideShaker {
             }
 
             identification.setMatchChanged(spectrumMatch);
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         }
 
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -661,6 +705,9 @@ public class PeptideShaker {
                 waitingDialog.increaseSecondaryProgressValue();
             }
             identification.buildPeptidesAndProteins(spectrumKey);
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         }
         if (waitingDialog != null) {
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -714,6 +761,9 @@ public class PeptideShaker {
             peptideMatch = identification.getPeptideMatch(peptideKey);
             scorePTMs(peptideMatch, searchParameters, annotationPreferences);
             waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         }
 
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -757,7 +807,6 @@ public class PeptideShaker {
         SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
         PSParameter psParameter = new PSParameter();
         double tempSpectrumCounting, maxSpectrumCounting = 0;
-        Protein currentProtein;
         Enzyme enzyme = searchParameters.getEnzyme();
         int maxPepLength = idFilter.getMaxPepLength();
         for (String proteinKey : identification.getProteinIdentification()) {
@@ -775,6 +824,9 @@ public class PeptideShaker {
                 }
             }
             waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         }
         if (metrics != null) {
             metrics.setMaxSpectrumCounting(maxSpectrumCounting);
@@ -1151,20 +1203,34 @@ public class PeptideShaker {
             waitingDialog.setSecondaryProgressDialogIntermediate(false);
             waitingDialog.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
         }
+        HashMap<String, Double> fractionScores;
+        String fraction;
         for (String peptideKey : identification.getPeptideIdentification()) {
             double probaScore = 1;
+            fractionScores = new HashMap<String, Double>();
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
+                fraction = Spectrum.getSpectrumFile(spectrumKey);
+                if (!fractionScores.containsKey(fraction)) {
+                    fractionScores.put(fraction, 1.0);
+                }
+                fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getPsmProbability());
             }
             psParameter = new PSParameter();
             psParameter.setPeptideProbabilityScore(probaScore);
             psParameter.setSecificMapKey(peptideMap.getKey(peptideMatch));
+            for (String fractionName : fractionScores.keySet()) {
+                psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
+            }
             identification.addMatchParameter(peptideKey, psParameter);
             peptideMap.addPoint(probaScore, peptideMatch);
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             }
         }
         if (waitingDialog != null) {
@@ -1195,8 +1261,14 @@ public class PeptideShaker {
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
             psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPeptideProbabilityScore()));
+            for (String fraction : psParameter.getFractions()) {
+                psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getFractionScore(fraction)));
+            }
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             }
         }
         if (waitingDialog != null) {
@@ -1222,20 +1294,34 @@ public class PeptideShaker {
             waitingDialog.setMaxSecondaryProgressValue(max);
         }
 
+        HashMap<String, Double> fractionScores;
         for (String proteinKey : identification.getProteinIdentification()) {
 
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             }
+            fractionScores = new HashMap<String, Double>();
 
             probaScore = 1;
             proteinMatch = identification.getProteinMatch(proteinKey);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
                 probaScore = probaScore * psParameter.getPeptideProbability();
+                for (String fraction : psParameter.getFractions()) {
+                    if (!fractionScores.containsKey(fraction)) {
+                        fractionScores.put(fraction, 1.0);
+                    }
+                    fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getPeptideProbability());
+                }
             }
             psParameter = new PSParameter();
             psParameter.setProteinProbabilityScore(probaScore);
+            for (String fractionName : fractionScores.keySet()) {
+                psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
+            }
             identification.addMatchParameter(proteinKey, psParameter);
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
@@ -1267,8 +1353,14 @@ public class PeptideShaker {
             psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
             proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
             psParameter.setProteinProbability(proteinProbability);
+            for (String fraction : psParameter.getFractions()) {
+                psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
+            }
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             }
         }
         if (waitingDialog != null) {
@@ -1325,6 +1417,9 @@ public class PeptideShaker {
                         toRemove.add(proteinSharedKey);
                     } else if (waitingDialog != null) {
                         waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
                     }
                 }
             }
@@ -1514,6 +1609,9 @@ public class PeptideShaker {
             }
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
             }
         }
 
@@ -1542,6 +1640,9 @@ public class PeptideShaker {
                     proteinList.addAll(tempList);
                     if (waitingDialog != null) {
                         waitingDialog.increaseSecondaryProgressValue(tempList.size());
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
                     }
                 }
             }

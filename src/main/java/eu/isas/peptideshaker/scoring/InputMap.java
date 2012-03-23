@@ -52,6 +52,9 @@ public class InputMap {
         for (TargetDecoyMap hitmap : inputMap.values()) {
             waitingDialog.increaseSecondaryProgressValue();
             hitmap.estimateProbabilities(waitingDialog);
+        if (waitingDialog.isRunCanceled()) {
+            return;
+        }
         }
         
         waitingDialog.setSecondaryProgressDialogIntermediate(true);

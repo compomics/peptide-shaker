@@ -1113,9 +1113,15 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
 
         // check if the xml file already exists
-        if (new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").exists()) {
+        String[] splittedName = titleJTextField.getText().split(" ");
+        String fileName = "";
+        for (String part : splittedName) {
+            fileName += part;
+        }
+        File prideFile = new File(outputFolderJTextField.getText(), fileName + ".xml");
+        if (prideFile.exists()) {
             int selection = JOptionPane.showConfirmDialog(this, "The file \'"
-                    + new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").getAbsolutePath() + "\' already exists."
+                    + prideFile.getAbsolutePath() + "\' already exists."
                     + "\nOverwrite file?",
                     "Overwrite?", JOptionPane.YES_NO_CANCEL_OPTION);
 
@@ -1124,6 +1130,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         }
 
+        final String prideFileName = fileName;
         final PrideExportDialog prideExportDialog = this; // needed due to threading issues
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
@@ -1177,7 +1184,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 try {
                     PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), 
                             labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
-                            references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()));
+                            references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()), prideFileName);
                     prideExport.createPrideXmlFile(progressDialog);
                     conversionCompleted = true;
                 } catch (Exception e) {

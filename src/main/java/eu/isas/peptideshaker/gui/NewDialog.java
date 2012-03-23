@@ -1055,7 +1055,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             allValid = false;
         }
 
-        if (searchParametersFiles.size() > 0) {
+        if (idFiles.size() > 0) {
             idFilesLabel.setForeground(Color.BLACK);
         } else {
             idFilesLabel.setForeground(Color.RED);
