@@ -195,9 +195,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
         aScoreLabel.setText("A-Score Threshold:");
 
+        deltaThresholdTxt.setEditable(false);
         deltaThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         deltaThresholdTxt.setText("50");
 
+        aScoreThresholdTxt.setEditable(false);
         aScoreThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         aScoreThresholdTxt.setText("50");
 

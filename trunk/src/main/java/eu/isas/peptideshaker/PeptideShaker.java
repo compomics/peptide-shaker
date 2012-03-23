@@ -374,9 +374,9 @@ public class PeptideShaker {
         waitingDialog.setMaxSecondaryProgressValue(max);
 
         for (String mapKey : peptideMap.getKeys()) {
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
             waitingDialog.increaseSecondaryProgressValue();
             currentMap = peptideMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
@@ -387,9 +387,9 @@ public class PeptideShaker {
         }
 
         for (int mapKey : psmMap.getKeys().keySet()) {
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
             waitingDialog.increaseSecondaryProgressValue();
             currentMap = psmMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
@@ -614,9 +614,9 @@ public class PeptideShaker {
             identification.addMatchParameter(spectrumKey, psParameter);
             identification.setMatchChanged(spectrumMatch);
             waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
 
         // the protein count map is no longer needed
@@ -671,9 +671,9 @@ public class PeptideShaker {
             }
 
             identification.setMatchChanged(spectrumMatch);
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
 
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -705,9 +705,9 @@ public class PeptideShaker {
                 waitingDialog.increaseSecondaryProgressValue();
             }
             identification.buildPeptidesAndProteins(spectrumKey);
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
         if (waitingDialog != null) {
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -761,9 +761,9 @@ public class PeptideShaker {
             peptideMatch = identification.getPeptideMatch(peptideKey);
             scorePTMs(peptideMatch, searchParameters, annotationPreferences);
             waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
 
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -824,9 +824,9 @@ public class PeptideShaker {
                 }
             }
             waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
         if (metrics != null) {
             metrics.setMaxSpectrumCounting(maxSpectrumCounting);
@@ -1228,9 +1228,9 @@ public class PeptideShaker {
             peptideMap.addPoint(probaScore, peptideMatch);
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                if (waitingDialog.isRunCanceled()) {
+                    return;
+                }
             }
         }
         if (waitingDialog != null) {
@@ -1266,9 +1266,9 @@ public class PeptideShaker {
             }
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                if (waitingDialog.isRunCanceled()) {
+                    return;
+                }
             }
         }
         if (waitingDialog != null) {
@@ -1295,13 +1295,13 @@ public class PeptideShaker {
         }
 
         HashMap<String, Double> fractionScores;
+        double peptideFractionProbability;
         for (String proteinKey : identification.getProteinIdentification()) {
-
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                if (waitingDialog.isRunCanceled()) {
+                    return;
+                }
             }
             fractionScores = new HashMap<String, Double>();
 
@@ -1314,7 +1314,7 @@ public class PeptideShaker {
                     if (!fractionScores.containsKey(fraction)) {
                         fractionScores.put(fraction, 1.0);
                     }
-                    fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getPeptideProbability());
+                    fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getFractionPEP(fraction));
                 }
             }
             psParameter = new PSParameter();
@@ -1358,9 +1358,9 @@ public class PeptideShaker {
             }
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                if (waitingDialog.isRunCanceled()) {
+                    return;
+                }
             }
         }
         if (waitingDialog != null) {
@@ -1417,9 +1417,9 @@ public class PeptideShaker {
                         toRemove.add(proteinSharedKey);
                     } else if (waitingDialog != null) {
                         waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                        if (waitingDialog.isRunCanceled()) {
+                            return;
+                        }
                     }
                 }
             }
@@ -1609,9 +1609,9 @@ public class PeptideShaker {
             }
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                if (waitingDialog.isRunCanceled()) {
+                    return;
+                }
             }
         }
 
@@ -1640,9 +1640,9 @@ public class PeptideShaker {
                     proteinList.addAll(tempList);
                     if (waitingDialog != null) {
                         waitingDialog.increaseSecondaryProgressValue(tempList.size());
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+                        if (waitingDialog.isRunCanceled()) {
+                            return;
+                        }
                     }
                 }
             }
