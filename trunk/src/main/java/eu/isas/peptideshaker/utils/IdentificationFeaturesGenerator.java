@@ -22,12 +22,10 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This class provides identification features at the protein level
@@ -670,9 +668,8 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the maximum number of spectra accounted by a single peptide Match
-     * all found in a protein match
+     * all found in a protein match.
      *
-     * @param proteinMatchKey the key of the protein match
      * @return the maximum number of spectra accounted by a single peptide Match
      * all found in a protein match
      */
@@ -1311,7 +1308,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * Sets the sorted protein key list.
      *
-     * @param sortedProteinKeys the new sorted protein key list
+     * @param proteinList the new sorted protein key list
      */
     public void setProteinKeys(ArrayList<String> proteinList) {
         this.proteinList = proteinList;
