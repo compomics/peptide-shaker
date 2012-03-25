@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.fileimport;
 
+import com.compomics.util.Util;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
@@ -32,9 +34,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 import org.xml.sax.SAXException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -173,11 +175,7 @@ public class FileImporter {
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
             if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
-                JOptionPane.showMessageDialog(waitingDialog,
-                        "We strongly recommend the use of UniProt accession numbers.\n"
-                        + "Some features will be limited if using other databases.",
-                        "Information",
-                        JOptionPane.INFORMATION_MESSAGE);
+                showDataBaseHelpDialog();
             }
 
             if (!sequenceFactory.concatenatedTargetDecoy()) {
@@ -594,7 +592,8 @@ public class FileImporter {
                 waitingDialog.setRunCanceled();
                 JOptionPane.showMessageDialog(null,
                         "The task used up all the available memory and had to be stopped.\n"
-                        + "You can increase the memory allocated to PeptideShaker in the Edit -> java options menu. More help can be found in the troublesection of our website http://peptide-shaker.googlecode.com.",
+                        + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
+                        + "More help can be found at our website http://peptide-shaker.googlecode.com.",
                         "Out Of Memory Error",
                         JOptionPane.ERROR_MESSAGE);
                 error.printStackTrace();
@@ -806,5 +805,38 @@ public class FileImporter {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Show a simple dialog saying that UniProt databases is recommended and
+     * display a link to the Database Help web page.
+     */
+    private void showDataBaseHelpDialog() {
+
+        // create an empty label to put the message in
+        JLabel label = new JLabel();
+
+        // html content 
+        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                + "We strongly recommend the use of UniProt databases. Some<br>"
+                + "features will be limited if using other databases.<br><br>"
+                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."
+                + "</body></html>");
+
+        // handle link events 
+        ep.addHyperlinkListener(new HyperlinkListener() {
+
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                }
+            }
+        });
+
+        ep.setBorder(null);
+        ep.setEditable(false);
+
+        JOptionPane.showMessageDialog(waitingDialog, ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
 }
