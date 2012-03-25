@@ -395,7 +395,7 @@ public class OutputGenerator {
      * @param aIncludeHeader
      * @param aOnlyStarred
      * @param aIncludeHidden
-     * @param unique
+     * @param aUniqueOnly
      * @param aProteinKey
      * @throws IOException
      */

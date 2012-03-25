@@ -1177,7 +1177,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
-        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
+        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1
+                && expectedModificationsTable.columnAtPoint(evt.getPoint()) == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
             expectedModificationsTable.setRowSelectionInterval(expectedModificationsTable.rowAtPoint(evt.getPoint()), expectedModificationsTable.rowAtPoint(evt.getPoint()));
             editExpectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
@@ -1198,7 +1199,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void availableModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_availableModificationsTableMouseClicked
-        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
+        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1
+                && availableModificationsTable.columnAtPoint(evt.getPoint()) == availableModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
             availableModificationsTable.setRowSelectionInterval(availableModificationsTable.rowAtPoint(evt.getPoint()), availableModificationsTable.rowAtPoint(evt.getPoint()));
             editAvailablePtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }

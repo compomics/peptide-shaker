@@ -7,7 +7,8 @@ import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 
 /**
- * This class contains all scoring maps from PeptideShaker and will be used to store the information
+ * This class contains all scoring maps from PeptideShaker and will be used to
+ * store the information.
  *
  * @author Marc Vaudel
  */
@@ -41,10 +42,11 @@ public class PSMaps implements UrParameter {
     }
 
     /**
-     * Constructor for the PSMaps
-     * @param proteinMap            The protein map
-     * @param PsmSpecificMap        The psm map
-     * @param PeptideSpecificMap    the peptide map
+     * Constructor for the PSMaps.
+     *
+     * @param proteinMap The protein map
+     * @param PsmSpecificMap The psm map
+     * @param PeptideSpecificMap the peptide map
      */
     public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap) {
         this.proteinMap = proteinMap;
@@ -53,7 +55,8 @@ public class PSMaps implements UrParameter {
     }
 
     /**
-     * Getter for the peptide map
+     * Getter for the peptide map.
+     *
      * @return the peptide map
      */
     public PeptideSpecificMap getPeptideSpecificMap() {
@@ -61,7 +64,8 @@ public class PSMaps implements UrParameter {
     }
 
     /**
-     * Getter for the psm map
+     * Getter for the psm map.
+     *
      * @return the psm map
      */
     public PsmSpecificMap getPsmSpecificMap() {
@@ -69,16 +73,18 @@ public class PSMaps implements UrParameter {
     }
 
     /**
-     * getter for the protein map
+     * getter for the protein map.
+     *
      * @return the protein map
      */
     public ProteinMap getProteinMap() {
         return proteinMap;
     }
-    
+
     /**
-     * Getter for the fractions map
-     * @return 
+     * Getter for the fractions map.
+     *
+     * @return the fractions map
      */
     public FractionsMap getFractionsMap() {
         return fractionsMap;
