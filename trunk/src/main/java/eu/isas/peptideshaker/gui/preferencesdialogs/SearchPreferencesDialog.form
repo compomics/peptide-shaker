@@ -2,12 +2,20 @@
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
-    <Container class="javax.swing.JPopupMenu" name="editExpectedPtmPopupMenu">
+    <Container class="javax.swing.JPopupMenu" name="expectedPtmPopupMenu">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="removeExpectedPtmJMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Remove Selected Modifications"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeExpectedPtmJMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="editExpectedPtmJMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Edit"/>
@@ -18,12 +26,20 @@
         </MenuItem>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPopupMenu" name="editAvailablePtmPopupMenu">
+    <Container class="javax.swing.JPopupMenu" name="availablePtmPopupMenu">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="addAvailablePtmJMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Add Selected Modifications"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addAvailablePtmJMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="editAvailablePtmJMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Edit"/>
@@ -516,7 +532,7 @@
                       <Table columnCount="4" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Name" type="java.lang.String"/>
-                        <Column editable="false" title="User Mod" type="java.lang.Boolean"/>
+                        <Column editable="false" title="U.M." type="java.lang.Boolean"/>
                         <Column editable="false" title="PSI-MOD" type="java.lang.String"/>
                       </Table>
                     </Property>
@@ -554,6 +570,9 @@
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="availableModificationsTableMouseReleased"/>
                     <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="availableModificationsTableMouseMoved"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="        new JTable() {&#xd;&#xa;&#xd;&#xa;            protected JTableHeader createDefaultTableHeader() {&#xd;&#xa;                return new JTableHeader(columnModel) {&#xd;&#xa;&#xd;&#xa;                    public String getToolTipText(MouseEvent e) {&#xd;&#xa;                        java.awt.Point p = e.getPoint();&#xd;&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xd;&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xd;&#xa;                        String tip = (String) availableModsTableToolTips.get(realIndex);&#xd;&#xa;                        return tip;&#xd;&#xa;                    }&#xd;&#xa;                };&#xd;&#xa;            }&#xd;&#xa;        };"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
