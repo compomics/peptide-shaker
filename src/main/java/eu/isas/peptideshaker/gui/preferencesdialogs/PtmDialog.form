@@ -78,7 +78,7 @@
                       <Component id="helpJButton" min="-2" max="-2" attributes="1"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="22" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -352,6 +352,9 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="neutralLossesTableMouseReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -377,6 +380,10 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="reporterIonsTableMousePressed"/>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="reporterIonsTableMouseReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -399,6 +406,7 @@
         <Component class="javax.swing.JButton" name="removeNeutralLoss">
           <Properties>
             <Property name="text" type="java.lang.String" value="-"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeNeutralLossActionPerformed"/>
@@ -407,6 +415,7 @@
         <Component class="javax.swing.JButton" name="removerReporterIon">
           <Properties>
             <Property name="text" type="java.lang.String" value="-"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removerReporterIonActionPerformed"/>

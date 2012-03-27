@@ -1175,8 +1175,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
-        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1
-                && expectedModificationsTable.columnAtPoint(evt.getPoint()) == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
+        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
             expectedModificationsTable.setRowSelectionInterval(expectedModificationsTable.rowAtPoint(evt.getPoint()), expectedModificationsTable.rowAtPoint(evt.getPoint()));
             editExpectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
@@ -1190,7 +1189,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private void editExpectedPtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editExpectedPtmJMenuItemActionPerformed
         int row = expectedModificationsTable.getSelectedRow();
         int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
-        new PtmDialog(this, ptmFactory.getPTM(ptmIndex));
+        new PtmDialog(this, ptmFactory.getPTM(modificationList.get(ptmIndex)));
     }//GEN-LAST:event_editExpectedPtmJMenuItemActionPerformed
 
     /**

@@ -169,13 +169,15 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             }
         }
         name = nameTxt.getText().trim();
-        if (ptmFactory.getDefaultModifications().contains(name)) {
+        if (ptmFactory.getDefaultModifications().contains(name)
+                && (currentPtm == null || !name.equals(currentPtm.getName()))) {
             JOptionPane.showMessageDialog(this, "A modification named " + name + " alredy exists in the "
                     + "default modification lists. Please select the default modification or use another name.",
                     "Modification already exists", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        if (ptmFactory.getUserModifications().contains(name) && currentPtm == null) {
+        if (ptmFactory.getUserModifications().contains(name)
+                && (currentPtm == null || !name.equals(currentPtm.getName()))) {
             int outcome = JOptionPane.showConfirmDialog(this, "There is already a modification named " + name
                     + ". Shall it be overwritten?", "Modification already exists", JOptionPane.YES_NO_OPTION);
             if (outcome == JOptionPane.NO_OPTION) {
@@ -193,22 +195,6 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             if (!aminoAcids.contains(aa.toUpperCase())) {
                 JOptionPane.showMessageDialog(this, "The following entry could not be parsed into an amino-acid: "
                         + aa, "Wrong amino-acid", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        }
-        for (int row = 0; row < neutralLossesTable.getRowCount(); row++) {
-            try {
-                double test = new Double((String) neutralLossesTable.getValueAt(row, 2));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Please verify the mass given for the neutral loss " + neutralLossesTable.getValueAt(row, 1), "Wrong neutral loss", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        }
-        for (int row = 0; row < reporterIonsTable.getRowCount(); row++) {
-            try {
-                double test = new Double((String) reporterIonsTable.getValueAt(row, 2));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Please verify the mass given for the neutral loss " + reporterIonsTable.getValueAt(row, 1), "Wrong neutral loss", JOptionPane.WARNING_MESSAGE);
                 return false;
             }
         }
@@ -334,10 +320,23 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
 
         neutralLossesTable.setModel(new NeutralLossesTable());
         neutralLossesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        neutralLossesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                neutralLossesTableMouseReleased(evt);
+            }
+        });
         jScrollPane2.setViewportView(neutralLossesTable);
 
         reporterIonsTable.setModel(new ReporterIonsTable());
         reporterIonsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        reporterIonsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                reporterIonsTableMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                reporterIonsTableMouseReleased(evt);
+            }
+        });
         jScrollPane3.setViewportView(reporterIonsTable);
 
         addNeutralLoss.setText("+");
@@ -355,6 +354,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         });
 
         removeNeutralLoss.setText("-");
+        removeNeutralLoss.setEnabled(false);
         removeNeutralLoss.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeNeutralLossActionPerformed(evt);
@@ -362,6 +362,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         });
 
         removerReporterIon.setText("-");
+        removerReporterIon.setEnabled(false);
         removerReporterIon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removerReporterIonActionPerformed(evt);
@@ -501,7 +502,6 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(cancelButton)
@@ -509,7 +509,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(helpJButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -530,13 +530,13 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
             for (int row = 0; row < neutralLossesTable.getRowCount(); row++) {
                 neutralLosses.add(new NeutralLoss((String) neutralLossesTable.getValueAt(row, 1),
-                        new Double((String) neutralLossesTable.getValueAt(row, 2))));
+                        (Double) neutralLossesTable.getValueAt(row, 2)));
             }
             newPTM.setNeutralLosses(neutralLosses);
             ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
             for (int row = 0; row < reporterIonsTable.getRowCount(); row++) {
                 reporterIons.add(new ReporterIon((String) reporterIonsTable.getValueAt(row, 1),
-                        new Double((String) reporterIonsTable.getValueAt(row, 2))));
+                        (Double) reporterIonsTable.getValueAt(row, 2)));
             }
             newPTM.setReporterIons(reporterIons);
             for (String ptm : ptmFactory.getPTMs()) {
@@ -553,11 +553,12 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                 }
             }
             if (currentPtm != null) {
-                ptmFactory.removeUserPtm(currentPtm.getName());
+                ptmFactory.replacePTM(currentPtm.getName(), newPTM);
+            } else {
+                ptmFactory.addUserPTM(newPTM);
             }
-            ptmFactory.addUserPTM(newPTM);
             ptmToPrideMap.putCVTerm(newPTM.getName(), cvTerm);
-            
+
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -656,7 +657,10 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         if (row != -1) {
             int index = neutralLossesTable.convertRowIndexToModel(row);
             neutralLosses.remove(index);
+            updateTables();
         }
+        row = neutralLossesTable.getSelectedRow();
+        removeNeutralLoss.setEnabled(row != -1);
     }//GEN-LAST:event_removeNeutralLossActionPerformed
 
     private void removerReporterIonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerReporterIonActionPerformed
@@ -664,8 +668,26 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         if (row != -1) {
             int index = reporterIonsTable.convertRowIndexToModel(row);
             reporterIons.remove(index);
+            updateTables();
         }
+        row = reporterIonsTable.getSelectedRow();
+        removerReporterIon.setEnabled(row != -1);
     }//GEN-LAST:event_removerReporterIonActionPerformed
+
+    private void neutralLossesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_neutralLossesTableMouseReleased
+        int row = neutralLossesTable.getSelectedRow();
+        removeNeutralLoss.setEnabled(row != -1);
+    }//GEN-LAST:event_neutralLossesTableMouseReleased
+
+    private void reporterIonsTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reporterIonsTableMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_reporterIonsTableMousePressed
+
+    private void reporterIonsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reporterIonsTableMouseReleased
+        int row = reporterIonsTable.getSelectedRow();
+        removerReporterIon.setEnabled(row != -1);
+    }//GEN-LAST:event_reporterIonsTableMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addNeutralLoss;
     private javax.swing.JButton addReporterIon;
@@ -779,6 +801,17 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return columnIndex != 0;
         }
+
+        @Override
+        public void setValueAt(Object aValue, int row, int column) {
+            int index = neutralLossesTable.convertColumnIndexToModel(row);
+            NeutralLoss neutralLoss = neutralLosses.get(index);
+            if (column == 1) {
+                neutralLoss.name = (String) aValue;
+            } else if (column == 2) {
+                neutralLoss.mass = (Double) aValue;
+            }
+        }
     }
 
     /**
@@ -837,6 +870,17 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return columnIndex != 0;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int row, int column) {
+            int index = reporterIonsTable.convertColumnIndexToModel(row);
+            ReporterIon reporterIon = reporterIons.get(index);
+            if (column == 1) {
+                reporterIon.setName((String) aValue);
+            } else if (column == 2) {
+                reporterIon.setMass((Double) aValue);
+            }
         }
     }
 }
