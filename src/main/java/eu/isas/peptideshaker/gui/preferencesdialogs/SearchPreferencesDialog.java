@@ -24,17 +24,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JColorChooser;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 
 /**
@@ -48,29 +43,33 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     /**
      * The tooltips for the expected variable mods.
      */
-    Vector<String> expectedVariableModsTableToolTips;
+    private Vector<String> expectedVariableModsTableToolTips;
     /**
-     * The search parameters needed by peptide-shaker
+     * The tooltips for the available mods.
+     */
+    private Vector<String> availableModsTableToolTips;
+    /**
+     * The search parameters needed by PeptideShaker.
      */
     private SearchParameters searchParameters;
     /**
-     * The enzyme factory
+     * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
-     * The peptide shaker gui
+     * The PeptideShakerGUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The compomics PTM factory
+     * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * A map of all loaded PTMs
+     * A map of all loaded PTMs.
      */
     private HashMap<String, PTM> ptms = new HashMap<String, PTM>();
     /**
-     * The selected ptms
+     * The selected ptms.
      */
     private ArrayList<String> modificationList = new ArrayList<String>();
     /**
@@ -83,11 +82,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * boolean indicating whether import-related data can be edited
+     * boolean indicating whether import-related data can be edited.
      */
     private boolean editable;
     /**
-     * The ptm to pride map
+     * The ptm to pride map.
      */
     private PtmToPrideMap ptmToPrideMap;
 
@@ -99,33 +98,50 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     public SearchPreferencesDialog(PeptideShakerGUI parent, boolean editable) {
         super(parent, true);
+
         this.editable = editable;
         this.peptideShakerGUI = parent;
         this.searchParameters = parent.getSearchParameters();
         this.profileFile = parent.getModificationProfileFile();
+
+        initComponents();
+        setUpGui();
+        setLocationRelativeTo(parent);
+        setVisible(true);
+    }
+
+    /**
+     * Set up the GUI.
+     */
+    private void setUpGui() {
+
         loadModifications();
         ptmToPrideMap = peptideShakerGUI.loadPrideToPtmMap();
-        initComponents();
 
+        // set the cell renderers
+        expectedModificationsTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
         expectedModificationsTable.getColumn("PSI-MOD").setCellRenderer(new HtmlLinksRenderer(
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         availableModificationsTable.getColumn("PSI-MOD").setCellRenderer(new HtmlLinksRenderer(
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        expectedModificationsTable.getColumn("U.M.").setCellRenderer(new NimbusCheckBoxRenderer());
+        availableModificationsTable.getColumn("U.M.").setCellRenderer(new NimbusCheckBoxRenderer());
 
         // set table properties
         expectedModificationsTable.getTableHeader().setReorderingAllowed(false);
         availableModificationsTable.getTableHeader().setReorderingAllowed(false);
 
-        // set the renderer for the color column
-        expectedModificationsTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
-
         availableModificationsTable.getColumn(" ").setMaxWidth(40);
         availableModificationsTable.getColumn(" ").setMinWidth(40);
+        availableModificationsTable.getColumn("U.M.").setMaxWidth(40);
+        availableModificationsTable.getColumn("U.M.").setMinWidth(40);
 
         expectedModificationsTable.getColumn(" ").setMaxWidth(40);
         expectedModificationsTable.getColumn(" ").setMinWidth(40);
         expectedModificationsTable.getColumn("  ").setMaxWidth(40);
         expectedModificationsTable.getColumn("  ").setMinWidth(40);
+        expectedModificationsTable.getColumn("U.M.").setMaxWidth(40);
+        expectedModificationsTable.getColumn("U.M.").setMinWidth(40);
 
         availableModificationsTable.getColumn("PSI-MOD").setMaxWidth(100);
         availableModificationsTable.getColumn("PSI-MOD").setMinWidth(100);
@@ -138,7 +154,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         expectedVariableModsTableToolTips.add("Modification Name");
         expectedVariableModsTableToolTips.add("Modification Family Name");
         expectedVariableModsTableToolTips.add("Modification Short Name");
+        expectedVariableModsTableToolTips.add("User Defined Modification");
         expectedVariableModsTableToolTips.add("The PSI-MOD CV Term Mapping");
+
+        availableModsTableToolTips = new Vector<String>();
+        availableModsTableToolTips.add(null);
+        availableModsTableToolTips.add("Modification Name");
+        availableModsTableToolTips.add("User Defined Modification");
+        availableModsTableToolTips.add("The PSI-MOD CV Term Mapping");
 
         // make sure that the scroll panes are see-through
         expectedModsScrollPane.getViewport().setOpaque(false);
@@ -152,8 +175,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         precursorUnit.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         loadValues();
         updateModificationLists();
-        setLocationRelativeTo(parent);
-        setVisible(true);
     }
 
     /**
@@ -165,9 +186,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        editExpectedPtmPopupMenu = new javax.swing.JPopupMenu();
+        expectedPtmPopupMenu = new javax.swing.JPopupMenu();
+        removeExpectedPtmJMenuItem = new javax.swing.JMenuItem();
         editExpectedPtmJMenuItem = new javax.swing.JMenuItem();
-        editAvailablePtmPopupMenu = new javax.swing.JPopupMenu();
+        availablePtmPopupMenu = new javax.swing.JPopupMenu();
+        addAvailablePtmJMenuItem = new javax.swing.JMenuItem();
         editAvailablePtmJMenuItem = new javax.swing.JMenuItem();
         backgroundPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
@@ -208,7 +231,21 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         saveAsProfileBtn = new javax.swing.JButton();
         loadProfileBtn = new javax.swing.JButton();
         availableModsScrollPane = new javax.swing.JScrollPane();
-        availableModificationsTable = new javax.swing.JTable();
+        availableModificationsTable =         new JTable() {
+
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        String tip = (String) availableModsTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         loadAvailableModsButton = new javax.swing.JButton();
         searchGuiParamsPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -217,13 +254,29 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         helpLineLabel = new javax.swing.JLabel();
         searchPreferencesHelpJButton = new javax.swing.JButton();
 
+        removeExpectedPtmJMenuItem.setText("Remove Selected Modifications");
+        removeExpectedPtmJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeExpectedPtmJMenuItemActionPerformed(evt);
+            }
+        });
+        expectedPtmPopupMenu.add(removeExpectedPtmJMenuItem);
+
         editExpectedPtmJMenuItem.setText("Edit");
         editExpectedPtmJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editExpectedPtmJMenuItemActionPerformed(evt);
             }
         });
-        editExpectedPtmPopupMenu.add(editExpectedPtmJMenuItem);
+        expectedPtmPopupMenu.add(editExpectedPtmJMenuItem);
+
+        addAvailablePtmJMenuItem.setText("Add Selected Modifications");
+        addAvailablePtmJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addAvailablePtmJMenuItemActionPerformed(evt);
+            }
+        });
+        availablePtmPopupMenu.add(addAvailablePtmJMenuItem);
 
         editAvailablePtmJMenuItem.setText("Edit");
         editAvailablePtmJMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -231,7 +284,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 editAvailablePtmJMenuItemActionPerformed(evt);
             }
         });
-        editAvailablePtmPopupMenu.add(editAvailablePtmJMenuItem);
+        availablePtmPopupMenu.add(editAvailablePtmJMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Search Parameters");
@@ -429,7 +482,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Name", "User Mod", "PSI-MOD"
+                " ", "Name", "U.M.", "PSI-MOD"
             }
         ) {
             Class[] types = new Class [] {
@@ -1177,7 +1230,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
             expectedModificationsTable.setRowSelectionInterval(expectedModificationsTable.rowAtPoint(evt.getPoint()), expectedModificationsTable.rowAtPoint(evt.getPoint()));
-            editExpectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            expectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_expectedModificationsTableMouseClicked
 
@@ -1198,10 +1251,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void availableModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_availableModificationsTableMouseClicked
-        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1
-                && availableModificationsTable.columnAtPoint(evt.getPoint()) == availableModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
+        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
             availableModificationsTable.setRowSelectionInterval(availableModificationsTable.rowAtPoint(evt.getPoint()), availableModificationsTable.rowAtPoint(evt.getPoint()));
-            editAvailablePtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            availablePtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_availableModificationsTableMouseClicked
 
@@ -1211,25 +1263,45 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAvailablePtmJMenuItemActionPerformed
-        new PtmDialog(this, null); // @TODO: need to input the ptm here!!
+        int row = availableModificationsTable.getSelectedRow();
+        new PtmDialog(this, ptmFactory.getPTM((String) availableModificationsTable.getValueAt(row, 1)));
     }//GEN-LAST:event_editAvailablePtmJMenuItemActionPerformed
+
+    /**
+     * Remove selected ptms from the list of expected ptms
+     *
+     * @param evt
+     */
+    private void removeExpectedPtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeExpectedPtmJMenuItemActionPerformed
+        removeModificationActionPerformed(null);
+    }//GEN-LAST:event_removeExpectedPtmJMenuItemActionPerformed
+
+    /**
+     * Add selected ptms to the list of expected ptms.
+     *
+     * @param evt
+     */
+    private void addAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAvailablePtmJMenuItemActionPerformed
+        addModificationsActionPerformed(null);
+    }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
     private javax.swing.JLabel availableModsLabel;
     private javax.swing.JScrollPane availableModsScrollPane;
+    private javax.swing.JPopupMenu availablePtmPopupMenu;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearProfileBtn;
     private javax.swing.JMenuItem editAvailablePtmJMenuItem;
-    private javax.swing.JPopupMenu editAvailablePtmPopupMenu;
     private javax.swing.JMenuItem editExpectedPtmJMenuItem;
-    private javax.swing.JPopupMenu editExpectedPtmPopupMenu;
     private javax.swing.JPanel enzymeAndFragmentIonsPanel;
     private javax.swing.JComboBox enzymesCmb;
     private javax.swing.JTable expectedModificationsTable;
     private javax.swing.JLabel expectedModsLabel;
     private javax.swing.JScrollPane expectedModsScrollPane;
+    private javax.swing.JPopupMenu expectedPtmPopupMenu;
     private javax.swing.JTextField fileTxt;
     private javax.swing.JTextField fragmentIonAccuracyTxt;
     private javax.swing.JLabel helpLineLabel;
@@ -1249,6 +1321,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JTextField precursorAccuracy;
     private javax.swing.JComboBox precursorUnit;
+    private javax.swing.JMenuItem removeExpectedPtmJMenuItem;
     private javax.swing.JButton removeModification;
     private javax.swing.JButton saveAsProfileBtn;
     private javax.swing.JPanel searchGuiParamsPanel;
@@ -1661,7 +1734,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 case 4:
                     return "Short";
                 case 5:
-                    return "User Mod";
+                    return "U.M.";
                 case 6:
                     return "PSI-MOD";
                 default:
@@ -1685,7 +1758,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     return searchParameters.getModificationProfile().getShortName(
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 5:
-                    return ptmFactory.isUserDefined(modificationList.get(row)); //@todo: change the cell renderer?
+                    return ptmFactory.isUserDefined(modificationList.get(row));
                 case 6:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
 

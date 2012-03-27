@@ -1295,7 +1295,7 @@ public class PeptideShaker {
         }
 
         HashMap<String, Double> fractionScores;
-        double peptideFractionProbability;
+        
         for (String proteinKey : identification.getProteinIdentification()) {
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();

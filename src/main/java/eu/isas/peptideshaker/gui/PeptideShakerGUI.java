@@ -391,6 +391,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         loadUserPreferences();
 
         initComponents();
+        
+        testJMenu.setVisible(false); // @TODO: remove completely when added as separate tab!
 
         overviewPanel = new OverviewPanel(this);
         overviewJPanel.add(overviewPanel);
@@ -601,7 +603,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         helpJMenuItem = new javax.swing.JMenuItem();
         logReportMenu = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
-        jMenu1 = new javax.swing.JMenu();
+        testJMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
 
@@ -1356,7 +1358,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         menuBar.add(helpMenu);
 
-        jMenu1.setText("Test");
+        testJMenu.setText("Test");
 
         jMenuItem1.setText("Protein table");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -1364,7 +1366,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 jMenuItem1ActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        testJMenu.add(jMenuItem1);
 
         jMenuItem2.setText("Peptide table");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -1372,9 +1374,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 jMenuItem2ActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        testJMenu.add(jMenuItem2);
 
-        menuBar.add(jMenu1);
+        menuBar.add(testJMenu);
 
         setJMenuBar(menuBar);
 
@@ -2704,7 +2706,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
-    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
@@ -2762,6 +2763,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu splitterMenu7;
     private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JPanel statsJPanel;
+    private javax.swing.JMenu testJMenu;
     private javax.swing.JMenu viewJMenu;
     private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem yIonCheckBoxMenuItem;
