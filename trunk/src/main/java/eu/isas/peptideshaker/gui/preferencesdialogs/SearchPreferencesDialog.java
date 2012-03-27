@@ -139,7 +139,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         expectedVariableModsTableToolTips.add("Modification Family Name");
         expectedVariableModsTableToolTips.add("Modification Short Name");
         expectedVariableModsTableToolTips.add("The PSI-MOD CV Term Mapping");
-        
+
         // make sure that the scroll panes are see-through
         expectedModsScrollPane.getViewport().setOpaque(false);
         availableModsScrollPane.getViewport().setOpaque(false);
@@ -429,14 +429,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Name", "PSI-MOD"
+                " ", "Name", "User Mod", "PSI-MOD"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -719,8 +719,15 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
-            searchParameters.getModificationProfile().setPeptideShakerName(name, name);
             if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                ArrayList<String> conflicts = new ArrayList<String>();
+                PTM oldPTM;
+                for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
+                    oldPTM = ptmFactory.getPTM(oldModification);
+                    if (Math.abs(oldPTM.getMass() - ptmFactory.getPTM(name).getMass()) < 0.01) {
+                        conflicts.add(oldModification);
+                    }
+                }
                 int index = name.length();
                 if (name.lastIndexOf(" ") > 0) {
                     index = name.indexOf(" ");
@@ -730,14 +737,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 }
                 searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
                 searchParameters.getModificationProfile().setColor(name, Color.lightGray);
-                ArrayList<String> conflicts = new ArrayList<String>();
-                PTM oldPTM;
-                for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                    oldPTM = ptmFactory.getPTM(oldModification);
-                    if (Math.abs(oldPTM.getMass() - ptmFactory.getPTM(name).getMass()) < 0.01) {
-                        conflicts.add(oldModification);
-                    }
-                }
                 if (!conflicts.isEmpty()) {
                     String report = name + " might be difficult to distinguish from ";
                     boolean first = true;
@@ -757,6 +756,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(this, report, "Modification Conflict", JOptionPane.WARNING_MESSAGE);
                 }
             }
+            searchParameters.getModificationProfile().setPeptideShakerName(name, name);
             modificationList.add(name);
         }
 
@@ -1011,13 +1011,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex() && expectedModificationsTable.getValueAt(row, column) != null) {
 
-                String tempValue = (String) expectedModificationsTable.getValueAt(row, column);
-
-                if (tempValue.lastIndexOf("<html>") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                }
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1081,27 +1075,28 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
 
         if (row != -1) {
+            int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
             if (column == expectedModificationsTable.getColumn("  ").getModelIndex()) {
-                Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(row, column));
+                Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(ptmIndex, column));
 
                 if (newColor != null) {
-                    searchParameters.getModificationProfile().setColor(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), newColor);
+                    searchParameters.getModificationProfile().setColor(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(ptmIndex)), newColor);
                     expectedModificationsTable.repaint();
                 }
             } else if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
-                //@TODO allow the user to select a MOD cv term
-
                 // open protein link in web browser
-                if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) expectedModificationsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                    if (((String) expectedModificationsTable.getValueAt(ptmIndex, column)).lastIndexOf("<html>") != -1) {
+                        String link = (String) expectedModificationsTable.getValueAt(ptmIndex, column);
+                        link = link.substring(link.indexOf("\"") + 1);
+                        link = link.substring(0, link.indexOf("\""));
 
-                    String link = (String) expectedModificationsTable.getValueAt(row, column);
-                    link = link.substring(link.indexOf("\"") + 1);
-                    link = link.substring(0, link.indexOf("\""));
-
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    BareBonesBrowserLaunch.openURL(link);
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                        BareBonesBrowserLaunch.openURL(link);
+                        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    } else {
+                        new PtmDialog(this, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+                    }
                 }
             }
         }
@@ -1152,20 +1147,23 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         int column = availableModificationsTable.columnAtPoint(evt.getPoint());
 
         if (row != -1) {
+            int ptmIndex = availableModificationsTable.convertRowIndexToModel(row);
             if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
-                //@TODO allow the user to select a MOD cv term
 
                 // open protein link in web browser
                 if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
                         && ((String) availableModificationsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+                    if (((String) availableModificationsTable.getValueAt(ptmIndex, column)).lastIndexOf("<html>") != -1) {
+                        String link = (String) availableModificationsTable.getValueAt(ptmIndex, column);
+                        link = link.substring(link.indexOf("\"") + 1);
+                        link = link.substring(0, link.indexOf("\""));
 
-                    String link = (String) availableModificationsTable.getValueAt(row, column);
-                    link = link.substring(link.indexOf("\"") + 1);
-                    link = link.substring(0, link.indexOf("\""));
-
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    BareBonesBrowserLaunch.openURL(link);
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                        BareBonesBrowserLaunch.openURL(link);
+                        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    } else {
+                        new PtmDialog(this, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+                    }
                 }
             }
         }
@@ -1173,8 +1171,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Show the edit ptm popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1
@@ -1186,17 +1184,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Open the edit ptm dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editExpectedPtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editExpectedPtmJMenuItemActionPerformed
-        new PtmDialog(this, null); // @TODO: need to input the ptm here!!
+        int row = expectedModificationsTable.getSelectedRow();
+        int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
+        new PtmDialog(this, ptmFactory.getPTM(ptmIndex));
     }//GEN-LAST:event_editExpectedPtmJMenuItemActionPerformed
 
     /**
      * Show the edit ptm popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void availableModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_availableModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1
@@ -1208,13 +1208,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Open the edit ptm dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAvailablePtmJMenuItemActionPerformed
         new PtmDialog(this, null); // @TODO: need to input the ptm here!!
     }//GEN-LAST:event_editAvailablePtmJMenuItemActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
@@ -1602,6 +1601,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             ((DefaultTableModel) availableModificationsTable.getModel()).addRow(new Object[]{
                         (i + 1),
                         allModificationsAsArray[i],
+                        ptmFactory.isUserDefined(allModificationsAsArray[i]),
                         psiModMapping
                     });
         }
@@ -1609,7 +1609,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         if (availableModificationsTable.getRowCount() > 0) {
             availableModificationsTable.setRowSelectionInterval(0, 0);
         }
-        
+
         addModifications.setEnabled(availableModificationsTable.getRowCount() > 0);
         removeModification.setEnabled(expectedModificationsTable.getRowCount() > 0);
 
@@ -1647,7 +1647,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 6;
+            return 7;
         }
 
         @Override
@@ -1662,6 +1662,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 case 4:
                     return "Short";
                 case 5:
+                    return "User Mod";
+                case 6:
                     return "PSI-MOD";
                 default:
                     return " ";
@@ -1684,18 +1686,17 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     return searchParameters.getModificationProfile().getShortName(
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 5:
+                    return ptmFactory.isUserDefined(modificationList.get(row)); //@todo: change the cell renderer?
+                case 6:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
 
                     CvTerm cvTerm = null;
                     if (ptmToPrideMap != null) {
                         cvTerm = ptmToPrideMap.getCVTerm(psName);
                     }
-                    if (cvTerm != null) {
-                        return getOlsAccessionLink(cvTerm.getAccession());
-                    } else {
+                    if (cvTerm == null) {
                         cvTerm = PtmToPrideMap.getDefaultCVTerm(psName);
                     }
-
                     if (cvTerm != null) {
                         return getOlsAccessionLink(cvTerm.getAccession());
                     }
@@ -1755,10 +1756,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @return the OLS web link
      */
     public String getOlsAccessionLink(String modAccession) {
-
         String accessionNumberWithLink = "<html><a href=\"http://www.ebi.ac.uk/ontology-lookup/?termId=" + modAccession + "\""
                 + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
                 + modAccession + "</font></a></html>";
         return accessionNumberWithLink;
+    }
+
+    /**
+     * Returns the ptm to pride map
+     *
+     * @return the ptm to pride map
+     */
+    public PtmToPrideMap getPtmToPrideMap() {
+        return ptmToPrideMap;
     }
 }

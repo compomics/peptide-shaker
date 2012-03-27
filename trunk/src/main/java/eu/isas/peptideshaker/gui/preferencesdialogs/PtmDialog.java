@@ -1,13 +1,18 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.ions.ReporterIon;
+import com.compomics.util.pride.CvTerm;
+import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.pride.MyComboBoxRenderer;
 import java.awt.Window;
 import java.util.*;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 import no.uib.olsdialog.OLSDialog;
 import no.uib.olsdialog.OLSInputable;
 
@@ -38,6 +43,22 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
      * The edited ptm.
      */
     private PTM currentPtm = null;
+    /**
+     * The neutral losses
+     */
+    ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
+    /**
+     * The reporter ions
+     */
+    ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
+    /**
+     * The ptm to pride map
+     */
+    private PtmToPrideMap ptmToPrideMap;
+    /**
+     * The modification cv term
+     */
+    private CvTerm cvTerm = null;
 
     /**
      * Creates a new PTM dialog.
@@ -49,6 +70,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         super(searchPreferencesDialog, true);
 
         this.searchPreferencesDialog = searchPreferencesDialog;
+        this.ptmToPrideMap = searchPreferencesDialog.getPtmToPrideMap();
         this.currentPtm = currentPTM;
 
         initComponents();
@@ -82,6 +104,13 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                 }
             }
             residuesTxt.setText(residues);
+            this.neutralLosses.addAll(currentPTM.getNeutralLosses());
+            this.reporterIons.addAll(currentPTM.getReporterIons());
+            updateTables();
+            cvTerm = ptmToPrideMap.getCVTerm(currentPTM.getName());
+            if (cvTerm != null) {
+                updateModMappingText();
+            }
             setTitle("Edit Modification");
         }
 
@@ -167,6 +196,22 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                 return false;
             }
         }
+        for (int row = 0; row < neutralLossesTable.getRowCount(); row++) {
+            try {
+                double test = new Double((String) neutralLossesTable.getValueAt(row, 2));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Please verify the mass given for the neutral loss " + neutralLossesTable.getValueAt(row, 1), "Wrong neutral loss", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+        for (int row = 0; row < reporterIonsTable.getRowCount(); row++) {
+            try {
+                double test = new Double((String) reporterIonsTable.getValueAt(row, 2));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Please verify the mass given for the neutral loss " + reporterIonsTable.getValueAt(row, 1), "Wrong neutral loss", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
         return true;
     }
 
@@ -179,6 +224,8 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         detailsPanel = new javax.swing.JPanel();
@@ -194,7 +241,30 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         jLabel6 = new javax.swing.JLabel();
         psiModMappingJTextField = new javax.swing.JTextField();
         olsJButton = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        neutralLossesTable = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        reporterIonsTable = new javax.swing.JTable();
+        addNeutralLoss = new javax.swing.JButton();
+        addReporterIon = new javax.swing.JButton();
+        removeNeutralLoss = new javax.swing.JButton();
+        removerReporterIon = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Modification");
@@ -258,6 +328,46 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             }
         });
 
+        jLabel7.setText("Neutral Losses:");
+
+        jLabel8.setText("Reporter Ions:");
+
+        neutralLossesTable.setModel(new NeutralLossesTable());
+        neutralLossesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(neutralLossesTable);
+
+        reporterIonsTable.setModel(new ReporterIonsTable());
+        reporterIonsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane3.setViewportView(reporterIonsTable);
+
+        addNeutralLoss.setText("+");
+        addNeutralLoss.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addNeutralLossActionPerformed(evt);
+            }
+        });
+
+        addReporterIon.setText("+");
+        addReporterIon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addReporterIonActionPerformed(evt);
+            }
+        });
+
+        removeNeutralLoss.setText("-");
+        removeNeutralLoss.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeNeutralLossActionPerformed(evt);
+            }
+        });
+
+        removerReporterIon.setText("-");
+        removerReporterIon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removerReporterIonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
         detailsPanel.setLayout(detailsPanelLayout);
         detailsPanelLayout.setHorizontalGroup(
@@ -265,28 +375,40 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             .addGroup(detailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(detailsPanelLayout.createSequentialGroup()
+                    .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(detailsPanelLayout.createSequentialGroup()
+                                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(detailsPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(78, 78, 78)))
+                        .addGroup(detailsPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel7)
+                            .addGap(64, 64, 64)))
                     .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(78, 78, 78)))
-                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(massTxt)
-                            .addComponent(psiModMappingJTextField)
-                            .addComponent(nameTxt)
-                            .addComponent(typeCmb, 0, 282, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(olsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(residuesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel8)
+                        .addGap(67, 67, 67)))
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(massTxt)
+                    .addComponent(psiModMappingJTextField)
+                    .addComponent(nameTxt)
+                    .addComponent(typeCmb, 0, 282, Short.MAX_VALUE)
+                    .addComponent(residuesTxt, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel4)
+                    .addComponent(olsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addNeutralLoss, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(addReporterIon, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(removeNeutralLoss, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removerReporterIon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         detailsPanelLayout.setVerticalGroup(
@@ -310,11 +432,32 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                     .addComponent(residuesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(psiModMappingJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(olsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(olsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(psiModMappingJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)))
+                    .addGroup(detailsPanelLayout.createSequentialGroup()
+                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(detailsPanelLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(jLabel8))
+                            .addGroup(detailsPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(detailsPanelLayout.createSequentialGroup()
+                                        .addComponent(addReporterIon)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(removerReporterIon))
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(detailsPanelLayout.createSequentialGroup()
+                        .addComponent(addNeutralLoss)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeNeutralLoss)))
                 .addContainerGap())
         );
 
@@ -342,30 +485,30 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton)
-                    .addComponent(helpJButton, javax.swing.GroupLayout.Alignment.LEADING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(cancelButton)
+                        .addComponent(okButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(helpJButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -384,6 +527,18 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             PTM otherPTM, newPTM = new PTM(typeCmb.getSelectedIndex(), nameTxt.getText().trim().toLowerCase(), new Double(massTxt.getText().trim()), parseResidues());
+            ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
+            for (int row = 0; row < neutralLossesTable.getRowCount(); row++) {
+                neutralLosses.add(new NeutralLoss((String) neutralLossesTable.getValueAt(row, 1),
+                        new Double((String) neutralLossesTable.getValueAt(row, 2))));
+            }
+            newPTM.setNeutralLosses(neutralLosses);
+            ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
+            for (int row = 0; row < reporterIonsTable.getRowCount(); row++) {
+                reporterIons.add(new ReporterIon((String) reporterIonsTable.getValueAt(row, 1),
+                        new Double((String) reporterIonsTable.getValueAt(row, 2))));
+            }
+            newPTM.setReporterIons(reporterIons);
             for (String ptm : ptmFactory.getPTMs()) {
                 if (currentPtm == null || !ptm.equals(currentPtm.getName())) {
                     otherPTM = ptmFactory.getPTM(ptm);
@@ -400,12 +555,8 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
             if (currentPtm != null) {
                 ptmFactory.removeUserPtm(currentPtm.getName());
             }
-
             ptmFactory.addUserPTM(newPTM);
-
-            // @TODO: we have store the PSI-MOD mappings!!!
-
-            // @TODO: update the psi-mod mappings in the SearchPreferencesDialog!
+            ptmToPrideMap.putCVTerm(newPTM.getName(), cvTerm);
             
             dispose();
         }
@@ -489,7 +640,35 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         new HelpDialog(this, getClass().getResource("/helpFiles/PtmDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
+
+    private void addNeutralLossActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNeutralLossActionPerformed
+        neutralLosses.add(new NeutralLoss("new neutral loss", 0.0));
+        updateTables();
+    }//GEN-LAST:event_addNeutralLossActionPerformed
+
+    private void addReporterIonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReporterIonActionPerformed
+        reporterIons.add(new ReporterIon("New reporter ion", 0.0));
+        updateTables();
+    }//GEN-LAST:event_addReporterIonActionPerformed
+
+    private void removeNeutralLossActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeNeutralLossActionPerformed
+        int row = neutralLossesTable.getSelectedRow();
+        if (row != -1) {
+            int index = neutralLossesTable.convertRowIndexToModel(row);
+            neutralLosses.remove(index);
+        }
+    }//GEN-LAST:event_removeNeutralLossActionPerformed
+
+    private void removerReporterIonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerReporterIonActionPerformed
+        int row = reporterIonsTable.getSelectedRow();
+        if (row != -1) {
+            int index = reporterIonsTable.convertRowIndexToModel(row);
+            reporterIons.remove(index);
+        }
+    }//GEN-LAST:event_removerReporterIonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addNeutralLoss;
+    private javax.swing.JButton addReporterIon;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JButton helpJButton;
@@ -499,11 +678,21 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField massTxt;
     private javax.swing.JTextField nameTxt;
+    private javax.swing.JTable neutralLossesTable;
     private javax.swing.JButton okButton;
     private javax.swing.JButton olsJButton;
     private javax.swing.JTextField psiModMappingJTextField;
+    private javax.swing.JButton removeNeutralLoss;
+    private javax.swing.JButton removerReporterIon;
+    private javax.swing.JTable reporterIonsTable;
     private javax.swing.JTextField residuesTxt;
     private javax.swing.JComboBox typeCmb;
     // End of variables declaration//GEN-END:variables
@@ -511,7 +700,8 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     @Override
     public void insertOLSResult(String field, String selectedValue,
             String accession, String ontologyShort, String ontologyLong, int modifiedRow, String mappedTerm, Map<String, String> metadata) {
-        setModMapping(selectedValue, accession, ontologyShort);
+        cvTerm = new CvTerm(ontologyShort, accession, selectedValue, null);
+        updateModMappingText();
     }
 
     @Override
@@ -520,14 +710,133 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     }
 
     /**
-     * Set the PSI-MOD mapping.
-     *
-     * @param name
-     * @param accession
-     * @param ontology
+     * Displays the PSI-MOD mapping information.
      */
-    public void setModMapping(String name, String accession, String ontology) {
-        psiModMappingJTextField.setText(name + " [" + accession + "]");
+    public void updateModMappingText() {
+        psiModMappingJTextField.setText(cvTerm.getName() + " [" + cvTerm.getAccession() + "]");
         psiModMappingJTextField.setCaretPosition(0);
+    }
+
+    public void updateTables() {
+        ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
+        ((DefaultTableModel) reporterIonsTable.getModel()).fireTableDataChanged();
+    }
+
+    /**
+     * Table model for the c term patterns table
+     */
+    private class NeutralLossesTable extends DefaultTableModel {
+
+        @Override
+        public int getRowCount() {
+            return neutralLosses.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return " ";
+                case 1:
+                    return "Name";
+                case 2:
+                    return "Mass";
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            switch (column) {
+                case 0:
+                    return row + 1;
+                case 1:
+                    return neutralLosses.get(row).name;
+                case 2:
+                    return neutralLosses.get(row).mass;
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            for (int i = 0; i < getRowCount(); i++) {
+                if (getValueAt(i, columnIndex) != null) {
+                    return getValueAt(i, columnIndex).getClass();
+                }
+            }
+            return String.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex != 0;
+        }
+    }
+
+    /**
+     * Table model for the c term patterns table
+     */
+    private class ReporterIonsTable extends DefaultTableModel {
+
+        @Override
+        public int getRowCount() {
+            return reporterIons.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return " ";
+                case 1:
+                    return "Name";
+                case 2:
+                    return "Mass";
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            switch (column) {
+                case 0:
+                    return row + 1;
+                case 1:
+                    return reporterIons.get(row).getName();
+                case 2:
+                    return reporterIons.get(row).theoreticMass;
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            for (int i = 0; i < getRowCount(); i++) {
+                if (getValueAt(i, columnIndex) != null) {
+                    return getValueAt(i, columnIndex).getClass();
+                }
+            }
+            return String.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex != 0;
+        }
     }
 }
