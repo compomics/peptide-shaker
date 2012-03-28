@@ -1819,20 +1819,19 @@ public class PtmPanel extends javax.swing.JPanel {
         final MouseEvent finalEvt = evt;
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Getting Peptides. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Getting Peptides 3. Please Wait...");
             }
         }, "ProgressDialog").start();
 
-        new Thread("DisplayThread") {
+        final Thread displayThread = new Thread("DisplayThread") {
 
-            @Override
             public void run() {
 
                 if (finalEvt != null) {
@@ -1878,7 +1877,20 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 progressDialog.dispose();
             }
-        }.start();
+        };
+
+        Thread appThread = new Thread() {
+
+            public void run() {
+                try {
+                    SwingUtilities.invokeAndWait(displayThread);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        appThread.start();
+
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
@@ -1891,20 +1903,19 @@ public class PtmPanel extends javax.swing.JPanel {
         final MouseEvent finalEvt = evt;
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Getting Related Peptides. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Getting Related Peptides. Please Wait..."); 
             }
-        }, "ProgressDialog").start();
+        }).start();
 
-        new Thread("DisplayThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
-            @Override
             public void run() {
 
                 relatedSelected = true;
@@ -1944,7 +1955,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 progressDialog.dispose();
             }
-        }.start();
+        });
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
 
     /**
@@ -2081,18 +2092,18 @@ public class PtmPanel extends javax.swing.JPanel {
         final JPanel finalRef = this;
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Getting Modifications. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Getting Modifications. Please Wait..."); 
             }
-        }, "ProgressDialog").start();
+        }).start();
 
-        new Thread("DisplayThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
@@ -2128,7 +2139,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 progressDialog.dispose();
             }
-        }.start();
+        });
     }//GEN-LAST:event_ptmJTableMouseReleased
 
     /**
@@ -2140,18 +2151,18 @@ public class PtmPanel extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.setIndeterminate(true);
             //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Getting Peptides. Please Wait...");
                     progressDialog.setVisible(true);
+                    progressDialog.setTitle("Getting Peptides 1. Please Wait..."); 
                 }
-            }, "ProgressDialog").start();
+            }).start();
 
-            new Thread("DisplayThread") {
+            final Thread displayThread = new Thread("DisplayThread") {
 
                 @Override
                 public void run() {
@@ -2159,7 +2170,19 @@ public class PtmPanel extends javax.swing.JPanel {
                     updatePeptideTable(progressDialog);
                     progressDialog.dispose();
                 }
-            }.start();
+            };
+
+            Thread appThread = new Thread() {
+
+                public void run() {
+                    try {
+                        SwingUtilities.invokeAndWait(displayThread);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            appThread.start();
         }
     }//GEN-LAST:event_ptmJTableKeyReleased
 
@@ -3032,18 +3055,18 @@ public class PtmPanel extends javax.swing.JPanel {
     public void displayResults() {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Updating Data. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Updating Data. Please Wait...");
             }
-        }, "ProgressDialog").start();
+        }).start();
 
-        new Thread("DisplayThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
@@ -3121,7 +3144,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 progressDialog.dispose();
             }
-        }.start();
+        });
     }
 
     /**
@@ -3235,26 +3258,25 @@ public class PtmPanel extends javax.swing.JPanel {
     public void updateSelection() {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Updating Selection. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Updating Selection. Please Wait...");
             }
-        }, "ProgressDialog").start();
+        }).start();
 
-        new Thread("DisplayThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 updateSelection(progressDialog);
-                progressDialog.setVisible(false);
                 progressDialog.dispose();
             }
-        }.start();
+        });
     }
 
     /**
@@ -3266,9 +3288,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         if (ptmJTable.getSelectedRow() != -1) {
 
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Getting Peptides. Please Wait...");
-            progressDialog.setVisible(true);
+            progressDialog.setTitle("Getting Peptides 2. Please Wait...");
 
             // clear the spectrum
             spectrumChartJPanel.removeAll();
@@ -4409,18 +4429,18 @@ public class PtmPanel extends javax.swing.JPanel {
                 || tableIndex == TableIndex.RELATED_PSMS_TABLE) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.setIndeterminate(true);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Copying to Clipboard. Please Wait...");
                     progressDialog.setVisible(true);
+                    progressDialog.setTitle("Copying to Clipboard. Please Wait...");
                 }
-            }, "ProgressDialog").start();
+            }).start();
 
-            new Thread("ExportThread") {
+            final Thread exportThread = new Thread("ExportThread") {
 
                 @Override
                 public void run() {
@@ -4449,7 +4469,19 @@ public class PtmPanel extends javax.swing.JPanel {
                         e.printStackTrace();
                     }
                 }
-            }.start();
+            };
+
+            Thread appThread = new Thread() {
+
+                public void run() {
+                    try {
+                        SwingUtilities.invokeAndWait(exportThread);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            appThread.start();
         }
     }
 
@@ -4603,98 +4635,98 @@ public class PtmPanel extends javax.swing.JPanel {
     private void updateModificationProfilesTable(ProgressDialogX progressDialog) {
 
         if (spectrumTabbedPane.isEnabledAt(0)) {
-        progressDialog.setTitle("Updating Modification Profile Table. Please Wait...");
-        progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Updating Modification Profile Table. Please Wait...");
+            progressDialog.setIndeterminate(true);
 
-        psmModProfilesTable.setModel(new DefaultTableModel() {
+            psmModProfilesTable.setModel(new DefaultTableModel() {
 
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-
-                if (columnIndex == 0) {
-                    return Double.class;
-                } else {
-                    return Double.class;
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
                 }
-            }
-        });
 
-        if (peptidesTable.getSelectedRow() != -1) {
+                @Override
+                public Class<?> getColumnClass(int columnIndex) {
 
-            PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
-            String sequence = peptideMatch.getTheoreticPeptide().getSequence();
-
-            ((DefaultTableModel) psmModProfilesTable.getModel()).addColumn("");
-
-            for (int i = 0; i < sequence.length(); i++) {
-                String columnName = "" + sequence.charAt(i) + (i + 1);
-                ((DefaultTableModel) psmModProfilesTable.getModel()).addColumn(columnName);
-            }
-
-            // add the peptide mod profile
-            PSPtmScores scores = new PSPtmScores();
-            scores = (PSPtmScores) peptideMatch.getUrParam(scores);
-            ArrayList<ModificationProfile> profiles = getModificationProfile(peptideMatch.getTheoreticPeptide(), scores);
-
-            ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{});
-
-            for (int i = 0; i < profiles.size(); i++) {
-                if (profiles.get(i).getPtmName().equalsIgnoreCase(getSelectedModification())) {
-                    double[][] tempProfile = profiles.get(i).getProfile();
-
-                    // get the delta scores
-                    for (int j = 0; j < tempProfile.length; j++) {
-                        psmModProfilesTable.setValueAt(tempProfile[j][ModificationProfile.DELTA_SCORE_ROW_INDEX], 0, j + 1);
+                    if (columnIndex == 0) {
+                        return Double.class;
+                    } else {
+                        return Double.class;
                     }
                 }
-            }
+            });
 
-            // add the peptide psm profiles
-            for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
+            if (peptidesTable.getSelectedRow() != -1) {
 
-                String spectrumKey = peptideMatch.getSpectrumMatches().get(i);
-                PSPtmScores ptmScores = new PSPtmScores();
-                ptmScores = (PSPtmScores) identification.getSpectrumMatch(spectrumKey).getUrParam(ptmScores);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
+                String sequence = peptideMatch.getTheoreticPeptide().getSequence();
 
-                if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
+                ((DefaultTableModel) psmModProfilesTable.getModel()).addColumn("");
 
-                    ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{(i + 1)});
+                for (int i = 0; i < sequence.length(); i++) {
+                    String columnName = "" + sequence.charAt(i) + (i + 1);
+                    ((DefaultTableModel) psmModProfilesTable.getModel()).addColumn(columnName);
+                }
 
-                    ArrayList<String> deltaScoreLocations = ptmScores.getPtmScoring(getSelectedModification()).getDeltaScorelocations();
+                // add the peptide mod profile
+                PSPtmScores scores = new PSPtmScores();
+                scores = (PSPtmScores) peptideMatch.getUrParam(scores);
+                ArrayList<ModificationProfile> profiles = getModificationProfile(peptideMatch.getTheoreticPeptide(), scores);
 
-                    for (int j = 0; j < deltaScoreLocations.size(); j++) {
+                ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{});
 
-                        String[] locations = deltaScoreLocations.get(j).split("\\|");
+                for (int i = 0; i < profiles.size(); i++) {
+                    if (profiles.get(i).getPtmName().equalsIgnoreCase(getSelectedModification())) {
+                        double[][] tempProfile = profiles.get(i).getProfile();
 
-                        for (int k = 0; k < locations.length; k++) {
-                            int location = new Integer(locations[k]);
-                            psmModProfilesTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getDeltaScore(deltaScoreLocations.get(j)), (i + 1), location);
+                        // get the delta scores
+                        for (int j = 0; j < tempProfile.length; j++) {
+                            psmModProfilesTable.setValueAt(tempProfile[j][ModificationProfile.DELTA_SCORE_ROW_INDEX], 0, j + 1);
                         }
                     }
-                } else {
-                    ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{(i + 1)});
                 }
 
-                // add zeros to the empty cells
-                for (int j = 1; j < psmModProfilesTable.getColumnCount(); j++) {
-                    if (psmModProfilesTable.getValueAt((i + 1), j) == null) {
-                        psmModProfilesTable.setValueAt(0.0, (i + 1), j);
+                // add the peptide psm profiles
+                for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
+
+                    String spectrumKey = peptideMatch.getSpectrumMatches().get(i);
+                    PSPtmScores ptmScores = new PSPtmScores();
+                    ptmScores = (PSPtmScores) identification.getSpectrumMatch(spectrumKey).getUrParam(ptmScores);
+
+                    if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
+
+                        ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{(i + 1)});
+
+                        ArrayList<String> deltaScoreLocations = ptmScores.getPtmScoring(getSelectedModification()).getDeltaScorelocations();
+
+                        for (int j = 0; j < deltaScoreLocations.size(); j++) {
+
+                            String[] locations = deltaScoreLocations.get(j).split("\\|");
+
+                            for (int k = 0; k < locations.length; k++) {
+                                int location = new Integer(locations[k]);
+                                psmModProfilesTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getDeltaScore(deltaScoreLocations.get(j)), (i + 1), location);
+                            }
+                        }
+                    } else {
+                        ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{(i + 1)});
+                    }
+
+                    // add zeros to the empty cells
+                    for (int j = 1; j < psmModProfilesTable.getColumnCount(); j++) {
+                        if (psmModProfilesTable.getValueAt((i + 1), j) == null) {
+                            psmModProfilesTable.setValueAt(0.0, (i + 1), j);
+                        }
                     }
                 }
-            }
 
-            // set the cell renderers
-            for (int i = 1; i < psmModProfilesTable.getColumnCount(); i++) {
-                //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
+                // set the cell renderers
+                for (int i = 1; i < psmModProfilesTable.getColumnCount(); i++) {
+                    //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
 //                ((JSparklinesBarChartTableCellRenderer) psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
-                //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
+                    //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
+                }
             }
-        }
         }
     }
 }

@@ -1244,7 +1244,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     if (exported) {

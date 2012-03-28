@@ -367,7 +367,7 @@ public class OutputGenerator {
                         }
 
                         writer.close();
-                        progressDialog.setVisible(false);
+                        
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -376,7 +376,7 @@ public class OutputGenerator {
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        progressDialog.setVisible(false);
+                        
                         progressDialog.dispose();
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
@@ -765,14 +765,13 @@ public class OutputGenerator {
                         }
 
                         writer.close();
-                        progressDialog.setVisible(false);
+                        
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
 
                     } catch (Exception e) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1071,14 +1070,13 @@ public class OutputGenerator {
                         }
 
                         writer.close();
-                        progressDialog.setVisible(false);
+                        
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
 
                     } catch (Exception e) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1416,14 +1414,13 @@ public class OutputGenerator {
                         }
 
                         writer.close();
-                        progressDialog.setVisible(false);
+                        
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
 
                     } catch (Exception e) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));

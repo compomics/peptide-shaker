@@ -334,7 +334,6 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                             Export.exportComponent(graphicsPanel, graphicsPanel.getBounds(), new File(finalSelectedFile), currentImageType);
                         }
 
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                         peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 

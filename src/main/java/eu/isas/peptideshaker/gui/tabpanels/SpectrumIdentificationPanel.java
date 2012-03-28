@@ -2552,7 +2552,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                     fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     // update the slider tooltips
@@ -2576,7 +2575,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     fileSelectionChanged();
 
                 } catch (Exception e) {
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                     peptideShakerGUI.catchException(e);
 
@@ -2759,10 +2757,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
 
                 updateSelection();
-                
                 peptideShakerGUI.mgfFileSelectionChanged(fileSelected);
-
-                progressDialog.setVisible(false);
                 progressDialog.dispose();
 
                 // return the peptide shaker icon to the standard version
@@ -3362,12 +3357,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 }
 
                                 writer.close();
-                                progressDialog.setVisible(false);
+
                                 progressDialog.dispose();
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to file:\n" + selectedFile.getPath(), "Copied to File", JOptionPane.INFORMATION_MESSAGE);
 
                             } catch (IOException e) {
-                                progressDialog.setVisible(false);
                                 progressDialog.dispose();
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
@@ -3376,7 +3370,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     }.start();
 
                 } catch (IOException e) {
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();

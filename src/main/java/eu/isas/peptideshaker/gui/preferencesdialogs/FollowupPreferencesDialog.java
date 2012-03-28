@@ -552,7 +552,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         b.close();
                         f.close();
 
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
 
                         // change the peptide shaker icon back to the default version
@@ -567,7 +566,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                     }
                 }
@@ -733,7 +731,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 b.close();
                                 f.close();
 
-                                progressDialog.setVisible(false);
                                 progressDialog.dispose();
 
                                 // change the peptide shaker icon back to the default version
@@ -751,7 +748,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
 
                 if (progressDialog != null) {
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
             }
@@ -803,7 +799,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         b.close();
                         f.close();
 
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
 
                         JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
@@ -817,7 +812,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                     }
                 }
@@ -895,7 +889,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         b.close();
                         f.close();
 
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
 
                         // change the peptide shaker icon back to the default version
@@ -910,7 +903,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                     }
                 }
@@ -987,7 +979,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         b.close();
                         f.close();
 
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
 
                         // change the peptide shaker icon back to the default version
@@ -1002,7 +993,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                     }
                 }
@@ -1078,7 +1068,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         b.close();
                         f.close();
 
-                        progressDialog.setVisible(false);
+
                         progressDialog.dispose();
 
                         // change the peptide shaker icon back to the default version
@@ -1093,7 +1083,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-                        progressDialog.setVisible(false);
+
                         progressDialog.dispose();
                     }
                 }
@@ -1169,7 +1159,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         b.close();
                         f.close();
 
-                        progressDialog.setVisible(false);
+
                         progressDialog.dispose();
 
                         // change the peptide shaker icon back to the default version
@@ -1184,7 +1174,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-                        progressDialog.setVisible(false);
+
                         progressDialog.dispose();
                     }
                 }

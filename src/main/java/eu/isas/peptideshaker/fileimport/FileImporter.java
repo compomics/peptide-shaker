@@ -571,8 +571,9 @@ public class FileImporter {
                     return 1;
                 }
 
-                waitingHandler.appendReport("Files import completed. "
-                        + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra. " + nRetained + " first hits passed the initial filtering.");
+                waitingHandler.appendReport("File import completed. "
+                        + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.");
+                waitingHandler.appendReport(nRetained + " first hits passed the initial filtering.");
                 waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.setProteinCountMap(proteinCount);
                 peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter);
