@@ -1,19 +1,18 @@
 package eu.isas.peptideshaker.scoring;
 
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import eu.isas.peptideshaker.gui.ModificationDialog;
-import eu.isas.peptideshaker.gui.WaitingDialog;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class contains the various peptides matches sorted according to their variable modification status
- * 
+ * This class contains the various peptides matches sorted according to their
+ * variable modification status
+ *
  * @author Marc Vaudel
  */
 public class PeptideSpecificMap implements Serializable {
@@ -23,7 +22,8 @@ public class PeptideSpecificMap implements Serializable {
      */
     static final long serialVersionUID = 1464466551122518117L;
     /**
-     * The peptide target/decoy maps indexed by the modification profile of the peptide.
+     * The peptide target/decoy maps indexed by the modification profile of the
+     * peptide.
      */
     private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<String, TargetDecoyMap>();
     /**
@@ -47,41 +47,40 @@ public class PeptideSpecificMap implements Serializable {
 
     /**
      * Estimate the posterior error probabilities.
-     * 
-     * @param waitingDialog a reference to the waiting dialog
+     *
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
-        
-        
-        if (waitingDialog != null) {
-        int max = getNEntries();
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(max);
+    public void estimateProbabilities(WaitingHandler waitingHandler) {
+
+        if (waitingHandler != null) {
+            int max = getNEntries();
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(max);
         }
-        
-        
+
         for (String modifications : peptideMaps.keySet()) {
-            
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
+
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
             }
-            
+
             if (!groupedMaps.contains(modifications)) {
-                peptideMaps.get(modifications).estimateProbabilities(waitingDialog);
+                peptideMaps.get(modifications).estimateProbabilities(waitingHandler);
             }
         }
-        
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
     /**
-     * Returns the posterior error probability of a peptide match at the given score
+     * Returns the posterior error probability of a peptide match at the given
+     * score
      *
-     * @param peptideMatchKey   the peptide match
-     * @param score             the score of the match
-     * @return                  the posterior error probability
+     * @param peptideMatchKey the peptide match
+     * @param score the score of the match
+     * @return the posterior error probability
      */
     public double getProbability(String peptideMatchKey, double score) {
         peptideMatchKey = getCorrectedKey(peptideMatchKey);
@@ -92,7 +91,7 @@ public class PeptideSpecificMap implements Serializable {
      * Adds a point in the peptide specific map.
      *
      * @param probabilityScore The estimated peptide probabilistic score
-     * @param peptideMatch     The corresponding peptide match
+     * @param peptideMatch The corresponding peptide match
      */
     public void addPoint(double probabilityScore, PeptideMatch peptideMatch) {
         String key = getKey(peptideMatch);
@@ -103,7 +102,8 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * Returns a list of keys from maps presenting a suspicious input
+     * Returns a list of keys from maps presenting a suspicious input.
+     *
      * @return a list of keys from maps presenting a suspicious input
      */
     public ArrayList<String> suspiciousInput() {
@@ -117,7 +117,8 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * This method puts all the small peptide groups in the dustbin to be analyzed together.
+     * This method puts all the small peptide groups in the dustbin to be
+     * analyzed together.
      *
      */
     public void cure() {
@@ -136,10 +137,10 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * This method returns the indexing key of a peptide match after curation
+     * This method returns the indexing key of a peptide match after curation.
      *
-     * @param specificKey   the considered peptide match
-     * @return              the corresponding key
+     * @param specificKey the considered peptide match
+     * @return the corresponding key
      */
     public String getCorrectedKey(String specificKey) {
         if (groupedMaps.contains(specificKey)) {
@@ -149,9 +150,9 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * This method returns the indexing key of a peptide match
+     * This method returns the indexing key of a peptide match.
      *
-     * @param peptideMatch  the considered peptide match
+     * @param peptideMatch the considered peptide match
      * @return the corresponding key
      */
     public String getKey(PeptideMatch peptideMatch) {
@@ -159,7 +160,7 @@ public class PeptideSpecificMap implements Serializable {
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.getTheoreticPtm() != null
                     && modificationMatch.isVariable()) {
-                    modifications.add(modificationMatch.getTheoreticPtm());
+                modifications.add(modificationMatch.getTheoreticPtm());
             }
         }
         Collections.sort(modifications);
@@ -171,7 +172,8 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the statistically retained peptide groups
+     * Returns the statistically retained peptide groups.
+     *
      * @return the statistically retained peptide groups
      */
     public ArrayList<String> getKeys() {
@@ -183,18 +185,20 @@ public class PeptideSpecificMap implements Serializable {
         }
         return results;
     }
-    
+
     /**
-     * Returns the desired target decoy map
-     * @param key   the key of the desired map
-     * @return      the corresponding target decoy map
+     * Returns the desired target decoy map.
+     *
+     * @param key the key of the desired map
+     * @return the corresponding target decoy map
      */
     public TargetDecoyMap getTargetDecoyMap(String key) {
         return peptideMaps.get(key);
     }
-    
+
     /**
-     * Returns the number of entries of the map
+     * Returns the number of entries of the map.
+     *
      * @return the number of entries of the map
      */
     public int getNEntries() {

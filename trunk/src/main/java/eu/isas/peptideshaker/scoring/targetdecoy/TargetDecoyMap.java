@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import eu.isas.peptideshaker.gui.WaitingDialog;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +26,8 @@ public class TargetDecoyMap implements Serializable {
      */
     private ArrayList<Double> scores;
     /**
-     * The maximal amount of target hits comprised between two subsequent decoy hits
+     * The maximal amount of target hits comprised between two subsequent decoy
+     * hits
      */
     private Integer nmax;
     /**
@@ -43,7 +44,8 @@ public class TargetDecoyMap implements Serializable {
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
 
     /**
-     * Returns the posterior error probability estimated at the given score
+     * Returns the posterior error probability estimated at the given score.
+     *
      * @param score the given score
      * @return the estimated posterior error probability
      */
@@ -70,7 +72,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns the number of target hits found at the given score
+     * Returns the number of target hits found at the given score.
+     *
      * @param score the given score
      * @return the number of target hits found at the given score
      */
@@ -79,7 +82,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * the number of decoy hits found at the given score
+     * Returns the number of decoy hits found at the given score.
+     *
      * @param score the given score
      * @return the number of decoy hits found at the given score
      */
@@ -88,8 +92,9 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Puts a new point in the target/decoy map at the given score
-     * @param score   The given score
+     * Puts a new point in the target/decoy map at the given score.
+     *
+     * @param score The given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void put(double score, boolean isDecoy) {
@@ -104,7 +109,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Removes a point in the target/decoy map at the given score
+     * Removes a point in the target/decoy map at the given score.
+     *
      * @param score the given score
      * @param isDecoy boolean indicating whether the hit is decoy
      */
@@ -124,13 +130,13 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Constructs a target/decoy map
+     * Constructs a target/decoy map.
      */
     public TargetDecoyMap() {
     }
 
     /**
-     * Estimates the metrics of the map: Nmax and NtargetOnly
+     * Estimates the metrics of the map: Nmax and NtargetOnly.
      */
     private void estimateNs() {
         if (scores == null) {
@@ -164,10 +170,10 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Estimates the posterior error probabilities in this map.
-     * 
-     * @param waitingDialog waiting dialog to display the progress (can be null)
+     *
+     * @param waitingHandler the handler displaying feedback to the user (can be null)
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
+    public void estimateProbabilities(WaitingHandler waitingHandler) {
         if (scores == null) {
             estimateScores();
         }
@@ -229,17 +235,18 @@ public class TargetDecoyMap implements Serializable {
                 point.p = 1;
             }
             previousPoint = point;
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-        if (waitingDialog.isRunCanceled()) {
-            return;
-        }
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
             }
         }
     }
 
     /**
-     * Returns the Nmax metric
+     * Returns the Nmax metric.
+     *
      * @return the Nmax metric
      */
     public int getnMax() {
@@ -250,7 +257,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns the number of target hits before the first decoy hit
+     * Returns the number of target hits before the first decoy hit.
+     *
      * @return the number of target hits before the first decoy hit
      */
     public Integer getnTargetOnly() {
@@ -258,7 +266,7 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Sorts the scores implemented in this map
+     * Sorts the scores implemented in this map.
      */
     private void estimateScores() {
         scores = new ArrayList<Double>(hitMap.keySet());
@@ -267,6 +275,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the sorted scores implemented in this map.
+     *
      * @return the sorted scores implemented in this map.
      */
     public ArrayList<Double> getScores() {
@@ -277,7 +286,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Adds all the points from another target/decoy map
+     * Adds all the points from another target/decoy map.
+     *
      * @param anOtherMap another target/decoy map
      */
     public void addAll(TargetDecoyMap anOtherMap) {
@@ -295,7 +305,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns a boolean indicating if a suspicious input was detected
+     * Returns a boolean indicating if a suspicious input was detected.
+     *
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput() {
@@ -311,7 +322,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns the current target decoy results
+     * Returns the current target decoy results.
+     *
      * @return the current target decoy results
      */
     public TargetDecoyResults getTargetDecoyResults() {
@@ -319,7 +331,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns the target decoy series
+     * Returns the target decoy series.
+     *
      * @return the target decoy series
      */
     public TargetDecoySeries getTargetDecoySeries() {
@@ -327,7 +340,8 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns the window size used for pep estimation
+     * Returns the window size used for pep estimation.
+     *
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
@@ -338,15 +352,17 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Sets the window size used for pep estimation
+     * Sets the window size used for pep estimation.
+     *
      * @param windowSize the window size used for pep estimation
      */
     public void setWindowSize(int windowSize) {
         this.windowSize = windowSize;
     }
-    
+
     /**
-     * Returns the size of the map
+     * Returns the size of the map.
+     *
      * @return the size of the map
      */
     public int getMapSize() {
