@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -10,7 +6,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -18,43 +13,47 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * A dialog for selecting missing mgf files.
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
-     * Map of the missing mgf files indexed by ID file
+     * Map of the missing mgf files indexed by ID file.
      */
     private HashMap<File, String> missingFiles;
     /**
-     * Map of the new mgf files indexed by the new ones
+     * Map of the new mgf files indexed by the new ones.
      */
     private HashMap<String, File> newFiles = new HashMap<String, File>();
     /**
-     * The list of id files presenting a missing mgf file
+     * The list of id files presenting a missing mgf file.
      */
     private ArrayList<File> idFiles;
     /**
-     * The last selected folder
+     * The last selected folder.
      */
     private File lastSelectedFolder;
     /**
-     * The waiting dialog
+     * The waiting dialog.
      */
     private WaitingDialog waitingDialog;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
-     * Creates new form MgfFilesNotFoundDialog
+     * Creates a new MgfFilesNotFoundDialog.
+     *
+     * @param waitingDialog a reference to the waiting dialog
+     * @param missingFiles the list of missing mgf files.
      */
-    public MgfFilesNotFoundDialog(WaitingDialog parent, HashMap<File, String> missingFiles) {
-        super(parent, true);
+    public MgfFilesNotFoundDialog(WaitingDialog waitingDialog, HashMap<File, String> missingFiles) {
+        super(waitingDialog, true);
 
-        this.waitingDialog = parent;
+        this.waitingDialog = waitingDialog;
         setLocationRelativeTo(waitingDialog);
         this.missingFiles = missingFiles;
 
@@ -71,7 +70,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Table model for the file table
+     * Table model for the file table.
      */
     private class FileTable extends DefaultTableModel {
 
@@ -141,7 +140,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads files from the selected folder
+     * Loads files from the selected folder.
      */
     private void newFolderLoaded() {
         folderTxt.setText(lastSelectedFolder.getAbsolutePath());
@@ -149,7 +148,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Updates the file list of the selected folder
+     * Updates the file list of the selected folder.
      */
     private void updateFileList() {
         File[] files = lastSelectedFolder.listFiles();
@@ -181,7 +180,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Validates the input
+     * Validates the input.
      *
      * @return a boolean indicating whether a spectrum file is given for every
      * id file
@@ -220,8 +219,9 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
-        jLabel1.setText("Spectrum files needed for identification processing were mising. Please select them manually:");
+        jLabel1.setText("Spectrum files needed for identification processing were missing. Select them manually:");
 
         fileTable.setModel(new FileTable());
         jScrollPane1.setViewportView(fileTable);
@@ -288,7 +288,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(18, 18, 18)
                                 .addComponent(folderTxt)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -300,6 +300,9 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
                         .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -332,6 +335,11 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Lets the user select the folder to find the missing files in.
+     * 
+     * @param evt 
+     */
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Change Folder");
@@ -363,11 +371,21 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_browseButtonActionPerformed
 
+    /**
+     * Cancels the selection, closes the dialog and then cancels the import.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         waitingDialog.setRunCanceled();
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Saves the mgf files and closes the dialog.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             for (String idName : newFiles.keySet()) {
@@ -377,6 +395,11 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Add an mgf file.
+     * 
+     * @param evt 
+     */
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         int row = fileTable.getSelectedRow();
         if (row == -1) {
@@ -395,6 +418,11 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         updateFileList();
     }//GEN-LAST:event_addButtonActionPerformed
 
+    /**
+     * Remove an mgf file from the list.
+     * 
+     * @param evt 
+     */
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         int row = fileTable.getSelectedRow();
         if (row >= 0) {

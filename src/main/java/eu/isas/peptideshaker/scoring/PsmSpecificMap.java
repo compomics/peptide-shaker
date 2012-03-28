@@ -2,66 +2,69 @@ package eu.isas.peptideshaker.scoring;
 
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import eu.isas.peptideshaker.gui.WaitingDialog;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This map will store target decoy informations about the psms grouped according to their precursor charge.
+ * This map will store target decoy informations about the psms grouped
+ * according to their precursor charge.
  *
  * @author Marc Vaudel
  */
 public class PsmSpecificMap implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = 746516685643358198L;
     /**
-     * The map of the psm target/decoy maps indexed by the psm charge
+     * The map of the psm target/decoy maps indexed by the psm charge.
      */
     private HashMap<Integer, TargetDecoyMap> psmsMaps = new HashMap<Integer, TargetDecoyMap>();
     /**
-     * Map used to group charges together in order to ensure statistical relevance
+     * Map used to group charges together in order to ensure statistical.
+     * relevance
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PsmSpecificMap() {
     }
 
     /**
      * Estimate the posterior error probabilities of the psms.
-     * 
-     * @param waitingDialog a reference to the waiting dialog
+     *
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
-        
+    public void estimateProbabilities(WaitingHandler waitingHandler) {
+
         int max = getMapsSize();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
-        
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
+
         for (int charge : psmsMaps.keySet()) {
-            
-            waitingDialog.increaseSecondaryProgressValue();
-            
+
+            waitingHandler.increaseSecondaryProgressValue();
+
             if (!grouping.keySet().contains(charge)) {
-                psmsMaps.get(charge).estimateProbabilities(waitingDialog);
+                psmsMaps.get(charge).estimateProbabilities(waitingHandler);
             }
         }
-        
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
-     * Returns the probability of the given spectrum match at the given score
-     * @param specificKey   the spectrum match of interest
-     * @param score         the corresponding score
-     * @return              the probability of the given spectrum match at the given score
+     * Returns the probability of the given spectrum match at the given score.
+     *
+     * @param specificKey the spectrum match of interest
+     * @param score the corresponding score
+     * @return the probability of the given spectrum match at the given score
      */
     public double getProbability(int specificKey, double score) {
         specificKey = getCorrectedKey(specificKey);
@@ -69,19 +72,22 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the probability of the given spectrum match at the given score
-     * @param specificKey   the spectrum match of interest
-     * @param score         the corresponding score
-     * @return              the probability of the given spectrum match at the given score
+     * Returns the probability of the given spectrum match at the given score.
+     *
+     * @param specificKey the spectrum match of interest
+     * @param score the corresponding score
+     * @return the probability of the given spectrum match at the given score
      */
     public double getProbability(String specificKey, double score) {
         return getProbability(new Integer(specificKey), score);
     }
 
     /**
-     * Adds a point representing the corresponding spectrum match at a given score
+     * Adds a point representing the corresponding spectrum match at a given
+     * score.
+     *
      * @param probabilityScore the estimated score
-     * @param spectrumMatch    the spectrum match of interest
+     * @param spectrumMatch the spectrum match of interest
      */
     public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch) {
         int key = getKey(spectrumMatch);
@@ -92,7 +98,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns a list of keys from maps presenting a suspicious input
+     * Returns a list of keys from maps presenting a suspicious input.
+     *
      * @return a list of keys from maps presenting a suspicious input
      */
     public ArrayList<String> suspiciousInput() {
@@ -106,7 +113,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * This method groups the statistically non significant psms with the ones having a charge directly smaller
+     * This method groups the statistically non significant psms with the ones
+     * having a charge directly smaller.
      */
     public void cure() {
         ArrayList<Integer> charges = new ArrayList(psmsMaps.keySet());
@@ -128,7 +136,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns a map of the keys: charge -> group name
+     * Returns a map of the keys: charge -> group name.
+     *
      * @return a map of the keys: charge -> group name
      */
     public HashMap<Integer, String> getKeys() {
@@ -142,7 +151,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Return a key of the selected charge group indexed by the main charge
+     * Return a key of the selected charge group indexed by the main charge.
+     *
      * @param mainCharge the selected charge
      * @return key of the corresponding charge group
      */
@@ -157,8 +167,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the key (here the charge) associated to the corresponding spectrum match after curation.
-     * 
+     * Returns the key (here the charge) associated to the corresponding
+     * spectrum match after curation.
+     *
      * @param specificKey the spectrum match of interest
      * @return the corresponding key
      */
@@ -170,8 +181,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the key (here the charge) associated to the corresponding spectrum match after curation.
-     * 
+     * Returns the key (here the charge) associated to the corresponding
+     * spectrum match after curation.
+     *
      * @param specificKey the spectrum match of interest
      * @return the corresponding key
      */
@@ -180,8 +192,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the key (here the charge) associated to the corresponding spectrum match.
-     * 
+     * Returns the key (here the charge) associated to the corresponding
+     * spectrum match.
+     *
      * @param spectrumMatch the spectrum match of interest
      * @return the corresponding key
      */
@@ -195,17 +208,17 @@ public class PsmSpecificMap implements Serializable {
 
     /**
      * Returns the desired target decoy map.
-     * 
-     * @param key   the key of the desired map
-     * @return      the corresponding target decoy map
+     *
+     * @param key the key of the desired map
+     * @return the corresponding target decoy map
      */
     public TargetDecoyMap getTargetDecoyMap(int key) {
         return psmsMaps.get(key);
     }
-    
+
     /**
      * Returns the overall number of points in the map.
-     * 
+     *
      * @return the overall number of points in the map
      */
     public int getMapsSize() {
@@ -218,8 +231,8 @@ public class PsmSpecificMap implements Serializable {
 
     /**
      * Returns the maximal precursor charge observed in the identified spectra.
-     * 
-     * @return the maximal precursor charge observed in the identified spectra 
+     *
+     * @return the maximal precursor charge observed in the identified spectra
      */
     public int getMaxCharge() {
         int maxCharge = 0;

@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
-import eu.isas.peptideshaker.gui.WaitingDialog;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,23 +44,23 @@ public class InputMap {
     /**
      * Estimates the posterior error probability for each search engine
      *
-     * @param waitingDialog a reference to the waiting dialog
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
+    public void estimateProbabilities(WaitingHandler waitingHandler) {
 
         int max = getNEntries();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (TargetDecoyMap hitmap : inputMap.values()) {
-            waitingDialog.increaseSecondaryProgressValue();
-            hitmap.estimateProbabilities(waitingDialog);
-            if (waitingDialog.isRunCanceled()) {
+            waitingHandler.increaseSecondaryProgressValue();
+            hitmap.estimateProbabilities(waitingHandler);
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**

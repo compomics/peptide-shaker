@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import eu.isas.peptideshaker.fileimport.MgfFilesNotFoundDialog;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -17,12 +19,8 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import java.util.HashMap;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -32,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class WaitingDialog extends javax.swing.JDialog {
+public class WaitingDialog extends javax.swing.JDialog implements WaitingHandler {
 
     /**
      * Needed for the shaking feature.
@@ -693,12 +691,12 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setIndeterminate(false);
         progressBar.setValue(progressBar.getMaximum());
         progressBar.setStringPainted(true);
-        this.setTitle("Importing Data - Completed");
+        this.setTitle("Importing Data - Completed!");
 
         secondaryProgressBarSplitPane.setDividerLocation(0);
         secondaryJProgressBar.setIndeterminate(false);
         secondaryJProgressBar.setValue(secondaryJProgressBar.getMaximum());
-        secondaryJProgressBar.setString("Import Completed");
+        secondaryJProgressBar.setString("Import Completed!");
 
         // change the peptide shaker icon back to the default version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -936,5 +934,17 @@ public class WaitingDialog extends javax.swing.JDialog {
         currentTipIndex = newTipIndex;
 
         return htmlStart + tips.get(currentTipIndex) + htmlEnd;
+    }
+
+    public void displayMessage(String message, String title, int messageType) {
+        JOptionPane.showMessageDialog(this, message, title, messageType);
+    }
+
+    public void displayHtmlMessage(JEditorPane messagePane, String title, int messageType) {
+        JOptionPane.showMessageDialog(this, messagePane, title, messageType);
+    }
+    
+    public void displayMissingMgfFilesMessage(HashMap<File, String> missingMgfFiles) {
+        new MgfFilesNotFoundDialog(this, missingMgfFiles);
     }
 }

@@ -23,9 +23,9 @@ import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
-import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -148,7 +148,7 @@ public class PeptideShaker {
     /**
      * Method used to import identification from identification result files.
      *
-     * @param waitingDialog A dialog to display the feedback
+     * @param waitingHandler the handler displaying feedback to the user
      * @param idFilter The identification filter to use
      * @param idFiles The files to import
      * @param spectrumFiles The corresponding spectra (can be empty: spectra
@@ -159,10 +159,10 @@ public class PeptideShaker {
      * scoring
      * @param projectDetails The project details
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
+    public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
-        waitingDialog.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
+        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
@@ -170,16 +170,16 @@ public class PeptideShaker {
         identification.setInMemory(false);
         identification.setAutomatedMemoryManagement(true);
         identification.setSerializationDirectory(SERIALIZATION_DIRECTORY);
-        fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter, metrics);
+        fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences);
     }
 
     /**
-     * This method processes the identifications and fills the peptide shaker
+     * This method processes the identifications and fills the PeptideShaker
      * maps.
      *
      * @param inputMap The input map
-     * @param waitingDialog A dialog to display the feedback
+     * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters
      * @param annotationPreferences
      * @param idFilter
@@ -187,102 +187,102 @@ public class PeptideShaker {
      * @throws IOException
      * @throws Exception
      */
-    public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter)
+    public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter)
             throws IllegalArgumentException, IOException, Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!identification.memoryCheck()) {
-            waitingDialog.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.");
+            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.");
         }
-        if (waitingDialog.isRunCanceled()) {
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Computing assumptions probabilities.");
-        inputMap.estimateProbabilities(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Computing assumptions probabilities.");
+        inputMap.estimateProbabilities(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Saving assumptions probabilities.");
-        attachAssumptionsProbabilities(inputMap, waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Saving assumptions probabilities.");
+        attachAssumptionsProbabilities(inputMap, waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Selecting best peptide per spectrum.");
-        fillPsmMap(inputMap, waitingDialog);
+        waitingHandler.appendReport("Selecting best peptide per spectrum.");
+        fillPsmMap(inputMap, waitingHandler);
         psmMap.cure();
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Computing PSM probabilities.");
-        psmMap.estimateProbabilities(waitingDialog);
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Computing PSM probabilities.");
+        psmMap.estimateProbabilities(waitingHandler);
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Saving probabilities, building peptides and proteins.");
-        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Saving probabilities, building peptides and proteins.");
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Generating peptide map.");
-        fillPeptideMaps(waitingDialog);
+        waitingHandler.appendReport("Generating peptide map.");
+        fillPeptideMaps(waitingHandler);
         peptideMap.cure();
-        if (waitingDialog.isRunCanceled()) {
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Computing peptide probabilities.");
-        peptideMap.estimateProbabilities(waitingDialog);
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Computing peptide probabilities.");
+        peptideMap.estimateProbabilities(waitingHandler);
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Saving peptide probabilities.");
-        attachPeptideProbabilities(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Saving peptide probabilities.");
+        attachPeptideProbabilities(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Generating protein map.");
-        fillProteinMap(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Generating protein map.");
+        fillProteinMap(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.");
-        cleanProteinGroups(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.");
+        cleanProteinGroups(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Correcting protein probabilities.");
-        proteinMap.estimateProbabilities(waitingDialog);
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Correcting protein probabilities.");
+        proteinMap.estimateProbabilities(waitingHandler);
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Saving protein probabilities.");
-        attachProteinProbabilities(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Saving protein probabilities.");
+        attachProteinProbabilities(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Validating identifications at 1% FDR.");
-        fdrValidation(waitingDialog);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Validating identifications at 1% FDR.");
+        fdrValidation(waitingHandler);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Scoring PTMs in peptides.");
-        scorePeptidePtms(waitingDialog, searchParameters, annotationPreferences);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Scoring PTMs in peptides.");
+        scorePeptidePtms(waitingHandler, searchParameters, annotationPreferences);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingDialog.appendReport("Scoring PTMs in proteins.");
-        scoreProteinPtms(waitingDialog, searchParameters, annotationPreferences, idFilter);
-        waitingDialog.increaseProgressValue();
-        if (waitingDialog.isRunCanceled()) {
+        waitingHandler.appendReport("Scoring PTMs in proteins.");
+        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, idFilter);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
             return;
         }
         String report = "Identification processing completed.\n\n";
@@ -349,18 +349,18 @@ public class PeptideShaker {
             }
         }
 
-        waitingDialog.appendReport(report);
+        waitingHandler.appendReport(report);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
-        waitingDialog.setRunFinished();
+        waitingHandler.setRunFinished();
     }
 
     /**
      * Makes a preliminary validation of hits. By default a 1% FDR is used for
      * all maps.
      *
-     * @param waitingDialog a reference to the waiting dialog
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    public void fdrValidation(WaitingDialog waitingDialog) {
+    public void fdrValidation(WaitingHandler waitingHandler) {
 
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
@@ -370,14 +370,14 @@ public class PeptideShaker {
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
         int max = peptideMap.getKeys().size() + psmMap.getKeys().keySet().size();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String mapKey : peptideMap.getKeys()) {
-            if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
-            waitingDialog.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressValue();
             currentMap = peptideMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
             currentResults.setClassicalEstimators(true);
@@ -387,10 +387,10 @@ public class PeptideShaker {
         }
 
         for (int mapKey : psmMap.getKeys().keySet()) {
-            if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
-            waitingDialog.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressValue();
             currentMap = psmMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
             currentResults.setClassicalEstimators(true);
@@ -399,10 +399,10 @@ public class PeptideShaker {
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
 
-        validateIdentifications(waitingDialog.getSecondaryProgressBar());
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        validateIdentifications(waitingHandler.getSecondaryProgressBar());
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
@@ -519,14 +519,14 @@ public class PeptideShaker {
      * Fills the psm specific map.
      *
      * @param inputMap The input map
-     * @param waitingDialog waiting dialog used to display the progress
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    private void fillPsmMap(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
+    private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler) throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         int max = identification.getSpectrumIdentification().size();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
         ArrayList<String> identifications;
         // map of the first hits for this spectrum: score -> max protein count -> max search engine votes
         HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>> peptideAssumptions;
@@ -613,8 +613,8 @@ public class PeptideShaker {
             psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
             identification.addMatchParameter(spectrumKey, psParameter);
             identification.setMatchChanged(spectrumMatch);
-            waitingDialog.increaseSecondaryProgressValue();
-            if (waitingDialog.isRunCanceled()) {
+            waitingHandler.increaseSecondaryProgressValue();
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
@@ -622,7 +622,7 @@ public class PeptideShaker {
         // the protein count map is no longer needed
         proteinCount.clear();
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
@@ -630,18 +630,18 @@ public class PeptideShaker {
      * assumptions.
      *
      * @param inputMap
-     * @param waitingDialog a reference to the waiting dialog
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachAssumptionsProbabilities(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
+    private void attachAssumptionsProbabilities(InputMap inputMap, WaitingHandler waitingHandler) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getSpectrumIdentification().size();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String spectrumKey : identification.getSpectrumIdentification()) {
 
-            waitingDialog.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressValue();
 
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
@@ -671,12 +671,12 @@ public class PeptideShaker {
             }
 
             identification.setMatchChanged(spectrumMatch);
-            if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
@@ -690,27 +690,29 @@ public class PeptideShaker {
     /**
      * Attaches the spectrum posterior error probabilities to the spectrum
      * matches.
+     *
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingDialog waitingDialog) {
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(identification.getSpectrumIdentification().size());
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentification().size());
         }
         PSParameter psParameter = new PSParameter();
         for (String spectrumKey : identification.getSpectrumIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
             psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPsmProbabilityScore()));
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
             }
             identification.buildPeptidesAndProteins(spectrumKey);
-            if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -718,74 +720,74 @@ public class PeptideShaker {
      * Attaches scores to possible PTM locations to spectrum matches.
      *
      * @param inspectedSpectra
-     * @param waitingDialog a reference to the waiting dialog
+     * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters
      * @param annotationPreferences
      * @throws Exception
      */
-    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
+    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         SpectrumMatch spectrumMatch;
 
         int max = inspectedSpectra.size();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String spectrumKey : inspectedSpectra) {
-            waitingDialog.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressValue();
             spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             scorePTMs(spectrumMatch, searchParameters, annotationPreferences);
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Scores the PTMs of all validated peptides.
      *
-     * @param waitingDialog waiting dialog which provides feedback to the user
+     * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scorePeptidePtms(WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
+    public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PeptideMatch peptideMatch;
 
         int max = identification.getPeptideIdentification().size();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String peptideKey : identification.getPeptideIdentification()) {
             peptideMatch = identification.getPeptideMatch(peptideKey);
             scorePTMs(peptideMatch, searchParameters, annotationPreferences);
-            waitingDialog.increaseSecondaryProgressValue();
-            if (waitingDialog.isRunCanceled()) {
+            waitingHandler.increaseSecondaryProgressValue();
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Scores the PTMs of all validated proteins.
      *
-     * @param waitingDialog waiting dialog which provides feedback to the user
+     * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    public void scoreProteinPtms(WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
-        scoreProteinPtms(waitingDialog, searchParameters, annotationPreferences, null);
+    public void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
+        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, null);
     }
 
     /**
      * Scores the PTMs of all validated proteins.
      *
-     * @param waitingDialog waiting dialog which provides feedback to the user
+     * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
      * @param idFilter the identification filter, needed only to get max values
@@ -793,13 +795,13 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    private void scoreProteinPtms(WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter) throws Exception {
+    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         ProteinMatch proteinMatch;
 
         int max = identification.getProteinIdentification().size();
-        waitingDialog.setSecondaryProgressDialogIntermediate(false);
-        waitingDialog.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
         // The spectrum counting preferences are here the default preferences.
@@ -823,8 +825,8 @@ public class PeptideShaker {
                     maxSpectrumCounting = tempSpectrumCounting;
                 }
             }
-            waitingDialog.increaseSecondaryProgressValue();
-            if (waitingDialog.isRunCanceled()) {
+            waitingHandler.increaseSecondaryProgressValue();
+            if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
@@ -833,7 +835,7 @@ public class PeptideShaker {
             metrics.setnValidatedProteins(nValidatedProteins);
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
@@ -1195,13 +1197,16 @@ public class PeptideShaker {
 
     /**
      * Fills the peptide specific map.
+     *
+     * @param waitingHandler the handler displaying feedback to the user
+     * @throws Exception
      */
-    private void fillPeptideMaps(WaitingDialog waitingDialog) throws Exception {
+    private void fillPeptideMaps(WaitingHandler waitingHandler) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
         }
         HashMap<String, Double> fractionScores;
         String fraction;
@@ -1226,15 +1231,15 @@ public class PeptideShaker {
             }
             identification.addMatchParameter(peptideKey, psParameter);
             peptideMap.addPoint(probaScore, peptideMatch);
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-                if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
                     return;
                 }
             }
         }
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -1249,14 +1254,16 @@ public class PeptideShaker {
     /**
      * Attaches the peptide posterior error probabilities to the peptide
      * matches.
+     *
+     * @param waitingHandler
      */
-    private void attachPeptideProbabilities(WaitingDialog waitingDialog) {
+    private void attachPeptideProbabilities(WaitingHandler waitingHandler) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
 
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
         }
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
@@ -1264,24 +1271,24 @@ public class PeptideShaker {
             for (String fraction : psParameter.getFractions()) {
                 psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getFractionScore(fraction)));
             }
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-                if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
                     return;
                 }
             }
         }
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
     /**
      * Fills the protein map.
      *
-     * @param waitingDialog a reference to the waiting dialog
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    private void fillProteinMap(WaitingDialog waitingDialog) throws Exception {
+    private void fillProteinMap(WaitingHandler waitingHandler) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         double probaScore;
         PSParameter psParameter = new PSParameter();
@@ -1289,17 +1296,17 @@ public class PeptideShaker {
 
         int max = identification.getProteinIdentification().size();
 
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(max);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(max);
         }
 
         HashMap<String, Double> fractionScores;
-        
+
         for (String proteinKey : identification.getProteinIdentification()) {
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-                if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
                     return;
                 }
             }
@@ -1326,8 +1333,8 @@ public class PeptideShaker {
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
 
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -1340,12 +1347,14 @@ public class PeptideShaker {
 
     /**
      * Attaches the protein posterior error probability to the protein matches.
+     *
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachProteinProbabilities(WaitingDialog waitingDialog) {
+    private void attachProteinProbabilities(WaitingHandler waitingHandler) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
         }
         PSParameter psParameter = new PSParameter();
         double proteinProbability;
@@ -1356,15 +1365,15 @@ public class PeptideShaker {
             for (String fraction : psParameter.getFractions()) {
                 psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
             }
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-                if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
                     return;
                 }
             }
         }
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -1374,8 +1383,12 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever it is attempted to attach two
      * different spectrum matches to the same spectrum from the same search
      * engine.
+     *
+     * @param waitingHandler the handler displaying feedback to the user
+     * @throws IOException
+     * @throws IllegalArgumentException
      */
-    private void cleanProteinGroups(WaitingDialog waitingDialog) throws IOException, IllegalArgumentException {
+    private void cleanProteinGroups(WaitingHandler waitingHandler) throws IOException, IllegalArgumentException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
@@ -1386,9 +1399,9 @@ public class PeptideShaker {
 
         int max = 3 * identification.getProteinIdentification().size();
 
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.setMaxSecondaryProgressValue(max);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            waitingHandler.setMaxSecondaryProgressValue(max);
         }
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
@@ -1415,9 +1428,9 @@ public class PeptideShaker {
                     }
                     if (better) {
                         toRemove.add(proteinSharedKey);
-                    } else if (waitingDialog != null) {
-                        waitingDialog.increaseSecondaryProgressValue();
-                        if (waitingDialog.isRunCanceled()) {
+                    } else if (waitingHandler != null) {
+                        waitingHandler.increaseSecondaryProgressValue();
+                        if (waitingHandler.isRunCanceled()) {
                             return;
                         }
                     }
@@ -1429,8 +1442,8 @@ public class PeptideShaker {
             psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
             proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
             identification.removeMatch(proteinKey);
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
             }
         }
 
@@ -1465,7 +1478,7 @@ public class PeptideShaker {
                 try {
                     currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 } catch (Exception e) {
-                    waitingDialog.appendReport("Protein not found: " + proteinMatch.getMainMatch() + "."); // This error is likely to be caught at an earlier stage
+                    waitingHandler.appendReport("Protein not found: " + proteinMatch.getMainMatch() + "."); // This error is likely to be caught at an earlier stage
                 }
 
                 if (currentProtein != null) {
@@ -1607,9 +1620,9 @@ public class PeptideShaker {
                     identification.setMatchChanged(proteinMatch);
                 }
             }
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-                if (waitingDialog.isRunCanceled()) {
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
                     return;
                 }
             }
@@ -1638,9 +1651,9 @@ public class PeptideShaker {
                     tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                     Collections.sort(tempList);
                     proteinList.addAll(tempList);
-                    if (waitingDialog != null) {
-                        waitingDialog.increaseSecondaryProgressValue(tempList.size());
-                        if (waitingDialog.isRunCanceled()) {
+                    if (waitingHandler != null) {
+                        waitingHandler.increaseSecondaryProgressValue(tempList.size());
+                        if (waitingHandler.isRunCanceled()) {
                             return;
                         }
                     }
@@ -1652,9 +1665,9 @@ public class PeptideShaker {
         metrics.setMaxNSpectra(-maxSpectra);
         metrics.setMaxMW(maxMW);
 
-        if (waitingDialog != null) {
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
-            waitingDialog.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIntermediate(true);
+            waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");
         }
     }
 
