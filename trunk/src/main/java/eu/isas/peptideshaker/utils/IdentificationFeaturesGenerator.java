@@ -374,8 +374,8 @@ public class IdentificationFeaturesGenerator {
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
             try {
-                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
-                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey,tempPreferences, peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
+                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, tempPreferences, 
+                        peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 return 0.0;
@@ -391,8 +391,9 @@ public class IdentificationFeaturesGenerator {
      */
     private double estimateSpectrumCounting(String proteinMatchKey) {
         try {
-            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
-            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
+            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, 
+                    peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                    peptideShakerGUI.getIdFilter().getMaxPepLength());
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return 0.0;
@@ -409,8 +410,10 @@ public class IdentificationFeaturesGenerator {
      * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
      * @return the spectrum counting index
+     * @throws IOException  
      */
-    public static double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey, SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException {
+    public static double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey, 
+            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException {
 
         double ratio, result;
         PSParameter pSParameter = new PSParameter();
@@ -1148,7 +1151,7 @@ public class IdentificationFeaturesGenerator {
                     || (peptideShakerGUI.getMetrics().getMaxSpectrumCounting() <= 0)
                     || (peptideShakerGUI.getMetrics().getMaxMW() == null)
                     || (peptideShakerGUI.getMetrics().getMaxMW() <= 0);
-
+            
             // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
             HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
                     new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();

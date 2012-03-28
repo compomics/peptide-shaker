@@ -1229,7 +1229,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
-            expectedModificationsTable.setRowSelectionInterval(expectedModificationsTable.rowAtPoint(evt.getPoint()), expectedModificationsTable.rowAtPoint(evt.getPoint()));
+            
+            boolean rowAlreadySelected = false;
+            
+            for (int i=0; i<expectedModificationsTable.getSelectedRows().length && !rowAlreadySelected; i++) {
+                if (expectedModificationsTable.getSelectedRows()[i] == expectedModificationsTable.rowAtPoint(evt.getPoint())) {
+                    rowAlreadySelected = true;
+                }
+            }
+            
+            if (!rowAlreadySelected) {
+                expectedModificationsTable.setRowSelectionInterval(expectedModificationsTable.rowAtPoint(evt.getPoint()), expectedModificationsTable.rowAtPoint(evt.getPoint()));
+            }
+            
             expectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_expectedModificationsTableMouseClicked
@@ -1252,7 +1264,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void availableModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_availableModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
-            availableModificationsTable.setRowSelectionInterval(availableModificationsTable.rowAtPoint(evt.getPoint()), availableModificationsTable.rowAtPoint(evt.getPoint()));
+            
+            boolean rowAlreadySelected = false;
+            
+            for (int i=0; i<availableModificationsTable.getSelectedRows().length && !rowAlreadySelected; i++) {
+                if (availableModificationsTable.getSelectedRows()[i] == availableModificationsTable.rowAtPoint(evt.getPoint())) {
+                    rowAlreadySelected = true;
+                }
+            }
+            
+            if (!rowAlreadySelected) {
+                availableModificationsTable.setRowSelectionInterval(availableModificationsTable.rowAtPoint(evt.getPoint()), availableModificationsTable.rowAtPoint(evt.getPoint()));
+            }
+            
             availablePtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_availableModificationsTableMouseClicked
