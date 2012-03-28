@@ -1033,7 +1033,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                     OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
 
                     try {
-                        outputGenerator.getProteinsOutput(null, false, true, true, false,
+                        outputGenerator.getProteinsOutput(
+                                null, false, true, true, false, false, false,
                                 false, false, false, false, false, false,
                                 false, false, false, false, false, false);
                     } catch (Exception e) {

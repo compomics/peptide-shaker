@@ -41,7 +41,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI the parent frame
      * @param modal
-     * @param graphicsPanel the graphics panel to exportt.
+     * @param graphicsPanel the graphics panel to export
      */
     public ExportGraphicsDialog(PeptideShakerGUI peptideShakerGUI, boolean modal, Component graphicsPanel) {
         super(peptideShakerGUI, modal);

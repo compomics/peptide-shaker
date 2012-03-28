@@ -3419,9 +3419,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 if (tableIndex == TableIndex.PROTEIN_TABLE) {
                     ArrayList<String> selectedProteins = getDisplayedProteins();
                     outputGenerator.getProteinsOutput(
-                            selectedProteins, true, false, true, true,
+                            selectedProteins, true, false, true, true, true,
                             true, true, true, true, false, true,
-                            true, true, true, true, false, false);
+                            true, true, true, true, false, true, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
                     String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));

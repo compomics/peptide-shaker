@@ -939,9 +939,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void proteinExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportAllActionPerformed
 
         try {
-            outputGenerator.getProteinsOutput(null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), proteinPI.isSelected(),
+            outputGenerator.getProteinsOutput(null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
                     proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
-                    proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(), proteinHidden.isSelected());
+                    proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(), 
+                    true, proteinHidden.isSelected());
         } catch (IOException e) {
             // change the peptide shaker icon back to the default version
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));

@@ -87,8 +87,10 @@ public class OutputGenerator {
      * for line number
      * @param aOnlyValidated boolean indicating whether only validated hits
      * shall be returned
-     * @param aAccession boolean indicating whether the accessions shall be
-     * output. Well, should always be the case but why not...
+     * @param aMainAccession boolean indicating whether the accessions shall be
+     * output
+     * @param aOtherAccessions boolean indicating whether the the additional
+     * protein accesion numbers should be included or not
      * @param aPiDetails boolean indicating whether protein inference details
      * shall be output
      * @param aDescription boolean indicating whether protein description of the
@@ -109,22 +111,25 @@ public class OutputGenerator {
      * output
      * @param aIncludeHeader boolean indicating whether the header shall be
      * output
-     * @param aOnlyStarred boolean indicatign whether only starred proteins
+     * @param aOnlyStarred boolean indicating whether only starred proteins
      * shall be output
+     * @param aShowStar boolean indicating wheter the starred proteins will be
+     * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
      * @throws IOException exception thrown whenever an error occurred while
      * writing the results
      */
-    public void getProteinsOutput(ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aPiDetails,
+    public void getProteinsOutput(ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
-            boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aIncludeHidden) throws IOException {
+            boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) throws IOException {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
         final boolean indexes = aIndexes;
         final boolean onlyValidated = aOnlyValidated;
-        final boolean accession = aAccession;
+        final boolean mainAccession = aMainAccession;
+        final boolean otherAccessions = aOtherAccessions;
         final boolean piDetails = aPiDetails;
         final boolean description = aDescription;
         final boolean nPeptides = aNPeptides;
@@ -137,6 +142,7 @@ public class OutputGenerator {
         final boolean confidence = aConfidence;
         final boolean includeHeader = aIncludeHeader;
         final boolean onlyStarred = aOnlyStarred;
+        final boolean showStar = aShowStar;
         final boolean includeHidden = aIncludeHidden;
 
         // get the file to send the output to
@@ -180,8 +186,10 @@ public class OutputGenerator {
                             if (indexes) {
                                 writer.write(SEPARATOR);
                             }
-                            if (accession) {
+                            if (mainAccession) {
                                 writer.write("Accession" + SEPARATOR);
+                            }
+                            if (otherAccessions) {
                                 writer.write("Other Protein(s)" + SEPARATOR);
                             }
                             if (piDetails) {
@@ -221,7 +229,7 @@ public class OutputGenerator {
                             if (includeHidden) {
                                 writer.write("Hidden" + SEPARATOR);
                             }
-                            if (!onlyStarred) {
+                            if (!onlyStarred && showStar) {
                                 writer.write("Starred" + SEPARATOR);
                             }
                             writer.write("\n");
@@ -244,8 +252,10 @@ public class OutputGenerator {
                                             }
 
                                             proteinMatch = identification.getProteinMatch(proteinKey);
-                                            if (accession) {
+                                            if (mainAccession) {
                                                 writer.write(proteinMatch.getMainMatch() + SEPARATOR);
+                                            }
+                                            if (otherAccessions) {
                                                 boolean first = true;
                                                 for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
                                                     if (!otherProtein.equals(proteinMatch.getMainMatch())) {
@@ -344,7 +354,7 @@ public class OutputGenerator {
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
-                                            if (!onlyStarred) {
+                                            if (!onlyStarred && showStar) {
                                                 writer.write(proteinPSParameter.isStarred() + "");
                                             }
                                             writer.write("\n");
