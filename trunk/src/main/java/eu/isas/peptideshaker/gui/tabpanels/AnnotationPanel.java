@@ -1291,7 +1291,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                         e.printStackTrace();
                     }
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
             }.start();

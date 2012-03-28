@@ -987,7 +987,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (outcome != JOptionPane.YES_OPTION) {
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
                         return;
                     }
@@ -1003,14 +1002,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         fos.close();
                         profileFile = newFile;
                         expectedModsLabel.setText("Expected Variable Modifications (" + newFile.getName().substring(0, newFile.getName().lastIndexOf(".")) + ")");
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
 
                     } catch (Exception e) {
-
-                        progressDialog.setVisible(false);
                         progressDialog.dispose();
-
                         JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }

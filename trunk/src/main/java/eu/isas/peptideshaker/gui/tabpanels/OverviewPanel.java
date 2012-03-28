@@ -4054,6 +4054,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public void displayResults() {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
         progressDialog.setTitle("Loading Overview. Please Wait...");
 
@@ -4127,7 +4128,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
 
                     progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Preparing Overview. Please Wait...");
+                    progressDialog.setTitle("Preparing Overview Tab. Please Wait...");
 
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
@@ -4141,7 +4142,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                            progressDialog.setVisible(false);
                             progressDialog.dispose();
                         }
                     });
@@ -4151,7 +4151,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.catchException(e);
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
             }

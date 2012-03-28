@@ -1561,7 +1561,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
             overviewPanel.updateSeparators();
         }
-
     }//GEN-LAST:event_spectrumJCheckBoxMenuItemActionPerformed
 
     /**
@@ -2394,7 +2393,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 File cpsFolder = new File(projectFolder, cpsFolderName);
 
                                 if (!cpsFolder.exists()) {
-                                    progressDialog.setVisible(false);
                                     progressDialog.dispose();
                                     // return the peptide shaker icon to the standard version
                                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -2454,7 +2452,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-                                progressDialog.setVisible(false);
+                                
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -2462,7 +2460,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 return;
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                progressDialog.setVisible(false);
+                                
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -2474,7 +2472,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                             double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
 
-                            progressDialog.setVisible(false);
+                            
                             progressDialog.dispose();
                             // return the peptide shaker icon to the standard version
                             tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -4009,14 +4007,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Closing. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Closing. Please Wait...");
             }
         }, "ProgressDialog").start();
 
@@ -4533,7 +4531,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     clearData();
                                     clearPreferences();
 
-                                    progressDialog.setVisible(false);
+                                    
                                     progressDialog.dispose();
                                     // change the peptide shaker icon back to the default version
                                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -4543,7 +4541,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 clearData();
                                 clearPreferences();
 
-                                progressDialog.setVisible(false);
+                                
                                 progressDialog.dispose();
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -4570,7 +4568,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 clearData();
                                 clearPreferences();
 
-                                progressDialog.setVisible(false);
+                                
                                 progressDialog.dispose();
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -4580,7 +4578,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             clearData();
                             clearPreferences();
 
-                            progressDialog.setVisible(false);
+                            
                             progressDialog.dispose();
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -4667,7 +4665,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                         clearData();
                                         clearPreferences();
 
-                                        progressDialog.setVisible(false);
+                                        
                                         progressDialog.dispose();
 
                                         // change the peptide shaker icon back to the default version
@@ -4678,7 +4676,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     clearData();
                                     clearPreferences();
 
-                                    progressDialog.setVisible(false);
+                                    
                                     progressDialog.dispose();
 
                                     // change the peptide shaker icon back to the default version
@@ -4693,7 +4691,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             clearData();
                             clearPreferences();
 
-                            progressDialog.setVisible(false);
+                            
                             progressDialog.dispose();
 
                             // change the peptide shaker icon back to the default version
@@ -4764,7 +4762,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             clearData();
                             clearPreferences();
 
-                            progressDialog.setVisible(false);
+                            
                             progressDialog.dispose();
 
                             // change the peptide shaker icon back to the default version
@@ -4772,12 +4770,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             e.printStackTrace();
                             return;
                         }
-                    }
-
-                    try {
-                        progressDialog.setVisible(false); // @TODO: there is sometimes an error here...
-                    } catch (IndexOutOfBoundsException e) {
-                        // do nothing 
                     }
 
                     progressDialog.dispose();
@@ -4803,7 +4795,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     error.printStackTrace();
@@ -4812,7 +4803,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -5066,7 +5056,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.setIndeterminate(true);
                     experimentIO.save(currentPSFile, experiment);
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     // return the peptide shaker icon to the standard version
@@ -5280,7 +5269,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.setIndeterminate(true);
                     experimentIO.save(currentPSFile, experiment);
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     // return the peptide shaker icon to the standard version
@@ -5297,7 +5285,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);

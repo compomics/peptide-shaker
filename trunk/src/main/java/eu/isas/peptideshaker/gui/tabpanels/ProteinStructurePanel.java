@@ -1712,7 +1712,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     // update the peptide to pdb mappings
                     updatePeptideToPdbMapping();
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
@@ -2866,7 +2865,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     exportPdbMatchesJButton.setEnabled(true);
                     exportPdbChainsJButton.setEnabled(true);
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
@@ -2884,7 +2882,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 } catch (Exception e) {
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                     peptideShakerGUI.catchException(e);
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -3003,7 +3000,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     ((TitledBorder) pdbChainsPanel.getBorder()).setTitle("PDB Chains");
                     pdbChainsPanel.repaint();
 
-                    progressDialog.setVisible(false);
                     progressDialog.dispose();
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -3458,7 +3454,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     }
                 }
             } catch (Exception e) {
-                progressDialog.setVisible(false);
                 progressDialog.dispose();
                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();

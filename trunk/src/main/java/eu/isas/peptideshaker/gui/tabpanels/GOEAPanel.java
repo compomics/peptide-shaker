@@ -80,7 +80,7 @@ import org.xml.sax.SAXException;
 
 /**
  * The PeptideShaker GO Enrichment Analysis (GO EA) tab.
- * 
+ *
  * @author Harald Barsnes
  */
 public class GOEAPanel extends javax.swing.JPanel {
@@ -118,7 +118,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private HashMap<String, String> speciesMap;
     /**
-     * The Ensembl versions for the downloaded species. 
+     * The Ensembl versions for the downloaded species.
      */
     private HashMap<String, String> ensemblVersionsMap;
     /**
@@ -130,7 +130,8 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private String mappingsFolderPath;
     /**
-     * If false, the mappings are not loaded and the analysis cannot be performed.
+     * If false, the mappings are not loaded and the analysis cannot be
+     * performed.
      */
     private boolean goMappingsLoaded = false;
     /**
@@ -138,10 +139,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private String speciesSeparator = "------------------------------------------------------------";
 
-    /** 
+    /**
      * Creates a new GOEAPanel.
-     * 
-     * @param peptideShakerGUI 
+     *
+     * @param peptideShakerGUI
      */
     public GOEAPanel(PeptideShakerGUI peptideShakerGUI) {
 
@@ -351,13 +352,13 @@ public class GOEAPanel extends javax.swing.JPanel {
             if (goMappingsFile.exists()) {
 
                 progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+                progressDialog.setIndeterminate(true);
 
                 new Thread(new Runnable() {
 
                     public void run() {
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setTitle("Getting GO Mapping Files. Please Wait...");
                         progressDialog.setVisible(true);
+                        progressDialog.setTitle("Getting GO Mapping Files. Please Wait...");
                     }
                 }, "ProgressDialog").start();
 
@@ -375,7 +376,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                         dm.fireTableDataChanged();
 
                         if (!goMappingsFile.exists()) {
-                            progressDialog.setVisible(false);
                             progressDialog.dispose();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Mapping file \"" + goMappingsFile.getName() + "\" not found!",
                                     "File Not Found", JOptionPane.ERROR_MESSAGE);
@@ -485,7 +485,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     }
                                 } catch (IllegalArgumentException e) {
                                     e.printStackTrace();
-                                    progressDialog.setVisible(false);
+
                                     progressDialog.dispose();
                                     // return the peptide shaker icon to the standard version
                                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -526,7 +526,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     maxLog2Diff = Math.abs(log2Diff);
                                 }
 
-                                String goDomain = "-";
+                                String goDomain;
 
                                 if (goDomainMap.get(goAccession) != null) {
                                     goDomain = goDomainMap.get(goAccession);
@@ -624,9 +624,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
 
                             for (int i = 1; i < pValues.size(); i++) {
-                                
+
                                 double tempPvalue = pValues.get(i) * pValues.size() / (pValues.size() - i);
-                                
+
                                 ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
                                         indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
                                 goMappingsTable.setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
@@ -680,7 +680,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
+
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -689,7 +689,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
+
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -698,7 +698,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -707,7 +706,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
+
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -716,7 +715,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
+
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -725,7 +724,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -734,7 +732,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
-                                progressDialog.setVisible(false);
+
                                 progressDialog.dispose();
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -911,10 +909,10 @@ public class GOEAPanel extends javax.swing.JPanel {
         updatePlotMarkers();
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -932,11 +930,10 @@ public class GOEAPanel extends javax.swing.JPanel {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) mappingsTableToolTips.get(realIndex);
+                        String tip = (String) mappingsTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -1009,11 +1006,13 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, ValueAndBooleanDataPoint.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, 
+			java.lang.Double.class, java.lang.Double.class, ValueAndBooleanDataPoint.class, java.lang.Object.class, 
+			java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, true
-			};
+		 };
                 public Class getColumnClass(int columnIndex) {
                     return types [columnIndex];
                 }
@@ -1375,8 +1374,8 @@ public class GOEAPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_goMappingsTableMouseExited
 
     /**
-     * Changes the cursor into a hand cursor if the table cell contains an
-     * html link.
+     * Changes the cursor into a hand cursor if the table cell contains an html
+     * link.
      *
      * @param evt
      */
@@ -1399,7 +1398,8 @@ public class GOEAPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_goMappingsTableMouseMoved
 
     /**
-     * If the user clicks the go term column the go term is opened in the web browser.
+     * If the user clicks the go term column the go term is opened in the web
+     * browser.
      *
      * @param evt
      */
@@ -1441,8 +1441,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Select all the mappings and update the plot.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void selectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllMenuItemActionPerformed
 
@@ -1455,8 +1455,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Deselect all the mappings and update the plot.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void deselectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllMenuItemActionPerformed
 
@@ -1469,8 +1469,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Select all the significant mappings and update the plot.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void selectSignificantMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectSignificantMenuItemActionPerformed
 
@@ -1487,8 +1487,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Update the plot markers.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void goMappingsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_goMappingsTableKeyReleased
         updatePlotMarkers();
@@ -1496,8 +1496,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Resize the layered panes.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
 
@@ -1560,8 +1560,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void mappingsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1569,8 +1569,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void mappingsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1578,8 +1578,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Open the help dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void mappingsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1589,8 +1589,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportMappingsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportMappingsJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1598,8 +1598,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportMappingsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportMappingsJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1607,20 +1607,20 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Export the table contents.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportMappingsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMappingsJButtonActionPerformed
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Copying to Clipboard. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Copying to Clipboard. Please Wait...");
             }
         }, "ProgressDialog").start();
 
@@ -1629,20 +1629,17 @@ public class GOEAPanel extends javax.swing.JPanel {
             @Override
             public void run() {
                 try {
-                    String clipboardString = "";
-
-                    clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, true);
-
+                    String clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, true);
                     StringSelection stringSelection = new StringSelection(clipboardString);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(stringSelection, peptideShakerGUI);
 
-                    progressDialog.setVisible(false);
+
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
 
                 } catch (Exception e) {
-                    progressDialog.setVisible(false);
+
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1653,8 +1650,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void plotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_plotHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1662,8 +1659,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void plotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_plotHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1671,8 +1668,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Open the help dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void plotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1682,8 +1679,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportPlotsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPlotsJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1691,8 +1688,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportPlotsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPlotsJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1700,8 +1697,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Export the table contents.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportPlotsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPlotsJButtonActionPerformed
 
@@ -1717,8 +1714,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Try to download the GO mappings for the currently selected species.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
 
@@ -1839,7 +1836,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    progressDialog.setVisible(false);
+
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI, "GO mappings downloaded.\nRe-select to use.", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
@@ -1856,7 +1853,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 } catch (Exception e) {
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    progressDialog.setVisible(false);
+
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured when downloading the mappings.", "Download Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1867,8 +1864,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Tries to update the GO mappings for the currently selected species.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
 
@@ -1892,8 +1889,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Species changes, update the GO mappings.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void speciesJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJComboBoxActionPerformed
         updateMappings();
@@ -1901,8 +1898,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void unknownSpeciesLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unknownSpeciesLabelMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1910,8 +1907,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void unknownSpeciesLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unknownSpeciesLabelMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1919,8 +1916,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Open the help dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void unknownSpeciesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_unknownSpeciesLabelMouseClicked
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1930,8 +1927,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Update the analysis with the new significance threshold.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void fivePercentRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fivePercentRadioButtonActionPerformed
         updateMappings();
@@ -1939,8 +1936,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Update the analysis with the new significance threshold.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void onePercentRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onePercentRadioButtonActionPerformed
         updateMappings();
@@ -1948,8 +1945,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Open the help dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void ensemblVersionLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ensemblVersionLabelMouseClicked
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1959,8 +1956,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void ensemblVersionLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ensemblVersionLabelMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1968,8 +1965,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void ensemblVersionLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ensemblVersionLabelMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2008,10 +2005,11 @@ public class GOEAPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Returns the GO accession number as a web link to the given GO term at QuickGO.
-     * 
+     * Returns the GO accession number as a web link to the given GO term at
+     * QuickGO.
+     *
      * @param goAccession
-     * @return 
+     * @return
      */
     private String addGoLink(String goAccession) {
         return "<html><a href=\"" + getGoAccessionLink(goAccession)
@@ -2020,10 +2018,11 @@ public class GOEAPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the GO accession number as a web link to the given GO term at QuickGO.
-     * 
-     * @param goAccession  the GO accession number
-     * @return             the GO accession web link
+     * Returns the GO accession number as a web link to the given GO term at
+     * QuickGO.
+     *
+     * @param goAccession the GO accession number
+     * @return the GO accession web link
      */
     private String getGoAccessionLink(String goAccession) {
         return "http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
@@ -2086,9 +2085,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Sort the p-values and make the same changes to the table indexes.
-     * 
+     *
      * @param pValues
-     * @param tableIndexes 
+     * @param tableIndexes
      */
     private void sortPValues(ArrayList<Double> pValues, ArrayList<Integer> tableIndexes) {
 
@@ -2131,7 +2130,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         goMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
                 PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor(), Color.lightGray, significanceLevel));
- 
+
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
@@ -2162,13 +2161,32 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             if (peptideShakerGUI.getIdentification() != null && goMappingsLoaded) {
 
-                // invoke later to give time for components to update
-                SwingUtilities.invokeLater(new Runnable() {
+//                // invoke later to give time for components to update
+//                SwingUtilities.invokeLater(new Runnable() {
+//
+//                    public void run() {
+//                        displayResults();
+//                    }
+//                });
+                final Thread displayThread = new Thread("DisplayThread") {
 
+                    @Override
                     public void run() {
                         displayResults();
                     }
-                });
+                };
+
+                Thread appThread = new Thread() {
+
+                    public void run() {
+                        try {
+                            SwingUtilities.invokeAndWait(displayThread);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                appThread.start();
             }
         } else {
             clearOldResults();
@@ -2205,7 +2223,8 @@ public class GOEAPanel extends javax.swing.JPanel {
     }
 
     /**
-     * A PeptideShaker dataset has been loaded, so the GO mappings can be updated.
+     * A PeptideShaker dataset has been loaded, so the GO mappings can be
+     * updated.
      */
     public void setDatasetLoaded() {
         speciesJComboBoxActionPerformed(null);
@@ -2213,8 +2232,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Displays or hide sparklines in the tables.
-     * 
-     * @param showSparkLines    boolean indicating whether sparklines shall be displayed or hidden
+     *
+     * @param showSparkLines boolean indicating whether sparklines shall be
+     * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
 

@@ -40,7 +40,7 @@ public class StarHider {
 
     /**
      * Constructor.
-     * 
+     *
      * @param peptideShakerGUI the peptideShakerGUI main class
      */
     public StarHider(PeptideShakerGUI peptideShakerGUI) {
@@ -51,7 +51,7 @@ public class StarHider {
      * Updates the star/hide status of all identification items.
      */
     public void starHide() {
-        
+
         final ProgressDialogX progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
         progressDialog.setIndeterminate(true);
@@ -61,9 +61,9 @@ public class StarHider {
 
             @Override
             public void run() {
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    
+                // change the peptide shaker icon to a "waiting version"
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                 Identification identification = peptideShakerGUI.getIdentification();
                 progressDialog.setIndeterminate(false);
                 progressDialog.setMax(identification.getProteinIdentification().size());
@@ -107,11 +107,11 @@ public class StarHider {
                     psParameter.setStarred(isProteinStarred(proteinKey));
                     progressDialog.incrementValue();
                 }
-                progressDialog.setVisible(false);
+
                 progressDialog.dispose();
 
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                // change the peptide shaker icon back to the default version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
         }.start();
 
@@ -120,17 +120,17 @@ public class StarHider {
 
     /**
      * Stars a protein match.
-     * 
+     *
      * @param match the key of the match
      */
     public void starProtein(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
         boolean validated = false;
-        
+
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
             if (matchFilter.getExceptions().contains(match)) {
                 matchFilter.removeException(match);
@@ -139,7 +139,7 @@ public class StarHider {
                 validated = true;
             }
         }
-        
+
         if (!validated) {
             ProteinFilter proteinFilter;
             if (!filterPreferences.getProteinStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
@@ -151,23 +151,23 @@ public class StarHider {
             }
             proteinFilter.addManualValidation(match);
         }
-        
+
         psParameter.setStarred(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Unstars a protein match.
-     * 
+     *
      * @param match the key of the match
      */
     public void unStarProtein(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-        
+
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
                 matchFilter.removeManualValidation(match);
@@ -176,24 +176,24 @@ public class StarHider {
                 matchFilter.addException(match);
             }
         }
-        
+
         psParameter.setStarred(false);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Hides a protein match.
-     * 
+     *
      * @param match the key of the match
      */
     public void hideProtein(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
         boolean validated = false;
-        
+
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
             if (matchFilter.getExceptions().contains(match)) {
                 matchFilter.removeException(match);
@@ -202,7 +202,7 @@ public class StarHider {
                 validated = true;
             }
         }
-        
+
         if (!validated) {
             ProteinFilter proteinFilter;
             if (!filterPreferences.getProteinHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
@@ -214,18 +214,18 @@ public class StarHider {
             }
             proteinFilter.addManualValidation(match);
         }
-        
+
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Unhides a protein match.
-     * 
+     *
      * @param match the key of the match
      */
     public void unHideProtein(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
@@ -238,24 +238,24 @@ public class StarHider {
                 matchFilter.addException(match);
             }
         }
-        
+
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Stars a peptide match.
-     * 
+     *
      * @param match the key of the match
      */
     public void starPeptide(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
         boolean validated = false;
-        
+
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
             if (matchFilter.getExceptions().contains(match)) {
                 matchFilter.removeException(match);
@@ -264,7 +264,7 @@ public class StarHider {
                 validated = true;
             }
         }
-        
+
         if (!validated) {
             PeptideFilter peptideFilter;
             if (!filterPreferences.getPeptideStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
@@ -276,23 +276,23 @@ public class StarHider {
             }
             peptideFilter.addManualValidation(match);
         }
-        
+
         psParameter.setStarred(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Unstars a peptide match.
-     * 
+     *
      * @param match the key of the match
      */
     public void unStarPeptide(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-        
+
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
                 matchFilter.removeManualValidation(match);
@@ -301,24 +301,24 @@ public class StarHider {
                 matchFilter.addException(match);
             }
         }
-        
+
         psParameter.setStarred(false);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Hides a peptide match.
-     * 
+     *
      * @param match the key of the match
      */
     public void hidePeptide(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
         boolean validated = false;
-        
+
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
             if (matchFilter.getExceptions().contains(match)) {
                 matchFilter.removeException(match);
@@ -327,7 +327,7 @@ public class StarHider {
                 validated = true;
             }
         }
-        
+
         if (!validated) {
             PeptideFilter peptideFilter;
             if (!filterPreferences.getPeptideHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
@@ -339,23 +339,23 @@ public class StarHider {
             }
             peptideFilter.addManualValidation(match);
         }
-        
+
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Unhides a peptide match.
-     * 
+     *
      * @param match the key of the match
      */
     public void unHidePeptide(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-        
+
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
                 matchFilter.removeManualValidation(match);
@@ -364,24 +364,24 @@ public class StarHider {
                 matchFilter.addException(match);
             }
         }
-        
+
         psParameter.setHidden(false);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Stars a PSM match.
-     * 
+     *
      * @param match the key of the match
      */
     public void starPsm(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
         boolean validated = false;
-        
+
         if (!validated) {
             for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
                 if (matchFilter.getExceptions().contains(match)) {
@@ -401,23 +401,23 @@ public class StarHider {
             }
             psmFilter.addManualValidation(match);
         }
-        
+
         psParameter.setStarred(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Unstars a PSM match.
-     * 
+     *
      * @param match the key of the match
      */
     public void unStarPsm(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-        
+
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
                 matchFilter.removeManualValidation(match);
@@ -426,24 +426,24 @@ public class StarHider {
                 matchFilter.addException(match);
             }
         }
-        
+
         psParameter.setStarred(false);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Hides a PSM match.
-     * 
+     *
      * @param match the key of the match
      */
     public void hidePsm(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
         boolean validated = false;
-        
+
         if (!validated) {
             for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
                 if (matchFilter.getExceptions().contains(match)) {
@@ -463,23 +463,23 @@ public class StarHider {
             }
             psmFilter.addManualValidation(match);
         }
-        
+
         psParameter.setHidden(true);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
      * Unhides a psm match.
-     * 
+     *
      * @param match the key of the match
      */
     public void unHidePsm(String match) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-        
+
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
                 matchFilter.removeManualValidation(match);
@@ -488,16 +488,18 @@ public class StarHider {
                 matchFilter.addException(match);
             }
         }
-        
+
         psParameter.setHidden(false);
         peptideShakerGUI.setDataSaved(false);
     }
 
     /**
-     * Tests whether a protein match should be hidden according to the implemented filters.
-     * 
+     * Tests whether a protein match should be hidden according to the
+     * implemented filters.
+     *
      * @param match the key of the match
-     * @return a boolean indicating whether a protein match should be hidden according to the implemented filters
+     * @return a boolean indicating whether a protein match should be hidden
+     * according to the implemented filters
      */
     public boolean isProteinHidden(String match) {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
@@ -510,109 +512,120 @@ public class StarHider {
     }
 
     /**
-     * Tests whether a peptide match should be hidden according to the implemented filters.
-     * 
+     * Tests whether a peptide match should be hidden according to the
+     * implemented filters.
+     *
      * @param match the key of the match
-     * @return a boolean indicating whether a protein match should be hidden according to the implemented filters
+     * @return a boolean indicating whether a protein match should be hidden
+     * according to the implemented filters
      */
     public boolean isPeptideHidden(String match) {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        
+
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
             if (matchFilter.isActive() && isValidated(match, matchFilter)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     /**
-     * Tests whether a psm match should be hidden according to the implemented filters.
-     * 
+     * Tests whether a psm match should be hidden according to the implemented
+     * filters.
+     *
      * @param match the key of the match
-     * @return a boolean indicating whether a protein match should be hidden according to the implemented filters
+     * @return a boolean indicating whether a protein match should be hidden
+     * according to the implemented filters
      */
     public boolean isPsmHidden(String match) {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        
+
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
             if (matchFilter.isActive() && isValidated(match, matchFilter)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     /**
-     * Tests whether a protein match should be starred according to the implemented filters.
-     * 
+     * Tests whether a protein match should be starred according to the
+     * implemented filters.
+     *
      * @param match the key of the match
-     * @return a boolean indicating whether a protein match should be hidden according to the implemented filters
+     * @return a boolean indicating whether a protein match should be hidden
+     * according to the implemented filters
      */
     public boolean isProteinStarred(String match) {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        
+
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
             if (matchFilter.isActive() && isValidated(match, matchFilter)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     /**
-     * Tests whether a peptide match should be starred according to the implemented filters.
-     * 
+     * Tests whether a peptide match should be starred according to the
+     * implemented filters.
+     *
      * @param match the key of the match
-     * @return a boolean indicating whether a protein match should be hidden according to the implemented filters
+     * @return a boolean indicating whether a protein match should be hidden
+     * according to the implemented filters
      */
     public boolean isPeptideStarred(String match) {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        
+
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
             if (matchFilter.isActive() && isValidated(match, matchFilter)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     /**
-     * Tests whether a PSM match should be starred according to the implemented filters.
-     * 
+     * Tests whether a PSM match should be starred according to the implemented
+     * filters.
+     *
      * @param match the key of the match
-     * @return a boolean indicating whether a protein match should be hidden according to the implemented filters
+     * @return a boolean indicating whether a protein match should be hidden
+     * according to the implemented filters
      */
     public boolean isPsmStarred(String match) {
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        
+
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
             if (matchFilter.isActive() && isValidated(match, matchFilter)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     /**
      * Tests whether a protein match is validated by a given filter.
-     * 
-     * @param match         the key of the protein match
+     *
+     * @param match the key of the protein match
      * @param proteinFilter the filter
-     * @return a boolean indicating whether a protein match is validated by a given filter
+     * @return a boolean indicating whether a protein match is validated by a
+     * given filter
      */
     public boolean isValidated(String match, ProteinFilter proteinFilter) {
-        
+
         try {
             if (proteinFilter.getExceptions().contains(match)) {
                 return false;
             }
-            
+
             if (proteinFilter.getManualValidation().size() > 0) {
                 if (proteinFilter.getManualValidation().contains(match)) {
                     return true;
@@ -620,7 +633,7 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             if (proteinFilter.getIdentifierRegex() != null) {
                 String test = "test_" + match + "_test";
                 if (test.split(proteinFilter.getIdentifierRegex()).length == 1) {
@@ -637,11 +650,11 @@ public class StarHider {
                     }
                 }
             }
-            
+
             PSParameter psParameter = new PSParameter();
             Identification identification = peptideShakerGUI.getIdentification();
             psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-            
+
             if (proteinFilter.getPi() != 5) {
                 if (proteinFilter.getPiComparison() == ComparisonType.NOT_EQUAL
                         && psParameter.getGroupClass() == proteinFilter.getPi()) {
@@ -651,7 +664,7 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             if (proteinFilter.getProteinScore() != null) {
                 if (proteinFilter.getProteinScoreComparison() == ComparisonType.AFTER) {
                     if (psParameter.getProteinScore() <= proteinFilter.getProteinScore()) {
@@ -671,7 +684,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             if (proteinFilter.getProteinConfidence() != null) {
                 if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.AFTER) {
                     if (psParameter.getProteinConfidence() <= proteinFilter.getProteinConfidence()) {
@@ -691,7 +704,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             if (proteinFilter.getnPeptides() != null
                     || proteinFilter.getProteinNSpectra() != null
                     || proteinFilter.getProteinCoverage() != null
@@ -737,7 +750,7 @@ public class StarHider {
                         }
                     }
                 }
-                
+
                 if (proteinFilter.getProteinCoverage() != null) {
                     double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(match);
                     if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
@@ -758,7 +771,7 @@ public class StarHider {
                         }
                     }
                 }
-                
+
                 if (proteinFilter.getSpectrumCounting() != null) {
                     double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(match);
                     if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
@@ -780,7 +793,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -791,18 +804,19 @@ public class StarHider {
 
     /**
      * Tests whether a peptide match is validated by a given filter.
-     * 
-     * @param match         the key of the peptide match
+     *
+     * @param match the key of the peptide match
      * @param peptideFilter the filter
-     * @return a boolean indicating whether a peptide match is validated by a given filter
+     * @return a boolean indicating whether a peptide match is validated by a
+     * given filter
      */
     public boolean isValidated(String match, PeptideFilter peptideFilter) {
-        
+
         try {
             if (peptideFilter.getExceptions().contains(match)) {
                 return false;
             }
-            
+
             if (peptideFilter.getManualValidation().size() > 0) {
                 if (peptideFilter.getManualValidation().contains(match)) {
                     return true;
@@ -810,10 +824,10 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             PSParameter psParameter = new PSParameter();
             boolean found = false;
-            
+
             for (String ptm : peptideFilter.getModificationStatus()) {
                 if (ptm.equals(PtmPanel.NO_MODIFICATION)) {
                     if (!Peptide.isModified(match)) {
@@ -827,14 +841,14 @@ public class StarHider {
                     }
                 }
             }
-            
+
             if (!found) {
                 return false;
             }
-            
+
             Identification identification = peptideShakerGUI.getIdentification();
             psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
-            
+
             if (peptideFilter.getPi() != 5) {
                 if (peptideFilter.getPiComparison() == ComparisonType.NOT_EQUAL
                         && psParameter.getGroupClass() == peptideFilter.getPi()) {
@@ -844,7 +858,7 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             if (peptideFilter.getPeptideScore() != null) {
                 if (peptideFilter.getPeptideScoreComparison() == ComparisonType.AFTER) {
                     if (psParameter.getPeptideScore() <= peptideFilter.getPeptideScore()) {
@@ -864,7 +878,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             if (peptideFilter.getPeptideConfidence() != null) {
                 if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.AFTER) {
                     if (psParameter.getPeptideConfidence() <= peptideFilter.getPeptideConfidence()) {
@@ -884,7 +898,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             if (peptideFilter.getNSpectra() != null
                     || peptideFilter.getProtein() != null) {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(match);
@@ -907,7 +921,7 @@ public class StarHider {
                         }
                     }
                 }
-                
+
                 if (peptideFilter.getProtein() != null) {
                     found = false;
                     for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
@@ -936,13 +950,14 @@ public class StarHider {
 
     /**
      * Tests whether a psm match is validated by a given filter.
-     * 
-     * @param match         the key of the psm match
+     *
+     * @param match the key of the psm match
      * @param psmFilter the filter
-     * @return a boolean indicating whether a psm match is validated by a given filter
+     * @return a boolean indicating whether a psm match is validated by a given
+     * filter
      */
     public boolean isValidated(String match, PsmFilter psmFilter) {
-        
+
         try {
             if (psmFilter.getExceptions().contains(match)) {
                 return false;
@@ -954,10 +969,10 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             Identification identification = peptideShakerGUI.getIdentification();
             PSParameter psParameter = new PSParameter();
-            
+
             if (psmFilter.getPsmScore() != null
                     || psmFilter.getPsmConfidence() != null) {
                 psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
@@ -981,7 +996,7 @@ public class StarHider {
                         }
                     }
                 }
-                
+
                 if (psmFilter.getPsmConfidence() != null) {
                     if (psmFilter.getPsmConfidenceComparison() == ComparisonType.AFTER) {
                         if (psParameter.getPsmConfidence() <= psmFilter.getPsmConfidence()) {
@@ -1002,7 +1017,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             if (psmFilter.getPrecursorMz() != null
                     || psmFilter.getPrecursorRT() != null
                     || psmFilter.getPrecursorMzError() != null) {
@@ -1026,7 +1041,7 @@ public class StarHider {
                         }
                     }
                 }
-                
+
                 if (psmFilter.getPrecursorRT() != null) {
                     if (psmFilter.getPrecursorRTComparison() == ComparisonType.AFTER) {
                         if (precursor.getRt() <= psmFilter.getPrecursorRT()) {
@@ -1046,7 +1061,7 @@ public class StarHider {
                         }
                     }
                 }
-                
+
                 if (psmFilter.getPrecursorMzError() != null) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(match);
                     double error = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
@@ -1076,7 +1091,7 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             if (!psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(match))) {
                 return false;
             }
