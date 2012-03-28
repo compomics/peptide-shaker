@@ -446,12 +446,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         HashMap<Integer, Color> psmColorMap = new HashMap<Integer, Color>();
         psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
         psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, Color.YELLOW); // search engines don't agree
+        psmColorMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
 
         // set up the psm tooltip map
         HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
         psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "Search Engines Agree");
         psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "Search Engines Disagree");
-
+        psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "Search Engine(s) Missing");
+        
         psmTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));

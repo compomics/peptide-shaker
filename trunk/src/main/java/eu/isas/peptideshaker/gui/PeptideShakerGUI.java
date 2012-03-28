@@ -53,7 +53,6 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
-import eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTable;
 import eu.isas.peptideshaker.gui.testDialogs.PeptideFractionDialog;
 import eu.isas.peptideshaker.gui.testDialogs.ProteinFractionDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -4008,7 +4007,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
-        progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
@@ -5262,7 +5260,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
                         progressDialog.setIndeterminate(true);
                     }
-
+                    
                     newFolder.mkdir();
 
                     identification.save(newFolder, progressDialog);
