@@ -40,16 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -85,19 +76,25 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         SEARCH_ENGINE_PERFORMANCE, SPECTRUM_FILES, PSM_TABLES
     };
     /**
-     * Static index for the search engine agreement: 0- no psm found
+     * Static index for the search engine agreement: no psm found.
      */
     public static final int NO_ID = 0;
     /**
-     * Static index for the search engine agreement: 2- the search engines have
-     * different top ranking peptides
+     * Static index for the search engine agreement: the search engines have
+     * different top ranking peptides.
      */
     public static final int CONFLICT = 1;
     /**
-     * Static index for the search engine agreement: 3- the search engines all
-     * have the same top ranking peptide
+     * Static index for the search engine agreement: one or more of the search
+     * engines did not identifie the spectrum, while one or more of the others
+     * did.
      */
-    public static final int AGREEMENT = 2;
+    public static final int PARTIALLY_MISSING = 2;
+    /**
+     * Static index for the search engine agreement: the search engines all have
+     * the same top ranking peptide.
+     */
+    public static final int AGREEMENT = 3;
     /**
      * The peptide sequence tooltips for the OMSSA table.
      */
@@ -174,6 +171,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The spectrum factory
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * Shows if OMSSA is used as part of the search.
+     */
+    private static boolean omssaUsed = false;
+    /**
+     * Shows if X!Tandem is used as part of the search.
+     */
+    private static boolean xtandemUsed = false;
+    /**
+     * Shows if Mascot is used as part of the search.
+     */
+    private static boolean mascotUsed = false;
 
     /**
      * Create a new SpectrumIdentificationPanel.
@@ -214,7 +223,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotTable.getTableHeader().setReorderingAllowed(false);
         xTandemTable.getTableHeader().setReorderingAllowed(false);
 
-        spectrumTable.setAutoCreateRowSorter(true);
+        //spectrumTable.setAutoCreateRowSorter(true); // @TODO: perhaps this should be enabled later
         searchEngineTable.setAutoCreateRowSorter(true);
 
         peptideShakerJTable.getColumn(" ").setMinWidth(30);
@@ -253,11 +262,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         HashMap<Integer, java.awt.Color> searchEngineColorMap = new HashMap<Integer, java.awt.Color>();
         searchEngineColorMap.put(AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
         searchEngineColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
+        searchEngineColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
 
         // set up the psm tooltip map
         HashMap<Integer, String> searchEngineTooltipMap = new HashMap<Integer, String>();
         searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree");
         searchEngineTooltipMap.put(CONFLICT, "Search Engines Disagree");
+        searchEngineTooltipMap.put(PARTIALLY_MISSING, "Search Engine(s) Missing");
 
         peptideShakerJTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineColorMap, searchEngineTooltipMap));
         peptideShakerJTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -308,12 +319,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         HashMap<Integer, java.awt.Color> searchEngineSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
         searchEngineSpectrumLevelColorMap.put(AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
         searchEngineSpectrumLevelColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
+        searchEngineSpectrumLevelColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
         searchEngineSpectrumLevelColorMap.put(NO_ID, java.awt.Color.lightGray); // no psm
 
         // set up the psm tooltip map
         HashMap<Integer, String> searchEngineSpectrumLevelTooltipMap = new HashMap<Integer, String>();
         searchEngineSpectrumLevelTooltipMap.put(AGREEMENT, "Search Engines Agree");
         searchEngineSpectrumLevelTooltipMap.put(CONFLICT, "Search Engines Disagree");
+        searchEngineSpectrumLevelTooltipMap.put(PARTIALLY_MISSING, "Search Engine(s) Missing");
         searchEngineSpectrumLevelTooltipMap.put(NO_ID, "(No PSM)");
 
         spectrumTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineSpectrumLevelColorMap, searchEngineSpectrumLevelTooltipMap));
@@ -2393,13 +2406,15 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     progressDialog.setValue(0);
 
 
+                    // @TODO: this should be moved to when the files are loaded and done only once...?
+
                     // get the list of search engines used
                     IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
                     ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
 
-                    boolean omssaUsed = false;
-                    boolean xtandemUsed = false;
-                    boolean mascotUsed = false;
+                    omssaUsed = false;
+                    xtandemUsed = false;
+                    mascotUsed = false;
 
                     for (int i = 0; i < idFiles.size(); i++) {
                         if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.OMSSA) {
@@ -2411,10 +2426,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         }
                     }
 
-                    // hide the unused search engine columns in the Search Engine Performance table
+                    // @TODO: hide the unused search engine columns in the Search Engine Performance table
                     // @TODO: hide the columns in the table for the search engines that are not used...
                     // @TODO: calculate the 'All' column values based on only the used search engines and not all three like now...
-
                     // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead?
 
 
@@ -2713,14 +2727,14 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     private void fileSelectionChanged() {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIndeterminate(true);
         //progressDialog.doNothingOnClose(); // @TODO: this should perhaps be turned back on??
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
                 progressDialog.setVisible(true);
+                progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
             }
         }, "ProgressDialog").start();
 
@@ -2828,10 +2842,14 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
 
         if (line >= 0) {
+            
+            // @TODO: this does not work when the table is sorted!!!
+            
             spectrumTable.setRowSelectionInterval(line, line);
             spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
             spectrumSelectionChanged();
         }
+
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
@@ -3517,28 +3535,59 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 return CONFLICT;
             }
         } else if (omssaMatch != null && xtandemMatch != null) {
-            if (omssaMatch.equalsIgnoreCase(xtandemMatch)
-                    && omssaCharge == xtandemCharge) {
-                return AGREEMENT;
+            if (!mascotUsed) {
+                if (omssaMatch.equalsIgnoreCase(xtandemMatch)
+                        && omssaCharge == xtandemCharge) {
+                    return AGREEMENT;
+                } else {
+                    return CONFLICT;
+                }
             } else {
-                return CONFLICT;
+                return PARTIALLY_MISSING;
             }
         } else if (omssaMatch != null && mascotMatch != null) {
-            if (omssaMatch.equalsIgnoreCase(mascotMatch)
-                    && omssaCharge == mascotCharge) {
-                return AGREEMENT;
+            if (!xtandemUsed) {
+                if (omssaMatch.equalsIgnoreCase(mascotMatch)
+                        && omssaCharge == mascotCharge) {
+                    return AGREEMENT;
+                } else {
+                    return CONFLICT;
+                }
             } else {
-                return CONFLICT;
+                return PARTIALLY_MISSING;
             }
         } else if (xtandemMatch != null && mascotMatch != null) {
-            if (xtandemMatch.equalsIgnoreCase(mascotMatch)
-                    && xtandemCharge == mascotCharge) {
-                return AGREEMENT;
+            if (!omssaUsed) {
+                if (xtandemMatch.equalsIgnoreCase(mascotMatch)
+                        && xtandemCharge == mascotCharge) {
+                    return AGREEMENT;
+                } else {
+                    return CONFLICT;
+                }
             } else {
-                return CONFLICT;
+                return PARTIALLY_MISSING;
             }
-        } else if (omssaMatch != null || xtandemMatch != null || mascotMatch != null) {
-            return AGREEMENT;
+        } else if (omssaMatch != null) {
+            if (xtandemUsed || mascotUsed) {
+                return PARTIALLY_MISSING;
+            } else {
+                return AGREEMENT;
+            }
+
+        } else if (xtandemMatch != null) {
+            if (omssaUsed || mascotUsed) {
+                return PARTIALLY_MISSING;
+            } else {
+                return AGREEMENT;
+            }
+
+        } else if (mascotMatch != null) {
+            if (omssaUsed || xtandemUsed) {
+                return PARTIALLY_MISSING;
+            } else {
+                return AGREEMENT;
+            }
+
         } else {
             return NO_ID;
         }
