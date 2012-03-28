@@ -3896,8 +3896,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 spectrumJTabbedPane.setToolTipTextAt(2, null);
                             }
 
-                                // update the panel border title
-                                updateSpectrumPanelBorderTitle(currentSpectrum);
+                            // update the panel border title
+                            updateSpectrumPanelBorderTitle(currentSpectrum);
 
                             spectrumMainPanel.revalidate();
                             spectrumMainPanel.repaint();
@@ -4072,7 +4072,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    
+
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
                     peptideShakerGUI.getMetrics().setProteinKeys(peptideShakerGUI.getIdentificationFeaturesGenerator().getProteinKeys(progressDialog));
@@ -4126,11 +4126,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
 
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Preparing Overview. Please Wait...");
 
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
@@ -4140,10 +4137,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             dm.fireTableDataChanged();
                             updateSelection();
                             proteinTable.requestFocus();
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
                         }
                     });
 
                 } catch (Exception e) {
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.catchException(e);
@@ -4152,8 +4156,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
             }
         }.start();
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -4597,9 +4599,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (tableIndex == TableIndex.PROTEIN_TABLE) {
                     ArrayList<String> selectedProteins = getDisplayedProteins();
                     outputGenerator.getProteinsOutput(
-                            selectedProteins, true, false, true, true,
+                            selectedProteins, true, false, true, true, true,
                             true, true, true, true, false, true,
-                            true, true, true, true, false, false);
+                            true, true, true, true, false, true, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
                     String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
@@ -4814,21 +4816,20 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         displayProteins = true;
         displayPeptidesAndPSMs = true;
 
-        ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
-        proteinTableModel.reset();
-        proteinTableModel.fireTableDataChanged();
-
-        DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
-        dm.getDataVector().removeAllElements();
-        dm.fireTableDataChanged();
-
-        dm = (DefaultTableModel) psmTable.getModel();
-        dm.getDataVector().removeAllElements();
-        dm.fireTableDataChanged();
-
         proteinKeys.clear();
         peptideKeys.clear();
         psmKeys.clear();
+
+        DefaultTableModel psmTableModel = (DefaultTableModel) psmTable.getModel();
+        psmTableModel.getDataVector().removeAllElements();
+        DefaultTableModel peptideTableModel = (DefaultTableModel) peptideTable.getModel();
+        peptideTableModel.getDataVector().removeAllElements();
+        ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
+        proteinTableModel.reset();
+
+        psmTableModel.fireTableDataChanged();
+        peptideTableModel.fireTableDataChanged();
+        proteinTableModel.fireTableDataChanged();
 
         currentSpectrumKey = "";
         currentProteinSequence = "";
