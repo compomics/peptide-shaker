@@ -164,12 +164,12 @@ public class OutputGenerator {
             }
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.setIndeterminate(true);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Copying to File. Please Wait...");
                     progressDialog.setVisible(true);
                 }
@@ -238,6 +238,9 @@ public class OutputGenerator {
                         PSParameter proteinPSParameter = new PSParameter();
                         int cpt, progress = 0, proteinCounter = 0;
                         ProteinMatch proteinMatch;
+                        
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMax(proteinKeys.size());
 
                         for (String proteinKey : proteinKeys) {
 
@@ -1318,6 +1321,9 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int rank, progress = 0;
                         SpectrumMatch spectrumMatch;
+                        
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMax(psmKeys.size());
 
                         for (String spectrumKey : psmKeys) {
                             spectrumMatch = identification.getSpectrumMatch(spectrumKey);

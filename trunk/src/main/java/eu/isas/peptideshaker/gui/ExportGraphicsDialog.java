@@ -4,6 +4,7 @@ import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import java.awt.Component;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
@@ -316,6 +317,9 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                        
                         ImageType currentImageType;
 
                         if (pngJRadioButton.isSelected()) {
@@ -334,6 +338,8 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                             Export.exportComponent(graphicsPanel, graphicsPanel.getBounds(), new File(finalSelectedFile), currentImageType);
                         }
 
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         progressDialog.dispose();
                         peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
