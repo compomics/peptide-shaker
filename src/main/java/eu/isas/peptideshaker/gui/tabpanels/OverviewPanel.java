@@ -452,8 +452,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
         psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "Search Engines Agree");
         psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "Search Engines Disagree");
-        psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "Search Engine(s) Missing");
-        
+        psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "First Hit(s) Missing");
+
         psmTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
@@ -3447,7 +3447,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     currentSpectrum,
                                     selectedPeptideMatch.getTheoreticPeptide(),
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                    annotationPreferences.getFragmentIonAccuracy());
+                                    annotationPreferences.getFragmentIonAccuracy(), false);
                             allAnnotations.add(annotations);
                             allSpectra.add(currentSpectrum);
 
@@ -3466,7 +3466,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                         selectedIndexes,
-                        allAnnotations, annotationPreferences.getIonTypes(), allSpectra, annotationPreferences.getFragmentIonAccuracy(),
+                        allAnnotations, annotationPreferences.getFragmentIonTypes(), allSpectra, annotationPreferences.getFragmentIonAccuracy(),
                         bubbleScale,
                         annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                         annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
@@ -3792,16 +3792,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
                             SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+                            int identificationCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                             annotationPreferences.setCurrentSettings(
-                                    currentPeptide, spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                    currentPeptide, identificationCharge,
                                     !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
-                                    spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                    identificationCharge,
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                    annotationPreferences.getFragmentIonAccuracy());
+                                    annotationPreferences.getFragmentIonAccuracy(), false);
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
 
@@ -3811,7 +3812,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 }
                             }
 
-                            peptideShakerGUI.updateAnnotationMenus();
+                            peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
 
                             currentSpectrumKey = spectrumKey;
 
@@ -3828,13 +3829,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create and display the fragment ion table
                             if (psmTable.getSelectedRowCount() == 1 && !peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
-                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, annotations, annotationPreferences.getIonTypes(),
+                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, annotations, annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
                             } else {
                                 ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
-                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getIonTypes(),
+                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
@@ -3843,12 +3844,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             // create the sequence fragment ion view
                             secondarySpectrumPlotsJPanel.removeAll();
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
-
+                            int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
+                            int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
                                     peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
                                     annotations, true, true,
                                     peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
-                                    peptideAssumption.getPeptide().getPTMShortNameMap());
+                                    peptideAssumption.getPeptide().getPTMShortNameMap(), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
                             sequenceFragmentationPanel.setBackground(Color.WHITE);
@@ -3856,7 +3858,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create the intensity histograms
                             secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
-                                    annotations, annotationPreferences.getIonTypes(), currentSpectrum,
+                                    annotations, annotationPreferences.getFragmentIonTypes(), currentSpectrum,
                                     peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit(),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4))));
@@ -3865,7 +3867,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create the miniature mass error plot
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
-                                    annotations, annotationPreferences.getIonTypes(), currentSpectrum,
+                                    annotations, annotationPreferences.getFragmentIonTypes(), currentSpectrum,
                                     annotationPreferences.getFragmentIonAccuracy(),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
@@ -4230,7 +4232,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                             currentSpectrum, currentPeptide,
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getFragmentIonAccuracy());
+                            annotationPreferences.getFragmentIonAccuracy(), false);
                     allAnnotations.add(annotations);
                     currentSpectrumKey = spectrumKey;
                 }

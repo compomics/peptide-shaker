@@ -268,7 +268,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         HashMap<Integer, String> searchEngineTooltipMap = new HashMap<Integer, String>();
         searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree");
         searchEngineTooltipMap.put(CONFLICT, "Search Engines Disagree");
-        searchEngineTooltipMap.put(PARTIALLY_MISSING, "Search Engine(s) Missing");
+        searchEngineTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
 
         peptideShakerJTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineColorMap, searchEngineTooltipMap));
         peptideShakerJTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -3099,21 +3099,25 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                     }
                                 }
 
+                                int identificationCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                                 annotationPreferences.setCurrentSettings(currentPeptide,
-                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                        identificationCharge, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
-                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                        identificationCharge,
                                         currentSpectrum, currentPeptide,
                                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                        annotationPreferences.getFragmentIonAccuracy());
+                                        annotationPreferences.getFragmentIonAccuracy(), false);
                                 currentSpectrumKey = spectrumMatch.getKey();
 
                                 // add the spectrum annotations
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                
+                                peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
+                                
                             }
 
                             // xtandem annotation (if any)
@@ -3140,21 +3144,25 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                     }
                                 }
 
+                                int identificationCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                                 annotationPreferences.setCurrentSettings(currentPeptide,
-                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                        identificationCharge, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
-                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                        identificationCharge,
                                         currentSpectrum, currentPeptide,
                                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                        annotationPreferences.getFragmentIonAccuracy());
+                                        annotationPreferences.getFragmentIonAccuracy(), false);
                                 currentSpectrumKey = spectrumMatch.getKey();
 
                                 // add the spectrum annotations
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                
+                                peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
+                                
                             }
 
                             // mascot annotation (if any)
@@ -3181,28 +3189,30 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                     }
                                 }
 
+                                int identificationCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                                 annotationPreferences.setCurrentSettings(currentPeptide,
-                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                        identificationCharge, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
-                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                        identificationCharge,
                                         currentSpectrum, currentPeptide,
                                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                        annotationPreferences.getFragmentIonAccuracy());
+                                        annotationPreferences.getFragmentIonAccuracy(), false);
                                 currentSpectrumKey = spectrumMatch.getKey();
 
                                 // add the spectrum annotations
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                
+                                peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
                             }
                         }
                     }
                 }
                 if (spectrum != null) {
                     spectrumChartPanel.add(spectrum);
-                    peptideShakerGUI.updateAnnotationMenus();
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);

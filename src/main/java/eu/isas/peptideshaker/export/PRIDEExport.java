@@ -396,7 +396,7 @@ public class PRIDEExport {
                 spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                 tempSpectrum, peptide,
                 tempSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                annotationPreferences.getFragmentIonAccuracy());
+                annotationPreferences.getFragmentIonAccuracy(), false);
 
         for (int i = 0; i < annotations.size(); i++) {
             writeFragmentIon(annotations.get(i));

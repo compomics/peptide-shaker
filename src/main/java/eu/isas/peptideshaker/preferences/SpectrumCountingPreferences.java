@@ -35,6 +35,9 @@ public class SpectrumCountingPreferences implements Serializable {
      * Default constructor.
      */
     public SpectrumCountingPreferences() {
+        // Set default preferences
+        selectedMethod = SpectralCountingMethod.NSAF;
+        validatedHits = true;
     }
 
     /**

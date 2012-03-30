@@ -1210,7 +1210,13 @@ public class PeptideShaker {
         }
         HashMap<String, Double> fractionScores;
         String fraction;
+        ArrayList<String> foundModifications = new ArrayList<String>();
         for (String peptideKey : identification.getPeptideIdentification()) {
+            for (String modification : Peptide.getModificationFamily(peptideKey)) {
+                if (!foundModifications.contains(modification)) {
+                    foundModifications.add(modification);
+                }
+            }
             double probaScore = 1;
             fractionScores = new HashMap<String, Double>();
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -1238,6 +1244,7 @@ public class PeptideShaker {
                 }
             }
         }
+        metrics.setFoundModifications(foundModifications);
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressDialogIntermediate(true);
         }

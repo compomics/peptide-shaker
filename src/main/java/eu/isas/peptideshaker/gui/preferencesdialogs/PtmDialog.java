@@ -78,26 +78,26 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         setLocationRelativeTo(searchPreferencesDialog);
         setVisible(true);
     }
-    
+
     /**
      * Set up the GUI.
      */
     private void setUpGui() {
-        
+
         // set table properties
         neutralLossesTable.getTableHeader().setReorderingAllowed(false);
         reporterIonsTable.getTableHeader().setReorderingAllowed(false);
-        
+
         // make sure that the scroll panes are see-through
         neutralLossesJScrollPane.getViewport().setOpaque(false);
         reporterIonsJScrollPane.getViewport().setOpaque(false);
-        
+
         // the index column
         neutralLossesTable.getColumn(" ").setMaxWidth(50);
         neutralLossesTable.getColumn(" ").setMinWidth(50);
         reporterIonsTable.getColumn(" ").setMaxWidth(50);
         reporterIonsTable.getColumn(" ").setMinWidth(50);
-        
+
         Vector comboboxTooltips = new Vector();
         comboboxTooltips.add("Modification at particular amino acids");
         comboboxTooltips.add("Modification at the N terminus of a protein");
@@ -109,14 +109,14 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
         comboboxTooltips.add("Modification at the C terminus of a peptide");
         comboboxTooltips.add("Modification at the C terminus of a peptide at particular amino acids");
         typeCmb.setRenderer(new MyComboBoxRenderer(comboboxTooltips, SwingConstants.CENTER));
-        
+
         if (currentPtm != null) {
             typeCmb.setSelectedIndex(currentPtm.getType());
             nameTxt.setText(currentPtm.getName());
             massTxt.setText(currentPtm.getMass() + "");
             String residues = "";
             boolean first = true;
-            
+
             for (String aa : currentPtm.getResidues()) {
                 if (!aa.equals("[") && !aa.equals("]")) {
                     if (first) {
@@ -127,18 +127,21 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                     residues += aa;
                 }
             }
-            
+
             residuesTxt.setText(residues);
             this.neutralLosses.addAll(currentPtm.getNeutralLosses());
             this.reporterIons.addAll(currentPtm.getReporterIons());
             updateTables();
-            
+
             cvTerm = ptmToPrideMap.getCVTerm(currentPtm.getName());
-            
+
+            if (cvTerm == null) {
+                cvTerm = PtmToPrideMap.getDefaultCVTerm(currentPtm.getName());
+            }
             if (cvTerm != null) {
                 updateModMappingText();
             }
-            
+
             setTitle("Edit Modification");
         }
     }
@@ -635,17 +638,17 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                 tempNeutralLosses.add(new NeutralLoss((String) neutralLossesTable.getValueAt(row, 1),
                         (Double) neutralLossesTable.getValueAt(row, 2)));
             }
-            
+
             newPTM.setNeutralLosses(tempNeutralLosses);
             ArrayList<ReporterIon> tempReporterIons = new ArrayList<ReporterIon>();
-            
+
             for (int row = 0; row < reporterIonsTable.getRowCount(); row++) {
                 tempReporterIons.add(new ReporterIon((String) reporterIonsTable.getValueAt(row, 1),
                         (Double) reporterIonsTable.getValueAt(row, 2)));
             }
-            
+
             newPTM.setReporterIons(tempReporterIons);
-            
+
             for (String ptm : ptmFactory.getPTMs()) {
                 if (currentPtm == null || !ptm.equals(currentPtm.getName())) {
                     otherPTM = ptmFactory.getPTM(ptm);
@@ -659,13 +662,13 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                     }
                 }
             }
-            
+
             if (currentPtm != null) {
                 ptmFactory.replacePTM(currentPtm.getName(), newPTM);
             } else {
                 ptmFactory.addUserPTM(newPTM);
             }
-            
+
             ptmToPrideMap.putCVTerm(newPTM.getName(), cvTerm);
 
             dispose();
@@ -857,7 +860,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     }
 
     /**
-     * Table model for the c term patterns table
+     * Table model for the neutral losses table
      */
     private class NeutralLossesTable extends DefaultTableModel {
 
@@ -927,7 +930,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
     }
 
     /**
-     * Table model for the c term patterns table
+     * Table model for the reporter ions table
      */
     private class ReporterIonsTable extends DefaultTableModel {
 
@@ -963,7 +966,7 @@ public class PtmDialog extends javax.swing.JDialog implements OLSInputable {
                 case 1:
                     return reporterIons.get(row).getName();
                 case 2:
-                    return reporterIons.get(row).theoreticMass;
+                    return reporterIons.get(row).getTheoreticMass();
                 default:
                     return "";
             }
