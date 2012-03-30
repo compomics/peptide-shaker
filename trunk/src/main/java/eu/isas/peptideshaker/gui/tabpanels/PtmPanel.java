@@ -3681,16 +3681,16 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 // get the spectrum annotations
                 Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
-
+                int identificationCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                 annotationPreferences.setCurrentSettings(currentPeptide,
-                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                        identificationCharge, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),
-                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                        identificationCharge,
                         currentSpectrum, currentPeptide,
                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                        annotationPreferences.getFragmentIonAccuracy());
+                        annotationPreferences.getFragmentIonAccuracy(), false);
                 currentSpectrumKey = spectrumMatch.getKey();
 
                 // add the spectrum annotations
@@ -3699,7 +3699,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                 spectrumChartJPanel.add(spectrum);
-                peptideShakerGUI.updateAnnotationMenus();
+                peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true) + ")");

@@ -57,6 +57,17 @@ public class PeptideFractionTable extends DefaultTableModel {
             fileNames.add(fileName);
             fractionNames.put(fileName, fileName);
         }
+        fileNames = new ArrayList<String>();
+        fileNames.add("COFRADIC Cys");
+        fractionNames.put("COFRADIC Cys", "COFRADIC Cys");
+        fileNames.add("COFRADIC Met");
+        fractionNames.put("COFRADIC Met", "COFRADIC Met");
+        fileNames.add("HILIC");
+        fractionNames.put("HILIC", "HILIC");
+        fileNames.add("IEF");
+        fractionNames.put("IEF", "IEF");
+        fileNames.add("SCX");
+        fractionNames.put("SCX", "SCX");
         Collections.sort(fileNames);
     }
     

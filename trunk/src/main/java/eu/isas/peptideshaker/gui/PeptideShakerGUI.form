@@ -84,9 +84,29 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zIonCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="precursorCheckMenu">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Precursor"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="immoniumIonsCheckMenu">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Immonium Ions"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="reporterIonsCheckMenu">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Reporter Ions"/>
+              </Properties>
+            </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="splitterMenu">
+        <Menu class="javax.swing.JMenu" name="lossSplitter">
           <Properties>
             <Property name="text" type="java.lang.String" value="|"/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -94,55 +114,10 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="lossMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Loss"/>
+            <Property name="text" type="java.lang.String" value="Losses"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h2oIonCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;H&lt;sub&gt;2&lt;/sub&gt;O&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Water Loss"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h2oIonCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="nh3IonCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;NH&lt;sub&gt;3&lt;/sub&gt;&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nh3IonCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h3po4IonCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;H&lt;sub&gt;3&lt;/sub&gt;PO&lt;sub&gt;4&lt;/sub&gt;&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Phospo Loss - Type 1"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h3po4IonCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="hpo3IonCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;HPO&lt;sub&gt;3&lt;/sub&gt;&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Phospo Loss - Type 2"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hpo3IonCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ch4osIonCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;CH&lt;sub&gt;4&lt;/sub&gt;OS&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Sulpho Loss"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ch4osIonCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="adaptCheckBoxMenuItem">
@@ -156,38 +131,6 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="splitterMenu1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="|"/>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="otherMenu">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Other"/>
-            <Property name="enabled" type="boolean" value="false"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="precursorCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Precursor"/>
-                <Property name="toolTipText" type="java.lang.String" value="Precursor ions"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="precursorCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="immoniumCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Immonium Ion"/>
-                <Property name="toolTipText" type="java.lang.String" value="Immonium ions"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="immoniumCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
         <Menu class="javax.swing.JMenu" name="splitterMenu2">
           <Properties>
             <Property name="text" type="java.lang.String" value="|"/>
@@ -196,38 +139,9 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="chargeMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Charge"/>
+            <Property name="text" type="java.lang.String" value="Charges"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="singleChargeCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="+"/>
-                <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="singleChargeCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="doubleChargeCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="++"/>
-                <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="doubleChargeCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="moreThanTwoChargesCheckBoxMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&gt;2"/>
-                <Property name="toolTipText" type="java.lang.String" value="More than two charges"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreThanTwoChargesCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="splitterMenu3">
           <Properties>
@@ -318,6 +232,16 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="errorPlotTypeCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator15">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="annotationColorsMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Colors"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="annotationColorsMenuActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -422,6 +346,11 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.ButtonGroup" name="ionTableButtonGroup">
+    </Component>
+    <Component class="javax.swing.JMenuItem" name="jMenuItem3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jMenuItem3"/>
+      </Properties>
     </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <Properties>

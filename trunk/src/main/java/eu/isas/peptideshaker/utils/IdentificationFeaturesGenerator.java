@@ -123,7 +123,8 @@ public class IdentificationFeaturesGenerator {
      */
     private double maxPsmMzValue;
     /**
-     * The maximum number of psms across all peptides of the last selected protein
+     * The maximum number of psms across all peptides of the last selected
+     * protein
      */
     private int maxSpectrumCount;
     /**
@@ -172,6 +173,30 @@ public class IdentificationFeaturesGenerator {
             bigObjectsCache.add(proteinMatchKey);
         }
         return result;
+    }
+
+    /**
+     * Returns the modifications found in the currently loaded dataset
+     *
+     * @return the modifications found in the currently loaded dataset
+     */
+    public ArrayList<String> getFoundModifications() {
+        if (peptideShakerGUI.getMetrics() == null) {
+            return new ArrayList<String>();
+        }
+        ArrayList<String> modifications = peptideShakerGUI.getMetrics().getFoundModifications();
+        if (modifications == null) {
+            modifications = new ArrayList<String>();
+            for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                for (String modification : Peptide.getModificationFamily(peptideKey)) {
+                    if (!modifications.contains(modification)) {
+                        modifications.add(modification);
+                    }
+                }
+            }
+            peptideShakerGUI.getMetrics().setFoundModifications(modifications);
+        }
+        return modifications;
     }
 
     /**
@@ -374,7 +399,7 @@ public class IdentificationFeaturesGenerator {
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
             try {
-                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, tempPreferences, 
+                return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, tempPreferences,
                         peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
@@ -391,8 +416,8 @@ public class IdentificationFeaturesGenerator {
      */
     private double estimateSpectrumCounting(String proteinMatchKey) {
         try {
-            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, 
-                    peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(), 
+            return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey,
+                    peptideShakerGUI.getSpectrumCountingPreferences(), peptideShakerGUI.getSearchParameters().getEnzyme(),
                     peptideShakerGUI.getIdFilter().getMaxPepLength());
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
@@ -410,9 +435,9 @@ public class IdentificationFeaturesGenerator {
      * @param enzyme the enzyme used
      * @param maxPepLength the maximal length accepted for a peptide
      * @return the spectrum counting index
-     * @throws IOException  
+     * @throws IOException
      */
-    public static double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey, 
+    public static double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException {
 
         double ratio, result;
@@ -426,7 +451,7 @@ public class IdentificationFeaturesGenerator {
             PeptideMatch peptideMatch;
             ArrayList<String> possibleProteinMatches;
             Protein currentProtein;
-            int peptideOccurrence=0;
+            int peptideOccurrence = 0;
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 peptideMatch = identification.getPeptideMatch(peptideKey);
                 possibleProteinMatches = new ArrayList<String>();
@@ -1151,7 +1176,7 @@ public class IdentificationFeaturesGenerator {
                     || (peptideShakerGUI.getMetrics().getMaxSpectrumCounting() <= 0)
                     || (peptideShakerGUI.getMetrics().getMaxMW() == null)
                     || (peptideShakerGUI.getMetrics().getMaxMW() <= 0);
-            
+
             // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
             HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
                     new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
@@ -1395,9 +1420,9 @@ public class IdentificationFeaturesGenerator {
                         nValidatedPsms++;
                     }
                     MSnSpectrum tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                        if (tempSpectrum.getPeakList() != null && maxPsmMzValue < tempSpectrum.getMaxMz()) {
-                            maxPsmMzValue = tempSpectrum.getMaxMz();
-                        }
+                    if (tempSpectrum.getPeakList() != null && maxPsmMzValue < tempSpectrum.getMaxMz()) {
+                        maxPsmMzValue = tempSpectrum.getMaxMz();
+                    }
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                     if (!orderingMap.containsKey(charge)) {
@@ -1436,19 +1461,21 @@ public class IdentificationFeaturesGenerator {
         }
         return psmList;
     }
-    
+
     /**
-     * Returns the max m/z value encountered across the selected spectra
-     * /!\ This value is only available after getSortedPsmKeys has been called
+     * Returns the max m/z value encountered across the selected spectra /!\
+     * This value is only available after getSortedPsmKeys has been called
+     *
      * @return the max m/z value encountered across the selected spectra
      */
     public double getMaxPsmMzValue() {
         return maxPsmMzValue;
     }
-    
+
     /**
-     * Returns the number of validated psms for the last selected peptide
-     * /!\ This value is only available after getSortedPsmKeys has been called
+     * Returns the number of validated psms for the last selected peptide /!\
+     * This value is only available after getSortedPsmKeys has been called
+     *
      * @return the number of validated psms for the last selected peptide
      */
     public int getNValidatedPsms() {

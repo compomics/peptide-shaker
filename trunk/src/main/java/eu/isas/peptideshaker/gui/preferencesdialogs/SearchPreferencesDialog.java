@@ -4,7 +4,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -314,6 +314,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         fragmentIonAccuracyTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fragmentIonAccuracyTxt.setToolTipText("Fragment ion tolerance");
+        fragmentIonAccuracyTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fragmentIonAccuracyTxtActionPerformed(evt);
+            }
+        });
 
         enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         enzymesCmb.setToolTipText("Enzyme used");
@@ -1303,6 +1308,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private void addAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAvailablePtmJMenuItemActionPerformed
         addModificationsActionPerformed(null);
     }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
+
+    private void fragmentIonAccuracyTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fragmentIonAccuracyTxtActionPerformed
+        // TODO: note that a tolerance in ppm is possible for our spectrum annotation
+    }//GEN-LAST:event_fragmentIonAccuracyTxtActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
@@ -1556,30 +1566,30 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * Sets the selected ion types
      */
     private void setIons() {
-        if (searchParameters.getIonSearched1() == PeptideFragmentIonType.A_ION) {
+        if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
             ion1Cmb.setSelectedItem("a");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.B_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
             ion1Cmb.setSelectedItem("b");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.C_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
             ion1Cmb.setSelectedItem("c");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.X_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.X_ION) {
             ion1Cmb.setSelectedItem("x");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.Y_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.Y_ION) {
             ion1Cmb.setSelectedItem("y");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.Z_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.Z_ION) {
             ion1Cmb.setSelectedItem("z");
         }
-        if (searchParameters.getIonSearched2() == PeptideFragmentIonType.A_ION) {
+        if (searchParameters.getIonSearched2() == PeptideFragmentIon.A_ION) {
             ion2Cmb.setSelectedItem("a");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.B_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.B_ION) {
             ion2Cmb.setSelectedItem("b");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.C_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.C_ION) {
             ion2Cmb.setSelectedItem("c");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.X_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
             ion2Cmb.setSelectedItem("x");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.Y_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
             ion2Cmb.setSelectedItem("y");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.Z_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
             ion2Cmb.setSelectedItem("z");
         }
     }
@@ -1777,7 +1787,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     return searchParameters.getModificationProfile().getShortName(
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 5:
-                    return ptmFactory.isUserDefined(modificationList.get(row));
+                    return ptmFactory.isUserDefined(modificationList.get(row)) &&
+                            ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 6:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
 

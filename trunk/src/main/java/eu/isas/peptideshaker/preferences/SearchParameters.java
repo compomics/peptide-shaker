@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,11 +57,11 @@ public class SearchParameters implements Serializable {
     /**
      * The first kind of ions searched for (typically a, b or c)
      */
-    private PeptideFragmentIonType ionSearched1;
+    private Integer forwardIon;
     /**
      * The second kind of ions searched for (typically x, y or z)
      */
-    private PeptideFragmentIonType ionSearched2;
+    private Integer rewindIon;
     /**
      * Convenience Array for ion type selection
      */
@@ -208,8 +208,8 @@ public class SearchParameters implements Serializable {
      * Getter for the first kind of ion searched
      * @return the first kind of ion searched
      */
-    public PeptideFragmentIonType getIonSearched1() {
-        return ionSearched1;
+    public Integer getIonSearched1() {
+        return forwardIon;
     }
 
     /**
@@ -218,17 +218,17 @@ public class SearchParameters implements Serializable {
      */
     public void setIonSearched1(String ionSearched1) {
         if (ionSearched1.equals("a")) {
-            this.ionSearched1 = PeptideFragmentIonType.A_ION;
+            this.forwardIon = PeptideFragmentIon.A_ION;
         } else if (ionSearched1.equals("b")) {
-            this.ionSearched1 = PeptideFragmentIonType.B_ION;
+            this.forwardIon = PeptideFragmentIon.B_ION;
         } else if (ionSearched1.equals("c")) {
-            this.ionSearched1 = PeptideFragmentIonType.C_ION;
+            this.forwardIon = PeptideFragmentIon.C_ION;
         } else if (ionSearched1.equals("x")) {
-            this.ionSearched1 = PeptideFragmentIonType.X_ION;
+            this.forwardIon = PeptideFragmentIon.X_ION;
         } else if (ionSearched1.equals("y")) {
-            this.ionSearched1 = PeptideFragmentIonType.Y_ION;
+            this.forwardIon = PeptideFragmentIon.Y_ION;
         } else if (ionSearched1.equals("z")) {
-            this.ionSearched1 = PeptideFragmentIonType.Z_ION;
+            this.forwardIon = PeptideFragmentIon.Z_ION;
         }
     }
 
@@ -236,8 +236,8 @@ public class SearchParameters implements Serializable {
      * Getter for the second kind of ion searched
      * @return the second kind of ion searched
      */
-    public PeptideFragmentIonType getIonSearched2() {
-        return ionSearched2;
+    public Integer getIonSearched2() {
+        return rewindIon;
     }
 
     /**
@@ -246,17 +246,17 @@ public class SearchParameters implements Serializable {
      */
     public void setIonSearched2(String ionSearched2) {
         if (ionSearched2.equals("a")) {
-            this.ionSearched2 = PeptideFragmentIonType.A_ION;
+            this.rewindIon = PeptideFragmentIon.A_ION;
         } else if (ionSearched2.equals("b")) {
-            this.ionSearched2 = PeptideFragmentIonType.B_ION;
+            this.rewindIon = PeptideFragmentIon.B_ION;
         } else if (ionSearched2.equals("c")) {
-            this.ionSearched2 = PeptideFragmentIonType.C_ION;
+            this.rewindIon = PeptideFragmentIon.C_ION;
         } else if (ionSearched2.equals("x")) {
-            this.ionSearched2 = PeptideFragmentIonType.X_ION;
+            this.rewindIon = PeptideFragmentIon.X_ION;
         } else if (ionSearched2.equals("y")) {
-            this.ionSearched2 = PeptideFragmentIonType.Y_ION;
+            this.rewindIon = PeptideFragmentIon.Y_ION;
         } else if (ionSearched2.equals("z")) {
-            this.ionSearched2 = PeptideFragmentIonType.Z_ION;
+            this.rewindIon = PeptideFragmentIon.Z_ION;
         }
     }
 
@@ -309,5 +309,17 @@ public class SearchParameters implements Serializable {
      */
     public boolean isPrecursorAccuracyTypePpm() {
         return currentPrecursorAccuracyType == PrecursorAccuracyType.PPM;
+    }
+    
+    /**
+     * Update for the version older than 0.15.1
+     */
+    public void updateVersion() {
+        if (forwardIon == null) {
+            forwardIon = PeptideFragmentIon.B_ION;
+        }
+        if (rewindIon == null) {
+            rewindIon = PeptideFragmentIon.Y_ION;
+        }
     }
 }

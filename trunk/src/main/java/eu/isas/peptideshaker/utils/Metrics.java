@@ -51,6 +51,10 @@ public class Metrics implements Serializable {
      * Amount of validated proteins
      */
     private int nValidatedProteins = -1;
+    /**
+     * List of modifications found in the dataset
+     */
+    private ArrayList<String> foundModifications = null;
 
     /**
      * Constructor.
@@ -222,5 +226,21 @@ public class Metrics implements Serializable {
      */
     public void setnValidatedProteins(int nValidatedProteins) {
         this.nValidatedProteins = nValidatedProteins;
+    }
+    
+    /**
+     * Returns the list of modifications found in the dataset
+     * @return the list of modifications found in the dataset
+     */
+    public ArrayList<String> getFoundModifications() {
+        return foundModifications;
+    }
+    
+    /**
+     * Sets the list of modifications found in the dataset
+     * @param foundModifications the list of modifications found in the dataset
+     */
+    public void setFoundModifications(ArrayList<String> foundModifications) {
+        this.foundModifications = foundModifications;
     }
 }
