@@ -96,8 +96,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private File currentPSFile = null;
     /**
-     * convenience static string indicating that no selection was done by the
-     * user
+     * Convenience static string indicating that no selection was done by the
+     * user.
      */
     public final static String NO_SELECTION = "NO SELECTION";
     /**
@@ -105,7 +105,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private String selectedProteinKey = NO_SELECTION;
     /**
-     * The currently selected peptide Key.
+     * The currently selected peptide key.
      */
     private String selectedPeptideKey = NO_SELECTION;
     /**
@@ -145,7 +145,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public static final int QC_PLOTS_TAB_INDEX = 7;
     /**
-     * array containing the tab which must be updated as indexed by the static
+     * Array containing the tab which must be updated as indexed by the static
      * index. If true the whole panel will be reloaded, if false only the
      * selection will be updated.
      */
@@ -179,8 +179,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private boolean ignorePepWindowUpdate = false;
     /**
-     * The scaling value for the bubbles. @TODO: do we need to save this? (we
-     * can :) )
+     * The scaling value for the bubbles.
      */
     private double bubbleScale = 1;
     /**
@@ -196,15 +195,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private static final String ENZYME_FILE = "conf/peptideshaker_enzymes.xml";
     /**
-     * modification file
+     * Modification file.
      */
     private final String MODIFICATIONS_FILE = "conf/peptideshaker_mods.xml";
     /**
-     * user modification file
+     * User modification file.
      */
     private final String USER_MODIFICATIONS_FILE = "conf/peptideshaker_usermods.xml";
     /**
-     * user preferences file
+     * User preferences file.
      */
     private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
     /**
@@ -213,7 +212,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private File profileFile = new File("conf/default.psm");
     /**
-     * The compomics PTM factory
+     * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
@@ -221,51 +220,51 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
-     * The compomics experiment
+     * The compomics experiment.
      */
     private MsExperiment experiment = null;
     /**
-     * The investigated sample
+     * The investigated sample.
      */
     private Sample sample;
     /**
-     * The replicate number
+     * The replicate number.
      */
     private int replicateNumber;
     /**
-     * The annotation preferences
+     * The annotation preferences.
      */
     private AnnotationPreferences annotationPreferences = new AnnotationPreferences();
     /**
-     * The spectrum counting preferences
+     * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
     /**
-     * The filter preferences
+     * The filter preferences.
      */
     private FilterPreferences filterPreferences = new FilterPreferences();
     /**
-     * The display preferences
+     * The display preferences.
      */
     private DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
-     * The parameters of the search
+     * The parameters of the search.
      */
     private SearchParameters searchParameters = new SearchParameters();
     /**
-     * the user preferences
+     * The user preferences.
      */
     private UserPreferences userPreferences;
     /**
-     * The identification filter used for this project
+     * The identification filter used for this project.
      */
     private IdFilter idFilter = new IdFilter();
     /**
-     * The project details
+     * The project details.
      */
     private ProjectDetails projectDetails = null;
     /**
-     * Compomics experiment saver and opener
+     * Compomics experiment saver and opener.
      */
     private ExperimentIO experimentIO = new ExperimentIO();
     /**
@@ -273,27 +272,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private static ProgressDialogX progressDialog;
     /**
-     * The identification to display
+     * The identification to display.
      */
     private Identification identification;
     /**
-     * The overview panel
+     * The overview panel.
      */
     private OverviewPanel overviewPanel;
     /**
-     * The statistics panel
+     * The statistics panel.
      */
     private StatsPanel statsPanel;
     /**
-     * The PTM panel
+     * The PTM panel.
      */
     private PtmPanel ptmPanel;
     /**
-     * The Annotation panel
+     * The Annotation panel.
      */
     private AnnotationPanel annotationPanel;
     /**
-     * The spectrum panel
+     * The spectrum panel.
      */
     private SpectrumIdentificationPanel spectrumIdentificationPanel;
     /**
@@ -301,19 +300,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private ProteinStructurePanel proteinStructurePanel;
     /**
-     * The QC panel
+     * The QC panel.
      */
     private QCPanel qcPanel;
     /**
-     * The GO Analysis panel
+     * The GO Analysis panel.
      */
     private GOEAPanel goPanel;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
     /**
@@ -331,15 +330,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private String notSelectedRowHtmlTagFontColor = "#0101DF";
     /**
-     * The spectrum annotator
+     * The spectrum annotator.
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
     /**
-     * List of caught exceptions
+     * List of caught exceptions.
      */
     private ArrayList<String> exceptionCaught = new ArrayList<String>();
     /**
-     * The actually identified modifications
+     * The actually identified modifications.
      */
     private ArrayList<String> identifiedModifications = null;
     /**
@@ -347,28 +346,28 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private JumpToPanel jumpToPanel;
     /**
-     * The class used to star/hide items
+     * The class used to star/hide items.
      */
     private StarHider starHider = new StarHider(this);
     /**
-     * The class used to provide sexy features out of the identification
+     * The class used to provide sexy features out of the identification.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator = new IdentificationFeaturesGenerator(this);
     /**
-     * Metrics picked-up while loading the files
+     * Metrics picked-up while loading the files.
      */
     private Metrics metrics;
     /**
-     * The charge menus
+     * The charge menus.
      */
     private HashMap<Integer, JCheckBoxMenuItem> chargeMenus = new HashMap<Integer, JCheckBoxMenuItem>();
     /**
-     * The neutral loss menus
+     * The neutral loss menus.
      */
     private HashMap<NeutralLoss, JCheckBoxMenuItem> lossMenus = new HashMap<NeutralLoss, JCheckBoxMenuItem>();
 
     /**
-     * The main method used to start PeptideShaker
+     * The main method used to start PeptideShaker.
      *
      * @param args
      */
@@ -509,7 +508,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         xIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         yIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         zIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jSeparator14 = new javax.swing.JPopupMenu.Separator();
+        splitterMenu8 = new javax.swing.JMenu();
+        otherMenu = new javax.swing.JMenu();
         precursorCheckMenu = new javax.swing.JCheckBoxMenuItem();
         immoniumIonsCheckMenu = new javax.swing.JCheckBoxMenuItem();
         reporterIonsCheckMenu = new javax.swing.JCheckBoxMenuItem();
@@ -529,8 +529,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         automaticAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jSeparator15 = new javax.swing.JPopupMenu.Separator();
-        annotationColorsMenu = new javax.swing.JMenuItem();
         splitterMenu4 = new javax.swing.JMenu();
         exportGraphicsMenu = new javax.swing.JMenu();
         exportSpectrumMenu = new javax.swing.JMenu();
@@ -545,7 +543,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         helpMenuItem = new javax.swing.JMenuItem();
         splitterMenu7 = new javax.swing.JMenu();
         ionTableButtonGroup = new javax.swing.ButtonGroup();
-        jMenuItem3 = new javax.swing.JMenuItem();
         gradientPanel = new javax.swing.JPanel();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
@@ -669,27 +666,34 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         ionsMenu.add(zIonCheckBoxMenuItem);
-        ionsMenu.add(jSeparator14);
+
+        annotationMenuBar.add(ionsMenu);
+
+        splitterMenu8.setText("|");
+        splitterMenu8.setEnabled(false);
+        annotationMenuBar.add(splitterMenu8);
+
+        otherMenu.setText("Other");
 
         precursorCheckMenu.setSelected(true);
         precursorCheckMenu.setText("Precursor");
-        ionsMenu.add(precursorCheckMenu);
+        otherMenu.add(precursorCheckMenu);
 
         immoniumIonsCheckMenu.setSelected(true);
-        immoniumIonsCheckMenu.setText("Immonium Ions");
-        ionsMenu.add(immoniumIonsCheckMenu);
+        immoniumIonsCheckMenu.setText("Immonium");
+        otherMenu.add(immoniumIonsCheckMenu);
 
         reporterIonsCheckMenu.setSelected(true);
-        reporterIonsCheckMenu.setText("Reporter Ions");
-        ionsMenu.add(reporterIonsCheckMenu);
+        reporterIonsCheckMenu.setText("Reporter");
+        otherMenu.add(reporterIonsCheckMenu);
 
-        annotationMenuBar.add(ionsMenu);
+        annotationMenuBar.add(otherMenu);
 
         lossSplitter.setText("|");
         lossSplitter.setEnabled(false);
         annotationMenuBar.add(lossSplitter);
 
-        lossMenu.setText("Losses");
+        lossMenu.setText("Loss");
         lossMenu.setEnabled(false);
         lossMenu.add(jSeparator7);
 
@@ -708,7 +712,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         splitterMenu2.setEnabled(false);
         annotationMenuBar.add(splitterMenu2);
 
-        chargeMenu.setText("Charges");
+        chargeMenu.setText("Charge");
         chargeMenu.setEnabled(false);
         annotationMenuBar.add(chargeMenu);
 
@@ -788,15 +792,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         settingsMenu.add(errorPlotTypeCheckBoxMenuItem);
-        settingsMenu.add(jSeparator15);
-
-        annotationColorsMenu.setText("Colors");
-        annotationColorsMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                annotationColorsMenuActionPerformed(evt);
-            }
-        });
-        settingsMenu.add(annotationColorsMenu);
 
         annotationMenuBar.add(settingsMenu);
 
@@ -881,8 +876,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         splitterMenu7.setText("|");
         splitterMenu7.setEnabled(false);
         annotationMenuBar.add(splitterMenu7);
-
-        jMenuItem3.setText("jMenuItem3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker");
@@ -2400,10 +2393,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         updateAnnotationPreferences();
     }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
-    private void annotationColorsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationColorsMenuActionPerformed
-        new SpectrumColorsDialog(this);
-    }//GEN-LAST:event_annotationColorsMenuActionPerformed
-
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2506,7 +2495,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JCheckBoxMenuItem adaptCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem allCheckBoxMenuItem;
     private javax.swing.JTabbedPane allTabsJTabbedPane;
-    private javax.swing.JMenuItem annotationColorsMenu;
     private javax.swing.JMenuBar annotationMenuBar;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
@@ -2547,14 +2535,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu ionsMenu;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
-    private javax.swing.JPopupMenu.Separator jSeparator14;
-    private javax.swing.JPopupMenu.Separator jSeparator15;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -2572,6 +2557,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu openRecentJMenu;
+    private javax.swing.JMenu otherMenu;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
@@ -2599,6 +2585,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu splitterMenu5;
     private javax.swing.JMenu splitterMenu6;
     private javax.swing.JMenu splitterMenu7;
+    private javax.swing.JMenu splitterMenu8;
     private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu testJMenu;
@@ -2825,7 +2812,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         spectrumCountingPreferences.setValidatedHits(true);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
-        
+
     }
 
     /**
@@ -3972,8 +3959,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
     /**
      * Update the annotation menu bar with the current annotation preferences.
+     *
+     * @param precursorCharge
+     * @param peptide
      */
-    public void updateAnnotationMenus(int precursorChqrge, Peptide peptide) {
+    public void updateAnnotationMenus(int precursorCharge, Peptide peptide) {
 
         aIonCheckBoxMenuItem.setSelected(false);
         bIonCheckBoxMenuItem.setSelected(false);
@@ -4012,25 +4002,31 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         boolean accounted;
+        
         for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
             lossMenu.remove(lossMenuItem);
         }
+        
         lossMenu.setVisible(true);
         lossSplitter.setVisible(true);
         lossMenus.clear();
+        
         HashMap<String, NeutralLoss> neutralLosses = new HashMap<String, NeutralLoss>();
+        
         for (NeutralLoss neutralLoss : IonFactory.getInstance().getDefaultNeutralLosses()) {
             neutralLosses.put(neutralLoss.name, neutralLoss);
         }
-        PTM ptm;
+        
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-            ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+            PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
             for (NeutralLoss neutralLoss : ptm.getNeutralLosses()) {
                 neutralLosses.put(neutralLoss.name, neutralLoss);
             }
         }
+        
         ArrayList<String> names = new ArrayList<String>(neutralLosses.keySet());
         Collections.sort(names);
+        
         if (names.isEmpty()) {
             lossMenu.setVisible(false);
             lossSplitter.setVisible(false);
@@ -4060,11 +4056,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         for (JCheckBoxMenuItem chargeMenuItem : chargeMenus.values()) {
             chargeMenu.remove(chargeMenuItem);
         }
+        
         chargeMenus.clear();
-        if (precursorChqrge == 1) {
-            precursorChqrge = 2;
+        
+        if (precursorCharge == 1) {
+            precursorCharge = 2;
         }
-        for (int charge = 1; charge < precursorChqrge; charge++) {
+        
+        for (int charge = 1; charge < precursorCharge; charge++) {
+            
             JCheckBoxMenuItem chargeMenuItem = new JCheckBoxMenuItem(charge + "+");
             chargeMenuItem.setSelected(annotationPreferences.getValidatedCharges().contains(charge));
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4074,6 +4074,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     updateAnnotationPreferences();
                 }
             });
+            
             chargeMenus.put(charge, chargeMenuItem);
             chargeMenu.add(chargeMenuItem);
         }
@@ -4664,13 +4665,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             || getSearchParameters().getIonSearched2() == null;
                     if (compatibilityIssue) {
                         JOptionPane.showMessageDialog(null,
-                                "Due to a compatibility issue with the version of PeptideShaker used to save the project the search and annotation preferences might have been altered. You can verify these in the corresponding menu and save again.\n\n"
-                                + "The current version of PeptideShaker was substancially improved, we invite you to reprocess your identification files.",
-                                "Compatibility issue",
-                                JOptionPane.ERROR_MESSAGE);
+                                "The annotation preferences for this project may have changed.\n\n"
+                                + "Please check Export > Spectrum Annotation and resave project.\n\n"
+                                + "Note that PeptideShaker has substancially improved, we strongly\n"
+                                + "recommend reprocessing your identification files.",
+                                "Annotation Preferences",
+                                JOptionPane.INFORMATION_MESSAGE);
                         searchParameters.updateVersion();
                         annotationPreferences.updateVersion();
-                        updateAnnotationPreferencesFromSearchSettings();;
+                        updateAnnotationPreferencesFromSearchSettings();
                     }
 
                     progressDialog.dispose();

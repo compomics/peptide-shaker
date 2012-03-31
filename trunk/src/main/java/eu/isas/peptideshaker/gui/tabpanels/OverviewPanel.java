@@ -4550,10 +4550,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 PeptideAssumption peptideAssumption = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestAssumption();
 
                 if (!before.equals("")) {
-                    before += "-";
+                    before += " - ";
                 }
                 if (!after.equals("")) {
-                    after = "-" + after;
+                    after = " - " + after;
                 }
                 String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
                 ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(

@@ -31,7 +31,7 @@ import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 
 /**
- * Table containing information about the peak annotation of a modified peptide. 
+ * Table containing information about the peak annotation of a modified peptide.
  * Heavily based on the Fragment ion table.
  *
  * @author Marc Vaudel
@@ -78,12 +78,13 @@ public class PtmTable extends JTable {
 
     /**
      * Constructor.
-     * 
-     * @param peptideShakerGUI  PeptideShakerGUI parent
-     * @param peptide           the peptide
-     * @param ptm               the ptm
-     * @param spectrumKeys      the spectrum keys
-     * @param areaChart         if true an area chart version will be used, false displays bar charts
+     *
+     * @param peptideShakerGUI PeptideShakerGUI parent
+     * @param peptide the peptide
+     * @param ptm the ptm
+     * @param spectrumKeys the spectrum keys
+     * @param areaChart if true an area chart version will be used, false
+     * displays bar charts
      */
     public PtmTable(PeptideShakerGUI peptideShakerGUI, Peptide peptide, PTM ptm, ArrayList<String> spectrumKeys, boolean areaChart) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -120,12 +121,10 @@ public class PtmTable extends JTable {
         return new JTableHeader(columnModel) {
 
             public String getToolTipText(MouseEvent e) {
-                String tip = null;
                 java.awt.Point p = e.getPoint();
                 int index = columnModel.getColumnIndexAtX(p.x);
                 int realIndex = columnModel.getColumn(index).getModelIndex();
-                tip = (String) tooltips.get(realIndex);
-                return tip;
+                return (String) tooltips.get(realIndex);
             }
         };
     }
@@ -387,11 +386,11 @@ public class PtmTable extends JTable {
 
     /**
      * Set up and add area charts.
-     * 
+     *
      * @param tableContent
      * @param fragmentIonType
      * @param aa
-     * @param column 
+     * @param column
      */
     private void addAreaChart(PtmtableContent tableContent, int fragmentIonType, int aa, int column) {
 
@@ -430,18 +429,17 @@ public class PtmTable extends JTable {
             data.add(0.0);
 
             // find area color
-            Color areaColor = Color.lightGray;
             double colorCoef;
             if (nPTM == 0) {
                 colorCoef = 1;
             } else {
                 colorCoef = 1.0 - ((1.0 * modCpt) / nPTM);
             }
-            String tooltip = null;
+
             Ion genericIon = Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, fragmentIonType, new ArrayList<NeutralLoss>());
-            areaColor = SpectrumPanel.determineFragmentIonColor(genericIon);
+            Color areaColor = SpectrumPanel.determineFragmentIonColor(genericIon, false);
             areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
-                    tooltip = "<html>" + PeptideFragmentIon.getSubTypeAsString(fragmentIonType) + "<sub>" + aa + "</sub>" + modification + "</html>";
+            String tooltip = "<html>" + PeptideFragmentIon.getSubTypeAsString(fragmentIonType) + "<sub>" + aa + "</sub>" + modification + "</html>";
 
             // create a JSparklineDataSeries  
             JSparklinesDataSeries sparklineDataseries = new JSparklinesDataSeries(data, areaColor, tooltip);
