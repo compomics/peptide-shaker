@@ -175,7 +175,7 @@ public class PtmScoring implements Serializable {
      *
      * @return the implemented locations for the A-score
      */
-    public ArrayList<String> getAScorePostions() {
+    public ArrayList<String> getAScoreLocations() {
         return new ArrayList<String>(aScores.keySet());
     }
 
@@ -210,7 +210,7 @@ public class PtmScoring implements Serializable {
         for (String positions : anotherScore.getDeltaScorelocations()) {
             addDeltaScore(positions, anotherScore.getDeltaScore(positions));
         }
-        for (String positions : anotherScore.getAScorePostions()) {
+        for (String positions : anotherScore.getAScoreLocations()) {
             addAScore(positions, anotherScore.getAScore(positions));
         }
         siteConfidence = Math.max(siteConfidence, anotherScore.getPtmSiteConfidence());
