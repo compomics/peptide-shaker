@@ -95,6 +95,7 @@
         <Menu class="javax.swing.JMenu" name="otherMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Other"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="precursorCheckMenu">

@@ -61,6 +61,7 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
+import no.uib.jsparklines.renderers.util.GradientColorCoding.ColorGradient;
 import org.jfree.chart.plot.PlotOrientation;
 
 /**
@@ -182,10 +183,11 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
         ptmTableJScrollPane.getViewport().setOpaque(false);
-        modProfilesScrollPane.getViewport().setOpaque(false);
+        psmAScoresScrollPane.getViewport().setOpaque(false);
+        psmDeltaScrollPane.getViewport().setOpaque(false);
 
         // @TODO: remove when individual psm modification plots are added
-        spectrumTabbedPane.setEnabledAt(0, false);
+        //spectrumTabbedPane.setEnabledAt(0, false);
 
         setTableProperties();
 
@@ -253,11 +255,15 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTable.getTableHeader().setReorderingAllowed(false);
         selectedPsmsTable.getTableHeader().setReorderingAllowed(false);
         relatedPsmsTable.getTableHeader().setReorderingAllowed(false);
-        psmModProfilesTable.getTableHeader().setReorderingAllowed(false);
+        psmAScoresTable.getTableHeader().setReorderingAllowed(false);
+        psmDeltaScoresTable.getTableHeader().setReorderingAllowed(false);
 
         // centrally align the column headers 
-        TableCellRenderer renderer = psmModProfilesTable.getTableHeader().getDefaultRenderer();
+        TableCellRenderer renderer = psmAScoresTable.getTableHeader().getDefaultRenderer();
         JLabel label = (JLabel) renderer;
+        label.setHorizontalAlignment(JLabel.CENTER);
+        renderer = psmDeltaScoresTable.getTableHeader().getDefaultRenderer();
+        label = (JLabel) renderer;
         label.setHorizontalAlignment(JLabel.CENTER);
 
         // set up the protein inference color map
@@ -525,13 +531,16 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumAndFragmentIonPanel = new javax.swing.JPanel();
         slidersSplitPane = new javax.swing.JSplitPane();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
-        psmModProfileJPanel = new javax.swing.JPanel();
-        modProfilesScrollPane = new javax.swing.JScrollPane();
-        psmModProfilesTable = new javax.swing.JTable();
         ptmTableJPanel = new javax.swing.JPanel();
         ptmTableJScrollPane = new javax.swing.JScrollPane();
         ptmTableJToolBar = new javax.swing.JToolBar();
         ptmTableAnnotationMenuPanel = new javax.swing.JPanel();
+        psmDeltaScoresJPanel = new javax.swing.JPanel();
+        psmDeltaScrollPane = new javax.swing.JScrollPane();
+        psmDeltaScoresTable = new javax.swing.JTable();
+        psmAScoresJPanel = new javax.swing.JPanel();
+        psmAScoresScrollPane = new javax.swing.JScrollPane();
+        psmAScoresTable = new javax.swing.JTable();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
@@ -1048,40 +1057,6 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
 
-        psmModProfileJPanel.setOpaque(false);
-
-        modProfilesScrollPane.setOpaque(false);
-
-        psmModProfilesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        psmModProfilesTable.setOpaque(false);
-        modProfilesScrollPane.setViewportView(psmModProfilesTable);
-
-        javax.swing.GroupLayout psmModProfileJPanelLayout = new javax.swing.GroupLayout(psmModProfileJPanel);
-        psmModProfileJPanel.setLayout(psmModProfileJPanelLayout);
-        psmModProfileJPanelLayout.setHorizontalGroup(
-            psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmModProfileJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(modProfilesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        psmModProfileJPanelLayout.setVerticalGroup(
-            psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmModProfileJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(modProfilesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        spectrumTabbedPane.addTab("PTM Profiles", psmModProfileJPanel);
-
         ptmTableJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         ptmTableJScrollPane.setOpaque(false);
@@ -1122,6 +1097,74 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("PTM Table", ptmTableJPanel);
 
+        psmDeltaScoresJPanel.setOpaque(false);
+
+        psmDeltaScrollPane.setOpaque(false);
+
+        psmDeltaScoresTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        psmDeltaScoresTable.setOpaque(false);
+        psmDeltaScrollPane.setViewportView(psmDeltaScoresTable);
+
+        javax.swing.GroupLayout psmDeltaScoresJPanelLayout = new javax.swing.GroupLayout(psmDeltaScoresJPanel);
+        psmDeltaScoresJPanel.setLayout(psmDeltaScoresJPanelLayout);
+        psmDeltaScoresJPanelLayout.setHorizontalGroup(
+            psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        psmDeltaScoresJPanelLayout.setVerticalGroup(
+            psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        spectrumTabbedPane.addTab("Delta Scores", psmDeltaScoresJPanel);
+
+        psmAScoresJPanel.setOpaque(false);
+
+        psmAScoresScrollPane.setOpaque(false);
+
+        psmAScoresTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        psmAScoresTable.setOpaque(false);
+        psmAScoresScrollPane.setViewportView(psmAScoresTable);
+
+        javax.swing.GroupLayout psmAScoresJPanelLayout = new javax.swing.GroupLayout(psmAScoresJPanel);
+        psmAScoresJPanel.setLayout(psmAScoresJPanelLayout);
+        psmAScoresJPanelLayout.setHorizontalGroup(
+            psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        psmAScoresJPanelLayout.setVerticalGroup(
+            psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        spectrumTabbedPane.addTab("A Scores", psmAScoresJPanel);
+
         spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -1156,7 +1199,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
-        spectrumTabbedPane.setSelectedIndex(2);
+        spectrumTabbedPane.setSelectedIndex(3);
 
         slidersSplitPane.setLeftComponent(spectrumTabbedPane);
 
@@ -1826,7 +1869,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
             public void run() {
                 progressDialog.setVisible(true);
-                progressDialog.setTitle("Getting Peptides 3. Please Wait...");
+                progressDialog.setTitle("Getting Peptides. Please Wait...");
             }
         }, "ProgressDialog").start();
 
@@ -1910,7 +1953,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
             public void run() {
                 progressDialog.setVisible(true);
-                progressDialog.setTitle("Getting Related Peptides. Please Wait..."); 
+                progressDialog.setTitle("Getting Related Peptides. Please Wait...");
             }
         }).start();
 
@@ -2099,7 +2142,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
             public void run() {
                 progressDialog.setVisible(true);
-                progressDialog.setTitle("Getting Modifications. Please Wait..."); 
+                progressDialog.setTitle("Getting Modifications. Please Wait...");
             }
         }).start();
 
@@ -2158,7 +2201,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 public void run() {
                     progressDialog.setVisible(true);
-                    progressDialog.setTitle("Getting Peptides 1. Please Wait..."); 
+                    progressDialog.setTitle("Getting Peptides. Please Wait...");
                 }
             }).start();
 
@@ -2856,7 +2899,6 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JButton exportRelatedPsmsJButton;
     private javax.swing.JButton exportSpectrumJButton;
     private javax.swing.JSlider intensitySlider;
-    private javax.swing.JScrollPane modProfilesScrollPane;
     private javax.swing.JPanel modPsmsPanel;
     private javax.swing.JButton modificationProfileHelpJButton;
     private javax.swing.JPanel modificationProfileRelatedPeptideJPanel;
@@ -2868,8 +2910,12 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane peptideTablesJSplitPane;
     private javax.swing.JTable peptidesTable;
     private javax.swing.JScrollPane peptidesTableJScrollPane;
-    private javax.swing.JPanel psmModProfileJPanel;
-    private javax.swing.JTable psmModProfilesTable;
+    private javax.swing.JPanel psmAScoresJPanel;
+    private javax.swing.JScrollPane psmAScoresScrollPane;
+    private javax.swing.JTable psmAScoresTable;
+    private javax.swing.JPanel psmDeltaScoresJPanel;
+    private javax.swing.JTable psmDeltaScoresTable;
+    private javax.swing.JScrollPane psmDeltaScrollPane;
     private javax.swing.JSplitPane psmSpectraSplitPane;
     private javax.swing.JSplitPane psmSplitPane;
     private javax.swing.JLayeredPane psmsModPeptidesLayeredPane;
@@ -2985,6 +3031,15 @@ public class PtmPanel extends javax.swing.JPanel {
         ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
+
+        // set the cell renderers
+        updatePsmScoresCellRenderers();
+
+        psmAScoresTable.revalidate();
+        psmAScoresTable.repaint();
+
+        psmDeltaScoresTable.revalidate();
+        psmDeltaScoresTable.repaint();
 
         peptidesTable.revalidate();
         peptidesTable.repaint();
@@ -3288,7 +3343,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         if (ptmJTable.getSelectedRow() != -1) {
 
-            progressDialog.setTitle("Getting Peptides 2. Please Wait...");
+            progressDialog.setTitle("Getting Peptides. Please Wait...");
 
             // clear the spectrum
             spectrumChartJPanel.removeAll();
@@ -4638,7 +4693,25 @@ public class PtmPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Updating Modification Profile Table. Please Wait...");
             progressDialog.setIndeterminate(true);
 
-            psmModProfilesTable.setModel(new DefaultTableModel() {
+            psmAScoresTable.setModel(new DefaultTableModel() {
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+
+                @Override
+                public Class<?> getColumnClass(int columnIndex) {
+
+                    if (columnIndex == 0) {
+                        return Double.class;
+                    } else {
+                        return Double.class;
+                    }
+                }
+            });
+
+            psmDeltaScoresTable.setModel(new DefaultTableModel() {
 
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -4661,32 +4734,16 @@ public class PtmPanel extends javax.swing.JPanel {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
                 String sequence = peptideMatch.getTheoreticPeptide().getSequence();
 
-                ((DefaultTableModel) psmModProfilesTable.getModel()).addColumn("");
+                ((DefaultTableModel) psmAScoresTable.getModel()).addColumn("");
+                ((DefaultTableModel) psmDeltaScoresTable.getModel()).addColumn("");
 
                 for (int i = 0; i < sequence.length(); i++) {
                     String columnName = "" + sequence.charAt(i) + (i + 1);
-                    ((DefaultTableModel) psmModProfilesTable.getModel()).addColumn(columnName);
+                    ((DefaultTableModel) psmAScoresTable.getModel()).addColumn(columnName);
+                    ((DefaultTableModel) psmDeltaScoresTable.getModel()).addColumn(columnName);
                 }
 
-                // add the peptide mod profile
-                PSPtmScores scores = new PSPtmScores();
-                scores = (PSPtmScores) peptideMatch.getUrParam(scores);
-                ArrayList<ModificationProfile> profiles = getModificationProfile(peptideMatch.getTheoreticPeptide(), scores);
-
-                ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{});
-
-                for (int i = 0; i < profiles.size(); i++) {
-                    if (profiles.get(i).getPtmName().equalsIgnoreCase(getSelectedModification())) {
-                        double[][] tempProfile = profiles.get(i).getProfile();
-
-                        // get the delta scores
-                        for (int j = 0; j < tempProfile.length; j++) {
-                            psmModProfilesTable.setValueAt(tempProfile[j][ModificationProfile.DELTA_SCORE_ROW_INDEX], 0, j + 1);
-                        }
-                    }
-                }
-
-                // add the peptide psm profiles
+                // add the psm scores (a score and delta score)
                 for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
 
                     String spectrumKey = peptideMatch.getSpectrumMatches().get(i);
@@ -4695,7 +4752,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
 
-                        ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{(i + 1)});
+                        ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
+                        ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
 
                         ArrayList<String> deltaScoreLocations = ptmScores.getPtmScoring(getSelectedModification()).getDeltaScorelocations();
 
@@ -4705,28 +4763,68 @@ public class PtmPanel extends javax.swing.JPanel {
 
                             for (int k = 0; k < locations.length; k++) {
                                 int location = new Integer(locations[k]);
-                                psmModProfilesTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getDeltaScore(deltaScoreLocations.get(j)), (i + 1), location);
+                                psmDeltaScoresTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getDeltaScore(deltaScoreLocations.get(j)), i, location);
+                            }
+                        }
+
+                        ArrayList<String> aScoreLocations = ptmScores.getPtmScoring(getSelectedModification()).getAScoreLocations();
+
+                        for (int j = 0; j < aScoreLocations.size(); j++) {
+
+                            String[] locations = aScoreLocations.get(j).split("\\|");
+
+                            for (int k = 0; k < locations.length; k++) {
+                                int location = new Integer(locations[k]);
+                                psmAScoresTable.setValueAt(ptmScores.getPtmScoring(getSelectedModification()).getAScore(aScoreLocations.get(j)), i, location);
                             }
                         }
                     } else {
-                        ((DefaultTableModel) psmModProfilesTable.getModel()).addRow(new Object[]{(i + 1)});
+                        ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
+                        ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
                     }
 
-                    // add zeros to the empty cells
-                    for (int j = 1; j < psmModProfilesTable.getColumnCount(); j++) {
-                        if (psmModProfilesTable.getValueAt((i + 1), j) == null) {
-                            psmModProfilesTable.setValueAt(0.0, (i + 1), j);
+                    // add zeros to the empty cells for the a score
+                    for (int j = 0; j < psmAScoresTable.getColumnCount(); j++) {
+                        if (psmAScoresTable.getValueAt(i, j) == null) {
+                            psmAScoresTable.setValueAt(0.0, i, j);
+                        }
+                    }
+
+                    // add zeros to the empty cells for the delta score
+                    for (int j = 0; j < psmDeltaScoresTable.getColumnCount(); j++) {
+                        if (psmDeltaScoresTable.getValueAt(i, j) == null) {
+                            psmDeltaScoresTable.setValueAt(0.0, i, j);
                         }
                     }
                 }
 
                 // set the cell renderers
-                for (int i = 1; i < psmModProfilesTable.getColumnCount(); i++) {
-                    //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
-//                ((JSparklinesBarChartTableCellRenderer) psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
-                    //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
-                }
+                updatePsmScoresCellRenderers();
             }
+        }
+    }
+
+    /**
+     * Update the psm delt and a score table cell renderers.
+     */
+    private void updatePsmScoresCellRenderers() {
+        for (int i = 1; i < psmAScoresTable.getColumnCount(); i++) {
+            if (peptideShakerGUI.showSparklines()) {
+                psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
+                ((JSparklinesBarChartTableCellRenderer) psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
+            } else {
+                ((JSparklinesBarChartTableCellRenderer) psmAScoresTable.getColumn(psmAScoresTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
+            }
+        }
+
+        for (int i = 1; i < psmDeltaScoresTable.getColumnCount(); i++) {
+            if (peptideShakerGUI.showSparklines()) {
+                psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
+                ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
+            } else {
+                ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
+            }
+
         }
     }
 }

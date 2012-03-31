@@ -674,6 +674,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu8);
 
         otherMenu.setText("Other");
+        otherMenu.setEnabled(false);
 
         precursorCheckMenu.setSelected(true);
         precursorCheckMenu.setText("Precursor");
@@ -2448,6 +2449,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             findJMenuItem.setEnabled(true);
             starHideJMenuItem.setEnabled(true);
             ionsMenu.setEnabled(true);
+            otherMenu.setEnabled(true);
             lossMenu.setEnabled(true);
             chargeMenu.setEnabled(true);
             settingsMenu.setEnabled(true);
