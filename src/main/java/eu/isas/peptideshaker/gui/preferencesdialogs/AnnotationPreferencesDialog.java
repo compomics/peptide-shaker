@@ -1,8 +1,6 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
-import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Ion.IonType;
-import com.compomics.util.experiment.biology.IonFactory;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import eu.isas.peptideshaker.gui.HelpDialog;
@@ -13,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 
 /**
  * A simple dialog for setting the spectrum annotation preferences.
@@ -31,11 +30,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * Map of the charges selection
+     * Map of the charges selection.
      */
     private HashMap<Integer, Boolean> chargesMap = new HashMap<Integer, Boolean>();
     /**
-     * Map of the neutral losses selection
+     * Map of the neutral losses selection.
      */
     private HashMap<NeutralLoss, Boolean> neutralLossesMap = new HashMap<NeutralLoss, Boolean>();
 
@@ -48,37 +47,77 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         this.annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+        setUpData();
+        initComponents();
+        setUpGui();
+        updateGUI();
+        this.setLocationRelativeTo(peptideShakerGUI);
+        setVisible(true);
+    }
 
+    /**
+     * Set up the GUI.
+     */
+    private void setUpGui() {
+
+        // set main table properties
+        chargesTable.getTableHeader().setReorderingAllowed(false);
+        neutralLossesTable.getTableHeader().setReorderingAllowed(false);
+
+        // make sure that the scroll panes are see-through
+        chargeScrollPane.getViewport().setOpaque(false);
+        neutralLossScrollPane.getViewport().setOpaque(false);
+
+        chargesTable.getColumn(" ").setMaxWidth(50);
+        chargesTable.getColumn(" ").setMinWidth(50);
+        chargesTable.getColumn("  ").setMaxWidth(30);
+        chargesTable.getColumn("  ").setMinWidth(30);
+
+        neutralLossesTable.getColumn(" ").setMaxWidth(50);
+        neutralLossesTable.getColumn(" ").setMinWidth(50);
+        neutralLossesTable.getColumn("  ").setMaxWidth(30);
+        neutralLossesTable.getColumn("  ").setMinWidth(30);
+
+        chargesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
+        neutralLossesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
+    }
+
+    /**
+     * Set up the required data.
+     */
+    private void setUpData() {
         ArrayList<Integer> charges = peptideShakerGUI.getCharges();
+
         int maxCharge = 1;
+
         if (!charges.isEmpty()) {
             maxCharge = Collections.max(charges);
         }
+
         ArrayList<Integer> selectedCharges = annotationPreferences.getValidatedCharges();
+
         for (int charge = 1; charge <= maxCharge; charge++) {
             chargesMap.put(charge, selectedCharges.contains(charge));
         }
 
         ArrayList<NeutralLoss> possibleNeutralLosses = peptideShakerGUI.getNeutralLosses();
         ArrayList<NeutralLoss> selectedNeutralLosses = annotationPreferences.getNeutralLosses().getAccountedNeutralLosses();
-        boolean found;
+
         for (NeutralLoss possibleNeutralLoss : possibleNeutralLosses) {
-            found = false;
+
+            boolean found = false;
+
             for (NeutralLoss selectedNeutralLoss : selectedNeutralLosses) {
                 if (possibleNeutralLoss.isSameAs(selectedNeutralLoss)) {
                     found = true;
                     break;
                 }
             }
+
             if (found) {
                 neutralLossesMap.put(possibleNeutralLoss, true);
             }
         }
-
-        initComponents();
-        updateGUI();
-        this.setLocationRelativeTo(peptideShakerGUI);
-        setVisible(true);
     }
 
     /**
@@ -97,9 +136,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         annotationPreferencesHelpJButton = new javax.swing.JButton();
-        tabbedPane = new javax.swing.JTabbedPane();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        ionsPanel = new javax.swing.JPanel();
         aBox = new javax.swing.JCheckBox();
         bBox = new javax.swing.JCheckBox();
         cBox = new javax.swing.JCheckBox();
@@ -109,21 +146,21 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         precursorBox = new javax.swing.JCheckBox();
         immoniumBox = new javax.swing.JCheckBox();
         reporterBox = new javax.swing.JCheckBox();
-        jPanel1 = new javax.swing.JPanel();
+        chargePanel = new javax.swing.JPanel();
+        chargeScrollPane = new javax.swing.JScrollPane();
+        chargesTable = new javax.swing.JTable();
+        neutralLossPanel = new javax.swing.JPanel();
+        neutralLossScrollPane = new javax.swing.JScrollPane();
+        neutralLossesTable = new javax.swing.JTable();
+        peakMatchingPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         intensitySpinner = new javax.swing.JSpinner();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         accuracySpinner = new javax.swing.JSpinner();
-        chargePanel = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        chargesTable = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
         adaptBox = new javax.swing.JCheckBox();
         automaticAnnotationCheck = new javax.swing.JCheckBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        neutralLossesTable = new javax.swing.JTable();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -180,246 +217,232 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel4.setOpaque(false);
+        ionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Ion Type"));
+        ionsPanel.setOpaque(false);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Ion Type"));
-        jPanel2.setOpaque(false);
-
-        aBox.setText("a");
+        aBox.setText("a-ion");
+        aBox.setIconTextGap(10);
         aBox.setOpaque(false);
 
-        bBox.setText("b");
+        bBox.setText("b-ion");
+        bBox.setIconTextGap(10);
         bBox.setOpaque(false);
 
-        cBox.setText("c");
+        cBox.setText("c-ion");
+        cBox.setIconTextGap(10);
         cBox.setOpaque(false);
 
-        xBox.setText("x");
+        xBox.setText("x-ion");
+        xBox.setIconTextGap(10);
         xBox.setOpaque(false);
 
-        yBox.setText("y");
+        yBox.setText("y-ion");
+        yBox.setIconTextGap(10);
         yBox.setOpaque(false);
 
-        zBox.setText("z");
+        zBox.setText("z-ion");
+        zBox.setIconTextGap(10);
         zBox.setOpaque(false);
 
         precursorBox.setText("Precursor");
+        precursorBox.setToolTipText("Precursor ions");
+        precursorBox.setIconTextGap(10);
         precursorBox.setOpaque(false);
 
-        immoniumBox.setText("Immonium Ions");
+        immoniumBox.setText("Immonium");
+        immoniumBox.setToolTipText("Immonium ions");
+        immoniumBox.setIconTextGap(10);
         immoniumBox.setOpaque(false);
 
-        reporterBox.setText("Reporter Ions");
+        reporterBox.setText("Reporter");
+        reporterBox.setToolTipText("Report ions");
+        reporterBox.setIconTextGap(10);
         reporterBox.setOpaque(false);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout ionsPanelLayout = new javax.swing.GroupLayout(ionsPanel);
+        ionsPanel.setLayout(ionsPanelLayout);
+        ionsPanelLayout.setHorizontalGroup(
+            ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ionsPanelLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(aBox)
                     .addComponent(bBox)
                     .addComponent(cBox))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(yBox)
-                            .addComponent(xBox))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(immoniumBox)
-                            .addComponent(precursorBox)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(zBox)
-                        .addGap(18, 18, 18)
-                        .addComponent(reporterBox)))
+                .addGap(50, 50, 50)
+                .addGroup(ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(yBox)
+                    .addComponent(xBox)
+                    .addComponent(zBox))
+                .addGap(50, 50, 50)
+                .addGroup(ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(reporterBox)
+                    .addComponent(immoniumBox)
+                    .addComponent(precursorBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aBox, bBox, cBox, immoniumBox, precursorBox, xBox, yBox, zBox});
+        ionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aBox, bBox, cBox, immoniumBox, precursorBox, xBox, yBox, zBox});
 
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        ionsPanelLayout.setVerticalGroup(
+            ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ionsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aBox)
                     .addComponent(xBox)
                     .addComponent(precursorBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bBox)
                     .addComponent(yBox, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(immoniumBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(ionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cBox)
                     .addComponent(zBox)
-                    .addComponent(reporterBox)))
-        );
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Peak Matching"));
-        jPanel1.setOpaque(false);
-
-        jLabel2.setText("Fragment Ion Accuracy:");
-
-        jLabel3.setText("Da");
-
-        intensitySpinner.setModel(new javax.swing.SpinnerNumberModel(25, 0, 100, 1));
-        intensitySpinner.setToolTipText("Display a certain percent of the possible annotations");
-        intensitySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                intensitySpinnerStateChanged(evt);
-            }
-        });
-
-        jLabel1.setText("%");
-
-        jLabel4.setText("Annotation Level:");
-        jLabel4.setToolTipText("Display a certain percent of the possible annotations");
-
-        accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.0010d));
-        accuracySpinner.setToolTipText("Display a certain percent of the possible annotations");
-        accuracySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                accuracySpinnerStateChanged(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addGap(26, 26, 26)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(reporterBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
-        );
-
-        tabbedPane.addTab("Standard Settings", jPanel4);
-
+        chargePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Charge"));
         chargePanel.setOpaque(false);
 
         chargesTable.setModel(new ChargesTableModel());
-        jScrollPane3.setViewportView(chargesTable);
+        chargesTable.setOpaque(false);
+        chargeScrollPane.setViewportView(chargesTable);
 
         javax.swing.GroupLayout chargePanelLayout = new javax.swing.GroupLayout(chargePanel);
         chargePanel.setLayout(chargePanelLayout);
         chargePanelLayout.setHorizontalGroup(
             chargePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, chargePanelLayout.createSequentialGroup()
+            .addGroup(chargePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                .addComponent(chargeScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         chargePanelLayout.setVerticalGroup(
             chargePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(chargePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                .addComponent(chargeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        tabbedPane.addTab("Charges", chargePanel);
+        neutralLossPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Neutral Loss"));
+        neutralLossPanel.setOpaque(false);
 
-        jPanel3.setOpaque(false);
+        neutralLossesTable.setModel(new NeutralLossesTableModel());
+        neutralLossesTable.setOpaque(false);
+        neutralLossScrollPane.setViewportView(neutralLossesTable);
 
-        adaptBox.setText("Adapt");
+        javax.swing.GroupLayout neutralLossPanelLayout = new javax.swing.GroupLayout(neutralLossPanel);
+        neutralLossPanel.setLayout(neutralLossPanelLayout);
+        neutralLossPanelLayout.setHorizontalGroup(
+            neutralLossPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(neutralLossPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(neutralLossScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        neutralLossPanelLayout.setVerticalGroup(
+            neutralLossPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(neutralLossPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(neutralLossScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        peakMatchingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peak Matching"));
+        peakMatchingPanel.setOpaque(false);
+
+        jLabel2.setText("Fragment Ion Accuracy:");
+        jLabel2.setToolTipText("Fragment ion annotation accuracy .");
+
+        jLabel3.setText("Da");
+
+        intensitySpinner.setModel(new javax.swing.SpinnerNumberModel(25, 0, 100, 1));
+        intensitySpinner.setToolTipText("<html>\nDisplay a certain percent of the<br>\npossible annotations relative<br>\nto the most intense peak.\n</html>");
+
+        jLabel1.setText("%");
+
+        jLabel4.setText("Annotation Level:");
+        jLabel4.setToolTipText("<html>\nDisplay a certain percent of the<br>\npossible annotations relative<br>\nto the most intense peak.\n</html>");
+
+        accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.0010d));
+        accuracySpinner.setToolTipText("Fragment ion annotation accuracy.");
+
+        adaptBox.setText("Adapt Neutral Losses");
+        adaptBox.setIconTextGap(10);
         adaptBox.setOpaque(false);
 
         automaticAnnotationCheck.setSelected(true);
         automaticAnnotationCheck.setText("Automatic Annotation");
+        automaticAnnotationCheck.setIconTextGap(10);
         automaticAnnotationCheck.setOpaque(false);
 
-        neutralLossesTable.setModel(new NeutralLossesTableModel());
-        jScrollPane1.setViewportView(neutralLossesTable);
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout peakMatchingPanelLayout = new javax.swing.GroupLayout(peakMatchingPanel);
+        peakMatchingPanel.setLayout(peakMatchingPanelLayout);
+        peakMatchingPanelLayout.setHorizontalGroup(
+            peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peakMatchingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(adaptBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
-                        .addComponent(automaticAnnotationCheck)))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(intensitySpinner)
+                    .addComponent(accuracySpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(adaptBox)
-                    .addComponent(automaticAnnotationCheck)))
+                    .addComponent(automaticAnnotationCheck))
+                .addGap(31, 31, 31))
         );
 
-        tabbedPane.addTab("Neutral losses", jPanel3);
+        peakMatchingPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel3});
+
+        peakMatchingPanelLayout.setVerticalGroup(
+            peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peakMatchingPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel4)
+                    .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(adaptBox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel2)
+                    .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(automaticAnnotationCheck))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                    .addComponent(ionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
                         .addComponent(annotationPreferencesHelpJButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton))
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(peakMatchingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(chargePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(neutralLossPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -429,14 +452,22 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chargePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(neutralLossPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(peakMatchingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(okButton)
                     .addComponent(cancelButton)
                     .addComponent(annotationPreferencesHelpJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {chargePanel, neutralLossPanel});
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -446,7 +477,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -551,15 +582,8 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
+    }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
 
-private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySpinnerStateChanged
-    annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
-}//GEN-LAST:event_intensitySpinnerStateChanged
-
-    private void accuracySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySpinnerStateChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_accuracySpinnerStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aBox;
     private javax.swing.JSpinner accuracySpinner;
@@ -572,26 +596,24 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
     private javax.swing.JCheckBox cBox;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel chargePanel;
+    private javax.swing.JScrollPane chargeScrollPane;
     private javax.swing.JTable chargesTable;
     private javax.swing.JCheckBox immoniumBox;
     private javax.swing.JSpinner intensitySpinner;
+    private javax.swing.JPanel ionsPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
+    private javax.swing.JPanel neutralLossPanel;
+    private javax.swing.JScrollPane neutralLossScrollPane;
     private javax.swing.JTable neutralLossesTable;
     private javax.swing.JButton okButton;
+    private javax.swing.JPanel peakMatchingPanel;
     private javax.swing.JCheckBox precursorBox;
     private javax.swing.JCheckBox reporterBox;
-    private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JCheckBox xBox;
     private javax.swing.JCheckBox yBox;
     private javax.swing.JCheckBox zBox;
@@ -641,11 +663,10 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
 
         automaticAnnotationCheck.setSelected(annotationPreferences.useAutomaticAnnotation());
         adaptBox.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
-
     }
 
     /**
-     * Table model for the charges table
+     * Table model for the charges table.
      */
     private class ChargesTableModel extends DefaultTableModel {
 
@@ -674,7 +695,7 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
                 case 1:
                     return "Charge";
                 case 2:
-                    return "Selected";
+                    return "  ";
                 default:
                     return "";
             }
@@ -716,7 +737,7 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
     }
 
     /**
-     * Table model for the neutral losses table
+     * Table model for the neutral losses table.
      */
     private class NeutralLossesTableModel extends DefaultTableModel {
 
@@ -752,7 +773,7 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
                 case 1:
                     return "Neutral Loss";
                 case 2:
-                    return "Selected";
+                    return "  ";
                 default:
                     return "";
             }

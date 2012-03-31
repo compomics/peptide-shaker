@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Ion;
@@ -12,8 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
- * @author vaudel
+ * Dialog for user selection of spectrum annotation colors.
+ * 
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class SpectrumColorsDialog extends javax.swing.JDialog {
 
@@ -22,13 +21,16 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
     private ArrayList<NeutralLoss> neutralLosses;
     
     /**
-     * Creates new form SpectrumColorsDialog
+     * Creates a new SpectrumColorsDialog.
+     * 
+     * @param peptideShakerGUI 
      */
     public SpectrumColorsDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         iontypes = peptideShakerGUI.getAnnotationPreferences().getIonTypes();
         neutralLosses = peptideShakerGUI.getNeutralLosses();
         initComponents();
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
