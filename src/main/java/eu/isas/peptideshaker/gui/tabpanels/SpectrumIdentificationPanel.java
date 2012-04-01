@@ -2842,9 +2842,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
 
         if (line >= 0) {
-            
+
             // @TODO: this does not work when the table is sorted!!!
-            
+
             spectrumTable.setRowSelectionInterval(line, line);
             spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
             spectrumSelectionChanged();
@@ -3064,6 +3064,10 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                         spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
                         spectrum.setBorder(null);
+                        spectrum.setDataPointAndLineColor(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                        spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
+                        spectrum.setPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
+                        spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
                     }
                 }
 
@@ -3115,9 +3119,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                                
+
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
-                                
+
                             }
 
                             // xtandem annotation (if any)
@@ -3160,9 +3164,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                                
+
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
-                                
+
                             }
 
                             // mascot annotation (if any)
@@ -3205,7 +3209,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                                
+
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
                             }
                         }

@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 
 /**
@@ -126,6 +127,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         expectedModificationsTable.getColumn("U.M.").setCellRenderer(new NimbusCheckBoxRenderer());
         availableModificationsTable.getColumn("U.M.").setCellRenderer(new NimbusCheckBoxRenderer());
+        expectedModificationsTable.getColumn("U.M.").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "User Modification", null));
+        availableModificationsTable.getColumn("U.M.").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "User Modification", null));
 
         // set table properties
         expectedModificationsTable.getTableHeader().setReorderingAllowed(false);

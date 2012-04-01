@@ -105,7 +105,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     /**
      * The current spectrum panel.
      */
-    private SpectrumPanel spectrum;
+    private SpectrumPanel spectrumPanel;
     /**
      * boolean indicating whether the spectrum shall be displayed
      */
@@ -596,12 +596,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         bubbleJPanel = new javax.swing.JPanel();
         bubblePlotJToolBar = new javax.swing.JToolBar();
         bubbleAnnotationMenuPanel = new javax.swing.JPanel();
-        spectrumJPanel = new javax.swing.JPanel();
+        spectrumContainerJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumSplitPane = new javax.swing.JSplitPane();
         secondarySpectrumPlotsJPanel = new javax.swing.JPanel();
-        spectrumPanel = new javax.swing.JPanel();
+        spectrumJPanel = new javax.swing.JPanel();
         slidersPanel = new javax.swing.JPanel();
         accuracySlider = new javax.swing.JSlider();
         intensitySlider = new javax.swing.JSlider();
@@ -1409,7 +1409,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         spectrumJTabbedPane.addTab("Bubble Plot", bubblePlotTabJPanel);
 
-        spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumContainerJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
         spectrumJToolBar.setBorder(null);
@@ -1430,29 +1430,29 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         secondarySpectrumPlotsJPanel.setLayout(new javax.swing.BoxLayout(secondarySpectrumPlotsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         spectrumSplitPane.setTopComponent(secondarySpectrumPlotsJPanel);
 
-        spectrumPanel.setOpaque(false);
-        spectrumPanel.setLayout(new java.awt.BorderLayout());
-        spectrumSplitPane.setRightComponent(spectrumPanel);
+        spectrumJPanel.setOpaque(false);
+        spectrumJPanel.setLayout(new java.awt.BorderLayout());
+        spectrumSplitPane.setRightComponent(spectrumJPanel);
 
-        javax.swing.GroupLayout spectrumJPanelLayout = new javax.swing.GroupLayout(spectrumJPanel);
-        spectrumJPanel.setLayout(spectrumJPanelLayout);
-        spectrumJPanelLayout.setHorizontalGroup(
-            spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectrumJPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout spectrumContainerJPanelLayout = new javax.swing.GroupLayout(spectrumContainerJPanel);
+        spectrumContainerJPanel.setLayout(spectrumContainerJPanelLayout);
+        spectrumContainerJPanelLayout.setHorizontalGroup(
+            spectrumContainerJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumContainerJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
         );
-        spectrumJPanelLayout.setVerticalGroup(
-            spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
+        spectrumContainerJPanelLayout.setVerticalGroup(
+            spectrumContainerJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumContainerJPanelLayout.createSequentialGroup()
                 .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        spectrumJTabbedPane.addTab("Spectrum", spectrumJPanel);
+        spectrumJTabbedPane.addTab("Spectrum", spectrumContainerJPanel);
 
         spectrumJTabbedPane.setSelectedIndex(2);
 
@@ -3181,6 +3181,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private javax.swing.JSplitPane slidersSplitPane;
     private javax.swing.JScrollPane spectraScrollPane;
     private javax.swing.JPanel spectrumAnnotationMenuPanel;
+    private javax.swing.JPanel spectrumContainerJPanel;
     private javax.swing.JButton spectrumHelpJButton;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JTabbedPane spectrumJTabbedPane;
@@ -3188,7 +3189,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private javax.swing.JLayeredPane spectrumLayeredPane;
     private javax.swing.JPanel spectrumMainJPanel;
     private javax.swing.JPanel spectrumMainPanel;
-    private javax.swing.JPanel spectrumPanel;
     private javax.swing.JSplitPane spectrumSplitPane;
     private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
@@ -3772,21 +3772,25 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             double lowerMzZoomRange = 0;
                             double upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue();
 
-                            if (spectrum != null && spectrum.getXAxisZoomRangeLowerValue() != 0 && !resetMzRange) {
-                                lowerMzZoomRange = spectrum.getXAxisZoomRangeLowerValue();
-                                upperMzZoomRange = spectrum.getXAxisZoomRangeUpperValue();
+                            if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !resetMzRange) {
+                                lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();
+                                upperMzZoomRange = spectrumPanel.getXAxisZoomRangeUpperValue();
                             }
 
                             // add the data to the spectrum panel
                             Precursor precursor = currentSpectrum.getPrecursor();
                             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                            spectrum = new SpectrumPanel(
+                            spectrumPanel = new SpectrumPanel(
                                     currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                     precursor.getMz(), spectrumMatch.getBestAssumption().getIdentificationCharge().toString(),
                                     "", 40, false, false, false, 2, false);
-                            spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
-                            spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
-                            spectrum.setBorder(null);
+                            spectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
+                            spectrumPanel.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
+                            spectrumPanel.setBorder(null);
+                            spectrumPanel.setDataPointAndLineColor(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                            spectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
+                            spectrumPanel.setPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
+                            spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
 
                             // get the spectrum annotations
                             int peptideIndex = peptideTable.convertRowIndexToModel(peptideTable.getSelectedRow());
@@ -3805,8 +3809,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getFragmentIonAccuracy(), false);
-                            spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                            spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
+                            spectrumPanel.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                            spectrumPanel.rescale(lowerMzZoomRange, upperMzZoomRange);
 
                             if (!currentSpectrumKey.equalsIgnoreCase(spectrumKey)) {
                                 if (annotationPreferences.useAutomaticAnnotation()) {
@@ -3819,15 +3823,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             currentSpectrumKey = spectrumKey;
 
                             // show all or just the annotated peaks
-                            spectrum.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
+                            spectrumPanel.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
 
-                            spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                            spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                             // add the spectrum panel to the frame
-                            spectrumPanel.removeAll();
-                            spectrumPanel.add(spectrum);
-                            spectrumPanel.revalidate();
-                            spectrumPanel.repaint();
+                            spectrumJPanel.removeAll();
+                            spectrumJPanel.add(spectrumPanel);
+                            spectrumJPanel.revalidate();
+                            spectrumJPanel.repaint();
 
                             // create and display the fragment ion table
                             if (psmTable.getSelectedRowCount() == 1 && !peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
@@ -3919,9 +3923,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         } else {
 
             // nothing to display, empty previous results
-            spectrumPanel.removeAll();
-            spectrumPanel.revalidate();
-            spectrumPanel.repaint();
+            spectrumJPanel.removeAll();
+            spectrumJPanel.revalidate();
+            spectrumJPanel.repaint();
 
             secondarySpectrumPlotsJPanel.removeAll();
             secondarySpectrumPlotsJPanel.revalidate();
@@ -4298,7 +4302,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (spectrumJTabbedPane.isEnabledAt(2)) {
             spectrumJTabbedPane.setSelectedIndex(2);
-            return (Component) spectrumPanel.getComponent(0);
+            return (Component) spectrumJPanel.getComponent(0);
         }
 
         return null;
@@ -4856,14 +4860,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         currentSpectrumKey = "";
         currentProteinSequence = "";
-        spectrum = null;
+        spectrumPanel = null;
 
         sequenceCoverageInnerPanel.removeAll();
         sequencePtmsPanel.removeAll();
 
         fragmentIonsJScrollPane.setViewportView(null);
         bubbleJPanel.removeAll();
-        spectrumPanel.removeAll();
+        spectrumJPanel.removeAll();
         secondarySpectrumPlotsJPanel.removeAll();
 
         ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins");
