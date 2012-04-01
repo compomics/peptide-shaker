@@ -1,12 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
@@ -15,11 +11,12 @@ import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * This table model shows a fraction view of the peptides given in the constructor
+ * This table model displays the protein confidence in every fraction
  *
- * @author marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
-public class PeptideFractionTable extends DefaultTableModel {
+public class ProteinFractionTableModel extends DefaultTableModel {
 
     /**
      * The main GUI class.
@@ -30,9 +27,9 @@ public class PeptideFractionTable extends DefaultTableModel {
      */
     private Identification identification;
     /**
-     * A list of ordered peptide keys.
+     * A list of ordered protein keys.
      */
-    private ArrayList<String> peptideKeys = null;
+    private ArrayList<String> proteinKeys = null;
     /**
      * A list of ordered file names.
      */
@@ -47,10 +44,31 @@ public class PeptideFractionTable extends DefaultTableModel {
      *
      * @param peptideShakerGUI instance of the main GUI class
      */
-    public PeptideFractionTable(PeptideShakerGUI peptideShakerGUI, ArrayList<String> peptideKeys) {
+    public ProteinFractionTableModel(PeptideShakerGUI peptideShakerGUI) {
+        setUpTableModel(peptideShakerGUI);
+    }
+    
+    /**
+     * Update the data in the table model without having to reset the whole
+     * table model. This keeps the sorting order of the table.
+     * 
+     * @param peptideShakerGUI 
+     */
+    public void updateDataModel(PeptideShakerGUI peptideShakerGUI) {
+        setUpTableModel(peptideShakerGUI);
+    }
+    
+    /**
+     * Set up the table model.
+     * 
+     * @param peptideShakerGUI 
+     */
+    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
-        this.peptideKeys = peptideKeys;
+        if (identification != null) {
+            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
+        }
         String fileName;
         for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
             fileName = Util.getFileName(filePath);
@@ -70,22 +88,25 @@ public class PeptideFractionTable extends DefaultTableModel {
         fractionNames.put("SCX", "SCX");
         Collections.sort(fileNames);
     }
-    
+
+    /**
+     * Reset the protein keys.
+     */
     public void reset() {
-        peptideKeys = null;
+        proteinKeys = null;
     }
 
     /**
      * Constructor which sets a new empty table.
      *
      */
-    public PeptideFractionTable() {
+    public ProteinFractionTableModel() {
     }
 
     @Override
     public int getRowCount() {
-        if (peptideKeys != null) {
-            return peptideKeys.size();
+        if (proteinKeys != null) {
+            return proteinKeys.size();
         } else {
             return 0;
         }
@@ -101,8 +122,8 @@ public class PeptideFractionTable extends DefaultTableModel {
         if (column == 0) {
             return " ";
         } else if (column == 1) {
-            return "Sequence";
-        } else if (column > 1 && column -2 < fileNames.size()) {
+            return "Accession";
+        } else if (column > 1 && column - 2 < fileNames.size()) {
             return fractionNames.get(fileNames.get(column - 2));
         } else if (column == fileNames.size() + 2) {
             return "Confidence";
@@ -117,34 +138,34 @@ public class PeptideFractionTable extends DefaultTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
-        if (column == 0) {
-            return row+1;
-        } else if (column == 1) {
-            String peptideKey = peptideKeys.get(row);
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
-        } else if (column > 1 && column -2 < fileNames.size()) {
-            String fraction = fileNames.get(column - 2);
-            PSParameter pSParameter = new PSParameter();
-            String peptideKey = peptideKeys.get(row);
-            pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
-            if (pSParameter.getFractions().contains(fraction)) {
-            return pSParameter.getFractionConfidence(fraction);
+            if (column == 0) {
+                return row + 1;
+            } else if (column == 1) {
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
+                return proteinMatch.getMainMatch();
+            } else if (column > 1 && column - 2 < fileNames.size()) {
+                String fraction = fileNames.get(column - 2);
+                PSParameter pSParameter = new PSParameter();
+                String proteinKey = proteinKeys.get(row);
+                pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
+                if (pSParameter.getFractions().contains(fraction)) {
+                    return pSParameter.getFractionConfidence(fraction);
+                } else {
+                    return 0.0;
+                }
+            } else if (column == fileNames.size() + 2) {
+                String proteinKey = proteinKeys.get(row);
+                PSParameter pSParameter = new PSParameter();
+                pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
+                return pSParameter.getProteinConfidence();
+            } else if (column == fileNames.size() + 3) {
+                String proteinKey = proteinKeys.get(row);
+                PSParameter pSParameter = new PSParameter();
+                pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
+                return pSParameter.isValidated();
             } else {
-                return 0.0;
+                return "";
             }
-        } else if (column == fileNames.size() + 2) {
-            String peptideKey = peptideKeys.get(row);
-            PSParameter pSParameter = new PSParameter();
-            pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
-            return pSParameter.getPeptideConfidence();
-        } else if (column == fileNames.size() + 3) {
-            String peptideKey = peptideKeys.get(row);
-            PSParameter pSParameter = new PSParameter();
-            pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
-            return pSParameter.isValidated();
-        } else {
-            return "";
-        }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return "";

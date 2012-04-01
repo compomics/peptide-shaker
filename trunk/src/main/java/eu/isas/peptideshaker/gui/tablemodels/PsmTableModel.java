@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.identification.Identification;
@@ -15,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
  * Table model for a set of peptide to spectrum matches.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PsmTableModel extends DefaultTableModel {
 
@@ -35,9 +35,29 @@ public class PsmTableModel extends DefaultTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param psmKeys  
+     * @param psmKeys
      */
     public PsmTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
+        setUpTableModel(peptideShakerGUI, psmKeys);
+    }
+    
+    /**
+     * Update the data in the table model without having to reset the whole
+     * table model. This keeps the sorting order of the table.
+     *
+     * @param peptideShakerGUI
+     * @param psmKeys  
+     */
+    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
+        setUpTableModel(peptideShakerGUI, psmKeys);
+    }
+    
+    /**
+     * Set up the table model.
+     *
+     * @param peptideShakerGUI
+     */
+    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         this.psmKeys = psmKeys;

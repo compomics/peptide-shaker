@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.testDialogs;
 
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTable;
+import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -15,14 +11,17 @@ import javax.swing.table.DefaultTableModel;
 public class PeptideFractionDialog extends javax.swing.JDialog {
 
     private PeptideShakerGUI peptideShakerGUI;
+
     /**
      * Creates new form PeptideFractionDialog
+     *
+     * @param peptideShakerGUI
      */
     public PeptideFractionDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
-        PeptideFractionTable peptideTableModel = new PeptideFractionTable(peptideShakerGUI,
+        PeptideFractionTableModel peptideTableModel = new PeptideFractionTableModel(peptideShakerGUI,
                 peptideShakerGUI.getIdentification().getPeptideIdentification());
         peptideTable.setModel(peptideTableModel);
 
@@ -82,7 +81,7 @@ public class PeptideFractionDialog extends javax.swing.JDialog {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide table"));
 
-        peptideTable.setModel(new PeptideFractionTable());
+        peptideTable.setModel(new PeptideFractionTableModel());
         jScrollPane2.setViewportView(peptideTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -156,7 +155,6 @@ public class PeptideFractionDialog extends javax.swing.JDialog {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

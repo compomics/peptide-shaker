@@ -18,6 +18,7 @@ import no.uib.jsparklines.data.XYDataPoint;
  * Table model for a set of peptide matches.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PeptideTableModel extends DefaultTableModel {
 
@@ -51,6 +52,21 @@ public class PeptideTableModel extends DefaultTableModel {
      * @param peptideKeys
      */
     public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
+        this.peptideShakerGUI = peptideShakerGUI;
+        identification = peptideShakerGUI.getIdentification();
+        this.peptideKeys = peptideKeys;
+        this.proteinAccession = proteinAccession;
+    }
+
+    /**
+     * Update the data in the table model without having to reset the whole
+     * table model. This keeps the sorting order of the table.
+     *
+     * @param peptideShakerGUI
+     * @param proteinAccession
+     * @param peptideKeys
+     */
+    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         this.peptideKeys = peptideKeys;
