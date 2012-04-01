@@ -84,7 +84,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * The main frame of the PeptideShaker.
+ * The main PeptideShaker frame.
  *
  * @author Harald Barsnes
  * @author Marc Vaudel
@@ -191,7 +191,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private String lastSelectedFolder = "user.home";
     /**
-     * The xml file containing the enzymes
+     * The xml file containing the enzymes.
      */
     private static final String ENZYME_FILE = "conf/peptideshaker_enzymes.xml";
     /**
@@ -270,7 +270,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * A simple progress dialog.
      */
-    private static ProgressDialogX progressDialog;
+    private ProgressDialogX progressDialog;
     /**
      * The identification to display.
      */
@@ -1847,177 +1847,176 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * @see #updateAnnotationPreferences()
      */
-private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
+    private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void bIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_bIonCheckBoxMenuItemActionPerformed
+    private void bIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_bIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void cIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_cIonCheckBoxMenuItemActionPerformed
+    private void cIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_cIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void xIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_xIonCheckBoxMenuItemActionPerformed
+    private void xIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_xIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void yIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_yIonCheckBoxMenuItemActionPerformed
+    private void yIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_yIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void zIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_zIonCheckBoxMenuItemActionPerformed
+    private void zIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_zIonCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void allCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_allCheckBoxMenuItemActionPerformed
+    private void allCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_allCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void barsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_barsCheckBoxMenuItemActionPerformed
+    private void barsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_barsCheckBoxMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void intensityIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityIonTableRadioButtonMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_intensityIonTableRadioButtonMenuItemActionPerformed
+    private void intensityIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityIonTableRadioButtonMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_intensityIonTableRadioButtonMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
      */
-private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzIonTableRadioButtonMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
+    private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzIonTableRadioButtonMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
 
     /**
      * Opens the wanted Help window.
      *
      * @param evt
      */
-private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
+    private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
 
-    int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
-    setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-    if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-        int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
 
-        if (spectrumTabIndex == 0) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"));
-        } else if (spectrumTabIndex == 1) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"));
-        } else if (spectrumTabIndex == 2) {
+            if (spectrumTabIndex == 0) {
+                new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"));
+            } else if (spectrumTabIndex == 1) {
+                new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"));
+            } else if (spectrumTabIndex == 2) {
+                new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+            }
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
             new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
-        }
-    } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-        new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
-    } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-        int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
 
-        if (spectrumTabIndex == 0) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides"); // @TODO: update when psm mod profiles are added!
-        } else if (spectrumTabIndex == 1) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Plot");
-        } else if (spectrumTabIndex == 2) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
+            if (spectrumTabIndex == 0) {
+                new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides"); // @TODO: update when psm mod profiles are added!
+            } else if (spectrumTabIndex == 1) {
+                new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Plot");
+            } else if (spectrumTabIndex == 2) {
+                new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
+            }
         }
-    }
 
-    setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_helpMenuItemActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpMenuItemActionPerformed
 
     /**
      * Save the current spectrum/spectra to an MGF file.
      */
-private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumValuesJMenuItemActionPerformed
-    int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+    private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumValuesJMenuItemActionPerformed
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
-    String spectrumAsMgf = null;
+        String spectrumAsMgf = null;
 
-    if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-        spectrumAsMgf = overviewPanel.getSpectrumAsMgf();
-    } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-        spectrumAsMgf = spectrumIdentificationPanel.getSpectrumAsMgf();
-    } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-        spectrumAsMgf = ptmPanel.getSpectrumAsMgf();
-    }
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            spectrumAsMgf = overviewPanel.getSpectrumAsMgf();
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            spectrumAsMgf = spectrumIdentificationPanel.getSpectrumAsMgf();
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            spectrumAsMgf = ptmPanel.getSpectrumAsMgf();
+        }
 
-    if (spectrumAsMgf != null) {
+        if (spectrumAsMgf != null) {
 
-        File selectedFile = getUserSelectedFile(".mgf", "(Mascot Generic Format) *.mgf", "Save As...", true);
+            File selectedFile = getUserSelectedFile(".mgf", "(Mascot Generic Format) *.mgf", "Save As...", true);
 
-        if (selectedFile != null) {
-            try {
-                FileWriter w = new FileWriter(selectedFile);
-                BufferedWriter bw = new BufferedWriter(w);
-                bw.write(spectrumAsMgf);
-                bw.close();
-                w.close();
+            if (selectedFile != null) {
+                try {
+                    FileWriter w = new FileWriter(selectedFile);
+                    BufferedWriter bw = new BufferedWriter(w);
+                    bw.write(spectrumAsMgf);
+                    bw.close();
+                    w.close();
 
-                JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
-                        "File Saved", JOptionPane.INFORMATION_MESSAGE);
-            } catch (IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "An error occured while saving " + selectedFile.getPath() + ".\n"
-                        + "See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Spectrum saved to " + selectedFile.getPath() + ".",
+                            "File Saved", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "An error occured while saving " + selectedFile.getPath() + ".\n"
+                            + "See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
+                }
             }
         }
-    }
-}//GEN-LAST:event_exportSpectrumValuesJMenuItemActionPerformed
+    }//GEN-LAST:event_exportSpectrumValuesJMenuItemActionPerformed
 
     /**
      * Set if the current annotation is to be used for all spectra.
      *
      * @param evt
      */
-private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+    private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+        if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
+            adaptCheckBoxMenuItem.setSelected(true);
+            annotationPreferences.resetAutomaticAnnotation();
 
-    if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
-        adaptCheckBoxMenuItem.setSelected(true);
-        annotationPreferences.resetAutomaticAnnotation();
-
-        for (int availableCharge : chargeMenus.keySet()) {
-            chargeMenus.get(availableCharge).setSelected(annotationPreferences.getValidatedCharges().contains(availableCharge));
+            for (int availableCharge : chargeMenus.keySet()) {
+                chargeMenus.get(availableCharge).setSelected(annotationPreferences.getValidatedCharges().contains(availableCharge));
+            }
         }
-    }
 
-    updateAnnotationPreferences();
-}//GEN-LAST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
 
     /**
      * Open the project details dialog.
      *
      * @param evt
      */
-private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuItemActionPerformed
-    new ProjectDetailsDialog(this);
-}//GEN-LAST:event_projectPropertiesMenuItemActionPerformed
+    private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuItemActionPerformed
+        new ProjectDetailsDialog(this);
+    }//GEN-LAST:event_projectPropertiesMenuItemActionPerformed
 
     /**
      * Export the sequence fragmentation as a figure.
@@ -2373,6 +2372,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         new BugReport(this);
     }//GEN-LAST:event_logReportMenuActionPerformed
 
+    /**
+     * Open the Java Options menu.
+     * 
+     * @param evt 
+     */
     private void javaOptionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaOptionsJMenuItemActionPerformed
         new JavaOptionsDialog(this);
     }//GEN-LAST:event_javaOptionsJMenuItemActionPerformed
@@ -2395,7 +2399,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
     /**
-     * Loads the enzymes from the enzyme file into the enzyme factory
+     * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
         try {
@@ -2416,7 +2420,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * This method will display results in all panels
+     * This method will display results in all panels.
      */
     public void displayResults() {
 
@@ -2469,7 +2473,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Method called to disable the spectrum display
+     * Method called to disable the spectrum display.
      */
     public void disableSpectrumDisplay() {
         spectrumJPanel.setEnabled(false);
@@ -2478,7 +2482,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * This method sets the information of the project when opened
+     * This method sets the information of the project when opened.
      *
      * @param experiment the experiment conducted
      * @param sample The sample analyzed
@@ -2731,7 +2735,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Checks the version compatibility and makes the necessary adjustments
+     * Checks the version compatibility and makes the necessary adjustments.
      */
     private void checkVersionCompatibility() {
         // Resets the user preferences keeping the the link to other projects
@@ -2749,9 +2753,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         tempPreferences.setMemoryPreference(userPreferences.getMemoryPreference());
         userPreferences = tempPreferences;
 
-        // Copy Pride default files
-
-
+        // Copy Pride default files // TODO???
     }
 
     /**
@@ -3871,7 +3873,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
         }, "ProgressDialog").start();
 
-        new Thread("CloseThread") {
+       SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
@@ -3899,7 +3901,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 progressDialog.dispose();
                 System.exit(0);
             }
-        }.start();
+        });
     }
 
     /**
@@ -4004,31 +4006,31 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         boolean accounted;
-        
+
         for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
             lossMenu.remove(lossMenuItem);
         }
-        
+
         lossMenu.setVisible(true);
         lossSplitter.setVisible(true);
         lossMenus.clear();
-        
+
         HashMap<String, NeutralLoss> neutralLosses = new HashMap<String, NeutralLoss>();
-        
+
         for (NeutralLoss neutralLoss : IonFactory.getInstance().getDefaultNeutralLosses()) {
             neutralLosses.put(neutralLoss.name, neutralLoss);
         }
-        
+
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
             for (NeutralLoss neutralLoss : ptm.getNeutralLosses()) {
                 neutralLosses.put(neutralLoss.name, neutralLoss);
             }
         }
-        
+
         ArrayList<String> names = new ArrayList<String>(neutralLosses.keySet());
         Collections.sort(names);
-        
+
         if (names.isEmpty()) {
             lossMenu.setVisible(false);
             lossSplitter.setVisible(false);
@@ -4058,15 +4060,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         for (JCheckBoxMenuItem chargeMenuItem : chargeMenus.values()) {
             chargeMenu.remove(chargeMenuItem);
         }
-        
+
         chargeMenus.clear();
-        
+
         if (precursorCharge == 1) {
             precursorCharge = 2;
         }
-        
+
         for (int charge = 1; charge < precursorCharge; charge++) {
-            
+
             JCheckBoxMenuItem chargeMenuItem = new JCheckBoxMenuItem(charge + "+");
             chargeMenuItem.setSelected(annotationPreferences.getValidatedCharges().contains(charge));
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -4076,7 +4078,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     updateAnnotationPreferences();
                 }
             });
-            
+
             chargeMenus.put(charge, chargeMenuItem);
             chargeMenu.add(chargeMenuItem);
         }
@@ -5322,7 +5324,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             int outcome = JOptionPane.YES_OPTION;
 
             if (!openDialog && newFile.exists()) {
-                outcome = JOptionPane.showConfirmDialog(progressDialog,
+                outcome = JOptionPane.showConfirmDialog(this,
                         "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
