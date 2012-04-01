@@ -178,7 +178,7 @@
                 <Component class="javax.swing.JTable" name="goMappingsTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="new javax.swing.table.DefaultTableModel(&#xa;            new Object [][] {&#xa;&#xa;            },&#xa;            new String [] {&#xa;                &quot;&quot;, &quot;GO Accession&quot;, &quot;GO Term&quot;, &quot;GO Domain&quot;, &quot;Frequency All (%)&quot;, &quot;Frequency Dataset (%)&quot;, &quot;Frequency (%)&quot;, &quot;Log2 Diff&quot;, &quot;p-value&quot;, &quot;  &quot;&#xa;            }&#xa;        ) {&#xa;            Class[] types = new Class [] {&#xa;                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, ValueAndBooleanDataPoint.class, java.lang.Object.class, java.lang.Double.class, java.lang.Boolean.class&#xa;            };&#xa;            boolean[] canEdit = new boolean [] {&#xa;                false, false, false, false, false, false, false, false, false, true&#xa;            &#xa;&#xa;            public Class getColumnClass(int columnIndex) {&#xa;                return types [columnIndex];&#xa;            }&#xa;&#xa;            public boolean isCellEditable(int rowIndex, int columnIndex) {&#xa;                return canEdit [columnIndex];&#xa;            }&#xa;        });" type="code"/>
+                      <Connection code="new javax.swing.table.DefaultTableModel(&#xd;&#xa;            new Object [][] {&#xd;&#xa;&#xd;&#xa;            },&#xd;&#xa;            new String [] {&#xd;&#xa;                &quot;&quot;, &quot;GO Accession&quot;, &quot;GO Term&quot;, &quot;GO Domain&quot;, &quot;Frequency All (%)&quot;, &quot;Frequency Dataset (%)&quot;, &quot;Frequency (%)&quot;, &quot;Log2 Diff&quot;, &quot;p-value&quot;, &quot;  &quot;&#xd;&#xa;            }&#xd;&#xa;        ) {&#xd;&#xa;            Class[] types = new Class [] {&#xd;&#xa;                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, ValueAndBooleanDataPoint.class, java.lang.Object.class, java.lang.Double.class, java.lang.Boolean.class&#xd;&#xa;            };&#xd;&#xa;            boolean[] canEdit = new boolean[]{&#xd;&#xa;                false, false, false, false, false, false, false, false, false, true&#xd;&#xa;            };&#xd;&#xa;&#xd;&#xa;            public Class getColumnClass(int columnIndex) {&#xd;&#xa;                return types[columnIndex];&#xd;&#xa;            }&#xd;&#xa;&#xd;&#xa;            public boolean isCellEditable(int rowIndex, int columnIndex) {&#xd;&#xa;                return canEdit[columnIndex];&#xd;&#xa;            }&#xd;&#xa;        }" type="code"/>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
@@ -415,7 +415,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="goPlotsTabbedPane" pref="987" max="32767" attributes="0"/>
+                      <Component id="goPlotsTabbedPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -424,7 +424,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="goPlotsTabbedPane" pref="321" max="32767" attributes="0"/>
+                      <Component id="goPlotsTabbedPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -433,12 +433,84 @@
           <SubComponents>
             <Container class="javax.swing.JTabbedPane" name="goPlotsTabbedPane">
               <Properties>
-                <Property name="selectedIndex" type="int" value="1"/>
+                <Property name="selectedIndex" type="int" value="2"/>
                 <Property name="tabPlacement" type="int" value="3"/>
               </Properties>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
               <SubComponents>
+                <Container class="javax.swing.JPanel" name="proteinsPanel">
+                  <Properties>
+                    <Property name="opaque" type="boolean" value="false"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="Proteins">
+                        <Property name="tabTitle" type="java.lang.String" value="Proteins"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="proteinsScrollPane" alignment="0" pref="982" max="32767" attributes="0"/>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="proteinsScrollPane" pref="271" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Container class="javax.swing.JScrollPane" name="proteinsScrollPane">
+                      <Properties>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTable" name="proteinTable">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="9" rowCount="0">
+                                <Column editable="false" title=" " type="java.lang.Integer"/>
+                                <Column editable="false" title="Accession" type="java.lang.String"/>
+                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="false" title="Coverage" type="java.lang.Object"/>
+                                <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
+                                <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
+                                <Column editable="false" title="MS2 Quant." type="java.lang.Double"/>
+                                <Column editable="false" title="Confidence" type="java.lang.Double"/>
+                                <Column editable="false" title="  " type="java.lang.Boolean"/>
+                              </Table>
+                            </Property>
+                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                              <JTableSelectionModel selectionMode="0"/>
+                            </Property>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseExited"/>
+                            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseReleased"/>
+                            <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseMoved"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinTableKeyReleased"/>
+                          </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) proteinTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                          </AuxValues>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
                 <Container class="javax.swing.JPanel" name="goFrequencyPlotPanel">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -447,8 +519,8 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                      <JTabbedPaneConstraints tabName="Distribution">
-                        <Property name="tabTitle" type="java.lang.String" value="Distribution"/>
+                      <JTabbedPaneConstraints tabName="Frequency">
+                        <Property name="tabTitle" type="java.lang.String" value="Frequency"/>
                       </JTabbedPaneConstraints>
                     </Constraint>
                   </Constraints>

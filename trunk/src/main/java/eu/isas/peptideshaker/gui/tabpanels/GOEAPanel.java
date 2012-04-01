@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -32,17 +33,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import java.text.DecimalFormat;
+import java.util.*;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -57,8 +50,10 @@ import no.uib.jsparklines.data.ValueAndBooleanDataPoint;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.util.BarChartColorRenderer;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.jfree.chart.ChartFactory;
@@ -79,12 +74,16 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * The PeptideShaker GO Enrichment Analysis (GO EA) tab.
+ * The PeptideShaker GO Enrichment Analysis tab.
  *
  * @author Harald Barsnes
  */
 public class GOEAPanel extends javax.swing.JPanel {
 
+    /**
+     * The protein table column header tooltips.
+     */
+    private ArrayList<String> proteinTableToolTips;
     /**
      * The progress dialog.
      */
@@ -101,6 +100,15 @@ public class GOEAPanel extends javax.swing.JPanel {
      * GO table tooltips.
      */
     private TreeMap<String, Integer> totalGoTermUsage;
+    /**
+     * GO term to protein mapping, key: GO accession number, element: list of
+     * proteins.
+     */
+    private HashMap<String, HashSet<String>> goProteinMappings;
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The distribution chart panel.
      */
@@ -180,16 +188,31 @@ public class GOEAPanel extends javax.swing.JPanel {
         speciesJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         goMappingsTable.getTableHeader().setReorderingAllowed(false);
+        proteinTable.getTableHeader().setReorderingAllowed(false);
         goMappingsTable.setAutoCreateRowSorter(true);
+        proteinTable.setAutoCreateRowSorter(true);
 
         // make sure that the scroll panes are see-through
         proteinGoMappingsScrollPane.getViewport().setOpaque(false);
+        proteinsScrollPane.getViewport().setOpaque(false);
 
         // the index column
         goMappingsTable.getColumn("").setMaxWidth(60);
         goMappingsTable.getColumn("").setMinWidth(60);
         goMappingsTable.getColumn("  ").setMaxWidth(30);
         goMappingsTable.getColumn("  ").setMinWidth(30);
+
+        proteinTable.getColumn(" ").setMaxWidth(60);
+        proteinTable.getColumn(" ").setMinWidth(60);
+        proteinTable.getColumn("  ").setMaxWidth(30);
+        proteinTable.getColumn("  ").setMinWidth(30);
+        proteinTable.getColumn("Confidence").setMaxWidth(90);
+        proteinTable.getColumn("Confidence").setMinWidth(90);
+
+        // set the preferred size of the accession column
+        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+        proteinTable.getColumn("Accession").setMinWidth(width);
+        proteinTable.getColumn("Accession").setMaxWidth(width);
 
         double significanceLevel = 0.05;
 
@@ -214,6 +237,26 @@ public class GOEAPanel extends javax.swing.JPanel {
                 JSparklinesTableCellRenderer.PlotType.barChart,
                 PlotOrientation.HORIZONTAL, 0.0, 100.0));
 
+        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
+                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                "Validated", "Not Validated"));
+        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), true));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
+
         // make the tabs in the tabbed pane go from right to left
         goPlotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
@@ -229,6 +272,17 @@ public class GOEAPanel extends javax.swing.JPanel {
         mappingsTableToolTips.add("Log2 Difference (Dataset / All)");
         mappingsTableToolTips.add("<html>Hypergeometic Test<br>FDR-Corrected</html>");
         mappingsTableToolTips.add("Selected for Plots");
+
+        proteinTableToolTips = new ArrayList<String>();
+        proteinTableToolTips.add(null);
+        proteinTableToolTips.add("Protein Accession Number");
+        proteinTableToolTips.add("Protein Description");
+        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
+        proteinTableToolTips.add("Number of Peptides (Validated / Total)");
+        proteinTableToolTips.add("Number of Spectra (Validated / Total)");
+        proteinTableToolTips.add("MS2 Quantification");
+        proteinTableToolTips.add("Protein Confidence");
+        proteinTableToolTips.add("Validated");
     }
 
     /**
@@ -386,6 +440,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         }
 
                         totalGoTermUsage = new TreeMap<String, Integer>();
+                        goProteinMappings = new HashMap<String, HashSet<String>>();
                         TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<String, Integer>();
                         HashMap<String, String> goTermToAccessionMap = new HashMap<String, String>();
                         HashMap<String, ArrayList<String>> proteinToGoMappings = new HashMap<String, ArrayList<String>>();
@@ -434,6 +489,17 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         }
 
                                         totalNumberOfProteins++;
+
+                                        // store the go term to protein mappings
+                                        if (goProteinMappings.containsKey(goAccession)) {
+                                            if (!goProteinMappings.get(goAccession).contains(proteinAccession)) {
+                                                goProteinMappings.get(goAccession).add(proteinAccession);
+                                            }
+                                        } else {
+                                            HashSet<String> tempProteinList = new HashSet<String>();
+                                            tempProteinList.add(proteinAccession);
+                                            goProteinMappings.put(goAccession, tempProteinList);
+                                        }
                                     }
                                 }
 
@@ -849,7 +915,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         goFrequencyPlotPanel.repaint();
 
 
-
         JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
         signChartPanel = new ChartPanel(significanceChart);
 
@@ -955,6 +1020,21 @@ public class GOEAPanel extends javax.swing.JPanel {
         plotLayeredPane = new javax.swing.JLayeredPane();
         plotPanel = new javax.swing.JPanel();
         goPlotsTabbedPane = new javax.swing.JTabbedPane();
+        proteinsPanel = new javax.swing.JPanel();
+        proteinsScrollPane = new javax.swing.JScrollPane();
+        proteinTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        String tip = (String) proteinTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         goFrequencyPlotPanel = new javax.swing.JPanel();
         goSignificancePlotPanel = new javax.swing.JPanel();
         plotHelpJButton = new javax.swing.JButton();
@@ -1006,363 +1086,426 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, 
-			java.lang.Double.class, java.lang.Double.class, ValueAndBooleanDataPoint.class, java.lang.Object.class, 
-			java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, ValueAndBooleanDataPoint.class, java.lang.Object.class, java.lang.Double.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, false, false, false, false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        });
+        goMappingsTable.setOpaque(false);
+        goMappingsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        goMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                goMappingsTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                goMappingsTableMouseReleased(evt);
+            }
+        });
+        goMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                goMappingsTableMouseMoved(evt);
+            }
+        });
+        goMappingsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                goMappingsTableKeyReleased(evt);
+            }
+        });
+        proteinGoMappingsScrollPane.setViewportView(goMappingsTable);
+
+        goMappingsFileJLabel.setText("Species:");
+
+        speciesJComboBox.setMaximumRowCount(30);
+        speciesJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        speciesJComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                speciesJComboBoxActionPerformed(evt);
+            }
+        });
+
+        significanceJLabel.setText("Significance Level:");
+
+        downloadButton.setText("Download");
+        downloadButton.setToolTipText("Download GO Mappings");
+        downloadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadButtonActionPerformed(evt);
+            }
+        });
+
+        updateButton.setText("Update");
+        updateButton.setToolTipText("Update the GO Mappings");
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
+            }
+        });
+
+        biasWarningLabel.setFont(biasWarningLabel.getFont().deriveFont((biasWarningLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        biasWarningLabel.setText("Note that the statistical analysis above is only correct as long as the selected protein set is unbiased.");
+
+        unknownSpeciesLabel.setFont(unknownSpeciesLabel.getFont().deriveFont((unknownSpeciesLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        unknownSpeciesLabel.setText("<html><a href>Species not in list?</a></html>");
+        unknownSpeciesLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                unknownSpeciesLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                unknownSpeciesLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                unknownSpeciesLabelMouseExited(evt);
+            }
+        });
+
+        significanceLevelButtonGroup.add(fivePercentRadioButton);
+        fivePercentRadioButton.setSelected(true);
+        fivePercentRadioButton.setText("0.05");
+        fivePercentRadioButton.setOpaque(false);
+        fivePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fivePercentRadioButtonActionPerformed(evt);
+            }
+        });
+
+        significanceLevelButtonGroup.add(onePercentRadioButton);
+        onePercentRadioButton.setText("0.01");
+        onePercentRadioButton.setOpaque(false);
+        onePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onePercentRadioButtonActionPerformed(evt);
+            }
+        });
+
+        ensemblVersionLabel.setFont(ensemblVersionLabel.getFont().deriveFont((ensemblVersionLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        ensemblVersionLabel.setText("<html><a href>Ensembl version?</a></html>");
+        ensemblVersionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ensemblVersionLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ensemblVersionLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ensemblVersionLabelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout mappingsPanelLayout = new javax.swing.GroupLayout(mappingsPanel);
+        mappingsPanel.setLayout(mappingsPanelLayout);
+        mappingsPanelLayout.setHorizontalGroup(
+            mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mappingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mappingsPanelLayout.createSequentialGroup()
+                        .addComponent(goMappingsFileJLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(downloadButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(updateButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(mappingsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(biasWarningLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
+                        .addComponent(significanceJLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(onePercentRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(fivePercentRadioButton)
+                        .addGap(13, 13, 13)))
+                .addContainerGap())
+        );
+
+        mappingsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {downloadButton, updateButton});
+
+        mappingsPanelLayout.setVerticalGroup(
+            mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(goMappingsFileJLabel)
+                    .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(biasWarningLabel)
+                    .addComponent(significanceJLabel)
+                    .addComponent(onePercentRadioButton)
+                    .addComponent(fivePercentRadioButton))
+                .addContainerGap())
+        );
+
+        mappingsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {downloadButton, speciesJComboBox, updateButton});
+
+        mappingsPanel.setBounds(0, 0, 1020, 368);
+        mappingsTableLayeredPane.add(mappingsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        mappingsHelpJButton.setToolTipText("Help");
+        mappingsHelpJButton.setBorder(null);
+        mappingsHelpJButton.setBorderPainted(false);
+        mappingsHelpJButton.setContentAreaFilled(false);
+        mappingsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        mappingsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                mappingsHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                mappingsHelpJButtonMouseExited(evt);
+            }
+        });
+        mappingsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mappingsHelpJButtonActionPerformed(evt);
+            }
+        });
+        mappingsHelpJButton.setBounds(990, 0, 10, 25);
+        mappingsTableLayeredPane.add(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportMappingsJButton.setToolTipText("Copy to Clipboard");
+        exportMappingsJButton.setBorder(null);
+        exportMappingsJButton.setBorderPainted(false);
+        exportMappingsJButton.setContentAreaFilled(false);
+        exportMappingsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportMappingsJButton.setEnabled(false);
+        exportMappingsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportMappingsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportMappingsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportMappingsJButtonMouseExited(evt);
+            }
+        });
+        exportMappingsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportMappingsJButtonActionPerformed(evt);
+            }
+        });
+        exportMappingsJButton.setBounds(980, 0, 10, 25);
+        mappingsTableLayeredPane.add(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuMappingsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuMappingsBackgroundPanel);
+        contextMenuMappingsBackgroundPanel.setLayout(contextMenuMappingsBackgroundPanelLayout);
+        contextMenuMappingsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuMappingsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
+        mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology - Enrichment Analysis"));
+        plotPanel.setOpaque(false);
+
+        goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        proteinsPanel.setOpaque(false);
+
+        proteinsScrollPane.setOpaque(false);
+
+        proteinTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "MS2 Quant.", "Confidence", "  "
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, true
-		 };
-                public Class getColumnClass(int columnIndex) {
-                    return types [columnIndex];
-                }
+                false, false, false, false, false, false, false, false, false
+            };
 
-                public boolean isCellEditable(int rowIndex, int columnIndex) {
-                    return canEdit [columnIndex];
-                }
-            });
-            goMappingsTable.setOpaque(false);
-            goMappingsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-            goMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    goMappingsTableMouseExited(evt);
-                }
-                public void mouseReleased(java.awt.event.MouseEvent evt) {
-                    goMappingsTableMouseReleased(evt);
-                }
-            });
-            goMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-                public void mouseMoved(java.awt.event.MouseEvent evt) {
-                    goMappingsTableMouseMoved(evt);
-                }
-            });
-            goMappingsTable.addKeyListener(new java.awt.event.KeyAdapter() {
-                public void keyReleased(java.awt.event.KeyEvent evt) {
-                    goMappingsTableKeyReleased(evt);
-                }
-            });
-            proteinGoMappingsScrollPane.setViewportView(goMappingsTable);
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
-            goMappingsFileJLabel.setText("Species:");
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinTableMouseReleased(evt);
+            }
+        });
+        proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                proteinTableMouseMoved(evt);
+            }
+        });
+        proteinTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                proteinTableKeyReleased(evt);
+            }
+        });
+        proteinsScrollPane.setViewportView(proteinTable);
 
-            speciesJComboBox.setMaximumRowCount(30);
-            speciesJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-            speciesJComboBox.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    speciesJComboBoxActionPerformed(evt);
-                }
-            });
+        javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
+        proteinsPanel.setLayout(proteinsPanelLayout);
+        proteinsPanelLayout.setHorizontalGroup(
+            proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 982, Short.MAX_VALUE)
+        );
+        proteinsPanelLayout.setVerticalGroup(
+            proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
-            significanceJLabel.setText("Significance Level:");
+        goPlotsTabbedPane.addTab("Proteins", proteinsPanel);
 
-            downloadButton.setText("Download");
-            downloadButton.setToolTipText("Download GO Mappings");
-            downloadButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    downloadButtonActionPerformed(evt);
-                }
-            });
+        goFrequencyPlotPanel.setBackground(new java.awt.Color(255, 255, 255));
+        goFrequencyPlotPanel.setLayout(new javax.swing.BoxLayout(goFrequencyPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        goPlotsTabbedPane.addTab("Frequency", goFrequencyPlotPanel);
 
-            updateButton.setText("Update");
-            updateButton.setToolTipText("Update the GO Mappings");
-            updateButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    updateButtonActionPerformed(evt);
-                }
-            });
+        goSignificancePlotPanel.setBackground(new java.awt.Color(255, 255, 255));
+        goSignificancePlotPanel.setLayout(new javax.swing.BoxLayout(goSignificancePlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        goPlotsTabbedPane.addTab("Significance", goSignificancePlotPanel);
 
-            biasWarningLabel.setFont(biasWarningLabel.getFont().deriveFont((biasWarningLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-            biasWarningLabel.setText("Note that the statistical analysis above is only correct as long as the selected protein set is unbiased.");
+        goPlotsTabbedPane.setSelectedIndex(2);
 
-            unknownSpeciesLabel.setFont(unknownSpeciesLabel.getFont().deriveFont((unknownSpeciesLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-            unknownSpeciesLabel.setText("<html><a href>Species not in list?</a></html>");
-            unknownSpeciesLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    unknownSpeciesLabelMouseClicked(evt);
-                }
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    unknownSpeciesLabelMouseEntered(evt);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    unknownSpeciesLabelMouseExited(evt);
-                }
-            });
+        javax.swing.GroupLayout plotPanelLayout = new javax.swing.GroupLayout(plotPanel);
+        plotPanel.setLayout(plotPanelLayout);
+        plotPanelLayout.setHorizontalGroup(
+            plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(plotPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(goPlotsTabbedPane)
+                .addContainerGap())
+        );
+        plotPanelLayout.setVerticalGroup(
+            plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plotPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(goPlotsTabbedPane)
+                .addContainerGap())
+        );
 
-            significanceLevelButtonGroup.add(fivePercentRadioButton);
-            fivePercentRadioButton.setSelected(true);
-            fivePercentRadioButton.setText("0.05");
-            fivePercentRadioButton.setOpaque(false);
-            fivePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    fivePercentRadioButtonActionPerformed(evt);
-                }
-            });
+        plotPanel.setBounds(0, 0, 1019, 370);
+        plotLayeredPane.add(plotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-            significanceLevelButtonGroup.add(onePercentRadioButton);
-            onePercentRadioButton.setText("0.01");
-            onePercentRadioButton.setOpaque(false);
-            onePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    onePercentRadioButtonActionPerformed(evt);
-                }
-            });
+        plotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        plotHelpJButton.setToolTipText("Help");
+        plotHelpJButton.setBorder(null);
+        plotHelpJButton.setBorderPainted(false);
+        plotHelpJButton.setContentAreaFilled(false);
+        plotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        plotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                plotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                plotHelpJButtonMouseExited(evt);
+            }
+        });
+        plotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plotHelpJButtonActionPerformed(evt);
+            }
+        });
+        plotHelpJButton.setBounds(990, 0, 10, 25);
+        plotLayeredPane.add(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-            ensemblVersionLabel.setFont(ensemblVersionLabel.getFont().deriveFont((ensemblVersionLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-            ensemblVersionLabel.setText("<html><a href>Ensembl version?</a></html>");
-            ensemblVersionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    ensemblVersionLabelMouseClicked(evt);
-                }
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    ensemblVersionLabelMouseEntered(evt);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    ensemblVersionLabelMouseExited(evt);
-                }
-            });
+        exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPlotsJButton.setToolTipText("Export");
+        exportPlotsJButton.setBorder(null);
+        exportPlotsJButton.setBorderPainted(false);
+        exportPlotsJButton.setContentAreaFilled(false);
+        exportPlotsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPlotsJButton.setEnabled(false);
+        exportPlotsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportPlotsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportPlotsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportPlotsJButtonMouseExited(evt);
+            }
+        });
+        exportPlotsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPlotsJButtonActionPerformed(evt);
+            }
+        });
+        exportPlotsJButton.setBounds(980, 0, 10, 25);
+        plotLayeredPane.add(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-            javax.swing.GroupLayout mappingsPanelLayout = new javax.swing.GroupLayout(mappingsPanel);
-            mappingsPanel.setLayout(mappingsPanelLayout);
-            mappingsPanelLayout.setHorizontalGroup(
-                mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mappingsPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mappingsPanelLayout.createSequentialGroup()
-                            .addComponent(goMappingsFileJLabel)
-                            .addGap(18, 18, 18)
-                            .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(downloadButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(updateButton)
-                            .addGap(18, 18, 18)
-                            .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(mappingsPanelLayout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(biasWarningLabel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
-                            .addComponent(significanceJLabel)
-                            .addGap(18, 18, 18)
-                            .addComponent(onePercentRadioButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(fivePercentRadioButton)
-                            .addGap(13, 13, 13)))
-                    .addContainerGap())
-            );
+        contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-            mappingsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {downloadButton, updateButton});
+        javax.swing.GroupLayout contextMenuPlotsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPlotsBackgroundPanel);
+        contextMenuPlotsBackgroundPanel.setLayout(contextMenuPlotsBackgroundPanelLayout);
+        contextMenuPlotsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuPlotsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
 
-            mappingsPanelLayout.setVerticalGroup(
-                mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(mappingsPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(goMappingsFileJLabel)
-                        .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                        .addComponent(biasWarningLabel)
-                        .addComponent(significanceJLabel)
-                        .addComponent(onePercentRadioButton)
-                        .addComponent(fivePercentRadioButton))
-                    .addContainerGap())
-            );
+        contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 20);
+        plotLayeredPane.add(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-            mappingsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {downloadButton, speciesJComboBox, updateButton});
-
-            mappingsPanel.setBounds(0, 0, 1020, 368);
-            mappingsTableLayeredPane.add(mappingsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-            mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-            mappingsHelpJButton.setToolTipText("Help");
-            mappingsHelpJButton.setBorder(null);
-            mappingsHelpJButton.setBorderPainted(false);
-            mappingsHelpJButton.setContentAreaFilled(false);
-            mappingsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-            mappingsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    mappingsHelpJButtonMouseEntered(evt);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    mappingsHelpJButtonMouseExited(evt);
-                }
-            });
-            mappingsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    mappingsHelpJButtonActionPerformed(evt);
-                }
-            });
-            mappingsHelpJButton.setBounds(990, 0, 10, 25);
-            mappingsTableLayeredPane.add(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-            exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-            exportMappingsJButton.setToolTipText("Copy to Clipboard");
-            exportMappingsJButton.setBorder(null);
-            exportMappingsJButton.setBorderPainted(false);
-            exportMappingsJButton.setContentAreaFilled(false);
-            exportMappingsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-            exportMappingsJButton.setEnabled(false);
-            exportMappingsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-            exportMappingsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    exportMappingsJButtonMouseEntered(evt);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    exportMappingsJButtonMouseExited(evt);
-                }
-            });
-            exportMappingsJButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    exportMappingsJButtonActionPerformed(evt);
-                }
-            });
-            exportMappingsJButton.setBounds(980, 0, 10, 25);
-            mappingsTableLayeredPane.add(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-            contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-            javax.swing.GroupLayout contextMenuMappingsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuMappingsBackgroundPanel);
-            contextMenuMappingsBackgroundPanel.setLayout(contextMenuMappingsBackgroundPanelLayout);
-            contextMenuMappingsBackgroundPanelLayout.setHorizontalGroup(
-                contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 30, Short.MAX_VALUE)
-            );
-            contextMenuMappingsBackgroundPanelLayout.setVerticalGroup(
-                contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 20, Short.MAX_VALUE)
-            );
-
-            contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
-            mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
-
-            plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology - Enrichment Analysis"));
-            plotPanel.setOpaque(false);
-
-            goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
-
-            goFrequencyPlotPanel.setBackground(new java.awt.Color(255, 255, 255));
-            goFrequencyPlotPanel.setLayout(new javax.swing.BoxLayout(goFrequencyPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
-            goPlotsTabbedPane.addTab("Distribution", goFrequencyPlotPanel);
-
-            goSignificancePlotPanel.setBackground(new java.awt.Color(255, 255, 255));
-            goSignificancePlotPanel.setLayout(new javax.swing.BoxLayout(goSignificancePlotPanel, javax.swing.BoxLayout.LINE_AXIS));
-            goPlotsTabbedPane.addTab("Significance", goSignificancePlotPanel);
-
-            goPlotsTabbedPane.setSelectedIndex(1);
-
-            javax.swing.GroupLayout plotPanelLayout = new javax.swing.GroupLayout(plotPanel);
-            plotPanel.setLayout(plotPanelLayout);
-            plotPanelLayout.setHorizontalGroup(
-                plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(plotPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
-                    .addContainerGap())
-            );
-            plotPanelLayout.setVerticalGroup(
-                plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plotPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                    .addContainerGap())
-            );
-
-            plotPanel.setBounds(0, 0, 1019, 370);
-            plotLayeredPane.add(plotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-            plotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-            plotHelpJButton.setToolTipText("Help");
-            plotHelpJButton.setBorder(null);
-            plotHelpJButton.setBorderPainted(false);
-            plotHelpJButton.setContentAreaFilled(false);
-            plotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-            plotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    plotHelpJButtonMouseEntered(evt);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    plotHelpJButtonMouseExited(evt);
-                }
-            });
-            plotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    plotHelpJButtonActionPerformed(evt);
-                }
-            });
-            plotHelpJButton.setBounds(990, 0, 10, 25);
-            plotLayeredPane.add(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-            exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-            exportPlotsJButton.setToolTipText("Export");
-            exportPlotsJButton.setBorder(null);
-            exportPlotsJButton.setBorderPainted(false);
-            exportPlotsJButton.setContentAreaFilled(false);
-            exportPlotsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-            exportPlotsJButton.setEnabled(false);
-            exportPlotsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-            exportPlotsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    exportPlotsJButtonMouseEntered(evt);
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    exportPlotsJButtonMouseExited(evt);
-                }
-            });
-            exportPlotsJButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    exportPlotsJButtonActionPerformed(evt);
-                }
-            });
-            exportPlotsJButton.setBounds(980, 0, 10, 25);
-            plotLayeredPane.add(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
-
-            contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-            javax.swing.GroupLayout contextMenuPlotsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPlotsBackgroundPanel);
-            contextMenuPlotsBackgroundPanel.setLayout(contextMenuPlotsBackgroundPanelLayout);
-            contextMenuPlotsBackgroundPanelLayout.setHorizontalGroup(
-                contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 30, Short.MAX_VALUE)
-            );
-            contextMenuPlotsBackgroundPanelLayout.setVerticalGroup(
-                contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGap(0, 20, Short.MAX_VALUE)
-            );
-
-            contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 20);
-            plotLayeredPane.add(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
-
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-            this.setLayout(layout);
-            layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(plotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
-                        .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE))
-                    .addContainerGap())
-            );
-            layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(plotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                    .addContainerGap())
-            );
-        }// </editor-fold>//GEN-END:initComponents
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(plotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
+                    .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(plotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+    }// </editor-fold>//GEN-END:initComponents
 
     /**
      * Changes the cursor back to the default cursor a hand.
@@ -1429,6 +1572,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 }
 
                 updatePlotMarkers();
+                updateProteinTable();
             }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1486,12 +1630,13 @@ public class GOEAPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_selectSignificantMenuItemActionPerformed
 
     /**
-     * Update the plot markers.
+     * Update the plot markers and the protein table.
      *
      * @param evt
      */
     private void goMappingsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_goMappingsTableKeyReleased
         updatePlotMarkers();
+        updateProteinTable();
     }//GEN-LAST:event_goMappingsTableKeyReleased
 
     /**
@@ -1634,7 +1779,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(stringSelection, peptideShakerGUI);
 
-
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
 
@@ -1704,12 +1848,17 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         int index = goPlotsTabbedPane.getSelectedIndex();
 
-        if (index == 0) {
+        if (index == 1) {
+            // frequency plot
             new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goFrequencyPlotPanel.getComponent(0));
-        } else {
+        } else if (index == 2) {
+            // significance plot
             new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
+        } else { 
+            // protein table
+            // @TODO: implement me!!
+            JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Available", JOptionPane.INFORMATION_MESSAGE);
         }
-
     }//GEN-LAST:event_exportPlotsJButtonActionPerformed
 
     /**
@@ -1971,6 +2120,95 @@ public class GOEAPanel extends javax.swing.JPanel {
     private void ensemblVersionLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ensemblVersionLabelMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_ensemblVersionLabelMouseExited
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an html
+     * link.
+     *
+     * @param evt
+     */
+    private void proteinTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseMoved
+        int row = proteinTable.rowAtPoint(evt.getPoint());
+        int column = proteinTable.columnAtPoint(evt.getPoint());
+
+        proteinTable.setToolTipText(null);
+
+        if (row != -1 && column != -1 && column == proteinTable.getColumn("Accession").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) proteinTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+            if (peptideShakerGUI.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
+                proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
+            }
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_proteinTableMouseMoved
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinTableMouseExited
+
+    /**
+     * Opens the protein accession number link in a browser.
+     *
+     * @param evt
+     */
+    private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
+
+        int row = proteinTable.getSelectedRow();
+        int column = proteinTable.getSelectedColumn();
+
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
+
+            // update the protein selection
+            String selectedProtein = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
+            selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
+            peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+
+            // open protein link in web browser
+            if (column == proteinTable.getColumn("Accession").getModelIndex()
+                    && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String link = (String) proteinTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        }
+    }//GEN-LAST:event_proteinTableMouseReleased
+
+    /**
+     * Update the protein selection.
+     *
+     * @param evt
+     */
+    private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
+
+        int row = proteinTable.getSelectedRow();
+
+        if (row != -1) {
+            // update the protein selection
+            String selectedProtein = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
+            selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
+            peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+        }
+    }//GEN-LAST:event_proteinTableKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel biasWarningLabel;
     private javax.swing.JPanel contextMenuMappingsBackgroundPanel;
@@ -1994,6 +2232,9 @@ public class GOEAPanel extends javax.swing.JPanel {
     private javax.swing.JLayeredPane plotLayeredPane;
     private javax.swing.JPanel plotPanel;
     private javax.swing.JScrollPane proteinGoMappingsScrollPane;
+    private javax.swing.JTable proteinTable;
+    private javax.swing.JPanel proteinsPanel;
+    private javax.swing.JScrollPane proteinsScrollPane;
     private javax.swing.JMenuItem selectAllMenuItem;
     private javax.swing.JMenuItem selectSignificantMenuItem;
     private javax.swing.JPopupMenu selectTermsJPopupMenu;
@@ -2044,7 +2285,14 @@ public class GOEAPanel extends javax.swing.JPanel {
             distributionChartPanel.getChart().getCategoryPlot().addDomainMarker(
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
                     Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
+
+            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology - Enrichment Analysis ("
+                    + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
+                    + ")");
+        } else {
+            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology - Enrichment Analysis");
         }
+        plotPanel.repaint();
     }
 
     /**
@@ -2245,5 +2493,108 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         goMappingsTable.revalidate();
         goMappingsTable.repaint();
+        
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        
+        proteinTable.revalidate();
+        proteinTable.repaint();
+    }
+
+    /**
+     * Update the protein table.
+     */
+    private void updateProteinTable() {
+
+        // @TODO: the table update below should be replaced by a table model??
+
+
+        if (goMappingsTable.getSelectedRow() != -1) {
+
+            // clear the old data
+            DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+            dm.getDataVector().removeAllElements();
+            dm.fireTableDataChanged();
+
+            // get the selected go accession number
+            String selectedGoAccession = (String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Accession").getModelIndex());
+
+            // remove the html tags
+            selectedGoAccession = selectedGoAccession.substring(selectedGoAccession.lastIndexOf("GTerm?id=") + "GTerm?id=".length(), selectedGoAccession.lastIndexOf("\"><font"));
+
+            // get the list of matching proteins
+            HashSet<String> proteins = goProteinMappings.get(selectedGoAccession);
+
+            // update the table
+            if (proteins != null) {
+
+                Iterator<String> iterator = proteins.iterator();
+
+                int rowIndex = 0;
+
+                while (iterator.hasNext()) {
+
+                    String proteinAccessionNumber = iterator.next();
+
+                    if (peptideShakerGUI.getIdentification().matchExists(proteinAccessionNumber)) {
+
+                        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinAccessionNumber);
+                        PSParameter pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccessionNumber, new PSParameter());
+
+                        String description = "";
+                        try {
+                            description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+
+                        double sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinAccessionNumber);
+                        double possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinAccessionNumber);
+                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinAccessionNumber);
+                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinAccessionNumber);
+                        int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinAccessionNumber);
+
+                        ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
+                                    ++rowIndex,
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinAccessionNumber),
+                                    description,
+                                    new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true),
+                                    new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false),
+                                    new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false),
+                                    peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinAccessionNumber),
+                                    pSParameter.getProteinConfidence(),
+                                    ((PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccessionNumber, new PSParameter())).isValidated()
+                                });
+                    }
+                }
+
+                if (proteinTable.getRowCount() > 0) {
+
+                    proteinTable.setRowSelectionInterval(0, 0);
+                    proteinTable.scrollRectToVisible(proteinTable.getCellRect(0, 0, false));
+                    
+                    // update the protein selection
+                    String selectedProtein = (String) proteinTable.getValueAt(0, proteinTable.getColumn("Accession").getModelIndex());
+                    selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
+                    peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+
+                    // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        // @TODO: this code should not have to be repeated here, the value should be calculated when loading the data...
+                        
+                        public void run() {
+                            // set the preferred size of the accession column
+                            int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+                            proteinTable.getColumn("Accession").setMinWidth(width);
+                            proteinTable.getColumn("Accession").setMaxWidth(width);
+                        }
+                    });
+                }
+            }
+        }
     }
 }

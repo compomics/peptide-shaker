@@ -1374,7 +1374,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt
      */
     private void peptideTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideTableKeyReleased
-        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
+                || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             peptideTableMouseReleased(null);
         }
 }//GEN-LAST:event_peptideTableKeyReleased
@@ -1385,7 +1386,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt
      */
     private void pdbMatchesJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdbMatchesJTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
+                || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             pdbMatchesJTableMouseReleased(null);
         }
     }//GEN-LAST:event_pdbMatchesJTableKeyReleased
@@ -1727,7 +1729,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt
      */
     private void pdbChainsJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdbChainsJTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
+                || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             updatePeptideToPdbMapping();
         }
     }//GEN-LAST:event_pdbChainsJTableKeyReleased
