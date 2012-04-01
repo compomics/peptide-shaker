@@ -529,6 +529,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         automaticAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator14 = new javax.swing.JPopupMenu.Separator();
+        annotationColorsJMenuItem = new javax.swing.JMenuItem();
         splitterMenu4 = new javax.swing.JMenu();
         exportGraphicsMenu = new javax.swing.JMenu();
         exportSpectrumMenu = new javax.swing.JMenu();
@@ -793,6 +795,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         settingsMenu.add(errorPlotTypeCheckBoxMenuItem);
+        settingsMenu.add(jSeparator14);
+
+        annotationColorsJMenuItem.setText("Annotation Colors");
+        annotationColorsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                annotationColorsJMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(annotationColorsJMenuItem);
 
         annotationMenuBar.add(settingsMenu);
 
@@ -2399,6 +2410,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
     /**
+     * Open the spectrum colors dialg.
+     * 
+     * @param evt 
+     */
+    private void annotationColorsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationColorsJMenuItemActionPerformed
+        new SpectrumColorsDialog(this);
+    }//GEN-LAST:event_annotationColorsJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2501,6 +2521,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem adaptCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem allCheckBoxMenuItem;
     private javax.swing.JTabbedPane allTabsJTabbedPane;
+    private javax.swing.JMenuItem annotationColorsJMenuItem;
     private javax.swing.JMenuBar annotationMenuBar;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
@@ -2546,6 +2567,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
+    private javax.swing.JPopupMenu.Separator jSeparator14;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;

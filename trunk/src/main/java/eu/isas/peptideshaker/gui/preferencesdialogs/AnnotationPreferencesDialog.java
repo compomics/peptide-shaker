@@ -9,9 +9,11 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.ImageIcon;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 
 /**
  * A simple dialog for setting the spectrum annotation preferences.
@@ -80,6 +82,15 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         chargesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
         neutralLossesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
+        
+        chargesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "Selected", null));
+        neutralLossesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "Selected", null));
     }
 
     /**

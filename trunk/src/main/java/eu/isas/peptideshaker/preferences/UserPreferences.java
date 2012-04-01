@@ -9,13 +9,30 @@ import java.util.ArrayList;
  * In this class are stored the user preferences for PeptideShaker
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class UserPreferences implements Serializable {
 
     /**
-     * The serial number for serialization compatibilty
+     * The serial number for serialization compatibilty.
      */
     static final long serialVersionUID = 3298905131097982664L;
+    /**
+     * The width to use for the annotated peaks.
+     */
+    private Float spectrumAnnotatedPeakWidth = 1.0f;
+    /**
+     * The width to use for the background peaks.
+     */
+    private Float spectrumBackgroundPeakWidth = 1.0f;
+    /**
+     * The color to use for the annotated peaks.
+     */
+    private Color spectrumAnnotatedPeakColor = Color.RED;
+    /**
+     * The color to use for the background peaks.
+     */
+    private Color spectrumBackgroundPeakColor = new Color(100, 100, 100, 50);
     /**
      * The color used for the sparkline bar chart plots.
      */
@@ -25,46 +42,47 @@ public class UserPreferences implements Serializable {
      */
     private Color sparklineColorNonValidated = new Color(208, 19, 19);
     /**
-     * The color used for the not found sparkline bar chart plots
+     * The color used for the not found sparkline bar chart plots.
      */
     private Color sparklineColorNotFound = new Color(222, 222, 222);
     /**
-     * The color used for the possible values sparkline bar chart plots
+     * The color used for the possible values sparkline bar chart plots.
      */
     private Color sparklineColorPossible = new Color(100, 150, 255);
     /**
-     * The color of the selected peptide
+     * The color of the selected peptide.
      */
     private Color peptideSelected = new Color(0, 0, 255);
     /**
-     * The recent projects
+     * The recent projects.
      */
     private ArrayList<String> recentProjects = new ArrayList<String>();
     /**
-     * Show/hide sliders
+     * Show/hide sliders.
      */
     private boolean showSliders = false;
     /**
-     * The memory to use by PeptideShaker
+     * The memory to use by PeptideShaker.
      */
-    private int memoryPreference = 4*1024;
+    private int memoryPreference = 4 * 1024;
     /**
-     * The user preferred delta score threshold
+     * The user preferred delta score threshold.
      */
     private Double deltaScoreThreshold = 50.0;
     /**
-     * The user preferred A-score threshold
+     * The user preferred A-score threshold.
      */
     private Double aScoreThreshold = 50.0;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public UserPreferences() {
     }
 
     /**
-     * Getter for the sparkline color
+     * Getter for the sparkline color.
+     *
      * @return the sparkline color
      */
     public Color getSparklineColor() {
@@ -72,15 +90,17 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Setter for the sparkline color
-     * @param sparklineColor  the sparkline color
+     * Setter for the sparkline color.
+     *
+     * @param sparklineColor the sparkline color
      */
     public void setSparklineColor(Color sparklineColor) {
         this.sparklineColor = sparklineColor;
     }
 
     /**
-     * Getter for the non-validated sparkline color
+     * Getter for the non-validated sparkline color.
+     *
      * @return the non-validated sparkline color
      */
     public Color getSparklineColorNonValidated() {
@@ -91,7 +111,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Returns the color for a selected peptide
+     * Returns the color for a selected peptide.
+     *
      * @return the color for a selected peptide
      */
     public Color getPeptideSelected() {
@@ -102,7 +123,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Returns the color for a not found sparkline bar chart plots
+     * Returns the color for a not found sparkline bar chart plots.
+     *
      * @return the color for a not found sparkline bar chart plots
      */
     public Color getSparklineColorNotFound() {
@@ -113,15 +135,17 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Setter for the non-validated sparkline color
+     * Setter for the non-validated sparkline color.
+     *
      * @param sparklineColorNonValidated the non-validated sparkline color
      */
     public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
         this.sparklineColorNonValidated = sparklineColorNonValidated;
     }
-    
+
     /**
-     * Returns the color for a possible sparkline bar chart plots
+     * Returns the color for a possible sparkline bar chart plots.
+     *
      * @return the color for a possible sparkline bar chart plots
      */
     public Color getSparklineColorPossible() {
@@ -132,7 +156,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Setter for the possible sparkline color
+     * Setter for the possible sparkline color.
+     *
      * @param sparklineColorPossible the possible sparkline color
      */
     public void setSparklineColorPossible(Color sparklineColorPossible) {
@@ -140,23 +165,26 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Returns whether sliders should be displayed
-     * @return  whether sliders should be displayed
+     * Returns whether sliders should be displayed.
+     *
+     * @return whether sliders should be displayed
      */
     public boolean showSliders() {
         return showSliders;
     }
 
     /**
-     * Sets whether sliders should be displayed
-     * @param showSliders  whether sliders should be displayed
+     * Sets whether sliders should be displayed.
+     *
+     * @param showSliders whether sliders should be displayed
      */
     public void setShowSliders(boolean showSliders) {
         this.showSliders = showSliders;
     }
 
     /**
-     * Returns the paths of the recent projects
+     * Returns the paths of the recent projects.
+     *
      * @return the paths of the recent projects
      */
     public ArrayList<String> getRecentProjects() {
@@ -164,7 +192,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Removes a recent project from the list
+     * Removes a recent project from the list.
+     *
      * @param recentProject the recent project to remove
      */
     public void removerRecentProject(String recentProject) {
@@ -172,7 +201,9 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Adds a recent project to the list and limits the list of recent projects to a size of 10
+     * Adds a recent project to the list and limits the list of recent projects
+     * to a size of 10.
+     *
      * @param recentProject the path of the recent project to add
      */
     public void addRecentProject(String recentProject) {
@@ -186,7 +217,9 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Adds a recent project to the list and limits the list of recent projects to a size of 10
+     * Adds a recent project to the list and limits the list of recent projects
+     * to a size of 10.
+     *
      * @param recentProject the recent project to add
      */
     public void addRecentProject(File recentProject) {
@@ -194,19 +227,21 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Returns the preferred upper memory limit
+     * Returns the preferred upper memory limit.
+     *
      * @return the preferred upper memory limit
      */
     public int getMemoryPreference() {
         if (memoryPreference == 0) {
             // needed for backward compatibility
-            memoryPreference = 4*1024;
+            memoryPreference = 4 * 1024;
         }
         return memoryPreference;
     }
 
     /**
-     * Sets the preferred upper memory limit
+     * Sets the preferred upper memory limit.
+     *
      * @param memoryPreference the preferred upper memory limit
      */
     public void setMemoryPreference(int memoryPreference) {
@@ -214,7 +249,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Returns the user preferred A-score Threshold
+     * Returns the user preferred A-score Threshold.
+     *
      * @return the user preferred A-score Threshold
      */
     public Double getAScoreThreshold() {
@@ -225,7 +261,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Sets the user preferred A-score Threshold
+     * Sets the user preferred A-score Threshold.
+     *
      * @param aScoreThreshold the user preferred A-score Threshold
      */
     public void setAScoreThreshold(Double aScoreThreshold) {
@@ -233,7 +270,8 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Returns the user preferred delta score Threshold
+     * Returns the user preferred delta score Threshold.
+     *
      * @return the user preferred delta score Threshold
      */
     public Double getDeltaScoreThreshold() {
@@ -244,11 +282,103 @@ public class UserPreferences implements Serializable {
     }
 
     /**
-     * Sets the user preferred delta score Threshold
+     * Sets the user preferred delta score Threshold.
+     *
      * @param deltaScoreThreshold the user preferred delta score Threshold
      */
     public void setDeltaScoreThreshold(Double deltaScoreThreshold) {
         this.deltaScoreThreshold = deltaScoreThreshold;
     }
-    
+
+    /**
+     * Returns the color to use for the annotated peaks.
+     * 
+     * @return the spectrumAnnotatedPeakColor
+     */
+    public Color getSpectrumAnnotatedPeakColor() {
+        
+        if (spectrumAnnotatedPeakColor == null) {
+            spectrumAnnotatedPeakColor = Color.RED;
+        }
+        
+        return spectrumAnnotatedPeakColor;
+    }
+
+    /**
+     * Set the color to use for the annotated peaks.
+     * 
+     * @param spectrumAnnotatedPeakColor the spectrumAnnotatedPeakColor to set
+     */
+    public void setSpectrumAnnotatedPeakColor(Color spectrumAnnotatedPeakColor) {
+        this.spectrumAnnotatedPeakColor = spectrumAnnotatedPeakColor;
+    }
+
+    /**
+     * Returns the color to use for the background peaks.
+     * 
+     * @return the spectrumBackgroundPeakColor
+     */
+    public Color getSpectrumBackgroundPeakColor() {
+        
+        if (spectrumBackgroundPeakColor == null) {
+           spectrumBackgroundPeakColor = new Color(100, 100, 100, 50);
+        }
+        
+        return spectrumBackgroundPeakColor;
+    }
+
+    /**
+     * Set the color to use for the background peaks.
+     * 
+     * @param spectrumBackgroundPeakColor the spectrumBackgroundPeakColor to set
+     */
+    public void setSpectrumBackgroundPeakColor(Color spectrumBackgroundPeakColor) {
+        this.spectrumBackgroundPeakColor = spectrumBackgroundPeakColor;
+    }
+
+    /**
+     * Returns the width of the annotated peaks.
+     * 
+     * @return the spectrumAnnotatedPeakWidth
+     */
+    public Float getSpectrumAnnotatedPeakWidth() {
+        
+        if (spectrumAnnotatedPeakWidth == null) {
+            spectrumAnnotatedPeakWidth = 1.0f;
+        }
+        
+        return spectrumAnnotatedPeakWidth;
+    }
+
+    /**
+     * Set the width of the annotated peaks.
+     * 
+     * @param spectrumAnnotatedPeakWidth the spectrumAnnotatedPeakWidth to set
+     */
+    public void setSpectrumAnnotatedPeakWidth(float spectrumAnnotatedPeakWidth) {
+        this.spectrumAnnotatedPeakWidth = spectrumAnnotatedPeakWidth;
+    }
+
+    /**
+     * Returns the width of the background peaks.
+     * 
+     * @return the spectrumBackgroundPeakWidth
+     */
+    public Float getSpectrumBackgroundPeakWidth() {
+        
+        if (spectrumBackgroundPeakWidth == null) {
+            spectrumBackgroundPeakWidth = 1.0f;
+        }
+        
+        return spectrumBackgroundPeakWidth;
+    }
+
+    /**
+     * Set the width of the background peaks.
+     * 
+     * @param spectrumBackgroundPeakWidth the spectrumBackgroundPeakWidth to set
+     */
+    public void setSpectrumBackgroundPeakWidth(float spectrumBackgroundPeakWidth) {
+        this.spectrumBackgroundPeakWidth = spectrumBackgroundPeakWidth;
+    }
 }

@@ -225,6 +225,10 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsTable.getColumn("Frequency (%)").setCellRenderer(new JSparklinesTableCellRenderer(
                 JSparklinesTableCellRenderer.PlotType.barChart,
                 PlotOrientation.HORIZONTAL, 0.0, 100.0));
+        goMappingsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "Selected", null));
 
         setProteinGoTableProperties();
 
@@ -424,7 +428,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     }
                 }, "ProgressDialog").start();
 
-                SwingUtilities.invokeLater(new Runnable() {
+                new Thread("GoThread") {
 
                     @Override
                     public void run() {
@@ -815,7 +819,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
                         }
                     }
-                });
+                }.start();
             }
         }
     }
@@ -1865,8 +1869,60 @@ public class GOEAPanel extends javax.swing.JPanel {
             new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
         } else {
             // protein table
-            // @TODO: implement me!!
-            JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Available", JOptionPane.INFORMATION_MESSAGE);
+
+            // get the file to send the output to
+            final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+
+            if (selectedFile != null) {
+
+                // change the peptide shaker icon to a "waiting version"
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+                progressDialog.setIndeterminate(true);
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) { // not really sure why this is needed...
+                            // ignore error
+                        }
+                        progressDialog.setTitle("Exporting to File. Please Wait...");
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("ExportThread") {
+
+                    @Override
+                    public void run() {
+
+                        try {
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
+                            Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
+                            writer.close();
+
+                            progressDialog.dispose();
+                            
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+
+                        } catch (IOException e) {
+                            progressDialog.dispose();
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+
+
+                // change the peptide shaker icon back to the default version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            }
         }
     }//GEN-LAST:event_exportPlotsJButtonActionPerformed
 

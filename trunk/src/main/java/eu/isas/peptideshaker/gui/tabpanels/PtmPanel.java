@@ -3738,6 +3738,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                 spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                 spectrum.setBorder(null);
+                spectrum.setDataPointAndLineColor(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
+                spectrum.setPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
+                spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
 
                 // get the spectrum annotations
                 Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
