@@ -2739,7 +2739,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         }, "ProgressDialog").start();
 
 
-        new Thread("UpdateThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
@@ -2777,7 +2777,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
-        }.start();
+        });
     }
 
     /**

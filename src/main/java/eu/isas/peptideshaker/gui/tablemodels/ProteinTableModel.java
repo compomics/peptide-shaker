@@ -41,13 +41,35 @@ public class ProteinTableModel extends DefaultTableModel {
      * @param peptideShakerGUI instance of the main GUI class
      */
     public ProteinTableModel(PeptideShakerGUI peptideShakerGUI) {
+        setUpTableModel(peptideShakerGUI);
+    }
+
+    /**
+     * Update the data in the table model without having to reset the whole
+     * table model. This keeps the sorting order of the table.
+     *
+     * @param peptideShakerGUI
+     */
+    public void updateDataModel(PeptideShakerGUI peptideShakerGUI) {
+        setUpTableModel(peptideShakerGUI);
+    }
+
+    /**
+     * Set up the table model.
+     *
+     * @param peptideShakerGUI
+     */
+    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         if (identification != null) {
             proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
         }
     }
-    
+
+    /**
+     * Reset the protein keys.
+     */
     public void reset() {
         proteinKeys = null;
     }
@@ -166,8 +188,8 @@ public class ProteinTableModel extends DefaultTableModel {
                         return null;
                     }
                 case 10:
-                        proteinKey = proteinKeys.get(row);
-                        pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                    proteinKey = proteinKeys.get(row);
+                    pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getProteinScore();
                     } else {

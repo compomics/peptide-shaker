@@ -6,8 +6,8 @@ package eu.isas.peptideshaker.gui.testDialogs;
 
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTable;
-import eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTable;
+import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel;
+import eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -29,7 +29,7 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
-        ProteinFractionTable proteinTableModel = new ProteinFractionTable(peptideShakerGUI);
+        ProteinFractionTableModel proteinTableModel = new ProteinFractionTableModel(peptideShakerGUI);
         proteinTable.setModel(proteinTableModel);
 
         DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
@@ -48,9 +48,15 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
         
         ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
-        PeptideFractionTable peptideTableModel = new PeptideFractionTable(peptideShakerGUI, peptideKeys);
-        peptideTable.setModel(peptideTableModel);
-
+        
+        // update the table model
+        if (peptideTable.getModel() instanceof PeptideFractionTableModel) {
+            ((PeptideFractionTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, peptideKeys);
+        } else {
+            PeptideFractionTableModel peptideTableModel = new PeptideFractionTableModel(peptideShakerGUI, peptideKeys);
+            peptideTable.setModel(peptideTableModel);
+        }
+        
         DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
         dm.fireTableDataChanged();
     }
@@ -106,7 +112,7 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
 
-        proteinTable.setModel(new ProteinFractionTable());
+        proteinTable.setModel(new ProteinFractionTableModel());
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 proteinTableMouseReleased(evt);
@@ -133,7 +139,7 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
 
-        peptideTable.setModel(new PeptideFractionTable());
+        peptideTable.setModel(new PeptideFractionTableModel());
         jScrollPane3.setViewportView(peptideTable);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
