@@ -10,6 +10,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -202,18 +203,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsTable.getColumn("  ").setMaxWidth(30);
         goMappingsTable.getColumn("  ").setMinWidth(30);
 
-        proteinTable.getColumn(" ").setMaxWidth(60);
-        proteinTable.getColumn(" ").setMinWidth(60);
-        proteinTable.getColumn("  ").setMaxWidth(30);
-        proteinTable.getColumn("  ").setMinWidth(30);
-        proteinTable.getColumn("Confidence").setMaxWidth(90);
-        proteinTable.getColumn("Confidence").setMinWidth(90);
-
-        // set the preferred size of the accession column
-        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
-        proteinTable.getColumn("Accession").setMinWidth(width);
-        proteinTable.getColumn("Accession").setMaxWidth(width);
-
         double significanceLevel = 0.05;
 
         if (onePercentRadioButton.isSelected()) {
@@ -237,25 +226,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 JSparklinesTableCellRenderer.PlotType.barChart,
                 PlotOrientation.HORIZONTAL, 0.0, 100.0));
 
-        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
-        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
-        proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
-        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), true));
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
+        setProteinGoTableProperties();
 
         // make the tabs in the tabbed pane go from right to left
         goPlotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -283,6 +254,43 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinTableToolTips.add("MS2 Quantification");
         proteinTableToolTips.add("Protein Confidence");
         proteinTableToolTips.add("Validated");
+    }
+
+    /**
+     * Set the properties of the GO protein table.
+     */
+    private void setProteinGoTableProperties() {
+        proteinTable.getColumn(" ").setMaxWidth(60);
+        proteinTable.getColumn(" ").setMinWidth(60);
+        proteinTable.getColumn("  ").setMaxWidth(30);
+        proteinTable.getColumn("  ").setMinWidth(30);
+        proteinTable.getColumn("Confidence").setMaxWidth(90);
+        proteinTable.getColumn("Confidence").setMinWidth(90);
+
+        // set the preferred size of the accession column
+        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+        proteinTable.getColumn("Accession").setMinWidth(width);
+        proteinTable.getColumn("Accession").setMaxWidth(width);
+
+        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
+                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                "Validated", "Not Validated"));
+        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), true));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
     }
 
     /**
@@ -416,7 +424,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     }
                 }, "ProgressDialog").start();
 
-                new Thread("GoThread") {
+                SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
@@ -491,14 +499,16 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         totalNumberOfProteins++;
 
                                         // store the go term to protein mappings
-                                        if (goProteinMappings.containsKey(goAccession)) {
-                                            if (!goProteinMappings.get(goAccession).contains(proteinAccession)) {
-                                                goProteinMappings.get(goAccession).add(proteinAccession);
+                                        if (peptideShakerGUI.getIdentification().matchExists(proteinAccession)) { // @TODO: this might be slow?? but i don't see i way around this?
+                                            if (goProteinMappings.containsKey(goAccession)) {
+                                                if (!goProteinMappings.get(goAccession).contains(proteinAccession)) {
+                                                    goProteinMappings.get(goAccession).add(proteinAccession);
+                                                }
+                                            } else {
+                                                HashSet<String> tempProteinList = new HashSet<String>();
+                                                tempProteinList.add(proteinAccession);
+                                                goProteinMappings.put(goAccession, tempProteinList);
                                             }
-                                        } else {
-                                            HashSet<String> tempProteinList = new HashSet<String>();
-                                            tempProteinList.add(proteinAccession);
-                                            goProteinMappings.put(goAccession, tempProteinList);
                                         }
                                     }
                                 }
@@ -805,7 +815,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
                         }
                     }
-                }.start();
+                });
             }
         }
     }
@@ -1324,7 +1334,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
         mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology - Enrichment Analysis"));
+        plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Enrichment Analysis"));
         plotPanel.setOpaque(false);
 
         goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
@@ -1386,8 +1396,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1854,7 +1863,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         } else if (index == 2) {
             // significance plot
             new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
-        } else { 
+        } else {
             // protein table
             // @TODO: implement me!!
             JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Available", JOptionPane.INFORMATION_MESSAGE);
@@ -2286,11 +2295,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
                     Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
 
-            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology - Enrichment Analysis ("
-                    + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
-                    + ")");
+            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis - "
+                    + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()));
         } else {
-            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology - Enrichment Analysis");
+            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
         }
         plotPanel.repaint();
     }
@@ -2457,6 +2465,10 @@ public class GOEAPanel extends javax.swing.JPanel {
         dm.getDataVector().removeAllElements();
         dm.fireTableDataChanged();
 
+        dm = (DefaultTableModel) proteinTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+
         goFrequencyPlotPanel.removeAll();
         goFrequencyPlotPanel.revalidate();
         goFrequencyPlotPanel.repaint();
@@ -2468,6 +2480,9 @@ public class GOEAPanel extends javax.swing.JPanel {
         ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings");
         mappingsPanel.revalidate();
         mappingsPanel.repaint();
+
+        ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
+        plotPanel.repaint();
     }
 
     /**
@@ -2493,13 +2508,13 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         goMappingsTable.revalidate();
         goMappingsTable.repaint();
-        
+
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        
+
         proteinTable.revalidate();
         proteinTable.repaint();
     }
@@ -2509,8 +2524,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void updateProteinTable() {
 
-        // @TODO: the table update below should be replaced by a table model??
-
+        // @TODO: order the proteins in some way?
 
         if (goMappingsTable.getSelectedRow() != -1) {
 
@@ -2528,72 +2542,34 @@ public class GOEAPanel extends javax.swing.JPanel {
             // get the list of matching proteins
             HashSet<String> proteins = goProteinMappings.get(selectedGoAccession);
 
+            if (proteins == null) {
+                proteins = new HashSet<String>();
+            }
+
             // update the table
-            if (proteins != null) {
+            if (proteinTable.getModel() instanceof ProteinGoTableModel) {
+                ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteins);
+            } else {
+                ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI, proteins);
+                proteinTable.setModel(proteinTableModel);
+            }
 
-                Iterator<String> iterator = proteins.iterator();
+            setProteinGoTableProperties();
 
-                int rowIndex = 0;
+            if (proteinTable.getRowCount() > 0) {
 
-                while (iterator.hasNext()) {
+                ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis - "
+                        + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
+                        + " (" + proteinTable.getRowCount() + ")");
+                plotPanel.repaint();
 
-                    String proteinAccessionNumber = iterator.next();
+                proteinTable.setRowSelectionInterval(0, 0);
+                proteinTable.scrollRectToVisible(proteinTable.getCellRect(0, 0, false));
 
-                    if (peptideShakerGUI.getIdentification().matchExists(proteinAccessionNumber)) {
-
-                        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinAccessionNumber);
-                        PSParameter pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccessionNumber, new PSParameter());
-
-                        String description = "";
-                        try {
-                            description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        }
-
-                        double sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinAccessionNumber);
-                        double possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinAccessionNumber);
-                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinAccessionNumber);
-                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinAccessionNumber);
-                        int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinAccessionNumber);
-
-                        ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
-                                    ++rowIndex,
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinAccessionNumber),
-                                    description,
-                                    new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true),
-                                    new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false),
-                                    new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false),
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinAccessionNumber),
-                                    pSParameter.getProteinConfidence(),
-                                    ((PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccessionNumber, new PSParameter())).isValidated()
-                                });
-                    }
-                }
-
-                if (proteinTable.getRowCount() > 0) {
-
-                    proteinTable.setRowSelectionInterval(0, 0);
-                    proteinTable.scrollRectToVisible(proteinTable.getCellRect(0, 0, false));
-                    
-                    // update the protein selection
-                    String selectedProtein = (String) proteinTable.getValueAt(0, proteinTable.getColumn("Accession").getModelIndex());
-                    selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
-                    peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
-
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        // @TODO: this code should not have to be repeated here, the value should be calculated when loading the data...
-                        
-                        public void run() {
-                            // set the preferred size of the accession column
-                            int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
-                            proteinTable.getColumn("Accession").setMinWidth(width);
-                            proteinTable.getColumn("Accession").setMaxWidth(width);
-                        }
-                    });
-                }
+                // update the protein selection
+                String selectedProtein = (String) proteinTable.getValueAt(0, proteinTable.getColumn("Accession").getModelIndex());
+                selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
+                peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             }
         }
     }
