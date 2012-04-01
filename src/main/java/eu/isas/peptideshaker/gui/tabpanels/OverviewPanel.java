@@ -1775,7 +1775,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * @see #proteinTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
+                || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             peptideShakerGUI.resetSelectedItems();
             proteinTableMouseReleased(null);
         }
@@ -1791,7 +1792,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (evt != null) {
             peptideShakerGUI.resetSelectedItems();
         }
-        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
+                || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             int row = peptideTable.getSelectedRow();
 
             if (row != -1) {
@@ -1864,7 +1866,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }//GEN-LAST:event_proteinTableMouseMoved
 
     /**
-     * Changes the cursor back to the default cursor a hand.
+     * Changes the cursor back to the default cursor.
      *
      * @param evt
      */

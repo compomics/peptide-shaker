@@ -2398,7 +2398,8 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void groupSelectionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_groupSelectionTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
+                || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
             groupSelectionChanged();
         }
     }//GEN-LAST:event_groupSelectionTableKeyReleased
