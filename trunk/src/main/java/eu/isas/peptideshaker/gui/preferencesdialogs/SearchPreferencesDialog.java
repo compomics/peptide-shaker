@@ -8,6 +8,8 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.gui.dialogs.PtmDialog;
+import com.compomics.util.gui.dialogs.PtmDialogParent;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ModificationProfile;
@@ -39,7 +41,7 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class SearchPreferencesDialog extends javax.swing.JDialog {
+public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmDialogParent {
 
     /**
      * The tooltips for the expected variable mods.
@@ -1157,7 +1159,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         BareBonesBrowserLaunch.openURL(link);
                         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } else {
-                        new PtmDialog(this, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)));
                     }
                 }
             }
@@ -1224,7 +1226,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         BareBonesBrowserLaunch.openURL(link);
                         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } else {
-                        new PtmDialog(this, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)));
                     }
                 }
             }
@@ -1263,7 +1265,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private void editExpectedPtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editExpectedPtmJMenuItemActionPerformed
         int row = expectedModificationsTable.getSelectedRow();
         int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
-        new PtmDialog(this, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)));
     }//GEN-LAST:event_editExpectedPtmJMenuItemActionPerformed
 
     /**
@@ -1297,7 +1299,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void editAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAvailablePtmJMenuItemActionPerformed
         int row = availableModificationsTable.getSelectedRow();
-        new PtmDialog(this, ptmFactory.getPTM((String) availableModificationsTable.getValueAt(row, 1)));
+        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM((String) availableModificationsTable.getValueAt(row, 1)));
     }//GEN-LAST:event_editAvailablePtmJMenuItemActionPerformed
 
     /**
@@ -1880,5 +1882,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     public PtmToPrideMap getPtmToPrideMap() {
         return ptmToPrideMap;
+    }
+    
+    /**
+     * Update the modifications.
+     */
+    public void updateModifications() {
+        // @TODO: should something be done here..? this method is called when the user click the OK button in the PTM Dialog
     }
 }
