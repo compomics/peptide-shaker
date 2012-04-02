@@ -125,6 +125,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionsExportAll = new javax.swing.JButton();
         assumptionUnselectAll = new javax.swing.JButton();
         assumptionExportAll = new javax.swing.JButton();
+        assumptionValidated = new javax.swing.JCheckBox();
         projectPanel = new javax.swing.JPanel();
         exportAll = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -702,6 +703,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        assumptionValidated.setSelected(true);
+        assumptionValidated.setText("Request Validated");
+        assumptionValidated.setIconTextGap(10);
+        assumptionValidated.setOpaque(false);
+
         javax.swing.GroupLayout searchEnginePanelLayout = new javax.swing.GroupLayout(searchEnginePanel);
         searchEnginePanel.setLayout(searchEnginePanelLayout);
         searchEnginePanelLayout.setHorizontalGroup(
@@ -711,18 +717,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(searchEnginePanelLayout.createSequentialGroup()
                         .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(assumptionPrecursor, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(searchEnginePanelLayout.createSequentialGroup()
                                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(assumptionAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(assumptionSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(assumptionModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(assumptionModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(assumptionFile, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(assumptionTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(75, 75, 75)
                                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(assumptionValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(assumptionScores, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(assumptionConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(assumptionPrecursor, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(assumptionTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(assumptionFile, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(assumptionConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addContainerGap(35, Short.MAX_VALUE))
                     .addGroup(searchEnginePanelLayout.createSequentialGroup()
                         .addComponent(assumptionsExportAll)
@@ -753,7 +760,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assumptionFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(assumptionTitle)
+                .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(assumptionTitle)
+                    .addComponent(assumptionValidated))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assumptionPrecursor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
@@ -817,7 +826,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         featuresPanelLayout.setVerticalGroup(
             featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(featuresPanelLayout.createSequentialGroup()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
 
@@ -1045,6 +1054,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionPrecursor.setSelected(true);
         assumptionScores.setSelected(true);
         assumptionConfidence.setSelected(true);
+        assumptionValidated.setSelected(true);
     }//GEN-LAST:event_assumptionsExportAllActionPerformed
 
     /**
@@ -1061,6 +1071,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionPrecursor.setSelected(false);
         assumptionScores.setSelected(false);
         assumptionConfidence.setSelected(false);
+        assumptionValidated.setSelected(false);
     }//GEN-LAST:event_assumptionUnselectAllActionPerformed
 
     /**
@@ -1071,9 +1082,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void peptideExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportAllActionPerformed
 
         try {
-            outputGenerator.getPeptidesOutput(null, null, peptideValidated.isSelected(), false,
-                    peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                    peptideModification.isSelected(), peptideLocation.isSelected(), peptideSurroundingAA.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
+            outputGenerator.getPeptidesOutput(null, null, false, peptideValidated.isSelected(), 
+                    peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
+                    peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
                     peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
 
         } catch (IOException e) {
@@ -1112,7 +1123,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void assumptionExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionExportAllActionPerformed
 
         try {
-            outputGenerator.getAssumptionsOutput(null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(),
+            outputGenerator.getAssumptionsOutput(null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), assumptionSequence.isSelected(),
                     assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
                     assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
 
@@ -1248,6 +1259,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox assumptionSequence;
     private javax.swing.JCheckBox assumptionTitle;
     private javax.swing.JButton assumptionUnselectAll;
+    private javax.swing.JCheckBox assumptionValidated;
     private javax.swing.JButton assumptionsExportAll;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton exitButton;

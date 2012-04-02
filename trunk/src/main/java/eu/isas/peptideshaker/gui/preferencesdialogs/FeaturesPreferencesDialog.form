@@ -109,7 +109,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="tabbedPane" pref="267" max="32767" attributes="0"/>
+                      <Component id="tabbedPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -837,21 +837,22 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" attributes="0">
+                                          <Component id="assumptionPrecursor" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="assumptionAccession" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                                   <Component id="assumptionSequence" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                                   <Component id="assumptionModification" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="assumptionFile" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="assumptionTitle" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="assumptionValidated" min="-2" pref="150" max="-2" attributes="0"/>
                                                   <Component id="assumptionScores" min="-2" pref="158" max="-2" attributes="0"/>
                                                   <Component id="assumptionConfidence" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
-                                          <Component id="assumptionPrecursor" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="assumptionTitle" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="assumptionFile" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace pref="35" max="32767" attributes="0"/>
                                   </Group>
@@ -885,7 +886,10 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="assumptionFile" linkSize="18" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="assumptionTitle" linkSize="18" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="assumptionTitle" linkSize="18" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="assumptionValidated" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="assumptionPrecursor" linkSize="18" min="-2" max="-2" attributes="0"/>
                               <EmptySpace pref="47" max="32767" attributes="0"/>
@@ -985,6 +989,14 @@
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionExportAllActionPerformed"/>
                       </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="assumptionValidated">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Request Validated"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
