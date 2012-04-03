@@ -719,9 +719,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1273,7 +1271,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void editExpectedPtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editExpectedPtmJMenuItemActionPerformed
         int row = expectedModificationsTable.getSelectedRow();
         int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
-        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+        String name = modificationList.get(ptmIndex);
+        if (!ptmFactory.containsPTM(name)) {
+            name = searchParameters.getModificationProfile().getPeptideShakerName(name);
+        }
+        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(name));
     }//GEN-LAST:event_editExpectedPtmJMenuItemActionPerformed
 
     /**

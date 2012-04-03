@@ -3,6 +3,7 @@ package eu.isas.peptideshaker;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.*;
+import com.compomics.util.experiment.biology.ions.ReporterIon;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -1751,6 +1752,8 @@ public class PeptideShaker {
     public static void setPeptideShakerPTMs(SearchParameters searchParameters) {
         ArrayList<String> residues, utilitiesNames;
         PTMFactory ptmFactory = PTMFactory.getInstance();
+        ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
+        ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
 
         for (String peptideShakerName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
             residues = new ArrayList<String>();
@@ -1759,6 +1762,8 @@ public class PeptideShaker {
             double mass = -1;
             for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
                 if (peptideShakerName.equals(searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName))) {
+                    neutralLosses = new ArrayList<NeutralLoss>();
+                    reporterIons = new ArrayList<ReporterIon>();
                     PTM sePtm = ptmFactory.getPTM(utilitiesName);
                     for (String aa : sePtm.getResidues()) {
                         if (!residues.contains(aa)) {
@@ -1772,10 +1777,37 @@ public class PeptideShaker {
                     }
                     mass = sePtm.getMass();
                     utilitiesNames.add(utilitiesName);
+                    boolean found;
+                    for (NeutralLoss neutralLoss : sePtm.getNeutralLosses()) {
+                        found = false;
+                        for (NeutralLoss alreadyImplemented : neutralLosses) {
+                            if (neutralLoss.isSameAs(alreadyImplemented)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            neutralLosses.add(neutralLoss);
+                        }
+                    }
+                    for (ReporterIon reporterIon : sePtm.getReporterIons()) {
+                        found = false;
+                        for (ReporterIon alreadyImplemented : reporterIons) {
+                            if (reporterIon.isSameAs(alreadyImplemented)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            reporterIons.add(reporterIon);
+                        }
+                    }
                 }
             }
             for (String utilitiesName : utilitiesNames) {
                 PTM newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, residues);
+                newPTM.setNeutralLosses(neutralLosses);
+                newPTM.setReporterIons(reporterIons);
                 ptmFactory.replacePTM(utilitiesName, newPTM);
             }
         }
