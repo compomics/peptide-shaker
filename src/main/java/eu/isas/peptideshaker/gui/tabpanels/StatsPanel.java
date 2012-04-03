@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -47,7 +48,7 @@ import org.jfree.ui.RectangleEdge;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class StatsPanel extends javax.swing.JPanel {
+public class StatsPanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
      * It true the tab has been initiated, i.e., the data displayed at leaat
@@ -58,6 +59,10 @@ public class StatsPanel extends javax.swing.JPanel {
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
     /**
      * If true the data has been (re-)loaded with the current thresold setting.
      */
@@ -2872,8 +2877,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
@@ -2919,20 +2923,31 @@ public class StatsPanel extends javax.swing.JPanel {
                     modifiedMaps.put(cpt, false);
                     ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Peptides"});
                 } else {
-                    for (String pepitdeKey : peptideKeys) {
-                        peptideMap.put(cpt, pepitdeKey);
+                    for (String peptideKey : peptideKeys) {
+
+                        if (cancelProgress) {
+                            break;
+                        }
+
+                        peptideMap.put(cpt, peptideKey);
                         modifiedMaps.put(cpt, false);
 
-                        if (pepitdeKey.equals("")) {
+                        if (peptideKey.equals("")) {
                             ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Unmodified Peptides"});
-                        } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
+                        } else if (peptideKey.equals(PeptideSpecificMap.DUSTBIN)) {
                             ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Other Peptides"});
                         } else {
-                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, pepitdeKey + " Peptides"});
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, peptideKey + " Peptides"});
                         }
                     }
                 }
+
                 for (Integer psmKey : psmKeys.keySet()) {
+
+                    if (cancelProgress) {
+                        break;
+                    }
+
                     psmMap.put(cpt, psmKey);
                     modifiedMaps.put(cpt, false);
                     if (psmKeys.size() > 1) {
@@ -2946,20 +2961,23 @@ public class StatsPanel extends javax.swing.JPanel {
                     groupSelectionTable.setRowSelectionInterval(0, 0);
                 }
 
-                groupSelectionChanged();
+                if (!cancelProgress) {
+                    groupSelectionChanged();
 
-                // enable the contextual export options
-                pepPlotExportJButton.setEnabled(true);
-                fdrPlotExportJButton.setEnabled(true);
-                confidencePlotExportJButton.setEnabled(true);
-                fdrFnrPlotExportJButton.setEnabled(true);
-                benefitPlotExportJButton.setEnabled(true);
+                    // enable the contextual export options
+                    pepPlotExportJButton.setEnabled(true);
+                    fdrPlotExportJButton.setEnabled(true);
+                    confidencePlotExportJButton.setEnabled(true);
+                    fdrFnrPlotExportJButton.setEnabled(true);
+                    benefitPlotExportJButton.setEnabled(true);
 
-                tabInitiated = true;
+                    tabInitiated = true;
+                }
 
                 // change the peptide shaker icon back to the default version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 progressDialog.dispose();
+                cancelProgress = false;
             }
         }.start();
     }
@@ -3639,5 +3657,10 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public boolean isInitiated() {
         return tabInitiated;
+    }
+
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }

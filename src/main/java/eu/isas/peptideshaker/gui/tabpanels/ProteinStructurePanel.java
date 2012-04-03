@@ -110,6 +110,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     private static ProgressDialogX progressDialog;
     /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
+    /**
      * The UniProt to PDB finder.
      */
     private FindPdbForUniprotAccessions uniProtPdb;
@@ -1670,13 +1674,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
             progressDialog.setIndeterminate(true);
-            progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
 
                 public void run() {
                     progressDialog.setTitle("Loading PDB Structure. Please Wait...");
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog2").start();
 
@@ -1698,24 +1705,30 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     } else if (backboneModel) {
                         jmolPanel.getViewer().evalString("select all; backbone only; backbone 100;");
                     }
-                    spinModel(spinModel);
-                    jmolStructureShown = true;
 
-                    ((TitledBorder) pdbOuterPanel.getBorder()).setTitle("PDB Structure (" + lParam.getPdbaccession() + ")");
-                    pdbOuterPanel.repaint();
+                    if (!cancelProgress) {
+                        spinModel(spinModel);
+                        jmolStructureShown = true;
 
-                    progressDialog.setTitle("Mapping Peptides. Please Wait...");
+                        ((TitledBorder) pdbOuterPanel.getBorder()).setTitle("PDB Structure (" + lParam.getPdbaccession() + ")");
+                        pdbOuterPanel.repaint();
+                    }
 
-                    // get the chains
-                    chains = lParam.getBlocks();
-                    int selectedChainIndex = (Integer) pdbChainsJTable.getValueAt(pdbChainsJTable.getSelectedRow(), 0);
-                    chainSequence = chains[selectedChainIndex - 1].getBlockSequence(lParam.getPdbaccession());
+                    if (!cancelProgress) {
+                        progressDialog.setTitle("Mapping Peptides. Please Wait...");
 
-                    // update the peptide to pdb mappings
-                    updatePeptideToPdbMapping();
+                        // get the chains
+                        chains = lParam.getBlocks();
+                        int selectedChainIndex = (Integer) pdbChainsJTable.getValueAt(pdbChainsJTable.getSelectedRow(), 0);
+                        chainSequence = chains[selectedChainIndex - 1].getBlockSequence(lParam.getPdbaccession());
+
+                        // update the peptide to pdb mappings
+                        updatePeptideToPdbMapping();
+                    }
 
                     progressDialog.dispose();
                     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -2619,8 +2632,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
@@ -2630,7 +2642,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             public void run() {
                 progressDialog.setIndeterminate(true);
                 progressDialog.setTitle("Updating Data. Please Wait...");
-                progressDialog.setVisible(true);
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
             }
         }, "ProgressDialog").start();
 
@@ -2672,6 +2688,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     progressDialog.setValue(0);
 
                     for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+
+                        if (cancelProgress) {
+                            break;
+                        }
+
                         if (!SequenceFactory.isDecoy(proteinKey)) {
                             proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                             probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
@@ -2699,12 +2720,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         }
                     }
 
-                    Collections.sort(scores);
-                    proteinTableMap = new HashMap<Integer, String>();
-                    // add the proteins to the table
-                    ArrayList<Integer> nP, nS;
-                    ArrayList<String> keys;
+                    if (!cancelProgress) {
+                        Collections.sort(scores);
+                    }
 
+                    proteinTableMap = new HashMap<Integer, String>();
+
+                    // add the proteins to the table
                     int validatedProteinsCounter = 0;
                     int nValidatedPeptides, nValidatedSpectra;
 
@@ -2715,20 +2737,37 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                     for (double currentScore : scores) {
 
-                        nP = new ArrayList(orderMap.get(currentScore).keySet());
+                        if (cancelProgress) {
+                            break;
+                        }
+
+                        ArrayList<Integer> nP = new ArrayList(orderMap.get(currentScore).keySet());
                         Collections.sort(nP);
 
                         for (int currentNP : nP) {
 
-                            nS = new ArrayList(orderMap.get(currentScore).get(currentNP).keySet());
+                            if (cancelProgress) {
+                                break;
+                            }
+
+                            ArrayList<Integer> nS = new ArrayList(orderMap.get(currentScore).get(currentNP).keySet());
                             Collections.sort(nS);
 
                             for (int currentNS : nS) {
 
-                                keys = orderMap.get(currentScore).get(currentNP).get(currentNS);
+                                if (cancelProgress) {
+                                    break;
+                                }
+
+                                ArrayList<String> keys = orderMap.get(currentScore).get(currentNP).get(currentNS);
                                 Collections.sort(keys);
 
                                 for (String proteinKey : keys) {
+
+                                    if (cancelProgress) {
+                                        break;
+                                    }
+
                                     proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
 
@@ -2815,13 +2854,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     }
 
                     // normalize the NSAF spectrum counts
-                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF && spectrumCountingSum > 0) {
+                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF && spectrumCountingSum > 0 && !cancelProgress) {
 
                         // @TODO: has to be a faster way of doing this??
 
                         maxSpectrumCounting = 0;
 
-                        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+                        for (int i = 0; i < proteinTable.getRowCount() && !cancelProgress; i++) {
 
                             double tempSpectrumCount = (Double) proteinTable.getValueAt(i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
                             tempSpectrumCount /= spectrumCountingSum;
@@ -2834,52 +2873,55 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         }
                     }
 
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(
-                            new Runnable() {
+                    if (!cancelProgress) {
 
-                                public void run() {
-                                    // set the preferred size of the accession column
-                                    int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
-                                    proteinTable.getColumn("Accession").setMinWidth(width);
-                                    proteinTable.getColumn("Accession").setMaxWidth(width);
-                                }
-                            });
+                        // invoke later to give time for components to update
+                        SwingUtilities.invokeLater(
+                                new Runnable() {
 
-                    ((TitledBorder) proteinsPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
-                    proteinsPanel.repaint();
+                                    public void run() {
+                                        // set the preferred size of the accession column
+                                        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+                                        proteinTable.getColumn("Accession").setMinWidth(width);
+                                        proteinTable.getColumn("Accession").setMaxWidth(width);
+                                    }
+                                });
 
-                    ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
-                    ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
-                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(maxSpectrumCounting);
-                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
-                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
+                        ((TitledBorder) proteinsPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
+                        proteinsPanel.repaint();
 
-                    try {
-                        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
-                    } catch (IllegalArgumentException e) {
-                        // ignore error
+                        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
+                        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
+                        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(maxSpectrumCounting);
+                        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
+                        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
+
+                        try {
+                            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
+                        } catch (IllegalArgumentException e) {
+                            // ignore error
+                        }
+
+                        // enable the contextual export options
+                        exportPdbStructureJButton.setEnabled(true);
+                        exportProteinsJButton.setEnabled(true);
+                        exportPeptidesJButton.setEnabled(true);
+                        exportPdbMatchesJButton.setEnabled(true);
+                        exportPdbChainsJButton.setEnabled(true);
+
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
+
+                        // invoke later to give time for components to update
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            public void run() {
+                                updateSelection();
+                                proteinTable.requestFocus();
+                            }
+                        });
                     }
 
-                    // enable the contextual export options
-                    exportPdbStructureJButton.setEnabled(true);
-                    exportProteinsJButton.setEnabled(true);
-                    exportPeptidesJButton.setEnabled(true);
-                    exportPdbMatchesJButton.setEnabled(true);
-                    exportPdbChainsJButton.setEnabled(true);
-
                     progressDialog.dispose();
-
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
-
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-                            updateSelection();
-                            proteinTable.requestFocus();
-                        }
-                    });
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -2889,6 +2931,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     peptideShakerGUI.catchException(e);
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
+
+                cancelProgress = false;
             }
         }.start();
     }
@@ -2938,7 +2982,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             public void run() {
                 progressDialog.setTitle("Getting PDB Data. Please Wait...");
-                progressDialog.setVisible(true);
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
             }
         }, "ProgressDialog").start();
 
@@ -2968,14 +3016,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     dm.fireTableDataChanged();
 
                     // clear the peptide to pdb mappings in the peptide table
-                    for (int i = 0; i < peptideTable.getRowCount(); i++) {
+                    for (int i = 0; i < peptideTable.getRowCount() && !cancelProgress; i++) {
                         peptideTable.setValueAt(false, i, peptideTable.getColumn("PDB").getModelIndex());
                     }
 
                     int maxNumberOfChains = 1;
 
                     // add the new matches to the pdb table
-                    for (int i = 0; i < uniProtPdb.getPdbs().size(); i++) {
+                    for (int i = 0; i < uniProtPdb.getPdbs().size() && !cancelProgress; i++) {
                         PdbParameter lParam = uniProtPdb.getPdbs().get(i);
 
                         ((DefaultTableModel) pdbMatchesJTable.getModel()).addRow(new Object[]{
@@ -2990,18 +3038,21 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         }
                     }
 
-                    ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Chains").getCellRenderer()).setMaxValue(maxNumberOfChains);
+                    if (!cancelProgress) {
 
-                    if (!uniProtPdb.urlWasRead()) {
-                        ((TitledBorder) pdbMatchesPanel.getBorder()).setTitle("PDB Matches - Not Available Without Internet Connection!");
-                    } else {
-                        ((TitledBorder) pdbMatchesPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
+                        ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Chains").getCellRenderer()).setMaxValue(maxNumberOfChains);
+
+                        if (!uniProtPdb.urlWasRead()) {
+                            ((TitledBorder) pdbMatchesPanel.getBorder()).setTitle("PDB Matches - Not Available Without Internet Connection!");
+                        } else {
+                            ((TitledBorder) pdbMatchesPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
+                        }
+
+                        pdbMatchesPanel.repaint();
+
+                        ((TitledBorder) pdbChainsPanel.getBorder()).setTitle("PDB Chains");
+                        pdbChainsPanel.repaint();
                     }
-
-                    pdbMatchesPanel.repaint();
-
-                    ((TitledBorder) pdbChainsPanel.getBorder()).setTitle("PDB Chains");
-                    pdbChainsPanel.repaint();
 
                     progressDialog.dispose();
                     // return the peptide shaker icon to the standard version
@@ -3012,13 +3063,15 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
+                
+                cancelProgress = false;
             }
         }.start();
     }
 
     @Override
     public void cancelProgress() {
-        // do nothing
+        cancelProgress = true;
     }
 
     /**
@@ -3165,7 +3218,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         // clear the old mappings
-        for (int i = 0; i < peptideTable.getRowCount(); i++) {
+        for (int i = 0; i < peptideTable.getRowCount() && !cancelProgress; i++) {
             peptideTable.setValueAt(false, i, peptideTable.getColumn("PDB").getModelIndex());
         }
 
@@ -3178,12 +3231,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptidePdbArray = new ArrayList<String>();
 
         // iterate the peptide table and highlight the covered areas
-        for (int i = 0; i < peptideTable.getRowCount(); i++) {
+        for (int i = 0; i < peptideTable.getRowCount() && !cancelProgress; i++) {
             String peptideKey = peptideTableMap.get(getPeptideIndex(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
             String tempSequence = proteinSequence;
 
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+            while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !cancelProgress) {
                 int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
@@ -3207,9 +3260,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         String peptideSequence = Peptide.getSequence(peptideKey);
         String tempSequence = proteinSequence;
         PTMFactory pmtFactory = PTMFactory.getInstance();
-        PTM ptm;
 
-        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+        while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !cancelProgress) {
 
             int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
             int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
@@ -3228,7 +3280,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
 
         // annotate the modified covered residues
-        for (int i = 0; i < peptideTable.getRowCount(); i++) {
+        for (int i = 0; i < peptideTable.getRowCount() && !cancelProgress; i++) {
             peptideKey = peptideTableMap.get(getPeptideIndex(i));
             peptideSequence = Peptide.getSequence(peptideKey);
             tempSequence = proteinSequence;
@@ -3242,16 +3294,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 e.printStackTrace();
             }
 
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+            while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !cancelProgress) {
 
                 int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
                 int peptideIndex = 0;
 
-                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                    for (int k = 0; k < modifications.size(); k++) {
-                        ptm = pmtFactory.getPTM(modifications.get(k).getTheoreticPtm());
+                for (int j = peptideTempStart; j < peptideTempEnd && !cancelProgress; j++) {
+                    for (int k = 0; k < modifications.size() && !cancelProgress; k++) {
+                        PTM ptm = pmtFactory.getPTM(modifications.get(k).getTheoreticPtm());
                         if (ptm.getType() == PTM.MODAA && modifications.get(k).isVariable()) {
                             if (modifications.get(k).getModificationSite() == (peptideIndex + 1)) {
 
@@ -3446,14 +3498,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                 writer.write(pdbCoverage.getX() + "\t" + pdbCoverage.getY() + "\t");
                                 writer.write(pdbChainsJTable.getValueAt(i, 3) + "\n");
                             }
-                            
+
                             writer.close();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         } else if (tableIndex == TableIndex.PDB_MATCHES) {
                             Util.tableToFile(pdbMatchesJTable, "\t", null, true, writer);
                             writer.close();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
-                        }  
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -3502,8 +3554,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             proteinRow = getProteinRow(proteinKey);
         }
 
-        if (proteinRow==-1) {
-                peptideShakerGUI.resetSelectedItems();
+        if (proteinRow == -1) {
+            peptideShakerGUI.resetSelectedItems();
         } else if (proteinTable.getSelectedRow() != proteinRow) {
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));

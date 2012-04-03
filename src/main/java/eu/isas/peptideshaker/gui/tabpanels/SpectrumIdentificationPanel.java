@@ -14,6 +14,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -57,12 +58,16 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class SpectrumIdentificationPanel extends javax.swing.JPanel {
+public class SpectrumIdentificationPanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
     /**
      * Needed in order to not update the file selection too many times.
      */
@@ -2364,8 +2369,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
         new Thread(new Runnable() {
 
@@ -2434,6 +2438,10 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                     for (String spectrumKey : identification.getSpectrumIdentification()) {
 
+                        if (cancelProgress) {
+                            break;
+                        }
+
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         mascot = false;
                         omssa = false;
@@ -2493,100 +2501,105 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         progressDialog.incrementValue();
                     }
 
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Updating Tables. Please Wait...");
+                    if (!cancelProgress) {
 
-                    int nMascot = m;
-                    int nOMSSA = o;
-                    int nXTandem = x;
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Updating Tables. Please Wait...");
 
-                    double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
-                    biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
+                        int nMascot = m;
+                        int nOMSSA = o;
+                        int nXTandem = x;
 
-                    if (omssaUsed && xtandemUsed && mascotUsed) {
-                        updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
-                                ox, mo, mx, omx,
-                                "OMSSA", "X!Tandem", "Mascot");
-                    } else if (omssaUsed && xtandemUsed) {
-                        updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
-                    } else if (xtandemUsed && mascotUsed) {
-                        updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot");
-                    } else if (omssaUsed && mascotUsed) {
-                        updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot");
-                    } else {
-                        vennDiagramButton.setText(null);
-                        vennDiagramButton.setToolTipText(null);
-                        vennDiagramButton.setIcon(null);
+                        double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
+                        biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
+
+                        if (omssaUsed && xtandemUsed && mascotUsed) {
+                            updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
+                                    ox, mo, mx, omx,
+                                    "OMSSA", "X!Tandem", "Mascot");
+                        } else if (omssaUsed && xtandemUsed) {
+                            updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
+                        } else if (xtandemUsed && mascotUsed) {
+                            updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot");
+                        } else if (omssaUsed && mascotUsed) {
+                            updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot");
+                        } else {
+                            vennDiagramButton.setText(null);
+                            vennDiagramButton.setToolTipText(null);
+                            vennDiagramButton.setIcon(null);
+                        }
+
+                        int searchEngineRowCounter = 0;
+
+                        if (omssaUsed) {
+                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "OMSSA",
+                                        nOMSSA, nOMSSA - ox - mo + omx, nOMSSA, ox, mo, omx, no_o
+                                    });
+                        }
+
+                        if (xtandemUsed) {
+                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "X!Tandem",
+                                        nXTandem, nXTandem - ox - mx + omx, ox, nXTandem, mx, omx, no_x
+                                    });
+                        }
+
+                        if (mascotUsed) {
+                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "Mascot",
+                                        nMascot, nMascot - mo - mx + omx, mo, mx, nMascot, omx, no_m
+                                    });
+                        }
+
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
+
+                        searchEngineTable.revalidate();
+                        searchEngineTable.repaint();
+
+                        progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
+
+                        ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+                        String[] filesArray = new String[fileNames.size()];
+                        int cpt = 0;
+
+                        for (String tempName : fileNames) {
+                            filesArray[cpt] = Util.getFileName(tempName);
+                            cpt++;
+                        }
+
+                        fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
+
+                        // update the slider tooltips
+                        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+                        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+                        intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+
+                        formComponentResized(null);
+
+                        // enable the contextual export options
+                        exportSearchEnginePerformanceJButton.setEnabled(true);
+                        exportSpectrumSelectionJButton.setEnabled(true);
+                        exportSpectrumJButton.setEnabled(true);
+                        exportPsmsJButton.setEnabled(true);
+
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, true);
                     }
-
-                    int searchEngineRowCounter = 0;
-
-                    if (omssaUsed) {
-                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                    ++searchEngineRowCounter, "OMSSA",
-                                    nOMSSA, nOMSSA - ox - mo + omx, nOMSSA, ox, mo, omx, no_o
-                                });
-                    }
-
-                    if (xtandemUsed) {
-                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                    ++searchEngineRowCounter, "X!Tandem",
-                                    nXTandem, nXTandem - ox - mx + omx, ox, nXTandem, mx, omx, no_x
-                                });
-                    }
-
-                    if (mascotUsed) {
-                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                    ++searchEngineRowCounter, "Mascot",
-                                    nMascot, nMascot - mo - mx + omx, mo, mx, nMascot, omx, no_m
-                                });
-                    }
-
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
-                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
-
-                    searchEngineTable.revalidate();
-                    searchEngineTable.repaint();
-
-                    progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
-
-                    ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
-                    String[] filesArray = new String[fileNames.size()];
-                    int cpt = 0;
-
-                    for (String tempName : fileNames) {
-                        filesArray[cpt] = Util.getFileName(tempName);
-                        cpt++;
-                    }
-
-                    fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 
                     progressDialog.dispose();
-
-                    // update the slider tooltips
-                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
-                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
-                    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
-
-                    formComponentResized(null);
-
-                    // enable the contextual export options
-                    exportSearchEnginePerformanceJButton.setEnabled(true);
-                    exportSpectrumSelectionJButton.setEnabled(true);
-                    exportSpectrumJButton.setEnabled(true);
-                    exportPsmsJButton.setEnabled(true);
-
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, true);
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    fileSelectionChanged();
+                    if (!cancelProgress) {
+                        fileSelectionChanged();
+                    }
 
                 } catch (Exception e) {
                     progressDialog.dispose();
@@ -2595,6 +2608,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
+
+                cancelProgress = false;
             }
         }.start();
     }
@@ -2726,9 +2741,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     private void fileSelectionChanged() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
         progressDialog.setIndeterminate(true);
-        //progressDialog.doNothingOnClose(); // @TODO: this should perhaps be turned back on??
 
         new Thread(new Runnable() {
 
@@ -2759,23 +2773,32 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 progressDialog.setValue(0);
 
                 for (String spectrumKey : identification.getSpectrumIdentification()) {
+
+                    if (cancelProgress) {
+                        break;
+                    }
+
                     if (Spectrum.getSpectrumFile(spectrumKey).equals(fileSelected)) {
                         identifiedCounter++;
                     }
                     progressDialog.incrementValue();
                 }
 
-                ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (identifiedCounter) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")");
-                spectrumSelectionPanel.repaint();
+                if (!cancelProgress) {
+                    ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (identifiedCounter) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")");
+                    spectrumSelectionPanel.repaint();
 
-                ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
+                    ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
 
-                updateSelection();
-                peptideShakerGUI.mgfFileSelectionChanged(fileSelected);
+                    updateSelection();
+                    peptideShakerGUI.mgfFileSelectionChanged(fileSelected);
+                }
+
                 progressDialog.dispose();
 
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                cancelProgress = false;
             }
         });
     }
@@ -3315,15 +3338,18 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 try {
                     final BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
 
-                    progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-                    progressDialog.doNothingOnClose();
+                    progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
                     new Thread(new Runnable() {
 
                         public void run() {
                             progressDialog.setIndeterminate(true);
                             progressDialog.setTitle("Copying to File. Please Wait...");
-                            progressDialog.setVisible(true);
+                            try {
+                                progressDialog.setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
                         }
                     }, "ProgressDialog").start();
 
@@ -3335,9 +3361,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             try {
 
                                 if (tableIndex == TableIndex.SEARCH_ENGINE_PERFORMANCE) {
-                                    Util.tableToFile(searchEngineTable, "\t", progressDialog, true, writer);
+                                    Util.tableToFile(searchEngineTable, "\t", progressDialog, cancelProgress, true, writer);
                                 } else if (tableIndex == TableIndex.SPECTRUM_FILES) {
-                                    Util.tableToFile(spectrumTable, "\t", progressDialog, true, writer);
+                                    Util.tableToFile(spectrumTable, "\t", progressDialog, cancelProgress, true, writer);
                                 } else if (tableIndex == TableIndex.PSM_TABLES) {
 
                                     writer.write("PeptideShaker\n\n");
@@ -3391,13 +3417,18 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 writer.close();
 
                                 progressDialog.dispose();
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to file:\n" + selectedFile.getPath(), "Copied to File", JOptionPane.INFORMATION_MESSAGE);
+                                
+                                if (!cancelProgress) {
+                                    JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to file:\n" + selectedFile.getPath(), "Copied to File", JOptionPane.INFORMATION_MESSAGE);
+                                }
 
                             } catch (IOException e) {
                                 progressDialog.dispose();
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
+                            
+                            cancelProgress = false;
                         }
                     }.start();
 
@@ -3716,5 +3747,10 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
         }
+    }
+
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }

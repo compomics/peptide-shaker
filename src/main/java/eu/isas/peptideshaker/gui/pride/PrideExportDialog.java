@@ -42,6 +42,10 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     private static ProgressDialogX progressDialog;
     /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
+    /**
      * The PeptideShakerGUI main class.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -63,12 +67,12 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     public PrideExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
-        
+
         // update the ptm
         updatePtmMap();
 
         initComponents();
-        
+
         // set gui properties
         setGuiProperties();
 
@@ -97,7 +101,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
-    
+
     /**
      * Set the GUI properties.
      */
@@ -119,7 +123,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         protocolJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         instrumentJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
     }
-    
+
     /**
      * Update the ptm map.
      */
@@ -1134,14 +1138,17 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         final PrideExportDialog prideExportDialog = this; // needed due to threading issues
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
-        progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
             public void run() {
                 progressDialog.setIndeterminate(true);
                 progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
-                progressDialog.setVisible(true);
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
             }
         }, "ProgressDialog").start();
 
@@ -1182,7 +1189,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 boolean conversionCompleted = false;
 
                 try {
-                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), 
+                    PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, prideExportDialog, titleJTextField.getText(),
                             labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
                             references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()), prideFileName);
                     prideExport.createPrideXmlFile(progressDialog);
@@ -1198,7 +1205,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // display a conversion complete message to the user
-                if (conversionCompleted) {
+                if (conversionCompleted && !cancelProgress) {
 
                     // create an empty label to put the message in
                     JLabel label = new JLabel();
@@ -1227,6 +1234,12 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                     JOptionPane.showMessageDialog(prideExportDialog, ep, "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 }
+                
+                if (cancelProgress) {
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE XML conversion cancelled by the user.", "PRIDE XML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
+                }
+                
+                cancelProgress = false;
             }
         }.start();
     }//GEN-LAST:event_convertJButtonActionPerformed
@@ -1533,6 +1546,16 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
     @Override
     public void cancelProgress() {
-        // do nothing
+        cancelProgress = true;
+    }
+    
+    /**
+     * Returns true if the user has cancelled the progress.
+     * 
+     * 
+     * @return true if the user has cancelled the progress
+     */
+    public boolean progressCancelled() {
+        return cancelProgress;
     }
 }

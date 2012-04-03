@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -70,12 +71,16 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PtmPanel extends javax.swing.JPanel {
+public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
 
     /**
      * Indexes for the data tables.
@@ -1864,9 +1869,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
         final MouseEvent finalEvt = evt;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: add code to handle progress bar closing...
         progressDialog.setIndeterminate(true);
-        //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
@@ -1948,9 +1952,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
         final MouseEvent finalEvt = evt;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: add code to handle progress bar closing...
         progressDialog.setIndeterminate(true);
-        //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
@@ -2137,9 +2140,8 @@ public class PtmPanel extends javax.swing.JPanel {
         final MouseEvent finalEvt = evt;
         final JPanel finalRef = this;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: add code to handle progress bar closing...
         progressDialog.setIndeterminate(true);
-        //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
@@ -2197,9 +2199,8 @@ public class PtmPanel extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
                 || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: add code to handle progress bar closing...
             progressDialog.setIndeterminate(true);
-            //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
             new Thread(new Runnable() {
 
@@ -3114,9 +3115,8 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);  // @TODO: add code to handle progress bar closing...
         progressDialog.setIndeterminate(true);
-        progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
@@ -3317,9 +3317,8 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public void updateSelection() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: add code to handle progress bar closing...
         progressDialog.setIndeterminate(true);
-        //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
         new Thread(new Runnable() {
 
@@ -4492,9 +4491,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 || tableIndex == TableIndex.MODIFIED_PSMS_TABLE
                 || tableIndex == TableIndex.RELATED_PSMS_TABLE) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: add code to handle progress bar closing...
             progressDialog.setIndeterminate(true);
-            progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
 
@@ -4835,5 +4833,10 @@ public class PtmPanel extends javax.swing.JPanel {
             }
 
         }
+    }
+    
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }

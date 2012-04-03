@@ -40,55 +40,59 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class CsvExporter {
 
     /**
-     * separator for csv export. Hard coded for now, could be user setting
+     * Separator for csv export. Hard coded for now, could be user setting.
      */
     private static final String SEPARATOR = "\t";
     /**
-     * The experiment to export
+     * The experiment to export.
      */
     private MsExperiment experiment;
     /**
-     * The sample considered
+     * The sample considered.
      */
     private Sample sample;
     /**
-     * The replicate considered
+     * The replicate considered.
      */
     private int replicateNumber;
     /**
-     * Name of the file containing the identification information at the protein level
+     * Name of the file containing the identification information at the protein
+     * level.
      */
     private String proteinFile;
     /**
-     * Name of the file containing the identification information at the peptide level
+     * Name of the file containing the identification information at the peptide
+     * level.
      */
     private String peptideFile;
     /**
-     * Name of the file containing the identification information at the psm level
+     * Name of the file containing the identification information at the psm
+     * level.
      */
     private String psmFile;
     /**
-     * Name of the file containing the identification information at the peptide assumption level
+     * Name of the file containing the identification information at the peptide
+     * assumption level.
      */
     private String assumptionFile;
     /**
-     * The enzyme used for digestion
+     * The enzyme used for digestion.
      */
     private Enzyme enzyme;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The identification features generator
+     * The identification features generator.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
 
@@ -98,7 +102,8 @@ public class CsvExporter {
      * @param experiment the ms experiment
      * @param sample the sample
      * @param replicateNumber the replicate number
-     * @param enzyme the enzyme used 
+     * @param enzyme the enzyme used
+     * @param identificationFeaturesGenerator
      */
     public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, Enzyme enzyme, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.experiment = experiment;
@@ -117,16 +122,17 @@ public class CsvExporter {
      * Exports the results to csv files.
      *
      * @param progressDialog a progress dialog, can be null
+     * @param cancelProgress 
      * @param folder the folder to store the results in.
      * @return true if the export was sucessfull
      */
-    public boolean exportResults(ProgressDialogX progressDialog, File folder) {
+    public boolean exportResults(ProgressDialogX progressDialog, boolean cancelProgress, File folder) {
 
         try {
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
-           // Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
+            // Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
                     + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "p score"
@@ -143,11 +149,11 @@ public class CsvExporter {
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
             spectrumWriter.write(content);
 
-            content = "Search Engine" + SEPARATOR + "Rank" + SEPARATOR + "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
-                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
-                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
-            //assumptionWriter.write(content);
+//            content = "Search Engine" + SEPARATOR + "Rank" + SEPARATOR + "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
+//                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
+//                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
+//                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+//            assumptionWriter.write(content);
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -162,26 +168,44 @@ public class CsvExporter {
             for (String proteinKey : identification.getProteinIdentification()) {
                 proteinWriter.write(getProteinLine(proteinKey));
                 progress++;
-                progressDialog.setValue(progress);
+                if (progressDialog != null) {
+                    progressDialog.setValue(progress);
+                }
+                
+                if (cancelProgress) {
+                    break;
+                }
             }
 
             for (String peptideKey : identification.getPeptideIdentification()) {
                 peptideWriter.write(getPeptideLine(peptideKey));
                 progress++;
-                progressDialog.setValue(progress);
+                if (progressDialog != null) {
+                    progressDialog.setValue(progress);
+                }
+                
+                if (cancelProgress) {
+                    break;
+                }
             }
 
             for (String spectrumKey : identification.getSpectrumIdentification()) {
                 spectrumWriter.write(getSpectrumLine(spectrumKey));
                 progress++;
-                progressDialog.setValue(progress);
+                if (progressDialog != null) {
+                    progressDialog.setValue(progress);
+                }
+                
+                if (cancelProgress) {
+                    break;
+                }
             }
 
-            for (String spectrumKey : identification.getSpectrumIdentification()) {
-                //assumptionWriter.write(getAssumptionLines(spectrumKey));
-                progress++;
-                progressDialog.setValue(progress);
-            }
+//            for (String spectrumKey : identification.getSpectrumIdentification()) {
+//                assumptionWriter.write(getAssumptionLines(spectrumKey));
+//                progress++;
+//                progressDialog.setValue(progress);
+//            }
 
             proteinWriter.close();
             peptideWriter.close();
@@ -515,9 +539,9 @@ public class CsvExporter {
                         }
                     }
                 }
-            } 
+            }
         }
-        
+
         if (mascotEValue != null) {
             line += mascotScore;
         }
@@ -561,10 +585,12 @@ public class CsvExporter {
     }
 
     /**
-     * Exports the peptide assumptions from a peptide spectrum match as lines of text.
+     * Exports the peptide assumptions from a peptide spectrum match as lines of
+     * text.
      *
      * @param spectrumMatch the spectrum match to export
-     * @return the peptide assumptions from a peptide spectrum match as lines of text
+     * @return the peptide assumptions from a peptide spectrum match as lines of
+     * text
      */
     private String getAssumptionLines(String spectrumKey) throws Exception {
 
