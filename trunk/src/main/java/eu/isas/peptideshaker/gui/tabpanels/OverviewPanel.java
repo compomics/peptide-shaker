@@ -16,6 +16,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.spectrum.FragmentIonTable;
 import com.compomics.util.gui.spectrum.IntensityHistogram;
 import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
@@ -68,7 +69,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class OverviewPanel extends javax.swing.JPanel implements ProteinSequencePanelParent {
+public class OverviewPanel extends javax.swing.JPanel implements ProteinSequencePanelParent, ProgressDialogParent {
 
     /**
      * Indexes for the three main data tables.
@@ -162,6 +163,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The sequence ptm chart.
      */
     private ChartPanel ptmChart;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
 
     /**
      * Creates a new OverviewPanel.
@@ -4075,15 +4080,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(this, true);
         progressDialog.setIndeterminate(true);
-        progressDialog.doNothingOnClose();
         progressDialog.setTitle("Loading Overview. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setVisible(true);
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
             }
         }, "ProgressDialog").start();
 
@@ -4125,7 +4133,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Confidence");
                     }
 
-                    ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins (" + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")");
+                    ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins (" 
+                            + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")");
                     proteinsLayeredPanel.repaint();
 
                     ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
@@ -4994,5 +5003,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 peptideShakerGUI.catchException(e);
             }
         }
+    }
+    
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true; // @TODO: this does not really do anyting as there is no way of stopping the loading of the gui
     }
 }

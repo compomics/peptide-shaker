@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
@@ -19,7 +20,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import java.awt.Toolkit;
 import javax.swing.RowFilter.ComparisonType;
-import org.apache.xerces.impl.xpath.regex.RegularExpression;
 
 /**
  * This class provides information whether a hit should be hidden or starred.
@@ -27,16 +27,24 @@ import org.apache.xerces.impl.xpath.regex.RegularExpression;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class StarHider {
+public class StarHider implements ProgressDialogParent {
 
     /**
-     * PeptideShakerGUI instance
+     * PeptideShakerGUI instance.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
 
     /**
      * Constructor.
@@ -52,10 +60,20 @@ public class StarHider {
      */
     public void starHide() {
 
-        final ProgressDialogX progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
         progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
 
         new Thread("Star/Hide") {
 
@@ -67,18 +85,35 @@ public class StarHider {
                 Identification identification = peptideShakerGUI.getIdentification();
                 progressDialog.setIndeterminate(false);
                 progressDialog.setMax(identification.getProteinIdentification().size());
-                ProteinMatch proteinMatch;
-                PeptideMatch peptideMatch;
-                boolean peptideSurvived, psmSurvived;
+
                 PSParameter psParameter = new PSParameter();
+
                 for (String proteinKey : identification.getProteinIdentification()) {
-                    proteinMatch = identification.getProteinMatch(proteinKey);
-                    peptideSurvived = false;
+
+                    if (cancelProgress) {
+                        break;
+                    }
+
+                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    boolean peptideSurvived = false;
+
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                        peptideMatch = identification.getPeptideMatch(peptideKey);
-                        psmSurvived = false;
+
+                        if (cancelProgress) {
+                            break;
+                        }
+
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        boolean psmSurvived = false;
+
                         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+
+                            if (cancelProgress) {
+                                break;
+                            }
+
                             psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+
                             if (isPsmHidden(spectrumKey)) {
                                 psParameter.setHidden(true);
                             } else {
@@ -87,7 +122,9 @@ public class StarHider {
                             }
                             psParameter.setStarred(isPsmStarred(spectrumKey));
                         }
+
                         psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+
                         if (!psmSurvived) {
                             psParameter.setHidden(true);
                         } else if (isPeptideHidden(peptideKey)) {
@@ -96,26 +133,29 @@ public class StarHider {
                             psParameter.setHidden(false);
                             peptideSurvived = true;
                         }
+
                         psParameter.setStarred(isPeptideStarred(peptideKey));
                     }
+
                     psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
+
                     if (!peptideSurvived) {
                         psParameter.setHidden(true);
                     } else {
                         psParameter.setHidden(isProteinHidden(proteinKey));
                     }
+
                     psParameter.setStarred(isProteinStarred(proteinKey));
                     progressDialog.incrementValue();
                 }
 
                 progressDialog.dispose();
+                cancelProgress = false;
 
                 // change the peptide shaker icon back to the default version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
         }.start();
-
-        progressDialog.setVisible(true);
     }
 
     /**
@@ -1101,5 +1141,10 @@ public class StarHider {
             peptideShakerGUI.catchException(e);
             return false;
         }
+    }
+
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }

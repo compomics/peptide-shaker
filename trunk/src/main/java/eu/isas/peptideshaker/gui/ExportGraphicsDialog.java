@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -18,7 +19,7 @@ import org.jfree.chart.ChartPanel;
  *
  * @author Harald Barsnes
  */
-public class ExportGraphicsDialog extends javax.swing.JDialog {
+public class ExportGraphicsDialog extends javax.swing.JDialog implements ProgressDialogParent {
 
     /**
      * The chart panel to export.
@@ -36,6 +37,10 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
 
     /**
      * Create and open a new ExportGraphicsDialog.
@@ -300,8 +305,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
             final String finalSelectedFile = selectedFile;
             final ExportGraphicsDialog tempRef = this;
 
-            progressDialog = new ProgressDialogX(tempRef, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            progressDialog = new ProgressDialogX(this, this, true);
 
             new Thread(new Runnable() {
 
@@ -432,5 +436,11 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         }
 
         chooser.setFileFilter(filter);
+    }
+
+    @Override
+    public void cancelProgress() {
+        // do nothing. at the moment it is not really possible to stop the export. the progress dialog can be closes though
+        // @TODO: implement the cancelling of the progress?
     }
 }

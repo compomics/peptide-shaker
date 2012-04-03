@@ -5,6 +5,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
@@ -79,7 +80,7 @@ import org.xml.sax.SAXException;
  *
  * @author Harald Barsnes
  */
-public class GOEAPanel extends javax.swing.JPanel {
+public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
      * The protein table column header tooltips.
@@ -147,6 +148,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      * The species separator used in the species combobox.
      */
     private String speciesSeparator = "------------------------------------------------------------";
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
 
     /**
      * Creates a new GOEAPanel.
@@ -417,13 +422,17 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             if (goMappingsFile.exists()) {
 
-                progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+                progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
                 progressDialog.setIndeterminate(true);
 
                 new Thread(new Runnable() {
 
                     public void run() {
-                        progressDialog.setVisible(true);
+                        try {
+                            progressDialog.setVisible(true);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
                         progressDialog.setTitle("Getting GO Mapping Files. Please Wait...");
                     }
                 }, "ProgressDialog").start();
@@ -472,7 +481,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                             String line = br.readLine();
 
-                            while (line != null) {
+                            while (line != null && !cancelProgress) {
 
                                 String[] elements = line.split("\\t");
 
@@ -536,6 +545,10 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                             for (String matchKey : identification.getProteinIdentification()) {
 
+                                if (cancelProgress) {
+                                    break;
+                                }
+
                                 progressDialog.incrementValue();
 
                                 try {
@@ -583,6 +596,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                             ArrayList<Double> pValues = new ArrayList<Double>();
 
                             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
+
+                                if (cancelProgress) {
+                                    break;
+                                }
 
                                 progressDialog.incrementValue();
 
@@ -682,11 +699,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         });
                             }
 
-                            ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
-
-                            // correct the p-values for multiple testing using benjamini-hochberg
-                            sortPValues(pValues, indexes);
-
                             int significantCounter = 0;
                             double significanceLevel = 0.05;
 
@@ -694,64 +706,78 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 significanceLevel = 0.01;
                             }
 
-                            ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
-                                    indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
-                                    pValues.get(0) < significanceLevel);
-                            goMappingsTable.setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0), goMappingsTable.getColumn("p-value").getModelIndex());
+                            if (!cancelProgress) {
 
-                            if (pValues.get(0) < significanceLevel) {
-                                significantCounter++;
-                            }
+                                ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
-                            for (int i = 1; i < pValues.size(); i++) {
-
-                                double tempPvalue = pValues.get(i) * pValues.size() / (pValues.size() - i);
+                                // correct the p-values for multiple testing using benjamini-hochberg
+                                sortPValues(pValues, indexes);
 
                                 ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
-                                        indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
-                                goMappingsTable.setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
+                                        indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
+                                        pValues.get(0) < significanceLevel);
+                                goMappingsTable.setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0), goMappingsTable.getColumn("p-value").getModelIndex());
 
-                                if (tempPvalue < significanceLevel) {
+                                if (pValues.get(0) < significanceLevel) {
                                     significantCounter++;
                                 }
+
+                                for (int i = 1; i < pValues.size(); i++) {
+
+                                    if (cancelProgress) {
+                                        break;
+                                    }
+
+                                    double tempPvalue = pValues.get(i) * pValues.size() / (pValues.size() - i);
+
+                                    ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
+                                            indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
+                                    goMappingsTable.setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
+
+                                    if (tempPvalue < significanceLevel) {
+                                        significantCounter++;
+                                    }
+                                }
+
+                                br.close();
+                                r.close();
                             }
 
-                            ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
-                            mappingsPanel.revalidate();
-                            mappingsPanel.repaint();
+                            if (!cancelProgress) {
 
-                            br.close();
-                            r.close();
+                                ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
+                                mappingsPanel.repaint();
 
-                            progressDialog.setIndeterminate(true);
+                                progressDialog.setIndeterminate(true);
 
-                            // invoke later to give time for components to update
-                            SwingUtilities.invokeLater(new Runnable() {
+                                // invoke later to give time for components to update
+                                SwingUtilities.invokeLater(new Runnable() {
 
-                                public void run() {
-                                    // set the preferred size of the accession column
-                                    int width = peptideShakerGUI.getPreferredColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
-                                    goMappingsTable.getColumn("GO Accession").setMinWidth(width);
-                                    goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
-                                }
-                            });
+                                    public void run() {
+                                        // set the preferred size of the accession column
+                                        int width = peptideShakerGUI.getPreferredColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
+                                        goMappingsTable.getColumn("GO Accession").setMinWidth(width);
+                                        goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
+                                    }
+                                });
 
-                            maxLog2Diff = Math.ceil(maxLog2Diff);
+                                maxLog2Diff = Math.ceil(maxLog2Diff);
 
-                            goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
-                                    PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.lightGray, 0));
-                            ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+                                goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
+                                        PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.lightGray, 0));
+                                ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
-                            // update the plots
-                            updateGoPlots();
+                                // update the plots
+                                updateGoPlots();
 
-                            // enable the contextual export options
-                            exportMappingsJButton.setEnabled(true);
-                            exportPlotsJButton.setEnabled(true);
+                                // enable the contextual export options
+                                exportMappingsJButton.setEnabled(true);
+                                exportPlotsJButton.setEnabled(true);
+
+                                peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, true);
+                            }
 
                             progressDialog.dispose();
-
-                            peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, true);
 
                             // return the peptide shaker icon to the standard version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -818,6 +844,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         }
+
+                        cancelProgress = false;
                     }
                 }.start();
             }
@@ -1770,9 +1798,8 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void exportMappingsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMappingsJButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
         progressDialog.setIndeterminate(true);
-        progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
 
@@ -1787,20 +1814,24 @@ public class GOEAPanel extends javax.swing.JPanel {
             @Override
             public void run() {
                 try {
-                    String clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, true);
+                    String clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, cancelProgress, true);
                     StringSelection stringSelection = new StringSelection(clipboardString);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(stringSelection, peptideShakerGUI);
 
                     progressDialog.dispose();
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
 
+                    if (!cancelProgress) {
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 } catch (Exception e) {
 
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
+
+                cancelProgress = false;
             }
         }.start();
     }//GEN-LAST:event_exportMappingsJButtonActionPerformed
@@ -1878,7 +1909,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+                progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
                 progressDialog.setIndeterminate(true);
 
                 new Thread(new Runnable() {
@@ -1886,7 +1917,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     public void run() {
                         try {
                             progressDialog.setVisible(true);
-                        } catch (IndexOutOfBoundsException e) { // not really sure why this is needed...
+                        } catch (IndexOutOfBoundsException e) {
                             // ignore error
                         }
                         progressDialog.setTitle("Exporting to File. Please Wait...");
@@ -1900,15 +1931,17 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                         try {
                             BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
-                            Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
+                            Util.tableToFile(proteinTable, "\t", progressDialog, cancelProgress, true, writer);
                             writer.close();
 
                             progressDialog.dispose();
-                            
+
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
 
+                            if (!cancelProgress) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                            }
                         } catch (IOException e) {
                             progressDialog.dispose();
                             // change the peptide shaker icon back to the default version
@@ -1916,6 +1949,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
                         }
+
+                        cancelProgress = false;
                     }
                 }.start();
 
@@ -1933,7 +1968,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
         new Thread(new Runnable() {
 
@@ -1965,7 +2000,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     boolean ensemblVersionFound = false;
                     String ensemblVersion = "?";
 
-                    while ((inputLine = in.readLine()) != null && !ensemblVersionFound) {
+                    while ((inputLine = in.readLine()) != null && !ensemblVersionFound && !cancelProgress) {
                         if (inputLine.indexOf("database=\"ensembl_mart_") != -1) {
                             ensemblVersion = inputLine.substring(inputLine.indexOf("database=\"ensembl_mart_") + "database=\"ensembl_mart_".length());
                             ensemblVersion = ensemblVersion.substring(0, ensemblVersion.indexOf("\""));
@@ -1989,74 +2024,80 @@ public class GOEAPanel extends javax.swing.JPanel {
                             + "</Dataset>"
                             + "</Query>";
 
+                    if (!cancelProgress) {
 
+                        // Send data
+                        url = new URL("http://www.biomart.org/biomart/martservice/result");
+                        URLConnection conn = url.openConnection();
+                        conn.setDoOutput(true);
+                        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                        wr.write(requestXml);
+                        wr.flush();
 
-                    // Send data
-                    url = new URL("http://www.biomart.org/biomart/martservice/result");
-                    URLConnection conn = url.openConnection();
-                    conn.setDoOutput(true);
-                    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                    wr.write(requestXml);
-                    wr.flush();
+                        if (!cancelProgress) {
 
-                    // Get the response
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                            // Get the response
+                            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-                    progressDialog.setTitle("Downloading GO Mappings. Please Wait...");
+                            progressDialog.setTitle("Downloading GO Mappings. Please Wait...");
 
-                    int counter = 0;
+                            int counter = 0;
 
-                    File tempFile = new File(mappingsFolderPath + selectedSpecies);
-                    tempFile.createNewFile();
+                            File tempFile = new File(mappingsFolderPath + selectedSpecies);
+                            tempFile.createNewFile();
 
-                    FileWriter w = new FileWriter(tempFile);
-                    BufferedWriter bw = new BufferedWriter(w);
+                            FileWriter w = new FileWriter(tempFile);
+                            BufferedWriter bw = new BufferedWriter(w);
 
-                    String rowLine = br.readLine();
+                            String rowLine = br.readLine();
 
-                    if (rowLine != null && rowLine.startsWith("Query ERROR")) {
-                        JOptionPane.showMessageDialog(peptideShakerGUI, rowLine, "Query Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
+                            if (rowLine != null && rowLine.startsWith("Query ERROR")) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, rowLine, "Query Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
 
-                        while (rowLine != null) {
-                            progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
-                            bw.write(rowLine + "\n");
-                            rowLine = br.readLine();
+                                while (rowLine != null && !cancelProgress) {
+                                    progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
+                                    bw.write(rowLine + "\n");
+                                    rowLine = br.readLine();
+                                }
+                            }
+
+                            bw.close();
+                            w.close();
+                            wr.close();
+                            br.close();
+
+                            if (!cancelProgress) {
+
+                                // update the Ensembl species versions
+                                w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
+                                bw = new BufferedWriter(w);
+
+                                ensemblVersionsMap.put(selectedSpecies, "Ensembl " + ensemblVersion);
+
+                                Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
+
+                                while (iterator.hasNext() && !cancelProgress) {
+                                    String key = iterator.next();
+                                    bw.write(key + "\t" + ensemblVersionsMap.get(key) + "\n");
+                                }
+
+                                bw.close();
+                                w.close();
+                            }
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                            progressDialog.dispose();
+
+                            if (!cancelProgress) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "GO mappings downloaded.\nRe-select to use.", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
+                                loadSpeciesAndGoDomains();
+                                speciesJComboBox.setSelectedIndex(0);
+                            }
                         }
                     }
-
-                    bw.close();
-                    w.close();
-                    wr.close();
-                    br.close();
-
-
-                    // update the Ensembl species versions
-                    w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
-                    bw = new BufferedWriter(w);
-
-                    ensemblVersionsMap.put(selectedSpecies, "Ensembl " + ensemblVersion);
-
-                    Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
-
-                    while (iterator.hasNext()) {
-                        String key = iterator.next();
-                        bw.write(key + "\t" + ensemblVersionsMap.get(key) + "\n");
-                    }
-
-                    bw.close();
-                    w.close();
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-
-                    progressDialog.dispose();
-
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "GO mappings downloaded.\nRe-select to use.", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
-
-                    loadSpeciesAndGoDomains();
-                    speciesJComboBox.setSelectedIndex(0);
 
                     // @TODO: the code below ought to work, but results in bugs...
                     //        therefore the user now has to reselect in the drop down menu
@@ -2072,6 +2113,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured when downloading the mappings.", "Download Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
+
+                cancelProgress = false;
             }
         }.start();
     }//GEN-LAST:event_downloadButtonActionPerformed
@@ -2628,5 +2671,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                 peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             }
         }
+    }
+
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }

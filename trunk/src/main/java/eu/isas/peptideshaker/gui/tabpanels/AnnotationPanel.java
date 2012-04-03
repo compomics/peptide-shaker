@@ -44,9 +44,13 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private boolean cancelProgress = false;
 
     /**
      * Creates a new AnnotationPanel.
@@ -56,6 +60,16 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     public AnnotationPanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
+    }
+    
+    /**
+     * Clears the old data.
+     */
+    private void clearOldData() {
+        proteinNameJTextField.setText("");
+        altProteinNameJTextField.setText("");
+        geneNameJTextField.setText("");
+        taxonomyJTextField.setText("");
     }
 
     /**
@@ -1174,6 +1188,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
             currentAccessionNumber = aAccessionNumber;
             accessionNumberJTextField.setText(currentAccessionNumber);
+            
+            clearOldData();
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
@@ -1210,7 +1226,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
                             int counter = 0;
 
-                            if (iterator.hasNext()) {
+                            if (iterator.hasNext() && !cancelProgress) {
 
                                 UniProtEntry uniProtEntry = iterator.next();
 
@@ -1260,10 +1276,13 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 counter++;
                             }
 
-                            if (counter > 1) {
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in more than 1 hit!", JOptionPane.WARNING_MESSAGE);
-                            } else if (counter == 0) {
-                                JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in 0 hits!", JOptionPane.WARNING_MESSAGE);
+                            if (!cancelProgress) {
+
+                                if (counter > 1) {
+                                    JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in more than 1 hit!", JOptionPane.WARNING_MESSAGE);
+                                } else if (counter == 0) {
+                                    JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in 0 hits!", JOptionPane.WARNING_MESSAGE);
+                                }
                             }
 
                             warningJLabel.setText("");
@@ -1291,6 +1310,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                         e.printStackTrace();
                     }
 
+                    cancelProgress = false;
                     progressDialog.dispose();
                 }
             }.start();
@@ -1299,7 +1319,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
     @Override
     public void cancelProgress() {
-        // do nothing??
-        // @TODO: is this correct??
+        cancelProgress = true;
     }
 }

@@ -10,6 +10,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -35,7 +36,7 @@ import javax.swing.filechooser.FileFilter;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class FollowupPreferencesDialog extends javax.swing.JDialog {
+public class FollowupPreferencesDialog extends javax.swing.JDialog implements ProgressDialogParent {
 
     /**
      * The main GUI.
@@ -49,6 +50,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
 
     /**
      * Creates a new FollowupPreferencesDialog.
@@ -506,10 +511,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         if (finalOutputFile != null) {
 
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+            progressDialog = new ProgressDialogX(this, this, true);
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
             new Thread(new Runnable() {
 
@@ -546,6 +550,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
                                 }
                                 progressDialog.incrementValue();
+
+                                if (cancelProgress) {
+                                    break;
+                                }
+                            }
+
+                            if (cancelProgress) {
+                                break;
                             }
                         }
 
@@ -557,7 +569,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -568,6 +582,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
+
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -580,85 +596,86 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void inclusionListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inclusionListButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
 
-        final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+        if (validateInput()) {
+            final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+            fileChooser.setDialogTitle("Select Destination File");
+            fileChooser.setMultiSelectionEnabled(false);
 
-        new Thread(new Runnable() {
+            FileFilter filter = new FileFilter() {
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+                @Override
+                public boolean accept(File myFile) {
+                    if (vendorCmb.getSelectedIndex() == 2) {
+                        return myFile.isDirectory() || myFile.getName().endsWith(".csv");
+                    }
+                    return myFile.isDirectory() || myFile.getName().endsWith(".txt");
+                }
 
-        new Thread("SaveThread") {
+                @Override
+                public String getDescription() {
+                    switch (vendorCmb.getSelectedIndex()) {
+                        case 0:
+                            return "(Thermo inclusion list) .txt";
+                        case 1:
+                            return "(ABI inclusion list) .txt";
+                        case 2:
+                            return "(Bruker inclusion list) .csv";
+                        case 3:
+                            return "(MassLynx inclusion list) .txt";
+                        default:
+                            return "(unknown format) .txt";
+                    }
+                }
+            };
 
-            @Override
-            public void run() {
+            fileChooser.setFileFilter(filter);
 
-                if (validateInput()) {
-                    final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-                    fileChooser.setDialogTitle("Select Destination File");
-                    fileChooser.setMultiSelectionEnabled(false);
+            int returnVal = fileChooser.showSaveDialog(this);
 
-                    FileFilter filter = new FileFilter() {
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+                File tempOutputFile = fileChooser.getSelectedFile();
+
+                int outcome = JOptionPane.YES_OPTION;
+
+                if (tempOutputFile.exists()) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should " + tempOutputFile + " be overwritten?", "Selected File Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+
+                if (outcome == JOptionPane.YES_OPTION) {
+
+                    if (vendorCmb.getSelectedIndex() == 2) {
+                        if (!tempOutputFile.getName().endsWith(".csv")) {
+                            tempOutputFile = new File(tempOutputFile.getParent(), tempOutputFile.getName() + ".csv");
+                        }
+                    } else {
+                        if (!tempOutputFile.getName().endsWith(".txt")) {
+                            tempOutputFile = new File(tempOutputFile.getParent(), tempOutputFile.getName() + ".txt");
+                        }
+                    }
+
+                    progressDialog = new ProgressDialogX(this, this, true);
+
+                    // needed due to threading issues
+                    final File outputFile = tempOutputFile;
+                    final FollowupPreferencesDialog tempRef = this;
+
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setTitle("Exporting. Please Wait...");
+                            progressDialog.setVisible(true);
+                        }
+                    }, "ProgressDialog").start();
+
+                    new Thread("SaveThread") {
 
                         @Override
-                        public boolean accept(File myFile) {
-                            if (vendorCmb.getSelectedIndex() == 2) {
-                                return myFile.isDirectory() || myFile.getName().endsWith(".csv");
-                            }
-                            return myFile.isDirectory() || myFile.getName().endsWith(".txt");
-                        }
-
-                        @Override
-                        public String getDescription() {
-                            switch (vendorCmb.getSelectedIndex()) {
-                                case 0:
-                                    return "(Thermo inclusion list) .txt";
-                                case 1:
-                                    return "(ABI inclusion list) .txt";
-                                case 2:
-                                    return "(Bruker inclusion list) .csv";
-                                case 3:
-                                    return "(MassLynx inclusion list) .txt";
-                                default:
-                                    return "(unknown format) .txt";
-                            }
-                        }
-                    };
-
-                    fileChooser.setFileFilter(filter);
-
-                    int returnVal = fileChooser.showSaveDialog(tempRef);
-
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-                        File outputFile = fileChooser.getSelectedFile();
-
-
-                        int outcome = JOptionPane.YES_OPTION;
-
-                        if (outputFile.exists()) {
-                            outcome = JOptionPane.showConfirmDialog(tempRef,
-                                    "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
-                                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                        }
-
-                        if (outcome == JOptionPane.YES_OPTION) {
-
-                            if (vendorCmb.getSelectedIndex() == 2) {
-                                if (!outputFile.getName().endsWith(".csv")) {
-                                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".csv");
-                                }
-                            } else {
-                                if (!outputFile.getName().endsWith(".txt")) {
-                                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".txt");
-                                }
-                            }
+                        public void run() {
 
                             try {
 
@@ -721,11 +738,19 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                                     }
                                                 }
                                             }
+
+                                            if (cancelProgress) {
+                                                break;
+                                            }
                                         }
                                     }
 
                                     cpt++;
                                     progressDialog.setValue(cpt);
+
+                                    if (cancelProgress) {
+                                        break;
+                                    }
                                 }
 
                                 b.close();
@@ -736,22 +761,27 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                                JOptionPane.showMessageDialog(tempRef, "Inclusion list saved to " + fileChooser.getSelectedFile().getName() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                                if (!cancelProgress) {
+                                    JOptionPane.showMessageDialog(tempRef, "Inclusion list saved to " + fileChooser.getSelectedFile().getName() + ".",
+                                            "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                                }
                             } catch (Exception e) {
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                 e.printStackTrace();
                                 JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             }
-                        }
-                    }
-                }
 
-                if (progressDialog != null) {
-                    progressDialog.dispose();
+                            if (progressDialog != null) {
+                                progressDialog.dispose();
+                            }
+
+                            cancelProgress = false;
+                        }
+                    }.start();
                 }
             }
-        }.start();
+        }
     }//GEN-LAST:event_inclusionListButtonActionPerformed
 
     /**
@@ -769,15 +799,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            progressDialog = new ProgressDialogX(this, this, true);
 
             new Thread(new Runnable() {
 
                 public void run() {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog").start();
 
@@ -794,14 +827,16 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         BufferedWriter b = new BufferedWriter(f);
 
                         OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-                        outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
+                        outputGenerator.getPSMsProgenesisExport(progressDialog, cancelProgress, null, b);
 
                         b.close();
                         f.close();
 
                         progressDialog.dispose();
 
-                        JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
 
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
@@ -814,6 +849,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
+
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -831,8 +868,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            progressDialog = new ProgressDialogX(this, this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -841,7 +877,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog").start();
 
@@ -884,6 +924,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             progressDialog.incrementValue();
+
+                            if (cancelProgress) {
+                                break;
+                            }
                         }
 
                         b.close();
@@ -894,7 +938,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -905,6 +951,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
+
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -923,8 +971,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            progressDialog = new ProgressDialogX(this, this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -933,7 +980,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog").start();
 
@@ -974,6 +1025,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             progressDialog.incrementValue();
+
+                            if (cancelProgress) {
+                                break;
+                            }
                         }
 
                         b.close();
@@ -984,7 +1039,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -995,6 +1052,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
+
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1012,8 +1071,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            progressDialog = new ProgressDialogX(this, this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1022,7 +1080,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog").start();
 
@@ -1063,6 +1125,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             progressDialog.incrementValue();
+
+                            if (cancelProgress) {
+                                break;
+                            }
                         }
 
                         b.close();
@@ -1074,7 +1140,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1083,9 +1151,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-
                         progressDialog.dispose();
                     }
+
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1104,8 +1173,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            progressDialog = new ProgressDialogX(this, this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1114,7 +1182,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog").start();
 
@@ -1154,6 +1226,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             progressDialog.incrementValue();
+
+                            if (cancelProgress) {
+                                break;
+                            }
                         }
 
                         b.close();
@@ -1165,7 +1241,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1174,9 +1252,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     }
 
                     if (progressDialog != null) {
-
                         progressDialog.dispose();
                     }
+                    
+                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1396,4 +1475,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox unrelatedCheck;
     private javax.swing.JComboBox vendorCmb;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
+    }
 }
