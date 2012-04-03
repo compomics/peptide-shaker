@@ -2857,6 +2857,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferences.addIonType(Ion.IonType.PEPTIDE_FRAGMENT_ION, searchParameters.getIonSearched2());
         annotationPreferences.addIonType(Ion.IonType.PRECURSOR_ION);
         annotationPreferences.addIonType(Ion.IonType.IMMONIUM_ION);
+        annotationPreferences.addIonType(Ion.IonType.REPORTER_ION);
         annotationPreferences.setFragmentIonAccuracy(searchParameters.getFragmentIonAccuracy());
     }
 
@@ -5360,7 +5361,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
-                
+
                 cancelProgress = false;
             }
         }.start();
