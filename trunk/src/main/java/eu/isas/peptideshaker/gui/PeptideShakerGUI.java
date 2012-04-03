@@ -4766,7 +4766,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     if (compatibilityIssue) {
                         JOptionPane.showMessageDialog(null,
                                 "The annotation preferences for this project may have changed.\n\n"
-                                + "Please check Export > Spectrum Annotation and resave project.\n\n"
+                                + "Please check Edit > Spectrum Annotation and resave project.\n\n"
                                 + "Note that PeptideShaker has substancially improved, we strongly\n"
                                 + "recommend reprocessing your identification files.",
                                 "Annotation Preferences",
