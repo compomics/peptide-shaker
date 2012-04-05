@@ -1067,7 +1067,7 @@ public class OutputGenerator implements ProgressDialogParent {
                                                 writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
                                                 writer.write(prec.getRt() + SEPARATOR);
                                                 writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
-                                                writer.write(Math.abs(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR);
+                                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
                                             }
                                             if (score) {
                                                 writer.write(psParameter.getPsmScore() + SEPARATOR);
