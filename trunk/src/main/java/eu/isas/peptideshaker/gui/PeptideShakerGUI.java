@@ -4810,6 +4810,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     progressDialog.dispose();
 
                     error.printStackTrace();
+                } catch (EOFException e) {
+
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    progressDialog.dispose();
+
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured while reading:\n" + currentPSFile + ".\n\n"
+                            + "The file is corrupted and cannot be opened anymore.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
                 } catch (Exception e) {
 
                     // change the peptide shaker icon back to the default version
