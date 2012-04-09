@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 /**
  * This class contains metrics from the dataset for later use.
- * @TODO for the next release without backward compatibility we could rename it into something more descriptive like DatasetMetrics
+ *
+ * @TODO for the next release without backward compatibility we could rename it
+ * into something more descriptive like DatasetMetrics
  *
  * @author Marc Vaudel
  */
@@ -16,11 +18,13 @@ public class Metrics implements Serializable {
      */
     static final long serialVersionUID = 5905881057533649517L;
     /**
-     * The maximal precursor error in Da in all PSMs (only the best hit per spectrum).
+     * The maximal precursor error in Da in all PSMs (only the best hit per
+     * spectrum).
      */
     private double maxPrecursorErrorDa = 0;
     /**
-     * The maximal precursor error in ppm in all PSMs (only the best hit per spectrum).
+     * The maximal precursor error in ppm in all PSMs (only the best hit per
+     * spectrum).
      */
     private double maxPrecursorErrorPpm = 0;
     /**
@@ -64,7 +68,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the found charges.
-     * 
+     *
      * @return the found charges.
      */
     public ArrayList<Integer> getFoundCharges() {
@@ -76,16 +80,17 @@ public class Metrics implements Serializable {
         }
         return foundCharges;
     }
-    
+
     /**
      * Clears the found charges
      */
     public void clearFoundCharges() {
         foundCharges.clear();
     }
-    
+
     /**
-     * Adds a new charge to the list of found charges
+     * Adds a new charge to the list of found charges.
+     *
      * @param foundCharges the new charge to add
      */
     public void addFoundCharges(ArrayList<Integer> foundCharges) {
@@ -98,7 +103,7 @@ public class Metrics implements Serializable {
 
     /**
      * Return the max precursor mass error in Dalton.
-     * 
+     *
      * @return the max precursor mass error in Dalton
      */
     public double getMaxPrecursorErrorDa() {
@@ -107,8 +112,8 @@ public class Metrics implements Serializable {
 
     /**
      * Set the max precursor mass error in Dalton.
-     * 
-     * @param maxPrecursorErrorDa the mass error to set 
+     *
+     * @param maxPrecursorErrorDa the mass error to set
      */
     public void setMaxPrecursorErrorDa(double maxPrecursorErrorDa) {
         this.maxPrecursorErrorDa = maxPrecursorErrorDa;
@@ -116,7 +121,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the max precursor mass error in ppm.
-     * 
+     *
      * @return the max precursor mass error in ppm
      */
     public double getMaxPrecursorErrorPpm() {
@@ -125,7 +130,7 @@ public class Metrics implements Serializable {
 
     /**
      * Set the max precursor mass error in ppm.
-     * 
+     *
      * @param maxPrecursorErrorPpm the max precursor mass error in ppm
      */
     public void setMaxPrecursorErrorPpm(double maxPrecursorErrorPpm) {
@@ -133,7 +138,8 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the molecular weight of the fattest protein in the dataset
+     * Returns the molecular weight of the fattest protein in the dataset.
+     *
      * @return the molecular weight of the fattest protein in the dataset
      */
     public Double getMaxMW() {
@@ -141,7 +147,8 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Sets the molecular weight of the fattest protein in the dataset
+     * Sets the molecular weight of the fattest protein in the dataset.
+     *
      * @param maxMW the molecular weight of the fattest protein in the dataset
      */
     public void setMaxMW(Double maxMW) {
@@ -149,7 +156,8 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the maximal amount of peptides in the proteins of the dataset
+     * Returns the maximal amount of peptides in the proteins of the dataset.
+     *
      * @return the maximal amount of peptides in the proteins of the dataset
      */
     public Integer getMaxNPeptides() {
@@ -157,15 +165,18 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Sets the maximal amount of peptides in the proteins of the dataset
-     * @param maxNPeptides the maximal amount of peptides in the proteins of the dataset
+     * Sets the maximal amount of peptides in the proteins of the dataset.
+     *
+     * @param maxNPeptides the maximal amount of peptides in the proteins of the
+     * dataset
      */
     public void setMaxNPeptides(Integer maxNPeptides) {
         this.maxNPeptides = maxNPeptides;
     }
 
     /**
-     * Returns the the maximal amount of psms in the proteins of the dataset
+     * Returns the the maximal amount of psms in the proteins of the dataset.
+     *
      * @return the the maximal amount of psms in the proteins of the dataset
      */
     public Integer getMaxNSpectra() {
@@ -173,31 +184,39 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Sets the the maximal amount of psms in the proteins of the dataset
-     * @param maxNSpectra the the maximal amount of psms in the proteins of the dataset
+     * Sets the the maximal amount of psms in the proteins of the dataset.
+     *
+     * @param maxNSpectra the the maximal amount of psms in the proteins of the
+     * dataset
      */
     public void setMaxNSpectra(Integer maxNSpectra) {
         this.maxNSpectra = maxNSpectra;
     }
 
     /**
-     * Returns the maximal spectrum counting value of the proteins of the dataset
-     * @return the maximal spectrum counting value of the proteins of the dataset
+     * Returns the maximal spectrum counting value of the proteins of the
+     * dataset.
+     *
+     * @return the maximal spectrum counting value of the proteins of the
+     * dataset
      */
     public Double getMaxSpectrumCounting() {
         return maxSpectrumCounting;
     }
 
     /**
-     * Sets the maximal spectrum counting value of the proteins of the dataset
-     * @param maxSpectrumCounting the maximal spectrum counting value of the proteins of the dataset
+     * Sets the maximal spectrum counting value of the proteins of the dataset.
+     *
+     * @param maxSpectrumCounting the maximal spectrum counting value of the
+     * proteins of the dataset
      */
     public void setMaxSpectrumCounting(Double maxSpectrumCounting) {
         this.maxSpectrumCounting = maxSpectrumCounting;
     }
 
     /**
-     * Returns the list of ordered protein keys
+     * Returns the list of ordered protein keys.
+     *
      * @return the list of ordered protein keys
      */
     public ArrayList<String> getProteinKeys() {
@@ -205,7 +224,8 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Sets the list of ordered protein keys
+     * Sets the list of ordered protein keys.
+     *
      * @param proteinKeys the list of ordered protein keys
      */
     public void setProteinKeys(ArrayList<String> proteinKeys) {
@@ -213,7 +233,8 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the number of validated proteins
+     * Returns the number of validated proteins.
+     *
      * @return the number of validated proteins
      */
     public int getnValidatedProteins() {
@@ -221,23 +242,26 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Sets the number of validated proteins
+     * Sets the number of validated proteins.
+     *
      * @param nValidatedProteins the number of validated proteins
      */
     public void setnValidatedProteins(int nValidatedProteins) {
         this.nValidatedProteins = nValidatedProteins;
     }
-    
+
     /**
-     * Returns the list of modifications found in the dataset
+     * Returns the list of modifications found in the dataset.
+     *
      * @return the list of modifications found in the dataset
      */
     public ArrayList<String> getFoundModifications() {
         return foundModifications;
     }
-    
+
     /**
-     * Sets the list of modifications found in the dataset
+     * Sets the list of modifications found in the dataset.
+     *
      * @param foundModifications the list of modifications found in the dataset
      */
     public void setFoundModifications(ArrayList<String> foundModifications) {
