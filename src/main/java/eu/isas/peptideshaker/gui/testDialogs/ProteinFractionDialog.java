@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.testDialogs;
 
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -14,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class ProteinFractionDialog extends javax.swing.JDialog {
 
@@ -46,9 +42,9 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
         int proteinIndex = proteinTable.convertRowIndexToModel(row);
         String proteinKey = proteinKeys.get(proteinIndex);
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-        
+
         ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
-        
+
         // update the table model
         if (peptideTable.getModel() instanceof PeptideFractionTableModel) {
             ((PeptideFractionTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, peptideKeys);
@@ -56,7 +52,7 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
             PeptideFractionTableModel peptideTableModel = new PeptideFractionTableModel(peptideShakerGUI, peptideKeys);
             peptideTable.setModel(peptideTableModel);
         }
-        
+
         DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
         dm.fireTableDataChanged();
     }
@@ -199,7 +195,7 @@ public class ProteinFractionDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
-updateSelection();
+        updateSelection();
     }//GEN-LAST:event_proteinTableMouseReleased
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

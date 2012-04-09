@@ -178,7 +178,6 @@ public class PRIDEExport {
      * Creates the PRIDE xml file.
      *
      * @param progressDialog a dialog displaying progress to the user
-     * @param cancelProgress set to true to cancel the progress
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/wrinting a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
