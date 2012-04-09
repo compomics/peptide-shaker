@@ -1225,6 +1225,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sparklinesJCheckBoxMenuItem.setSelected(true);
         sparklinesJCheckBoxMenuItem.setText("JSparklines");
         sparklinesJCheckBoxMenuItem.setToolTipText("View sparklines or the underlying numbers");
+        sparklinesJCheckBoxMenuItem.setEnabled(false);
         sparklinesJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sparklinesJCheckBoxMenuItemActionPerformed(evt);
@@ -1247,6 +1248,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         scoresJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         scoresJCheckBoxMenuItem.setMnemonic('c');
         scoresJCheckBoxMenuItem.setText("Scores");
+        scoresJCheckBoxMenuItem.setEnabled(false);
         scoresJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 scoresJCheckBoxMenuItemActionPerformed(evt);
@@ -2486,6 +2488,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             settingsMenu.setEnabled(true);
             exportGraphicsMenu.setEnabled(true);
             helpJMenu.setEnabled(true);
+            scoresJCheckBoxMenuItem.setEnabled(true);
+            sparklinesJCheckBoxMenuItem.setEnabled(true);
 
         } catch (Exception e) {
 
