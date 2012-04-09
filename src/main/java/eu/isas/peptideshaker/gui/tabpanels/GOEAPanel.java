@@ -480,6 +480,9 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             br.readLine();
 
                             String line = br.readLine();
+                            
+                            PSParameter proteinPSParameter = new PSParameter();
+                            PSParameter probabilities = new PSParameter();
 
                             while (line != null && !cancelProgress) {
 
@@ -513,14 +516,21 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                         // store the go term to protein mappings
                                         if (peptideShakerGUI.getIdentification().matchExists(proteinAccession)) { // @TODO: this might be slow?? but i don't see i way around this?
-                                            if (goProteinMappings.containsKey(goAccession)) {
-                                                if (!goProteinMappings.get(goAccession).contains(proteinAccession)) {
-                                                    goProteinMappings.get(goAccession).add(proteinAccession);
+
+                                            proteinPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccession, proteinPSParameter);
+                                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccession, probabilities);
+
+                                            if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(proteinAccession) && !probabilities.isHidden()) {
+
+                                                if (goProteinMappings.containsKey(goAccession)) {
+                                                    if (!goProteinMappings.get(goAccession).contains(proteinAccession)) {
+                                                        goProteinMappings.get(goAccession).add(proteinAccession);
+                                                    }
+                                                } else {
+                                                    HashSet<String> tempProteinList = new HashSet<String>();
+                                                    tempProteinList.add(proteinAccession);
+                                                    goProteinMappings.put(goAccession, tempProteinList);
                                                 }
-                                            } else {
-                                                HashSet<String> tempProteinList = new HashSet<String>();
-                                                tempProteinList.add(proteinAccession);
-                                                goProteinMappings.put(goAccession, tempProteinList);
                                             }
                                         }
                                     }
@@ -532,16 +542,12 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                             // get go terms for dataset
                             Identification identification = peptideShakerGUI.getIdentification();
-                            ArrayList<String> allProjectProteins = identification.getProteinIdentification();
-                            PSParameter proteinPSParameter = new PSParameter();
-                            String mainAccession;
+                            int totalNumberOfGoMappedProteinsInProject = 0;
 
                             progressDialog.setTitle("Mapping GO Terms. Please Wait...");
                             progressDialog.setIndeterminate(false);
                             progressDialog.setValue(0);
                             progressDialog.setMax(identification.getProteinIdentification().size());
-
-                            PSParameter probabilities = new PSParameter();
 
                             for (String matchKey : identification.getProteinIdentification()) {
 
@@ -556,11 +562,15 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(matchKey, probabilities);
 
                                     if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(matchKey) && !probabilities.isHidden()) {
+
+                                        String mainAccession;
+
                                         if (ProteinMatch.getNProteins(matchKey) > 1) {
                                             mainAccession = identification.getProteinMatch(matchKey).getMainMatch();
                                         } else {
                                             mainAccession = matchKey;
                                         }
+                                        
                                         if (proteinToGoMappings.containsKey(mainAccession)) {
 
                                             ArrayList<String> goTerms = proteinToGoMappings.get(mainAccession);
@@ -572,6 +582,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                                     datasetGoTermUsage.put(goTerms.get(j), 1);
                                                 }
                                             }
+
+                                            totalNumberOfGoMappedProteinsInProject++;
                                         } else {
                                             // ignore, does not map to any GO terms in the current GO slim
                                         }
@@ -612,11 +624,15 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                 if (datasetGoTermUsage.get(goTerm) != null) {
                                     frequencyDataset = datasetGoTermUsage.get(goTerm);
-                                    percentDataset = ((double) frequencyDataset / allProjectProteins.size()) * 100;
+                                    percentDataset = ((double) frequencyDataset / totalNumberOfGoMappedProteinsInProject) * 100;
                                 }
-
+                                
                                 Double percentAll = ((double) frequencyAll / proteinToGoMappings.size()) * 100;
-                                Double pValue = new HypergeometricDistributionImpl(proteinToGoMappings.size(), frequencyAll, allProjectProteins.size()).probability(frequencyDataset);
+                                Double pValue = new HypergeometricDistributionImpl(
+                                        proteinToGoMappings.size(), // population size
+                                        frequencyAll, // number of successes
+                                        totalNumberOfGoMappedProteinsInProject // sample size
+                                        ).probability(frequencyDataset);
                                 Double log2Diff = Math.log(percentDataset / percentAll) / Math.log(2);
 
                                 if (!log2Diff.isInfinite() && Math.abs(log2Diff) > maxLog2Diff) {
@@ -713,10 +729,11 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 // correct the p-values for multiple testing using benjamini-hochberg
                                 sortPValues(pValues, indexes);
 
-                                ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
+                                ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                         indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
                                         pValues.get(0) < significanceLevel);
-                                goMappingsTable.setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0), goMappingsTable.getColumn("p-value").getModelIndex());
+                                ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0), 
+                                        goMappingsTable.getColumn("p-value").getModelIndex());
 
                                 if (pValues.get(0) < significanceLevel) {
                                     significantCounter++;
@@ -730,9 +747,10 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                     double tempPvalue = pValues.get(i) * pValues.size() / (pValues.size() - i);
 
-                                    ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
+                                    ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                             indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
-                                    goMappingsTable.setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
+                                    ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), 
+                                            goMappingsTable.getColumn("p-value").getModelIndex());
 
                                     if (tempPvalue < significanceLevel) {
                                         significantCounter++;
