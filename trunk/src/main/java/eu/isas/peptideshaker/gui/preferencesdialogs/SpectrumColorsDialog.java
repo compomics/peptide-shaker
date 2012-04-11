@@ -232,14 +232,14 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         peakColorsPanelLayout.setHorizontalGroup(
             peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peakColorsPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(21, 21, 21)
+                .addGroup(peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(peakColorsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(backgroundPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(peakColorsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(annotatedPeakColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(50, 50, 50)
@@ -427,6 +427,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
             annotatedPeakColorPanel.setBackground(newColor);
             peptideShakerGUI.getUserPreferences().setSpectrumAnnotatedPeakColor(annotatedPeakColorPanel.getBackground());
             peptideShakerGUI.updateSpectrumAnnotations();
+            annotatedPeakColorPanel.repaint();
         }
     }//GEN-LAST:event_annotatedPeakColorPanelMouseClicked
 
@@ -461,6 +462,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
             backgroundPeakColorPanel.setBackground(newColor);
             peptideShakerGUI.getUserPreferences().setSpectrumBackgroundPeakColor(backgroundPeakColorPanel.getBackground());
             peptideShakerGUI.updateSpectrumAnnotations();
+            backgroundPeakColorPanel.repaint();
         }
     }//GEN-LAST:event_backgroundPeakColorPanelMouseClicked
 

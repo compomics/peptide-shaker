@@ -605,6 +605,10 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             Double maxLog2Diff = 0.0;
                             ArrayList<Integer> indexes = new ArrayList<Integer>();
                             ArrayList<Double> pValues = new ArrayList<Double>();
+                            
+                            // display the number of go mapped proteins
+                            goProteinCountLabel.setText("[GO Proteins: Ensembl: " + proteinToGoMappings.size() 
+                                    + ", Project: " + totalNumberOfGoMappedProteinsInProject + "]");
 
                             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
 
@@ -1073,6 +1077,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         fivePercentRadioButton = new javax.swing.JRadioButton();
         onePercentRadioButton = new javax.swing.JRadioButton();
         ensemblVersionLabel = new javax.swing.JLabel();
+        goProteinCountLabel = new javax.swing.JLabel();
         mappingsHelpJButton = new javax.swing.JButton();
         exportMappingsJButton = new javax.swing.JButton();
         contextMenuMappingsBackgroundPanel = new javax.swing.JPanel();
@@ -1259,6 +1264,9 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
             }
         });
 
+        goProteinCountLabel.setText("[GO Proteins: Ensembl: -, Project: -]");
+        goProteinCountLabel.setToolTipText("Number of GO mapped proteins");
+
         javax.swing.GroupLayout mappingsPanelLayout = new javax.swing.GroupLayout(mappingsPanel);
         mappingsPanel.setLayout(mappingsPanelLayout);
         mappingsPanelLayout.setHorizontalGroup(
@@ -1278,11 +1286,14 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                         .addGap(18, 18, 18)
                         .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(mappingsPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(biasWarningLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(goProteinCountLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(significanceJLabel)
                         .addGap(18, 18, 18)
                         .addComponent(onePercentRadioButton)
@@ -1312,7 +1323,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                     .addComponent(biasWarningLabel)
                     .addComponent(significanceJLabel)
                     .addComponent(onePercentRadioButton)
-                    .addComponent(fivePercentRadioButton))
+                    .addComponent(fivePercentRadioButton)
+                    .addComponent(goProteinCountLabel))
                 .addContainerGap())
         );
 
@@ -2348,6 +2360,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
     private javax.swing.JLabel goMappingsFileJLabel;
     private javax.swing.JTable goMappingsTable;
     private javax.swing.JTabbedPane goPlotsTabbedPane;
+    private javax.swing.JLabel goProteinCountLabel;
     private javax.swing.JPanel goSignificancePlotPanel;
     private javax.swing.JButton mappingsHelpJButton;
     private javax.swing.JPanel mappingsPanel;
@@ -2599,6 +2612,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
         ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
         plotPanel.repaint();
+        
+        goProteinCountLabel.setText("[GO Proteins: Ensembl: -, Project: -]");
     }
 
     /**

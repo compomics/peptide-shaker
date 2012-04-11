@@ -11,14 +11,14 @@ import java.util.HashMap;
 
 /**
  * This class contains the various peptides matches sorted according to their
- * variable modification status
+ * variable modification status.
  *
  * @author Marc Vaudel
  */
 public class PeptideSpecificMap implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = 1464466551122518117L;
     /**
@@ -27,20 +27,20 @@ public class PeptideSpecificMap implements Serializable {
      */
     private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<String, TargetDecoyMap>();
     /**
-     * The indexes of the maps which have been put to the dustbin
+     * The indexes of the maps which have been put to the dustbin.
      */
     private ArrayList<String> groupedMaps = new ArrayList<String>();
     /**
-     * The index of the dustbin
+     * The index of the dustbin.
      */
     public final static String DUSTBIN = "OTHER";
     /**
-     * index correction map for unexpected modifications
+     * index correction map for unexpected modifications.
      */
     private HashMap<String, String> nameCorrectionMap = new HashMap<String, String>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PeptideSpecificMap() {
     }
@@ -52,31 +52,27 @@ public class PeptideSpecificMap implements Serializable {
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
-        if (waitingHandler != null) {
-            int max = getNEntries();
-            waitingHandler.setSecondaryProgressDialogIntermediate(false);
-            waitingHandler.setMaxSecondaryProgressValue(max);
-        }
+        waitingHandler.setTitle("Estimating Probabilities. Please Wait...");
+
+        int max = getNEntries();
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String modifications : peptideMaps.keySet()) {
 
-            if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressValue();
-            }
+            waitingHandler.increaseSecondaryProgressValue();
 
             if (!groupedMaps.contains(modifications)) {
                 peptideMaps.get(modifications).estimateProbabilities(waitingHandler);
             }
         }
 
-        if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIntermediate(true);
-        }
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Returns the posterior error probability of a peptide match at the given
-     * score
+     * score.
      *
      * @param peptideMatchKey the peptide match
      * @param score the score of the match
@@ -119,7 +115,6 @@ public class PeptideSpecificMap implements Serializable {
     /**
      * This method puts all the small peptide groups in the dustbin to be
      * analyzed together.
-     *
      */
     public void cure() {
         if (peptideMaps.size() > 1) {
