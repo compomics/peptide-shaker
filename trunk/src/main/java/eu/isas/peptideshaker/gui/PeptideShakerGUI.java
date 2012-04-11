@@ -684,14 +684,29 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         precursorCheckMenu.setSelected(true);
         precursorCheckMenu.setText("Precursor");
+        precursorCheckMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                precursorCheckMenuActionPerformed(evt);
+            }
+        });
         otherMenu.add(precursorCheckMenu);
 
         immoniumIonsCheckMenu.setSelected(true);
         immoniumIonsCheckMenu.setText("Immonium");
+        immoniumIonsCheckMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                immoniumIonsCheckMenuActionPerformed(evt);
+            }
+        });
         otherMenu.add(immoniumIonsCheckMenu);
 
         reporterIonsCheckMenu.setSelected(true);
         reporterIonsCheckMenu.setText("Reporter");
+        reporterIonsCheckMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reporterIonsCheckMenuActionPerformed(evt);
+            }
+        });
         otherMenu.add(reporterIonsCheckMenu);
 
         annotationMenuBar.add(otherMenu);
@@ -2428,6 +2443,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_annotationColorsJMenuItemActionPerformed
 
     /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void precursorCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorCheckMenuActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_precursorCheckMenuActionPerformed
+
+    /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void immoniumIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_immoniumIonsCheckMenuActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_immoniumIonsCheckMenuActionPerformed
+
+    /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void reporterIonsCheckMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reporterIonsCheckMenuActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_reporterIonsCheckMenuActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -4056,7 +4092,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         for (Ion.IonType ionType : annotationPreferences.getIonTypes().keySet()) {
             if (ionType == IonType.IMMONIUM_ION) {
-                precursorCheckMenu.setSelected(true);
+                immoniumIonsCheckMenu.setSelected(true);
             } else if (ionType == IonType.PRECURSOR_ION) {
                 precursorCheckMenu.setSelected(true);
             } else if (ionType == IonType.REPORTER_ION) {

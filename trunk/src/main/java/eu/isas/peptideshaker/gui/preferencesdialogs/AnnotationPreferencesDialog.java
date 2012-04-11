@@ -531,10 +531,12 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 annotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
             }
         }
+        
         annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
         annotationPreferences.setFragmentIonAccuracy((Double) accuracySpinner.getValue());
 
         annotationPreferences.clearNeutralLosses();
+        
         for (NeutralLoss neutralLoss : neutralLossesMap.keySet()) {
             if (neutralLossesMap.get(neutralLoss)) {
                 annotationPreferences.addNeutralLoss(neutralLoss);
@@ -545,6 +547,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         annotationPreferences.setNeutralLossesSequenceDependant(adaptBox.isSelected());
 
         annotationPreferences.clearCharges();
+        
         for (int charge : chargesMap.keySet()) {
             if (chargesMap.get(charge)) {
                 annotationPreferences.addSelectedCharge(charge);
@@ -631,7 +634,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Refresh the selection,
+     * Refresh the selection.
      */
     private void updateGUI() {
         intensitySpinner.setValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
