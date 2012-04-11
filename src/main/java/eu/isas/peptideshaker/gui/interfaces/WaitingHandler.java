@@ -142,4 +142,11 @@ public interface WaitingHandler {
      * @param missingMgfFiles 
      */
     public void displayMissingMgfFilesMessage(HashMap<File, String> missingMgfFiles);
+    
+    /**
+     * Sets the text describing what is currently waited for.
+     * 
+     * @param text a text describing what is currently waited for
+     */
+    public void setTitle(String text);
 }

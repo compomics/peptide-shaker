@@ -205,7 +205,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Set up the table header tooltips
+     * Set up the table header tooltips.
      */
     private void setUpTableHeaderToolTips() {
         proteinTableToolTips = new ArrayList<String>();

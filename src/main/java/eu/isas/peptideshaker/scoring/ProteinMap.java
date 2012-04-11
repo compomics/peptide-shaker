@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class ProteinMap implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility.
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -2438674334416191482L;
     /**
@@ -30,18 +30,18 @@ public class ProteinMap implements Serializable {
     /**
      * Estimate the posterior error probabilities.
      *
-     * @param waitingHandler the handler displaying feedback to the user (can be
-     * null)
+     * @param waitingHandler the handler displaying feedback to the user
      */
-    public void estimateProbabilities(WaitingHandler waitingHandler) { //@TODO: replace this by a progress bar?
-        if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIntermediate(false);
-            waitingHandler.setMaxSecondaryProgressValue(proteinMatchMap.getMapSize());
-        }
+    public void estimateProbabilities(WaitingHandler waitingHandler) {
+
+        waitingHandler.setTitle("Estimating Probabilities. Please Wait...");
+
+        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setMaxSecondaryProgressValue(proteinMatchMap.getMapSize());
+
         proteinMatchMap.estimateProbabilities(waitingHandler);
-        if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIntermediate(true);
-        }
+
+        waitingHandler.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**

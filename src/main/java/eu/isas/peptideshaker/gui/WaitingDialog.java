@@ -947,4 +947,9 @@ public class WaitingDialog extends javax.swing.JDialog implements WaitingHandler
     public void displayMissingMgfFilesMessage(HashMap<File, String> missingMgfFiles) {
         new MgfFilesNotFoundDialog(this, missingMgfFiles);
     }
+    
+    @Override
+    public void setTitle(String text) {
+        // ignore, not implemented for this waiting handler
+    }
 }

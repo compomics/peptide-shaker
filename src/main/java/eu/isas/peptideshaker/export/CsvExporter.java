@@ -122,38 +122,23 @@ public class CsvExporter {
      * Exports the results to csv files.
      *
      * @param progressDialog a progress dialog, can be null
-     * @param cancelProgress 
+     * @param cancelProgress
      * @param folder the folder to store the results in.
      * @return true if the export was sucessfull
      */
     public boolean exportResults(ProgressDialogX progressDialog, boolean cancelProgress, File folder) {
 
         try {
-            Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
-            Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
-            Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
-            // Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
+            // write the proteins
+            if (progressDialog != null) {
+                progressDialog.setTitle("Exporting Proteins. Please Wait...");
+            }
 
+            Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
                     + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "p score"
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
-
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
-            peptideWriter.write(content);
-
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
-                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
-            spectrumWriter.write(content);
-
-//            content = "Search Engine" + SEPARATOR + "Rank" + SEPARATOR + "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
-//                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-//                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
-//                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
-//            assumptionWriter.write(content);
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -165,52 +150,95 @@ public class CsvExporter {
             }
 
             int progress = 0;
+
             for (String proteinKey : identification.getProteinIdentification()) {
+
                 proteinWriter.write(getProteinLine(proteinKey));
-                progress++;
+
                 if (progressDialog != null) {
-                    progressDialog.setValue(progress);
+                    progressDialog.setValue(++progress);
                 }
-                
+
                 if (cancelProgress) {
                     break;
                 }
             }
+
+            proteinWriter.close();
+
+
+            // write the peptides
+            if (progressDialog != null) {
+                progressDialog.setTitle("Exporting Peptides. Please Wait...");
+            }
+
+            Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
+                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+            peptideWriter.write(content);
 
             for (String peptideKey : identification.getPeptideIdentification()) {
+
                 peptideWriter.write(getPeptideLine(peptideKey));
-                progress++;
+
                 if (progressDialog != null) {
-                    progressDialog.setValue(progress);
+                    progressDialog.setValue(++progress);
                 }
-                
+
                 if (cancelProgress) {
                     break;
                 }
             }
 
+            peptideWriter.close();
+
+
+            // write the spectra
+            if (progressDialog != null) {
+                progressDialog.setTitle("Exporting Spectra. Please Wait...");
+            }
+
+            Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
+                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
+                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
+                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+            spectrumWriter.write(content);
+
             for (String spectrumKey : identification.getSpectrumIdentification()) {
+
                 spectrumWriter.write(getSpectrumLine(spectrumKey));
-                progress++;
+
                 if (progressDialog != null) {
-                    progressDialog.setValue(progress);
+                    progressDialog.setValue(++progress);
                 }
-                
+
                 if (cancelProgress) {
                     break;
                 }
             }
+
+            spectrumWriter.close();
+
+
+            // write the assumptions
+//            if (progressDialog != null) {
+//                progressDialog.setTitle("Exporting Assumptions. Please Wait...");
+//            }
+//            
+//            Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
+//            content = "Search Engine" + SEPARATOR + "Rank" + SEPARATOR + "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
+//                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
+//                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
+//                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+//            assumptionWriter.write(content);
 
 //            for (String spectrumKey : identification.getSpectrumIdentification()) {
 //                assumptionWriter.write(getAssumptionLines(spectrumKey));
-//                progress++;
-//                progressDialog.setValue(progress);
+//                progressDialog.setValue(++progress);
 //            }
-
-            proteinWriter.close();
-            peptideWriter.close();
-            spectrumWriter.close();
-            //assumptionWriter.close();
+//            
+//            assumptionWriter.close();
 
             return true;
         } catch (IOException e) {
@@ -232,31 +260,41 @@ public class CsvExporter {
      * @return the protein match as a line of text
      */
     private String getProteinLine(String proteinKey) throws Exception {
-        String line = "";
+        
+        // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
+
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) identification.getMatchParameter(proteinKey, probabilities);
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-        line += proteinMatch.getMainMatch() + SEPARATOR;
+        String line = proteinMatch.getMainMatch() + SEPARATOR;
+
         for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
             if (!otherAccession.equals(proteinMatch.getMainMatch())) {
                 line += otherAccession + " ";
             }
         }
+
         line += SEPARATOR + probabilities.getGroupClass() + SEPARATOR;
         line += proteinMatch.getPeptideCount() + SEPARATOR;
         int nSpectra = 0;
         int nValidatedPeptides = 0;
         int nValidatedPsms = 0;
         PSParameter psParameter = new PSParameter();
-        PeptideMatch peptideMatch;
+
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
-            peptideMatch = identification.getPeptideMatch(peptideKey);
+
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             nSpectra += peptideMatch.getSpectrumCount();
             psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+
             if (psParameter.isValidated()) {
+
                 nValidatedPeptides++;
+
                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+
                     psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+
                     if (psParameter.isValidated()) {
                         nValidatedPsms++;
                     }
@@ -266,6 +304,7 @@ public class CsvExporter {
 
         line += nSpectra + SEPARATOR;
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
+
         try {
             line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight() + SEPARATOR;
             line += identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + SEPARATOR;
@@ -291,12 +330,15 @@ public class CsvExporter {
         } else {
             line += "0" + SEPARATOR;
         }
+
         try {
             line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
         } catch (Exception e) {
             line += "Protein not found";
         }
+
         line += "\n";
+
         return line;
     }
 
@@ -307,9 +349,12 @@ public class CsvExporter {
      * @return the peptide match as a line of text
      */
     private String getPeptideLine(String peptideKey) throws Exception {
+        
+        // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
         String line = "";
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        
         for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
             line += protein + " ";
         }
@@ -318,6 +363,7 @@ public class CsvExporter {
         line += peptideMatch.getTheoreticPeptide().getSequence() + SEPARATOR;
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+        
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
@@ -326,17 +372,21 @@ public class CsvExporter {
                 modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
-        boolean first = true, first2;
+        
+        boolean first = true;
         ArrayList<String> modifications = new ArrayList<String>(modMap.keySet());
         Collections.sort(modifications);
+        
         for (String mod : modifications) {
             if (first) {
                 first = false;
             } else {
                 line += ", ";
             }
-            first2 = true;
+            
+            boolean first2 = true;
             line += mod + "(";
+            
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;
@@ -345,21 +395,28 @@ public class CsvExporter {
                 }
                 line += aa;
             }
+            
             line += ")";
         }
+        
         line += SEPARATOR;
-        PSPtmScores ptmScores;
         first = true;
+        
         for (String mod : modifications) {
+            
             if (first) {
                 first = false;
             } else {
                 line += ", ";
             }
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+            
+            PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             line += mod + " (";
+            
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                
                 int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                
                 if (ptmConfidence == PtmScoring.NOT_FOUND) {
                     line += "Not Scored"; // Well this should not happen
                 } else if (ptmConfidence == PtmScoring.RANDOM) {
@@ -374,19 +431,23 @@ public class CsvExporter {
             } else {
                 line += "Not Scored";
             }
+            
             line += ")";
         }
+        
         line += SEPARATOR;
 
         line += peptideMatch.getSpectrumCount() + SEPARATOR;
         PSParameter probabilities = new PSParameter();
         int nSpectraValidated = 0;
+        
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
             if (probabilities.isValidated()) {
                 nSpectraValidated++;
             }
         }
+        
         line += nSpectraValidated + SEPARATOR;
         probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
 
@@ -398,11 +459,13 @@ public class CsvExporter {
         } else {
             line += "0" + SEPARATOR;
         }
+        
         if (probabilities.isValidated()) {
             line += "1";
         } else {
             line += "0";
         }
+        
         line += "\n";
 
         return line;
@@ -415,13 +478,13 @@ public class CsvExporter {
      * @return the spectrum match as a line of text
      */
     private String getSpectrumLine(String spectrumKey) throws Exception {
-
-        String line = "";
+        
+        // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
 
+        String line = "";
 
         for (String protein : bestAssumption.getParentProteins()) {
             line += protein + " ";
@@ -431,6 +494,7 @@ public class CsvExporter {
         line += bestAssumption.getSequence() + SEPARATOR;
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+        
         for (ModificationMatch modificationMatch : bestAssumption.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
@@ -439,17 +503,21 @@ public class CsvExporter {
                 modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
-        boolean first = true, first2;
+        
+        boolean first = true;
         ArrayList<String> modifications = new ArrayList<String>(modMap.keySet());
         Collections.sort(modifications);
+        
         for (String mod : modifications) {
             if (first) {
                 first = false;
             } else {
                 line += ", ";
             }
-            first2 = true;
+            
+            boolean first2 = true;
             line += mod + "(";
+            
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;
@@ -458,22 +526,31 @@ public class CsvExporter {
                 }
                 line += aa;
             }
+            
             line += ")";
         }
+        
         line += SEPARATOR;
         PSPtmScores ptmScores = new PSPtmScores();
         first = true;
+        
         for (String mod : modifications) {
+            
             if (first) {
                 first = false;
             } else {
                 line += ", ";
             }
+            
             if (spectrumMatch.getUrParam(ptmScores) != null) {
+                
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 line += mod + " (";
+                
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                    
                     int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                    
                     if (ptmConfidence == PtmScoring.NOT_FOUND) {
                         line += "Not Scored"; // Well this should not happen
                     } else if (ptmConfidence == PtmScoring.RANDOM) {
@@ -488,9 +565,11 @@ public class CsvExporter {
                 } else {
                     line += "Not Scored";
                 }
+                
                 line += ")";
             }
         }
+        
         line += SEPARATOR;
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
@@ -500,6 +579,7 @@ public class CsvExporter {
         line += spectrumTitle + SEPARATOR;
 
         ArrayList<String> fileNames = new ArrayList<String>();
+        
         for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions()) {
             if (assumption.getPeptide().isSameAs(bestAssumption)) {
                 if (!fileNames.contains(assumption.getFile())) {
@@ -507,7 +587,9 @@ public class CsvExporter {
                 }
             }
         }
+        
         Collections.sort(fileNames);
+        
         for (String name : fileNames) {
             line += name + " ";
         }
@@ -519,6 +601,7 @@ public class CsvExporter {
         Double omssaEValue = null;
         Double xtandemEValue = null;
         double mascotScore = 0;
+        
         for (int se : spectrumMatch.getAdvocates()) {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                 for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
@@ -545,17 +628,21 @@ public class CsvExporter {
         if (mascotEValue != null) {
             line += mascotScore;
         }
+        
         line += SEPARATOR;
+        
         if (mascotEValue != null) {
             line += mascotEValue;
         }
 
         line += SEPARATOR;
+        
         if (omssaEValue != null) {
             line += omssaEValue;
         }
 
         line += SEPARATOR;
+        
         if (xtandemEValue != null) {
             line += xtandemEValue;
         }
@@ -594,21 +681,25 @@ public class CsvExporter {
      */
     private String getAssumptionLines(String spectrumKey) throws Exception {
 
+        // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
+        
         String line = "";
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         ArrayList<Integer> searchEngines = spectrumMatch.getAdvocates();
         Collections.sort(searchEngines);
-        ArrayList<Double> eValues;
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
         Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
-        int rank;
+        
         for (int se : searchEngines) {
-            eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
+            
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
             Collections.sort(eValues);
-            rank = 1;
+            int rank = 1;
+            
             for (double eValue : eValues) {
                 for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                    
                     if (se == Advocate.MASCOT) {
                         line += "M" + SEPARATOR;
                     } else if (se == Advocate.OMSSA) {
@@ -616,7 +707,9 @@ public class CsvExporter {
                     } else if (se == Advocate.XTANDEM) {
                         line += "X" + SEPARATOR;
                     }
+                    
                     line += rank + SEPARATOR;
+                    
                     for (String protein : assumption.getPeptide().getParentProteins()) {
                         line += protein + " ";
                     }
@@ -634,9 +727,7 @@ public class CsvExporter {
                     line += assumption.getIdentificationCharge().value + SEPARATOR;
                     line += spectrumTitle + SEPARATOR;
                     line += fileName + SEPARATOR;
-
                     line += assumption.getFile() + SEPARATOR;
-
                     line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
                     line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
 
@@ -651,11 +742,13 @@ public class CsvExporter {
                     if (se == Advocate.OMSSA) {
                         line += assumption.getEValue() + "";
                     }
+                    
                     line += SEPARATOR;
 
                     if (se == Advocate.XTANDEM) {
                         line += assumption.getEValue() + "";
                     }
+                    
                     line += SEPARATOR;
 
                     PSParameter probabilities = new PSParameter();
@@ -689,6 +782,7 @@ public class CsvExporter {
                 }
             }
         }
+        
         return line;
     }
 }

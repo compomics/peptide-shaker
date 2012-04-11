@@ -121,11 +121,14 @@
                               <Component id="unknownSpeciesLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="ensemblVersionLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                               <Component id="biasWarningLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="278" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="goProteinCountLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="significanceJLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="onePercentRadioButton" min="-2" max="-2" attributes="0"/>
@@ -158,6 +161,7 @@
                           <Component id="significanceJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="onePercentRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="fivePercentRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="goProteinCountLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -305,6 +309,12 @@
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ensemblVersionLabelMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ensemblVersionLabelMouseExited"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="goProteinCountLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="[GO Proteins: Ensembl: -, Project: -]"/>
+                <Property name="toolTipText" type="java.lang.String" value="Number of GO mapped proteins"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

@@ -14,32 +14,32 @@ import java.util.HashMap;
 public class TargetDecoyMap implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = 7333389442377322662L;
     /**
-     * The hit map containing the indexed target/decoy points
+     * The hit map containing the indexed target/decoy points.
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
     /**
-     * The scores imported in the map
+     * The scores imported in the map.
      */
     private ArrayList<Double> scores;
     /**
      * The maximal amount of target hits comprised between two subsequent decoy
-     * hits
+     * hits.
      */
     private Integer nmax;
     /**
-     * The window size for pep estimation
+     * The window size for pep estimation.
      */
     private Integer windowSize;
     /**
-     * The number of target hits found before the first decoy hit
+     * The number of target hits found before the first decoy hit.
      */
     private Integer nTargetOnly;
     /**
-     * the results computed on this map
+     * the results computed on this map.
      */
     private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
 
@@ -147,9 +147,9 @@ public class TargetDecoyMap implements Serializable {
         int nMax1 = 0;
         int targetCpt = 0;
         nTargetOnly = 0;
-        TargetDecoyPoint point;
+
         for (double peptideP : scores) {
-            point = hitMap.get(peptideP);
+            TargetDecoyPoint point = hitMap.get(peptideP);
             if (onlyTarget) {
                 nTargetOnly += point.nTarget;
                 if (point.nDecoy > 0) {
@@ -171,9 +171,12 @@ public class TargetDecoyMap implements Serializable {
     /**
      * Estimates the posterior error probabilities in this map.
      *
-     * @param waitingHandler the handler displaying feedback to the user (can be null)
+     * @param waitingHandler the handler displaying feedback to the user
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
+
+        waitingHandler.setTitle("Estimating Probabilities. Please Wait...");
+
         if (scores == null) {
             estimateScores();
         }
@@ -189,23 +192,21 @@ public class TargetDecoyMap implements Serializable {
         double nLimit = 0.5 * windowSize;
         double nTargetSup = 1.5 * previousPoint.nTarget;
         double nTargetInf = -0.5 * previousPoint.nTarget;
-        double nTargetInfTemp;
         double nDecoy = previousPoint.nDecoy;
         int cptInf = 0;
         int cptSup = 1;
         boolean oneReached = false;
-        double change;
-        TargetDecoyPoint point;
+        
         for (int cpt = 0; cpt < scores.size(); cpt++) {
-            point = hitMap.get(scores.get(cpt));
+            TargetDecoyPoint point = hitMap.get(scores.get(cpt));
             if (!oneReached) {
-                change = 0.5 * (previousPoint.nTarget + point.nTarget);
+                double change = 0.5 * (previousPoint.nTarget + point.nTarget);
                 nTargetInf += change;
                 nTargetSup -= change;
                 while (nTargetInf > nLimit) {
                     if (cptInf < cpt) {
                         tempPoint = hitMap.get(scores.get(cptInf));
-                        nTargetInfTemp = nTargetInf - tempPoint.nTarget;
+                        double nTargetInfTemp = nTargetInf - tempPoint.nTarget;
                         if (nTargetInfTemp >= nLimit) {
                             nDecoy -= tempPoint.nDecoy;
                             nTargetInf = nTargetInfTemp;
@@ -235,11 +236,10 @@ public class TargetDecoyMap implements Serializable {
                 point.p = 1;
             }
             previousPoint = point;
-            if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressValue();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
+
+            waitingHandler.increaseSecondaryProgressValue();
+            if (waitingHandler.isRunCanceled()) {
+                return;
             }
         }
     }

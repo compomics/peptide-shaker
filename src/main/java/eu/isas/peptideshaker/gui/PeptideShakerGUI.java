@@ -1375,7 +1375,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         File selectedFile = getUserSelectedFile(".cps", "(Compomics Peptide Shaker format) *.cps", "Save As...", false);
 
         if (selectedFile != null) {
-            saveProjectAs(selectedFile);
+            saveProjectAs(selectedFile, false);
         }
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
@@ -2347,9 +2347,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
         if (currentPSFile != null && currentPSFile.exists()) {
-            saveProject();
+            saveProject(false);
         } else {
-            saveAsMenuItemActionPerformed(null);
+            saveProjectAs(false);
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
@@ -3890,13 +3890,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     JOptionPane.QUESTION_MESSAGE);
 
             if (value == JOptionPane.YES_OPTION) {
-                saveMenuItemActionPerformed(null);
-            } else if (value == JOptionPane.CANCEL_OPTION) {
-                return;
+                if (currentPSFile != null && currentPSFile.exists()) {
+                    saveProject(true);
+                } else {
+                    saveProjectAs(true);
+                }
+            } else if (value == JOptionPane.NO_OPTION) {
+                closePeptideShaker();
             }
+        } else {
+            closePeptideShaker();
         }
+    }
 
+    /**
+     * Closes PeptideShaker.
+     */
+    private void closePeptideShaker() {
+        
         progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.setTitle("Closing. Please Wait...");
         progressDialog.setIndeterminate(true);
 
         new Thread(new Runnable() {
@@ -3907,21 +3920,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 } catch (IndexOutOfBoundsException e) {
                     // ignore
                 }
-                progressDialog.setTitle("Closing. Please Wait...");
             }
         }, "ProgressDialog").start();
 
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread("CloseThread") {
 
             @Override
             public void run() {
                 try {
+                    // change the peptide shaker icon to a "waiting version"
+                    setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    
                     File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
                     String[] files = serializationFolder.list();
+                    
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMax(files.length);
                     int cpt = 0;
 
+                    // remove match files from cache
                     for (String matchFile : files) {
 
                         if (cancelProgress) {
@@ -3935,6 +3952,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         progressDialog.setValue(++cpt);
                     }
 
+                    // close the files and save the user preferences
                     if (!cancelProgress) {
                         spectrumFactory.closeFiles();
                         sequenceFactory.closeFile();
@@ -3945,14 +3963,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     catchException(e);
                 }
 
+                // close peptide shaker
                 if (!cancelProgress) {
                     progressDialog.dispose();
                     System.exit(0);
                 }
-
+                
+                // change the peptide shaker icon back to the default version
+                setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 cancelProgress = false;
             }
-        });
+        }.start();
     }
 
     /**
@@ -5059,17 +5080,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Saves the modifications made to the project.
+     * 
+     * @param closeWhenDone if true, PeptideShaker closes after saving
      */
-    private void saveProject() {
+    private void saveProject(boolean aCloseWhenDone) {
+        
+        final boolean closeWhenDone = aCloseWhenDone;
 
         progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Saving. Please Wait...");
+        
         final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Saving. Please Wait...");
                 try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
@@ -5078,7 +5104,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }, "ProgressDialog").start();
 
-        new Thread("ExportThread") {
+        new Thread("SaveThread") {
 
             @Override
             public void run() {
@@ -5086,9 +5112,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
+                    // empty the cache
                     identification.emptyCache(progressDialog, cancelProgress);
-                    progressDialog.setIndeterminate(true);
 
+                    // save the project
                     if (!cancelProgress) {
                         experimentIO.save(currentPSFile, experiment);
                     }
@@ -5097,23 +5124,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
+                   
                     if (!cancelProgress) {
                         userPreferences.addRecentProject(currentPSFile);
                         updateRecentProjectsList();
 
-                        JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
-                        dataSaved = true;
+                        if (closeWhenDone) {
+                            closePeptideShaker();
+                        } else {
+                            JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                            dataSaved = true;
+                        }
                     } else {
                         JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     catchException(e);
                 }
-
-                progressDialog.dispose();
+                
                 cancelProgress = false;
             }
         }.start();
@@ -5287,24 +5316,40 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         String folderPath = currentPSFile.getParentFile().getAbsolutePath();
         return new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
     }
-
+    
     /**
      * Save the project to the currentPSFile location.
      */
-    private void saveProjectAs(File newFile) {
+    private void saveProjectAs(boolean closeWhenDone) {
+        File selectedFile = getUserSelectedFile(".cps", "(Compomics Peptide Shaker format) *.cps", "Save As...", false);
+
+        if (selectedFile != null) {
+            saveProjectAs(selectedFile, closeWhenDone);
+        }
+    }
+
+    /**
+     * Save the project to the currentPSFile location.
+     * 
+     * @param newFile the file to save the project to
+     * @param closeWhenDone if true, PeptideShaker closes after saving
+     */
+    private void saveProjectAs(File newFile, boolean aCloseWhenDone) {
+        
+        final boolean closeWhenDone = aCloseWhenDone;
 
         currentPSFile = newFile;
         lastSelectedFolder = currentPSFile.getAbsolutePath();
 
         progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Saving. Please Wait...");
 
         final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Saving. Please Wait...");
                 try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
@@ -5321,15 +5366,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    
+                    // set the experiment parameters
                     experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics));
 
                     File newFolder = getDefaultSerializationDirectory();
 
+                    // delete the old data
                     if (newFolder.exists()) {
                         String[] fileList = newFolder.list();
                         progressDialog.setMax(fileList.length);
                         progressDialog.setTitle("Deleting Old Data. Please Wait...");
-                        File toDelete;
+
                         int cpt = 0;
                         for (String fileName : fileList) {
 
@@ -5337,16 +5385,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                                 break;
                             }
 
-                            toDelete = new File(newFolder.getPath(), fileName);
+                            File toDelete = new File(newFolder.getPath(), fileName);
                             toDelete.delete();
                             progressDialog.setValue(++cpt);
                         }
+                        
                         progressDialog.setIndeterminate(true);
                     }
 
+                    // make the new save folder and save the project
                     if (!cancelProgress) {
                         newFolder.mkdir();
-
                         identification.save(newFolder, progressDialog, cancelProgress);
                         progressDialog.setIndeterminate(true);
                         experimentIO.save(currentPSFile, experiment);
@@ -5360,13 +5409,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     if (!cancelProgress) {
                         userPreferences.addRecentProject(currentPSFile);
                         updateRecentProjectsList();
-
-                        JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
-                        dataSaved = true;
+                        
+                        if (closeWhenDone) {
+                            closePeptideShaker();
+                        } else {
+                            JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                            dataSaved = true;
+                        }
                     } else {
                         JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
                     }
-
                 } catch (Exception e) {
 
                     // return the peptide shaker icon to the standard version
