@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class contains the spectrum annotation preferences
+ * This class contains the spectrum annotation preferences.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class AnnotationPreferences implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = 7127816818986024284L;
     /**
@@ -46,15 +46,15 @@ public class AnnotationPreferences implements Serializable {
      */
     private double intensityLimit = 0.75;
     /**
-     * Shall PeptideShaker use automatic annotation
+     * Shall PeptideShaker use automatic annotation.
      */
     private boolean automaticAnnotation;
     /**
-     * The types of ions to annotate
+     * The types of ions to annotate.
      */
     private HashMap<Ion.IonType, ArrayList<Integer>> selectedIons = new HashMap<Ion.IonType, ArrayList<Integer>>();
     /**
-     * The neutral losses searched for
+     * The neutral losses searched for.
      */
     private NeutralLossesMap neutralLossesMap = new NeutralLossesMap();
     /**
@@ -63,7 +63,7 @@ public class AnnotationPreferences implements Serializable {
      */
     private boolean neutralLossesSequenceDependant;
     /**
-     * the maximal fragment charge to be searched for
+     * The maximum fragment charge to be searched for.
      */
     private ArrayList<Integer> selectedCharges = new ArrayList<Integer>();
     /**
@@ -71,16 +71,16 @@ public class AnnotationPreferences implements Serializable {
      */
     private double fragmentIonAccuracy;
     /**
-     * The currently inspected peptide
+     * The currently inspected peptide.
      */
     private Peptide currentPeptide;
     /**
-     * The charge of the currently inspected precursor
+     * The charge of the currently inspected precursor.
      */
     private int currentPrecursorCharge = 0;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public AnnotationPreferences() {
     }
@@ -106,7 +106,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Updates the neutral losses and charge annotation settings
+     * Updates the neutral losses and charge annotation settings.
      */
     public void resetAutomaticAnnotation() {
 
@@ -135,7 +135,7 @@ public class AnnotationPreferences implements Serializable {
 
     /**
      * Returns the fragment ion charges considered for the desired precursor
-     * charge
+     * charge.
      *
      * @return the fragment ion charges considered
      */
@@ -144,14 +144,14 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Clears the selected charges
+     * Clears the selected charges.
      */
     public void clearCharges() {
         selectedCharges.clear();
     }
 
     /**
-     * Add a charge to take into account when annotating the spectrum
+     * Add a charge to take into account when annotating the spectrum.
      *
      * @param selectedCharge a charge to take into account when annotating the
      * spectrum
@@ -161,14 +161,14 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * clears the considered neutral losses
+     * Clears the considered neutral losses.
      */
     public void clearNeutralLosses() {
         neutralLossesMap.clearNeutralLosses();
     }
 
     /**
-     * returns the considered neutral losses
+     * Returns the considered neutral losses.
      *
      * @return the considered neutral losses
      */
@@ -177,7 +177,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * adds a neutral loss
+     * Adds a neutral loss.
      *
      * @param neutralLoss a new neutral loss
      */
@@ -186,7 +186,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * returns the type of ions annotated
+     * Returns the type of ions annotated.
      *
      * @return the type of ions annotated
      */
@@ -195,7 +195,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * returns the type of peptide fragment ions annotated
+     * Returns the type of peptide fragment ions annotated.
      *
      * @return the type of peptide fragment ions annotated
      */
@@ -204,16 +204,17 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Clears the ion types annotated
+     * Clears the ion types annotated.
      */
     public void clearIonTypes() {
         selectedIons.clear();
     }
 
     /**
-     * Adds a new ion type and subtype to annotate
+     * Adds a new ion type and subtype to annotate.
      *
      * @param ionType a new ion type to annotate
+     * @param subType the ion sub type 
      */
     public void addIonType(IonType ionType, int subType) {
         if (!selectedIons.containsKey(ionType)) {
@@ -223,7 +224,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Adds a new ion type to annotate. All subtypes will be annotated
+     * Adds a new ion type to annotate. All subtypes will be annotated.
      *
      * @param ionType a new ion type to annotate
      */
@@ -279,7 +280,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Returns the current precursor charge
+     * Returns the current precursor charge.
      *
      * @return the current precursor charge
      */
@@ -338,7 +339,7 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Set if the bars in the bubble plot are to be shown or not
+     * Set if the bars in the bubble plot are to be shown or not.
      *
      * @param showBars
      */
@@ -386,7 +387,7 @@ public class AnnotationPreferences implements Serializable {
     }
     
     /**
-     * Update for the version older than 0.15.1
+     * Update for the version older than 0.15.1.
      */
     public void updateVersion() {
         if (selectedIons == null) {
