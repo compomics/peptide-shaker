@@ -440,7 +440,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog implements Progres
 
     @Override
     public void cancelProgress() {
-        // do nothing. at the moment it is not really possible to stop the export. the progress dialog can be closes though
+        // do nothing. at the moment it is not really possible to stop the export. the progress dialog can be closed though
         // @TODO: implement the cancelling of the progress?
     }
 }

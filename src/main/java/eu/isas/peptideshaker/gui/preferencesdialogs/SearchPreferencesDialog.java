@@ -971,7 +971,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // @TODO: not really possible to cancel this one...
+            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // note: not really possible to cancel this one...
 
             final PeptideShakerGUI tempRef = peptideShakerGUI; // needed due to threading issues
 
@@ -1414,7 +1414,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     /**
      * This method takes the specified properties instance and reads the values
      * for (some of) the GUI components from it. Keys are defined as constants
-     * on this class. Method inspired from searchGUI
+     * on this class. Method inspired from searchGUI.
      *
      * @param aProps Properties with the values for the GUI.
      */
