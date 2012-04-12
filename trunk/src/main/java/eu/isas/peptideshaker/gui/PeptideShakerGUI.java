@@ -2885,7 +2885,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumCountingPreferences.setValidatedHits(true);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
-
     }
 
     /**
@@ -2902,7 +2901,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the reporter ions possibly found in this project
+     * Returns the reporter ions possibly found in this project.
      *
      * @return the reporter ions possibly found in this project
      */
@@ -3943,7 +3942,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Closes PeptideShaker.
      */
     private void closePeptideShaker() {
-        
+
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setTitle("Closing. Please Wait...");
         progressDialog.setIndeterminate(true);
@@ -3966,10 +3965,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    
+
                     File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
                     String[] files = serializationFolder.list();
-                    
+
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMax(files.length);
                     int cpt = 0;
@@ -4004,7 +4003,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     progressDialog.dispose();
                     System.exit(0);
                 }
-                
+
                 // change the peptide shaker icon back to the default version
                 setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 cancelProgress = false;
@@ -4116,9 +4115,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
 
-        boolean accounted;
+        boolean selected;
+
+        ArrayList<String> selectedLosses = new ArrayList<String>();
 
         for (JCheckBoxMenuItem lossMenuItem : lossMenus.values()) {
+
+            if (lossMenuItem.isSelected()) {
+                selectedLosses.add(lossMenuItem.getText());
+            }
+
             lossMenu.remove(lossMenuItem);
         }
 
@@ -4142,24 +4148,37 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ArrayList<String> names = new ArrayList<String>(neutralLosses.keySet());
         Collections.sort(names);
 
+        ArrayList<String> finalSelectedLosses = selectedLosses;
+
         if (names.isEmpty()) {
             lossMenu.setVisible(false);
             lossSplitter.setVisible(false);
         } else {
             for (int i = 0; i < names.size(); i++) {
-                accounted = false;
-                for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
-                    if (neutralLoss.isSameAs(neutralLoss)) {
-                        accounted = true;
-                        break;
+
+                if (annotationPreferences.areNeutralLossesSequenceDependant()) {
+                    selected = false;
+                    for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
+                        if (neutralLoss.isSameAs(neutralLoss)) {
+                            selected = true;
+                            break;
+                        }
+                    }
+                } else {
+                    if (finalSelectedLosses.contains(names.get(i))) {
+                        selected = true;
+                    } else {
+                        selected = false;
                     }
                 }
+
                 JCheckBoxMenuItem lossMenuItem = new JCheckBoxMenuItem(names.get(i));
-                lossMenuItem.setSelected(accounted);
+                lossMenuItem.setSelected(selected);
                 lossMenuItem.addActionListener(new java.awt.event.ActionListener() {
 
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         annotationPreferences.useAutomaticAnnotation(false);
+                        annotationPreferences.setNeutralLossesSequenceDependant(false);
                         updateAnnotationPreferences();
                     }
                 });
@@ -4168,20 +4187,39 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
 
+        ArrayList<String> selectedCharges = new ArrayList<String>();
+
         for (JCheckBoxMenuItem chargeMenuItem : chargeMenus.values()) {
+
+            if (chargeMenuItem.isSelected()) {
+                selectedCharges.add(chargeMenuItem.getText());
+            }
+            
             chargeMenu.remove(chargeMenuItem);
         }
-
+        
         chargeMenus.clear();
 
         if (precursorCharge == 1) {
             precursorCharge = 2;
         }
+        
+        final ArrayList<String> finalSelectedCharges = selectedCharges;
 
         for (int charge = 1; charge < precursorCharge; charge++) {
 
             JCheckBoxMenuItem chargeMenuItem = new JCheckBoxMenuItem(charge + "+");
-            chargeMenuItem.setSelected(annotationPreferences.getValidatedCharges().contains(charge));
+
+            if (annotationPreferences.useAutomaticAnnotation()) {
+                chargeMenuItem.setSelected(annotationPreferences.getValidatedCharges().contains(charge));
+            } else {
+                if (finalSelectedCharges.contains(charge + "+")) {
+                    chargeMenuItem.setSelected(true);
+                } else {
+                    chargeMenuItem.setSelected(false);
+                }
+            }
+
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -4252,15 +4290,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
 
-        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
-        annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
-
         annotationPreferences.clearCharges();
+
         for (int charge : chargeMenus.keySet()) {
             if (chargeMenus.get(charge).isSelected()) {
                 annotationPreferences.addSelectedCharge(charge);
             }
         }
+        
+        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
+        annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
 
         annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
         annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
@@ -5116,17 +5155,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Saves the modifications made to the project.
-     * 
+     *
      * @param closeWhenDone if true, PeptideShaker closes after saving
      */
     private void saveProject(boolean aCloseWhenDone) {
-        
+
         final boolean closeWhenDone = aCloseWhenDone;
 
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Saving. Please Wait...");
-        
+
         final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
         new Thread(new Runnable() {
@@ -5160,7 +5199,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                   
+
                     if (!cancelProgress) {
                         userPreferences.addRecentProject(currentPSFile);
                         updateRecentProjectsList();
@@ -5178,7 +5217,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     e.printStackTrace();
                     catchException(e);
                 }
-                
+
                 cancelProgress = false;
             }
         }.start();
@@ -5352,7 +5391,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         String folderPath = currentPSFile.getParentFile().getAbsolutePath();
         return new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
     }
-    
+
     /**
      * Save the project to the currentPSFile location.
      */
@@ -5366,12 +5405,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Save the project to the currentPSFile location.
-     * 
+     *
      * @param newFile the file to save the project to
      * @param closeWhenDone if true, PeptideShaker closes after saving
      */
     private void saveProjectAs(File newFile, boolean aCloseWhenDone) {
-        
+
         final boolean closeWhenDone = aCloseWhenDone;
 
         currentPSFile = newFile;
@@ -5402,7 +5441,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    
+
                     // set the experiment parameters
                     experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics));
 
@@ -5425,7 +5464,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             toDelete.delete();
                             progressDialog.setValue(++cpt);
                         }
-                        
+
                         progressDialog.setIndeterminate(true);
                     }
 
@@ -5445,7 +5484,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     if (!cancelProgress) {
                         userPreferences.addRecentProject(currentPSFile);
                         updateRecentProjectsList();
-                        
+
                         if (closeWhenDone) {
                             closePeptideShaker();
                         } else {

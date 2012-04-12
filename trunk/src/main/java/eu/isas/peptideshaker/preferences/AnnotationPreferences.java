@@ -100,8 +100,10 @@ public class AnnotationPreferences implements Serializable {
 
         if (newSpectrum && automaticAnnotation) {
             resetAutomaticAnnotation();
-        } else if (neutralLossesSequenceDependant) {
-            neutralLossesMap = SpectrumAnnotator.getDefaultLosses(currentPeptide);
+        } else {
+            if (neutralLossesSequenceDependant) {
+                neutralLossesMap = SpectrumAnnotator.getDefaultLosses(currentPeptide);
+            }
         }
     }
 
@@ -129,10 +131,17 @@ public class AnnotationPreferences implements Serializable {
         return neutralLossesSequenceDependant;
     }
 
+    /**
+     * Set whether neutral losses are considered only for amino acids of
+     * interest or not.
+     *
+     * 
+     * @param neutralLossesSequenceDependant 
+     */
     public void setNeutralLossesSequenceDependant(boolean neutralLossesSequenceDependant) {
         this.neutralLossesSequenceDependant = neutralLossesSequenceDependant;
     }
-
+    
     /**
      * Returns the fragment ion charges considered for the desired precursor
      * charge.
@@ -200,7 +209,11 @@ public class AnnotationPreferences implements Serializable {
      * @return the type of peptide fragment ions annotated
      */
     public ArrayList<Integer> getFragmentIonTypes() {
-        return selectedIons.get(IonType.PEPTIDE_FRAGMENT_ION);
+        if (selectedIons.get(IonType.PEPTIDE_FRAGMENT_ION) == null) {
+            return new ArrayList<Integer>();
+        } else {
+            return selectedIons.get(IonType.PEPTIDE_FRAGMENT_ION);
+        } 
     }
 
     /**

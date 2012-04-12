@@ -124,10 +124,8 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-
-            if (found) {
-                neutralLossesMap.put(possibleNeutralLoss, true);
-            }
+            
+            neutralLossesMap.put(possibleNeutralLoss, found);
         }
     }
 
