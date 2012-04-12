@@ -14,12 +14,15 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -1452,9 +1455,10 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
                     ArrayList<Double> bins = new ArrayList<Double>();
 
-                    // @TODO: here we ought to use the max charge and max precursor error!!
-
                     if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+                        
+                        // @TODO: here we ought to use the max precursor error!!
+                        
                         bins.add(0.0);
                         bins.add(0.25);
                         bins.add(0.5);
@@ -1471,11 +1475,12 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         currentPsmPlotType = PlotType.PSM_Precursor_Mass_Error;
                         
                     } else if (psmPrecursorChargeJRadioButton.isSelected()) {
-                        bins.add(0.0);
-                        bins.add(1.0);
-                        bins.add(2.0);
-                        bins.add(3.0);
-                        bins.add(4.0);
+                        
+                        int maxCharge = ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge();
+                        
+                        for (int i=0;i<=maxCharge;i++) {
+                            bins.add((double) i);
+                        }
                         
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
