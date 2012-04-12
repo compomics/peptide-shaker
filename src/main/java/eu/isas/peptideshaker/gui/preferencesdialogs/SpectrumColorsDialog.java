@@ -53,13 +53,13 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * Set up the GUI.
      */
     private void setUpGui() {
-        
+
         annotatedPeakColorPanel.setBackground(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor());
         backgroundPeakColorPanel.setBackground(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
-        
+
         annotatedPeakWidthSpinner.setValue(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
         backgroungPeakWidthSpinner.setValue(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
-        
+
         colorsTable.getTableHeader().setReorderingAllowed(false);
 
         // make sure that the scroll panes are see-through
@@ -389,7 +389,13 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
                 Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) colorsTable.getValueAt(row, column));
 
                 if (newColor != null) {
-                    SpectrumPanel.setIonColor(((IonLabelColorTableModel) colorsTable.getModel()).getIonAtRow(row), newColor);
+
+                    int[] selectedRows = colorsTable.getSelectedRows();
+
+                    for (int i = 0; i < selectedRows.length; i++) {
+                        SpectrumPanel.setIonColor(((IonLabelColorTableModel) colorsTable.getModel()).getIonAtRow(selectedRows[i]), newColor);
+                    }
+
                     ((IonLabelColorTableModel) colorsTable.getModel()).fireTableDataChanged();
                     peptideShakerGUI.updateSpectrumAnnotations();
                 }
@@ -468,8 +474,8 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
 
     /**
      * Update the annotated peak width.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void annotatedPeakWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_annotatedPeakWidthSpinnerStateChanged
         peptideShakerGUI.getUserPreferences().setSpectrumAnnotatedPeakWidth((Float) annotatedPeakWidthSpinner.getValue());
@@ -478,8 +484,8 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
 
     /**
      * Update the background peak width.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void backgroungPeakWidthSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_backgroungPeakWidthSpinnerStateChanged
         peptideShakerGUI.getUserPreferences().setSpectrumBackgroundPeakWidth((Float) backgroungPeakWidthSpinner.getValue());
@@ -514,7 +520,6 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumColorsDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel annotatedPeakColorPanel;
     private javax.swing.JSpinner annotatedPeakWidthSpinner;
