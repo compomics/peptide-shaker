@@ -20,7 +20,7 @@
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
-            <url>LICENSE-2.0.txt</url>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
 
@@ -109,7 +109,8 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}-${project.version}/lib
+                            <outputDirectory>
+                                ${project.build.directory}/${project.name}-${project.version}/lib
                             </outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
@@ -168,30 +169,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Resources plugin - classes 
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/${project.name}-${project.version}
-                            </outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources/</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
 
             <!-- Create javadoc on build -->
             <plugin>
@@ -282,7 +259,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
-            <scope>build</scope>
+            <scope>test</scope>
         </dependency>
 
         <!-- This project depends on the JAR file "xpp-1.1.3.4.jar" (XmlPullParser)
@@ -391,7 +368,7 @@
             <version>2.0</version>
         </dependency>
         
-        <!-- JDAS dependency -->    
+        <!-- JDAS dependency -->    <!-- not used!! -->
         <dependency>        
             <groupId>uk.ac.ebi.das</groupId>        
             <artifactId>jdas</artifactId>        
