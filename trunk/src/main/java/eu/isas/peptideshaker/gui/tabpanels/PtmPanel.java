@@ -3955,12 +3955,14 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         ArrayList<String> psmKey = new ArrayList<String>();
         PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(relatedPeptide));
         if (relatedPeptide) {
-            for (int row : relatedPsmsTable.getSelectedRows()) {
-                psmKey.add(peptideMatch.getSpectrumMatches().get(row));
+            int[] selectedRows = relatedPsmsTable.getSelectedRows();
+            for (int row : selectedRows) {
+                psmKey.add(peptideMatch.getSpectrumMatches().get(selectedRows[row]));
             }
         } else {
-            for (int row : selectedPsmsTable.getSelectedRows()) {
-                psmKey.add(peptideMatch.getSpectrumMatches().get(row));
+            int[] selectedRows = selectedPsmsTable.getSelectedRows();
+            for (int row : selectedRows) {
+                psmKey.add(peptideMatch.getSpectrumMatches().get(selectedRows[row]));
             }
         }
         return psmKey;

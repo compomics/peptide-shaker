@@ -1032,7 +1032,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
             int[] selectedRows = referencesJTable.getSelectedRows();
 
-            for (int i = referencesJTable.getSelectedRows().length - 1; i >= 0; i--) {
+            for (int i = selectedRows.length - 1; i >= 0; i--) {
                 ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRows[i]);
             }
 
