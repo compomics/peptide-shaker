@@ -394,17 +394,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // set up the ErrorLog
         setUpLogFile();
-        
+
         // add desktop shortcut?
-        if (!getJarFilePath().equalsIgnoreCase(".") 
+        if (!getJarFilePath().equalsIgnoreCase(".")
                 && System.getProperty("os.name").lastIndexOf("Windows") != -1
                 && new File(getJarFilePath() + "/conf/firstRun").exists()) {
-            
+
             // @TODO: add support for desktop icons in mac and linux??
-            
+
             // delete the firstRun file such that the user is not asked the next time around
             new File(getJarFilePath() + "/conf/firstRun").delete();
-            
+
             int value = JOptionPane.showConfirmDialog(this,
                     "Create a shortcut to PeptideShaker on the desktop?",
                     "Create Desktop Shortcut?",
@@ -1572,7 +1572,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 JOptionPane.showMessageDialog(this, "Bubble scale has to be a number.", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-
     }//GEN-LAST:event_bubbleScaleJMenuItemActionPerformed
 
     /**
