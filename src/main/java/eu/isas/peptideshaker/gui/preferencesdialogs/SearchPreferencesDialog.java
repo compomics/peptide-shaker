@@ -844,8 +844,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         ArrayList<String> toRemove = new ArrayList<String>();
 
-        for (int selectedRow : expectedModificationsTable.getSelectedRows()) {
-            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 2));
+        int[] selectedRows = expectedModificationsTable.getSelectedRows();
+        for (int selectedRow : selectedRows) {
+            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRows[selectedRow], 2));
         }
 
         for (String name : toRemove) {
@@ -1246,19 +1247,21 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
-            
+
             boolean rowAlreadySelected = false;
+
+            int[] selectedRows = expectedModificationsTable.getSelectedRows();
             
-            for (int i=0; i<expectedModificationsTable.getSelectedRows().length && !rowAlreadySelected; i++) {
-                if (expectedModificationsTable.getSelectedRows()[i] == expectedModificationsTable.rowAtPoint(evt.getPoint())) {
+            for (int i = 0; i < selectedRows.length && !rowAlreadySelected; i++) {
+                if (selectedRows[i] == expectedModificationsTable.rowAtPoint(evt.getPoint())) {
                     rowAlreadySelected = true;
                 }
             }
-            
+
             if (!rowAlreadySelected) {
                 expectedModificationsTable.setRowSelectionInterval(expectedModificationsTable.rowAtPoint(evt.getPoint()), expectedModificationsTable.rowAtPoint(evt.getPoint()));
             }
-            
+
             expectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_expectedModificationsTableMouseClicked
@@ -1285,19 +1288,21 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void availableModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_availableModificationsTableMouseClicked
         if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && availableModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
-            
+
             boolean rowAlreadySelected = false;
+
+            int[] selectedRows = availableModificationsTable.getSelectedRows();
             
-            for (int i=0; i<availableModificationsTable.getSelectedRows().length && !rowAlreadySelected; i++) {
-                if (availableModificationsTable.getSelectedRows()[i] == availableModificationsTable.rowAtPoint(evt.getPoint())) {
+            for (int i = 0; i < selectedRows.length && !rowAlreadySelected; i++) {
+                if (selectedRows[i] == availableModificationsTable.rowAtPoint(evt.getPoint())) {
                     rowAlreadySelected = true;
                 }
             }
-            
+
             if (!rowAlreadySelected) {
                 availableModificationsTable.setRowSelectionInterval(availableModificationsTable.rowAtPoint(evt.getPoint()), availableModificationsTable.rowAtPoint(evt.getPoint()));
             }
-            
+
             availablePtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_availableModificationsTableMouseClicked
@@ -1333,7 +1338,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void fragmentIonAccuracyTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fragmentIonAccuracyTxtActionPerformed
         // TODO: note that a tolerance in ppm is possible for our spectrum annotation
     }//GEN-LAST:event_fragmentIonAccuracyTxtActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
@@ -1808,8 +1812,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     return searchParameters.getModificationProfile().getShortName(
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 5:
-                    return ptmFactory.isUserDefined(modificationList.get(row)) &&
-                            ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
+                    return ptmFactory.isUserDefined(modificationList.get(row))
+                            && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 6:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
 
@@ -1893,14 +1897,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     public PtmToPrideMap getPtmToPrideMap() {
         return ptmToPrideMap;
     }
-    
+
     /**
      * Update the modifications.
      */
     public void updateModifications() {
         // @TODO: should something be done here..? this method is called when the user click the OK button in the PTM Dialog
     }
-    
+
     @Override
     public void cancelProgress() {
         cancelProgress = true;
