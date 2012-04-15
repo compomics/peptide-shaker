@@ -1785,7 +1785,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             peptideShakerGUI.resetSelectedItems();
             proteinTableMouseReleased(null);
         }
-}//GEN-LAST:event_proteinTableKeyReleased
+    }//GEN-LAST:event_proteinTableKeyReleased
 
     /**
      * Updates tha tables according to the currently selected peptide.
@@ -1817,7 +1817,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 newItemSelection();
             }
         }
-}//GEN-LAST:event_peptideTableKeyReleased
+    }//GEN-LAST:event_peptideTableKeyReleased
 
     /**
      * Updates the tables according to the currently selected PSM.
@@ -1835,7 +1835,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 newItemSelection();
             }
         }
-}//GEN-LAST:event_psmTableKeyReleased
+    }//GEN-LAST:event_psmTableKeyReleased
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an html

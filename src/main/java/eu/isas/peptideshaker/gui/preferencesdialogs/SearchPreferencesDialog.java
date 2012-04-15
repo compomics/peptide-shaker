@@ -330,11 +330,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         fragmentIonAccuracyTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fragmentIonAccuracyTxt.setToolTipText("Fragment ion tolerance");
-        fragmentIonAccuracyTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fragmentIonAccuracyTxtActionPerformed(evt);
-            }
-        });
 
         enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         enzymesCmb.setToolTipText("Enzyme used");
@@ -1318,7 +1313,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }//GEN-LAST:event_editAvailablePtmJMenuItemActionPerformed
 
     /**
-     * Remove selected ptms from the list of expected ptms
+     * Remove selected ptms from the list of expected ptms.
      *
      * @param evt
      */
@@ -1335,9 +1330,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         addModificationsActionPerformed(null);
     }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
 
-    private void fragmentIonAccuracyTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fragmentIonAccuracyTxtActionPerformed
-        // TODO: note that a tolerance in ppm is possible for our spectrum annotation
-    }//GEN-LAST:event_fragmentIonAccuracyTxtActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
