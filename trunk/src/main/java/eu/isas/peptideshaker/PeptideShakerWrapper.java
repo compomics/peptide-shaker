@@ -34,11 +34,11 @@ public class PeptideShakerWrapper {
      */
     private boolean firstTry = true;
     /**
-     * user preferences file
+     * User preferences file.
      */
     private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
     /**
-     * the user preferences
+     * The user preferences.
      */
     private UserPreferences userPreferences;
 
@@ -55,6 +55,7 @@ public class PeptideShakerWrapper {
 
         try {
             loadUserPreferences();
+            
             if (debug) {
                 String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
                 path = path.substring(5, path.indexOf(jarFileName));
@@ -65,7 +66,9 @@ public class PeptideShakerWrapper {
                 bw = new BufferedWriter(new FileWriter(debugOutput));
                 bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
             }
+            
             launch();
+            
             if (debug) {
                 bw.flush();
                 bw.close();
@@ -359,7 +362,7 @@ public class PeptideShakerWrapper {
     }
 
     /**
-     * Saves the new memory settings
+     * Saves the new memory settings.
      */
     private void saveNewSettings() {
         saveUserPreferences();
@@ -388,7 +391,7 @@ public class PeptideShakerWrapper {
     }
 
     /**
-     * Creates a new javaOptions text file with the new settings
+     * Creates a new javaOptions text file with the new settings.
      */
     private void saveJavaOptions() {
 

@@ -160,6 +160,7 @@
                                         <include>matches/</include>
                                         <include>peptide-shaker.ico</include>
                                         <include>LICENSE-2.0.txt</include>
+                                        <include>README.txt</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -275,7 +276,8 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <!-- This project depends on the junit JAR file. -->
+        
+        <!-- The junit JAR file -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -413,6 +415,14 @@
             <groupId>org.xeustechnologies</groupId>
             <artifactId>jtar</artifactId>
             <version>1.0.4</version>
+        </dependency>
+        
+        <!-- use for adding desktop shortcuts -->
+        <dependency>
+            <groupId>net.jimmc</groupId>
+            <artifactId>jshortcut</artifactId>
+            <version>0.4-oberzalek</version>
+            <type>jar</type>
         </dependency>
         
     </dependencies>

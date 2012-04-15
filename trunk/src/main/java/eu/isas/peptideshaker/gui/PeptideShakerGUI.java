@@ -78,6 +78,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import net.jimmc.jshortcut.JShellLink;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -393,6 +394,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // set up the ErrorLog
         setUpLogFile();
+        
+        // add desktop shortcut?
+        if (!getJarFilePath().equalsIgnoreCase(".") 
+                && System.getProperty("os.name").lastIndexOf("Windows") != -1
+                && new File(getJarFilePath() + "/conf/firstRun").exists()) {
+            
+            // @TODO: add support for desktop icons in mac and linux??
+            
+            // delete the firstRun file such that the user is not asked the next time around
+            new File(getJarFilePath() + "/conf/firstRun").delete();
+            
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Create a shortcut to PeptideShaker on the desktop?",
+                    "Create Desktop Shortcut?",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (value == JOptionPane.YES_OPTION) {
+                addShortcutAtDeskTop();
+            }
+        }
 
         loadUserPreferences();
 
@@ -5650,5 +5672,34 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void updateSurroundingAminoAcids() {
         overviewPanel.updateSurroundingAminoAcids();
+    }
+
+    /**
+     * Ask the user if he/she wants to add a shortcut at the desktop.
+     */
+    private void addShortcutAtDeskTop() {
+
+        String jarFilePath = getJarFilePath();
+
+        if (!jarFilePath.equalsIgnoreCase(".")) {
+
+            // remove the initial '/' at the start of the line
+            jarFilePath = jarFilePath.substring(1);
+
+            String iconFileLocation = jarFilePath + "/peptide-shaker.ico";
+            String jarFileLocation = jarFilePath + "/PeptideShaker-" + getVersion() + ".jar";
+
+            try {
+                JShellLink link = new JShellLink();
+                link.setFolder(JShellLink.getDirectory("desktop"));
+                link.setName("Peptide Shaker " + getVersion());
+                link.setIconLocation(iconFileLocation);
+                link.setPath(jarFileLocation);
+                link.save();
+            } catch (Exception e) {
+                System.out.println("An error occurred when trying to create a desktop shortcut...");
+                e.printStackTrace();
+            }
+        }
     }
 }
