@@ -1971,61 +1971,61 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      *
      * @param evt
      */
-private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
-    spectrumJPanelMouseWheelMoved(evt);
-}//GEN-LAST:event_intensitySliderMouseWheelMoved
+    private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
+        spectrumJPanelMouseWheelMoved(evt);
+    }//GEN-LAST:event_intensitySliderMouseWheelMoved
 
     /**
      * Updates the intensity annotation limit.
      *
      * @param evt
      */
-private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-    peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
-    peptideShakerGUI.updateSpectrumAnnotations();
-    peptideShakerGUI.setDataSaved(false);
-    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
-    updateSpectrumSliderToolTip();
-}//GEN-LAST:event_intensitySliderStateChanged
+    private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
+        peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
+        peptideShakerGUI.updateSpectrumAnnotations();
+        peptideShakerGUI.setDataSaved(false);
+        intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+        updateSpectrumSliderToolTip();
+    }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
      * Updates the slider values when the user scrolls.
      *
      * @param evt
      */
-private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJPanelMouseWheelMoved
+    private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJPanelMouseWheelMoved
 
-    // @TODO: figure out why the strange special cases are needed... 
-    //          if not included the slider gets stuck at given values depending on the current max value
+        // @TODO: figure out why the strange special cases are needed... 
+        //          if not included the slider gets stuck at given values depending on the current max value
 
-    if (evt.isControlDown()) {
-        if (evt.getWheelRotation() > 0) { // Down
-            accuracySlider.setValue(accuracySlider.getValue() - 1);
-        } else { // Up
-            int oldValue = accuracySlider.getValue();
-            int newValue = accuracySlider.getValue() + 1;
-            accuracySlider.setValue(newValue);
+        if (evt.isControlDown()) {
+            if (evt.getWheelRotation() > 0) { // Down
+                accuracySlider.setValue(accuracySlider.getValue() - 1);
+            } else { // Up
+                int oldValue = accuracySlider.getValue();
+                int newValue = accuracySlider.getValue() + 1;
+                accuracySlider.setValue(newValue);
 
-            while (oldValue == accuracySlider.getValue()) {
-                accuracySlider.setValue(newValue++);
+                while (oldValue == accuracySlider.getValue()) {
+                    accuracySlider.setValue(newValue++);
+                }
+            }
+        } else {
+            if (evt.getWheelRotation() > 0) { // Down
+                intensitySlider.setValue(intensitySlider.getValue() - 1);
+            } else { // Up
+                int oldValue = intensitySlider.getValue();
+                int newValue = intensitySlider.getValue() + 1;
+                intensitySlider.setValue(newValue);
+
+                while (oldValue == intensitySlider.getValue()) {
+                    intensitySlider.setValue(newValue++);
+                }
             }
         }
-    } else {
-        if (evt.getWheelRotation() > 0) { // Down
-            intensitySlider.setValue(intensitySlider.getValue() - 1);
-        } else { // Up
-            int oldValue = intensitySlider.getValue();
-            int newValue = intensitySlider.getValue() + 1;
-            intensitySlider.setValue(newValue);
 
-            while (oldValue == intensitySlider.getValue()) {
-                intensitySlider.setValue(newValue++);
-            }
-        }
-    }
-
-    updateSpectrumSliderToolTip();
-}//GEN-LAST:event_spectrumJPanelMouseWheelMoved
+        updateSpectrumSliderToolTip();
+    }//GEN-LAST:event_spectrumJPanelMouseWheelMoved
 
     /**
      * Updates the slider value when the user scrolls.
@@ -2050,10 +2050,20 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         updateSpectrumSliderToolTip();
     }//GEN-LAST:event_accuracySliderStateChanged
 
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
     private void psmsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmsHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonMouseEntered
 
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
     private void psmsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmsHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonMouseExited
@@ -3416,7 +3426,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 writer.close();
 
                                 progressDialog.dispose();
-                                
+
                                 if (!cancelProgress) {
                                     JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to file:\n" + selectedFile.getPath(), "Copied to File", JOptionPane.INFORMATION_MESSAGE);
                                 }
@@ -3426,7 +3436,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
-                            
+
                             cancelProgress = false;
                         }
                     }.start();
