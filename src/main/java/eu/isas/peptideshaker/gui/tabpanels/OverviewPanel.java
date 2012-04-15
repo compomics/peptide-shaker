@@ -3385,7 +3385,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Sets the whether the protein coverage and the spectrum shall be displayed
+     * Sets the whether the protein coverage and the spectrum shall be
+     * displayed.
      *
      * @param displayProteins boolean indicating whether the proteins shall be
      * displayed
@@ -3410,6 +3411,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public void updateBubblePlot() {
 
         if (peptideTable.getSelectedRow() != -1 && displaySpectrum) {
+
             try {
                 ArrayList<String> selectedIndexes = new ArrayList<String>();
 
@@ -3419,12 +3421,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int[] selectedRows = psmTable.getSelectedRows();
 
                 for (int row = 0; row < selectedRows.length; row++) {
-                    int psmIndex = psmTable.convertRowIndexToModel(row);
+                    int psmIndex = psmTable.convertRowIndexToModel(selectedRows[row]);
                     String spectrumKey = psmKeys.get(psmIndex);
                     selectedPsmKeys.add(spectrumKey);
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    selectedIndexes.add(psmIndex + " "
-                            + spectrumMatch.getBestAssumption().getIdentificationCharge().toString());
+                    selectedIndexes.add(psmIndex + " " + spectrumMatch.getBestAssumption().getIdentificationCharge().toString());
                 }
 
                 ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
@@ -3441,6 +3442,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (selectedPsmKeys.contains(spectrumKey)) {
 
                         MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+
                         if (currentSpectrum != null) {
                             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                             annotationPreferences.setCurrentSettings(
@@ -4238,14 +4240,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         SpectrumAnnotator miniAnnotator = new SpectrumAnnotator();
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+
         try {
             for (int row = 0; row < selectedRows.length; row++) {
 
-                int psmIndex = psmTable.convertRowIndexToModel(row);
+                int psmIndex = psmTable.convertRowIndexToModel(selectedRows[row]);
                 String spectrumKey = psmKeys.get(psmIndex);
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+
                 if (currentSpectrum != null) {
+
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+
                     // get the spectrum annotations
                     int peptideIndex = peptideTable.convertRowIndexToModel(peptideTable.getSelectedRow());
                     String peptideKey = peptideKeys.get(peptideIndex);
@@ -4284,7 +4290,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         MSnSpectrum tempSpectrum;
 
         for (int row = 0; row < selectedRows.length; row++) {
-            int psmIndex = psmTable.convertRowIndexToModel(row);
+            int psmIndex = psmTable.convertRowIndexToModel(selectedRows[row]);
             String spectrumKey = psmKeys.get(psmIndex);
             tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
             if (tempSpectrum != null) {
@@ -4375,7 +4381,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             String spectraAsMgf = "";
 
             for (int row = 0; row < selectedRows.length; row++) {
-                int psmIndex = psmTable.convertRowIndexToModel(row);
+                int psmIndex = psmTable.convertRowIndexToModel(selectedRows[row]);
                 String spectrumKey = psmKeys.get(psmIndex);
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                 spectraAsMgf += currentSpectrum.asMgf();
@@ -4445,7 +4451,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
         setTableProperties();
-        
+
         if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.OVER_VIEW_TAB_INDEX) {
             this.updateSelection();
         }
@@ -4455,7 +4461,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         } else {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
         }
-        
+
         updateProteinTableCellRenderers();
     }
 

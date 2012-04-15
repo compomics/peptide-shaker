@@ -3144,7 +3144,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
-
                             }
 
                             // xtandem annotation (if any)
