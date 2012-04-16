@@ -3,6 +3,51 @@
 
 ----
 
+*Changes in PeptideShaker 0.16.0 (April 16. 2012):*
+ * NEW FEATURE: On Windows (on supported architectures) the user is now asked if a desktop shortcut should be added the first time he/she starts the tool.
+ * NEW FEATURE: Added Request Validated to the Export Features dialog for the Search Engine export.
+ * NEW FEATURE: The users can now change the spectrum annotation colors, plus the color and width of the peaks.
+ * NEW FEATURE: Neutral losses and reporter ions are now ptm dependent and their selection is automated.
+ * NEW FEATURE: Made it possible to add/edit PSI-MOD terms, neutral losses and reporter ions for the PTMs.
+ * NEW FEATURE: Added a new tag to the search engine agreement columns. Orange is now used to indicate that one of the search engines failed to identify a spectrum that was identified by the other search engines used.
+ * NEW FEATURE: Added a README file. 
+
+ * FEATURE IMPROVEMENT: Tried to make the progress bar stay visible in the Overview tab until the data is finish loading.
+ * FEATURE IMPROVEMENT: Redesigned the Export Features dialog.
+ * FEATURE IMPROVEMENT: Improved the GUI for the SearchPreferencesDialog.
+ * FEATURE IMPROVEMENT: Extended the protein outputGenerator to be able to export just the list of the main accession numbers. As needed for the Annotation tab.
+ * FEATURE IMPROVEMENT: Refurbished the AnnotationPreferencesDialog.
+ * FEATURE IMPROVEMENT: Updated the default human GO mappings to Ensembl version 66.
+ * FEATURE IMPROVEMENT: Page up and page down will now result in selection updates in the tables (before only up and down was used).
+ * FEATURE IMPROVEMENT: The sorting order in the tables are now kept when updating the table models.
+ * FEATURE IMPROVEMENT: Replaced all the check boxes in tables with our own home made check mark.
+ * FEATURE IMPROVEMENT: All progress dialogs can now be closed/canceled.
+ * FEATURE IMPROVEMENT: Added progress dialogs to the Validation tab where missing.
+ * FEATURE IMPROVEMENT: In the GO tab the number of GO mapped proteins for Ensembl and for the project is now shown.
+ * FEATURE IMPROVEMENT: Updated the PeptideShaker icon.
+ * FEATURE IMPROVEMENT: The precursor charge QC plot now uses the max charge detected in the project as the max value.
+ * FEATURE IMPROVEMENT: Improved the GUI of the ImportSettingsDialog.
+
+ * BUG FIX: Tried to fix the threading issues in the PtmPanel.
+ * BUG FIX: Fixed a bug in the clearData method that resulted in issues when opening a second project.
+ * BUG FIX: Fixed a threading issue that could result in a null pointer exception when closing the tool.
+ * BUG FIX: Fixed a threading issue that could result in a null pointer exception when closing the tool.
+ * BUG FIX: Fixed a bug in the peptide export in the Export Features dialog where the order of the boolean variables had gotten mixed up.
+ * BUG FIX: Fixed a serious bug in the GO tab: the max value used for the dataset was incorrect (and could result in an exception).
+ * BUG FIX: Fixed a bug in the GO tab where the sorting of the table resulted in the wrong p-values being shown.
+ * BUG FIX: Fixed a bug where the saving and closing of a project started at the same time.
+ * BUG FIX: Fixed some bugs in the Modification tab related to selecting multiple PSMs.
+ * BUG FIX: Corrected a bug in the new dialog which made it impossible to load data when not from SearchGUI.
+ * BUG FIX: Corrected bugs concerning modifications and spectrum counting maximum.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.4.8.
+ * LIBRARY UPDATE: Updated uniprotjapi to version 2012.03.
+ * LIBRARY UPDATE: Added jshortcut as a dependency.
+ * LIBRARY UPDATE: Removed swingx as a dependency.
+
+
+----
+
 *Changes in PeptideShaker 0.15 (March 22. 2012):*
  * NEW FEATURE: PRIDE Export is now supported.
  * NEW FEATURE: Allowed the user to change the number of displayed aa before and after the sequence improved the sequence coverage panel for multiply detected peptides.
@@ -24,6 +69,8 @@
  * LIBRARY UPDATE: Updated utilities to version 3.3.51.
  * LIBRARY UPDATE: Updated uniprotjapi to version 2012.02.
 
+Download Count: 27
+
 ----
 
 *Changes in PeptideShaker 0.14.7 (February 28. 2012):*
@@ -36,7 +83,7 @@
  * FEATURE IMPROVEMENT: Find feature: made it possible to jump to spectra in the Spectrum ID tab.
  * LIBRARY UPDATE: Updated utilities to version 3.3.42, fixing an issue with unknown protein expect values in X!Tandem files.
 
-Download Count: 59
+Download Count: 79
 
 ----
 
