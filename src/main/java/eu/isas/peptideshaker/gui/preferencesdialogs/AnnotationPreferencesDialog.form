@@ -423,7 +423,7 @@
                       </Group>
                       <EmptySpace pref="31" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="adaptBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="adaptNeutralLossesBox" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="automaticAnnotationCheck" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
@@ -438,7 +438,7 @@
                           <Component id="jLabel4" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="intensitySpinner" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="adaptBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="adaptNeutralLossesBox" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
@@ -491,12 +491,16 @@
                 <Property name="toolTipText" type="java.lang.String" value="Fragment ion annotation accuracy."/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="adaptBox">
+            <Component class="javax.swing.JCheckBox" name="adaptNeutralLossesBox">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Adapt Neutral Losses"/>
                 <Property name="iconTextGap" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="adaptNeutralLossesBoxActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="automaticAnnotationCheck">
               <Properties>
