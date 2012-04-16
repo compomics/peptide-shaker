@@ -389,6 +389,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         automaticAnnotationCheck.setText("Automatic Annotation");
         automaticAnnotationCheck.setIconTextGap(10);
         automaticAnnotationCheck.setOpaque(false);
+        automaticAnnotationCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                automaticAnnotationCheckActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout peakMatchingPanelLayout = new javax.swing.GroupLayout(peakMatchingPanel);
         peakMatchingPanel.setLayout(peakMatchingPanelLayout);
@@ -596,6 +601,14 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
 
+    private void automaticAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckActionPerformed
+        if (automaticAnnotationCheck.isSelected()) {
+            setUpData();
+            ((DefaultTableModel) chargesTable.getModel()).fireTableDataChanged();
+            ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
+        }
+    }//GEN-LAST:event_automaticAnnotationCheckActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aBox;
     private javax.swing.JSpinner accuracySpinner;
@@ -745,6 +758,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         @Override
         public void setValueAt(Object aValue, int row, int column) {
             chargesMap.put(charges.get(row), !chargesMap.get(charges.get(row)));
+            automaticAnnotationCheck.setSelected(false);
         }
     }
 
@@ -810,10 +824,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             for (int i = 0; i < getRowCount(); i++) {
                 if (getValueAt(i, columnIndex) != null) {
                     return getValueAt(i, columnIndex).getClass();
-
-
-
-
                 }
             }
             return String.class;
@@ -828,6 +838,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         public void setValueAt(Object aValue, int row, int column) {
             NeutralLoss neutralLoss = namesMap.get(namesList.get(row));
             neutralLossesMap.put(neutralLoss, !neutralLossesMap.get(neutralLoss));
+            automaticAnnotationCheck.setSelected(false);
         }
     }
 }
