@@ -3710,7 +3710,6 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
                     e.printStackTrace();
                 }
 
-                // @TODO: one of these should be removed right??
                 modifiedMaps.put(0, false);
                 for (int key : peptideMap.keySet()) {
                     modifiedMaps.put(key, false);
