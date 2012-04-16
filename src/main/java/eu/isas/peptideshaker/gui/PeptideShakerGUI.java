@@ -4196,7 +4196,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         annotationPreferences.useAutomaticAnnotation(false);
-                        automaticAnnotationCheckBoxMenuItem.setSelected(false);
                         annotationPreferences.setNeutralLossesSequenceDependant(false);
                         updateAnnotationPreferences();
                     }
@@ -4243,7 +4242,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     annotationPreferences.useAutomaticAnnotation(false);
-                    automaticAnnotationCheckBoxMenuItem.setSelected(false);
                     updateAnnotationPreferences();
                 }
             });

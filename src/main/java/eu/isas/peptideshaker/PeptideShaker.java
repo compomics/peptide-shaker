@@ -428,7 +428,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Processes the identifications if a change occured in the peptide map.
+     * Processes the identifications if a change occurred in the peptide map.
      *
      * @param waitingHandler the waiting handler
      * @throws Exception Exception thrown whenever it is attempted to attach
