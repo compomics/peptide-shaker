@@ -11,6 +11,7 @@
  * NEW FEATURE: Made it possible to add/edit PSI-MOD terms, neutral losses and reporter ions for the PTMs.
  * NEW FEATURE: Added a new tag to the search engine agreement columns. Orange is now used to indicate that one of the search engines failed to identify a spectrum that was identified by the other search engines used.
  * NEW FEATURE: Added a README file. 
+ * NEW FEATURE: The proteins for a given GO terms is now listed in a separate table in the GO tab.
 
  * FEATURE IMPROVEMENT: Tried to make the progress bar stay visible in the Overview tab until the data is finish loading.
  * FEATURE IMPROVEMENT: Redesigned the Export Features dialog.
@@ -30,7 +31,6 @@
 
  * BUG FIX: Tried to fix the threading issues in the PtmPanel.
  * BUG FIX: Fixed a bug in the clearData method that resulted in issues when opening a second project.
- * BUG FIX: Fixed a threading issue that could result in a null pointer exception when closing the tool.
  * BUG FIX: Fixed a threading issue that could result in a null pointer exception when closing the tool.
  * BUG FIX: Fixed a bug in the peptide export in the Export Features dialog where the order of the boolean variables had gotten mixed up.
  * BUG FIX: Fixed a serious bug in the GO tab: the max value used for the dataset was incorrect (and could result in an exception).
