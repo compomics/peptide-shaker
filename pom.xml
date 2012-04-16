@@ -310,26 +310,6 @@
             <artifactId>jfreechart</artifactId>
             <version>1.0.13</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swingx</artifactId>
-            <version>0.9.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>swing-worker</artifactId>
-                    <groupId>org.swinglabs</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>multiplegradientpaint</artifactId>
-                    <groupId>org.swinglabs</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>filters</artifactId>
-                    <groupId>com.jhlabs</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>no.uib</groupId>
