@@ -82,7 +82,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         chargesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
         neutralLossesTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
-        
+
         chargesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
                 null,
@@ -97,6 +97,14 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      * Set up the required data.
      */
     private void setUpData() {
+        setUpCharges();
+        setUpNeutralLosses();
+    }
+
+    /**
+     * Set up the charges.
+     */
+    public void setUpCharges() {
         ArrayList<Integer> charges = peptideShakerGUI.getCharges();
 
         int maxCharge = 1;
@@ -110,7 +118,12 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         for (int charge = 1; charge <= maxCharge; charge++) {
             chargesMap.put(charge, selectedCharges.contains(charge));
         }
+    }
 
+    /**
+     * Set up the neutral losses
+     */
+    public void setUpNeutralLosses() {
         ArrayList<NeutralLoss> possibleNeutralLosses = peptideShakerGUI.getNeutralLosses();
         ArrayList<NeutralLoss> selectedNeutralLosses = annotationPreferences.getNeutralLosses().getAccountedNeutralLosses();
 
@@ -124,7 +137,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-            
+
             neutralLossesMap.put(possibleNeutralLoss, found);
         }
     }
@@ -168,7 +181,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         accuracySpinner = new javax.swing.JSpinner();
-        adaptBox = new javax.swing.JCheckBox();
+        adaptNeutralLossesBox = new javax.swing.JCheckBox();
         automaticAnnotationCheck = new javax.swing.JCheckBox();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -381,9 +394,15 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.0010d));
         accuracySpinner.setToolTipText("Fragment ion annotation accuracy.");
 
-        adaptBox.setText("Adapt Neutral Losses");
-        adaptBox.setIconTextGap(10);
-        adaptBox.setOpaque(false);
+        adaptNeutralLossesBox.setSelected(true);
+        adaptNeutralLossesBox.setText("Adapt Neutral Losses");
+        adaptNeutralLossesBox.setIconTextGap(10);
+        adaptNeutralLossesBox.setOpaque(false);
+        adaptNeutralLossesBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                adaptNeutralLossesBoxActionPerformed(evt);
+            }
+        });
 
         automaticAnnotationCheck.setSelected(true);
         automaticAnnotationCheck.setText("Automatic Annotation");
@@ -414,7 +433,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(adaptBox)
+                    .addComponent(adaptNeutralLossesBox)
                     .addComponent(automaticAnnotationCheck))
                 .addGap(31, 31, 31))
         );
@@ -429,7 +448,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(jLabel4)
                     .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
-                    .addComponent(adaptBox))
+                    .addComponent(adaptNeutralLossesBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel2)
@@ -534,12 +553,12 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 annotationPreferences.addIonType(IonType.REPORTER_ION, subtype);
             }
         }
-        
+
         annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
         annotationPreferences.setFragmentIonAccuracy((Double) accuracySpinner.getValue());
 
         annotationPreferences.clearNeutralLosses();
-        
+
         for (NeutralLoss neutralLoss : neutralLossesMap.keySet()) {
             if (neutralLossesMap.get(neutralLoss)) {
                 annotationPreferences.addNeutralLoss(neutralLoss);
@@ -547,10 +566,10 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         }
 
         annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheck.isSelected());
-        annotationPreferences.setNeutralLossesSequenceDependant(adaptBox.isSelected());
+        annotationPreferences.setNeutralLossesSequenceDependant(adaptNeutralLossesBox.isSelected());
 
         annotationPreferences.clearCharges();
-        
+
         for (int charge : chargesMap.keySet()) {
             if (chargesMap.get(charge)) {
                 annotationPreferences.addSelectedCharge(charge);
@@ -601,18 +620,35 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
 
+    /**
+     * Reset the automatic annotation in the tables.
+     *
+     * @param evt
+     */
     private void automaticAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckActionPerformed
         if (automaticAnnotationCheck.isSelected()) {
+            adaptNeutralLossesBox.setSelected(true);
             setUpData();
             ((DefaultTableModel) chargesTable.getModel()).fireTableDataChanged();
             ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
         }
     }//GEN-LAST:event_automaticAnnotationCheckActionPerformed
 
+    /**
+     * Reset the neutral losses to adapt to the sequence if selected.
+     *
+     * @param evt
+     */
+    private void adaptNeutralLossesBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptNeutralLossesBoxActionPerformed
+        if (adaptNeutralLossesBox.isSelected()) {
+            setUpNeutralLosses();
+            ((DefaultTableModel) neutralLossesTable.getModel()).fireTableDataChanged();
+        }
+    }//GEN-LAST:event_adaptNeutralLossesBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aBox;
     private javax.swing.JSpinner accuracySpinner;
-    private javax.swing.JCheckBox adaptBox;
+    private javax.swing.JCheckBox adaptNeutralLossesBox;
     private javax.swing.JButton annotationPreferencesHelpJButton;
     private javax.swing.JCheckBox automaticAnnotationCheck;
     private javax.swing.JCheckBox bBox;
@@ -687,7 +723,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         }
 
         automaticAnnotationCheck.setSelected(annotationPreferences.useAutomaticAnnotation());
-        adaptBox.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        adaptNeutralLossesBox.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
     }
 
     /**
@@ -838,6 +874,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         public void setValueAt(Object aValue, int row, int column) {
             NeutralLoss neutralLoss = namesMap.get(namesList.get(row));
             neutralLossesMap.put(neutralLoss, !neutralLossesMap.get(neutralLoss));
+            adaptNeutralLossesBox.setSelected(false);
             automaticAnnotationCheck.setSelected(false);
         }
     }
