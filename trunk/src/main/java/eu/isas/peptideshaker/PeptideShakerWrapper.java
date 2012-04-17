@@ -10,27 +10,27 @@ import javax.swing.JOptionPane;
  * A wrapper class used to start the jar file with parameters. The parameters
  * are read from the JavaOptions file in the Properties folder.
  *
- * @author  Harald Barsnes
+ * @author Harald Barsnes
  */
 public class PeptideShakerWrapper {
 
     /**
      * If set to true debug output will be written to the screen.
      */
-    private boolean debug = false;
+    private boolean debug = true;
     /**
      * Writes the debug output in a debug.txt file
      */
     private BufferedWriter bw = null;
     /**
-     * The name of the jar file. Must be equal to the name
-     * given in the pom file.
+     * The name of the jar file. Must be equal to the name given in the pom
+     * file.
      */
     private String jarFileName = "PeptideShaker-";
     /**
-     * True if this the first time the wrapper tries to launch the application. 
-     * If the first launch failes, e.g., due to memory settings, it is set 
-     * to false.
+     * True if this the first time the wrapper tries to launch the application.
+     * If the first launch failes, e.g., due to memory settings, it is set to
+     * false.
      */
     private boolean firstTry = true;
     /**
@@ -43,8 +43,8 @@ public class PeptideShakerWrapper {
     private UserPreferences userPreferences;
 
     /**
-     * Starts the launcher by calling the launch method. Use this as the
-     * main class in the jar file.
+     * Starts the launcher by calling the launch method. Use this as the main
+     * class in the jar file.
      */
     public PeptideShakerWrapper() {
 
@@ -55,7 +55,7 @@ public class PeptideShakerWrapper {
 
         try {
             loadUserPreferences();
-            
+
             if (debug) {
                 String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
                 path = path.substring(5, path.indexOf(jarFileName));
@@ -66,9 +66,9 @@ public class PeptideShakerWrapper {
                 bw = new BufferedWriter(new FileWriter(debugOutput));
                 bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
             }
-            
+
             launch();
-            
+
             if (debug) {
                 bw.flush();
                 bw.close();
@@ -229,8 +229,21 @@ public class PeptideShakerWrapper {
             bw.write("new java.home: " + javaHome + "\n");
         }
 
+        // get the splash 
+        String splashPath = path + "conf/peptide-shaker-splash.png ";
+        
+        // set the correct slashes for the splash path
+        if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
+            splashPath = splashPath.replace("/", "\\");
+            
+            // remove the initial '\' at the start of the line 
+            if (splashPath.startsWith("\\") && !splashPath.startsWith("\\\\")) {
+                splashPath = splashPath.substring(1);
+            }
+        }
+        
         // create the complete command line
-        cmdLine = javaHome + "java " + options + " -cp "
+        cmdLine = javaHome + "java -splash:" + splashPath + options + " -cp "
                 + quote + new File(path, jarFileName).getAbsolutePath() + quote
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
@@ -238,6 +251,8 @@ public class PeptideShakerWrapper {
             System.out.println(cmdLine);
             bw.write("Command line: " + cmdLine + "\n\n");
         }
+        
+        //JOptionPane.showMessageDialog(null, "cmdLine: " + cmdLine, "cmdLine", JOptionPane.INFORMATION_MESSAGE); // @TODO: remove when finished testing
 
         // try to run the command line
         try {
@@ -435,8 +450,8 @@ public class PeptideShakerWrapper {
     }
 
     /**
-     * Starts the launcher by calling the launch method. Use this as the
-     * main class in the jar file.
+     * Starts the launcher by calling the launch method. Use this as the main
+     * class in the jar file.
      *
      * @param args
      */

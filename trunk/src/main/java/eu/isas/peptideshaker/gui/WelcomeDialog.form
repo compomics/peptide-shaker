@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
@@ -29,7 +29,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="backgroundPanel" alignment="0" max="32767" attributes="0"/>
+          <Component id="backgroundPanel" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -47,62 +47,66 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="newJButton" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="openJButton" linkSize="1" alignment="0" min="-2" max="-2" attributes="1"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="openProjectLabel" min="-2" max="-2" attributes="1"/>
-                              <Component id="createLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="jSeparator1" pref="654" max="32767" attributes="1"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="newJButton" max="32767" attributes="0"/>
+                              <Component id="openJButton" pref="238" max="32767" attributes="1"/>
+                          </Group>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jSeparator1" alignment="0" pref="525" max="32767" attributes="1"/>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="recentProjectsLabel" min="-2" max="-2" attributes="1"/>
+                              </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                                  <Component id="compomicsButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="probeButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                                  <Component id="isasButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="openProjectLabel" min="-2" max="-2" attributes="1"/>
+                                      <Component id="createLabel" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="430" max="32767" attributes="0"/>
-                          <Component id="recentProjectsLabel" min="-2" max="-2" attributes="1"/>
-                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                  <Component id="compomicsButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
+                  <Component id="probeButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="isasButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="38" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="newJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="newJButton" linkSize="3" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                       <Component id="createLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="openJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="openJButton" linkSize="3" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                       <Component id="openProjectLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="recentProjectsLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="isasButton" alignment="2" min="-2" max="-2" attributes="1"/>
-                      <Component id="probeButton" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="compomicsButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="probeButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="isasButton" alignment="2" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -114,26 +118,36 @@
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font component="createLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                <Font bold="true" component="createLabel" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Create a new PeptideShaker project"/>
+            <Property name="text" type="java.lang.String" value="&gt;  Create a new PeptideShaker project."/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="openProjectLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font component="openProjectLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                <Font bold="true" component="openProjectLabel" property="font" relativeSize="true" size="1"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Open an existing PeptideShaker project"/>
+            <Property name="text" type="java.lang.String" value="&gt;  Open an existing PeptideShaker project."/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="openJButton">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+              <FontInfo relative="true">
+                <Font bold="true" component="openJButton" property="font" relativeSize="true" size="3"/>
+              </FontInfo>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/peptide-shaker-midium-blue.shadow.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Open Project"/>
             <Property name="focusPainted" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="iconTextGap" type="int" value="20"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openJButtonActionPerformed"/>
@@ -141,8 +155,18 @@
         </Component>
         <Component class="javax.swing.JButton" name="newJButton">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+              <FontInfo relative="true">
+                <Font bold="true" component="newJButton" property="font" relativeSize="true" size="3"/>
+              </FontInfo>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/peptide-shaker-midium-orange-shadow.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="New Project"/>
             <Property name="focusPainted" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="iconTextGap" type="int" value="20"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newJButtonActionPerformed"/>
@@ -170,7 +194,7 @@
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font component="recentProjectsLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                <Font bold="true" component="recentProjectsLabel" property="font" relativeSize="true" size="0"/>
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">

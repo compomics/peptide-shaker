@@ -2877,6 +2877,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             path = path.replace("%20", " ");
             path = path.replace("%5b", "[");
             path = path.replace("%5d", "]");
+            
+            if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
+                path = path.replace("/", "\\");
+            } 
         } else {
             path = ".";
         }
@@ -5683,11 +5687,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         if (!jarFilePath.equalsIgnoreCase(".")) {
 
             // remove the initial '/' at the start of the line
-            jarFilePath = jarFilePath.substring(1);
+            if (jarFilePath.startsWith("\\") && !jarFilePath.startsWith("\\\\")) {
+                jarFilePath = jarFilePath.substring(1);
+            }
+            
+            String iconFileLocation = jarFilePath + "\\peptide-shaker.ico";
+            String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
 
-            String iconFileLocation = jarFilePath + "/peptide-shaker.ico";
-            String jarFileLocation = jarFilePath + "/PeptideShaker-" + getVersion() + ".jar";
-
+            //JOptionPane.showMessageDialog(null, "jarFileLocation: " + jarFileLocation, "jarFileLocation", JOptionPane.INFORMATION_MESSAGE); // @TODO: remove when finished testing
+            
             try {
                 JShellLink link = new JShellLink();
                 link.setFolder(JShellLink.getDirectory("desktop"));
