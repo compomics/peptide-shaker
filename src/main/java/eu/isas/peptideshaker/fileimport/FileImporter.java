@@ -188,7 +188,7 @@ public class FileImporter {
 
             waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setSecondaryProgressDialogIntermediate(true);
-
+  
             if (needPeptideMap) {
                 if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
                     waitingHandler.appendReport("Creating peptide to protein map.");
@@ -202,8 +202,6 @@ public class FileImporter {
                     int nMax = idFilter.getMaxPepLength();
                     sharedPeptides = new HashMap<String, ArrayList<String>>();
                     HashMap<String, String> tempMap = new HashMap<String, String>();
-                    String tempProtein;
-                    ArrayList<String> tempList;
 
                     int numberOfSequences = sequenceFactory.getAccessions().size();
 
@@ -221,9 +219,9 @@ public class FileImporter {
                             if (proteins != null) {
                                 proteins.add(proteinKey);
                             } else {
-                                tempProtein = tempMap.get(peptide);
+                                String tempProtein = tempMap.get(peptide);
                                 if (tempProtein != null) {
-                                    tempList = new ArrayList<String>();
+                                    ArrayList<String> tempList = new ArrayList<String>(2);
                                     tempList.add(tempProtein);
                                     tempList.add(proteinKey);
                                     sharedPeptides.put(peptide, tempList);

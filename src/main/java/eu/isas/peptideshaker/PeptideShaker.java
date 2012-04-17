@@ -746,14 +746,13 @@ public class PeptideShaker {
      */
     public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        PeptideMatch peptideMatch;
 
         int max = identification.getPeptideIdentification().size();
         waitingHandler.setSecondaryProgressDialogIntermediate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String peptideKey : identification.getPeptideIdentification()) {
-            peptideMatch = identification.getPeptideMatch(peptideKey);
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             scorePTMs(peptideMatch, searchParameters, annotationPreferences);
             waitingHandler.increaseSecondaryProgressValue();
             if (waitingHandler.isRunCanceled()) {
@@ -928,9 +927,11 @@ public class PeptideShaker {
         }
 
         if (variableModifications.size() > 0) {
+
             boolean validated = false;
             double bestConfidence = 0;
             ArrayList<String> bestKeys = new ArrayList<String>();
+
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
                 if (psParameter.isValidated()) {
@@ -949,14 +950,20 @@ public class PeptideShaker {
                     }
                 }
             }
+
             for (String spectrumKey : bestKeys) {
+
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 scorePTMs(spectrumMatch, searchParameters, annotationPreferences);
+
                 for (String modification : variableModifications) {
+
                     if (!peptideScores.containsPtm(modification)) {
                         peptideScores.addPtmScoring(modification, new PtmScoring(modification));
                     }
+
                     psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+
                     if (psmScores != null) {
                         PtmScoring spectrumScoring = psmScores.getPtmScoring(modification);
                         if (spectrumScoring != null) {
@@ -965,8 +972,11 @@ public class PeptideShaker {
                     }
                 }
             }
+
             for (String modification : variableModifications) {
+
                 PtmScoring scoring = peptideScores.getPtmScoring(modification);
+
                 if (scoring != null) {
                     for (int mainLocation : scoring.getPtmLocation()) {
                         peptideScores.addMainModificationSite(modification, mainLocation);
@@ -999,10 +1009,9 @@ public class PeptideShaker {
 
         if (ptmScores != null) {
 
-            PtmScoring ptmScoring;
-
             for (String modification : ptmScores.getScoredPTMs()) {
-                ptmScoring = ptmScores.getPtmScoring(modification);
+                
+                PtmScoring ptmScoring = ptmScores.getPtmScoring(modification);
                 String bestAKey = ptmScoring.getBestAScoreLocations();
                 String bestDKey = ptmScoring.getBestDeltaScoreLocations();
                 String retainedKey;
@@ -1032,8 +1041,6 @@ public class PeptideShaker {
                 }
                 if (retainedKey != null) {
                     ptmScoring.setPtmSite(retainedKey, confidence);
-                } else {
-                    int debug = 1;
                 }
             }
         }
@@ -1049,31 +1056,27 @@ public class PeptideShaker {
     private void attachDeltaScore(SpectrumMatch spectrumMatch) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        PSParameter psParameter = new PSParameter();
-        double p1, p2;
-        String mainSequence, modificationName;
-        ArrayList<String> modifications;
         HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
-        PSPtmScores ptmScores;
-        PtmScoring ptmScoring;
-        ptmScores = new PSPtmScores();
+        PSPtmScores ptmScores = new PSPtmScores();
 
         if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
 
+        PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
-        p1 = psParameter.getSearchEngineProbability();
+        double p1 = psParameter.getSearchEngineProbability();
 
         if (p1 < 1) {
-            mainSequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
-            p2 = 1;
-            modifications = new ArrayList<String>();
+            String mainSequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+            double p2 = 1;
+            ArrayList<String> modifications = new ArrayList<String>();
+
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
                 if (modificationMatch.isVariable()) {
                     PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     if (ptm.getType() == PTM.MODAA) {
-                        modificationName = modificationMatch.getTheoreticPtm();
+                        String modificationName = modificationMatch.getTheoreticPtm();
                         if (!modifications.contains(modificationName)) {
                             modifications.add(modificationName);
                             modificationProfiles.put(modificationName, new ArrayList<Integer>());
@@ -1082,6 +1085,7 @@ public class PeptideShaker {
                     }
                 }
             }
+
             if (!modifications.isEmpty()) {
                 for (String mod : modifications) {
                     for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
@@ -1103,13 +1107,14 @@ public class PeptideShaker {
                             }
                         }
                     }
-                    ptmScoring = ptmScores.getPtmScoring(mod);
+                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                     if (ptmScoring == null) {
                         ptmScoring = new PtmScoring(mod);
                     }
                     ptmScoring.addDeltaScore(modificationProfiles.get(mod), (p2 - p1) * 100);
                     ptmScores.addPtmScoring(mod, ptmScoring);
                 }
+
                 spectrumMatch.addUrParam(ptmScores);
                 identification.setMatchChanged(spectrumMatch);
             }
@@ -1129,29 +1134,24 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         PSParameter psParameter = new PSParameter();
-        double p1;
-        String modificationName;
-        HashMap<String, PTM> modifications;
-        PSPtmScores ptmScores;
-        PtmScoring ptmScoring;
-        ptmScores = new PSPtmScores();
+        PSPtmScores ptmScores = new PSPtmScores();
 
         if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
 
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
-        p1 = psParameter.getSearchEngineProbability();
+        double p1 = psParameter.getSearchEngineProbability();
 
         if (p1 < 1) {
-            modifications = new HashMap<String, PTM>();
+            HashMap<String, PTM> modifications = new HashMap<String, PTM>();
             HashMap<String, Integer> nMod = new HashMap<String, Integer>();
 
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
                 if (modificationMatch.isVariable()) {
                     PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                     if (ptm.getType() == PTM.MODAA) {
-                        modificationName = modificationMatch.getTheoreticPtm();
+                        String modificationName = modificationMatch.getTheoreticPtm();
                         if (!modifications.keySet().contains(modificationName)) {
                             modifications.put(modificationName, ptm);
                             nMod.put(modificationName, 1);
@@ -1163,8 +1163,10 @@ public class PeptideShaker {
             }
 
             if (!modifications.isEmpty()) {
+                
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
                 annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
+                
                 for (String mod : modifications.keySet()) {
                     if (nMod.get(mod) == 1) {
                         HashMap<ArrayList<Integer>, Double> aScores = PTMLocationScores.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
@@ -1172,16 +1174,20 @@ public class PeptideShaker {
                                 annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                                 spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                 searchParameters.getFragmentIonAccuracy());
-                        ptmScoring = ptmScores.getPtmScoring(mod);
+                        PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                        
                         if (ptmScoring == null) {
                             ptmScoring = new PtmScoring(mod);
                         }
+                        
                         for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
                             ptmScoring.addAScore(modificationProfile, aScores.get(modificationProfile));
                         }
+                        
                         ptmScores.addPtmScoring(mod, ptmScoring);
                     }
                 }
+                
                 spectrumMatch.addUrParam(ptmScores);
                 identification.setMatchChanged(spectrumMatch);
             }
