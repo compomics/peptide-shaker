@@ -3,11 +3,18 @@
 
 ----
 
+*Changes in PeptideShaker 0.16.2 (April 18. 2012):*
+ * BUG FIX: Fixed an issue with spaces in the splash screen graphics path on Windows.
+
+----
+
 *Changes in PeptideShaker 0.16.1 (April 18. 2012):*
  * NEW FEATURE: Added a PeptideShaker splash screen. 
  * FEATURE IMPROVEMENT: Updated the Welcome dialog.
  * FEATURE IMPROVEMENT: Cleaned up the folder structure in the zip file.
  * BUG FIX: Fixed a bug in the method for setting the path for the icon and target in the desktop shortcut that occurred when running PeptideShaker from network drives.
+
+Download Count: 4
 
 ----
 
