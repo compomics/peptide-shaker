@@ -17,7 +17,7 @@ public class PeptideShakerWrapper {
     /**
      * If set to true debug output will be written to the screen.
      */
-    private boolean debug = true;
+    private boolean debug = false;
     /**
      * Writes the debug output in a debug.txt file
      */
