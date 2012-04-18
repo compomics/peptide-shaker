@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.16.1 (April 18. 2012):*
+ * NEW FEATURE: Added a PeptideShaker splash screen. 
+ * FEATURE IMPROVEMENT: Updated the Welcome dialog.
+ * FEATURE IMPROVEMENT: Cleaned up the folder structure in the zip file.
+ * BUG FIX: Fixed a bug in the method for setting the path for the icon and target in the desktop shortcut that occurred when running PeptideShaker from network drives.
+
+----
+
 *Changes in PeptideShaker 0.16.0 (April 16. 2012):*
  * NEW FEATURE: On Windows (on supported architectures) the user is now asked if a desktop shortcut should be added the first time he/she starts the tool.
  * NEW FEATURE: Added Request Validated to the Export Features dialog for the Search Engine export.
@@ -45,6 +53,7 @@
  * LIBRARY UPDATE: Added jshortcut as a dependency.
  * LIBRARY UPDATE: Removed swingx as a dependency.
 
+Download Count: 44
 
 ----
 
