@@ -169,12 +169,12 @@ public class OutputGenerator implements ProgressDialogParent {
             }
             
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog.setTitle("Copying to File. Please Wait...");
             progressDialog.setIndeterminate(true);
             
             new Thread(new Runnable() {
                 
                 public void run() {
-                    progressDialog.setTitle("Copying to File. Please Wait...");
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {
@@ -474,12 +474,12 @@ public class OutputGenerator implements ProgressDialogParent {
             }
             
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Copying to File. Please Wait...");
             
             new Thread(new Runnable() {
                 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Copying to File. Please Wait...");
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {
@@ -871,12 +871,12 @@ public class OutputGenerator implements ProgressDialogParent {
             }
             
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Copying to File. Please Wait...");
             
             new Thread(new Runnable() {
                 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Copying to File. Please Wait...");
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {
@@ -1308,12 +1308,12 @@ public class OutputGenerator implements ProgressDialogParent {
             }
             
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Copying to File. Please Wait...");
             
             new Thread(new Runnable() {
                 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Copying to File. Please Wait...");
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {

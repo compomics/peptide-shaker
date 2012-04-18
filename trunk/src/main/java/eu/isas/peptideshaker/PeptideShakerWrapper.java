@@ -230,7 +230,7 @@ public class PeptideShakerWrapper {
         }
 
         // get the splash 
-        String splashPath = path + "conf/peptide-shaker-splash.png ";
+        String splashPath = path + "conf/peptide-shaker-splash.png";
         
         // set the correct slashes for the splash path
         if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
@@ -243,7 +243,7 @@ public class PeptideShakerWrapper {
         }
         
         // create the complete command line
-        cmdLine = javaHome + "java -splash:" + splashPath + options + " -cp "
+        cmdLine = javaHome + "java -splash:" + quote + splashPath + quote + " " + options + " -cp "
                 + quote + new File(path, jarFileName).getAbsolutePath() + quote
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
