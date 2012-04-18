@@ -158,9 +158,9 @@
                                     <directory>./</directory>
                                     <includes>
                                         <include>conf/</include>
+                                        <include>license/</include>
+                                        <include>icon/</include>
                                         <include>matches/</include>
-                                        <include>peptide-shaker.ico</include>
-                                        <include>LICENSE-2.0.txt</include>
                                         <include>README.txt</include>
                                     </includes>
                                 </resource>

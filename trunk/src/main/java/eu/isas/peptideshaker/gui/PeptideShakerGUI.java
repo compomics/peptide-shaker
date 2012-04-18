@@ -5691,7 +5691,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 jarFilePath = jarFilePath.substring(1);
             }
             
-            String iconFileLocation = jarFilePath + "\\peptide-shaker.ico";
+            String iconFileLocation = jarFilePath + "\\icon\\peptide-shaker.ico";
             String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
 
             //JOptionPane.showMessageDialog(null, "jarFileLocation: " + jarFileLocation, "jarFileLocation", JOptionPane.INFORMATION_MESSAGE); // @TODO: remove when finished testing
