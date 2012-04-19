@@ -44,11 +44,13 @@ public class IdFilter implements Serializable {
      */
     private double maxMassDeviation;
     /**
-     * Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da).
+     * Boolean indicating the unit of the allowed m/z deviation (true: ppm,
+     * false: Da).
      */
     private boolean isPpm;
     /**
-     * Boolean indicating whether peptides presenting unknown PTMs should be ignored.
+     * Boolean indicating whether peptides presenting unknown PTMs should be
+     * ignored.
      */
     private boolean unknownPtm;
     /**
@@ -73,14 +75,15 @@ public class IdFilter implements Serializable {
     /**
      * Constructor for an Identification filter.
      *
-     * @param minPepLength      The minimal peptide length allowed
-     * @param maxPepLength      The maximal peptide length allowed
-     * @param mascotMaxEvalue   The maximal Mascot e-value allowed
-     * @param omssaMaxEvalue    The maximal OMSSA e-value allowed
-     * @param xtandemMaxEvalue  The maximal X!Tandem e-value allowed
-     * @param maxMzDeviation    The maximal m/z deviation allowed
-     * @param isPpm             Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da)
-     * @param unknownPTM        Shall peptides presenting unknownPTMs be ignored
+     * @param minPepLength The minimal peptide length allowed
+     * @param maxPepLength The maximal peptide length allowed
+     * @param mascotMaxEvalue The maximal Mascot e-value allowed
+     * @param omssaMaxEvalue The maximal OMSSA e-value allowed
+     * @param xtandemMaxEvalue The maximal X!Tandem e-value allowed
+     * @param maxMzDeviation The maximal m/z deviation allowed
+     * @param isPpm Boolean indicating the unit of the allowed m/z deviation
+     * (true: ppm, false: Da)
+     * @param unknownPTM Shall peptides presenting unknownPTMs be ignored
      */
     public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMzDeviation, boolean isPpm, boolean unknownPTM) {
         this.minPepLength = minPepLength;
@@ -95,10 +98,14 @@ public class IdFilter implements Serializable {
 
     /**
      * Validates a peptide assumption.
-     * 
+     *
      * @param assumption the considered peptide assumption
-     * @param spectrumKey the key of the spectrum used to get the precursor (Note that the precursor should be accessible via the spectrum factory)
-     * @return a boolean indicating whether the given assumption passes the filter
+     * @param spectrumKey the key of the spectrum used to get the precursor
+     * (Note that the precursor should be accessible via the spectrum factory)
+     * @return a boolean indicating whether the given assumption passes the
+     * filter
+     * @throws IOException
+     * @throws MzMLUnmarshallerException
      */
     public boolean validateId(PeptideAssumption assumption, String spectrumKey) throws IOException, MzMLUnmarshallerException {
 
@@ -125,13 +132,13 @@ public class IdFilter implements Serializable {
                     decoy = true;
                 } else {
                     target = true;
-        }
+                }
             }
             if (target && decoy) {
                 return false;
             }
         }
-        if (unknownPtm) {   
+        if (unknownPtm) {
             ArrayList<ModificationMatch> modificationMatches = assumption.getPeptide().getModificationMatches();
             for (ModificationMatch modMatch : modificationMatches) {
                 if (modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
@@ -141,7 +148,8 @@ public class IdFilter implements Serializable {
         }
 
         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation*assumption.getIdentificationCharge().value && maxMassDeviation > 0) {
+        
+        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation * assumption.getIdentificationCharge().value && maxMassDeviation > 0) {
             return false;
         }
 
@@ -150,7 +158,7 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns a boolean indicating whether unkown PTMs shall be removed.
-     * 
+     *
      * @return a boolean indicating whether unkown PTMs shall be removed
      */
     public boolean removeUnknownPTMs() {
@@ -159,8 +167,9 @@ public class IdFilter implements Serializable {
 
     /**
      * Indicates whether the mass tolerance is in ppm (true) or Dalton (false).
-     * 
-     * @return a boolean indicating whether the mass tolerance is in ppm (true) or Dalton (false)
+     *
+     * @return a boolean indicating whether the mass tolerance is in ppm (true)
+     * or Dalton (false)
      */
     public boolean isIsPpm() {
         return isPpm;
@@ -168,8 +177,9 @@ public class IdFilter implements Serializable {
 
     /**
      * Sets whether the mass tolerance is in ppm (true) or Dalton (false).
-     * 
-     * @param isPpm a boolean indicating whether the mass tolerance is in ppm (true) or Dalton (false)
+     *
+     * @param isPpm a boolean indicating whether the mass tolerance is in ppm
+     * (true) or Dalton (false)
      */
     public void setIsPpm(boolean isPpm) {
         this.isPpm = isPpm;
@@ -177,17 +187,17 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns the maximal Mascot e-value allowed.
-     * 
-     * @return the maximal Mascot e-value allowed 
+     *
+     * @return the maximal Mascot e-value allowed
      */
     public double getMascotMaxEvalue() {
         return mascotMaxEvalue;
     }
 
     /**
-     * Sets  the maximal Mascot e-value allowed.
-     * 
-     * @param mascotMaxEvalue  the maximal Mascot e-value allowed
+     * Sets the maximal Mascot e-value allowed.
+     *
+     * @param mascotMaxEvalue the maximal Mascot e-value allowed
      */
     public void setMascotMaxEvalue(double mascotMaxEvalue) {
         this.mascotMaxEvalue = mascotMaxEvalue;
@@ -195,8 +205,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns the maximal m/z deviation allowed.
-     * 
-     * @return the maximal mass deviation allowed 
+     *
+     * @return the maximal mass deviation allowed
      */
     public double getMaxMzDeviation() {
         return maxMassDeviation;
@@ -204,8 +214,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Sets the maximal m/z deviation allowed.
-     * 
-     * @param maxMzDeviation  the maximal mass deviation allowed
+     *
+     * @param maxMzDeviation the maximal mass deviation allowed
      */
     public void setMaxMzDeviation(double maxMzDeviation) {
         this.maxMassDeviation = maxMzDeviation;
@@ -213,8 +223,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns the maximal peptide length allowed.
-     * 
-     * @return the maximal peptide length allowed 
+     *
+     * @return the maximal peptide length allowed
      */
     public int getMaxPepLength() {
         return maxPepLength;
@@ -222,8 +232,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Sets the maximal peptide length allowed.
-     * 
-     * @param maxPepLength  the maximal peptide length allowed
+     *
+     * @param maxPepLength the maximal peptide length allowed
      */
     public void setMaxPepLength(int maxPepLength) {
         this.maxPepLength = maxPepLength;
@@ -231,8 +241,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns the maximal peptide length allowed.
-     * 
-     * @return the maximal peptide length allowed 
+     *
+     * @return the maximal peptide length allowed
      */
     public int getMinPepLength() {
         return minPepLength;
@@ -240,8 +250,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Sets the maximal peptide length allowed.
-     * 
-     * @param minPepLength  the maximal peptide length allowed
+     *
+     * @param minPepLength the maximal peptide length allowed
      */
     public void setMinPepLength(int minPepLength) {
         this.minPepLength = minPepLength;
@@ -249,8 +259,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns the OMSSA maximal e-value allowed.
-     * 
-     * @return the OMSSA maximal e-value allowed 
+     *
+     * @return the OMSSA maximal e-value allowed
      */
     public double getOmssaMaxEvalue() {
         return omssaMaxEvalue;
@@ -258,8 +268,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Sets the OMSSA maximal e-value allowed.
-     * 
-     * @param omssaMaxEvalue  the OMSSA maximal e-value allowed
+     *
+     * @param omssaMaxEvalue the OMSSA maximal e-value allowed
      */
     public void setOmssaMaxEvalue(double omssaMaxEvalue) {
         this.omssaMaxEvalue = omssaMaxEvalue;
@@ -267,8 +277,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Returns the maximal X!Tandem e-value allowed.
-     * 
-     * @return  the OMSSA maximal e-value allowed
+     *
+     * @return the OMSSA maximal e-value allowed
      */
     public double getXtandemMaxEvalue() {
         return xtandemMaxEvalue;
@@ -276,8 +286,8 @@ public class IdFilter implements Serializable {
 
     /**
      * Sets the OMSSA maximal e-value allowed.
-     * 
-     * @param xtandemMaxEvalue  the OMSSA maximal e-value allowed
+     *
+     * @param xtandemMaxEvalue the OMSSA maximal e-value allowed
      */
     public void setXtandemMaxEvalue(double xtandemMaxEvalue) {
         this.xtandemMaxEvalue = xtandemMaxEvalue;

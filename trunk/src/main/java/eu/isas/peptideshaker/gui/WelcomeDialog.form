@@ -124,13 +124,13 @@
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/peptide-shaker-midium-blue.shadow.png"/>
+              <Image iconType="3" name="/icons/peptide-shaker-medium-blue-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Open Project"/>
             <Property name="toolTipText" type="java.lang.String" value="Open an existing PeptideShaker project."/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="21"/>
+            <Property name="iconTextGap" type="int" value="20"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openJButtonActionPerformed"/>
@@ -144,13 +144,13 @@
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/peptide-shaker-midium-orange-shadow.png"/>
+              <Image iconType="3" name="/icons/peptide-shaker-medium-orange-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="New Project"/>
             <Property name="toolTipText" type="java.lang.String" value="Create a new PeptideShaker project."/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="26"/>
+            <Property name="iconTextGap" type="int" value="24"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newJButtonActionPerformed"/>
@@ -220,11 +220,10 @@
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/searchgui-midium-shadow.png"/>
+              <Image iconType="3" name="/icons/searchgui-medium-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Start Search"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Start a SearchGUI protein identification search.&lt;br&gt;&#xa;(in development)&#xa;&lt;/html&gt;"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="20"/>
@@ -241,11 +240,10 @@
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help-midium-shadow.png"/>
+              <Image iconType="3" name="/icons/help-medium-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Getting Started"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Open the Getting Started tutorial.&lt;br&gt;&#xa;(in development)&#xa;&lt;/html&gt;"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="20"/>

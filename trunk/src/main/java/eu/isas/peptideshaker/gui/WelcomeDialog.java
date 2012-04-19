@@ -69,12 +69,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         openJButton.setFont(openJButton.getFont().deriveFont(openJButton.getFont().getStyle() | java.awt.Font.BOLD, openJButton.getFont().getSize()+3));
-        openJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker-midium-blue.shadow.png"))); // NOI18N
+        openJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker-medium-blue-shadow.png"))); // NOI18N
         openJButton.setText("Open Project");
         openJButton.setToolTipText("Open an existing PeptideShaker project.");
         openJButton.setFocusPainted(false);
         openJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        openJButton.setIconTextGap(21);
+        openJButton.setIconTextGap(20);
         openJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openJButtonActionPerformed(evt);
@@ -82,12 +82,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         newJButton.setFont(newJButton.getFont().deriveFont(newJButton.getFont().getStyle() | java.awt.Font.BOLD, newJButton.getFont().getSize()+3));
-        newJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker-midium-orange-shadow.png"))); // NOI18N
+        newJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker-medium-orange-shadow.png"))); // NOI18N
         newJButton.setText("New Project");
         newJButton.setToolTipText("Create a new PeptideShaker project.");
         newJButton.setFocusPainted(false);
         newJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        newJButton.setIconTextGap(26);
+        newJButton.setIconTextGap(24);
         newJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newJButtonActionPerformed(evt);
@@ -152,10 +152,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         searchJButton.setFont(searchJButton.getFont().deriveFont(searchJButton.getFont().getStyle() | java.awt.Font.BOLD, searchJButton.getFont().getSize()+3));
-        searchJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/searchgui-midium-shadow.png"))); // NOI18N
+        searchJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/searchgui-medium-shadow.png"))); // NOI18N
         searchJButton.setText("Start Search");
         searchJButton.setToolTipText("<html>\nStart a SearchGUI protein identification search.<br>\n(in development)\n</html>");
-        searchJButton.setEnabled(false);
         searchJButton.setFocusPainted(false);
         searchJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         searchJButton.setIconTextGap(20);
@@ -166,10 +165,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         gettingStartedJButton.setFont(gettingStartedJButton.getFont().deriveFont(gettingStartedJButton.getFont().getStyle() | java.awt.Font.BOLD, gettingStartedJButton.getFont().getSize()+3));
-        gettingStartedJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help-midium-shadow.png"))); // NOI18N
+        gettingStartedJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help-medium-shadow.png"))); // NOI18N
         gettingStartedJButton.setText("Getting Started");
         gettingStartedJButton.setToolTipText("<html>\nOpen the Getting Started tutorial.<br>\n(in development)\n</html>");
-        gettingStartedJButton.setEnabled(false);
         gettingStartedJButton.setFocusPainted(false);
         gettingStartedJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         gettingStartedJButton.setIconTextGap(20);
