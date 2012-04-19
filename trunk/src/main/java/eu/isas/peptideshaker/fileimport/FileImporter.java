@@ -182,13 +182,13 @@ public class FileImporter {
                         + "Some features will be limited if using other types of databases.\n\n"
                         + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
                         + "See the PeptideShaker home page for details.",
-                        "No Decoys Found", 
+                        "No Decoys Found",
                         JOptionPane.INFORMATION_MESSAGE);
             }
 
             waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setSecondaryProgressDialogIntermediate(true);
-  
+
             if (needPeptideMap) {
                 if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
                     waitingHandler.appendReport("Creating peptide to protein map.");
@@ -529,6 +529,7 @@ public class FileImporter {
                     break;
                 }
             }
+            
             importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
             try {
@@ -612,10 +613,9 @@ public class FileImporter {
          * @throws MzMLUnmarshallerException exception thrown whenever an error
          * occurred while reading an mzML file
          */
-        public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException {
+        public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
 
             boolean idReport, goodFirstHit, unknown = false;
-            Peptide peptide;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.appendReport("Reducing memory consumption.");
             waitingHandler.setSecondaryProgressDialogIntermediate(false);
@@ -642,9 +642,7 @@ public class FileImporter {
             waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
             idReport = false;
             ArrayList<Integer> charges = new ArrayList<Integer>();
-            int currentCharge;
-            double precursorMz, error, maxErrorPpm = 0, maxErrorDa = 0;
-            Integer count;
+            double maxErrorPpm = 0, maxErrorDa = 0;
 
             while (matchIt.hasNext()) {
 
@@ -682,15 +680,14 @@ public class FileImporter {
                 goodFirstHit = false;
                 ArrayList<PeptideAssumption> allAssumptions = match.getAllAssumptions(searchEngine).get(firstHit.getEValue());
 
-
                 for (PeptideAssumption assumption : allAssumptions) {
                     if (idFilter.validateId(assumption, spectrumKey)) {
                         if (!goodFirstHit) {
                             match.setFirstHit(searchEngine, assumption);
                         }
-                        precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+                        double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
                         goodFirstHit = true;
-                        error = assumption.getDeltaMass(precursorMz, true);
+                        double error = assumption.getDeltaMass(precursorMz, true);
 
                         if (error > maxErrorPpm) {
                             maxErrorPpm = error;
@@ -701,13 +698,14 @@ public class FileImporter {
                         if (error > maxErrorDa) {
                             maxErrorDa = error;
                         }
-                        currentCharge = assumption.getIdentificationCharge().value;
+                        
+                        int currentCharge = assumption.getIdentificationCharge().value;
 
                         if (!charges.contains(currentCharge)) {
                             charges.add(currentCharge);
                         }
 
-                        peptide = assumption.getPeptide();
+                        Peptide peptide = assumption.getPeptide();
                         String sequence = peptide.getSequence();
                         if (searchEngine == Advocate.XTANDEM) {
                             ArrayList<String> proteins = getProteins(sequence, waitingHandler);
@@ -717,7 +715,7 @@ public class FileImporter {
                         }
 
                         for (String protein : peptide.getParentProteins()) {
-                            count = proteinCount.get(protein);
+                            Integer count = proteinCount.get(protein);
                             if (count != null) {
                                 proteinCount.put(protein, count + 1);
                             } else {
@@ -738,7 +736,7 @@ public class FileImporter {
                 } else {
                     // use search engine independant PTMs
                     for (PeptideAssumption assumptions : match.getAllAssumptions()) {
-                        peptide = assumptions.getPeptide();
+                        Peptide peptide = assumptions.getPeptide();
                         String sequence = peptide.getSequence();
                         for (ModificationMatch seMod : peptide.getModificationMatches()) {
                             if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {

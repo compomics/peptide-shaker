@@ -15,11 +15,12 @@ import javax.swing.JOptionPane;
 public class PeptideShakerWrapper {
 
     /**
-     * If set to true debug output will be written to the screen.
+     * If set to true debug output will be written to the screen and to
+     * startup.log.
      */
-    private boolean debug = false;
+    private boolean useStartUpLog = true;
     /**
-     * Writes the debug output in a debug.txt file
+     * Writes the debug output to startup.log.
      */
     private BufferedWriter bw = null;
     /**
@@ -56,20 +57,20 @@ public class PeptideShakerWrapper {
         try {
             loadUserPreferences();
 
-            if (debug) {
+            if (useStartUpLog) {
                 String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
                 path = path.substring(5, path.indexOf(jarFileName));
                 path = path.replace("%20", " ");
                 path = path.replace("%5b", "[");
                 path = path.replace("%5d", "]");
-                File debugOutput = new File(path + "conf/debug.txt");
+                File debugOutput = new File(path + "conf/startup.log");
                 bw = new BufferedWriter(new FileWriter(debugOutput));
                 bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
             }
 
             launch();
 
-            if (debug) {
+            if (useStartUpLog) {
                 bw.flush();
                 bw.close();
             }
@@ -122,12 +123,13 @@ public class PeptideShakerWrapper {
                                 try {
                                     userPreferences.setMemoryPreference(new Integer(currentOption));
                                     saveNewSettings();
-                                    if (debug) {
+                                    if (useStartUpLog) {
                                         bw.write("New memory setting saved: " + userPreferences.getMemoryPreference() + "\n");
                                     }
                                 } catch (Exception e) {
                                     javax.swing.JOptionPane.showMessageDialog(null,
-                                            "PeptideShaker could not parse the memory setting:" + currentOption + ". The value was reset to" + userPreferences.getMemoryPreference() + ".",
+                                            "PeptideShaker could not parse the memory setting:" + currentOption 
+                                            + ". The value was reset to" + userPreferences.getMemoryPreference() + ".",
                                             "PeptideShaker - Startup Failed", JOptionPane.WARNING_MESSAGE);
                                 }
                             }
@@ -200,11 +202,11 @@ public class PeptideShakerWrapper {
         // set up the quote type, windows or linux/mac
         String quote = "";
 
-        if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
+        if (System.getProperty("os.name").lastIndexOf("Windows") != -1) { // @TODO: no quotes on mac/linux?
             quote = "\"";
         }
 
-        if (debug) {
+        if (useStartUpLog) {
             bw.write("original java.home: " + javaHome + "\n");
         }
 
@@ -216,7 +218,7 @@ public class PeptideShakerWrapper {
 
             String tempJavaHome = javaHome.replaceAll(" \\(x86\\)", "");
 
-            if (debug) {
+            if (useStartUpLog) {
                 bw.write("temp java.home: " + tempJavaHome + "\n");
             }
 
@@ -225,34 +227,32 @@ public class PeptideShakerWrapper {
             }
         }
 
-        if (debug) {
+        if (useStartUpLog) {
             bw.write("new java.home: " + javaHome + "\n");
         }
 
         // get the splash 
         String splashPath = path + "conf/peptide-shaker-splash.png";
-        
+
         // set the correct slashes for the splash path
         if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
             splashPath = splashPath.replace("/", "\\");
-            
+
             // remove the initial '\' at the start of the line 
             if (splashPath.startsWith("\\") && !splashPath.startsWith("\\\\")) {
                 splashPath = splashPath.substring(1);
             }
         }
-        
+
         // create the complete command line
         cmdLine = javaHome + "java -splash:" + quote + splashPath + quote + " " + options + " -cp "
                 + quote + new File(path, jarFileName).getAbsolutePath() + quote
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
-        if (debug) {
-            System.out.println(cmdLine);
-            bw.write("Command line: " + cmdLine + "\n\n");
+        if (useStartUpLog) {
+            System.out.println("\n" + cmdLine + "\n\n");
+            bw.write("\nCommand line: " + cmdLine + "\n\n");
         }
-        
-        //JOptionPane.showMessageDialog(null, "cmdLine: " + cmdLine, "cmdLine", JOptionPane.INFORMATION_MESSAGE); // @TODO: remove when finished testing
 
         // try to run the command line
         try {
@@ -262,20 +262,13 @@ public class PeptideShakerWrapper {
             InputStreamReader isr = new InputStreamReader(stderr);
             BufferedReader br = new BufferedReader(isr);
 
-            temp += "<ERROR>\n\n";
-
-            if (debug) {
-                System.out.println("<ERROR>");
-                bw.write("Error stream:\n");
-            }
-
             String line = br.readLine();
 
             boolean error = false;
 
             while (line != null) {
 
-                if (debug) {
+                if (useStartUpLog) {
                     System.out.println(line);
                     bw.write(line + "\n");
                 }
@@ -285,12 +278,9 @@ public class PeptideShakerWrapper {
                 error = true;
             }
 
-            temp += "\nThe command line executed:\n";
-            temp += cmdLine + "\n";
-            temp += "\n</ERROR>\n";
             int exitVal = p.waitFor();
 
-            if (debug) {
+            if (useStartUpLog) {
                 System.out.println("Process exitValue: " + exitVal);
                 bw.write("Process exitValue: " + exitVal + "\n");
             }
@@ -299,6 +289,7 @@ public class PeptideShakerWrapper {
             if (error) {
 
                 firstTry = false;
+
                 //if needed, try relaunching with reduced memory settings
                 if (temp.contains("Could not create the Java virtual machine")) {
                     if (userPreferences.getMemoryPreference() > 3 * 1024) {
@@ -310,38 +301,33 @@ public class PeptideShakerWrapper {
                         saveNewSettings();
                         launch();
                     } else {
-                        if (debug) {
+                        if (useStartUpLog) {
                             bw.write("Memory Limit:" + userPreferences.getMemoryPreference() + "\n");
-                            bw.write(temp + "\n");
-                        }
-                        File logFile = new File("conf", "PeptideShaker.log");
-                        FileWriter f = new FileWriter(logFile, true);
-                        f.write("\n\n" + temp + "\n\n");
-                        f.close();
-                        javax.swing.JOptionPane.showMessageDialog(null,
-                                "Failed to create the Java virtual machine.\n\n"
-                                + "Inspect the log file for details: conf/PeptideShaker.log.\n\n"
-                                + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
-                                "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
-
-                        if (debug) {
                             bw.flush();
                             bw.close();
                         }
+
+                        javax.swing.JOptionPane.showMessageDialog(null,
+                                "Failed to create the Java virtual machine.\n\n"
+                                + "Inspect the log file for details: conf/startup.log.\n\n"
+                                + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
+                                "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
+
                         System.exit(0);
                     }
                 } else {
-                    bw.write(temp + "\n");
-                    javax.swing.JOptionPane.showMessageDialog(null,
-                            "An error occurred when starting PeptideShaker.\n\n"
-                            + "Inspect the log file for details: conf/PeptideShaker.log.\n\n"
-                            + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
-                            "PeptideShaker - Startup Error", JOptionPane.ERROR_MESSAGE);
 
-                    if (debug) {
+                    if (useStartUpLog) {
                         bw.flush();
                         bw.close();
                     }
+
+                    javax.swing.JOptionPane.showMessageDialog(null,
+                            "An error occurred when starting PeptideShaker.\n\n"
+                            + "Inspect the log file for details: conf/startup.log.\n\n"
+                            + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
+                            "PeptideShaker - Startup Error", JOptionPane.ERROR_MESSAGE);
+
                     System.exit(0);
                 }
             }
@@ -349,7 +335,6 @@ public class PeptideShakerWrapper {
             t.printStackTrace();
             System.exit(0);
         }
-
     }
 
     /**
@@ -418,6 +403,7 @@ public class PeptideShakerWrapper {
         path = path.replace("%5d", "]");
 
         File javaOptions = new File(path + "conf/JavaOptions.txt");
+
         // read any java option settings
         if (javaOptions.exists()) {
 
