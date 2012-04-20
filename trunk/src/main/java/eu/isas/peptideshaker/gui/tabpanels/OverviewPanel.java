@@ -4087,6 +4087,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         progressDialog = new ProgressDialogX(this, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Loading Overview. Please Wait...");
+        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
@@ -4156,6 +4157,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     exportSequenceCoverageContextJButton.setEnabled(true);
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
+                    
+                    // change the peptide shaker icon to a "waiting version" // @TODO: not really sure why we need to set this again here, but seems to be needed...
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Preparing Overview Tab. Please Wait...");
@@ -4168,7 +4172,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             dm.fireTableDataChanged();
                             updateSelection();
                             proteinTable.requestFocus();
-
+                            
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

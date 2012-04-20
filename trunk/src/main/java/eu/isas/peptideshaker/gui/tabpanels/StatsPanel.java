@@ -1713,7 +1713,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
                 progressDialogWaitingHandler = new ProgressDialogWaitingHandler(peptideShakerGUI, this, true);
                 progressDialogWaitingHandler.setTitle("Recalculating. Please Wait...");
                 progressDialogWaitingHandler.setIndeterminate(true);
-                progressDialogWaitingHandler.doNothingOnClose(); // @TODO: this should be removed when a way to stop the recalulation has been found!!
+                progressDialogWaitingHandler.setUnstoppable(true);
 
                 new Thread(new Runnable() {
 
@@ -3624,7 +3624,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         progressDialogWaitingHandler = new ProgressDialogWaitingHandler(peptideShakerGUI, this, true);
         progressDialogWaitingHandler.setTitle("Recalculating. Please Wait...");
         progressDialogWaitingHandler.setIndeterminate(true);
-        progressDialogWaitingHandler.doNothingOnClose(); // @TODO: this should be removed when a way to stop the recalulation has been found!!
+        progressDialogWaitingHandler.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
@@ -3677,7 +3677,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         progressDialogWaitingHandler = new ProgressDialogWaitingHandler(peptideShakerGUI, this, true);
         progressDialogWaitingHandler.setTitle("Recalculating. Please Wait...");
         progressDialogWaitingHandler.setIndeterminate(true);
-        progressDialogWaitingHandler.doNothingOnClose(); // @TODO: this should be removed when a way to stop the recalulation has been found!!
+        progressDialogWaitingHandler.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
@@ -3730,7 +3730,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         progressDialogWaitingHandler = new ProgressDialogWaitingHandler(peptideShakerGUI, this, true);
         progressDialogWaitingHandler.setTitle("Recalculating. Please Wait...");
         progressDialogWaitingHandler.setIndeterminate(true);
-        progressDialogWaitingHandler.doNothingOnClose(); // @TODO: this should be removed when a way to stop the recalulation has been found!!
+        progressDialogWaitingHandler.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
