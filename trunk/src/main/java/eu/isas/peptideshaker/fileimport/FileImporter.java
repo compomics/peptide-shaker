@@ -157,13 +157,13 @@ public class FileImporter {
     }
 
     /**
-     * Imports sequences from a fasta file
+     * Imports sequences from a fasta file.
      *
-     * @param waitingHandler The handler displaying feedback to the user
+     * @param waitingHandler the handler displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
      * @param fastaFile FASTA file to process
      * @param idFilter the identification filter
-     * @param searchParameters The search parameters
+     * @param searchParameters the search parameters
      */
     public void importSequences(WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
 

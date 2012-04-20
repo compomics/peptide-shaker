@@ -3259,6 +3259,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     @Override
     public void cancelProgress() {
         cancelProgress = true;
+        sequenceFactory.cancelProcess(true);
     }
 
     /**
@@ -4522,6 +4523,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Importing Project. Please Wait...");
+        
 
         new Thread(new Runnable() {
 
