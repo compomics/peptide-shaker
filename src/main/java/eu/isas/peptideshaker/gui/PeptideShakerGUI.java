@@ -3111,8 +3111,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @param spectrumKey the key of the given spectrum
      * @return the precursor
+     * @throws IOException
+     * @throws MzMLUnmarshallerException 
+     * @throws IllegalArgumentException  
      */
-    public Precursor getPrecursor(String spectrumKey) {
+    public Precursor getPrecursor(String spectrumKey) throws IOException, MzMLUnmarshallerException, IllegalArgumentException{
         return getPrecursor(spectrumKey, false);
     }
 
@@ -3123,14 +3126,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param save boolean indicating whether the precursor should be saved in
      * memory for later re-use
      * @return the precursor
+     * @throws IOException
+     * @throws MzMLUnmarshallerException 
+     * @throws IllegalArgumentException 
      */
-    public Precursor getPrecursor(String spectrumKey, boolean save) {
-        try {
-            return spectrumFactory.getPrecursor(spectrumKey, save);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Precursor getPrecursor(String spectrumKey, boolean save) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
+        return spectrumFactory.getPrecursor(spectrumKey, save);
     }
 
     /**

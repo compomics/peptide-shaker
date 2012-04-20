@@ -841,7 +841,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         int[] selectedRows = expectedModificationsTable.getSelectedRows();
         for (int selectedRow : selectedRows) {
-            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRows[selectedRow], 2));
+            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 2));
         }
 
         for (String name : toRemove) {
