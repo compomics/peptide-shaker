@@ -29,11 +29,7 @@ import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.gui.PtmTable;
 import eu.isas.peptideshaker.myparameters.PSMaps;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
@@ -177,6 +173,9 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         initComponents();
         formComponentResized(null);
 
+        // add Delta and A score gradient color panels
+        addGradientScoreColors();
+
         peptidesTable.setAutoCreateRowSorter(true);
         relatedPeptidesTable.setAutoCreateRowSorter(true);
         selectedPsmsTable.setAutoCreateRowSorter(true);
@@ -198,6 +197,64 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+    }
+    
+    /**
+     * Adds the gradient score colors for the A and Delta score tables. 
+     */
+    private void addGradientScoreColors() {
+        
+        final Color startColor = Color.WHITE;
+        final Color endColor = Color.BLUE;
+        
+        JPanel deltaScoreGradientJPanel = new JPanel() {
+
+            @Override
+            protected void paintComponent(Graphics grphcs) {
+                Graphics2D g2d = (Graphics2D) grphcs;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+
+                GradientPaint gp = new GradientPaint(
+                        0, getHeight()/2,
+                        startColor,
+                        getWidth(), getHeight()/2,
+                        endColor);
+                        
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                super.paintComponent(grphcs);
+            }
+        };
+
+        deltaScoreGradientJPanel.setOpaque(false);
+        deltaScoreGradientPanel.add(deltaScoreGradientJPanel);
+        
+        JPanel aScoreGradientJPanel = new JPanel() {
+
+            @Override
+            protected void paintComponent(Graphics grphcs) {
+                Graphics2D g2d = (Graphics2D) grphcs;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+
+                GradientPaint gp = new GradientPaint(
+                        0, getHeight()/2,
+                        startColor,
+                        getWidth(), getHeight()/2,
+                        endColor);
+                        
+
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                super.paintComponent(grphcs);
+            }
+        };
+
+        aScoreGradientJPanel.setOpaque(false);
+        aScoreGradientPanel.add(aScoreGradientJPanel);
     }
 
     /**
@@ -540,12 +597,18 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         ptmTableJScrollPane = new javax.swing.JScrollPane();
         ptmTableJToolBar = new javax.swing.JToolBar();
         ptmTableAnnotationMenuPanel = new javax.swing.JPanel();
-        psmDeltaScoresJPanel = new javax.swing.JPanel();
-        psmDeltaScrollPane = new javax.swing.JScrollPane();
-        psmDeltaScoresTable = new javax.swing.JTable();
         psmAScoresJPanel = new javax.swing.JPanel();
         psmAScoresScrollPane = new javax.swing.JScrollPane();
         psmAScoresTable = new javax.swing.JTable();
+        aScoreMinValueJLabel = new javax.swing.JLabel();
+        aScoreGradientPanel = new javax.swing.JPanel();
+        aScoreMaxValueJLabel = new javax.swing.JLabel();
+        psmDeltaScoresJPanel = new javax.swing.JPanel();
+        psmDeltaScrollPane = new javax.swing.JScrollPane();
+        psmDeltaScoresTable = new javax.swing.JTable();
+        deltaScoreGradientPanel = new javax.swing.JPanel();
+        deltaScoreMinValueJLabel = new javax.swing.JLabel();
+        deltaScoreMaxValueJLabel = new javax.swing.JLabel();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
@@ -1102,40 +1165,6 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         spectrumTabbedPane.addTab("PTM Table", ptmTableJPanel);
 
-        psmDeltaScoresJPanel.setOpaque(false);
-
-        psmDeltaScrollPane.setOpaque(false);
-
-        psmDeltaScoresTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        psmDeltaScoresTable.setOpaque(false);
-        psmDeltaScrollPane.setViewportView(psmDeltaScoresTable);
-
-        javax.swing.GroupLayout psmDeltaScoresJPanelLayout = new javax.swing.GroupLayout(psmDeltaScoresJPanel);
-        psmDeltaScoresJPanel.setLayout(psmDeltaScoresJPanelLayout);
-        psmDeltaScoresJPanelLayout.setHorizontalGroup(
-            psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        psmDeltaScoresJPanelLayout.setVerticalGroup(
-            psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        spectrumTabbedPane.addTab("Delta Scores", psmDeltaScoresJPanel);
-
         psmAScoresJPanel.setOpaque(false);
 
         psmAScoresScrollPane.setOpaque(false);
@@ -1151,24 +1180,108 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         psmAScoresTable.setOpaque(false);
         psmAScoresScrollPane.setViewportView(psmAScoresTable);
 
+        aScoreMinValueJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        aScoreMinValueJLabel.setText("0%");
+
+        aScoreGradientPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        aScoreGradientPanel.setToolTipText("A-Score Certainty");
+        aScoreGradientPanel.setLayout(new java.awt.BorderLayout());
+
+        aScoreMaxValueJLabel.setText("100%");
+
         javax.swing.GroupLayout psmAScoresJPanelLayout = new javax.swing.GroupLayout(psmAScoresJPanel);
         psmAScoresJPanel.setLayout(psmAScoresJPanelLayout);
         psmAScoresJPanelLayout.setHorizontalGroup(
             psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(aScoreMinValueJLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(aScoreGradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(aScoreMaxValueJLabel)
+                .addGap(20, 20, 20))
+            .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        psmAScoresJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aScoreMaxValueJLabel, aScoreMinValueJLabel});
+
         psmAScoresJPanelLayout.setVerticalGroup(
             psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmAScoresJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addComponent(psmAScoresScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(psmAScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(aScoreMinValueJLabel)
+                    .addComponent(aScoreGradientPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(aScoreMaxValueJLabel))
                 .addContainerGap())
         );
 
-        spectrumTabbedPane.addTab("A Scores", psmAScoresJPanel);
+        spectrumTabbedPane.addTab("A-Scores", psmAScoresJPanel);
+
+        psmDeltaScoresJPanel.setOpaque(false);
+
+        psmDeltaScrollPane.setOpaque(false);
+
+        psmDeltaScoresTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        psmDeltaScoresTable.setOpaque(false);
+        psmDeltaScrollPane.setViewportView(psmDeltaScoresTable);
+
+        deltaScoreGradientPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        deltaScoreGradientPanel.setToolTipText("Delta Score Certainty");
+        deltaScoreGradientPanel.setLayout(new java.awt.BorderLayout());
+
+        deltaScoreMinValueJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        deltaScoreMinValueJLabel.setText("0%");
+
+        deltaScoreMaxValueJLabel.setText("100%");
+
+        javax.swing.GroupLayout psmDeltaScoresJPanelLayout = new javax.swing.GroupLayout(psmDeltaScoresJPanel);
+        psmDeltaScoresJPanel.setLayout(psmDeltaScoresJPanelLayout);
+        psmDeltaScoresJPanelLayout.setHorizontalGroup(
+            psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(deltaScoreMinValueJLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(deltaScoreGradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(deltaScoreMaxValueJLabel)
+                .addGap(20, 20, 20))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmDeltaScoresJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        psmDeltaScoresJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deltaScoreMaxValueJLabel, deltaScoreMinValueJLabel});
+
+        psmDeltaScoresJPanelLayout.setVerticalGroup(
+            psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmDeltaScoresJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmDeltaScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(psmDeltaScoresJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(deltaScoreMinValueJLabel)
+                    .addComponent(deltaScoreGradientPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deltaScoreMaxValueJLabel))
+                .addContainerGap())
+        );
+
+        spectrumTabbedPane.addTab("Delta Scores", psmDeltaScoresJPanel);
 
         spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -2780,10 +2893,12 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         int spectrumTabIndex = spectrumTabbedPane.getSelectedIndex();
 
         if (spectrumTabIndex == 0) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides"); // @TODO: update when psm mod profiles are added!
-        } else if (spectrumTabIndex == 1) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Table");
+        } else if (spectrumTabIndex == 1) {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#AScore");
         } else if (spectrumTabIndex == 2) {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#DeltsScore");
+        } else if (spectrumTabIndex == 3) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
         }
 
@@ -2933,6 +3048,9 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         spectrumAndFragmentIonJPanelMouseWheelMoved(evt);
     }//GEN-LAST:event_ptmTableJScrollPaneMouseWheelMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel aScoreGradientPanel;
+    private javax.swing.JLabel aScoreMaxValueJLabel;
+    private javax.swing.JLabel aScoreMinValueJLabel;
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuModPsmsBackgroundPanel;
     private javax.swing.JPanel contextMenuModifiedPeptidesBackgroundPanel;
@@ -2940,6 +3058,9 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
     private javax.swing.JPanel contextMenuRelatedPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuRelatedPsmsBackgroundPanel;
     private javax.swing.JPanel contextMenuSpectrumBackgroundPanel;
+    private javax.swing.JPanel deltaScoreGradientPanel;
+    private javax.swing.JLabel deltaScoreMaxValueJLabel;
+    private javax.swing.JLabel deltaScoreMinValueJLabel;
     private javax.swing.JButton exportModifiedPeptideProfileJButton;
     private javax.swing.JButton exportModifiedPsmsJButton;
     private javax.swing.JButton exportRelatedPeptideProfileJButton;
@@ -3771,7 +3892,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 }
 
                 updatePtmTable();
-//@todo update psm modification profile
+                //@TODO: update psm modification profile
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
@@ -3957,12 +4078,12 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         if (relatedPeptide) {
             int[] selectedRows = relatedPsmsTable.getSelectedRows();
             for (int row : selectedRows) {
-                psmKey.add(peptideMatch.getSpectrumMatches().get(selectedRows[row]));
+                psmKey.add(peptideMatch.getSpectrumMatches().get(row));
             }
         } else {
             int[] selectedRows = selectedPsmsTable.getSelectedRows();
             for (int row : selectedRows) {
-                psmKey.add(peptideMatch.getSpectrumMatches().get(selectedRows[row]));
+                psmKey.add(peptideMatch.getSpectrumMatches().get(row));
             }
         }
         return psmKey;
@@ -4247,8 +4368,18 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value;
                     case 5:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
-                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey); // @TODO: there is sometimes an IOException when closing the tool...
-                        return precursor.getRt();
+                        try {
+                            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey); // @TODO: there is sometimes an IOException when closing the tool...
+                            
+                            if (precursor != null) {
+                                return precursor.getRt();
+                            } else {
+                                return null;
+                            }   
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
                     case 6:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, probabilities);
@@ -4894,20 +5025,6 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                     } else {
                         ((DefaultTableModel) psmAScoresTable.getModel()).addRow(new Object[]{(i + 1)});
                         ((DefaultTableModel) psmDeltaScoresTable.getModel()).addRow(new Object[]{(i + 1)});
-                    }
-
-                    // add zeros to the empty cells for the a score
-                    for (int j = 0; j < psmAScoresTable.getColumnCount(); j++) {
-                        if (psmAScoresTable.getValueAt(i, j) == null) {
-                            psmAScoresTable.setValueAt(0.0, i, j);
-                        }
-                    }
-
-                    // add zeros to the empty cells for the delta score
-                    for (int j = 0; j < psmDeltaScoresTable.getColumnCount(); j++) {
-                        if (psmDeltaScoresTable.getValueAt(i, j) == null) {
-                            psmDeltaScoresTable.setValueAt(0.0, i, j);
-                        }
                     }
                 }
 
