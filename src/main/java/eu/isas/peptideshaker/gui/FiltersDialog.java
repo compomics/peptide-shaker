@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 
 /**
- * Displays the filters used for star/hide items
+ * Displays the filters used for star/hide items.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -23,35 +23,39 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 public class FiltersDialog extends javax.swing.JDialog {
 
     /**
-     * The main gui
+     * The main gui.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The protein star filters
+     * The protein star filters.
      */
     private HashMap<String, ProteinFilter> proteinStarFilters;
     /**
-     * The protein hide filters
+     * The protein hide filters.
      */
     private HashMap<String, ProteinFilter> proteinHideFilters;
     /**
-     * The peptide star filters
+     * The peptide star filters.
      */
     private HashMap<String, PeptideFilter> peptideStarFilters;
     /**
-     * The peptide hide filters
+     * The peptide hide filters.
      */
     private HashMap<String, PeptideFilter> peptideHideFilters;
     /**
-     * The psm star filters
+     * The psm star filters.
      */
     private HashMap<String, PsmFilter> psmStarFilters;
     /**
-     * The psm hide filters
+     * The psm hide filters.
      */
     private HashMap<String, PsmFilter> psmHideFilters;
 
-    /** Creates new form FiltersDialog */
+    /** 
+     * Creates a new FiltersDialog.
+     * 
+     * @param peptideShakerGUI 
+     */
     public FiltersDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
 
@@ -129,6 +133,9 @@ public class FiltersDialog extends javax.swing.JDialog {
         hiddenPsmTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
     }
 
+    /**
+     * Update the maps.
+     */
     private void updateMaps() {
         proteinStarFilters = new HashMap<String, ProteinFilter>();
         proteinHideFilters = new HashMap<String, ProteinFilter>();
@@ -144,6 +151,9 @@ public class FiltersDialog extends javax.swing.JDialog {
         psmHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getPsmHideFilters());
     }
 
+    /**
+     * Empty the maps.
+     */
     private void emptyTables() {
         while (hiddenProteinsTable.getRowCount() > 0) {
             ((DefaultTableModel) hiddenProteinsTable.getModel()).removeRow(0);
@@ -165,6 +175,9 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Fill the tables.
+     */
     private void fillTables() {
         for (MatchFilter matchFilter : proteinStarFilters.values()) {
             ((DefaultTableModel) starredProteinsTable.getModel()).addRow(new Object[]{
@@ -949,11 +962,22 @@ public class FiltersDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Save the filter settings and update the filters. 
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        
         peptideShakerGUI.getFilterPreferences().setProteinStarFilters(proteinStarFilters);
         peptideShakerGUI.getFilterPreferences().setProteinHideFilters(proteinHideFilters);
         peptideShakerGUI.getFilterPreferences().setPeptideStarFilters(peptideStarFilters);
@@ -973,6 +997,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Update the starred proteins table.
+     * 
+     * @param evt 
+     */
     private void starredProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredProteinsTableKeyReleased
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
@@ -1029,6 +1058,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_starredProteinsTableKeyReleased
 
+    /**
+     * Update the starred proteins table.
+     * 
+     * @param evt 
+     */
     private void starredProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredProteinsTableMouseReleased
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
@@ -1049,6 +1083,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_starredProteinsTableMouseReleased
 
+    /**
+     * Update the starred peptides table.
+     * 
+     * @param evt 
+     */
     private void starredPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredPeptidesTableMouseReleased
         int column = starredPeptidesTable.getSelectedColumn();
         int row = starredPeptidesTable.getSelectedRow();
@@ -1073,6 +1112,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_starredPeptidesTableMouseReleased
 
+    /**
+     * Update the starred psms table.
+     * 
+     * @param evt 
+     */
     private void starredPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredPsmTableMouseReleased
         int column = starredPsmTable.getSelectedColumn();
         int row = starredPsmTable.getSelectedRow();
@@ -1097,6 +1141,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_starredPsmTableMouseReleased
 
+    /**
+     * Update the hidden proteins table.
+     * 
+     * @param evt 
+     */
     private void hiddenProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hiddenProteinsTableMouseReleased
         int column = hiddenProteinsTable.getSelectedColumn();
         int row = hiddenProteinsTable.getSelectedRow();
@@ -1121,6 +1170,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_hiddenProteinsTableMouseReleased
 
+    /**
+     * Update the hidden peptides table.
+     * 
+     * @param evt 
+     */
     private void hiddenPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hiddenPeptidesTableMouseReleased
         int column = hiddenPeptidesTable.getSelectedColumn();
         int row = hiddenPeptidesTable.getSelectedRow();
@@ -1145,6 +1199,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_hiddenPeptidesTableMouseReleased
 
+    /**
+     * Update the hidden psms table.
+     * 
+     * @param evt 
+     */
     private void hiddenPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hiddenPsmTableMouseReleased
         int column = hiddenPsmTable.getSelectedColumn();
         int row = hiddenPsmTable.getSelectedRow();
@@ -1169,30 +1228,65 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_hiddenPsmTableMouseReleased
 
+    /**
+     * Open the FindDialog to add/edit a filter.
+     * 
+     * @param evt 
+     */
     private void addStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredPsmActionPerformed
         new FindDialog(peptideShakerGUI, this, 2, FilterType.STAR);
     }//GEN-LAST:event_addStarredPsmActionPerformed
 
+    /**
+     * Open the FindDialog to add/edit a filter.
+     * 
+     * @param evt 
+     */
     private void addStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredProteinActionPerformed
         new FindDialog(peptideShakerGUI, this, 0, FilterType.STAR);
     }//GEN-LAST:event_addStarredProteinActionPerformed
 
+    /**
+     * Open the FindDialog to add/edit a filter.
+     * 
+     * @param evt 
+     */
     private void addHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenProteinActionPerformed
         new FindDialog(peptideShakerGUI, this, 0, FilterType.HIDE);
     }//GEN-LAST:event_addHiddenProteinActionPerformed
 
+    /**
+     * Open the FindDialog to add/edit a filter.
+     * 
+     * @param evt 
+     */
     private void addStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredPeptidesActionPerformed
         new FindDialog(peptideShakerGUI, this, 1, FilterType.STAR);
     }//GEN-LAST:event_addStarredPeptidesActionPerformed
 
+    /**
+     * Open the FindDialog to add/edit a filter.
+     * 
+     * @param evt 
+     */
     private void addHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenPeptidesActionPerformed
         new FindDialog(peptideShakerGUI, this, 1, FilterType.HIDE);
     }//GEN-LAST:event_addHiddenPeptidesActionPerformed
 
+    /**
+     * Open the FindDialog to add/edit a filter.
+     * 
+     * @param evt 
+     */
     private void addHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenPsmActionPerformed
         new FindDialog(peptideShakerGUI, this, 2, FilterType.HIDE);
     }//GEN-LAST:event_addHiddenPsmActionPerformed
 
+    /**
+     * Clear the starred protein filters.
+     * 
+     * @param evt 
+     */
     private void clearStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStarredProteinActionPerformed
         proteinStarFilters.clear();
         ((DefaultTableModel) starredProteinsTable.getModel()).getDataVector().removeAllElements();
@@ -1200,6 +1294,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         editStarredProtein.setEnabled(false);
     }//GEN-LAST:event_clearStarredProteinActionPerformed
 
+    /**
+     * Clear the hidden protein filters.
+     * 
+     * @param evt 
+     */
     private void clearHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHiddenProteinActionPerformed
         proteinHideFilters.clear();
         ((DefaultTableModel) hiddenProteinsTable.getModel()).getDataVector().removeAllElements();
@@ -1207,6 +1306,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         editHiddenProtein.setEnabled(false);
     }//GEN-LAST:event_clearHiddenProteinActionPerformed
 
+    /**
+     * Clear the starred peptides filters.
+     * 
+     * @param evt 
+     */
     private void clearStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStarredPeptidesActionPerformed
         peptideStarFilters.clear();
         ((DefaultTableModel) starredPeptidesTable.getModel()).getDataVector().removeAllElements();
@@ -1214,6 +1318,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         editStarredPeptides.setEnabled(false);
     }//GEN-LAST:event_clearStarredPeptidesActionPerformed
 
+    /**
+     * Clear the hidden peptides filters.
+     * 
+     * @param evt 
+     */
     private void clearHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHiddenPeptidesActionPerformed
         peptideHideFilters.clear();
         ((DefaultTableModel) hiddenPeptidesTable.getModel()).getDataVector().removeAllElements();
@@ -1221,6 +1330,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         editHiddenPeptides.setEnabled(false);
     }//GEN-LAST:event_clearHiddenPeptidesActionPerformed
 
+    /**
+     * Clear the starred psms filters.
+     * 
+     * @param evt 
+     */
     private void clearStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStarredPsmActionPerformed
         psmStarFilters.clear();
         ((DefaultTableModel) starredPsmTable.getModel()).getDataVector().removeAllElements();
@@ -1228,6 +1342,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         editStarredPsm.setEnabled(false);
     }//GEN-LAST:event_clearStarredPsmActionPerformed
 
+    /**
+     * Clear the hidden psms filters.
+     * 
+     * @param evt 
+     */
     private void clearHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHiddenPsmActionPerformed
         psmHideFilters.clear();
         ((DefaultTableModel) hiddenPsmTable.getModel()).getDataVector().removeAllElements();
@@ -1235,6 +1354,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         editHiddenPsm.setEnabled(false);
     }//GEN-LAST:event_clearHiddenPsmActionPerformed
 
+    /**
+     * Edit a starred protein.
+     * 
+     * @param evt 
+     */
     private void editStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editStarredProteinActionPerformed
         int row = starredProteinsTable.getSelectedRow();
         if (row >= 0) {
@@ -1244,6 +1368,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editStarredProteinActionPerformed
 
+    /**
+     * Edit a hidden protein.
+     * 
+     * @param evt 
+     */
     private void editHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editHiddenProteinActionPerformed
         int row = hiddenProteinsTable.getSelectedRow();
         if (row >= 0) {
@@ -1253,6 +1382,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editHiddenProteinActionPerformed
 
+    /**
+     * Edit a starred peptide.
+     * 
+     * @param evt 
+     */
     private void editStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editStarredPeptidesActionPerformed
         int row = starredPeptidesTable.getSelectedRow();
         if (row >= 0) {
@@ -1262,6 +1396,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editStarredPeptidesActionPerformed
 
+    /**
+     * Edit a hidden peptide.
+     * 
+     * @param evt 
+     */
     private void editHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editHiddenPeptidesActionPerformed
         int row = hiddenPeptidesTable.getSelectedRow();
         if (row >= 0) {
@@ -1271,6 +1410,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editHiddenPeptidesActionPerformed
 
+    /**
+     * Edit a starred psm.
+     * 
+     * @param evt 
+     */
     private void editStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editStarredPsmActionPerformed
         int row = starredPsmTable.getSelectedRow();
         if (row >= 0) {
@@ -1280,6 +1424,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editStarredPsmActionPerformed
 
+    /**
+     * Edit a hidden protein.
+     * 
+     * @param evt 
+     */
     private void editHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editHiddenPsmActionPerformed
         int row = hiddenPsmTable.getSelectedRow();
         if (row >= 0) {
@@ -1289,6 +1438,11 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_editHiddenPsmActionPerformed
 
+    /**
+     * Update the hidden proteins table.
+     * 
+     * @param evt 
+     */
     private void hiddenProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenProteinsTableKeyReleased
 
         int column = hiddenProteinsTable.getSelectedColumn();
@@ -1339,9 +1493,15 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_hiddenProteinsTableKeyReleased
 
+    /**
+     * Update the starred peptides table.
+     * 
+     * @param evt 
+     */
     private void starredPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredPeptidesTableKeyReleased
         int column = starredPeptidesTable.getSelectedColumn();
         int row = starredPeptidesTable.getSelectedRow();
+        
         if (column == 2) {
             String newName = (String) starredPeptidesTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1387,9 +1547,15 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_starredPeptidesTableKeyReleased
 
+    /**
+     * Update the hidden peptides table.
+     * 
+     * @param evt 
+     */
     private void hiddenPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenPeptidesTableKeyReleased
         int column = hiddenPeptidesTable.getSelectedColumn();
         int row = hiddenPeptidesTable.getSelectedRow();
+        
         if (column == 2) {
             String newName = (String) hiddenPeptidesTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1435,9 +1601,15 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_hiddenPeptidesTableKeyReleased
 
+    /**
+     * Update the starred psms table.
+     * 
+     * @param evt 
+     */
     private void starredPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredPsmTableKeyReleased
         int column = starredPsmTable.getSelectedColumn();
         int row = starredPsmTable.getSelectedRow();
+        
         if (column == 2) {
             String newName = (String) starredPsmTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1483,9 +1655,15 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_starredPsmTableKeyReleased
 
+    /**
+     * Update the hidden psms table.
+     * 
+     * @param evt 
+     */
     private void hiddenPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenPsmTableKeyReleased
         int column = hiddenPsmTable.getSelectedColumn();
         int row = hiddenPsmTable.getSelectedRow();
+        
         if (column == 2) {
             String newName = (String) hiddenPsmTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
