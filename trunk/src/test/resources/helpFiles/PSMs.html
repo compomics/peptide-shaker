@@ -7,26 +7,68 @@
     <BODY>
         <a name="#top"/>
         <H2>Peptide-Spectrum Matches (PSMs)</H2>
+        
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#SearchEnginePerformance'>Search Engine Performance</a></li>
+            <li><a href='#SpectrumSelection'>Spectrum Selection</a></li>
+            <li><a href='#Spectrum'>Spectrum</a></li>
+            <li><a href='#PSM'>PSM</a></li>
+        </ul>
 
+        <a name="#Introduction"></a>
         <h3>Introduction</h3>
         <p align="justify">
             The <i>Spectrum ID</i> tab details how peptides were matched to spectra for the various search engines.
         </p>
+        <br>
+        <a href="#top">Go to top of page</a>
         <br><br><br>
-
+        
+        <a name="#SearchEnginePerformance"></a>
         <h3>Search Engine Performance</h3>
         <p align="justify">
             The search engine performance table displays how many spectra would be matched at 1% FDR using the search engines 
             separately. The same information is also shown in the corresponding Venn diagram.
         </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
+        <a name="#SpectrumSelection"></a>
+        <h3>Spectrum Selection</h3>
+        <p align="justify">
+            This table shows all the spectra per MGF file. Selecting a given row/spectrum will show the spectrum to the right 
+            and the peptides mapped to that spectrum by each search engine, and the PSM retained by <b>PeptideShaker</b>.
+            <br><br>
+            The search engine agreement is color coded in the second column of the table. Hold the mouse over a given color 
+            to learn what the colors mean. The same colors are also used in the PSM table in the <i>Overview</i> tab.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
         <br><br><br>
 
+        <a name="#Spectrum"></a>
+        <h3>Spectrum</h3>
+        <p align="justify">
+            The currently selected spectrum is shown here with the annotations corresponding to the currently selected  
+            PSM in the <i>Peptide-Spectrum Matches</i> table at the bottom.
+            <br><br>
+            For more details on how to interact with the spectrum see the menu bar below the spectrum.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+
+        <a name="#PSM"></a>
         <h3>Peptide-Spectrum Matches</h3>
         <p align="justify">
             For each spectrum it is possible to see all peptide assumptions made by the various search engines with the corresponding 
             score and confidence. On top of these the PSM retained by <b>PeptideShaker</b> is displayed. Note that selecting the PSM 
             of choice updates the spectrum annotation.
         </p>
+        <br>
+        <a href="#top">Go to top of page</a>
         <br><br><br>
     </BODY>
 </HTML>

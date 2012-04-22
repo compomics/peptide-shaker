@@ -2216,7 +2216,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         proteinSplitPane.setLeftComponent(proteinManualValidationPanel);
 
-        proteinExceptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Exception(s)"));
+        proteinExceptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Exceptions"));
         proteinExceptionsPanel.setOpaque(false);
 
         proteinExceptionsTxt.setColumns(20);
@@ -2546,7 +2546,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         peptidesSplitPane.setLeftComponent(peptidesManualValidationPanel);
 
-        peptidesExceptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Exception(s)"));
+        peptidesExceptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Exceptions"));
         peptidesExceptionsPanel.setOpaque(false);
 
         peptideExceptionsTxt.setColumns(20);
@@ -2897,7 +2897,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         psmSplitPane.setLeftComponent(psmManualValidationPanel);
 
-        psmExceptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Exception(s)"));
+        psmExceptionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Exceptions"));
         psmExceptionsPanel.setOpaque(false);
 
         psmExceptinosScrollPane.setOpaque(false);
