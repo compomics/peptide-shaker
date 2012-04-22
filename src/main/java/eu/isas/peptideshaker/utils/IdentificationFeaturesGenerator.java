@@ -1429,8 +1429,14 @@ public class IdentificationFeaturesGenerator {
                         orderingMap.put(charge, new HashMap<Double, ArrayList<String>>());
                     }
                     if (hasRT) {
-                        rt = peptideShakerGUI.getPrecursor(spectrumKey).getRt();
-                        if (rt == -1) {
+                        try {
+                            rt = peptideShakerGUI.getPrecursor(spectrumKey).getRt();
+
+                            if (rt == -1) {
+                                hasRT = false;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                             hasRT = false;
                         }
                     }

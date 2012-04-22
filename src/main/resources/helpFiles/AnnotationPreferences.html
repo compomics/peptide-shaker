@@ -11,6 +11,7 @@
         <ul>
             <li><a href='#Annotation'>Annotation</a></li>
             <li><a href='#AnnotationAccuracy'>AnnotationAccuracy</a></li>
+            <li><a href='#AnnotationColor'>Annotation Color</a></li>
         </ul>
 
         <a name="#Annotation"></a>
@@ -21,8 +22,8 @@
             This includes the automatic selection of neutral losses. 
             <br><br>
             However, the user can override the default annotation by selecting 
-            different ion types in this dialog or in the menu below the spectrum. To change the neutral 
-            losses one first has to uncheck the <i>Adapt</i> option on the <i>Loss</i> menu. 
+            different ion types in this dialog or in the menu below the spectrum. Note that to change the neutral 
+            losses in the menu below the spectrum one first has to uncheck the <i>Adapt</i> option on the <i>Loss</i> menu. 
             <br><br>
             To make sure that the same ion types are used for all spectra, the user 
             can also turn of the automatic annotation completly by unchecking the 
@@ -37,19 +38,28 @@
         <p align="justify">
             In addition to deciding which ion types to use when annotating the spectrum, the 
             user can also change the required accuracy of the annotations. This is done using 
-            the <i>Annotation Accuracy Slider</i> to the right of the spectrum or by changing 
-            the <i>Fragment Ion Accuracy</i> value in this dialog. Chaning this value will 
+            by using the scroll while while holding down the Ctrl key or by changing 
+            the <i>Fragment Ion Accuracy</i> value in this dialog. Changing this value will 
             decrease or increase the accuracy required to say that a given peak 
             should be annotated. The maximum value is set to the fragment ion accuracy set 
-            in the Search Parameters tab (found on the Edit menu).
+            in the <i>Search Parameters</i> tab (found on the <i>Edit</i> menu).
             <br><br>
-            The <i>Annotation Level Slider</i> is also found to the right of the spectrum 
-            (or the value can be selected in the <i>Annotation Level</i> value in this dialog) 
-            and lets the user decide how many of the peaks <b>PeptideShaker</b> should try to annotate. 
-            The level is set relative to the most intense peak, e.g., 80% means that the tool only 
-            considers peaks that have an intensity that is at least 80% of the most intense peak. As 
-            the value is reduced more and more of the low intensity peaks will be 
-            annotated.
+            Scrolling without holding down the Ctrl key 
+            (or editing the <i>Annotation Level</i> value in this dialog) 
+            lets the user decide how many of the peaks <b>PeptideShaker</b> should try to annotate.
+            The level is set relative to the most intense peak, e.g., 80% means that only 
+            peaks with an intensity that is at least 80% of the most intense peak are considered. As 
+            the value is reduced, more and more of the low intensity peaks will be annotated.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
+        <a name="#AnnotationColor"></a>
+        <h3>AnnotationColor</h3>
+        <p align="justify">
+            The annotation colors plus the width and color of the peaks can also be edited 
+            from the <i>Settings</i> menu below the spectrum, choose <i>Settings</i> > <i>Annotation Colors</i>.
         </p>
         <br>
         <a href="#top">Go to top of page</a>

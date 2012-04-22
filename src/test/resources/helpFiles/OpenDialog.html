@@ -19,7 +19,7 @@
         <h3>Introduction</h3>
         <p align="justify">
             The New Project dialog is where new PeptideShaker projects are created based on identification files. 
-            After completing each field click "Create" to start the processing. During the importing of the files 
+            After completing each field click "Create!" to start the processing. During the importing of the files 
             the progress of the import will be displayed. 
             <br><br>
             To open previously saved projects use the Open Project option instead.
@@ -45,10 +45,10 @@
         </p>
         <ul>
             <li>
-                <b>Identification File(s):</b> the files containing the identification results. Supported formats are Mascot dat files, OMSSA omx files and X!Tandem xml files. 
+                <b>Identification File(s):</b> the files containing the identification results. Supported formats are Mascot DAT files, OMSSA OMX files and X!Tandem XML files. 
                 <br><br>
                 <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, <b>PeptideShaker</b> will 
-                    try to load the other files automatically!</i>
+                    load the additional files automatically!</i>
             </li>
             <br>
             <li>
@@ -62,8 +62,9 @@
                 <b>FASTA File:</b> the FASTA file used to identify the spectra.
                 <br><br>
                 <i>Identification should be conducted using concatenated Target/Decoy databases. The tag for reverse sequences is "REVERSED". 
-                    It is recommended to use <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a> for the identification of spectra. 
-                    Peptides common to the Target and the Decoy database will be automatically ignored.</i>
+                    We recommended using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a> for the identification of spectra. 
+                    Peptides common to the Target and the Decoy database will be automatically ignored.
+                </i>
                 <br><br>
                 Loading big files can require a lot of time and memory. We recommend trying <b>PeptideShaker</b> on smaller datasets first!
             </li>
@@ -79,8 +80,12 @@
         </p>
         <ul>
             <li>
-                <b>e-value filtering:</b> In order to reduce the memory consumption it is possible to remove identifications with a high e-values. 
-                It is adviced to keep these values as high as possible in order to ensure that PSMs reach a PEP of 1. This can be verified in the Validation tab.
+                <b>Search Parameters:</b> The search parameters should be set carefully in order to process the data reliably.
+            </li>
+            <br>
+            <li>
+                <b>e-value Filtering:</b> In order to reduce the memory consumption it is possible to remove identifications with a high e-values. 
+                It is adviced to keep these values as high as possible in order to ensure that PSMs reach a PEP of 1. This can be verified in the <i>Validation</i> tab.
             </li>
             <br>
             <li>
@@ -91,15 +96,12 @@
                 <b>Precursor Accuracy:</b> The higher precursor mass error allowed can be set here in order to filter out outliers.
             </li>
             <br>
-            <li>
-                <b>Search Parameters:</b> The search parameters should be set carefully in order to process the data reliably.
-            </li>
-            <br>
-            <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, 
-                <b>PeptideShaker</b> will try to load the search parameters automatically!
-            </i>
         </ul>
-        <br>
+        <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, 
+            <b>PeptideShaker</b> will load the search parameters automatically!
+        </i>
+
+         <br><br>
         <a href="#top">Go to top of page</a>
         <br><br><br>
     </BODY>

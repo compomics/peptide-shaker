@@ -283,11 +283,10 @@ public class JumpToPanel extends javax.swing.JPanel {
             public synchronized void run() {
 
                 try {
-                wait(waitingTime);
+                    wait(waitingTime);
                 } catch (InterruptedException e) {
-                    
                 }
-                
+
                 // see if the gui is to be updated or not
                 if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1) {
 
@@ -379,17 +378,21 @@ public class JumpToPanel extends javax.swing.JPanel {
                                         possibilities.get(jumpType).add(spectrumKey);
                                         types.get(jumpType).add(Type.SPECTRUM);
                                     } else {
-                                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
-                                        doubleString = precursor.getMz() + "";
-                                        if (doubleString.startsWith(input)) {
-                                            possibilities.get(jumpType).add(spectrumKey);
-                                            types.get(jumpType).add(Type.SPECTRUM);
-                                        } else {
-                                            doubleString = precursor.getRt() + "";
+                                        try {
+                                            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                                            doubleString = precursor.getMz() + "";
                                             if (doubleString.startsWith(input)) {
                                                 possibilities.get(jumpType).add(spectrumKey);
                                                 types.get(jumpType).add(Type.SPECTRUM);
+                                            } else {
+                                                doubleString = precursor.getRt() + "";
+                                                if (doubleString.startsWith(input)) {
+                                                    possibilities.get(jumpType).add(spectrumKey);
+                                                    types.get(jumpType).add(Type.SPECTRUM);
+                                                }
                                             }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
                                     }
                                 }
@@ -416,7 +419,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                     indexLabel.setText("");
                                 }
                             }
-                            
+
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                         } else {
@@ -470,8 +473,8 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     /**
      * Select all text in the search field.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
         if (inputTxt.getText().equals(welcomeText.get(jumpType))) {
