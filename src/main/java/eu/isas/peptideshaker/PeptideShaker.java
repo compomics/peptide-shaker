@@ -97,7 +97,7 @@ public class PeptideShaker {
     /**
      * The location of the folder used for serialization of matches.
      */
-    public final static String SERIALIZATION_DIRECTORY = "matches";
+    public final static String SERIALIZATION_DIRECTORY = "resources/matches";
     /**
      * The compomics PTM factory.
      */

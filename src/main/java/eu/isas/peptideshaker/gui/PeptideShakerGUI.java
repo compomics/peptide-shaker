@@ -194,15 +194,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The xml file containing the enzymes.
      */
-    private static final String ENZYME_FILE = "conf/peptideshaker_enzymes.xml";
+    private static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
     /**
      * Modification file.
      */
-    private final String MODIFICATIONS_FILE = "conf/peptideshaker_mods.xml";
+    private final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
     /**
      * User modification file.
      */
-    private final String USER_MODIFICATIONS_FILE = "conf/peptideshaker_usermods.xml";
+    private final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
     /**
      * User preferences file.
      */
@@ -211,7 +211,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * File containing the modification profile. By default default.psm in the
      * conf folder.
      */
-    private File profileFile = new File("conf/default.psm");
+    private File profileFile = new File("resources/conf/default.psm");
     /**
      * The compomics PTM factory.
      */
@@ -398,12 +398,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // add desktop shortcut?
         if (!getJarFilePath().equalsIgnoreCase(".")
                 && System.getProperty("os.name").lastIndexOf("Windows") != -1
-                && new File(getJarFilePath() + "/conf/firstRun").exists()) {
+                && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
 
             // @TODO: add support for desktop icons in mac and linux??
 
             // delete the firstRun file such that the user is not asked the next time around
-            new File(getJarFilePath() + "/conf/firstRun").delete();
+            new File(getJarFilePath() + "/resources/conf/firstRun").delete();
 
             int value = JOptionPane.showConfirmDialog(this,
                     "Create a shortcut to PeptideShaker on the desktop?",
@@ -2030,7 +2030,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 } catch (IOException e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this, "An error occured while saving " + selectedFile.getPath() + ".\n"
-                            + "See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
+                            + "See resources/conf/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
@@ -2553,7 +2553,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             e.printStackTrace();
             catchException(e);
             JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\n"
-                    + "See /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
+                    + "See /resources/conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -2762,7 +2762,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void setUpLogFile() {
         if (useLogFile && !getJarFilePath().equalsIgnoreCase(".")) {
             try {
-                String path = getJarFilePath() + "/conf/PeptideShaker.log";
+                String path = getJarFilePath() + "/resources/PeptideShaker.log";
 
                 File file = new File(path);
                 System.setOut(new java.io.PrintStream(new FileOutputStream(file, true)));
@@ -4939,7 +4939,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     Runtime.getRuntime().gc();
                     JOptionPane.showMessageDialog(null,
                             "The task used up all the available memory and had to be stopped.\n"
-                            + "Memory boundaries are set in ../conf/JavaOptions.txt.",
+                            + "Memory boundaries are set in ../resources/conf/JavaOptions.txt.",
                             "Out Of Memory Error",
                             JOptionPane.ERROR_MESSAGE);
 
@@ -5697,7 +5697,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 jarFilePath = jarFilePath.substring(1);
             }
             
-            String iconFileLocation = jarFilePath + "\\icon\\peptide-shaker.ico";
+            String iconFileLocation = jarFilePath + "\\resources\\peptide-shaker.ico";
             String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
 
             //JOptionPane.showMessageDialog(null, "jarFileLocation: " + jarFileLocation, "jarFileLocation", JOptionPane.INFORMATION_MESSAGE); // @TODO: remove when finished testing
