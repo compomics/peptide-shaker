@@ -63,7 +63,7 @@ public class PeptideShakerWrapper {
                 path = path.replace("%20", " ");
                 path = path.replace("%5b", "[");
                 path = path.replace("%5d", "]");
-                File debugOutput = new File(path + "conf/startup.log");
+                File debugOutput = new File(path + "resources/conf/startup.log");
                 bw = new BufferedWriter(new FileWriter(debugOutput));
                 bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
             }
@@ -96,8 +96,8 @@ public class PeptideShakerWrapper {
         path = path.replace("%5b", "[");
         path = path.replace("%5d", "]");
 
-        File javaOptions = new File(path + "conf/JavaOptions.txt");
-        File nonStandardJavaHome = new File(path + "conf/JavaHome.txt");
+        File javaOptions = new File(path + "resources/conf/JavaOptions.txt");
+        File nonStandardJavaHome = new File(path + "resources/conf/JavaHome.txt");
 
         // read any java option settings
         if (javaOptions.exists()) {
@@ -232,7 +232,7 @@ public class PeptideShakerWrapper {
         }
 
         // get the splash 
-        String splashPath = path + "conf/peptide-shaker-splash.png";
+        String splashPath = path + "resources/conf/peptide-shaker-splash.png";
 
         // set the correct slashes for the splash path
         if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
@@ -309,7 +309,7 @@ public class PeptideShakerWrapper {
 
                         javax.swing.JOptionPane.showMessageDialog(null,
                                 "Failed to create the Java virtual machine.\n\n"
-                                + "Inspect the log file for details: conf/startup.log.\n\n"
+                                + "Inspect the log file for details: resources/conf/startup.log.\n\n"
                                 + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
                                 "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
 
@@ -324,7 +324,7 @@ public class PeptideShakerWrapper {
 
                     javax.swing.JOptionPane.showMessageDialog(null,
                             "An error occurred when starting PeptideShaker.\n\n"
-                            + "Inspect the log file for details: conf/startup.log.\n\n"
+                            + "Inspect the log file for details: resources/conf/startup.log.\n\n"
                             + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
                             "PeptideShaker - Startup Error", JOptionPane.ERROR_MESSAGE);
 
@@ -402,7 +402,7 @@ public class PeptideShakerWrapper {
         path = path.replace("%5b", "[");
         path = path.replace("%5d", "]");
 
-        File javaOptions = new File(path + "conf/JavaOptions.txt");
+        File javaOptions = new File(path + "resources/conf/JavaOptions.txt");
 
         // read any java option settings
         if (javaOptions.exists()) {

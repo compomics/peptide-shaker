@@ -51,7 +51,6 @@ import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.data.ValueAndBooleanDataPoint;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
-import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
@@ -165,7 +164,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         initComponents();
         setupGUI();
 
-        mappingsFolderPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
+        mappingsFolderPath = peptideShakerGUI.getJarFilePath() + File.separator 
+                + "resources" + File.separator + "conf"
                 + File.separator + "gene_ontology" + File.separator;
 
         // load the go mapping files

@@ -1213,7 +1213,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                             JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
                                     "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         } else {
-                            JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See resources/conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                     

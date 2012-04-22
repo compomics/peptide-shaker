@@ -68,11 +68,11 @@ public class FileImporter {
     /**
      * The location of the modification file
      */
-    private final String MODIFICATION_FILE = "conf/peptideshaker_mods.xml";
+    private final String MODIFICATION_FILE = "resources/conf/peptideshaker_mods.xml";
     /**
      * The location of the user modification file
      */
-    private final String USER_MODIFICATION_FILE = "conf/peptideshaker_usermods.xml";
+    private final String USER_MODIFICATION_FILE = "resources/conf/peptideshaker_usermods.xml";
     /**
      * The modification factory
      */
