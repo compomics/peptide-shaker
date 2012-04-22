@@ -14,13 +14,13 @@
             <li><a href='#Peptides'>Peptides</a></li>
             <li><a href='#PSMs'>PSMs</a></li>
             <li><a href='#Spectrum'>Spectrum</a></li>
-            <li><a href='#SequenceCoverage'>SequenceCoverage</a></li>
+            <li><a href='#SequenceCoverage'>Sequence Coverage</a></li>
         </ul>
 
         <a name="#Introduction"></a>
         <h3>Introduction</h3>
         <p align="justify">
-            The Overview tab is split into five main sections: the protein table at the top; the peptide 
+            The <i>Overview</i> tab is split into five main sections: the protein table at the top; the peptide 
             and peptide to spectrum match (PSM) tables, both in the middle left; the spectrum view in the 
             middle right; and the sequence coverage at the bottom.
             <br><br>
@@ -42,10 +42,10 @@
             For each protein, the protein inference status is color coded. If you click on the colored square, 
             more details about the protein inference issue will be displayed.
             <br><br>
-            The protein accession and protein description are given as parsed from the FASTA file. We strongly 
-            encourage the use of <a href="http://www.uniprot.org">UniProt</a> databases. Then, clicking on the protein 
-            accession links directly to the UniProt protein summary. The protein description is also given as parsed 
-            from the FASTA file. Once again, unrecognized databases may be result in issues.
+            The protein accession and protein description are given as parsed from the FASTA file. Note that we strongly 
+            encourage the use of <a href="http://www.uniprot.org">UniProt</a> databases. Clicking on the protein 
+            accession links then directly open the UniProt protein summary. The protein description is also given as parsed 
+            from the FASTA file. Once again, unrecognized databases may be result in issues or reduced amounts of information.
             <br><br>
             <b>PeptideShaker</b> estimates the protein coverage, number of peptides and spectra linking to this protein 
             based on the validated peptides and PSMs. The validation of peptides and PSMs can be customized in 
@@ -64,17 +64,17 @@
             </li>
         </ul>
         <p align="justify">
-            You can select your favorite spectrum quantification method in the <i>Edit</i> menu.
+            You can select the desired spectrum quantification method in the <i>Edit</i> menu, Edit > Preferences.
             <br><br>
-            These protein quantification methods are based on the validated identifications. It is important to note 
-            that these metrics are absolutely not precise and can be biased toward validation methods, normalization 
-            methods and shared peptides. They can however be normalized by known protein abundances and give a rough 
-            estimate of the protein abundance.
+            The protein quantification methods are based on the validated identifications. It is important to note 
+            that the metrics are absolutely not precise and can be biased toward validation methods, normalization 
+            methods and shared peptides. They can however be normalized by known protein abundances and do give a rough 
+            estimate of the protein abundances.
             <br><br>
-            The confidence in protein identification is given in the last column. It important to stress here as well 
+            The confidence in the protein identification is given in the last column. It important to stress here as well 
             that the confidence should not be taken for granted. The confidence estimation is based on the <i>Target/Decoy</i>
             hits and thus suffers from accuracy limitations inherent in the method. Confidence estimation accuracy can 
-            be proofed in the <i>Validation</i> panel. If doubts in the confidence estimation accuracy remain, it is advised 
+            be proofed in the <i>Validation</i> tab. If doubts in the confidence estimation accuracy remain, it is advised 
             to verify the protein scores which can be accessed via the <i>View</i> menu.
             <br><br>
             The final column shows whether the protein has been validated or not, the validation criteria can be set in the <i>Validation</i> tab.
@@ -92,10 +92,9 @@
             proteins in the dataset and it is possible to inspect all cases by clicking on the given colored box.
             <br><br>
             The sequence of the peptide is displayed with the identified termini. The modifications are color coded using the 
-            colors set in the search parameters accessible in the <i>Edit</i> menu. For more information about post-translational 
+            colors set in the <i>Search Parameters</i> accessible in the <i>Edit</i> menu. For more information about post-translational 
             modifications see the <i>Modifications</i> tab.
-            The start and end amino acids of the first peptide occurence in the protein sequence are also given and displayed 
-            in the sequence coverage section at the bottom of the frame.
+            The peptide's occurence(s) in the protein sequence are also displayed in the sequence coverage section at the bottom of the frame.
             <br><br>
             The number of validated PSMs supporting the peptide as well as the confidence and validation status are given in 
             the three last columns. Like for proteins it is important to note that these are sensitive to the validation 
@@ -113,10 +112,13 @@
             with different modification locations will link to the same peptide. The modification status of the peptide 
             based on the PSMs can be optimized in the <i>Modifications</i> tab.
             <br><br>
-            The charge of the precursor as found in the mgf file is given in this table. It is important to note that it 
+            The SE column shows the search engine agreement, i.e., if the search eninges agree on the top ranking peptide 
+            or not. Click the colored box to inspect the search engine details.
+            <br><br>
+            The charge of the precursor as found in the MGF file is given in this table. It is important to note that it 
             might not correspond to the charge assigned to the PSM by the search engine.
             <br><br>
-            The difference in ppm between the measured precursor mass and the theoretic peptide mass is given. Note that 
+            The difference in ppm between the measured precursor mass and the theoretic peptide mass is also provided. Note that 
             PSMs with large precursor mass deviations are filtered out when loading the data.
         </p>
         <br>
@@ -126,18 +128,22 @@
         <a name="#Spectrum"></a>
         <h3>Spectrum</h3>
         <p align="justify">
-            The spectrum corresponding to the PSM is searched in the mgf file and dispayed by <b>PeptideShaker</b>. The spectrum 
+            The spectrum corresponding to the selected PSM is located in the MGF file and dispayed by <b>PeptideShaker</b>. The spectrum 
             annotation is independent of the search engine(s) and the corresponding settings can be fine tuned in the menu bar below the spectrum. 
-            On the right two slide bars allow you to restrain the intensity threshold and peak error threshold. Depending on 
+            <br><br>
+            The annotation accuracy and the minimum annotation intensity level can be controlled by scrolling the mouse wheel (with and without 
+            holding doen the Ctrl key).
+            <br><br>
+            Depending on 
             the peaks annotated, the peptide sequence coverage by the selected ion series is displayed with the corresponding 
             ion intensities. An histogram displays the various peak intensities with annotated peaks in green and non-annotated 
             peaks in gray. Finally, the mass error of the various peak annotations can be seen on the top right.
             <br><br>
-            If one clicks on the bubble plot, peaks will be materialized by a circle centered on the annotation mass error 
-            versus the fragment ion mass. The size of the so-called bubbles represent the intensity of the ion. This display 
-            allows you to compare different PSMs. To do so, select multiple PSMs in the PSM table by holding down the shift key.
+            If one selects the <i>Bubble Plot</i> option the peaks will be represented by circles centered on the annotation mass error 
+            versus the fragment ion mass. The size of the bubbles represent the intensity of the ion. This display 
+            allows you to compare different PSMs. To do so, select multiple PSMs in the PSM table (by holding down the shift key).
             <br><br>
-            The ion table shows which ions were found with the corresponding intensity. Note that it is here also possible to 
+            The <i>Ion Table</i> shows which ions were found with the corresponding intensities. Note that it is here also possible to 
             select different PSMs, the intensity variability will then be displayed with error bars. Note that fragment ion 
             intensities of correct PSMs are usually highly reproducible.
             <br><br>
@@ -151,8 +157,13 @@
         <h3>Sequence Coverage</h3>
         <p align="justify">
             The sequence coverage is displayed for the selected protein. The validated peptides are displayed in green and the 
-            selected peptide in the peptide table is in red. You can access the peptide by clicking on the corresponding peptide. 
+            peptide selected in the peptide table is in blue. Areas if the sequence that is theoretically possible to cover 
+            with the given search settings is shown in light grey. PTMs are color coded and shown below the modified residue. 
+            <br><br>
+            You can access a peptide by clicking on the corresponding peptide. 
             In case of overlapping peptides you can select the peptide of interest using the appearing contextual menu.
+            <br><br>
+            It is also possible to zoom by left clicking an dragging the mouse towards the right.
         </p>
         <br>
         <a href="#top">More on the Overview tab</a>

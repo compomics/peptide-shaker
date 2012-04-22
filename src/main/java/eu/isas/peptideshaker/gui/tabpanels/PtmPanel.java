@@ -2024,6 +2024,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                         // open the protein inference at the petide level dialog
                         if (column == peptidesTable.getColumn("PI").getModelIndex()) {
+                            progressDialog.setVisible(false);
                             try {
                                 String peptideKey = getSelectedPeptide(false);
                                 new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
@@ -2033,6 +2034,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         } else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
                             if (peptidesTable.getValueAt(row, column) != null
                                     && ((Integer) peptidesTable.getValueAt(row, column)).intValue() != -1) {
+                                progressDialog.setVisible(false);
                                 new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
                             }
                         }
@@ -2126,6 +2128,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                         // open the protein inference at the petide level dialog
                         if (column == relatedPeptidesTable.getColumn("PI").getModelIndex()) {
+                            progressDialog.setVisible(false);
                             try {
                                 String peptideKey = getSelectedPeptide(true);
                                 new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
@@ -2135,6 +2138,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         } else if (column == relatedPeptidesTable.getColumn("PTM").getModelIndex()) {
                             if (relatedPeptidesTable.getValueAt(row, column) != null
                                     && ((Integer) relatedPeptidesTable.getValueAt(row, column)).intValue() != -1) {
+                                progressDialog.setVisible(false);
                                 new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
                             }
                         }

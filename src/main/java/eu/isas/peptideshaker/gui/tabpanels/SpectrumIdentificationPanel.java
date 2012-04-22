@@ -2075,7 +2075,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      */
     private void psmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#PSM");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonActionPerformed
 
@@ -2131,7 +2131,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      */
     private void searchEnginesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#SearchEnginePerformance");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_searchEnginesHelpJButtonActionPerformed
 
@@ -2178,7 +2178,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      */
     private void spectrumSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSelectionHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#SpectrumSelection");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumSelectionHelpJButtonActionPerformed
 
@@ -2234,7 +2234,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"), "#Spectrum");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
