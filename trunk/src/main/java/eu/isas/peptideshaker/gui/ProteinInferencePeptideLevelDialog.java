@@ -404,9 +404,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(helpJButton)
                     .addComponent(okButton)
-                    .addComponent(cancelButton)
-                    .addComponent(helpJButton))
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 

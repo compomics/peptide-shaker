@@ -1738,7 +1738,7 @@ public class FiltersDialog extends javax.swing.JDialog {
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FiltersDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FilterSelection.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 

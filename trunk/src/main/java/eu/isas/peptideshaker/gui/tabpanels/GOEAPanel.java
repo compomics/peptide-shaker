@@ -1890,7 +1890,13 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      */
     private void plotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "#GO_Plots");
+        
+        if (goPlotsTabbedPane.getSelectedIndex() == 0) {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "#Proteins");
+        } else {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "#GO_Plots");
+        }
+
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_plotHelpJButtonActionPerformed
 

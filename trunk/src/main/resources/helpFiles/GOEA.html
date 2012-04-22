@@ -13,6 +13,7 @@
             <li><a href='#Species'>Species</a></li>
             <li><a href='#Ensembl_Version'>Ensembl Version</a></li>
             <li><a href='#GO_Plots'>GO Plots</a></li>
+            <li><a href='#GO_Plots'>Proteins</a></li>
         </ul>
 
         <a name="#Introduction"></a>
@@ -36,6 +37,7 @@
         </ul>
         <p align="justify">
             <b><i>Note that the GO Enrichment Analysis only supports <a href="http://www.uniprot.org">UniProt</a> accession numbers!</i></b>
+            <b><i>Also note that only proteins in your dataset mapping to GO annotated proteins are counted in the analysis.</i></b>
         </p>
 
         <br>
@@ -67,7 +69,7 @@
             <b>PeptideShaker</b> always uses the latest version of <a href="http://www.ensembl.org">Ensembl</a> 
             when downloading the GO term to protein mappings. The version used for a given species is shown 
             behind the species name in the species drop down menu. Ensembl is updated with the latest data on a 
-            monthly basis and each version is given a number, e.g., Ensembl 64.
+            monthly basis and each version is given a number, e.g., Ensembl 66.
         </p>
         <br>
         <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
@@ -76,17 +78,29 @@
         <a name="#GO_Plots"></a>
         <h3>GO Plots</h3>
         <p align="justify">
-            Two GO plots are available: a <i>significance plot</i> and a <i>distribution plot</i>. The significance plot highlights 
-            the significant GO terms, while the distribution plot shows the frequencies in 
+            Two GO plots are available: a <i>Significance Plot</i> and a <i>Distribution Plot</i>. The <i>Significance Plot</i> highlights 
+            the significant GO terms, while the <i>Distribution Plot</i> shows the frequencies in 
             percent for your dataset compared to the whole of <a href="http://www.ensembl.org">Ensembl</a>.
             <br><br>
-            The plots are closely connected to the table with the GO terms. Selecting a a row in the table will 
+            The plots are closely connected to the table with the GO terms. Selecting a row in the table will 
             highlight the same term in the plots and visa versa. GO terms can be excluded from the plot by 
             deselecting them in the final column in the table. Right-clicking in the table will bring up 
             a menu with shortcuts for selecting/deselecting all, and for selecting only the significant GO terms. 
             <br><br>
             The order of the terms in the plot is also the same as for the table. Click the table column headers 
             to re-order the table and plots.
+        </p>
+        <br>
+        <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
+        <br><br><br>
+        
+        <a name="#Proteins"></a>
+        <h3>Proteins</h3>
+        <p align="justify">
+            The proteins in your project annotated with the currently selected GO term is shown in this table. If the 
+            table is empty make sure that you have selected a row in the <i>Gene Ontology Mappings</i> table at the top. 
+            If the table is still empty the this means that there are no proteins in your project mapping to the given 
+            GO term.
         </p>
         <br>
         <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
