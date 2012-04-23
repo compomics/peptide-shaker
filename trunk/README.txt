@@ -7,6 +7,7 @@
    To start PeptideShaker simply double click the jar file.
 
    From the command line use 'java -jar PeptideShaker-X.Y.Z.jar'. 
+   (Replace X.Y.Z with the PeptideShaker version number.)
 
 
    ========================

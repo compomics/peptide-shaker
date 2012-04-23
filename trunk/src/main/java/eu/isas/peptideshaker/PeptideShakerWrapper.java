@@ -35,6 +35,10 @@ public class PeptideShakerWrapper {
      */
     private boolean firstTry = true;
     /**
+     * Is set to true if proxy settings are found in the JavaOptions file.
+     */
+    private boolean proxySettingsFound = false;
+    /**
      * User preferences file.
      */
     private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
@@ -99,6 +103,9 @@ public class PeptideShakerWrapper {
         File javaOptions = new File(path + "resources/conf/JavaOptions.txt");
         File nonStandardJavaHome = new File(path + "resources/conf/JavaHome.txt");
 
+        File uniprotApiPropertiesFile = new File(path + "resources/conf/proxy/uniprotjapi.properties");
+        String uniprotApiProperties = "";
+
         // read any java option settings
         if (javaOptions.exists()) {
 
@@ -128,16 +135,43 @@ public class PeptideShakerWrapper {
                                     }
                                 } catch (Exception e) {
                                     javax.swing.JOptionPane.showMessageDialog(null,
-                                            "PeptideShaker could not parse the memory setting:" + currentOption 
+                                            "PeptideShaker could not parse the memory setting:" + currentOption
                                             + ". The value was reset to" + userPreferences.getMemoryPreference() + ".",
                                             "PeptideShaker - Startup Failed", JOptionPane.WARNING_MESSAGE);
                                 }
                             }
                         }
                     } else if (!currentOption.startsWith("#")) {
+
+                        // extract the proxy settings as these are needed for uniprotjapi.properties
+                        if (currentOption.startsWith("-Dhttp")) {
+
+                            proxySettingsFound = true;
+                            String[] tempProxySetting = currentOption.split("=");
+
+                            if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyHost")) { // proxy host
+                                uniprotApiProperties += "proxy.host=" + tempProxySetting[1] + "\n";
+                            } else if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyPort")) { // proxy port
+                                uniprotApiProperties += "proxy.port=" + tempProxySetting[1] + "\n";
+                            } else if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyUser")) { // proxy user name
+                                uniprotApiProperties += "username=" + tempProxySetting[1] + "\n";
+                            } else if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyPassword")) { // proxy password
+                                uniprotApiProperties += "password=" + tempProxySetting[1] + "\n";
+                            }
+                        }
+
                         options += currentOption + " ";
                     }
                     currentOption = b.readLine();
+                }
+
+                // create the uniprot japi proxy settings file
+                if (proxySettingsFound) {
+                    FileWriter uniprotProxyWriter = new FileWriter(uniprotApiPropertiesFile);
+                    BufferedWriter uniprotProxyBufferedWriter = new BufferedWriter(uniprotProxyWriter);
+                    uniprotProxyBufferedWriter.write(uniprotApiProperties);
+                    uniprotProxyBufferedWriter.close();
+                    uniprotProxyWriter.close();
                 }
 
                 b.close();
@@ -147,8 +181,14 @@ public class PeptideShakerWrapper {
 
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
+                if (useStartUpLog) {
+                    bw.write(ex.getMessage());
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
+                if (useStartUpLog) {
+                    bw.write(ex.getMessage());
+                }
             }
         } else {
             options = "-Xms128M -Xmx1024M";
@@ -244,9 +284,28 @@ public class PeptideShakerWrapper {
             }
         }
 
+        String uniprotProxyClassPath = "";
+
+        // add the classpath for the uniprot proxy file
+        if (proxySettingsFound) {
+            uniprotProxyClassPath = path + "resources/conf/proxy";
+            
+            // set the correct slashes for the proxy path
+            if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
+                uniprotProxyClassPath = uniprotProxyClassPath.replace("/", "\\");
+
+                // remove the initial '\' at the start of the line 
+                if (uniprotProxyClassPath.startsWith("\\") && !uniprotProxyClassPath.startsWith("\\\\")) {
+                    uniprotProxyClassPath = uniprotProxyClassPath.substring(1);
+                }
+            }
+            
+            uniprotProxyClassPath = ";" + quote + uniprotProxyClassPath + quote;
+        }
+
         // create the complete command line
         cmdLine = javaHome + "java -splash:" + quote + splashPath + quote + " " + options + " -cp "
-                + quote + new File(path, jarFileName).getAbsolutePath() + quote
+                + quote + new File(path, jarFileName).getAbsolutePath() + quote + uniprotProxyClassPath
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
         if (useStartUpLog) {
