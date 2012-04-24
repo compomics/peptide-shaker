@@ -605,6 +605,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         findJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
+        jSeparator15 = new javax.swing.JPopupMenu.Separator();
+        searchGuiPreferencesJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
@@ -1153,6 +1155,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(starHideJMenuItem);
+        editMenu.add(jSeparator15);
+
+        searchGuiPreferencesJMenuItem.setText("SearchGUI Settings");
+        searchGuiPreferencesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchGuiPreferencesJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(searchGuiPreferencesJMenuItem);
 
         menuBar.add(editMenu);
 
@@ -2482,6 +2493,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_reporterIonsCheckMenuActionPerformed
 
     /**
+     * Open a SearchGuiSetupDialog were the user can setup the SearchGUI link.
+     * 
+     * @param evt 
+     */
+    private void searchGuiPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGuiPreferencesJMenuItemActionPerformed
+        new SearchGuiSetupDialog(this, true);
+    }//GEN-LAST:event_searchGuiPreferencesJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2633,6 +2653,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator14;
+    private javax.swing.JPopupMenu.Separator jSeparator15;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -2665,6 +2686,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
+    private javax.swing.JMenuItem searchGuiPreferencesJMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JMenu settingsMenu;
@@ -2838,6 +2860,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         tempPreferences.setDeltaScoreThreshold(userPreferences.getDeltaScoreThreshold());
         tempPreferences.setAScoreThreshold(userPreferences.getAScoreThreshold());
         tempPreferences.setMemoryPreference(userPreferences.getMemoryPreference());
+        tempPreferences.setSearchGuiPath(userPreferences.getSearchGuiPath());
         userPreferences = tempPreferences;
 
         // Copy Pride default files // TODO???
@@ -2846,7 +2869,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * Saves the user preferences.
      */
-    private void saveUserPreferences() {
+    public void saveUserPreferences() {
         try {
             File file = new File(USER_PREFERENCES_FILE);
             if (!file.getParentFile().exists()) {
