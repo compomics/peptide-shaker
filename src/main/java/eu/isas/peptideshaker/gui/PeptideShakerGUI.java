@@ -48,6 +48,7 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
+import eu.isas.peptideshaker.SearchGUIWrapper;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.testDialogs.PeptideFractionDialog;
 import eu.isas.peptideshaker.gui.testDialogs.ProteinFractionDialog;
@@ -584,6 +585,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
+        startSearchGuiMenuItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
@@ -1011,7 +1013,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         newJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         newJMenuItem.setMnemonic('N');
-        newJMenuItem.setText("New Project");
+        newJMenuItem.setText("New Project...");
         newJMenuItem.setToolTipText("Create a new PeptideShaker project");
         newJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1019,11 +1021,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(newJMenuItem);
+
+        startSearchGuiMenuItem.setText("New Search...");
+        startSearchGuiMenuItem.setToolTipText("Start a new SearchGUI protein identification search");
+        startSearchGuiMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startSearchGuiMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(startSearchGuiMenuItem);
         fileJMenu.add(jSeparator8);
 
         openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         openJMenuItem.setMnemonic('O');
-        openJMenuItem.setText("Open Project");
+        openJMenuItem.setText("Open Project...");
         openJMenuItem.setToolTipText("Open an existing PeptideShaker project");
         openJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2494,12 +2505,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Open a SearchGuiSetupDialog were the user can setup the SearchGUI link.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void searchGuiPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGuiPreferencesJMenuItemActionPerformed
         new SearchGuiSetupDialog(this, true);
     }//GEN-LAST:event_searchGuiPreferencesJMenuItemActionPerformed
+
+    /**
+     * Open SearchGUI.
+     *
+     * @param evt
+     */
+    private void startSearchGuiMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSearchGuiMenuItemActionPerformed
+        startSearchGui();
+    }//GEN-LAST:event_startSearchGuiMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -2702,6 +2722,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu splitterMenu7;
     private javax.swing.JMenu splitterMenu8;
     private javax.swing.JMenuItem starHideJMenuItem;
+    private javax.swing.JMenuItem startSearchGuiMenuItem;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu testJMenu;
     private javax.swing.JMenu viewJMenu;
@@ -2900,10 +2921,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             path = path.replace("%20", " ");
             path = path.replace("%5b", "[");
             path = path.replace("%5d", "]");
-            
+
             if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
                 path = path.replace("/", "\\");
-            } 
+            }
         } else {
             path = ".";
         }
@@ -3135,10 +3156,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param spectrumKey the key of the given spectrum
      * @return the precursor
      * @throws IOException
-     * @throws MzMLUnmarshallerException 
-     * @throws IllegalArgumentException  
+     * @throws MzMLUnmarshallerException
+     * @throws IllegalArgumentException
      */
-    public Precursor getPrecursor(String spectrumKey) throws IOException, MzMLUnmarshallerException, IllegalArgumentException{
+    public Precursor getPrecursor(String spectrumKey) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
         return getPrecursor(spectrumKey, false);
     }
 
@@ -3150,8 +3171,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * memory for later re-use
      * @return the precursor
      * @throws IOException
-     * @throws MzMLUnmarshallerException 
-     * @throws IllegalArgumentException 
+     * @throws MzMLUnmarshallerException
+     * @throws IllegalArgumentException
      */
     public Precursor getPrecursor(String spectrumKey, boolean save) throws IOException, MzMLUnmarshallerException, IllegalArgumentException {
         return spectrumFactory.getPrecursor(spectrumKey, save);
@@ -4547,7 +4568,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Importing Project. Please Wait...");
-        
+
 
         new Thread(new Runnable() {
 
@@ -5719,12 +5740,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             if (jarFilePath.startsWith("\\") && !jarFilePath.startsWith("\\\\")) {
                 jarFilePath = jarFilePath.substring(1);
             }
-            
+
             String iconFileLocation = jarFilePath + "\\resources\\peptide-shaker.ico";
             String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
 
             //JOptionPane.showMessageDialog(null, "jarFileLocation: " + jarFileLocation, "jarFileLocation", JOptionPane.INFORMATION_MESSAGE); // @TODO: remove when finished testing
-            
+
             try {
                 JShellLink link = new JShellLink();
                 link.setFolder(JShellLink.getDirectory("desktop"));
@@ -5736,6 +5757,44 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 System.out.println("An error occurred when trying to create a desktop shortcut...");
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Open SearchGUI.
+     */
+    public void startSearchGui() {
+        String path = userPreferences.getSearchGuiPath();
+
+        final PeptideShakerGUI finalRef = this;
+        
+        if (path == null) {
+            new SearchGuiSetupDialog(this, true);
+            path = userPreferences.getSearchGuiPath();
+            
+            if (path != null) {
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        try {
+                            new SearchGUIWrapper(finalRef);
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore
+                        }
+                    }
+                }, "SearchGUI").start();
+            }
+        } else {
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        new SearchGUIWrapper(finalRef);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "SearchGUI").start();
         }
     }
 }

@@ -387,11 +387,20 @@
                   <KeyStroke key="Ctrl+N"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="78"/>
-                <Property name="text" type="java.lang.String" value="New Project"/>
+                <Property name="text" type="java.lang.String" value="New Project..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Create a new PeptideShaker project"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newJMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="startSearchGuiMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="New Search..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Start a new SearchGUI protein identification search"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startSearchGuiMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">
@@ -402,7 +411,7 @@
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="79"/>
-                <Property name="text" type="java.lang.String" value="Open Project"/>
+                <Property name="text" type="java.lang.String" value="Open Project..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Open an existing PeptideShaker project"/>
               </Properties>
               <Events>
