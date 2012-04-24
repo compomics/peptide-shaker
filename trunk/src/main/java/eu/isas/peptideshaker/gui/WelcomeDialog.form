@@ -127,7 +127,7 @@
               <Image iconType="3" name="/icons/peptide-shaker-medium-blue-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Open Project"/>
-            <Property name="toolTipText" type="java.lang.String" value="Open an existing PeptideShaker project."/>
+            <Property name="toolTipText" type="java.lang.String" value="Open an existing PeptideShaker project"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="20"/>
@@ -147,7 +147,7 @@
               <Image iconType="3" name="/icons/peptide-shaker-medium-orange-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="New Project"/>
-            <Property name="toolTipText" type="java.lang.String" value="Create a new PeptideShaker project."/>
+            <Property name="toolTipText" type="java.lang.String" value="Create a new PeptideShaker project"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="24"/>
@@ -223,7 +223,7 @@
               <Image iconType="3" name="/icons/searchgui-medium-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Start Search"/>
-            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Start a SearchGUI protein identification search.&lt;br&gt;&#xa;(in development)&#xa;&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Start a SearchGUI protein identification search&lt;br&gt;&#xa;(under development)&#xa;&lt;/html&gt;"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="20"/>
@@ -243,7 +243,8 @@
               <Image iconType="3" name="/icons/help-medium-shadow.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Getting Started"/>
-            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Open the Getting Started tutorial.&lt;br&gt;&#xa;(in development)&#xa;&lt;/html&gt;"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Open the Getting Started tutorial&lt;br&gt;&#xa;(coming soon...)&#xa;&lt;/html&gt;"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="20"/>

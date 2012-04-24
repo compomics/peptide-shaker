@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * In this class are stored the user preferences for PeptideShaker
+ * In this class are stored the user preferences for PeptideShaker.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -73,6 +73,12 @@ public class UserPreferences implements Serializable {
      * The user preferred A-score threshold.
      */
     private Double aScoreThreshold = 50.0;
+    /**
+     * The path to the SearchGUI installation (if any). Makes it possible to
+     * start SearchGUI directly from PeptideShaker. Set to null if no path is
+     * provided.
+     */
+    private String searchGuiPath = null;
 
     /**
      * Constructor.
@@ -292,21 +298,21 @@ public class UserPreferences implements Serializable {
 
     /**
      * Returns the color to use for the annotated peaks.
-     * 
+     *
      * @return the spectrumAnnotatedPeakColor
      */
     public Color getSpectrumAnnotatedPeakColor() {
-        
+
         if (spectrumAnnotatedPeakColor == null) {
             spectrumAnnotatedPeakColor = Color.RED;
         }
-        
+
         return spectrumAnnotatedPeakColor;
     }
 
     /**
      * Set the color to use for the annotated peaks.
-     * 
+     *
      * @param spectrumAnnotatedPeakColor the spectrumAnnotatedPeakColor to set
      */
     public void setSpectrumAnnotatedPeakColor(Color spectrumAnnotatedPeakColor) {
@@ -315,21 +321,21 @@ public class UserPreferences implements Serializable {
 
     /**
      * Returns the color to use for the background peaks.
-     * 
+     *
      * @return the spectrumBackgroundPeakColor
      */
     public Color getSpectrumBackgroundPeakColor() {
-        
+
         if (spectrumBackgroundPeakColor == null) {
-           spectrumBackgroundPeakColor = new Color(100, 100, 100, 50);
+            spectrumBackgroundPeakColor = new Color(100, 100, 100, 50);
         }
-        
+
         return spectrumBackgroundPeakColor;
     }
 
     /**
      * Set the color to use for the background peaks.
-     * 
+     *
      * @param spectrumBackgroundPeakColor the spectrumBackgroundPeakColor to set
      */
     public void setSpectrumBackgroundPeakColor(Color spectrumBackgroundPeakColor) {
@@ -338,21 +344,21 @@ public class UserPreferences implements Serializable {
 
     /**
      * Returns the width of the annotated peaks.
-     * 
+     *
      * @return the spectrumAnnotatedPeakWidth
      */
     public Float getSpectrumAnnotatedPeakWidth() {
-        
+
         if (spectrumAnnotatedPeakWidth == null) {
             spectrumAnnotatedPeakWidth = 1.0f;
         }
-        
+
         return spectrumAnnotatedPeakWidth;
     }
 
     /**
      * Set the width of the annotated peaks.
-     * 
+     *
      * @param spectrumAnnotatedPeakWidth the spectrumAnnotatedPeakWidth to set
      */
     public void setSpectrumAnnotatedPeakWidth(float spectrumAnnotatedPeakWidth) {
@@ -361,24 +367,42 @@ public class UserPreferences implements Serializable {
 
     /**
      * Returns the width of the background peaks.
-     * 
+     *
      * @return the spectrumBackgroundPeakWidth
      */
     public Float getSpectrumBackgroundPeakWidth() {
-        
+
         if (spectrumBackgroundPeakWidth == null) {
             spectrumBackgroundPeakWidth = 1.0f;
         }
-        
+
         return spectrumBackgroundPeakWidth;
     }
 
     /**
      * Set the width of the background peaks.
-     * 
+     *
      * @param spectrumBackgroundPeakWidth the spectrumBackgroundPeakWidth to set
      */
     public void setSpectrumBackgroundPeakWidth(float spectrumBackgroundPeakWidth) {
         this.spectrumBackgroundPeakWidth = spectrumBackgroundPeakWidth;
+    }
+
+    /**
+     * Returns the path to the SearchGUI installation.
+     * 
+     * @return the path to the SearchGUI installation
+     */
+    public String getSearchGuiPath() {
+        return searchGuiPath;
+    }
+
+    /**
+     * Set the path to the SearchGUI installation.
+     * 
+     * @param searchGuiPath the path to the SearchGUI installation
+     */
+    public void setSearchGuiPath(String searchGuiPath) {
+        this.searchGuiPath = searchGuiPath;
     }
 }
