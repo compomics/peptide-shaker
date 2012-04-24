@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 /**
  * A wrapper class used to start the SearchGUI from within PeptideShaker.
  *
- * @author  Harald Barsnes
+ * @author Harald Barsnes
  */
 public class SearchGUIWrapper {
 
@@ -22,13 +22,13 @@ public class SearchGUIWrapper {
 
     /**
      * Starts the launcher by calling the launch method.
-     * 
+     *
      * @param peptideShakerGUI the PeptideShakerGUI parent
      */
     public SearchGUIWrapper(PeptideShakerGUI peptideShakerGUI) {
 
         this.peptideShakerGUI = peptideShakerGUI;
-        
+
         try {
             launch();
         } catch (Exception e) {
@@ -42,20 +42,26 @@ public class SearchGUIWrapper {
      * @throws java.lang.Exception
      */
     private void launch() throws Exception {
-        
+
+        // check if searchgui file exists
+        if (!new File(peptideShakerGUI.getUserPreferences().getSearchGuiPath()).exists()) {
+            JOptionPane.showMessageDialog(peptideShakerGUI,
+                    "SearchGUI installation not found!\n"
+                    + "Check Edit > SearchGUI Settings", "SearvhGUI Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         // check if a new version of SearchGUI is available
         // @TODO: implement me!!
-        
+
         String quote = "";
 
         if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
             quote = "\"";
         }
-        
+
         String cmdLine = "java -jar " + quote + peptideShakerGUI.getUserPreferences().getSearchGuiPath() + quote;
-        
-        System.out.println(cmdLine);
-        
+
         if (debug) {
             System.out.println(cmdLine);
         }
@@ -100,20 +106,18 @@ public class SearchGUIWrapper {
             if (debug) {
                 System.out.println("Process exitValue: " + exitVal);
             }
-            
+
             if (error) {
-                File logFile = new File("resources/conf", "SearchGUI.log");
+                File logFile = new File(peptideShakerGUI.getJarFilePath() + "/resources/conf", "SearchGUI.log");
                 FileWriter f = new FileWriter(logFile, true);
                 f.write("\n\n" + temp + "\n\n");
                 f.close();
-                
-                javax.swing.JOptionPane.showMessageDialog(null,
-                        "Failed to start SearchGUI.\n\n" +
-                        "Inspect the log file for details: resources/conf/SearchGUI.log.\n\n" +
-                        "Then go to Troubleshooting at http://searchgui.googlecode.com.",
-                        "SearchGUI - Startup Failed", JOptionPane.ERROR_MESSAGE);
 
-                System.exit(0);
+                javax.swing.JOptionPane.showMessageDialog(null,
+                        "Failed to start SearchGUI.\n\n"
+                        + "Inspect the log file for details: resources/conf/SearchGUI.log.\n\n"
+                        + "Then go to Troubleshooting at http://searchgui.googlecode.com.",
+                        "SearchGUI - Startup Failed", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -121,4 +125,3 @@ public class SearchGUIWrapper {
         }
     }
 }
-

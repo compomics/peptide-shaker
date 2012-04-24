@@ -430,19 +430,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
-        String path = peptideShakerGUI.getUserPreferences().getSearchGuiPath();
-
-        if (path == null) {
-            SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(peptideShakerGUI, true);
-            
-            path = peptideShakerGUI.getUserPreferences().getSearchGuiPath();
-            
-            if (path != null) {
-                new SearchGUIWrapper(peptideShakerGUI);
-            }
-        } else {
-            new SearchGUIWrapper(peptideShakerGUI);
-        }
+        peptideShakerGUI.startSearchGui();
     }//GEN-LAST:event_searchJButtonActionPerformed
 
     /**

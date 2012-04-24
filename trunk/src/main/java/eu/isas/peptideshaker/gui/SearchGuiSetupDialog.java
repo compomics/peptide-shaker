@@ -90,7 +90,7 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
             searchGuiInstallationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchGuiInstallationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(searchGuiInstallationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(searchGuiInstallationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(searchGuiInstallationPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(searchGuiJarFileHelpLabel))
@@ -196,13 +196,13 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchGuiInstallationPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(searchGuiDownloadPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                        .addComponent(cancelButton))
+                    .addComponent(searchGuiInstallationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -226,7 +226,7 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -251,6 +251,11 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
+        
+        if (searchGuiInstallationJTextField.getText().length() > 0) {
+            peptideShakerGUI.setLastSelectedFolder(searchGuiInstallationJTextField.getText());
+        }
+        
         File selectedFile = peptideShakerGUI.getUserSelectedFile(".jar", "SearchGUI jar file (.jar)", "Select SearchGUI Jar File", true);
 
         if (selectedFile != null) {
