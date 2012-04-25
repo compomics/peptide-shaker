@@ -50,11 +50,14 @@ public class GettingStartedDialog extends javax.swing.JDialog {
      */
     private void setUpDisplayPanels() {
         displayPanels = new ArrayList<ImageIconPanel>();
+        displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/introduction.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/overview_tab.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/overview_tab_2.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/export_features.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/export_features_2.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/contextual_help.png"))));
+        displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/specific_tabs.png"))));
+        displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/pride_export.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/searchgui.png"))));
     }
 
