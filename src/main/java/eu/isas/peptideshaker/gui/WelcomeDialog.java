@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import eu.isas.peptideshaker.SearchGUIWrapper;
+import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
@@ -168,8 +168,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         gettingStartedJButton.setFont(gettingStartedJButton.getFont().deriveFont(gettingStartedJButton.getFont().getStyle() | java.awt.Font.BOLD, gettingStartedJButton.getFont().getSize()+3));
         gettingStartedJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help-medium-shadow.png"))); // NOI18N
         gettingStartedJButton.setText("Getting Started");
-        gettingStartedJButton.setToolTipText("<html>\nOpen the Getting Started tutorial<br>\n(coming soon...)\n</html>");
-        gettingStartedJButton.setEnabled(false);
+        gettingStartedJButton.setToolTipText("<html>\nOpen the Getting Started tutorial<br>\n(under development)\n</html>");
         gettingStartedJButton.setFocusPainted(false);
         gettingStartedJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         gettingStartedJButton.setIconTextGap(20);
@@ -439,7 +438,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void gettingStartedJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedJButtonActionPerformed
-        // TODO add your handling code here:
+        new GettingStartedDialog(peptideShakerGUI, true);
     }//GEN-LAST:event_gettingStartedJButtonActionPerformed
 
     /**

@@ -49,6 +49,7 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.SearchGUIWrapper;
+import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.testDialogs.PeptideFractionDialog;
 import eu.isas.peptideshaker.gui.testDialogs.ProteinFractionDialog;
@@ -628,7 +629,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
+        gettingStartedMenuItem = new javax.swing.JMenuItem();
+        jSeparator17 = new javax.swing.JPopupMenu.Separator();
         logReportMenu = new javax.swing.JMenuItem();
+        jSeparator16 = new javax.swing.JPopupMenu.Separator();
         aboutJMenuItem = new javax.swing.JMenuItem();
         testJMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -1330,6 +1334,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         helpMenu.add(helpJMenuItem);
 
+        gettingStartedMenuItem.setText("Getting Started...");
+        gettingStartedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gettingStartedMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(gettingStartedMenuItem);
+        helpMenu.add(jSeparator17);
+
         logReportMenu.setMnemonic('B');
         logReportMenu.setText("Bug Report");
         logReportMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -1338,6 +1351,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         helpMenu.add(logReportMenu);
+        helpMenu.add(jSeparator16);
 
         aboutJMenuItem.setMnemonic('A');
         aboutJMenuItem.setText("About");
@@ -2522,6 +2536,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_startSearchGuiMenuItemActionPerformed
 
     /**
+     * Open the Getting Started tutorial.
+     * 
+     * @param evt 
+     */
+    private void gettingStartedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedMenuItemActionPerformed
+        new GettingStartedDialog(this, false);
+    }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2653,6 +2676,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
+    private javax.swing.JMenuItem gettingStartedMenuItem;
     private javax.swing.JPanel goJPanel;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JMenu helpJMenu;
@@ -2674,6 +2698,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator14;
     private javax.swing.JPopupMenu.Separator jSeparator15;
+    private javax.swing.JPopupMenu.Separator jSeparator16;
+    private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
