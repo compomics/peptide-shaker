@@ -148,5 +148,5 @@ public interface WaitingHandler {
      * 
      * @param text a text describing what is currently waited for
      */
-    public void setTitle(String text);
+    public void setWaitingText(String text);
 }

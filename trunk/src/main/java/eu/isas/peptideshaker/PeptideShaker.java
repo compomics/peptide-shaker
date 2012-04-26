@@ -683,7 +683,7 @@ public class PeptideShaker {
      */
     private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler) {
 
-        waitingHandler.setTitle("Attaching Spectrum Probabilities. Please Wait...");
+        waitingHandler.setWaitingText("Attaching Spectrum Probabilities. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -1202,7 +1202,7 @@ public class PeptideShaker {
      */
     private void fillPeptideMaps(WaitingHandler waitingHandler) throws Exception {
 
-        waitingHandler.setTitle("Filling Peptide Maps. Please Wait...");
+        waitingHandler.setWaitingText("Filling Peptide Maps. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
@@ -1259,7 +1259,7 @@ public class PeptideShaker {
      */
     private void attachPeptideProbabilities(WaitingHandler waitingHandler) {
 
-        waitingHandler.setTitle("Attaching Peptide Probabilities. Please Wait...");
+        waitingHandler.setWaitingText("Attaching Peptide Probabilities. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
@@ -1290,7 +1290,7 @@ public class PeptideShaker {
      */
     private void fillProteinMap(WaitingHandler waitingHandler) throws Exception {
 
-        waitingHandler.setTitle("Filling Protein Map. Please Wait...");
+        waitingHandler.setWaitingText("Filling Protein Map. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         double probaScore;
@@ -1344,7 +1344,7 @@ public class PeptideShaker {
      */
     private void attachProteinProbabilities(WaitingHandler waitingHandler) {
 
-        waitingHandler.setTitle("Attaching Protein Probabilities. Please Wait...");
+        waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -1383,7 +1383,7 @@ public class PeptideShaker {
      */
     private void cleanProteinGroups(WaitingHandler waitingHandler) throws IOException, IllegalArgumentException {
 
-        waitingHandler.setTitle("Cleaning Protein Groups. Please Wait...");
+        waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
