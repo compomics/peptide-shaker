@@ -601,7 +601,7 @@ public class FileImporter {
         }
 
         /**
-         * Imports the psms from an identification file
+         * Imports the psms from an identification file.
          *
          * @param idFile the identification file
          * @throws FileNotFoundException exception thrown whenever a file was

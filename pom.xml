@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.16.3</version.number>
+        <version.number>0.16.3-beta</version.number>
     </properties>
 
 
@@ -39,7 +39,7 @@
         <developer>
             <name>Harald Barsnes</name>
             <id>harald</id>
-            <email>harald.barsnes@biomed.uib.no</email>
+            <email>harald.barsnes AT biomed.uib.no</email>
             <organization>Department of Biomedicine, University of Bergen, Norway</organization>
             <roles>
                 <role>Java Developer</role>
@@ -271,7 +271,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.4.11</version>
+            <version>3.4.12</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>

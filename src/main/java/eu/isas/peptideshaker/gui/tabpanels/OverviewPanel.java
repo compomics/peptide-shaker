@@ -4087,7 +4087,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         progressDialog = new ProgressDialogX(this, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Loading Overview. Please Wait...");
-        progressDialog.setUnstoppable(true);
+        //progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
