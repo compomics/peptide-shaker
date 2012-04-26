@@ -52,7 +52,7 @@ public class PeptideSpecificMap implements Serializable {
      */
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
-        waitingHandler.setTitle("Estimating Probabilities. Please Wait...");
+        waitingHandler.setWaitingText("Estimating Probabilities. Please Wait...");
 
         int max = getNEntries();
         waitingHandler.setSecondaryProgressDialogIntermediate(false);

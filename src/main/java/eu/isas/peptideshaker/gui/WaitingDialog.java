@@ -949,7 +949,7 @@ public class WaitingDialog extends javax.swing.JDialog implements WaitingHandler
     }
     
     @Override
-    public void setTitle(String text) {
+    public void setWaitingText(String text) {
         // ignore, not implemented for this waiting handler
     }
 }

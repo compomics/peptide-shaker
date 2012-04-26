@@ -150,7 +150,7 @@ public class ProgressDialogWaitingHandler extends ProgressDialogX implements Wai
     }
 
     @Override
-    public void setTitle(String text) {
+    public void setWaitingText(String text) {
         super.setTitle(text);
     }
 }
