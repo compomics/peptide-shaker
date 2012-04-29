@@ -121,7 +121,7 @@ Download Count: 27
  * FEATURE IMPROVEMENT: Find feature: made it possible to jump to spectra in the Spectrum ID tab.
  * LIBRARY UPDATE: Updated utilities to version 3.3.42, fixing an issue with unknown protein expect values in X!Tandem files.
 
-Download Count: 79
+Download Count: 81
 
 ----
 
@@ -146,7 +146,7 @@ Download Count: 79
  * LIBRARY UPDATE: Updated utilities to version 3.3.39, improving the support for home made FASTA files.
  * LIBRARY UPDATE: Added ols-dialog version 3.3.2 as a dependency.
 
-Download Count: 20
+Download Count: 22
 
 ----
 
@@ -168,7 +168,7 @@ Download Count: 20
  * LIBRARY UPDATE: Updated the UniProt API to 2012.01.
  * LIBRARY UPDATE: Updated utilities to version 3.3.35.
 
-Download Count: 44
+Download Count: 46
 
 ----
 
@@ -187,7 +187,7 @@ Download Count: 44
  * LIBRARY UPDATE: Added swingx 0.9.1 as a dependency, was only a transitive dependency before. 
  * LIBRARY UPDATE: Updated utilities to version 3.3.30
 
-Download Count: 21
+Download Count: 22
 
 ----
 
@@ -200,7 +200,7 @@ Download Count: 21
  * BUG FIX: Fixed a bug where the confidence column in the Peptide table was not hidden when hiding the sparklines.
  * LIBRARY UPDATE: Updated utilities to version 3.3.26.
 
-Download Count: 23
+Download Count: 24
 
 ----
 
