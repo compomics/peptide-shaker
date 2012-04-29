@@ -3,8 +3,30 @@
 
 ----
 
+*Changes in PeptideShaker 0.16.3 (April 29. 2012):*
+ * NEW FEATURE: It is now possible to start SearchGUI directly from the Welcome dialog or from the File menu. (Requires SearchGUI v1.8.3 or newer.)
+ * NEW FEATURE: Added a Getting Started tutorial to the Welcome Dialog.
+ * NEW FEATURE: Added a gradient color coding panel below the A-score and Delta-score tables in the PTM tab displaying the PTM score certainty.
+
+ * FEATURE IMPROVEMENT: Updated all the Welcome Dialog icons.
+ * FEATURE IMPROVEMENT: Made it possible to close progress dialogs that track processes that previously could not be canceled. A warning is now instead showed and the user can decide if he/she still wants to cancel the process.
+ * FEATURE IMPROVEMENT: Fixed the issue with the UniProt Java API needing its own proxy settings file.
+ * FEATURE IMPROVEMENT: Updated the help files.
+ * FEATURE IMPROVEMENT: Added protein description to the peptide, PSM and search engine feature export options.
+ * FEATURE IMPROVEMENT: Improved the GUI of the Export Features dialog.
+ * FEATURE IMPROVEMENT: Simplified the folder structure in the zip file.
+
+ * BUG FIX: Fixed a bug in the selection of PSMs in the PTM tab, and for removing expected PTMs in the SearchPreferencesDialog.
+ * BUG FIX: Fixed a bug that removed the dialog title for the Waiting Dialog.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.4.12.
+
+----
+
 *Changes in PeptideShaker 0.16.2 (April 18. 2012):*
  * BUG FIX: Fixed an issue with spaces in the splash screen graphics path on Windows.
+
+Download Count: 55
 
 ----
 
