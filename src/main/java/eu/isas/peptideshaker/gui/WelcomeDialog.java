@@ -155,7 +155,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         searchJButton.setFont(searchJButton.getFont().deriveFont(searchJButton.getFont().getStyle() | java.awt.Font.BOLD, searchJButton.getFont().getSize()+3));
         searchJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/searchgui-medium-shadow.png"))); // NOI18N
         searchJButton.setText("Start Search");
-        searchJButton.setToolTipText("<html>\nStart a SearchGUI protein identification search<br>\n(under development)\n</html>");
+        searchJButton.setToolTipText("Start a SearchGUI protein identification search");
         searchJButton.setFocusPainted(false);
         searchJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         searchJButton.setIconTextGap(20);
@@ -168,7 +168,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         gettingStartedJButton.setFont(gettingStartedJButton.getFont().deriveFont(gettingStartedJButton.getFont().getStyle() | java.awt.Font.BOLD, gettingStartedJButton.getFont().getSize()+3));
         gettingStartedJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help-medium-shadow.png"))); // NOI18N
         gettingStartedJButton.setText("Getting Started");
-        gettingStartedJButton.setToolTipText("<html>\nOpen the Getting Started tutorial<br>\n(under development)\n</html>");
+        gettingStartedJButton.setToolTipText("Open the Getting Started tutorial");
         gettingStartedJButton.setFocusPainted(false);
         gettingStartedJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         gettingStartedJButton.setIconTextGap(20);

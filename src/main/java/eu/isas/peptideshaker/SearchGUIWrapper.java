@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker;
 
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.SearchGuiSetupDialog;
 import java.io.*;
 import javax.swing.JOptionPane;
 
@@ -47,12 +48,10 @@ public class SearchGUIWrapper {
         if (!new File(peptideShakerGUI.getUserPreferences().getSearchGuiPath()).exists()) {
             JOptionPane.showMessageDialog(peptideShakerGUI,
                     "SearchGUI installation not found!\n"
-                    + "Check Edit > SearchGUI Settings", "SearvhGUI Error", JOptionPane.WARNING_MESSAGE);
+                    + "Check Edit > SearchGUI Settings", "SearchGUI Error", JOptionPane.WARNING_MESSAGE);
+            new SearchGuiSetupDialog(peptideShakerGUI, true);
             return;
         }
-
-        // check if a new version of SearchGUI is available
-        // @TODO: implement me!!
 
         String quote = "";
 

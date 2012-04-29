@@ -77,21 +77,20 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         proteinScore = new javax.swing.JCheckBox();
         proteinConfidence = new javax.swing.JCheckBox();
         proteinExportAll = new javax.swing.JButton();
-        proteinSelectAll = new javax.swing.JButton();
-        proteinUnselectAll = new javax.swing.JButton();
         proteinSequenceCoverage = new javax.swing.JCheckBox();
         ptmSummary = new javax.swing.JCheckBox();
         proteinValidated = new javax.swing.JCheckBox();
         proteinStarred = new javax.swing.JCheckBox();
         proteinHidden = new javax.swing.JCheckBox();
+        proteinSelectAllLabel = new javax.swing.JLabel();
+        proteinDeselectAllLabel = new javax.swing.JLabel();
+        slashLabel1 = new javax.swing.JLabel();
         peptidesPanel = new javax.swing.JPanel();
         peptideAccession = new javax.swing.JCheckBox();
         peptideModification = new javax.swing.JCheckBox();
         peptideNSpectra = new javax.swing.JCheckBox();
         peptideScore = new javax.swing.JCheckBox();
         peptideConfidence = new javax.swing.JCheckBox();
-        peptideSelectAll = new javax.swing.JButton();
-        peptideUnselectAll = new javax.swing.JButton();
         peptideExportAll = new javax.swing.JButton();
         peptideSequence = new javax.swing.JCheckBox();
         peptidePosition = new javax.swing.JCheckBox();
@@ -102,6 +101,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         precursorCharges = new javax.swing.JCheckBox();
         peptideSurroundingAA = new javax.swing.JCheckBox();
         peptideUniqueOnly = new javax.swing.JCheckBox();
+        proteinDescriptionPeptideTab = new javax.swing.JCheckBox();
+        peptideSelectAllLabel = new javax.swing.JLabel();
+        slashLabel2 = new javax.swing.JLabel();
+        peptideDeselectAllLabel = new javax.swing.JLabel();
         psmPanel = new javax.swing.JPanel();
         psmAccession = new javax.swing.JCheckBox();
         psmSequence = new javax.swing.JCheckBox();
@@ -112,12 +115,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         psmModification = new javax.swing.JCheckBox();
         psmScore = new javax.swing.JCheckBox();
         psmConfidence = new javax.swing.JCheckBox();
-        psmSelectAll = new javax.swing.JButton();
-        psmUnselectAll = new javax.swing.JButton();
         psmExportAll = new javax.swing.JButton();
         psmValidated = new javax.swing.JCheckBox();
         psmStarred = new javax.swing.JCheckBox();
         psmHidden = new javax.swing.JCheckBox();
+        proteinDescriptionPsmTab = new javax.swing.JCheckBox();
+        psmSelectAllLabel = new javax.swing.JLabel();
+        slashLabel3 = new javax.swing.JLabel();
+        psmDeselectAllLabel = new javax.swing.JLabel();
         searchEnginePanel = new javax.swing.JPanel();
         assumptionAccession = new javax.swing.JCheckBox();
         assumptionSequence = new javax.swing.JCheckBox();
@@ -127,10 +132,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         assumptionPrecursor = new javax.swing.JCheckBox();
         assumptionScores = new javax.swing.JCheckBox();
         assumptionConfidence = new javax.swing.JCheckBox();
-        assumptionsExportAll = new javax.swing.JButton();
-        assumptionUnselectAll = new javax.swing.JButton();
         assumptionExportAll = new javax.swing.JButton();
         assumptionValidated = new javax.swing.JCheckBox();
+        proteinDescriptionSerarchEnginesTab = new javax.swing.JCheckBox();
+        searchEnginesSelectAllLabel = new javax.swing.JLabel();
+        slashLabel4 = new javax.swing.JLabel();
+        searchEnginesDeselectAllLabel = new javax.swing.JLabel();
         projectPanel = new javax.swing.JPanel();
         exportAll = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -168,6 +175,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         proteinNSpectra.setIconTextGap(10);
         proteinNSpectra.setOpaque(false);
 
+        proteinDescription.setSelected(true);
         proteinDescription.setText("Protein Description");
         proteinDescription.setIconTextGap(10);
         proteinDescription.setOpaque(false);
@@ -196,20 +204,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
             }
         });
 
-        proteinSelectAll.setText("Select All");
-        proteinSelectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinSelectAllActionPerformed(evt);
-            }
-        });
-
-        proteinUnselectAll.setText("Deselect All");
-        proteinUnselectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinUnselectAllActionPerformed(evt);
-            }
-        });
-
         proteinSequenceCoverage.setText("Sequence Coverage");
         proteinSequenceCoverage.setIconTextGap(10);
         proteinSequenceCoverage.setOpaque(false);
@@ -231,6 +225,34 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         proteinHidden.setIconTextGap(10);
         proteinHidden.setOpaque(false);
 
+        proteinSelectAllLabel.setText("<html><a href>Select All<a></html>");
+        proteinSelectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                proteinSelectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                proteinSelectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinSelectAllLabelMouseExited(evt);
+            }
+        });
+
+        proteinDeselectAllLabel.setText("<html><a href>Deselect All<a></html>");
+        proteinDeselectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                proteinDeselectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                proteinDeselectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinDeselectAllLabelMouseExited(evt);
+            }
+        });
+
+        slashLabel1.setText("/");
+
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
         proteinsPanelLayout.setHorizontalGroup(
@@ -242,76 +264,77 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                         .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(proteinDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinPI, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinNPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinNSpectra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(proteinNPeptides, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(proteinPI, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(proteinNSpectra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(proteinSequenceCoverage, javax.swing.GroupLayout.Alignment.TRAILING)))
                         .addGap(75, 75, 75)
                         .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(proteinSequenceCoverage)
                             .addComponent(proteinNsaf, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinEmpai, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(ptmSummary, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(43, Short.MAX_VALUE))
+                        .addGap(0, 8, Short.MAX_VALUE))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addComponent(proteinSelectAll)
+                        .addComponent(proteinSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinUnselectAll)
+                        .addComponent(slashLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(proteinExportAll)
-                        .addGap(20, 20, 20))))
+                        .addComponent(proteinExportAll)))
+                .addContainerGap())
         );
 
         proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
-
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinExportAll, proteinSelectAll, proteinUnselectAll});
 
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteinAccession)
-                    .addComponent(proteinSequenceCoverage))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addComponent(proteinPI)
+                        .addComponent(proteinAccession)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinDescription)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(proteinScore)
-                            .addComponent(ptmSummary)))
+                        .addComponent(proteinPI)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinScore))
+                    .addGroup(proteinsPanelLayout.createSequentialGroup()
+                        .addGap(46, 46, 46)
+                        .addComponent(ptmSummary))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
                         .addComponent(proteinEmpai)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinNsaf)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(proteinConfidence)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addComponent(proteinConfidence)
+                        .addComponent(proteinNPeptides)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(proteinNPeptides)
-                            .addGroup(proteinsPanelLayout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addComponent(proteinNSpectra))))
+                        .addComponent(proteinNSpectra)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinSequenceCoverage))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
                         .addComponent(proteinValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinStarred)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinHidden)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(proteinSelectAll)
-                    .addComponent(proteinUnselectAll)
-                    .addComponent(proteinExportAll))
+                    .addComponent(proteinExportAll)
+                    .addComponent(proteinSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(proteinDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(slashLabel1))
                 .addContainerGap())
         );
 
@@ -342,20 +365,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         peptideConfidence.setText("Peptide Confidence");
         peptideConfidence.setIconTextGap(10);
         peptideConfidence.setOpaque(false);
-
-        peptideSelectAll.setText("Select All");
-        peptideSelectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideSelectAllActionPerformed(evt);
-            }
-        });
-
-        peptideUnselectAll.setText("Deselect All");
-        peptideUnselectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideUnselectAllActionPerformed(evt);
-            }
-        });
 
         peptideExportAll.setText("Export");
         peptideExportAll.setToolTipText("Export selected peptide details");
@@ -403,6 +412,39 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         peptideUniqueOnly.setIconTextGap(10);
         peptideUniqueOnly.setOpaque(false);
 
+        proteinDescriptionPeptideTab.setSelected(true);
+        proteinDescriptionPeptideTab.setText("Protein Description");
+        proteinDescriptionPeptideTab.setIconTextGap(10);
+        proteinDescriptionPeptideTab.setOpaque(false);
+
+        peptideSelectAllLabel.setText("<html><a href>Select All<a></html>");
+        peptideSelectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                peptideSelectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                peptideSelectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                peptideSelectAllLabelMouseExited(evt);
+            }
+        });
+
+        slashLabel2.setText("/");
+
+        peptideDeselectAllLabel.setText("<html><a href>Deselect All<a></html>");
+        peptideDeselectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                peptideDeselectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                peptideDeselectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                peptideDeselectAllLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
         peptidesPanelLayout.setHorizontalGroup(
@@ -420,7 +462,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                                     .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(peptideScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(peptideModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(proteinDescriptionPeptideTab, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(75, 75, 75)
                         .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(peptideNSpectra, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -430,19 +473,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                             .addComponent(peptideValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(peptideHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(peptideStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(43, Short.MAX_VALUE))
+                        .addGap(0, 8, Short.MAX_VALUE))
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
-                        .addComponent(peptideSelectAll)
+                        .addComponent(peptideSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideUnselectAll)
+                        .addComponent(slashLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptideDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(peptideExportAll)
-                        .addGap(20, 20, 20))))
+                        .addComponent(peptideExportAll)))
+                .addContainerGap())
         );
 
         peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideAccession, peptideConfidence, peptideHidden, peptideLocation, peptideModification, peptideNSpectra, peptidePosition, peptideScore, peptideSequence, peptideStarred, peptideSurroundingAA, peptideUniqueOnly, peptideValidated, precursorCharges});
-
-        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideExportAll, peptideSelectAll, peptideUnselectAll});
 
         peptidesPanelLayout.setVerticalGroup(
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -450,40 +493,44 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                 .addGap(20, 20, 20)
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
+                        .addComponent(peptideAccession)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinDescriptionPeptideTab)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptideSequence)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptidePosition)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptideScore))
+                    .addGroup(peptidesPanelLayout.createSequentialGroup()
                         .addComponent(peptideNSpectra)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(precursorCharges)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideUniqueOnly))
-                    .addGroup(peptidesPanelLayout.createSequentialGroup()
-                        .addComponent(peptideAccession)
+                        .addComponent(peptideUniqueOnly)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideSequence)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptidePosition)))
+                        .addComponent(peptideSurroundingAA, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideScore)
-                    .addComponent(peptideSurroundingAA, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(peptidesPanelLayout.createSequentialGroup()
-                        .addComponent(peptideConfidence)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideModification)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
                         .addComponent(peptideValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideStarred)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideHidden)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                        .addComponent(peptideHidden))
+                    .addGroup(peptidesPanelLayout.createSequentialGroup()
+                        .addComponent(peptideConfidence)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptideModification)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(peptideSelectAll)
-                    .addComponent(peptideUnselectAll)
-                    .addComponent(peptideExportAll))
+                    .addComponent(peptideExportAll)
+                    .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(peptideSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(peptideDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(slashLabel2)))
                 .addContainerGap())
         );
 
@@ -533,20 +580,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         psmConfidence.setIconTextGap(10);
         psmConfidence.setOpaque(false);
 
-        psmSelectAll.setText("Select All");
-        psmSelectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                psmSelectAllActionPerformed(evt);
-            }
-        });
-
-        psmUnselectAll.setText("Deselect All");
-        psmUnselectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                psmUnselectAllActionPerformed(evt);
-            }
-        });
-
         psmExportAll.setText("Export");
         psmExportAll.setToolTipText("Export selected PSM details");
         psmExportAll.addActionListener(new java.awt.event.ActionListener() {
@@ -568,6 +601,39 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         psmHidden.setIconTextGap(10);
         psmHidden.setOpaque(false);
 
+        proteinDescriptionPsmTab.setSelected(true);
+        proteinDescriptionPsmTab.setText("Protein Description");
+        proteinDescriptionPsmTab.setIconTextGap(10);
+        proteinDescriptionPsmTab.setOpaque(false);
+
+        psmSelectAllLabel.setText("<html><a href>Select All<a></html>");
+        psmSelectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                psmSelectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                psmSelectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                psmSelectAllLabelMouseExited(evt);
+            }
+        });
+
+        slashLabel3.setText("/");
+
+        psmDeselectAllLabel.setText("<html><a href>Deselect All<a></html>");
+        psmDeselectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                psmDeselectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                psmDeselectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                psmDeselectAllLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
         psmPanelLayout.setHorizontalGroup(
@@ -576,43 +642,61 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                 .addGap(20, 20, 20)
                 .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(psmPanelLayout.createSequentialGroup()
-                        .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(psmLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(psmAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(psmSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(psmModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(psmFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(psmPrecursor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(psmTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(75, 75, 75)
-                        .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(psmHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(psmStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(psmConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(psmScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(psmValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(43, Short.MAX_VALUE))
+                        .addComponent(psmSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(psmPanelLayout.createSequentialGroup()
-                        .addComponent(psmSelectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(psmExportAll)
-                        .addGap(20, 20, 20))))
+                        .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(psmPanelLayout.createSequentialGroup()
+                                .addComponent(psmSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(slashLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(psmDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(psmExportAll))
+                            .addGroup(psmPanelLayout.createSequentialGroup()
+                                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(psmLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(psmAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(psmModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(psmPrecursor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(proteinDescriptionPsmTab, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(psmFile, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(psmTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(75, 75, 75)
+                                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(psmHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(psmStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(psmConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(psmScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(psmValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 8, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
 
         psmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {psmAccession, psmConfidence, psmFile, psmLocation, psmModification, psmPrecursor, psmScore, psmSequence, psmTitle});
-
-        psmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {psmExportAll, psmSelectAll, psmUnselectAll});
 
         psmPanelLayout.setVerticalGroup(
             psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(psmPanelLayout.createSequentialGroup()
+                        .addComponent(psmScore)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(psmConfidence)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(psmValidated)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(psmStarred)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(psmHidden))
                     .addGroup(psmPanelLayout.createSequentialGroup()
                         .addComponent(psmAccession)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinDescriptionPsmTab)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmSequence)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -624,22 +708,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmFile)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmTitle))
-                    .addGroup(psmPanelLayout.createSequentialGroup()
-                        .addComponent(psmScore)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmConfidence)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(psmValidated)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmStarred)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmHidden)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                        .addComponent(psmTitle)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(psmSelectAll)
-                    .addComponent(psmUnselectAll)
-                    .addComponent(psmExportAll))
+                    .addComponent(psmExportAll)
+                    .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(psmSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(psmDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(slashLabel3)))
                 .addContainerGap())
         );
 
@@ -686,20 +762,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         assumptionConfidence.setIconTextGap(10);
         assumptionConfidence.setOpaque(false);
 
-        assumptionsExportAll.setText("Select All");
-        assumptionsExportAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                assumptionsExportAllActionPerformed(evt);
-            }
-        });
-
-        assumptionUnselectAll.setText("Deselect All");
-        assumptionUnselectAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                assumptionUnselectAllActionPerformed(evt);
-            }
-        });
-
         assumptionExportAll.setText("Export");
         assumptionExportAll.setToolTipText("Export selected search engine details");
         assumptionExportAll.addActionListener(new java.awt.event.ActionListener() {
@@ -713,6 +775,39 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         assumptionValidated.setIconTextGap(10);
         assumptionValidated.setOpaque(false);
 
+        proteinDescriptionSerarchEnginesTab.setSelected(true);
+        proteinDescriptionSerarchEnginesTab.setText("Protein Description");
+        proteinDescriptionSerarchEnginesTab.setIconTextGap(10);
+        proteinDescriptionSerarchEnginesTab.setOpaque(false);
+
+        searchEnginesSelectAllLabel.setText("<html><a href>Select All<a></html>");
+        searchEnginesSelectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchEnginesSelectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                searchEnginesSelectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                searchEnginesSelectAllLabelMouseExited(evt);
+            }
+        });
+
+        slashLabel4.setText("/");
+
+        searchEnginesDeselectAllLabel.setText("<html><a href>Deselect All<a></html>");
+        searchEnginesDeselectAllLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchEnginesDeselectAllLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                searchEnginesDeselectAllLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                searchEnginesDeselectAllLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout searchEnginePanelLayout = new javax.swing.GroupLayout(searchEnginePanel);
         searchEnginePanel.setLayout(searchEnginePanelLayout);
         searchEnginePanelLayout.setHorizontalGroup(
@@ -722,32 +817,36 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(searchEnginePanelLayout.createSequentialGroup()
                         .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(assumptionPrecursor, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(assumptionScores, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(assumptionConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(searchEnginePanelLayout.createSequentialGroup()
+                        .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(searchEnginePanelLayout.createSequentialGroup()
                                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(assumptionAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(assumptionSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(assumptionModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(assumptionFile, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(assumptionTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(assumptionTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(proteinDescriptionSerarchEnginesTab, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(75, 75, 75)
                                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(assumptionValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(assumptionScores, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(assumptionConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(35, Short.MAX_VALUE))
-                    .addGroup(searchEnginePanelLayout.createSequentialGroup()
-                        .addComponent(assumptionsExportAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(assumptionUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(assumptionExportAll)
-                        .addGap(20, 20, 20))))
+                                    .addComponent(assumptionPrecursor, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 8, Short.MAX_VALUE))
+                            .addGroup(searchEnginePanelLayout.createSequentialGroup()
+                                .addComponent(searchEnginesSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(slashLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchEnginesDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(assumptionExportAll)))
+                        .addContainerGap())))
         );
 
         searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionModification, assumptionPrecursor, assumptionSequence, assumptionTitle});
-
-        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionExportAll, assumptionUnselectAll, assumptionsExportAll});
 
         searchEnginePanelLayout.setVerticalGroup(
             searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -755,11 +854,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                 .addGap(20, 20, 20)
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(assumptionAccession)
-                    .addComponent(assumptionScores))
+                    .addComponent(assumptionPrecursor))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(assumptionSequence)
-                    .addComponent(assumptionConfidence))
+                .addComponent(proteinDescriptionSerarchEnginesTab)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(assumptionSequence)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assumptionModification)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -769,12 +868,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                     .addComponent(assumptionTitle)
                     .addComponent(assumptionValidated))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(assumptionPrecursor)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
+                .addComponent(assumptionScores)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(assumptionConfidence)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(assumptionsExportAll)
-                    .addComponent(assumptionUnselectAll)
-                    .addComponent(assumptionExportAll))
+                    .addComponent(assumptionExportAll)
+                    .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchEnginesSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchEnginesDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(slashLabel4)))
                 .addContainerGap())
         );
 
@@ -803,18 +906,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
             .addGroup(projectPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(exportAll)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         projectPanelLayout.setVerticalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, projectPanelLayout.createSequentialGroup()
-                .addContainerGap(108, Short.MAX_VALUE)
+                .addContainerGap(131, Short.MAX_VALUE)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportAll)
                     .addComponent(jLabel2))
-                .addGap(108, 108, 108))
+                .addGap(124, 124, 124))
         );
 
         tabbedPane.addTab("Project", projectPanel);
@@ -831,7 +934,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         featuresPanelLayout.setVerticalGroup(
             featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(featuresPanelLayout.createSequentialGroup()
-                .addComponent(tabbedPane)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -871,7 +974,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                         .addGap(20, 20, 20)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(exitButton))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -882,8 +985,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(featuresPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpJButton)
                     .addComponent(exitButton))
@@ -923,163 +1026,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     }//GEN-LAST:event_proteinExportAllActionPerformed
 
     /**
-     * Select all protein features.
-     *
-     * @param evt
-     */
-    private void proteinSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinSelectAllActionPerformed
-        proteinAccession.setSelected(true);
-        proteinPI.setSelected(true);
-        proteinDescription.setSelected(true);
-        proteinNPeptides.setSelected(true);
-        proteinEmpai.setSelected(true);
-        proteinNSpectra.setSelected(true);
-        ptmSummary.setSelected(true);
-        proteinNsaf.setSelected(true);
-        proteinScore.setSelected(true);
-        proteinConfidence.setSelected(true);
-        proteinSequenceCoverage.setSelected(true);
-        proteinValidated.setSelected(true);
-    }//GEN-LAST:event_proteinSelectAllActionPerformed
-
-    /**
-     * Deselect all protein features.
-     *
-     * @param evt
-     */
-    private void proteinUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinUnselectAllActionPerformed
-        proteinAccession.setSelected(false);
-        proteinPI.setSelected(false);
-        proteinDescription.setSelected(false);
-        proteinNPeptides.setSelected(false);
-        proteinEmpai.setSelected(false);
-        proteinNSpectra.setSelected(false);
-        proteinNsaf.setSelected(false);
-        proteinScore.setSelected(false);
-        proteinConfidence.setSelected(false);
-        proteinSequenceCoverage.setSelected(false);
-        ptmSummary.setSelected(false);
-        proteinValidated.setSelected(false);
-        proteinStarred.setSelected(false);
-        proteinHidden.setSelected(false);
-    }//GEN-LAST:event_proteinUnselectAllActionPerformed
-
-    /**
-     * Select all peptide features.
-     *
-     * @param evt
-     */
-    private void peptideSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideSelectAllActionPerformed
-        peptideAccession.setSelected(true);
-        peptideSequence.setSelected(true);
-        peptideModification.setSelected(true);
-        peptideLocation.setSelected(true);
-        peptideSurroundingAA.setSelected(true);
-        precursorCharges.setSelected(true);
-        peptideNSpectra.setSelected(true);
-        peptideScore.setSelected(true);
-        peptideConfidence.setSelected(true);
-        peptideLocation.setSelected(true);
-        peptidePosition.setSelected(true);
-        peptideValidated.setSelected(true);
-    }//GEN-LAST:event_peptideSelectAllActionPerformed
-
-    /**
-     * Deselect all peptide features.
-     *
-     * @param evt
-     */
-    private void peptideUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideUnselectAllActionPerformed
-        peptideAccession.setSelected(false);
-        peptideSequence.setSelected(false);
-        peptideModification.setSelected(false);
-        peptideLocation.setSelected(false);
-        peptideSurroundingAA.setSelected(false);
-        peptideUniqueOnly.setSelected(false);
-        precursorCharges.setSelected(false);
-        peptideNSpectra.setSelected(false);
-        peptideScore.setSelected(false);
-        peptideConfidence.setSelected(false);
-        peptideLocation.setSelected(false);
-        peptidePosition.setSelected(false);
-        peptideValidated.setSelected(false);
-        peptideStarred.setSelected(false);
-        peptideHidden.setSelected(false);
-    }//GEN-LAST:event_peptideUnselectAllActionPerformed
-
-    /**
-     * Select all psm features.
-     *
-     * @param evt
-     */
-    private void psmSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmSelectAllActionPerformed
-        psmAccession.setSelected(true);
-        psmSequence.setSelected(true);
-        psmModification.setSelected(true);
-        psmLocation.setSelected(true);
-        psmFile.setSelected(true);
-        psmTitle.setSelected(true);
-        psmPrecursor.setSelected(true);
-        psmScore.setSelected(true);
-        psmConfidence.setSelected(true);
-        psmValidated.setSelected(true);
-    }//GEN-LAST:event_psmSelectAllActionPerformed
-
-    /**
-     * Deselect all psm features.
-     *
-     * @param evt
-     */
-    private void psmUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmUnselectAllActionPerformed
-        psmAccession.setSelected(false);
-        psmSequence.setSelected(false);
-        psmModification.setSelected(false);
-        psmLocation.setSelected(false);
-        psmFile.setSelected(false);
-        psmTitle.setSelected(false);
-        psmPrecursor.setSelected(false);
-        psmScore.setSelected(false);
-        psmConfidence.setSelected(false);
-        psmValidated.setSelected(false);
-        psmStarred.setSelected(false);
-        psmHidden.setSelected(false);
-    }//GEN-LAST:event_psmUnselectAllActionPerformed
-
-    /**
-     * Select all search engine features.
-     *
-     * @param evt
-     */
-    private void assumptionsExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionsExportAllActionPerformed
-        assumptionAccession.setSelected(true);
-        assumptionSequence.setSelected(true);
-        assumptionModification.setSelected(true);
-        assumptionFile.setSelected(true);
-        assumptionTitle.setSelected(true);
-        assumptionPrecursor.setSelected(true);
-        assumptionScores.setSelected(true);
-        assumptionConfidence.setSelected(true);
-        assumptionValidated.setSelected(true);
-    }//GEN-LAST:event_assumptionsExportAllActionPerformed
-
-    /**
-     * Deselect all search engine features.
-     *
-     * @param evt
-     */
-    private void assumptionUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionUnselectAllActionPerformed
-        assumptionAccession.setSelected(false);
-        assumptionSequence.setSelected(false);
-        assumptionModification.setSelected(false);
-        assumptionFile.setSelected(false);
-        assumptionTitle.setSelected(false);
-        assumptionPrecursor.setSelected(false);
-        assumptionScores.setSelected(false);
-        assumptionConfidence.setSelected(false);
-        assumptionValidated.setSelected(false);
-    }//GEN-LAST:event_assumptionUnselectAllActionPerformed
-
-    /**
      * Export all peptide features to file.
      *
      * @param evt
@@ -1088,7 +1034,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
 
         try {
             outputGenerator.getPeptidesOutput(null, null, false, peptideValidated.isSelected(),
-                    peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
+                    peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
                     peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
                     peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
 
@@ -1108,7 +1054,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private void psmExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmExportAllActionPerformed
 
         try {
-            outputGenerator.getPSMsOutput(null, false, psmValidated.isSelected(), psmAccession.isSelected(), psmSequence.isSelected(),
+            outputGenerator.getPSMsOutput(null, false, psmValidated.isSelected(), psmAccession.isSelected(), proteinDescriptionPsmTab.isSelected(), psmSequence.isSelected(),
                     psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
                     psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true, psmStarred.isSelected(), psmHidden.isSelected());
 
@@ -1128,8 +1074,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private void assumptionExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionExportAllActionPerformed
 
         try {
-            outputGenerator.getAssumptionsOutput(null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), assumptionSequence.isSelected(),
-                    assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
+            outputGenerator.getAssumptionsOutput(null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), proteinDescriptionSerarchEnginesTab.isSelected(),
+                    assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
                     assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
 
         } catch (IOException e) {
@@ -1216,7 +1162,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                             JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See resources/conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
-                    
+
                     cancelProgress = false;
                 }
             }.start();
@@ -1261,6 +1207,308 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
         setVisible(false);
         dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
+
+    /**
+     * Select all protein features.
+     *
+     * @param evt
+     */
+    private void proteinSelectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinSelectAllLabelMouseClicked
+        proteinAccession.setSelected(true);
+        proteinPI.setSelected(true);
+        proteinDescription.setSelected(true);
+        proteinNPeptides.setSelected(true);
+        proteinEmpai.setSelected(true);
+        proteinNSpectra.setSelected(true);
+        ptmSummary.setSelected(true);
+        proteinNsaf.setSelected(true);
+        proteinScore.setSelected(true);
+        proteinConfidence.setSelected(true);
+        proteinSequenceCoverage.setSelected(true);
+        proteinValidated.setSelected(true);
+    }//GEN-LAST:event_proteinSelectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void proteinSelectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinSelectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_proteinSelectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void proteinSelectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinSelectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinSelectAllLabelMouseExited
+
+    /**
+     * Deselect all protein features.
+     *
+     * @param evt
+     */
+    private void proteinDeselectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinDeselectAllLabelMouseClicked
+        proteinAccession.setSelected(false);
+        proteinPI.setSelected(false);
+        proteinDescription.setSelected(false);
+        proteinNPeptides.setSelected(false);
+        proteinEmpai.setSelected(false);
+        proteinNSpectra.setSelected(false);
+        proteinNsaf.setSelected(false);
+        proteinScore.setSelected(false);
+        proteinConfidence.setSelected(false);
+        proteinSequenceCoverage.setSelected(false);
+        ptmSummary.setSelected(false);
+        proteinValidated.setSelected(false);
+        proteinStarred.setSelected(false);
+        proteinHidden.setSelected(false);
+    }//GEN-LAST:event_proteinDeselectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void proteinDeselectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinDeselectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_proteinDeselectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void proteinDeselectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinDeselectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinDeselectAllLabelMouseExited
+
+    /**
+     * Select all peptide features.
+     *
+     * @param evt
+     */
+    private void peptideSelectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideSelectAllLabelMouseClicked
+        peptideAccession.setSelected(true);
+        proteinDescriptionPeptideTab.setSelected(true);
+        peptideSequence.setSelected(true);
+        peptideModification.setSelected(true);
+        peptideLocation.setSelected(true);
+        peptideSurroundingAA.setSelected(true);
+        precursorCharges.setSelected(true);
+        peptideNSpectra.setSelected(true);
+        peptideScore.setSelected(true);
+        peptideConfidence.setSelected(true);
+        peptideLocation.setSelected(true);
+        peptidePosition.setSelected(true);
+        peptideValidated.setSelected(true);
+    }//GEN-LAST:event_peptideSelectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void peptideSelectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideSelectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_peptideSelectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void peptideSelectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideSelectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptideSelectAllLabelMouseExited
+
+    /**
+     * Deselect all peptide features.
+     *
+     * @param evt
+     */
+    private void peptideDeselectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideDeselectAllLabelMouseClicked
+        peptideAccession.setSelected(false);
+        proteinDescriptionPeptideTab.setSelected(false);
+        peptideSequence.setSelected(false);
+        peptideModification.setSelected(false);
+        peptideLocation.setSelected(false);
+        peptideSurroundingAA.setSelected(false);
+        peptideUniqueOnly.setSelected(false);
+        precursorCharges.setSelected(false);
+        peptideNSpectra.setSelected(false);
+        peptideScore.setSelected(false);
+        peptideConfidence.setSelected(false);
+        peptideLocation.setSelected(false);
+        peptidePosition.setSelected(false);
+        peptideValidated.setSelected(false);
+        peptideStarred.setSelected(false);
+        peptideHidden.setSelected(false);
+    }//GEN-LAST:event_peptideDeselectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void peptideDeselectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideDeselectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_peptideDeselectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void peptideDeselectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideDeselectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptideDeselectAllLabelMouseExited
+
+    /**
+     * Select all psm features.
+     *
+     * @param evt
+     */
+    private void psmSelectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmSelectAllLabelMouseClicked
+        psmAccession.setSelected(true);
+        proteinDescriptionPsmTab.setSelected(true);
+        psmSequence.setSelected(true);
+        psmModification.setSelected(true);
+        psmLocation.setSelected(true);
+        psmFile.setSelected(true);
+        psmTitle.setSelected(true);
+        psmPrecursor.setSelected(true);
+        psmScore.setSelected(true);
+        psmConfidence.setSelected(true);
+        psmValidated.setSelected(true);
+    }//GEN-LAST:event_psmSelectAllLabelMouseClicked
+
+    private void psmSelectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmSelectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_psmSelectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void psmSelectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmSelectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_psmSelectAllLabelMouseExited
+
+    /**
+     * Deselect all psm features.
+     *
+     * @param evt
+     */
+    private void psmDeselectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmDeselectAllLabelMouseClicked
+        psmAccession.setSelected(false);
+        proteinDescriptionPsmTab.setSelected(false);
+        psmSequence.setSelected(false);
+        psmModification.setSelected(false);
+        psmLocation.setSelected(false);
+        psmFile.setSelected(false);
+        psmTitle.setSelected(false);
+        psmPrecursor.setSelected(false);
+        psmScore.setSelected(false);
+        psmConfidence.setSelected(false);
+        psmValidated.setSelected(false);
+        psmStarred.setSelected(false);
+        psmHidden.setSelected(false);
+    }//GEN-LAST:event_psmDeselectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void psmDeselectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmDeselectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_psmDeselectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void psmDeselectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmDeselectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_psmDeselectAllLabelMouseExited
+
+    /**
+     * Select all search engine features.
+     *
+     * @param evt
+     */
+    private void searchEnginesSelectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesSelectAllLabelMouseClicked
+        assumptionAccession.setSelected(true);
+        proteinDescriptionSerarchEnginesTab.setSelected(true);
+        assumptionSequence.setSelected(true);
+        assumptionModification.setSelected(true);
+        assumptionFile.setSelected(true);
+        assumptionTitle.setSelected(true);
+        assumptionPrecursor.setSelected(true);
+        assumptionScores.setSelected(true);
+        assumptionConfidence.setSelected(true);
+        assumptionValidated.setSelected(true);
+    }//GEN-LAST:event_searchEnginesSelectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void searchEnginesSelectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesSelectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_searchEnginesSelectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void searchEnginesSelectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesSelectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_searchEnginesSelectAllLabelMouseExited
+
+    /**
+     * Deselect all search engine features.
+     *
+     * @param evt
+     */
+    private void searchEnginesDeselectAllLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesDeselectAllLabelMouseClicked
+        assumptionAccession.setSelected(false);
+        proteinDescriptionSerarchEnginesTab.setSelected(false);
+        assumptionSequence.setSelected(false);
+        assumptionModification.setSelected(false);
+        assumptionFile.setSelected(false);
+        assumptionTitle.setSelected(false);
+        assumptionPrecursor.setSelected(false);
+        assumptionScores.setSelected(false);
+        assumptionConfidence.setSelected(false);
+        assumptionValidated.setSelected(false);
+    }//GEN-LAST:event_searchEnginesDeselectAllLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void searchEnginesDeselectAllLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesDeselectAllLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_searchEnginesDeselectAllLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void searchEnginesDeselectAllLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesDeselectAllLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_searchEnginesDeselectAllLabelMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
     private javax.swing.JCheckBox assumptionConfidence;
@@ -1271,9 +1519,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JCheckBox assumptionScores;
     private javax.swing.JCheckBox assumptionSequence;
     private javax.swing.JCheckBox assumptionTitle;
-    private javax.swing.JButton assumptionUnselectAll;
     private javax.swing.JCheckBox assumptionValidated;
-    private javax.swing.JButton assumptionsExportAll;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton exitButton;
     private javax.swing.JButton exportAll;
@@ -1282,6 +1528,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JLabel jLabel2;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
+    private javax.swing.JLabel peptideDeselectAllLabel;
     private javax.swing.JButton peptideExportAll;
     private javax.swing.JCheckBox peptideHidden;
     private javax.swing.JCheckBox peptideLocation;
@@ -1289,12 +1536,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JCheckBox peptideNSpectra;
     private javax.swing.JCheckBox peptidePosition;
     private javax.swing.JCheckBox peptideScore;
-    private javax.swing.JButton peptideSelectAll;
+    private javax.swing.JLabel peptideSelectAllLabel;
     private javax.swing.JCheckBox peptideSequence;
     private javax.swing.JCheckBox peptideStarred;
     private javax.swing.JCheckBox peptideSurroundingAA;
     private javax.swing.JCheckBox peptideUniqueOnly;
-    private javax.swing.JButton peptideUnselectAll;
     private javax.swing.JCheckBox peptideValidated;
     private javax.swing.JPanel peptidesPanel;
     private javax.swing.JCheckBox precursorCharges;
@@ -1302,6 +1548,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JCheckBox proteinAccession;
     private javax.swing.JCheckBox proteinConfidence;
     private javax.swing.JCheckBox proteinDescription;
+    private javax.swing.JCheckBox proteinDescriptionPeptideTab;
+    private javax.swing.JCheckBox proteinDescriptionPsmTab;
+    private javax.swing.JCheckBox proteinDescriptionSerarchEnginesTab;
+    private javax.swing.JLabel proteinDeselectAllLabel;
     private javax.swing.JCheckBox proteinEmpai;
     private javax.swing.JButton proteinExportAll;
     private javax.swing.JCheckBox proteinHidden;
@@ -1311,14 +1561,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JCheckBox proteinPI;
     private javax.swing.JCheckBox proteinScore;
     private javax.swing.JCheckBox proteinScore1;
-    private javax.swing.JButton proteinSelectAll;
+    private javax.swing.JLabel proteinSelectAllLabel;
     private javax.swing.JCheckBox proteinSequenceCoverage;
     private javax.swing.JCheckBox proteinStarred;
-    private javax.swing.JButton proteinUnselectAll;
     private javax.swing.JCheckBox proteinValidated;
     private javax.swing.JPanel proteinsPanel;
     private javax.swing.JCheckBox psmAccession;
     private javax.swing.JCheckBox psmConfidence;
+    private javax.swing.JLabel psmDeselectAllLabel;
     private javax.swing.JButton psmExportAll;
     private javax.swing.JCheckBox psmFile;
     private javax.swing.JCheckBox psmHidden;
@@ -1327,14 +1577,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JPanel psmPanel;
     private javax.swing.JCheckBox psmPrecursor;
     private javax.swing.JCheckBox psmScore;
-    private javax.swing.JButton psmSelectAll;
+    private javax.swing.JLabel psmSelectAllLabel;
     private javax.swing.JCheckBox psmSequence;
     private javax.swing.JCheckBox psmStarred;
     private javax.swing.JCheckBox psmTitle;
-    private javax.swing.JButton psmUnselectAll;
     private javax.swing.JCheckBox psmValidated;
     private javax.swing.JCheckBox ptmSummary;
     private javax.swing.JPanel searchEnginePanel;
+    private javax.swing.JLabel searchEnginesDeselectAllLabel;
+    private javax.swing.JLabel searchEnginesSelectAllLabel;
+    private javax.swing.JLabel slashLabel1;
+    private javax.swing.JLabel slashLabel2;
+    private javax.swing.JLabel slashLabel3;
+    private javax.swing.JLabel slashLabel4;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 
