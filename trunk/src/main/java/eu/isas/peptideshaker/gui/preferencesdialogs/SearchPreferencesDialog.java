@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
@@ -28,6 +29,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -753,9 +756,35 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             searchParameters.setPrecursorAccuracy(new Double(precursorAccuracy.getText()));
 
             if (!searchParameters.getEnzyme().enzymeCleaves()) {
-                JOptionPane.showMessageDialog(this, "The cleavage site of the selected enzyme is not configured. PeptideShaker functionalities will be limited.\n"
-                        + "You can edit enzyme configuration in the file peptideshaker_enzymes.xml located in the conf folder.\n"
-                        + "For more information on enzymes, contact us via the mailing list: http://groups.google.com/group/peptide-shaker.", "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);
+
+                // create an empty label to put the message in
+                JLabel label = new JLabel();
+
+                // html content 
+                JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                        + "The cleavage site of the selected enzyme is not configured.<br><br>"
+                        + "PeptideShaker functionalities will be limited.<br><br>"
+                        + "Edit enzyme configuration in:<br>"
+                        + "<i>peptideshaker_enzymes.xml</i> located in the conf folder.<br><br>"
+                        + "For more information on enzymes, contact us via:<br>"
+                        + "<a href=\"http://groups.google.com/group/peptide-shaker\">http://groups.google.com/group/peptide-shaker</a>."
+                        + "</body></html>");
+
+                // handle link events 
+                ep.addHyperlinkListener(new HyperlinkListener() {
+
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent e) {
+                        if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                            BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                        }
+                    }
+                });
+
+                ep.setBorder(null);
+                ep.setEditable(false);
+                
+                JOptionPane.showMessageDialog(this, ep, "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);
             }
 
             peptideShakerGUI.setSearchParameters(searchParameters);
@@ -1246,7 +1275,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             boolean rowAlreadySelected = false;
 
             int[] selectedRows = expectedModificationsTable.getSelectedRows();
-            
+
             for (int i = 0; i < selectedRows.length && !rowAlreadySelected; i++) {
                 if (selectedRows[i] == expectedModificationsTable.rowAtPoint(evt.getPoint())) {
                     rowAlreadySelected = true;
@@ -1287,7 +1316,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             boolean rowAlreadySelected = false;
 
             int[] selectedRows = availableModificationsTable.getSelectedRows();
-            
+
             for (int i = 0; i < selectedRows.length && !rowAlreadySelected; i++) {
                 if (selectedRows[i] == availableModificationsTable.rowAtPoint(evt.getPoint())) {
                     rowAlreadySelected = true;
@@ -1329,7 +1358,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void addAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAvailablePtmJMenuItemActionPerformed
         addModificationsActionPerformed(null);
     }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;

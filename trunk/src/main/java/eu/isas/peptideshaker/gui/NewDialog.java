@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -26,8 +27,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -1120,8 +1125,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         peptideShakerGUI.getSearchParameters().setFastaFile(fastaFile);
-        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, 
-                spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), 
+        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
+                spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(),
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails());
     }
 
@@ -1139,14 +1144,19 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
             ArrayList<String> searchedMods = new ArrayList<String>();
             String temp = props.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
+            
             if (temp != null && !temp.trim().equals("")) {
                 searchedMods = IdentificationParametersReader.parseModificationLine(temp);
             }
+            
             temp = props.getProperty(IdentificationParametersReader.FIXED_MODIFICATIONS);
+            
             if (temp != null && !temp.trim().equals("")) {
                 searchedMods.addAll(IdentificationParametersReader.parseModificationLine(temp));
             }
+            
             ArrayList<String> missing = new ArrayList<String>();
+            
             for (String name : searchedMods) {
                 if (!ptmFactory.containsPTM(name)) {
                     missing.add(name);
@@ -1164,10 +1174,11 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                             searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
                             searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                         }
+                        
                         ArrayList<String> conflicts = new ArrayList<String>();
-                        PTM oldPTM;
+
                         for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                            oldPTM = ptmFactory.getPTM(oldModification);
+                            PTM oldPTM = ptmFactory.getPTM(oldModification);
                             if (Math.abs(oldPTM.getMass() - ptmFactory.getPTM(name).getMass()) < 0.01) {
                                 if (!searchedMods.contains(oldModification)) {
                                     conflicts.add(oldModification);
@@ -1314,14 +1325,41 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             }
+            
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             importFilterTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
+            
             if (!searchParameters.getEnzyme().enzymeCleaves()) {
-                JOptionPane.showMessageDialog(this, "The cleavage site of the selected enzyme is not configured. PeptideShaker functionalities will be limited.\n"
-                        + "You can edit enzyme configuration in the file peptideshaker_enzymes.xml located in the conf folder.\n"
-                        + "For more information on enzymes, contact us via the mailing list: http://groups.google.com/group/peptide-shaker.", "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);
+                // create an empty label to put the message in
+                JLabel label = new JLabel();
+
+                // html content 
+                JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                        + "The cleavage site of the selected enzyme is not configured.<br><br>"
+                        + "PeptideShaker functionalities will be limited.<br><br>"
+                        + "Edit enzyme configuration in:<br>"
+                        + "<i>peptideshaker_enzymes.xml</i> located in the conf folder.<br><br>"
+                        + "For more information on enzymes, contact us via:<br>"
+                        + "<a href=\"http://groups.google.com/group/peptide-shaker\">http://groups.google.com/group/peptide-shaker</a>."
+                        + "</body></html>");
+
+                // handle link events 
+                ep.addHyperlinkListener(new HyperlinkListener() {
+
+                    @Override
+                    public void hyperlinkUpdate(HyperlinkEvent e) {
+                        if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                            BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                        }
+                    }
+                });
+
+                ep.setBorder(null);
+                ep.setEditable(false);
+
+                JOptionPane.showMessageDialog(this, ep, "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

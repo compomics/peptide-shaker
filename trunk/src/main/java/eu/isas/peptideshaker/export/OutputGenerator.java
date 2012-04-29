@@ -405,12 +405,15 @@ public class OutputGenerator implements ProgressDialogParent {
     }
 
     /**
-     *
+     * Sends the desired peptide output (based on the elements needed as
+     * provided in arguments) to a user chosen file.
+     * 
      * @param aPeptideKeys
      * @param aPeptidePdbArray
      * @param aIndexes
      * @param aOnlyValidated
      * @param aAccession
+     * @param aProteinDescription 
      * @param aLocation
      * @param aSurroundings
      * @param aSequence
@@ -428,7 +431,7 @@ public class OutputGenerator implements ProgressDialogParent {
      * @throws IOException
      */
     public void getPeptidesOutput(ArrayList<String> aPeptideKeys,
-            ArrayList<String> aPeptidePdbArray, boolean aIndexes, boolean aOnlyValidated, boolean aAccession,
+            ArrayList<String> aPeptidePdbArray, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aProteinDescription,
             boolean aLocation, boolean aSurroundings, boolean aSequence, boolean aModifications, boolean aPtmLocations, boolean aCharges,
             boolean aNSpectra, boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred,
             boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) throws IOException {
@@ -440,6 +443,7 @@ public class OutputGenerator implements ProgressDialogParent {
         final boolean indexes = aIndexes;
         final boolean onlyValidated = aOnlyValidated;
         final boolean accession = aAccession;
+        final boolean proteinDescription = aProteinDescription;
         final boolean location = aLocation;
         final boolean surroundings = aSurroundings;
         final boolean sequence = aSequence;
@@ -503,8 +507,13 @@ public class OutputGenerator implements ProgressDialogParent {
                             }
                             if (accession) {
                                 writer.write("Protein" + SEPARATOR);
-                                writer.write("Other protein(s)" + SEPARATOR);
-                                writer.write("Peptide protein(s)" + SEPARATOR);
+                                writer.write("Other Protein(s)" + SEPARATOR);
+                                writer.write("Peptide Protein(s)" + SEPARATOR);
+                            }
+                            if (proteinDescription) {
+                                writer.write("Protein Description" + SEPARATOR);
+                                writer.write("Other Protein Description(s)" + SEPARATOR);
+                                writer.write("Peptide Proteins Description(s)" + SEPARATOR);
                             }
                             if (surroundings) {
                                 writer.write("AA Before" + SEPARATOR);
@@ -575,7 +584,7 @@ public class OutputGenerator implements ProgressDialogParent {
                                             
                                             Peptide peptide = peptideMatch.getTheoreticPeptide();
                                             
-                                            if (accession || surroundings || location || uniqueOnly) {
+                                            if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
                                                     ArrayList<String> possibleProteins = new ArrayList<String>();
                                                     for (String parentProtein : peptide.getParentProteins()) {
@@ -611,12 +620,14 @@ public class OutputGenerator implements ProgressDialogParent {
                                                     writer.write(++peptideCounter + SEPARATOR);
                                                 }
                                                 
-                                                if (accession) {
+                                                if (accession || proteinDescription) {
                                                     String mainMatch, secondaryProteins = "", peptideProteins = "";
+                                                    String mainMatchDescription, secondaryProteinsDescriptions = "", peptideProteinDescriptions = "";
                                                     boolean first;
                                                     ArrayList<String> accessions = new ArrayList<String>();
                                                     if (!shared) {
                                                         mainMatch = proteinMatch.getMainMatch();
+                                                        mainMatchDescription = sequenceFactory.getHeader(mainMatch).getDescription();
                                                         first = true;
                                                         accessions.addAll(proteinMatch.getTheoreticProteinsAccessions());
                                                         Collections.sort(accessions);
@@ -626,12 +637,15 @@ public class OutputGenerator implements ProgressDialogParent {
                                                                     first = false;
                                                                 } else {
                                                                     secondaryProteins += ", ";
+                                                                    secondaryProteinsDescriptions += "; ";
                                                                 }
                                                                 secondaryProteins += key;
+                                                                secondaryProteinsDescriptions += sequenceFactory.getHeader(key).getDescription();
                                                             }
                                                         }
                                                     } else {
-                                                        mainMatch = "Shared peptide";
+                                                        mainMatch = "shared peptide";
+                                                        mainMatchDescription = "shared peptide";
                                                     }
                                                     first = true;
                                                     ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins());
@@ -642,13 +656,23 @@ public class OutputGenerator implements ProgressDialogParent {
                                                                 first = false;
                                                             } else {
                                                                 peptideProteins += ", ";
+                                                                peptideProteinDescriptions += "; ";
                                                             }
                                                             peptideProteins += key;
+                                                            peptideProteinDescriptions += sequenceFactory.getHeader(key).getDescription();
                                                         }
                                                     }
-                                                    writer.write(mainMatch + SEPARATOR);
-                                                    writer.write(secondaryProteins + SEPARATOR);
-                                                    writer.write(peptideProteins + SEPARATOR);
+                                                    
+                                                    if (accession) {
+                                                        writer.write(mainMatch + SEPARATOR);
+                                                        writer.write(secondaryProteins + SEPARATOR);
+                                                        writer.write(peptideProteins + SEPARATOR);
+                                                    }
+                                                    if (proteinDescription) {
+                                                        writer.write(mainMatchDescription + SEPARATOR);
+                                                        writer.write(secondaryProteinsDescriptions + SEPARATOR);
+                                                        writer.write(peptideProteinDescriptions + SEPARATOR);
+                                                    }
                                                 }
                                                 
                                                 if (location || surroundings) {
@@ -673,7 +697,7 @@ public class OutputGenerator implements ProgressDialogParent {
                                                         }
                                                         writer.write(subSequence + SEPARATOR);
                                                     } else if (!accession) {
-                                                        writer.write("Shared peptide" + SEPARATOR);
+                                                        writer.write("shared peptide" + SEPARATOR);
                                                     } else {
                                                         writer.write(SEPARATOR);
                                                     }
@@ -725,8 +749,8 @@ public class OutputGenerator implements ProgressDialogParent {
                                                         }
                                                         
                                                     } else if (!accession && !surroundings) {
-                                                        start += "Shared peptide";
-                                                        end += "Shared peptide";
+                                                        start += "shared peptide";
+                                                        end += "shared peptide";
                                                     }
                                                     
                                                     writer.write(start + SEPARATOR + end + SEPARATOR);
@@ -818,6 +842,7 @@ public class OutputGenerator implements ProgressDialogParent {
      * @param aIndexes
      * @param aOnlyValidated
      * @param aAccessions
+     * @param aProteinDescription 
      * @param aSequence
      * @param aModification
      * @param aLocation
@@ -831,7 +856,7 @@ public class OutputGenerator implements ProgressDialogParent {
      * @param aIncludeHidden
      * @throws IOException
      */
-    public void getPSMsOutput(ArrayList<String> aPsmKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccessions, boolean aSequence, boolean aModification,
+    public void getPSMsOutput(ArrayList<String> aPsmKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccessions, boolean aProteinDescription, boolean aSequence, boolean aModification,
             boolean aLocation, boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScore, boolean aConfidence, boolean aIncludeHeader,
             boolean aOnlyStarred, boolean aIncludeHidden) throws IOException {
 
@@ -840,6 +865,7 @@ public class OutputGenerator implements ProgressDialogParent {
         final boolean indexes = aIndexes;
         final boolean onlyValidated = aOnlyValidated;
         final boolean accessions = aAccessions;
+        final boolean proteinDescription = aProteinDescription;
         final boolean sequence = aSequence;
         final boolean modification = aModification;
         final boolean location = aLocation;
@@ -900,6 +926,9 @@ public class OutputGenerator implements ProgressDialogParent {
                             }
                             if (accessions) {
                                 writer.write("Protein(s)" + SEPARATOR);
+                            }
+                            if (proteinDescription) {
+                                writer.write("Protein(s) Descriptions" + SEPARATOR);
                             }
                             if (sequence) {
                                 writer.write("Sequence" + SEPARATOR);
@@ -967,17 +996,36 @@ public class OutputGenerator implements ProgressDialogParent {
                                                 writer.write(++psmCounter + SEPARATOR);
                                             }
                                             
-                                            if (accessions) {
+                                            if (accessions || proteinDescription) {
+                                                
+                                                String proteinAccessions = "";
+                                                String proteinDescriptions = "";
+                                                
                                                 boolean first = true;
                                                 for (String protein : bestAssumption.getPeptide().getParentProteins()) {
                                                     if (first) {
                                                         first = false;
                                                     } else {
-                                                        writer.write(", ");
+                                                        if (accessions) {
+                                                            proteinAccessions += ", ";
+                                                        }
+                                                        if (proteinDescription) {
+                                                            proteinDescriptions += "; ";
+                                                        }
                                                     }
-                                                    writer.write(protein);
+                                                    if (accessions) {
+                                                        proteinAccessions += protein;
+                                                    }
+                                                    if (proteinDescription) {
+                                                        proteinDescriptions += sequenceFactory.getHeader(protein).getDescription();
+                                                    }
                                                 }
-                                                writer.write(SEPARATOR);
+                                                if (accessions) {
+                                                    writer.write(proteinAccessions + SEPARATOR);
+                                                }
+                                                if (proteinDescription) {
+                                                    writer.write(proteinDescriptions + SEPARATOR);
+                                                }
                                             }
                                             if (sequence) {
                                                 writer.write(bestAssumption.getPeptide().getSequence() + SEPARATOR);
@@ -1262,6 +1310,7 @@ public class OutputGenerator implements ProgressDialogParent {
      * @param aPsmKeys
      * @param aOnlyValidated
      * @param aAccession
+     * @param aProteinDescription 
      * @param aSequence
      * @param aModifications
      * @param aFile
@@ -1273,13 +1322,14 @@ public class OutputGenerator implements ProgressDialogParent {
      * @throws IOException
      */
     public void getAssumptionsOutput(ArrayList<String> aPsmKeys, boolean aOnlyValidated,
-            boolean aAccession, boolean aSequence, boolean aModifications,
+            boolean aAccession, boolean aProteinDescription, boolean aSequence, boolean aModifications,
             boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScores, boolean aConfidence, boolean aIncludeHeader) throws IOException {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> psmKeys;
         final boolean onlyValidated = aOnlyValidated;
         final boolean accession = aAccession;
+        final boolean proteinDescription = aProteinDescription;
         final boolean sequence = aSequence;
         final boolean modifications = aModifications;
         final boolean file = aFile;
@@ -1332,7 +1382,10 @@ public class OutputGenerator implements ProgressDialogParent {
                             writer.write("Search Engine" + SEPARATOR);
                             writer.write("Rank" + SEPARATOR);
                             if (accession) {
-                                writer.write("Accession" + SEPARATOR);
+                                writer.write("Protein Accession" + SEPARATOR);
+                            }
+                            if (proteinDescription) {
+                                writer.write("Protein Description" + SEPARATOR);
                             }
                             if (sequence) {
                                 writer.write("Sequence" + SEPARATOR);
@@ -1367,7 +1420,7 @@ public class OutputGenerator implements ProgressDialogParent {
                             if (confidence) {
                                 writer.write("Confidence" + SEPARATOR);
                             }
-                            writer.write("Retained As Main PSM" + SEPARATOR);
+                            writer.write("Retained as Main PSM" + SEPARATOR);
                             writer.write("Decoy" + SEPARATOR);
                             writer.write("\n");
                         }
@@ -1396,17 +1449,36 @@ public class OutputGenerator implements ProgressDialogParent {
                                         for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
                                             writer.write(AdvocateFactory.getInstance().getAdvocate(se).getName() + SEPARATOR);
                                             writer.write(rank + SEPARATOR);
-                                            if (accession) {
+                                            if (accession || proteinDescription) {
+                                                
+                                                String proteinAccessions = "";
+                                                String proteinDescriptions = "";
+                                                
                                                 boolean first = true;
                                                 for (String protein : peptideAssumption.getPeptide().getParentProteins()) {
                                                     if (first) {
                                                         first = false;
                                                     } else {
-                                                        writer.write(", ");
+                                                         if (accession) {
+                                                            proteinAccessions += ", ";
+                                                        }
+                                                        if (proteinDescription) {
+                                                            proteinDescriptions += "; ";
+                                                        }
                                                     }
-                                                    writer.write(protein);
+                                                    if (accession) {
+                                                        proteinAccessions += protein;
+                                                    }
+                                                    if (proteinDescription) {
+                                                        proteinDescriptions += sequenceFactory.getHeader(protein).getDescription();
+                                                    }
                                                 }
-                                                writer.write(SEPARATOR);
+                                                if (accession) {
+                                                    writer.write(proteinAccessions + SEPARATOR);
+                                                }
+                                                if (proteinDescription) {
+                                                    writer.write(proteinDescriptions + SEPARATOR);
+                                                }
                                             }
                                             if (sequence) {
                                                 writer.write(peptideAssumption.getPeptide().getSequence() + SEPARATOR);

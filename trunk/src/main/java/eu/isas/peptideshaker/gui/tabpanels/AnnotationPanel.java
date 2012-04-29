@@ -81,8 +81,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
         annotationLinksJPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         accessionNumberJTextField = new javax.swing.JTextField();
@@ -133,8 +131,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         helpEditorPane = new javax.swing.JEditorPane();
         warningJLabel = new javax.swing.JLabel();
         picrLinkJLabel = new javax.swing.JLabel();
-
-        jScrollPane1.setViewportView(jEditorPane1);
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -652,7 +648,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(helpPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(helpScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                .addComponent(helpScrollPane)
                 .addContainerGap())
         );
 
@@ -712,7 +708,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -736,7 +732,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(warningJLabel)
                     .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(85, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1136,7 +1132,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JEditorPane helpEditorPane;
     private javax.swing.JPanel helpPanel;
     private javax.swing.JScrollPane helpScrollPane;
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1151,7 +1146,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton loadDastyJButton;
     private javax.swing.JButton loadDavidJButton;
     private javax.swing.JButton loadIntActJButton;
