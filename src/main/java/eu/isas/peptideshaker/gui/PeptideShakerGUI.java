@@ -52,8 +52,6 @@ import eu.isas.peptideshaker.SearchGUIWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
-import eu.isas.peptideshaker.gui.testDialogs.PeptideFractionDialog;
-import eu.isas.peptideshaker.gui.testDialogs.ProteinFractionDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
