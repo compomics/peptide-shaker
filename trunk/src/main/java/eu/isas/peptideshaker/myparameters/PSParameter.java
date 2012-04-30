@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- * PeptideShaker compomics utilities experiment customizable parameter.
- * This parameter will be added to spectrum, peptide and protein matches to score 
- * them, indicate the estimated posterior error probability associated and flag 
+ * PeptideShaker compomics utilities experiment customizable parameter. This
+ * parameter will be added to spectrum, peptide and protein matches to score
+ * them, indicate the estimated posterior error probability associated and flag
  * whether they have been validated or not.
  *
  * @author Marc Vaudel
@@ -15,88 +15,91 @@ import java.util.Set;
 public class PSParameter implements UrParameter {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = 2846587135366515967L;
     /**
-     * Posterior error probability estimated for the search engine results
+     * Posterior error probability estimated for the search engine results.
      */
     private double searchEngineProbability;
     /**
-     * Probabilistic score for a peptide to spectrum match in the dataset
+     * Probabilistic score for a peptide to spectrum match in the dataset.
      */
     private double psmProbabilityScore;
     /**
-     * Spectrum posterior error probability
+     * Spectrum posterior error probability.
      */
     private double psmProbability;
     /**
-     * Probabilistic score for a peptide match
+     * Probabilistic score for a peptide match.
      */
     private double peptideProbabilityScore;
     /**
-     * Peptide Posterior error probability
+     * Peptide Posterior error probability.
      */
     private double peptideProbability;
     /**
-     * Probabilistic score for a protein match
+     * Probabilistic score for a protein match.
      */
     private double proteinProbabilityScore;
     /**
-     * Protein posterior error probability
+     * Protein posterior error probability.
      */
     private double proteinProbability;
     /**
-     * Boolean indicating whether a match is validated or not at the selected threshold
+     * Boolean indicating whether a match is validated or not at the selected
+     * threshold.
      */
     private boolean validated = false;
     /**
-     * Boolean indicating whether this is a hidden match
+     * Boolean indicating whether this is a hidden match.
      */
     private boolean hidden = false;
     /**
-     * Boolean indicating whether this is a starred match
+     * Boolean indicating whether this is a starred match.
      */
     private boolean starred = false; // @TODO would be nice to change this into a color
     /**
-     * the key in the corresponding specific map
+     * the key in the corresponding specific map.
      */
     private String secificMapKey;
     /**
-     * Protein groups can belong to the following groups according to the static field indexing.
+     * Protein groups can belong to the following groups according to the static
+     * field indexing.
      */
     private int groupClass = NOT_GROUP;
     /**
-     * Static index for a protein inference group:
-     * 0- not a protein group or unique peptide of single protein group
+     * Static index for a protein inference group: 0- not a protein group or
+     * unique peptide of single protein group.
      */
     public static final int NOT_GROUP = 0;
     /**
-     * Static index for a protein group:
-     * 1- isoforms or peptide of isoform groups (not necessarily unique to the group)
+     * Static index for a protein group: 1- isoforms or peptide of isoform
+     * groups (not necessarily unique to the group).
      */
     public static final int ISOFORMS = 1;
     /**
-     * Static index for a protein group:
-     * 2- isoforms and a few unrelated proteins (less than 50%) or peptide shared by isoforms and non isoforms (not necessarily unique to the group)
+     * Static index for a protein group: 2- isoforms and a few unrelated
+     * proteins (less than 50%) or peptide shared by isoforms and non isoforms
+     * (not necessarily unique to the group).
      */
     public static final int ISOFORMS_UNRELATED = 2;
     /**
-     * Static index for a protein group:
-     * 3- unrelated proteins proteins or peptide shared by unrelated proteins
+     * Static index for a protein group: 3- unrelated proteins proteins or
+     * peptide shared by unrelated proteins.
      */
     public static final int UNRELATED = 3;
     /**
-     * The fraction confidence map
+     * The fraction confidence map.
      */
     private HashMap<String, Double> fractionPEP = new HashMap<String, Double>();
     /**
-     * The fraction confidence map
+     * The fraction confidence map.
      */
     private HashMap<String, Double> fractionScore = new HashMap<String, Double>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PSParameter() {
     }
@@ -130,7 +133,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the peptide score.
-     * 
+     *
      * @return the peptide score
      */
     public double getPeptideScore() {
@@ -148,11 +151,11 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the peptide confidence.
-     * 
+     *
      * @return the peptide confidence
      */
     public double getPeptideConfidence() {
-        double confidence = 100.0*(1-peptideProbability);
+        double confidence = 100.0 * (1 - peptideProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -197,7 +200,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the protein score.
-     * 
+     *
      * @return the protein score
      */
     public double getProteinScore() {
@@ -215,11 +218,11 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the protein confidence.
-     * 
+     *
      * @return the protein confidence
      */
     public double getProteinConfidence() {
-        double confidence = 100.0*(1-proteinProbability);
+        double confidence = 100.0 * (1 - proteinProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -255,11 +258,11 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the search engine confidence.
-     * 
+     *
      * @return the search engine confidence
      */
     public double getSearchEngineConfidence() {
-        double confidence = 100.0*(1-searchEngineProbability);
+        double confidence = 100.0 * (1 - searchEngineProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -304,7 +307,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the PSM score.
-     * 
+     *
      * @return the PSM score
      */
     public double getPsmScore() {
@@ -322,11 +325,11 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the PSM confidence.
-     * 
+     *
      * @return the PSM confidence
      */
     public double getPsmConfidence() {
-        double confidence = 100.0*(1-psmProbability);
+        double confidence = 100.0 * (1 - psmProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -335,7 +338,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Un/Validates a match.
-     * 
+     *
      * @param validated boolean indicating whether the match should be validated
      */
     public void setValidated(boolean validated) {
@@ -344,7 +347,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns whether a match is validated or not.
-     * 
+     *
      * @return boolean indicating whether a match is validated or not
      */
     public boolean isValidated() {
@@ -353,7 +356,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Hide/Unhide a match.
-     * 
+     *
      * @param hidden boolean indicating whether the match should be hidden
      */
     public void setHidden(boolean hidden) {
@@ -362,7 +365,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns whether a match is hidden or not.
-     * 
+     *
      * @return boolean indicating whether a match is hidden or not
      */
     public boolean isHidden() {
@@ -371,7 +374,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Star/Unstar a match.
-     * 
+     *
      * @param starred boolean indicating whether the match should be starred
      */
     public void setStarred(boolean starred) {
@@ -380,7 +383,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns whether a match is starred or not.
-     * 
+     *
      * @return boolean indicating whether a match is starred or not
      */
     public boolean isStarred() {
@@ -389,7 +392,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the protein group class.
-     * 
+     *
      * @return the protein group class
      */
     public int getGroupClass() {
@@ -397,8 +400,9 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the group class description
-     * @return the group class description 
+     * Returns the group class description.
+     *
+     * @return the group class description
      */
     public String getGroupName() {
         switch (groupClass) {
@@ -417,7 +421,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Sets the protein group class.
-     * 
+     *
      * @param groupClass the protein group class
      */
     public void setGroupClass(int groupClass) {
@@ -425,7 +429,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the match key in the corresponding specific map
+     * Returns the match key in the corresponding specific map.
+     *
      * @return the match key in the corresponding specific map
      */
     public String getSecificMapKey() {
@@ -433,63 +438,77 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Sets the match key in the corresponding specific map
+     * Sets the match key in the corresponding specific map.
+     *
      * @param secificMapKey the match key in the corresponding specific map
      */
     public void setSecificMapKey(String secificMapKey) {
         this.secificMapKey = secificMapKey;
     }
-    
+
     /**
-     * Sets the fraction confidence
-     * @param fraction      the fraction
-     * @param confidence    the confidence
+     * Sets the fraction confidence.
+     *
+     * @param fraction the fraction
+     * @param confidence the confidence
      */
     public void setFractionScore(String fraction, double confidence) {
         fractionScore.put(fraction, confidence);
     }
-    
+
     /**
-     * Returns the fraction score. null if not found
-     * @param fraction 
+     * Returns the fraction score. Null if not found.
+     *
+     * @param fraction
+     * @return the fraction score
      */
     public double getFractionScore(String fraction) {
         return fractionScore.get(fraction);
     }
-    
+
     /**
-     * Return the fractions where this match was found
+     * Return the fractions where this match was found. Null if not found.
+     *
      * @return the fractions where this match was found
      */
     public Set<String> getFractions() {
-        return fractionScore.keySet();
+        if (fractionScore != null) {
+            return fractionScore.keySet();
+        } else {
+            return null;
+        }
     }
-    
+
     /**
-     * Sets the fraction confidence
-     * @param fraction      the fraction
-     * @param confidence    the confidence
+     * Sets the fraction confidence.
+     *
+     * @param fraction the fraction
+     * @param confidence the confidence
      */
     public void setFractionPEP(String fraction, double confidence) {
         fractionPEP.put(fraction, confidence);
     }
-    
+
     /**
      * Returns the fraction confidence. null if not found.
-     * @param fraction 
+     *
+     * @param fraction
+     * @return the fraction confidence
      */
     public double getFractionPEP(String fraction) {
         return fractionPEP.get(fraction);
     }
-    
+
     /**
-     * Returns the fraction confidence
-     * @param fraction 
+     * Returns the fraction confidence.
+     *
+     * @param fraction
+     * @return the fraction confidence 
      */
     public double getFractionConfidence(String fraction) {
         return 100 * (1 - fractionPEP.get(fraction));
     }
- 
+
     @Override
     public String getFamilyName() {
         return "PeptideShaker";

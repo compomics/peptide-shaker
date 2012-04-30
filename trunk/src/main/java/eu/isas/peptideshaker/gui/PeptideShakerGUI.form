@@ -786,29 +786,6 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="testJMenu">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Test"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Protein table"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Peptide table"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
-              </Events>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
       </SubComponents>
     </Menu>
   </NonVisualComponents>
@@ -903,8 +880,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Overview">
+                  <JTabbedPaneConstraints tabName="Overview" toolTip="Overview of all proteins, peptides and PSMs">
                     <Property name="tabTitle" type="java.lang.String" value="Overview"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Overview of all proteins, peptides and PSMs"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -914,8 +892,39 @@
             <Container class="javax.swing.JPanel" name="spectrumJPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Spectrum IDs">
+                  <JTabbedPaneConstraints tabName="Spectrum IDs" toolTip="Spectrum identifications">
                     <Property name="tabTitle" type="java.lang.String" value="Spectrum IDs"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Spectrum identifications"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+            </Container>
+            <Container class="javax.swing.JPanel" name="proteinFractionsJPanel">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Fractions I" toolTip="Protein fraction analysis">
+                    <Property name="tabTitle" type="java.lang.String" value="Fractions I"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Protein fraction analysis"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+            </Container>
+            <Container class="javax.swing.JPanel" name="peptideFractionsJPanel">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Fractions II" toolTip="Peptide fraction analysis">
+                    <Property name="tabTitle" type="java.lang.String" value="Fractions II"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Peptide fraction analysis"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -928,8 +937,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Modifications">
+                  <JTabbedPaneConstraints tabName="Modifications" toolTip="Project wide modification analysis">
                     <Property name="tabTitle" type="java.lang.String" value="Modifications"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Project wide modification analysis"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -942,8 +952,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="3D Structures">
+                  <JTabbedPaneConstraints tabName="3D Structures" toolTip="Peptide to protein structure mapping">
                     <Property name="tabTitle" type="java.lang.String" value="3D Structures"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Peptide to protein structure mapping"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -956,8 +967,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Annotation">
+                  <JTabbedPaneConstraints tabName="Annotation" toolTip="Online protein annotation resources">
                     <Property name="tabTitle" type="java.lang.String" value="Annotation"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Online protein annotation resources"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -970,8 +982,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="GO Analysis">
+                  <JTabbedPaneConstraints tabName="GO Analysis" toolTip="Gene Ontology enrichment analysis">
                     <Property name="tabTitle" type="java.lang.String" value="GO Analysis"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Gene Ontology enrichment analysis"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -984,8 +997,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Validation">
+                  <JTabbedPaneConstraints tabName="Validation" toolTip="Validate all calculations">
                     <Property name="tabTitle" type="java.lang.String" value="Validation"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Validate all calculations"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -998,8 +1012,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="QC Plots">
+                  <JTabbedPaneConstraints tabName="QC Plots" toolTip="Quality Control metrics and plots">
                     <Property name="tabTitle" type="java.lang.String" value="QC Plots"/>
+                    <Property name="tabToolTip" type="java.lang.String" value="Quality Control metrics and plots"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * This table model displays the protein confidence in every fraction
+ * This table model displays the protein confidence in every fraction.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -38,6 +38,11 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      * A map of all fraction names.
      */
     private HashMap<String, String> fractionNames = new HashMap<String, String>();
+    /**
+     * Set to true as soon as the real model is initiated. False means that only 
+     * the dummy constructor has been used.
+     */
+    private boolean modelInitiated = false;
 
     /**
      * Constructor which sets a new table.
@@ -46,6 +51,14 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      */
     public ProteinFractionTableModel(PeptideShakerGUI peptideShakerGUI) {
         setUpTableModel(peptideShakerGUI);
+        modelInitiated = true;
+    }
+    
+    /**
+     * Constructor which sets a new empty table.
+     *
+     */
+    public ProteinFractionTableModel() {
     }
     
     /**
@@ -66,16 +79,21 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
+        
         if (identification != null) {
             proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
         }
-        String fileName;
+        
+        fileNames = new ArrayList<String>();
+        
         for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-            fileName = Util.getFileName(filePath);
+            String fileName = Util.getFileName(filePath);
             fileNames.add(fileName);
             fractionNames.put(fileName, fileName);
         }
-        fileNames = new ArrayList<String>();
+        
+        Collections.sort(fileNames);
+        
         fileNames.add("COFRADIC Cys");
         fractionNames.put("COFRADIC Cys", "COFRADIC Cys");
         fileNames.add("COFRADIC Met");
@@ -86,7 +104,6 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         fractionNames.put("IEF", "IEF");
         fileNames.add("SCX");
         fractionNames.put("SCX", "SCX");
-        Collections.sort(fileNames);
     }
 
     /**
@@ -94,13 +111,6 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      */
     public void reset() {
         proteinKeys = null;
-    }
-
-    /**
-     * Constructor which sets a new empty table.
-     *
-     */
-    public ProteinFractionTableModel() {
     }
 
     @Override
@@ -142,13 +152,13 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 return row + 1;
             } else if (column == 1) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
-                return proteinMatch.getMainMatch();
+                return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
             } else if (column > 1 && column - 2 < fileNames.size()) {
                 String fraction = fileNames.get(column - 2);
                 PSParameter pSParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
                 pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
-                if (pSParameter.getFractions().contains(fraction)) {
+                if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;
@@ -185,5 +195,23 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
+    }
+
+    /**
+     * Returns true if the real model has been iniitated.
+     * 
+     * @return the modelInitiated
+     */
+    public boolean isModelInitiated() {
+        return modelInitiated;
+    }
+
+    /**
+     * Set if the real model has been initiated.
+     * 
+     * @param modelInitiated the modelInitiated to set
+     */
+    public void setModelInitiated(boolean modelInitiated) {
+        this.modelInitiated = modelInitiated;
     }
 }

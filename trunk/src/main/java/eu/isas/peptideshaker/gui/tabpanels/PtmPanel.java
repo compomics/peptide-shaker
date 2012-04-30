@@ -5058,7 +5058,6 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
             } else {
                 ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
             }
-
         }
     }
 
