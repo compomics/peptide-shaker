@@ -38,6 +38,11 @@ public class PeptideFractionTableModel extends DefaultTableModel {
      * A map of all fraction names.
      */
     private HashMap<String, String> fractionNames = new HashMap<String, String>();
+    /**
+     * Set to true as soon as the real model is initiated. False means that only 
+     * the dummy constructor has been used.
+     */
+    private boolean modelInitiated = false;
 
     /**
      * Constructor which sets a new table.
@@ -47,6 +52,14 @@ public class PeptideFractionTableModel extends DefaultTableModel {
      */
     public PeptideFractionTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> peptideKeys) {
         setUpTableModel(peptideShakerGUI, peptideKeys);
+        modelInitiated = true;
+    }
+    
+    /**
+     * Constructor which sets a new empty table.
+     *
+     */
+    public PeptideFractionTableModel() {
     }
 
     /**
@@ -70,15 +83,17 @@ public class PeptideFractionTableModel extends DefaultTableModel {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         this.peptideKeys = peptideKeys;
-        String fileName;
 
+        fileNames = new ArrayList<String>();
+        
         for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-            fileName = Util.getFileName(filePath);
+            String fileName = Util.getFileName(filePath);
             fileNames.add(fileName);
             fractionNames.put(fileName, fileName);
         }
+        
+        Collections.sort(fileNames);
 
-        fileNames = new ArrayList<String>();
         fileNames.add("COFRADIC Cys");
         fractionNames.put("COFRADIC Cys", "COFRADIC Cys");
         fileNames.add("COFRADIC Met");
@@ -89,7 +104,6 @@ public class PeptideFractionTableModel extends DefaultTableModel {
         fractionNames.put("IEF", "IEF");
         fileNames.add("SCX");
         fractionNames.put("SCX", "SCX");
-        Collections.sort(fileNames);
     }
 
     /**
@@ -97,13 +111,6 @@ public class PeptideFractionTableModel extends DefaultTableModel {
      */
     public void reset() {
         peptideKeys = null;
-    }
-
-    /**
-     * Constructor which sets a new empty table.
-     *
-     */
-    public PeptideFractionTableModel() {
     }
 
     @Override
@@ -151,7 +158,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 PSParameter pSParameter = new PSParameter();
                 String peptideKey = peptideKeys.get(row);
                 pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
-                if (pSParameter.getFractions().contains(fraction)) {
+                if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;
@@ -188,5 +195,23 @@ public class PeptideFractionTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
+    }
+    
+    /**
+     * Returns true if the real model has been iniitated.
+     * 
+     * @return the modelInitiated
+     */
+    public boolean isModelInitiated() {
+        return modelInitiated;
+    }
+
+    /**
+     * Set if the real model has been initiated.
+     * 
+     * @param modelInitiated the modelInitiated to set
+     */
+    public void setModelInitiated(boolean modelInitiated) {
+        this.modelInitiated = modelInitiated;
     }
 }

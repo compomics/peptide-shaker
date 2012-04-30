@@ -176,6 +176,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbPanel.add(jmolPanel);
 
         setUpTableHeaderToolTips();
+        setTableProperties();
 
         proteinScrollPane.getViewport().setOpaque(false);
         peptideScrollPane.getViewport().setOpaque(false);

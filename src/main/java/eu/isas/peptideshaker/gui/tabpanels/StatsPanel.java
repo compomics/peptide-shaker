@@ -1800,6 +1800,10 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
                 recalculatePeptidesAndProteins();
             }
             
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.PEPTIDE_FRACTIONS_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
 
@@ -1991,6 +1995,8 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
                     // update the other tabs
                     peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+                    peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+                    peptideShakerGUI.setUpdated(PeptideShakerGUI.PEPTIDE_FRACTIONS_TAB_INDEX, false);
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
