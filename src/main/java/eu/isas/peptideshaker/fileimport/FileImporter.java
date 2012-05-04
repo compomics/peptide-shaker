@@ -687,13 +687,13 @@ public class FileImporter {
                         }
                         double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
                         goodFirstHit = true;
-                        double error = assumption.getDeltaMass(precursorMz, true);
+                        double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
 
                         if (error > maxErrorPpm) {
                             maxErrorPpm = error;
                         }
 
-                        error = assumption.getDeltaMass(precursorMz, false);
+                        error = Math.abs(assumption.getDeltaMass(precursorMz, false));
 
                         if (error > maxErrorDa) {
                             maxErrorDa = error;
