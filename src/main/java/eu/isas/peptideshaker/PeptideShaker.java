@@ -1387,10 +1387,8 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
-        boolean better;
-        ProteinMatch proteinShared, proteinUnique;
-        double sharedProteinProbabilityScore, uniqueProteinProbabilityScore;
         ArrayList<String> toRemove = new ArrayList<String>();
+        int maxProteinKeyLength = 0;
 
         int max = 3 * identification.getProteinIdentification().size();
 
@@ -1401,15 +1399,15 @@ public class PeptideShaker {
 
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getMatchParameter(proteinSharedKey, psParameter);
-                sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
+                double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
                 if (sharedProteinProbabilityScore < 1) {
-                    better = false;
+                    boolean better = false;
                     for (String proteinUniqueKey : identification.getProteinIdentification()) {
                         if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
                             psParameter = (PSParameter) identification.getMatchParameter(proteinUniqueKey, psParameter);
-                            uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                            proteinUnique = identification.getProteinMatch(proteinUniqueKey);
-                            proteinShared = identification.getProteinMatch(proteinSharedKey);
+                            double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
+                            ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
+                            ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
                             for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
                                 proteinUnique.addPeptideMatch(sharedPeptideKey);
                             }
@@ -1441,7 +1439,6 @@ public class PeptideShaker {
         int nSolved = toRemove.size();
         int nGroups = 0;
         int nLeft = 0;
-        ArrayList<String> primaryDescription, secondaryDescription, accessions;
 
         // As we go through all protein ids, keep the sorted list of proteins and maxima in the instance of the Metrics class to pass them to the GUI afterwards
         // proteins are sorted according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
@@ -1449,22 +1446,17 @@ public class PeptideShaker {
                 new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
         ArrayList<Double> scores = new ArrayList<Double>();
         PSParameter probabilities = new PSParameter();
-        ProteinMatch proteinMatch;
-        PeptideMatch peptideMatch;
-        double score;
-        int nPeptides, nSpectra;
-        double mw, maxMW = 0;
+        double maxMW = 0;
         Protein currentProtein = null;
 
         for (String proteinKey : identification.getProteinIdentification()) {
-            proteinMatch = identification.getProteinMatch(proteinKey);
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
             if (!SequenceFactory.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getMatchParameter(proteinKey, probabilities);
-                score = probabilities.getProteinProbabilityScore();
-                nPeptides = -proteinMatch.getPeptideMatches().size();
-                nSpectra = 0;
-
+                double score = probabilities.getProteinProbabilityScore();
+                int nPeptides = -proteinMatch.getPeptideMatches().size();
+                int nSpectra = 0;
 
                 try {
                     currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
@@ -1473,14 +1465,14 @@ public class PeptideShaker {
                 }
 
                 if (currentProtein != null) {
-                    mw = currentProtein.computeMolecularWeight() / 1000;
+                    double mw = currentProtein.computeMolecularWeight() / 1000;
                     if (mw > maxMW) {
                         maxMW = mw;
                     }
                 }
 
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     nSpectra -= peptideMatch.getSpectrumCount();
                 }
                 if (!orderMap.containsKey(score)) {
@@ -1496,9 +1488,14 @@ public class PeptideShaker {
                     orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
                 }
                 orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
+                
+                // save the lenght of the longest protein accession number
+                if (proteinMatch.getMainMatch().length() > maxProteinKeyLength) {
+                    maxProteinKeyLength = proteinMatch.getMainMatch().length();
+                }
             }
 
-            accessions = new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(proteinKey)));
+            ArrayList<String> accessions = new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(proteinKey)));
             Collections.sort(accessions);
             String mainKey = accessions.get(0);
 
@@ -1507,9 +1504,9 @@ public class PeptideShaker {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
                 for (int i = 0; i < accessions.size() - 1; i++) {
-                    primaryDescription = parseDescription(accessions.get(i));
+                    ArrayList<String> primaryDescription = parseDescription(accessions.get(i));
                     for (int j = i + 1; j < accessions.size(); j++) {
-                        secondaryDescription = parseDescription(accessions.get(j));
+                        ArrayList<String> secondaryDescription = parseDescription(accessions.get(j));
                         if (getSimilarity(primaryDescription, secondaryDescription)) {
                             similarityFound = true;
                             mainKey = accessions.get(i);
@@ -1524,8 +1521,8 @@ public class PeptideShaker {
                     allSimilar = true;
                     for (String key : accessions) {
                         if (!mainKey.equals(key)) {
-                            primaryDescription = parseDescription(mainKey);
-                            secondaryDescription = parseDescription(key);
+                            ArrayList<String> primaryDescription = parseDescription(mainKey);
+                            ArrayList<String> secondaryDescription = parseDescription(key);
                             if (!getSimilarity(primaryDescription, secondaryDescription)) {
                                 allSimilar = false;
                                 break;
@@ -1561,12 +1558,12 @@ public class PeptideShaker {
                     String mainMatch = proteinMatch.getMainMatch();
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
-                        peptideMatch = identification.getPeptideMatch(peptideKey);
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         boolean unrelated = false;
                         for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
                             if (!proteinKey.contains(protein)) {
-                                primaryDescription = parseDescription(mainMatch);
-                                secondaryDescription = parseDescription(protein);
+                                ArrayList<String> primaryDescription = parseDescription(mainMatch);
+                                ArrayList<String> secondaryDescription = parseDescription(protein);
                                 if (!getSimilarity(primaryDescription, secondaryDescription)) {
                                     unrelated = true;
                                     break;
@@ -1584,14 +1581,14 @@ public class PeptideShaker {
                 String mainMatch = proteinMatch.getMainMatch();
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
-                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     boolean unrelated = false;
                     boolean otherProtein = false;
                     for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
                         if (!proteinKey.contains(protein)) {
                             otherProtein = true;
-                            primaryDescription = parseDescription(mainMatch);
-                            secondaryDescription = parseDescription(protein);
+                            ArrayList<String> primaryDescription = parseDescription(mainMatch);
+                            ArrayList<String> secondaryDescription = parseDescription(protein);
                             if (primaryDescription == null || secondaryDescription == null || !getSimilarity(primaryDescription, secondaryDescription)) {
                                 unrelated = true;
                                 break;
@@ -1622,25 +1619,23 @@ public class PeptideShaker {
         ArrayList<String> proteinList = new ArrayList<String>();
         ArrayList<Double> scoreList = new ArrayList<Double>(orderMap.keySet());
         Collections.sort(scoreList);
-        ArrayList<Integer> nPeptideList, nPsmList;
-        ArrayList<String> tempList;
         int maxPeptides = 0;
         int maxSpectra = 0;
 
         for (double currentScore : scoreList) {
-            nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
+            ArrayList<Integer> nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
             Collections.sort(nPeptideList);
             if (nPeptideList.get(0) < maxPeptides) {
                 maxPeptides = nPeptideList.get(0);
             }
             for (int currentNPeptides : nPeptideList) {
-                nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
+                ArrayList<Integer> nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
                 Collections.sort(nPsmList);
                 if (nPsmList.get(0) < maxSpectra) {
                     maxSpectra = nPsmList.get(0);
                 }
                 for (int currentNPsms : nPsmList) {
-                    tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
+                    ArrayList<String> tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                     Collections.sort(tempList);
                     proteinList.addAll(tempList);
 
@@ -1656,6 +1651,7 @@ public class PeptideShaker {
         metrics.setMaxNPeptides(-maxPeptides);
         metrics.setMaxNSpectra(-maxSpectra);
         metrics.setMaxMW(maxMW);
+        metrics.setMaxProteinKeyLength(maxProteinKeyLength);
 
         waitingHandler.setSecondaryProgressDialogIntermediate(true);
         waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");

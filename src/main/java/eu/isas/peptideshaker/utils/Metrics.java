@@ -52,6 +52,10 @@ public class Metrics implements Serializable {
      */
     private ArrayList<String> proteinKeys;
     /**
+     * The max protein key length.
+     */
+    private Integer maxProteinKeyLength = null;
+    /**
      * Amount of validated proteins
      */
     private int nValidatedProteins = -1;
@@ -231,13 +235,35 @@ public class Metrics implements Serializable {
     public void setProteinKeys(ArrayList<String> proteinKeys) {
         this.proteinKeys = proteinKeys;
     }
+    
+    /**
+     * Sets the max protein key length.
+     * 
+     * @param maxProteinKeyLength the length to set
+     */
+    public void setMaxProteinKeyLength(Integer maxProteinKeyLength) {
+        this.maxProteinKeyLength = maxProteinKeyLength;
+    }
+    
+    /**
+     * Returns the max protein key length.
+     * 
+     * @return the max protein key length
+     */
+    public Integer getMaxProteinKeyLength() {
+        if (maxProteinKeyLength != null) {
+            return maxProteinKeyLength;
+        } else {
+            return Integer.MAX_VALUE;
+        }
+    }
 
     /**
      * Returns the number of validated proteins.
      *
      * @return the number of validated proteins
      */
-    public int getnValidatedProteins() {
+    public Integer getnValidatedProteins() {
         return nValidatedProteins;
     }
 

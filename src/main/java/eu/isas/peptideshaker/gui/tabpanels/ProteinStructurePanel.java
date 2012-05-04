@@ -327,9 +327,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             public void run() {
                 // set the preferred size of the accession column
-                int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
-                proteinTable.getColumn("Accession").setMinWidth(width);
-                proteinTable.getColumn("Accession").setMaxWidth(width);
+                Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+                if (width != null) {
+                    proteinTable.getColumn("Accession").setMinWidth(width);
+                    proteinTable.getColumn("Accession").setMaxWidth(width);
+                } else {
+                    proteinTable.getColumn("Accession").setMinWidth(15);
+                    proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+                }
             }
         });
     }
