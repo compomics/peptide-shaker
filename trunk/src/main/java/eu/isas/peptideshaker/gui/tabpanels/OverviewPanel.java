@@ -336,23 +336,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
-        
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
 
-            public void run() {
-                // set the preferred size of the accession column
-                Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
-                
-                if (width != null) {
-                    proteinTable.getColumn("Accession").setMinWidth(width);
-                    proteinTable.getColumn("Accession").setMaxWidth(width);
-                } else {
-                    proteinTable.getColumn("Accession").setMinWidth(15);
-                    proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
-                }
-            }
-        });
+
+        // set the preferred size of the accession column
+        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+
+        if (width != null) {
+            proteinTable.getColumn("Accession").setMinWidth(width);
+            proteinTable.getColumn("Accession").setMaxWidth(width);
+        } else {
+            proteinTable.getColumn("Accession").setMinWidth(15);
+            proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+        }
     }
 
     /**
@@ -4163,7 +4158,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     exportSequenceCoverageContextJButton.setEnabled(true);
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
-                    
+
                     // change the peptide shaker icon to a "waiting version" // @TODO: not really sure why we need to set this again here, but seems to be needed...
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -4178,7 +4173,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             dm.fireTableDataChanged();
                             updateSelection();
                             proteinTable.requestFocus();
-                            
+
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

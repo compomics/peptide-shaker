@@ -776,21 +776,15 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                 progressDialog.setIndeterminate(true);
 
-                                // invoke later to give time for components to update
-                                SwingUtilities.invokeLater(new Runnable() {
-
-                                    public void run() {
-                                        // set the preferred size of the accession column
-                                        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
-                                        if (width != null) {
-                                            goMappingsTable.getColumn("GO Accession").setMinWidth(width);
-                                            goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
-                                        } else {
-                                            proteinTable.getColumn("Accession").setMinWidth(15);
-                                            proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
-                                        }
-                                    }
-                                });
+                                // set the preferred size of the accession column
+                                Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
+                                if (width != null) {
+                                    goMappingsTable.getColumn("GO Accession").setMinWidth(width);
+                                    goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
+                                } else {
+                                    proteinTable.getColumn("Accession").setMinWidth(15);
+                                    proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+                                }
 
                                 maxLog2Diff = Math.ceil(maxLog2Diff);
 
