@@ -94,24 +94,25 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="modProfilePanel" max="32767" attributes="1"/>
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Component id="searchPreferencesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="helpLineLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="185" max="-2" attributes="0"/>
                           <Component id="okButton" linkSize="17" min="-2" pref="64" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="17" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="searchGuiParamsPanel" max="32767" attributes="1"/>
                       <Component id="enzymeAndFragmentIonsPanel" alignment="0" max="32767" attributes="1"/>
-                      <Component id="modProfilePanel" alignment="0" max="32767" attributes="1"/>
+                      <Component id="searchGuiParamsPanel" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -183,7 +184,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="fragmentIonAccuracyTxt" min="-2" pref="60" max="-2" attributes="2"/>
                           </Group>
-                          <Component id="enzymesCmb" pref="308" max="32767" attributes="3"/>
+                          <Component id="enzymesCmb" max="32767" attributes="3"/>
                       </Group>
                       <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
