@@ -3779,10 +3779,51 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Gets the preferred width of the column specified by vColIndex. The column
+     * Gets the preferred width of the column specified by colIndex. The column
+     * will be just wide enough to show the column head and the widest cell in
+     * the column. Margin pixels are added to the left and right (resulting in
+     * an additional width of 2*margin pixels. Returns null if the max width 
+     * cannot be set.
+     *
+     * @param table the table
+     * @param colIndex the colum index
+     * @param margin the margin to add
+     * @return the prefereed width of the column
+     */
+    public Integer getPreferredAccessionColumnWidth(JTable table, int colIndex, int margin) {
+
+        DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
+        TableColumn col = colModel.getColumn(colIndex);
+
+        // get width of column header
+        TableCellRenderer renderer = col.getHeaderRenderer();
+        if (renderer == null) {
+            renderer = table.getTableHeader().getDefaultRenderer();
+        }
+
+        Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+        int width = comp.getPreferredSize().width;
+
+
+        // get maximum width of column data
+        if (metrics == null || metrics.getMaxProteinKeyLength() > table.getColumnName(colIndex).length()) {
+            return null;
+        }
+
+        // add margin
+        width += 2 * margin;
+
+        return width;
+    }
+    
+    /**
+     * Gets the preferred width of the column specified by colIndex. The column
      * will be just wide enough to show the column head and the widest cell in
      * the column. Margin pixels are added to the left and right (resulting in
      * an additional width of 2*margin pixels.
+     * <br>
+     * Note that this method iterates all rows in the table to get the perfect 
+     * width of the column!
      *
      * @param table the table
      * @param colIndex the colum index
@@ -3802,8 +3843,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
         int width = comp.getPreferredSize().width;
-
-        // get maximum width of column data
+        
         for (int r = 0; r < table.getRowCount(); r++) {
             renderer = table.getCellRenderer(r, colIndex);
             comp = renderer.getTableCellRendererComponent(
@@ -5833,16 +5873,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
 
-        File testFile, selectedFolder = null;
         int returnVal = fileChooser.showDialog(this.getParent(), "Save");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            selectedFolder = fileChooser.getSelectedFile();
+            File selectedFolder = fileChooser.getSelectedFile();
             if (!selectedFolder.isDirectory()) {
                 selectedFolder = selectedFolder.getParentFile();
             }
             for (String fileName : spectrumFactory.getMgfFileNames()) {
                 String newName = getRecalibratedFileName(fileName);
-                testFile = new File(selectedFolder, newName);
+                File testFile = new File(selectedFolder, newName);
                 if (testFile.exists()) {
                     int outcome = JOptionPane.showConfirmDialog(this,
                             "File(s) already exist, shall it be overwritten?", "Selected File Already Exists",
@@ -5864,7 +5903,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the name of the recalibrated file
+     * Returns the name of the recalibrated file.
+     * 
+     * @param fileName the original file name
+     * @return the name of the recalibrated file
      */
     public String getRecalibratedFileName(String fileName) {
         String tempName = fileName.substring(0, fileName.lastIndexOf("."));
@@ -5873,7 +5915,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Writes the recalibrated files
+     * Writes the recalibrated files.
+     * 
+     * @param outputFolder the output folder
      */
     public void writeRecalibratedSpectra(File outputFolder) {
 
@@ -5898,33 +5942,43 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             @Override
             public void run() {
+                
                 PeptideShakerGUI peptideShakerGUI = PeptideShakerGUI.this;
+                
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     DataSetErrors dataSetErrors = new DataSetErrors(PeptideShakerGUI.this);
-                    FractionError fileErrors;
                     int progress = 1;
                     progressDialog.setIndeterminate(false);
-                    double precursorMz, correction;
-                    MSnSpectrum spectrum;
+                    
                     for (String fileName : spectrumFactory.getMgfFileNames()) {
+                        
+                        if (cancelProgress) {
+                            break;
+                        }
+                        
                         progressDialog.setTitle("Recalibrating " + fileName + " (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ") - correcting spectra.");
                         progressDialog.setValue(0);
                         progressDialog.setMax(2 * spectrumFactory.getNSpectra(fileName));
-                        fileErrors = dataSetErrors.getFileErrors(fileName, progressDialog);
+                        FractionError fileErrors = dataSetErrors.getFileErrors(fileName, progressDialog);
+                        
                         // Debug part
                         File debugFile = new File(selectedFolder, getRecalibratedFileName(fileName) + "_precursors.txt");
                         BufferedWriter debugWriter = new BufferedWriter(new FileWriter(debugFile));
                         debugWriter.write("mass\t25%\t50%\t75%\tn\n");
-                        int index;
-                        ArrayList<Double> errors;
+                        
                         for (double key : fileErrors.getPrecursorBins()) {
+                            
+                            if (cancelProgress) {
+                                break;
+                            }
+                            
                             debugWriter.write(key + "\t");
-                            errors = fileErrors.getPrecursorErrors(key);
+                            ArrayList<Double> errors = fileErrors.getPrecursorErrors(key);
                             Collections.sort(errors);
-                            index = errors.size()/4;
+                            int index = errors.size()/4;
                             debugWriter.write(errors.get(index) + "\t");
                             index = errors.size()/2;
                             debugWriter.write(errors.get(index) + "\t");
@@ -5938,11 +5992,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         debugFile = new File(selectedFolder, getRecalibratedFileName(fileName) + "_fragments.txt");
                         debugWriter = new BufferedWriter(new FileWriter(debugFile));
                         debugWriter.write("mass\t25%\t50%\t75%\tn\n");
+                        
                         for (double key : fileErrors.getFragmentBins()) {
+                            
+                            if (cancelProgress) {
+                                break;
+                            }
+                            
                             debugWriter.write(key + "\t");
-                            errors = fileErrors.getFragmentErrors(key);
+                            ArrayList<Double> errors = fileErrors.getFragmentErrors(key);
                             Collections.sort(errors);
-                            index = errors.size()/4;
+                            int index = errors.size()/4;
                             debugWriter.write(errors.get(index) + "\t");
                             index = errors.size()/2;
                             debugWriter.write(errors.get(index) + "\t");
@@ -5956,14 +6016,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         
                         File file = new File(selectedFolder, getRecalibratedFileName(fileName));
                         BufferedWriter writer1 = new BufferedWriter(new FileWriter(file));
-                        progressDialog.setTitle("Recalibrating " + fileName + " (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ") - writing spectra.");
+                        progressDialog.setTitle("Recalibrating " + fileName + " (" + progress + "/" 
+                                + spectrumFactory.getMgfFileNames().size() + ") - writing spectra.");
+                        
                         for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
+                            
+                            if (cancelProgress) {
+                                break;
+                            }
+                            
                             System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
-                            spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle);
-                            precursorMz = spectrum.getPrecursor().getMz();
-                            correction = fileErrors.getPrecursorCorrection(precursorMz);
+                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle);
+                            double precursorMz = spectrum.getPrecursor().getMz();
+                            double correction = fileErrors.getPrecursorCorrection(precursorMz);
                             Precursor newPrecursor = spectrum.getPrecursor().getRecalibratedPrecursor(correction, 0.0);
-                            MSnSpectrum newSpectrum = new MSnSpectrum(2, newPrecursor, spectrumTitle, spectrum.getRecalibratedPeakList(fileErrors.getFragmentCorrections()), fileName);
+                            MSnSpectrum newSpectrum = new MSnSpectrum(2, newPrecursor, spectrumTitle, 
+                                    spectrum.getRecalibratedPeakList(fileErrors.getFragmentCorrections()), fileName);
                             newSpectrum.writeMgf(writer1);
                             writer1.flush();
                             if (progressDialog != null) {
@@ -5972,6 +6040,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         }
                         writer1.close();
                     }
+                    
+                    cancelProgress = false;
+                    
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 } catch (Exception e) {
@@ -5979,6 +6050,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
+                
                 progressDialog.setVisible(false);
             }
         }.start();

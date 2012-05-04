@@ -3614,7 +3614,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
                 relatedPeptidesPanel.repaint();
 
-                // set the preferred size of the accession column
+                // set the preferred size of the sequence columns
                 int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
                 int relatedPeptideWidth = peptideShakerGUI.getPreferredColumnWidth(relatedPeptidesTable, relatedPeptidesTable.getColumn("Sequence").getModelIndex(), 1);
 

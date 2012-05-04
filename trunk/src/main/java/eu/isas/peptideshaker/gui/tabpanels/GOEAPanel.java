@@ -164,7 +164,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         initComponents();
         setupGUI();
 
-        mappingsFolderPath = peptideShakerGUI.getJarFilePath() + File.separator 
+        mappingsFolderPath = peptideShakerGUI.getJarFilePath() + File.separator
                 + "resources" + File.separator + "conf"
                 + File.separator + "gene_ontology" + File.separator;
 
@@ -276,9 +276,14 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         proteinTable.getColumn("Confidence").setMinWidth(90);
 
         // set the preferred size of the accession column
-        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
-        proteinTable.getColumn("Accession").setMinWidth(width);
-        proteinTable.getColumn("Accession").setMaxWidth(width);
+        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+        if (width != null) {
+            proteinTable.getColumn("Accession").setMinWidth(width);
+            proteinTable.getColumn("Accession").setMaxWidth(width);
+        } else {
+            proteinTable.getColumn("Accession").setMinWidth(15);
+            proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+        }
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
@@ -479,7 +484,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             br.readLine();
 
                             String line = br.readLine();
-                            
+
                             PSParameter proteinPSParameter = new PSParameter();
                             PSParameter probabilities = new PSParameter();
 
@@ -569,7 +574,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                         } else {
                                             mainAccession = matchKey;
                                         }
-                                        
+
                                         if (proteinToGoMappings.containsKey(mainAccession)) {
 
                                             ArrayList<String> goTerms = proteinToGoMappings.get(mainAccession);
@@ -605,9 +610,9 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             Double maxLog2Diff = 0.0;
                             ArrayList<Integer> indexes = new ArrayList<Integer>();
                             ArrayList<Double> pValues = new ArrayList<Double>();
-                            
+
                             // display the number of go mapped proteins
-                            goProteinCountLabel.setText("[GO Proteins: Ensembl: " + proteinToGoMappings.size() 
+                            goProteinCountLabel.setText("[GO Proteins: Ensembl: " + proteinToGoMappings.size()
                                     + ", Project: " + totalNumberOfGoMappedProteinsInProject + "]");
 
                             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
@@ -629,7 +634,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                     frequencyDataset = datasetGoTermUsage.get(goTerm);
                                     percentDataset = ((double) frequencyDataset / totalNumberOfGoMappedProteinsInProject) * 100;
                                 }
-                                
+
                                 Double percentAll = ((double) frequencyAll / proteinToGoMappings.size()) * 100;
                                 Double pValue = new HypergeometricDistributionImpl(
                                         proteinToGoMappings.size(), // population size
@@ -735,7 +740,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                         indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
                                         pValues.get(0) < significanceLevel);
-                                ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0), 
+                                ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0),
                                         goMappingsTable.getColumn("p-value").getModelIndex());
 
                                 if (pValues.get(0) < significanceLevel) {
@@ -752,7 +757,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                     ((ValueAndBooleanDataPoint) ((DefaultTableModel) goMappingsTable.getModel()).getValueAt(
                                             indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
-                                    ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), 
+                                    ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i),
                                             goMappingsTable.getColumn("p-value").getModelIndex());
 
                                     if (tempPvalue < significanceLevel) {
@@ -776,9 +781,14 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                     public void run() {
                                         // set the preferred size of the accession column
-                                        int width = peptideShakerGUI.getPreferredColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
-                                        goMappingsTable.getColumn("GO Accession").setMinWidth(width);
-                                        goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
+                                        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
+                                        if (width != null) {
+                                            goMappingsTable.getColumn("GO Accession").setMinWidth(width);
+                                            goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
+                                        } else {
+                                            proteinTable.getColumn("Accession").setMinWidth(15);
+                                            proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+                                        }
                                     }
                                 });
 
@@ -1890,7 +1900,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      */
     private void plotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        
+
         if (goPlotsTabbedPane.getSelectedIndex() == 0) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "#Proteins");
         } else {
@@ -2618,7 +2628,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
         ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
         plotPanel.repaint();
-        
+
         goProteinCountLabel.setText("[GO Proteins: Ensembl: -, Project: -]");
     }
 
