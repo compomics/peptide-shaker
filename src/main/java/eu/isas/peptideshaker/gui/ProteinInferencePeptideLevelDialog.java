@@ -128,30 +128,24 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             }
         }
 
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                // set the preferred size of the accession column
-                Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6);
-                if (width != null) {
-                    otherProteinJTable.getColumn("Accession").setMinWidth(width);
-                    otherProteinJTable.getColumn("Accession").setMaxWidth(width);
-                } else {
-                    otherProteinJTable.getColumn("Accession").setMinWidth(15);
-                    otherProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
-                }
-                // set the preferred size of the accession column
-                width = peptideShakerGUI.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 6);
-                if (width != null) {
-                    retainedProteinJTable.getColumn("Accession").setMinWidth(width);
-                    retainedProteinJTable.getColumn("Accession").setMaxWidth(width);
-                } else {
-                    retainedProteinJTable.getColumn("Accession").setMinWidth(15);
-                    retainedProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
-                }
-            }
-        });
+        // set the preferred size of the accession column
+        Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6);
+        if (width != null) {
+            otherProteinJTable.getColumn("Accession").setMinWidth(width);
+            otherProteinJTable.getColumn("Accession").setMaxWidth(width);
+        } else {
+            otherProteinJTable.getColumn("Accession").setMinWidth(15);
+            otherProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+        }
+        // set the preferred size of the accession column
+        width = peptideShakerGUI.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 6);
+        if (width != null) {
+            retainedProteinJTable.getColumn("Accession").setMinWidth(width);
+            retainedProteinJTable.getColumn("Accession").setMaxWidth(width);
+        } else {
+            retainedProteinJTable.getColumn("Accession").setMinWidth(15);
+            retainedProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+        }
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
