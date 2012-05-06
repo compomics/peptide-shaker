@@ -117,7 +117,7 @@ public class PeptideFractionsPanel extends javax.swing.JPanel {
         updateSelection();
         peptideTable.requestFocus();
 
-        peptideShakerGUI.setUpdated(PeptideShakerGUI.PEPTIDE_FRACTIONS_TAB_INDEX, true);
+        //peptideShakerGUI.setUpdated(PeptideShakerGUI.PEPTIDE_FRACTIONS_TAB_INDEX, true);
         
         ((TitledBorder) peptidePanel.getBorder()).setTitle("Peptides (" + peptideTable.getRowCount() + ")");
         peptidePanel.repaint();

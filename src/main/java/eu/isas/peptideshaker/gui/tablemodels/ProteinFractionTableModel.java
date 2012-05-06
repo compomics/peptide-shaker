@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -22,6 +24,10 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      * The main GUI class.
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The identification of this project.
      */
@@ -124,7 +130,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return fileNames.size() + 4;
+        return fileNames.size() + 6;
     }
 
     @Override
@@ -133,12 +139,16 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             return " ";
         } else if (column == 1) {
             return "Accession";
-        } else if (column > 1 && column - 2 < fileNames.size()) {
-            return fractionNames.get(fileNames.get(column - 2));
-        } else if (column == fileNames.size() + 2) {
-            return "Confidence";
+        } else if (column == 2) {
+            return "Description";
+        } else if (column > 2 && column - 3 < fileNames.size()) {
+            return fractionNames.get(fileNames.get(column - 3));
         } else if (column == fileNames.size() + 3) {
-            return "";
+            return "MW";
+        } else if (column == fileNames.size() + 4) {
+            return "Confidence";
+        } else if (column == fileNames.size() + 5) {
+            return "  ";
         } else {
             return "";
         }
@@ -153,22 +163,39 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             } else if (column == 1) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
-            } else if (column > 1 && column - 2 < fileNames.size()) {
-                String fraction = fileNames.get(column - 2);
+            } else if (column == 2) {
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
+                String description = "";
+                try {
+                    description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+                return description;
+            } else if (column > 2 && column - 3 < fileNames.size()) {
+                String fraction = fileNames.get(column - 3);
                 PSParameter pSParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
                 pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
                 if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
-                    return 0.0;
+                    return null;
                 }
-            } else if (column == fileNames.size() + 2) {
+            } else if (column == fileNames.size() + 3) {
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
+                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                if (currentProtein != null) {
+                    return currentProtein.computeMolecularWeight() / 1000;
+                } else {
+                    return null;
+                }
+            } else if (column == fileNames.size() + 4) {
                 String proteinKey = proteinKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
                 pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
                 return pSParameter.getProteinConfidence();
-            } else if (column == fileNames.size() + 3) {
+            } else if (column == fileNames.size() + 5) {
                 String proteinKey = proteinKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
                 pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);

@@ -907,24 +907,9 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Fractions I" toolTip="Protein fraction analysis">
-                    <Property name="tabTitle" type="java.lang.String" value="Fractions I"/>
+                  <JTabbedPaneConstraints tabName="Fractions" toolTip="Protein fraction analysis">
+                    <Property name="tabTitle" type="java.lang.String" value="Fractions"/>
                     <Property name="tabToolTip" type="java.lang.String" value="Protein fraction analysis"/>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-            </Container>
-            <Container class="javax.swing.JPanel" name="peptideFractionsJPanel">
-              <Properties>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Fractions II" toolTip="Peptide fraction analysis">
-                    <Property name="tabTitle" type="java.lang.String" value="Fractions II"/>
-                    <Property name="tabToolTip" type="java.lang.String" value="Peptide fraction analysis"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
