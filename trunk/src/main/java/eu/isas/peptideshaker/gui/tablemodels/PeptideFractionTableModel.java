@@ -161,7 +161,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
-                    return 0.0;
+                    return null;
                 }
             } else if (column == fileNames.size() + 2) {
                 String peptideKey = peptideKeys.get(row);

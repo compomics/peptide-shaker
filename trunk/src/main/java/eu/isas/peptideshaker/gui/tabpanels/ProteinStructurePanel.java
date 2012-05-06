@@ -3509,6 +3509,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             } catch (IllegalArgumentException e) {
                 ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
             }
+            
+            showSparkLines(peptideShakerGUI.showSparklines());
         }
     }
 }
