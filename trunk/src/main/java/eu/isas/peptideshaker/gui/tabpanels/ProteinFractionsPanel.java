@@ -4,6 +4,10 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
+import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel;
@@ -11,10 +15,16 @@ import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -38,7 +48,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class ProteinFractionsPanel extends javax.swing.JPanel {
+public class ProteinFractionsPanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
      * A reference to the main PeptideShakerGUI.
@@ -60,6 +70,22 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
      * The peptide table column header tooltips.
      */
     private ArrayList<String> peptideTableToolTips;
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
+    /**
+     * If true the progress bar is disposed of.
+     */
+    private static boolean cancelProgress = false;
+
+    /**
+     * Indexes for the three main data tables.
+     */
+    private enum TableIndex {
+
+        PROTEIN_TABLE, PEPTIDE_TABLE
+    };
 
     /**
      * Creates a new ProteinFractionsPanel.
@@ -247,6 +273,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
         proteinTable.requestFocus();
 
         peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, true);
+        
+        // enable the contextual export options
+        exportProteinsJButton.setEnabled(true);
+        exportPeptidesJButton.setEnabled(true);
     }
 
     /**
@@ -351,7 +381,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
 
         // clear the peptide plot
         plotPanel.removeAll();
-        
+
         // add the new plot
         plotPanel.add(chartPanel);
     }
@@ -489,21 +519,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        proteinPanel = new javax.swing.JPanel();
-        proteinTableScrollPane = new javax.swing.JScrollPane();
-        proteinTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) proteinTableToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
+        disclamierPanel = new javax.swing.JPanel();
+        disclaimerLabel = new javax.swing.JLabel();
+        proteinPeptideSplitPane = new javax.swing.JSplitPane();
+        peptidesLayeredPane = new javax.swing.JLayeredPane();
         peptidePanel = new javax.swing.JPanel();
         peptidesTabbedPane = new javax.swing.JTabbedPane();
         plotOuterPanel = new javax.swing.JPanel();
@@ -523,10 +542,209 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
                 };
             }
         };
-        disclamierPanel = new javax.swing.JPanel();
-        disclaimerLabel = new javax.swing.JLabel();
+        peptidesHelpJButton = new javax.swing.JButton();
+        exportPeptidesJButton = new javax.swing.JButton();
+        contextMenuPeptidesBackgroundPanel = new javax.swing.JPanel();
+        proteinsLayeredPane = new javax.swing.JLayeredPane();
+        proteinPanel = new javax.swing.JPanel();
+        proteinTableScrollPane = new javax.swing.JScrollPane();
+        proteinTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        String tip = (String) proteinTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
+        proteinsHelpJButton = new javax.swing.JButton();
+        exportProteinsJButton = new javax.swing.JButton();
+        contextMenuProteinsBackgroundPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
+
+        disclamierPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Disclaimer"));
+        disclamierPanel.setOpaque(false);
+
+        disclaimerLabel.setText("<html>\nThe values above are estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole analysis.<br>\n<i>These are <u><b>not</b></u> equal the confidence in the peptide/protein identifications when processing the fractions independently!</i><br><br>\nIndependant fractions (like different donors, measurements) or replicates should be processed separately.<br>\nTo ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the <i>Validation</i> tab.\n</html>");
+
+        javax.swing.GroupLayout disclamierPanelLayout = new javax.swing.GroupLayout(disclamierPanel);
+        disclamierPanel.setLayout(disclamierPanelLayout);
+        disclamierPanelLayout.setHorizontalGroup(
+            disclamierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(disclamierPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(disclaimerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(268, Short.MAX_VALUE))
+        );
+        disclamierPanelLayout.setVerticalGroup(
+            disclamierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(disclamierPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(disclaimerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        proteinPeptideSplitPane.setBorder(null);
+        proteinPeptideSplitPane.setDividerLocation(200);
+        proteinPeptideSplitPane.setDividerSize(0);
+        proteinPeptideSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        proteinPeptideSplitPane.setResizeWeight(0.5);
+        proteinPeptideSplitPane.setOpaque(false);
+
+        peptidePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
+        peptidePanel.setOpaque(false);
+
+        peptidesTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        plotOuterPanel.setOpaque(false);
+
+        plotPanel.setOpaque(false);
+        plotPanel.setLayout(new javax.swing.BoxLayout(plotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout plotOuterPanelLayout = new javax.swing.GroupLayout(plotOuterPanel);
+        plotOuterPanel.setLayout(plotOuterPanelLayout);
+        plotOuterPanelLayout.setHorizontalGroup(
+            plotOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(plotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE)
+        );
+        plotOuterPanelLayout.setVerticalGroup(
+            plotOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(plotOuterPanelLayout.createSequentialGroup()
+                .addComponent(plotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        peptidesTabbedPane.addTab("Plot", plotOuterPanel);
+
+        tablePanel.setOpaque(false);
+
+        peptideTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel());
+        peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                peptideTableMouseReleased(evt);
+            }
+        });
+        peptideTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptideTableKeyReleased(evt);
+            }
+        });
+        peptideTableScrollPane.setViewportView(peptideTable);
+
+        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
+        tablePanel.setLayout(tablePanelLayout);
+        tablePanelLayout.setHorizontalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 903, Short.MAX_VALUE)
+            .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(peptideTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE))
+        );
+        tablePanelLayout.setVerticalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 153, Short.MAX_VALUE)
+            .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
+                    .addComponent(peptideTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        peptidesTabbedPane.addTab("Table", tablePanel);
+
+        peptidesTabbedPane.setSelectedIndex(1);
+
+        javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
+        peptidePanel.setLayout(peptidePanelLayout);
+        peptidePanelLayout.setHorizontalGroup(
+            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptidesTabbedPane)
+                .addContainerGap())
+        );
+        peptidePanelLayout.setVerticalGroup(
+            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptidePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptidesTabbedPane)
+                .addContainerGap())
+        );
+
+        peptidePanel.setBounds(0, 0, 940, 230);
+        peptidesLayeredPane.add(peptidePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        peptidesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        peptidesHelpJButton.setToolTipText("Help");
+        peptidesHelpJButton.setBorder(null);
+        peptidesHelpJButton.setBorderPainted(false);
+        peptidesHelpJButton.setContentAreaFilled(false);
+        peptidesHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        peptidesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                peptidesHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                peptidesHelpJButtonMouseExited(evt);
+            }
+        });
+        peptidesHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptidesHelpJButtonActionPerformed(evt);
+            }
+        });
+        peptidesHelpJButton.setBounds(930, 0, 10, 25);
+        peptidesLayeredPane.add(peptidesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportPeptidesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPeptidesJButton.setToolTipText("Export");
+        exportPeptidesJButton.setBorder(null);
+        exportPeptidesJButton.setBorderPainted(false);
+        exportPeptidesJButton.setContentAreaFilled(false);
+        exportPeptidesJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPeptidesJButton.setEnabled(false);
+        exportPeptidesJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportPeptidesJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportPeptidesJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportPeptidesJButtonMouseExited(evt);
+            }
+        });
+        exportPeptidesJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPeptidesJButtonActionPerformed(evt);
+            }
+        });
+        exportPeptidesJButton.setBounds(920, 0, 10, 25);
+        peptidesLayeredPane.add(exportPeptidesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuPeptidesBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPeptidesBackgroundPanel);
+        contextMenuPeptidesBackgroundPanel.setLayout(contextMenuPeptidesBackgroundPanelLayout);
+        contextMenuPeptidesBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 40, Short.MAX_VALUE)
+        );
+        contextMenuPeptidesBackgroundPanelLayout.setVerticalGroup(
+            contextMenuPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuPeptidesBackgroundPanel.setBounds(910, 0, 40, 20);
+        peptidesLayeredPane.add(contextMenuPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        proteinPeptideSplitPane.setRightComponent(peptidesLayeredPane);
 
         proteinPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
         proteinPanel.setOpaque(false);
@@ -559,116 +777,83 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinTableScrollPane)
+                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
                 .addContainerGap())
         );
         proteinPanelLayout.setVerticalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        peptidePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
-        peptidePanel.setOpaque(false);
+        proteinPanel.setBounds(0, 0, 940, 240);
+        proteinsLayeredPane.add(proteinPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        peptidesTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
-
-        plotOuterPanel.setOpaque(false);
-
-        plotPanel.setOpaque(false);
-        plotPanel.setLayout(new javax.swing.BoxLayout(plotPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        javax.swing.GroupLayout plotOuterPanelLayout = new javax.swing.GroupLayout(plotOuterPanel);
-        plotOuterPanel.setLayout(plotOuterPanelLayout);
-        plotOuterPanelLayout.setHorizontalGroup(
-            plotOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(plotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 911, Short.MAX_VALUE)
-        );
-        plotOuterPanelLayout.setVerticalGroup(
-            plotOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(plotOuterPanelLayout.createSequentialGroup()
-                .addComponent(plotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        peptidesTabbedPane.addTab("Plot", plotOuterPanel);
-
-        tablePanel.setOpaque(false);
-
-        peptideTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel());
-        peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                peptideTableMouseReleased(evt);
+        proteinsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        proteinsHelpJButton.setToolTipText("Help");
+        proteinsHelpJButton.setBorder(null);
+        proteinsHelpJButton.setBorderPainted(false);
+        proteinsHelpJButton.setContentAreaFilled(false);
+        proteinsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        proteinsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                proteinsHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinsHelpJButtonMouseExited(evt);
             }
         });
-        peptideTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                peptideTableKeyReleased(evt);
+        proteinsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinsHelpJButtonActionPerformed(evt);
             }
         });
-        peptideTableScrollPane.setViewportView(peptideTable);
+        proteinsHelpJButton.setBounds(930, 0, 10, 25);
+        proteinsLayeredPane.add(proteinsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 911, Short.MAX_VALUE)
-            .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(peptideTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 911, Short.MAX_VALUE))
+        exportProteinsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportProteinsJButton.setToolTipText("Copy to File");
+        exportProteinsJButton.setBorder(null);
+        exportProteinsJButton.setBorderPainted(false);
+        exportProteinsJButton.setContentAreaFilled(false);
+        exportProteinsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportProteinsJButton.setEnabled(false);
+        exportProteinsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportProteinsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportProteinsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportProteinsJButtonMouseExited(evt);
+            }
+        });
+        exportProteinsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportProteinsJButtonActionPerformed(evt);
+            }
+        });
+        exportProteinsJButton.setBounds(920, 0, 10, 25);
+        proteinsLayeredPane.add(exportProteinsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuProteinsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuProteinsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuProteinsBackgroundPanel);
+        contextMenuProteinsBackgroundPanel.setLayout(contextMenuProteinsBackgroundPanelLayout);
+        contextMenuProteinsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuProteinsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 40, Short.MAX_VALUE)
         );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 188, Short.MAX_VALUE)
-            .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
-                    .addComponent(peptideTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addContainerGap()))
+        contextMenuProteinsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuProteinsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
         );
 
-        peptidesTabbedPane.addTab("Table", tablePanel);
+        contextMenuProteinsBackgroundPanel.setBounds(910, 0, 40, 20);
+        proteinsLayeredPane.add(contextMenuProteinsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        peptidesTabbedPane.setSelectedIndex(1);
-
-        javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
-        peptidePanel.setLayout(peptidePanelLayout);
-        peptidePanelLayout.setHorizontalGroup(
-            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(peptidesTabbedPane)
-                .addContainerGap())
-        );
-        peptidePanelLayout.setVerticalGroup(
-            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(peptidePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(peptidesTabbedPane)
-                .addContainerGap())
-        );
-
-        disclamierPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Disclaimer"));
-        disclamierPanel.setOpaque(false);
-
-        disclaimerLabel.setText("<html>\nThe values above are estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole analysis.<br>\n<i>These are <u><b>not</b></u> equal the confidence in the peptide/protein identifications when processing the fractions independently!</i><br><br>\nIndependant fractions (like different donors, measurements) or replicates should be processed separately.<br>\nTo ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the <i>Validation</i> tab.\n</html>");
-
-        javax.swing.GroupLayout disclamierPanelLayout = new javax.swing.GroupLayout(disclamierPanel);
-        disclamierPanel.setLayout(disclamierPanelLayout);
-        disclamierPanelLayout.setHorizontalGroup(
-            disclamierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(disclamierPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(disclaimerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        disclamierPanelLayout.setVerticalGroup(
-            disclamierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(disclamierPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(disclaimerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        proteinPeptideSplitPane.setLeftComponent(proteinsLayeredPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -677,19 +862,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteinPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(peptidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(disclamierPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(disclamierPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinPeptideSplitPane))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(peptidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(proteinPeptideSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 481, Short.MAX_VALUE)
+                .addGap(7, 7, 7)
                 .addComponent(disclamierPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -805,18 +987,207 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
         // remember the selection
         newItemSelection();
     }//GEN-LAST:event_peptideTableKeyReleased
+
+    /**
+     * Update the layered panes.
+     *
+     * @param evt
+     */
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        proteinPeptideSplitPane.setDividerLocation(0.5);
+
+        // resize the layered panels
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+
+                // move the icons
+                proteinsLayeredPane.getComponent(0).setBounds(
+                        proteinsLayeredPane.getWidth() - proteinsLayeredPane.getComponent(0).getWidth() - 10,
+                        -3,
+                        proteinsLayeredPane.getComponent(0).getWidth(),
+                        proteinsLayeredPane.getComponent(0).getHeight());
+
+                proteinsLayeredPane.getComponent(1).setBounds(
+                        proteinsLayeredPane.getWidth() - proteinsLayeredPane.getComponent(1).getWidth() - 20,
+                        -3,
+                        proteinsLayeredPane.getComponent(1).getWidth(),
+                        proteinsLayeredPane.getComponent(1).getHeight());
+
+                proteinsLayeredPane.getComponent(2).setBounds(
+                        proteinsLayeredPane.getWidth() - proteinsLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        proteinsLayeredPane.getComponent(2).getWidth(),
+                        proteinsLayeredPane.getComponent(2).getHeight());
+
+                // resize the plot area
+                proteinsLayeredPane.getComponent(3).setBounds(0, 0, proteinsLayeredPane.getWidth(), proteinsLayeredPane.getHeight());
+                proteinsLayeredPane.revalidate();
+                proteinsLayeredPane.repaint();
+
+                // move the icons
+                peptidesLayeredPane.getComponent(0).setBounds(
+                        peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(0).getWidth() - 10,
+                        -3,
+                        peptidesLayeredPane.getComponent(0).getWidth(),
+                        peptidesLayeredPane.getComponent(0).getHeight());
+
+                peptidesLayeredPane.getComponent(1).setBounds(
+                        peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(1).getWidth() - 20,
+                        -3,
+                        peptidesLayeredPane.getComponent(1).getWidth(),
+                        peptidesLayeredPane.getComponent(1).getHeight());
+
+                peptidesLayeredPane.getComponent(2).setBounds(
+                        peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        peptidesLayeredPane.getComponent(2).getWidth(),
+                        peptidesLayeredPane.getComponent(2).getHeight());
+
+                // resize the plot area
+                peptidesLayeredPane.getComponent(3).setBounds(0, 0, peptidesLayeredPane.getWidth(), peptidesLayeredPane.getHeight());
+                peptidesLayeredPane.revalidate();
+                peptidesLayeredPane.repaint();
+            }
+        });
+    }//GEN-LAST:event_formComponentResized
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void proteinsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_proteinsHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void proteinsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinsHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     *
+     * @param evt
+     */
+    private void proteinsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FractionsTab.html"), "#Proteins");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinsHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void exportProteinsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportProteinsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportProteinsJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportProteinsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportProteinsJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportProteinsJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     *
+     * @param evt
+     */
+    private void exportProteinsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsJButtonActionPerformed
+        copyTableContentToClipboardOrFile(TableIndex.PROTEIN_TABLE);
+    }//GEN-LAST:event_exportProteinsJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void peptidesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_peptidesHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void peptidesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptidesHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     *
+     * @param evt
+     */
+    private void peptidesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FractionsTab.html"), "#Peptides");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptidesHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void exportPeptidesJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportPeptidesJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportPeptidesJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportPeptidesJButtonMouseExited
+
+    /**
+     * Export the table or plot.
+     *
+     * @param evt
+     */
+    private void exportPeptidesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonActionPerformed
+        if (peptidesTabbedPane.getSelectedIndex() == 0) {
+            new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) plotPanel.getComponent(0));
+        } else {
+            copyTableContentToClipboardOrFile(TableIndex.PEPTIDE_TABLE);
+        }
+    }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
+    private javax.swing.JPanel contextMenuProteinsBackgroundPanel;
     private javax.swing.JLabel disclaimerLabel;
     private javax.swing.JPanel disclamierPanel;
+    private javax.swing.JButton exportPeptidesJButton;
+    private javax.swing.JButton exportProteinsJButton;
     private javax.swing.JPanel peptidePanel;
     private javax.swing.JTable peptideTable;
     private javax.swing.JScrollPane peptideTableScrollPane;
+    private javax.swing.JButton peptidesHelpJButton;
+    private javax.swing.JLayeredPane peptidesLayeredPane;
     private javax.swing.JTabbedPane peptidesTabbedPane;
     private javax.swing.JPanel plotOuterPanel;
     private javax.swing.JPanel plotPanel;
     private javax.swing.JPanel proteinPanel;
+    private javax.swing.JSplitPane proteinPeptideSplitPane;
     private javax.swing.JTable proteinTable;
     private javax.swing.JScrollPane proteinTableScrollPane;
+    private javax.swing.JButton proteinsHelpJButton;
+    private javax.swing.JLayeredPane proteinsLayeredPane;
     private javax.swing.JPanel tablePanel;
     // End of variables declaration//GEN-END:variables
 
@@ -850,7 +1221,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
                 ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
             }
         }
-        
+
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
 
@@ -897,5 +1268,84 @@ public class ProteinFractionsPanel extends javax.swing.JPanel {
      */
     public ArrayList<String> getDisplayedPeptides() {
         return peptideKeys;
+    }
+
+    /**
+     * Export the table contents to the clipboard.
+     *
+     * @param index
+     */
+    private void copyTableContentToClipboardOrFile(TableIndex index) {
+        
+        final TableIndex tableIndex = index;
+        
+        // get the file to send the output to
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+
+        if (selectedFile != null) {
+
+            // change the peptide shaker icon to a "waiting version"
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog.setIndeterminate(true);
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore error
+                    }
+                    progressDialog.setTitle("Exporting to File. Please Wait...");
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+
+                    try {
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
+                        
+                        if (tableIndex == TableIndex.PROTEIN_TABLE) {
+                            Util.tableToFile(proteinTable, "\t", progressDialog, cancelProgress, true, writer);
+                        } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
+                            Util.tableToFile(peptideTable, "\t", progressDialog, cancelProgress, true, writer);
+                        }
+                        
+                        writer.close();
+
+                        progressDialog.dispose();
+
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                        if (!cancelProgress) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (IOException e) {
+                        progressDialog.dispose();
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    cancelProgress = false;
+                }
+            }.start();
+
+
+            // change the peptide shaker icon back to the default version
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+        }
+    }
+    
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }

@@ -1826,7 +1826,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             if (selectedIndex == OVER_VIEW_TAB_INDEX
                     || selectedIndex == MODIFICATIONS_TAB_INDEX
-                    || selectedIndex == STRUCTURES_TAB_INDEX) {
+                    || selectedIndex == STRUCTURES_TAB_INDEX
+                    || selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
                 jumpToPanel.setEnabled(true);
                 jumpToPanel.setType(JumpToPanel.JumpType.proteinAndPeptides);
             } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
@@ -3473,7 +3474,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.updateSelection();
         } else if (selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
-            proteinFractionsPanel.updatePeptideTable();
+            proteinFractionsPanel.updateSelection();
         }
     }
 
