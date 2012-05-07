@@ -133,7 +133,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
         spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectra"));
         spectraPanel.setOpaque(false);
 
-        jLabel1.setText("Export Spectra from:");
+        jLabel1.setText("Export Spectra:");
 
         spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs", "Non-Validated Peptides", "Non-Validated Proteins" }));
 
@@ -144,7 +144,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
             }
         });
 
-        jLabel9.setText("Recalibrate spectra:");
+        jLabel9.setText("Recalibrate Spectra:");
 
         spectrumRecalibrationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor and Fragment Ions", "Precursor Ions", "Fragment Ions" }));
 
@@ -167,7 +167,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                 .addGap(31, 31, 31)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(spectraPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumValidationCmb, 0, 388, Short.MAX_VALUE)
+                        .addComponent(spectrumValidationCmb, 0, 391, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(spectraPanelLayout.createSequentialGroup()
@@ -318,16 +318,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                             .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)))
                     .addComponent(degeneratedCheck))
-                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))
-                    .addGroup(inclusionListPanelLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(inclusionListButton))))
+                .addGap(8, 8, 8)
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(inclusionListButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
