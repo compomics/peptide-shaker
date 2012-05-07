@@ -65,6 +65,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
+        spectrumRecalibrationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         spectrumValidationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         idSelectionCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -87,6 +88,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
         jLabel1 = new javax.swing.JLabel();
         spectrumValidationCmb = new javax.swing.JComboBox();
         exportMgfButton = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        spectrumRecalibrationCmb = new javax.swing.JComboBox();
+        recalibrateMgfButton = new javax.swing.JButton();
         inclusionListPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         miscleavedCheck = new javax.swing.JCheckBox();
@@ -126,10 +130,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unassigned Spectra"));
+        spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectra"));
         spectraPanel.setOpaque(false);
 
-        jLabel1.setText("Spectra Matching To:");
+        jLabel1.setText("Export Spectra from:");
 
         spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs", "Non-Validated Peptides", "Non-Validated Proteins" }));
 
@@ -140,23 +144,47 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
             }
         });
 
+        jLabel9.setText("Recalibrate spectra:");
+
+        spectrumRecalibrationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor and Fragment Ions", "Precursor Ions", "Fragment Ions" }));
+
+        recalibrateMgfButton.setText("Export as MGF");
+        recalibrateMgfButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recalibrateMgfButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout spectraPanelLayout = new javax.swing.GroupLayout(spectraPanel);
         spectraPanel.setLayout(spectraPanelLayout);
         spectraPanelLayout.setHorizontalGroup(
             spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel9))
                 .addGap(31, 31, 31)
-                .addComponent(spectrumValidationCmb, 0, 362, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(spectraPanelLayout.createSequentialGroup()
+                        .addComponent(spectrumValidationCmb, 0, 388, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(spectraPanelLayout.createSequentialGroup()
+                        .addComponent(spectrumRecalibrationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(recalibrateMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         spectraPanelLayout.setVerticalGroup(
             spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectraPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(recalibrateMgfButton)
+                    .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(exportMgfButton)
@@ -228,7 +256,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -259,8 +287,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 .addComponent(jLabel7))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(vendorCmb, 0, 366, Short.MAX_VALUE)
-                            .addComponent(idSelectionCmb, 0, 366, Short.MAX_VALUE))
+                            .addComponent(vendorCmb, 0, 378, Short.MAX_VALUE)
+                            .addComponent(idSelectionCmb, 0, 378, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -384,7 +412,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exportUnidentifiedSpectraAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(exportUnidentifiedSpectraAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
@@ -436,7 +464,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 254, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exportIdentifiedSpectraAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(exportIdentifiedSpectraAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
@@ -475,13 +503,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(unidentifiedProteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(11, 11, 11)
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1261,6 +1289,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
         }
     }//GEN-LAST:event_exportIdentifiedSpectraAsCsvButtonActionPerformed
 
+    private void recalibrateMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalibrateMgfButtonActionPerformed
+       boolean ms1 = true;
+       boolean ms2 = true;
+       if (spectrumRecalibrationCmb.getSelectedIndex() == 1) {
+           ms2 = false;
+       } else if (spectrumRecalibrationCmb.getSelectedIndex() == 2) {
+           ms1 = false;
+       }
+       peptideShakerGUI.recalibrateSpectra(ms1, ms2);
+    }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
+
     /**
      * Indicates whether a spectrum is validated according to the user's
      * settings.
@@ -1464,11 +1503,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JCheckBox miscleavedCheck;
     private javax.swing.JPanel progenesisPanel;
     private javax.swing.JCheckBox reactiveCheck;
+    private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JTextField rtWindow;
     private javax.swing.JPanel spectraPanel;
+    private javax.swing.JComboBox spectrumRecalibrationCmb;
     private javax.swing.JComboBox spectrumValidationCmb;
     private javax.swing.JPanel unidentifiedProteinsPanel;
     private javax.swing.JPanel unidentifiedProteinsPanel1;
