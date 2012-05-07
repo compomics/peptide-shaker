@@ -2555,9 +2555,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new GettingStartedDialog(this, false);
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
@@ -5853,7 +5850,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }
             int outcome = JOptionPane.showConfirmDialog(this,
-                    "Recalibrating spectra is very time consuming, proceed anyway?", "Warning",
+                    "Recalibrating spectra is very time consuming. Proceed anyway?", "Warning",
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (outcome == JOptionPane.YES_OPTION) {
                 writeRecalibratedSpectra(selectedFolder, ms1, ms2);
@@ -5865,8 +5862,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Returns the name of the recalibrated file.
      *
      * @param fileName the original file name
-     * @param ms1 boolean indicating whether ms1 peaks should be recalibrated
-     * @param ms2 boolean indicating whether ms2 peaks should be recalibrated
      * @return the name of the recalibrated file
      */
     public String getRecalibratedFileName(String fileName) {
@@ -5879,6 +5874,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Writes the recalibrated files.
      *
      * @param outputFolder the output folder
+     * @param ms1 boolean indicating whether ms1 peaks should be recalibrated
+     * @param ms2 boolean indicating whether ms2 peaks should be recalibrated
      */
     public void writeRecalibratedSpectra(File outputFolder, boolean ms1, boolean ms2) {
 
