@@ -1288,6 +1288,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
         }
     }//GEN-LAST:event_exportIdentifiedSpectraAsCsvButtonActionPerformed
 
+    /**
+     * Recalibrate the spectra.
+     * 
+     * @param evt 
+     */
     private void recalibrateMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalibrateMgfButtonActionPerformed
        boolean ms1 = true;
        boolean ms2 = true;

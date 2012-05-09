@@ -1077,7 +1077,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
      */
     private void proteinsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FractionsTab.html"), "#Proteins");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FractionsTab.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonActionPerformed
 

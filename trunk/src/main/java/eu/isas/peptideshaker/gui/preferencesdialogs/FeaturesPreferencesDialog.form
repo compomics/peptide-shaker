@@ -109,7 +109,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="tabbedPane" pref="306" max="32767" attributes="0"/>
+                      <Component id="tabbedPane" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -222,11 +222,11 @@
                                   </Group>
                               </Group>
                               <EmptySpace pref="40" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="proteinExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinSelectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinDeselectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="slashLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="2" attributes="0">
+                                  <Component id="proteinSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="slashLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -476,13 +476,11 @@
                                   </Group>
                               </Group>
                               <EmptySpace pref="40" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="peptideExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="3" groupAlignment="3" attributes="0">
-                                      <Component id="peptideSelectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="peptideDeselectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="slashLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="103" groupAlignment="2" attributes="0">
+                                  <Component id="peptideSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="slashLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -737,13 +735,11 @@
                                   </Group>
                               </Group>
                               <EmptySpace pref="40" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="psmExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="3" groupAlignment="3" attributes="0">
-                                      <Component id="psmSelectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="psmDeselectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="slashLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="103" groupAlignment="2" attributes="0">
+                                  <Component id="psmSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="slashLabel3" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="psmDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="psmExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -971,13 +967,11 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="assumptionConfidence" linkSize="18" min="-2" max="-2" attributes="0"/>
                               <EmptySpace pref="40" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="assumptionExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="3" groupAlignment="3" attributes="0">
-                                      <Component id="searchEnginesSelectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="searchEnginesDeselectAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="slashLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="103" groupAlignment="2" attributes="0">
+                                  <Component id="searchEnginesSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="slashLabel4" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="searchEnginesDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="assumptionExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
