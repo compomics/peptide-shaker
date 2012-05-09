@@ -643,20 +643,35 @@ public class FileImporter {
             idReport = false;
             ArrayList<Integer> charges = new ArrayList<Integer>();
             double maxErrorPpm = 0, maxErrorDa = 0;
-
+String spectrumKey, fileName, spectrumTitle, oldTitle;
+PeptideAssumption firstHit;
+SpectrumMatch match;
             while (matchIt.hasNext()) {
 
-                SpectrumMatch match = matchIt.next();
+                match = matchIt.next();
                 nPSMs++;
                 nSecondary += match.getAllAssumptions().size() - 1;
 
-                PeptideAssumption firstHit = match.getFirstHit(searchEngine);
-                String spectrumKey = match.getKey();
-                String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                firstHit = match.getFirstHit(searchEngine);
+                spectrumKey = match.getKey();
+                fileName = Spectrum.getSpectrumFile(spectrumKey);
                 if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                     fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
                     match.setKey(Spectrum.getSpectrumKey(fileName, Spectrum.getSpectrumTitle(spectrumKey)));
                     spectrumKey = match.getKey();
+                }
+                if (spectrumFactory.fileLoaded(fileName)
+                    && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                    oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
+                    spectrumTitle = match.getSpectrumNumber() + "";
+                    spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+                    match.setKey(spectrumKey);
+                    if (spectrumFactory.fileLoaded(fileName)
+                    && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                        waitingHandler.appendReport("Spectrum " + oldTitle + " number " + spectrumTitle + " not found in file " + fileName + ".");
+                        waitingHandler.setRunCanceled();
+                        return;
+                    }
                 }
 
                 if (!mgfUsed.contains(fileName)) {
