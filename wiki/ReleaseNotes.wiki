@@ -3,6 +3,21 @@
 
 ----
 
+*Changes in PeptideShaker 0.17.0 (May 10. 2012):*
+ * NEW FEATURE: Added a Protein Fractions tab.
+ * NEW FEATURE: Added method for spectra recalibration.
+
+ * FEATURE IMPROVEMENT: Simplified and sped up the setting of the width for the Accession columns.
+ * FEATURE IMPROVEMENT: Spectra with out spectrum titles are now supported as input.
+ * FEATURE IMPROVEMENT: Help files extended.
+
+ * BUG FIX: Corrected a bug in mgf export output.
+ * BUG FIX: Fixed a GUI resizing issue in the SearchPreferencesDialog.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.4.19.
+
+----
+
 *Changes in PeptideShaker 0.16.3 (April 29. 2012):*
  * NEW FEATURE: It is now possible to start SearchGUI directly from the Welcome dialog or from the File menu. (Requires SearchGUI v1.8.3 or newer.)
  * NEW FEATURE: Added a Getting Started tutorial to the Welcome Dialog.
@@ -20,6 +35,8 @@
  * BUG FIX: Fixed a bug that removed the dialog title for the Waiting Dialog.
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.12.
+
+Download Count: 28
 
 ----
 
