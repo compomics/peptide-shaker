@@ -129,6 +129,8 @@ public class OutputGenerator implements ProgressDialogParent {
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
             boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) throws IOException {
 
+        cancelProgress = false;
+        
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
         final boolean indexes = aIndexes;
@@ -436,6 +438,7 @@ public class OutputGenerator implements ProgressDialogParent {
             boolean aNSpectra, boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred,
             boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) throws IOException {
 
+        cancelProgress = false;
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> peptideKeys;
@@ -860,6 +863,8 @@ public class OutputGenerator implements ProgressDialogParent {
             boolean aLocation, boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScore, boolean aConfidence, boolean aIncludeHeader,
             boolean aOnlyStarred, boolean aIncludeHidden) throws IOException {
 
+        cancelProgress = false;
+        
         // create final versions of all variables to use inside the export thread
         final ArrayList<String> psmKeys;
         final boolean indexes = aIndexes;
@@ -1181,7 +1186,7 @@ public class OutputGenerator implements ProgressDialogParent {
      * @throws IOException
      */
     public void getPSMsProgenesisExport(ProgressDialogX progressDialog, boolean cancelProgress, ArrayList<String> psmKeys, BufferedWriter writer) throws IOException {
-        
+         
         if (psmKeys == null) {
             psmKeys = identification.getSpectrumIdentification();
         }
