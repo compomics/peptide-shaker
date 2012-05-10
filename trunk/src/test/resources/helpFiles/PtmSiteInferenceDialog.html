@@ -8,7 +8,52 @@
         <a name="#top"/>
         <H2>PTM Site Inference</H2>
 
-        (to be added...)
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Peptide'>Peptide Level Inference</a></li>
+            <li><a href='#PSM'>PSM Level Inference</a></li>
+        </ul>
+
+        <a name="#Introduction"></a>
+        <h3>Introduction</h3>
+        <p align="justify">
+            This dialog displays the quality of the PTM localization onto the peptide sequence. It is possible to change the PTM site and the assignment confidence.
+            <br><br>
+            Note that PTM specific study with <b>PeptideShaker</b> is at its genesis. Feel free to contact the developers if you have special needs.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+
+        <a name="#Peptide"></a>
+        <h3>Peptide Level Inference</h3>
+        <p align="justify">
+            The quality of the PTM localization on the sequence can be 'Not Found', 'Random', 'Doubtfull', 'Confident' or 'Very Confident'. For every peptide, 
+            <b>PeptideShaker</b> gives a confidence level which can be manually changed by the user in this dialog. Note that only validated hits will be taken into 
+            account, non validated hits will be marked as 'Not Found'.
+            <br><br>
+            Every PTM is mapped onto the peptide sequence and subsequently protein sequence based on the user defined color coding. Note that confident and very
+            confident modifications will be displayed with a color background whereas secondary modification sites will be displayed with a white background.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+
+        <a name="#PSM"></a>
+        <h3>PSM Level Inference</h3>
+        <p align="justify">
+            The peptide level modification sites are deduced from the various PSM rattached to this peptide. These are displayed in the Potential modification sites table. 
+            <br><br>
+            Every column of this table represent an amino acid of the peptide sequence. The first line allows you to manually select the primary (confident) modification 
+            sites while the second is used for secondary modification sites. 
+            <br><br>
+            The confidence in a modification site assignment is computed using PSM level scores. The combination of these scores, color coded in the table where every 
+            line represents a PSM, is used to deduce the potential modification sites. The peptide level scores subsequently calculated can be inspected in the modifications tab.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
         <br><br><br>
     </BODY>
 </HTML>
