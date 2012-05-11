@@ -169,6 +169,7 @@ public class FractionError {
         PSParameter psParameter = new PSParameter();
         ms2Bin = 100 * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
         HashMap<Double, ArrayList<Double>> precursorRawMap = new HashMap<Double, ArrayList<Double>>();
+        HashMap<Double, ArrayList<Double>> fragmentRawMap;
         
         for (String spectrumName : spectrumFactory.getSpectrumTitles(fileName)) {
             
@@ -200,18 +201,26 @@ public class FractionError {
                             spectrumMatch.getBestAssumption().getPeptide(),
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getFragmentIonAccuracy(), false);
-                    
+                    fragmentRawMap = new HashMap<Double, ArrayList<Double>>();
                     for (IonMatch ionMatch : annotations) {
                         double fragmentMz = ionMatch.peak.mz;
                         int roundedValue = (int) (fragmentMz / ms2Bin);
                         double key = (double) roundedValue * ms2Bin;
                         
+                        if (!fragmentRawMap.containsKey(key)) {
+                            fragmentRawMap.put(key, new ArrayList<Double>());
+                        }
+                        
+                        fragmentRawMap.get(key).add(ionMatch.getAbsoluteError());
+                    }
+                    
+                    for (double key : fragmentRawMap.keySet()) {
                         if (!fragmentsDeviations.containsKey(key)) {
                             fragmentsDeviations.put(key, new ArrayList<Double>());
                         }
-                        
-                        fragmentsDeviations.get(key).add(ionMatch.getAbsoluteError());
+                        fragmentsDeviations.get(key).add(BasicMathFunctions.median(fragmentRawMap.get(key)));
                     }
+                    
                 }
             }
             
