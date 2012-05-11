@@ -5956,7 +5956,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             debugFile = new File(selectedFolder, getRecalibratedFileName(fileName) + "_fragments.txt");
                             debugWriter = new BufferedWriter(new FileWriter(debugFile));
-                            debugWriter.write("mass\t25%\t50%\t75%\tn\n");
+                            debugWriter.write("mass\t0\t10\t20%\t30%\t40%\t50%\t60%\t70%\t80%\t90%\t100%\tn\n");
 
                             for (double key : fileErrors.getFragmentBins()) {
 
@@ -5967,11 +5967,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                                 debugWriter.write(key + "\t");
                                 ArrayList<Double> errors = fileErrors.getFragmentErrors(key);
                                 Collections.sort(errors);
-                                int index = errors.size() / 4;
+                                int index = 0;
                                 debugWriter.write(errors.get(index) + "\t");
-                                index = errors.size() / 2;
+                                index = errors.size() / 10;
                                 debugWriter.write(errors.get(index) + "\t");
-                                index = 3 * errors.size() / 4;
+                                index = errors.size() *2 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *3 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *4 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *5 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *6 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *7 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *8 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() *9 / 10;
+                                debugWriter.write(errors.get(index) + "\t");
+                                index = errors.size() -1;
                                 debugWriter.write(errors.get(index) + "\t");
                                 debugWriter.write(errors.size() + "\n");
                             }
