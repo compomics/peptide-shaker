@@ -130,8 +130,11 @@ public class CsvExporter {
 
         try {
             // write the proteins
+            String lMessage = "Exporting Proteins. Please Wait...";
             if (progressDialog != null) {
-                progressDialog.setTitle("Exporting Proteins. Please Wait...");
+                progressDialog.setTitle(lMessage);
+            }else{
+                System.out.println(lMessage);
             }
 
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
@@ -168,8 +171,11 @@ public class CsvExporter {
 
 
             // write the peptides
+            lMessage = "Exporting Peptides. Please Wait...";
             if (progressDialog != null) {
-                progressDialog.setTitle("Exporting Peptides. Please Wait...");
+                progressDialog.setTitle(lMessage);
+            }else{
+                System.out.println(lMessage);
             }
 
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
@@ -194,8 +200,11 @@ public class CsvExporter {
 
 
             // write the spectra
+            lMessage = "Exporting Spectra. Please Wait...";
             if (progressDialog != null) {
-                progressDialog.setTitle("Exporting Spectra. Please Wait...");
+                progressDialog.setTitle(lMessage);
+            }else{
+                System.out.println(lMessage);
             }
 
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
