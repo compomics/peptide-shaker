@@ -7,11 +7,7 @@ import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
-import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
@@ -21,24 +17,21 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import org.xml.sax.SAXException;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import org.xml.sax.SAXException;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * This class is responsible for the import of identifications
@@ -47,6 +40,11 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author Harald Barsnes
  */
 public class FileImporter {
+
+    /**
+     * This boolean sets the FileImporter to be aware that PeptideShaker is working in CLI.
+     */
+    private static boolean boolCLI = false;
 
     /**
      * The class which will load the information into the various maps and do
@@ -111,11 +109,11 @@ public class FileImporter {
      * Constructor for the importer
      *
      * @param identificationShaker the identification shaker which will load the
-     * data into the maps and do the preliminary calculations
-     * @param waitingHandler The handler displaying feedback to the user
-     * @param proteomicAnalysis The current proteomic analysis
-     * @param idFilter The identification filter to use
-     * @param metrics metrics of the dataset to be saved for the GUI
+     *                             data into the maps and do the preliminary calculations
+     * @param waitingHandler       The handler displaying feedback to the user
+     * @param proteomicAnalysis    The current proteomic analysis
+     * @param idFilter             The identification filter to use
+     * @param metrics              metrics of the dataset to be saved for the GUI
      */
     public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics) {
         this.peptideShaker = identificationShaker;
@@ -129,9 +127,9 @@ public class FileImporter {
      * Constructor for an import without filtering
      *
      * @param identificationShaker the parent identification shaker
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param proteomicAnalysis the current proteomic analysis
-     * @param metrics metrics of the dataset to be saved for the GUI
+     * @param waitingHandler       the handler displaying feedback to the user
+     * @param proteomicAnalysis    the current proteomic analysis
+     * @param metrics              metrics of the dataset to be saved for the GUI
      */
     public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, Metrics metrics) {
         this.peptideShaker = identificationShaker;
@@ -143,27 +141,39 @@ public class FileImporter {
     /**
      * Imports the identification from files.
      *
-     * @param idFiles the identification files to import the Ids from
-     * @param spectrumFiles the files where the corresponding spectra can be
-     * imported
-     * @param fastaFile the FASTA file to use
-     * @param searchParameters the search parameters
+     * @param idFiles               the identification files to import the Ids from
+     * @param spectrumFiles         the files where the corresponding spectra can be
+     *                              imported
+     * @param fastaFile             the FASTA file to use
+     * @param searchParameters      the search parameters
      * @param annotationPreferences the annotation preferences to use for PTM
-     * scoring
+     *                              scoring
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters, annotationPreferences);
-        idProcessor.execute();
+        if (boolCLI) {
+            // CLI mode needs to call the SwingWorker's running method directly.
+            try {
+                idProcessor.doInBackground();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+
+        } else {
+            // GUI mode
+            idProcessor.execute();
+        }
+
     }
 
     /**
      * Imports sequences from a fasta file.
      *
-     * @param waitingHandler the handler displaying feedback to the user
+     * @param waitingHandler    the handler displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
-     * @param fastaFile FASTA file to process
-     * @param idFilter the identification filter
-     * @param searchParameters the search parameters
+     * @param fastaFile         FASTA file to process
+     * @param idFilter          the identification filter
+     * @param searchParameters  the search parameters
      */
     public void importSequences(WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
 
@@ -277,7 +287,7 @@ public class FileImporter {
      * peptide sequence.
      *
      * @param peptideSequence the tested peptide sequence
-     * @param waitingHandler the handler displaying feedback to the user
+     * @param waitingHandler  the handler displaying feedback to the user
      * @return a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingHandler waitingHandler) {
@@ -323,9 +333,9 @@ public class FileImporter {
     /**
      * Returns a search-engine independent PTM.
      *
-     * @param sePTM The search engine PTM
+     * @param sePTM            The search engine PTM
      * @param modificationSite The modified site according to the search engine
-     * @param sequence The sequence of the peptide
+     * @param sequence         The sequence of the peptide
      * @param searchParameters The search parameters used
      * @return the best PTM candidate
      */
@@ -529,7 +539,7 @@ public class FileImporter {
                     break;
                 }
             }
-            
+
             importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
             try {
@@ -590,8 +600,8 @@ public class FileImporter {
                 waitingHandler.setRunCanceled();
                 JOptionPane.showMessageDialog(null,
                         "The task used up all the available memory and had to be stopped.\n"
-                        + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
-                        + "More help can be found at our website http://peptide-shaker.googlecode.com.",
+                                + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
+                                + "More help can be found at our website http://peptide-shaker.googlecode.com.",
                         "Out Of Memory Error",
                         JOptionPane.ERROR_MESSAGE);
                 error.printStackTrace();
@@ -604,14 +614,14 @@ public class FileImporter {
          * Imports the psms from an identification file.
          *
          * @param idFile the identification file
-         * @throws FileNotFoundException exception thrown whenever a file was
-         * not found
-         * @throws IOException exception thrown whenever an error occurred while
-         * reading or writing a file
-         * @throws SAXException exception thrown whenever an error occurred
-         * while parsing an xml file
+         * @throws FileNotFoundException     exception thrown whenever a file was
+         *                                   not found
+         * @throws IOException               exception thrown whenever an error occurred while
+         *                                   reading or writing a file
+         * @throws SAXException              exception thrown whenever an error occurred
+         *                                   while parsing an xml file
          * @throws MzMLUnmarshallerException exception thrown whenever an error
-         * occurred while reading an mzML file
+         *                                   occurred while reading an mzML file
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
 
@@ -643,9 +653,9 @@ public class FileImporter {
             idReport = false;
             ArrayList<Integer> charges = new ArrayList<Integer>();
             double maxErrorPpm = 0, maxErrorDa = 0;
-String spectrumKey, fileName, spectrumTitle, oldTitle;
-PeptideAssumption firstHit;
-SpectrumMatch match;
+            String spectrumKey, fileName, spectrumTitle, oldTitle;
+            PeptideAssumption firstHit;
+            SpectrumMatch match;
             while (matchIt.hasNext()) {
 
                 match = matchIt.next();
@@ -661,13 +671,13 @@ SpectrumMatch match;
                     spectrumKey = match.getKey();
                 }
                 if (spectrumFactory.fileLoaded(fileName)
-                    && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                        && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                     oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
                     spectrumTitle = match.getSpectrumNumber() + "";
                     spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
                     match.setKey(spectrumKey);
                     if (spectrumFactory.fileLoaded(fileName)
-                    && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                            && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                         waitingHandler.appendReport("Spectrum " + oldTitle + " number " + spectrumTitle + " not found in file " + fileName + ".");
                         waitingHandler.setRunCanceled();
                         return;
@@ -713,7 +723,7 @@ SpectrumMatch match;
                         if (error > maxErrorDa) {
                             maxErrorDa = error;
                         }
-                        
+
                         int currentCharge = assumption.getIdentificationCharge().value;
 
                         if (!charges.contains(currentCharge)) {
@@ -794,7 +804,7 @@ SpectrumMatch match;
          * Verify that the spectra are imported and imports spectra from the
          * desired spectrum file if necessary.
          *
-         * @param targetFileName the spectrum file
+         * @param targetFileName   the spectrum file
          * @param searchParameters the search parameters
          */
         public void importSpectra(String targetFileName, SearchParameters searchParameters) {
@@ -848,5 +858,15 @@ SpectrumMatch match;
         ep.setEditable(false);
 
         waitingHandler.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Needs to be set to TRUE when working in CLI modus to avoid the SwingWorker backgroundthread.
+     *
+     * @param status CLI mode : TRUE
+     *               GUI mode : FALSE
+     */
+    public static void setCLIMode(boolean status) {
+        boolCLI = status;
     }
 }

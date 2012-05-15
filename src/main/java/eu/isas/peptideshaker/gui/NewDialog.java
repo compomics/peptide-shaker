@@ -18,22 +18,16 @@ import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
-import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Properties;
 
 /**
  * A dialog for selecting the files to load.
@@ -82,7 +76,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     /**
      * A file where the input will be stored.
      */
-    private final static String SEARCHGUI_INPUT = "searchGUI_input.txt";
+    public final static String SEARCHGUI_INPUT = "searchGUI_input.txt";
     /**
      * The list of spectrum files.
      */
