@@ -41,7 +41,7 @@ public class BugReport extends javax.swing.JDialog {
         String log = "";
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(new File("resources/conf/PeptideShaker.log")));
+            BufferedReader br = new BufferedReader(new FileReader(new File("resources/PeptideShaker.log")));
             String line;
             while ((line = br.readLine()) != null) {
                 log += line + "\n";
@@ -49,7 +49,7 @@ public class BugReport extends javax.swing.JDialog {
         } catch (FileNotFoundException e) {
             log = "resources/conf/peptideshaker.log not found.";
         } catch (IOException e) {
-            log = "An error occured while reafing resources/conf/peptideshaker.log.";
+            log = "An error occured while reafing resources/peptideshaker.log.";
         }
 
         logTxt.setText(log);
@@ -232,7 +232,7 @@ public class BugReport extends javax.swing.JDialog {
     private void clearJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearJButtonActionPerformed
 
         try {
-            FileWriter w = new FileWriter(new File("resources/conf/PeptideShaker.log"));
+            FileWriter w = new FileWriter(new File("resources/PeptideShaker.log"));
             BufferedWriter bw = new BufferedWriter(w);
             bw.write("\n" + new Date() + ": PeptideShaker version " + peptideShakerGUI.getVersion() + ".\n");
             bw.close();

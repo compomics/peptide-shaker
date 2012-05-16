@@ -21,8 +21,6 @@ import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
