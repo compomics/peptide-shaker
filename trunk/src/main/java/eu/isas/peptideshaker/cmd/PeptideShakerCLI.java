@@ -13,6 +13,7 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.NewDialog;
+import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -23,83 +24,39 @@ import org.apache.commons.cli.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 /**
  * A Command line interface to run PeptideShaker on a SearchGUI output folder.
  *
  * @author Kenny Helsens
  */
-public class PeptideShakerCLI implements Runnable {
+public class PeptideShakerCLI implements Callable {
 
-     /**
+    /**
      * The xml file containing the enzymes.
      */
     private static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
     /**
      * Modification file.
      */
-    private final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
+    private static final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
     /**
      * User modification file.
      */
-    private final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
+    private static final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
     /**
      * User preferences file.
      */
-    private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
-
+    private static final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
     /**
      * The Progress messaging handler reports the status throughout all PeptideShaker processes
      */
-    private WaitingHandlerCLIImpl iWaitingHandler = new WaitingHandlerCLIImpl();
-
-    /**
-     * The list of spectrum files
-     */
-    private ArrayList<File> spectrumFiles = new ArrayList<File>();
-
-    /**
-     * The identification filter used for this project.
-     */
-    private IdFilter idFilter = new IdFilter();
-
-
-    /**
-     * The fasta file.
-     */
-    private File fastaFile = null;
-
+    private WaitingHandler iWaitingHandler = new WaitingHandlerCLIImpl();
     /**
      * The CLI input parameters to start PeptideShaker from command line
      */
-    private final PeptideShakerCLIInputBean iPeptideShakerCLIInputBean;
-
-    /**
-     * The list of identification files
-     */
-    private ArrayList<File> idFiles = new ArrayList<File>();
-    /**
-     * The parameters files found
-     */
-    private ArrayList<File> searchParametersFiles = new ArrayList<File>();
-
-    /**
-     * The xml modification files found
-     */
-    private ArrayList<File> modificationFiles = new ArrayList<File>();
-
-
-    private SearchParameters searchParameters = new SearchParameters();
-
-    /**
-     * The compomics PTM factory.
-     */
-    private PTMFactory ptmFactory = PTMFactory.getInstance();
-
-    /**
-     * The enzyme factory.
-     */
-    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    private PeptideShakerCLIInputBean iPeptideShakerCLIInputBean = null;
     /**
      * The experiment conducted.
      */
@@ -109,15 +66,45 @@ public class PeptideShakerCLI implements Runnable {
      */
     private Sample sample;
     /**
-     * The replicate number.
+     * The list of identification files
      */
-    private int replicateNumber;
-
+    private ArrayList<File> idFiles = new ArrayList<File>();
+    /**
+     * The parameters files found
+     */
+    private ArrayList<File> searchParametersFiles = new ArrayList<File>();
+    /**
+     * The list of spectrum files
+     */
+    private ArrayList<File> spectrumFiles = new ArrayList<File>();
+    /**
+     * The xml modification files found
+     */
+    private ArrayList<File> modificationFiles = new ArrayList<File>();
+    /**
+     * The fasta file.
+     */
+    private File fastaFile = null;
+    /**
+     * The compomics PTM factory.
+     */
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * The enzyme factory.
+     */
+    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    /**
+     * The parameters of the search.
+     */
+    private SearchParameters searchParameters = new SearchParameters();
     /**
      * The annotation preferences.
      */
     private AnnotationPreferences annotationPreferences = new AnnotationPreferences();
-
+    /**
+     * The identification filter used for this project.
+     */
+    private IdFilter idFilter = new IdFilter();
     /**
      * The project details.
      */
@@ -143,6 +130,105 @@ public class PeptideShakerCLI implements Runnable {
 
     }
 
+    /**
+     * Calling this method will run the configured PeptideShaker process.
+     */
+    public Object call() {
+
+
+        experiment = new MsExperiment("peptideshaker_cli");
+        sample = new Sample("peptideshaker_cli_sample");
+        int lReplicaNumber = 1;
+
+        SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(lReplicaNumber));
+        experiment.addAnalysisSet(sample, analysisSet);
+
+        PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, lReplicaNumber);
+
+        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails);
+//        peptideShaker.processIdentifications();
+//        peptideShaker.validateIdentifications();
+
+        peptideShaker.fdrValidation(iWaitingHandler);
+        Metrics lMetrics = peptideShaker.getMetrics();
+
+        IdentificationFeaturesGenerator lIdentificationFeaturesGenerator = new IdentificationFeaturesGenerator(null);
+        CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
+
+        exporter.exportResults(null, false, iPeptideShakerCLIInputBean.getOutput());
+
+        System.out.println("finished PeptideShaker-CLI");
+
+        return null;
+    }
+
+    /**
+     * PeptideShaker CLI header message when printing the usage.
+     */
+    private static String getHeader() {
+        return ""
+                + "----------------------\n"
+                + "\n"
+                + "INFO"
+                + "\n"
+                + "----------------------\n"
+                + "\n"
+                + "The PeptideShaker command line tool takes a SearchGUI result folder and performs the X!Tandem/OMSSA integration including user specified FDR calculations generates PSM, peptide and protein an output files.\n"
+                + "\n"
+                + "----------------------\n"
+                + "OPTIONS\n"
+                + "\n"
+                + "----------------------\n"
+                + "";
+
+    }
+
+    /**
+     * @param aOptions Apache Commons CLI Options instance to set the possible parameters that can be passed to PeptideShakerCLI.
+     */
+    private static void createOptionsCLI(Options aOptions) {
+        aOptions.addOption(PeptideShakerCLIParams.FDR.id, true, PeptideShakerCLIParams.FDR.description);
+        aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL.id, true, PeptideShakerCLIParams.FDR_LEVEL.description);
+        aOptions.addOption(PeptideShakerCLIParams.SEARCH_GUI_RES.id, true, PeptideShakerCLIParams.SEARCH_GUI_RES.description);
+        aOptions.addOption(PeptideShakerCLIParams.OUTPUT.id, true, PeptideShakerCLIParams.OUTPUT.description);
+    }
+
+    /**
+     * Loads the modifications from the modification file.
+     */
+    private void resetPtmFactory() {
+
+        // reset ptm factory
+        ptmFactory.reloadFactory();
+        ptmFactory = PTMFactory.getInstance();
+        try {
+            ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads the enzymes from the enzyme file into the enzyme factory.
+     */
+    private void loadEnzymes() {
+        try {
+            enzymeFactory.importEnzymes(new File(ENZYME_FILE));
+        } catch (Exception e) {
+            System.err.println("Not able to load the enzyme file.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Initialize the SearchGUI result folder.
+     * Loads the identification files, the mgf files and other parameter files located in that folder.
+     */
     private void importSearchGUIFiles() {
 
         FileImporter.setCLIMode(true);
@@ -176,250 +262,11 @@ public class PeptideShakerCLI implements Runnable {
     }
 
     /**
-     * Starts the launcher by calling the launch method. Use this as the main
-     * class in the jar file.
-     */
-    public static void main(String[] args) {
-        try {
-            Options lOptions = new Options();
-
-            createOptions(lOptions);
-
-            BasicParser parser = new BasicParser();
-
-            CommandLine line = null;
-            line = parser.parse(lOptions, args);
-
-            if (!isValidStartup(line)) {
-                HelpFormatter formatter = new HelpFormatter();
-
-                PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("PeptideShaker-CLI\n");
-
-                lPrintWriter.print(getHeader());
-
-                lPrintWriter.print("\nOptions:\n");
-                formatter.printOptions(lPrintWriter, 200, lOptions, 0, 0);
-
-                lPrintWriter.flush();
-                lPrintWriter.close();
-
-                System.exit(0);
-
-
-            } else {
-                System.out.println("PeptideShaker-CLI startup parameters ok!");
-
-                PeptideShakerCLIInputBean lCLIBean = new PeptideShakerCLIInputBean(line);
-                PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI(lCLIBean);
-                lPeptideShakerCLI.run();
-
-
-            }
-        } catch (ParseException e) {
-            System.err.println(e.getMessage());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Calling this method will run the configured PeptideShaker process.
-     */
-    public void run() {
-
-
-        experiment = new MsExperiment("peptideshaker_cli");
-        sample = new Sample("peptideshaker_cli_sample");
-        int lReplicaNumber = 1;
-
-        SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(lReplicaNumber));
-        experiment.addAnalysisSet(sample, analysisSet);
-
-        PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, lReplicaNumber);
-
-        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails);
-//        peptideShaker.processIdentifications();
-//        peptideShaker.validateIdentifications();
-
-        peptideShaker.fdrValidation(iWaitingHandler);
-        Metrics lMetrics = peptideShaker.getMetrics();
-
-        IdentificationFeaturesGenerator lIdentificationFeaturesGenerator = new IdentificationFeaturesGenerator(null);
-        CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
-
-        exporter.exportResults(null, false, iPeptideShakerCLIInputBean.getOutput());
-
-        System.out.println("finished PeptideShaker-CLI");
-    }
-
-
-    /**
-     * PeptideShaker CLI header message when printing the usage.
-     */
-    private static String getHeader() {
-        return ""
-                + "----------------------\n"
-                + "\n"
-                + "INFO"
-                + "\n"
-                + "----------------------\n"
-                + "\n"
-                + "The PeptideShaker command line tool takes a SearchGUI result folder and performs the X!Tandem/OMSSA integration including user specified FDR calculations generates PSM, peptide and protein an output files.\n"
-                + "\n"
-                + "----------------------\n"
-                + "OPTIONS\n"
-                + "\n"
-                + "----------------------\n"
-                + "";
-
-    }
-
-    /**
-     * @param aOptions Apache Commons CLI Options instance to set the possible parameters that can be passed to PeptideShakerCLI.
-     */
-    private static void createOptions(Options aOptions) {
-        aOptions.addOption(PeptideShakerCLIParams.FDR.id, true, PeptideShakerCLIParams.FDR.description);
-        aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL.id, true, PeptideShakerCLIParams.FDR_LEVEL.description);
-        aOptions.addOption(PeptideShakerCLIParams.SEARCH_GUI_RES.id, true, PeptideShakerCLIParams.SEARCH_GUI_RES.description);
-        aOptions.addOption(PeptideShakerCLIParams.OUTPUT.id, true, PeptideShakerCLIParams.OUTPUT.description);
-    }
-
-
-    /**
-     * Verifies the command line start parameters.
-     *
-     * @return
-     */
-    public static boolean isValidStartup(CommandLine aLine) throws IOException {
-        // No params.
-        if (aLine.getOptions().length == 0) {
-            return false;
-        }
-
-        // Required params.
-        if (aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_GUI_RES.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT.id) == null) {
-            System.out.println("input/output not specified!!");
-            return false;
-        }
-
-        // SearchGUI input folder exists?
-        String lFile = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_GUI_RES.id);
-        File lInputFile = new File(lFile);
-        if (!lInputFile.exists()) {
-            String lMessage = String.format("SearchGUI results folder '%s' does not exist!!", lFile);
-            System.out.println(lMessage);
-            return false;
-        }
-
-        // Folder contains "SearchGUI.properties" file?
-        boolean hasSearchGUIProperties = lInputFile.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File aFile) {
-                return aFile.getName().equals("SearchGUI.properties");
-            }
-        }).length > 0;
-
-        if (!hasSearchGUIProperties) {
-            String lMessage = String.format("SearchGUI results folder '%s' does not contain SearchGUI.properties!!", lFile);
-            System.out.println(lMessage);
-            return false;
-        }
-
-
-        // if output given, does it exist? if not, make it!
-        String lOutputFileName = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT.id);
-        if (lOutputFileName != null) {
-            File lOutputFile = new File(lOutputFileName);
-            if (!lOutputFile.exists()) {
-                boolean lNewFile = lOutputFile.createNewFile();
-                if (!lNewFile) {
-                    String lMessage = String.format("Failed to create output folder '%s'!!", lOutputFile);
-                    throw new IOException(lMessage);
-                }
-
-            }
-        }
-
-        // Required params for FDR calculation.
-        if (aLine.getOptionValue(PeptideShakerCLIParams.FDR.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL.id) == null) {
-            System.out.println("FDR and FDR level not specified appropriately!!");
-            return false;
-        }
-
-
-        // FDR is a number?
-        String lFDR = aLine.getOptionValue(PeptideShakerCLIParams.FDR.id);
-        Double lFDRNumber;
-        try {
-            lFDRNumber = Double.parseDouble(lFDR);
-        } catch (NumberFormatException e) {
-            System.out.println(String.format("FDR '%s' not a number!!", lFDR));
-            return false;
-        }
-
-        // FDR is larger then 0?
-        if (lFDRNumber <= 0) {
-            System.out.println(String.format("FDR '%f' is not a valid FDR!!", lFDRNumber));
-            return false;
-        }
-
-        // FDR level is known?
-        String lFDRLevel = aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL.id);
-        if (!(
-                lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PSM.id) ||
-                        lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id) ||
-                        lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id))
-                ) {
-
-            System.out.println("FDR level not specified appropriately!!");
-            return false;
-        }
-
-
-        // All is fine!
-        return true;
-    }
-
-
-    /**
-     * Loads the modifications from the modification file.
-     */
-    private void resetPtmFactory() {
-
-        // reset ptm factory
-        ptmFactory.reloadFactory();
-        ptmFactory = PTMFactory.getInstance();
-        try {
-            ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Loads the enzymes from the enzyme file into the enzyme factory.
-     */
-    private void loadEnzymes() {
-        try {
-            enzymeFactory.importEnzymes(new File(ENZYME_FILE));
-        } catch (Exception e) {
-            System.err.println("Not able to load the enzyme file.");
-            e.printStackTrace();
-        }
-    }
-    /**
      * Imports the search parameters from a searchGUI file.
      *
      * @param searchGUIFile the selected searchGUI file
      */
-    public void importSearchParameters(File searchGUIFile) {
+    private void importSearchParameters(File searchGUIFile) {
 
         this.resetPtmFactory(); // reload the ptms
 
@@ -621,9 +468,9 @@ public class PeptideShakerCLI implements Runnable {
      * Imports the mgf files from a searchGUI file.
      *
      * @param searchGUIFile a searchGUI file @returns true of the mgf files were
-     * imported successfully
+     *                      imported successfully
      */
-    private boolean importMgfFiles(File searchGUIFile) {
+    private void importMgfFiles(File searchGUIFile) {
 
         boolean success = true;
 
@@ -669,20 +516,169 @@ public class PeptideShakerCLI implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Verifies the command line start parameters.
+     *
+     * @return
+     */
+    private static boolean isValidStartup(CommandLine aLine) throws IOException {
+        // No params.
+        if (aLine.getOptions().length == 0) {
+            return false;
+        }
+
+        // Required params.
+        if (aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_GUI_RES.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT.id) == null) {
+            System.out.println("input/output not specified!!");
+            return false;
+        }
+
+        // SearchGUI input folder exists?
+        String lFile = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_GUI_RES.id);
+        File lInputFile = new File(lFile);
+        if (!lInputFile.exists()) {
+            String lMessage = String.format("SearchGUI results folder '%s' does not exist!!", lFile);
+            System.out.println(lMessage);
+            return false;
+        }
+
+        // Folder contains "SearchGUI.properties" file?
+        boolean hasSearchGUIProperties = lInputFile.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File aFile) {
+                return aFile.getName().equals("SearchGUI.properties");
+            }
+        }).length > 0;
+
+        if (!hasSearchGUIProperties) {
+            String lMessage = String.format("SearchGUI results folder '%s' does not contain SearchGUI.properties!!", lFile);
+            System.out.println(lMessage);
+            return false;
+        }
 
 
-        return success;
+        // if output given, does it exist? if not, make it!
+        String lOutputFileName = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT.id);
+        if (lOutputFileName != null) {
+            File lOutputFile = new File(lOutputFileName);
+            if (!lOutputFile.exists()) {
+                boolean lNewFile = lOutputFile.createNewFile();
+                if (!lNewFile) {
+                    String lMessage = String.format("Failed to create output folder '%s'!!", lOutputFile);
+                    throw new IOException(lMessage);
+                }
+
+            }
+        }
+
+        // Required params for FDR calculation.
+        if (aLine.getOptionValue(PeptideShakerCLIParams.FDR.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL.id) == null) {
+            System.out.println("FDR and FDR level not specified appropriately!!");
+            return false;
+        }
+
+
+        // FDR is a number?
+        String lFDR = aLine.getOptionValue(PeptideShakerCLIParams.FDR.id);
+        Double lFDRNumber;
+        try {
+            lFDRNumber = Double.parseDouble(lFDR);
+        } catch (NumberFormatException e) {
+            System.out.println(String.format("FDR '%s' not a number!!", lFDR));
+            return false;
+        }
+
+        // FDR is larger then 0?
+        if (lFDRNumber <= 0) {
+            System.out.println(String.format("FDR '%f' is not a valid FDR!!", lFDRNumber));
+            return false;
+        }
+
+        // FDR level is known?
+        String lFDRLevel = aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL.id);
+        if (!(
+                lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PSM.id) ||
+                        lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id) ||
+                        lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id))
+                ) {
+
+            System.out.println("FDR level not specified appropriately!!");
+            return false;
+        }
+
+
+        // All is fine!
+        return true;
+    }
+
+    /**
+     * Starts the launcher by calling the launch method. Use this as the main
+     * class in the jar file.
+     */
+    public static void main(String[] args) {
+        try {
+            Options lOptions = new Options();
+
+            createOptionsCLI(lOptions);
+
+            BasicParser parser = new BasicParser();
+
+            CommandLine line = null;
+            line = parser.parse(lOptions, args);
+
+            if (!isValidStartup(line)) {
+                HelpFormatter formatter = new HelpFormatter();
+
+                PrintWriter lPrintWriter = new PrintWriter(System.out);
+                lPrintWriter.print("PeptideShaker-CLI\n");
+
+                lPrintWriter.print(getHeader());
+
+                lPrintWriter.print("\nOptions:\n");
+                formatter.printOptions(lPrintWriter, 200, lOptions, 0, 0);
+
+                lPrintWriter.flush();
+                lPrintWriter.close();
+
+                System.exit(0);
+
+
+            } else {
+                System.out.println("PeptideShaker-CLI startup parameters ok!");
+
+                PeptideShakerCLIInputBean lCLIBean = new PeptideShakerCLIInputBean(line);
+                PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI(lCLIBean);
+                lPeptideShakerCLI.call();
+
+
+            }
+        } catch (ParseException e) {
+            System.err.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     @Override
     public String toString() {
         return "PeptideShakerCLI{" +
-                "idFiles=" + idFiles +
+                "annotationPreferences=" + annotationPreferences +
                 ", iWaitingHandler=" + iWaitingHandler +
-                ", spectrumFiles=" + spectrumFiles +
+                ", fastaFile=" + fastaFile +
                 ", iPeptideShakerCLIInputBean=" + iPeptideShakerCLIInputBean +
+                ", experiment=" + experiment +
+                ", sample=" + sample +
+                ", idFiles=" + idFiles +
                 ", searchParametersFiles=" + searchParametersFiles +
+                ", spectrumFiles=" + spectrumFiles +
                 ", modificationFiles=" + modificationFiles +
+                ", ptmFactory=" + ptmFactory +
+                ", enzymeFactory=" + enzymeFactory +
+                ", searchParameters=" + searchParameters +
+                ", idFilter=" + idFilter +
+                ", projectDetails=" + projectDetails +
                 '}';
     }
 }
