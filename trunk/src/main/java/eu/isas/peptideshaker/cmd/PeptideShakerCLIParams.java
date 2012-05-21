@@ -7,13 +7,11 @@ package eu.isas.peptideshaker.cmd;
  */
 public enum PeptideShakerCLIParams {
 
-    FDR("fdr", "False Discovery Rate (e.g. <0.01>)"),
-    SEARCH_GUI_RES("search_gui_results", "SearchGUI result folder"),
-    OUTPUT("out", "PeptideShaker output folder"),
-    FDR_LEVEL("fdr_level", String.format("Calculate FDR at specific ID level (<%s>, <%s> or <%s>)", "psm", "pep", "prot")),
-    FDR_LEVEL_PSM("psm", "Calculate FDR at PSM level"),
-    FDR_LEVEL_PEPTIDE("pep", "Calculate FDR at PEPTIDE level"),
-    FDR_LEVEL_PROTEIN("prot", "Calculate FDR at PROTEIN level");
+    PEPTIDESHAKER_INPUT("search_gui_results", "SearchGUI result folder"),
+    PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output folder"),
+    FDR_LEVEL_PSM("psm", "FDR at PSM level (default 1% FDR: <1>)"),
+    FDR_LEVEL_PEPTIDE("pep", "FDR at PEPTIDE level (default 1% FDR: <1>)"),
+    FDR_LEVEL_PROTEIN("prot", "FDR at PROTEIN level (default 1% FDR: <1>)");
 
     /**
      * Short Id for the CLI parameter
