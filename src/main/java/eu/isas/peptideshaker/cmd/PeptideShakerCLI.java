@@ -18,7 +18,6 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import eu.isas.peptideshaker.utils.Metrics;
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -135,28 +134,34 @@ public class PeptideShakerCLI implements Callable {
      */
     public Object call() {
 
-
+        // Define new sample and experiment
         experiment = new MsExperiment("peptideshaker_cli");
         sample = new Sample("peptideshaker_cli_sample");
         int lReplicaNumber = 1;
-
         SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(lReplicaNumber));
         experiment.addAnalysisSet(sample, analysisSet);
 
+        // Create new PeptideShaker instance from this experiment and sample
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, lReplicaNumber);
 
+        // Import the current files/settings
         peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails);
-//        peptideShaker.processIdentifications();
-//        peptideShaker.validateIdentifications();
 
-        peptideShaker.fdrValidation(iWaitingHandler);
-        Metrics lMetrics = peptideShaker.getMetrics();
+        // Apply the FDR validation with the pre-defined FDR thresholds.
+        peptideShaker.fdrValidation(iWaitingHandler,
+                iPeptideShakerCLIInputBean.getPSMFDR(),
+                iPeptideShakerCLIInputBean.getPeptideFDR(),
+                iPeptideShakerCLIInputBean.getProteinFDR());
 
+        // Creates a dummy IdentificationFeaturesGenerator instnace.
         IdentificationFeaturesGenerator lIdentificationFeaturesGenerator = new IdentificationFeaturesGenerator(null);
-        CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
 
+        // Export the PeptideShaker project into a CSV file
+        CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
         exporter.exportResults(null, false, iPeptideShakerCLIInputBean.getOutput());
 
+
+        // Finished!
         System.out.println("finished PeptideShaker-CLI");
 
         return null;
@@ -187,10 +192,11 @@ public class PeptideShakerCLI implements Callable {
      * @param aOptions Apache Commons CLI Options instance to set the possible parameters that can be passed to PeptideShakerCLI.
      */
     private static void createOptionsCLI(Options aOptions) {
-        aOptions.addOption(PeptideShakerCLIParams.FDR.id, true, PeptideShakerCLIParams.FDR.description);
-        aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL.id, true, PeptideShakerCLIParams.FDR_LEVEL.description);
-        aOptions.addOption(PeptideShakerCLIParams.SEARCH_GUI_RES.id, true, PeptideShakerCLIParams.SEARCH_GUI_RES.description);
-        aOptions.addOption(PeptideShakerCLIParams.OUTPUT.id, true, PeptideShakerCLIParams.OUTPUT.description);
+        aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL_PSM.id, true, PeptideShakerCLIParams.FDR_LEVEL_PSM.description);
+        aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id, true, PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.description);
+        aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id, true, PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.description);
+        aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.description);
+        aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.description);
     }
 
     /**
@@ -530,13 +536,13 @@ public class PeptideShakerCLI implements Callable {
         }
 
         // Required params.
-        if (aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_GUI_RES.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT.id) == null) {
+        if (aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id) == null) {
             System.out.println("input/output not specified!!");
             return false;
         }
 
         // SearchGUI input folder exists?
-        String lFile = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_GUI_RES.id);
+        String lFile = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id);
         File lInputFile = new File(lFile);
         if (!lInputFile.exists()) {
             String lMessage = String.format("SearchGUI results folder '%s' does not exist!!", lFile);
@@ -560,7 +566,7 @@ public class PeptideShakerCLI implements Callable {
 
 
         // if output given, does it exist? if not, make it!
-        String lOutputFileName = aLine.getOptionValue(PeptideShakerCLIParams.OUTPUT.id);
+        String lOutputFileName = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
         if (lOutputFileName != null) {
             File lOutputFile = new File(lOutputFileName);
             if (!lOutputFile.exists()) {
@@ -573,39 +579,32 @@ public class PeptideShakerCLI implements Callable {
             }
         }
 
-        // Required params for FDR calculation.
-        if (aLine.getOptionValue(PeptideShakerCLIParams.FDR.id) == null || aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL.id) == null) {
-            System.out.println("FDR and FDR level not specified appropriately!!");
-            return false;
-        }
-
 
         // FDR is a number?
-        String lFDR = aLine.getOptionValue(PeptideShakerCLIParams.FDR.id);
-        Double lFDRNumber;
-        try {
-            lFDRNumber = Double.parseDouble(lFDR);
-        } catch (NumberFormatException e) {
-            System.out.println(String.format("FDR '%s' not a number!!", lFDR));
-            return false;
+        ArrayList<String> aFDRs = new ArrayList<String>();
+        if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PSM.id)) {
+            aFDRs.add(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PSM.id));
         }
-
-        // FDR is larger then 0?
-        if (lFDRNumber <= 0) {
-            System.out.println(String.format("FDR '%f' is not a valid FDR!!", lFDRNumber));
-            return false;
+        if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id)) {
+            aFDRs.add(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id));
         }
+        if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id)) {
+            aFDRs.add(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id));
+        }
+        for (String lFDR : aFDRs) {
+            double lFDRNumber = 0;
+            try {
+                // FDR is a number?
+                lFDRNumber = Double.parseDouble(lFDR);
+            } catch (NumberFormatException e) {
+                System.out.println(String.format("FDR '%s' not a number!!", lFDR));
+            }
 
-        // FDR level is known?
-        String lFDRLevel = aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL.id);
-        if (!(
-                lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PSM.id) ||
-                        lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id) ||
-                        lFDRLevel.equals(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id))
-                ) {
-
-            System.out.println("FDR level not specified appropriately!!");
-            return false;
+            if (lFDRNumber <= 0) {
+                // FDR is larger then 0?
+                System.out.println(String.format("FDR '%f' is not a valid FDR!!", lFDRNumber));
+                return false;
+            }
         }
 
 
