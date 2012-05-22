@@ -209,8 +209,9 @@ public class CsvExporter {
 
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
+                    + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
+                    + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + 
+                    "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
             spectrumWriter.write(content);
 
@@ -583,6 +584,7 @@ public class CsvExporter {
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
         Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
+        line += precursor.getPossibleChargesAsString() + SEPARATOR;
         line += spectrumMatch.getBestAssumption().getIdentificationCharge().value + SEPARATOR;
         line += fileName + SEPARATOR;
         line += spectrumTitle + SEPARATOR;
@@ -604,6 +606,8 @@ public class CsvExporter {
         }
 
         line += SEPARATOR;
+        line += precursor.getRt() + SEPARATOR;
+        line += precursor.getMz() + SEPARATOR;
         line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
         line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
         Double mascotEValue = null;
