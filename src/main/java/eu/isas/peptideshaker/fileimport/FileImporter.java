@@ -627,9 +627,6 @@ public class FileImporter {
 
             boolean idReport, goodFirstHit, unknown = false;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-            waitingHandler.appendReport("Reducing memory consumption.");
-            waitingHandler.setSecondaryProgressDialogIntermediate(false);
-            identification.reduceMemoryConsumtion(waitingHandler.getSecondaryProgressBar());
             waitingHandler.setSecondaryProgressDialogIntermediate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".");
             IdfileReader fileReader;
@@ -796,6 +793,9 @@ public class FileImporter {
                 metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
             }
 
+            waitingHandler.appendReport("Reducing memory consumption.");
+            waitingHandler.setSecondaryProgressDialogIntermediate(false);
+            identification.reduceMemoryConsumtion(waitingHandler.getSecondaryProgressBar());
             waitingHandler.setSecondaryProgressDialogIntermediate(true);
             waitingHandler.increaseProgressValue();
         }

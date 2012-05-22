@@ -3232,8 +3232,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             e.printStackTrace();
         }
 
-        // update the 3D structure
-        peptideTableMouseReleased(null);
+        if (peptideTable.getRowCount() > 0) {
+            // update the 3D structure
+            peptideTableMouseReleased(null);
+        }
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
@@ -3509,7 +3511,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             } catch (IllegalArgumentException e) {
                 ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
             }
-            
+
             showSparkLines(peptideShakerGUI.showSparklines());
         }
     }
