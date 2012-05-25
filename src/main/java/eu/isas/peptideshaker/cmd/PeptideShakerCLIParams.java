@@ -11,7 +11,8 @@ public enum PeptideShakerCLIParams {
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output folder"),
     FDR_LEVEL_PSM("psm", "FDR at PSM level (default 1% FDR: <1>)"),
     FDR_LEVEL_PEPTIDE("pep", "FDR at PEPTIDE level (default 1% FDR: <1>)"),
-    FDR_LEVEL_PROTEIN("prot", "FDR at PROTEIN level (default 1% FDR: <1>)");
+    FDR_LEVEL_PROTEIN("prot", "FDR at PROTEIN level (default 1% FDR: <1>)"),
+    ASCORE("ascore", "Include ascore to estimate the probability of phospho sites");
 
     /**
      * Short Id for the CLI parameter

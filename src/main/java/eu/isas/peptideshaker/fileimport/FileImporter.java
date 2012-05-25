@@ -67,11 +67,11 @@ public class FileImporter {
     /**
      * The location of the modification file
      */
-    private final String MODIFICATION_FILE = "resources/conf/peptideshaker_mods.xml";
+    private String MODIFICATION_FILE = "resources/conf/peptideshaker_mods.xml";
     /**
      * The location of the user modification file
      */
-    private final String USER_MODIFICATION_FILE = "resources/conf/peptideshaker_usermods.xml";
+    private String USER_MODIFICATION_FILE = "resources/conf/peptideshaker_usermods.xml";
     /**
      * The modification factory
      */
@@ -105,6 +105,13 @@ public class FileImporter {
      * Metrics of the dataset picked-up while loading the data
      */
     private Metrics metrics;
+
+
+    /**
+     * Boolean whether to use the reduced memory feature of PeptideShaker.
+     */
+    private static boolean boolReducedMemory = true;
+
 
     /**
      * Constructor for the importer
@@ -802,7 +809,11 @@ public class FileImporter {
 
             waitingHandler.appendReport("Reducing memory consumption.");
             waitingHandler.setSecondaryProgressDialogIntermediate(false);
-            identification.reduceMemoryConsumtion(waitingHandler.getSecondaryProgressBar());
+
+            if (boolReducedMemory) {
+                identification.reduceMemoryConsumtion(waitingHandler.getSecondaryProgressBar());
+            }
+
             waitingHandler.setSecondaryProgressDialogIntermediate(true);
             waitingHandler.increaseProgressValue();
         }
@@ -875,5 +886,30 @@ public class FileImporter {
      */
     public static void setCLIMode(boolean status) {
         boolCLI = status;
+    }
+
+    /**
+     * Set the modifications File to be used.
+     *
+     * @param aMODIFICATION_FILE
+     */
+    public void setModificationFile(String aMODIFICATION_FILE) {
+        MODIFICATION_FILE = aMODIFICATION_FILE;
+    }
+
+    /**
+     * Set the user modifications File to be used.
+     *
+     * @param aUSER_MODIFICATION_FILE
+     */
+    public void setUserModificationFile(String aUSER_MODIFICATION_FILE) {
+        USER_MODIFICATION_FILE = aUSER_MODIFICATION_FILE;
+    }
+
+    /**
+     * Set whether to use the Reduced Memory application logic.
+     */
+    public static void setReducedMemory(boolean aReducedMemory) {
+        boolReducedMemory = aReducedMemory;
     }
 }

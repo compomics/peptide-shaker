@@ -30,6 +30,16 @@ public class ProjectDetails implements Serializable {
     private Date creationDate;
 
     /**
+     * The usermod file used in the project.
+     */
+    private File iUserModificationFile;
+
+    /**
+     * The mod file used in the project.
+     */
+    private File iModificationFile;
+
+    /**
      * Constructor
      */
     public ProjectDetails() {
@@ -81,5 +91,33 @@ public class ProjectDetails implements Serializable {
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    /**
+     * Returns the mods.xml File handler used in this search.
+     */
+    public File getModificationFile() {
+        return iModificationFile;
+    }
+
+    /**
+     * Set the mods.xml File handler used in this search.
+     */
+    public void setModificationFile(File aModificationFile) {
+        iModificationFile = aModificationFile;
+    }
+
+    /**
+     * Returns the usermods.xml File handler used in this search.
+     */
+    public File getUserModificationFile() {
+        return iUserModificationFile;
+    }
+
+    /**
+     * Set the usermods.xml File handler used in this search.
+     */
+    public void setUserModificationFile(File aUserModificationFile) {
+        iUserModificationFile = aUserModificationFile;
     }
 }
