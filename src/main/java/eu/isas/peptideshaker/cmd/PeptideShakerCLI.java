@@ -146,15 +146,12 @@ public class PeptideShakerCLI implements Callable {
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, lReplicaNumber);
 
         // Import the current files/settings
-        // @TODO: Kenny, can you check the processing preferences here?
-        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, new ProcessingPreferences());
-
-        // Apply the FDR validation with the pre-defined FDR thresholds.
-        //@TODO: with the correct processing preferences we should not need this
-        peptideShaker.fdrValidation(iWaitingHandler,
-                iPeptideShakerCLIInputBean.getPSMFDR(),
-                iPeptideShakerCLIInputBean.getPeptideFDR(),
-                iPeptideShakerCLIInputBean.getProteinFDR());
+        ProcessingPreferences processingPreferences = new ProcessingPreferences();
+        processingPreferences.setPsmFDR(iPeptideShakerCLIInputBean.getPSMFDR());
+        processingPreferences.setPeptideFDR(iPeptideShakerCLIInputBean.getPeptideFDR());
+        processingPreferences.setProteinFDR(iPeptideShakerCLIInputBean.getProteinFDR());
+        processingPreferences.estimateAScore(true); //@TODO: Kenny you might want to make this optional
+        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, processingPreferences);
 
         // Creates a dummy IdentificationFeaturesGenerator instnace.
         IdentificationFeaturesGenerator lIdentificationFeaturesGenerator = new IdentificationFeaturesGenerator(null);
