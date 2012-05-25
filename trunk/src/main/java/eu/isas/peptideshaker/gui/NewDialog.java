@@ -15,7 +15,9 @@ import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.ProcessingPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 
@@ -102,6 +104,10 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * The peptide shaker class which will take care of the pre-processing..
      */
     private PeptideShaker peptideShaker;
+    /**
+     * The processing preferences
+     */
+    private ProcessingPreferences processingPreferences = new ProcessingPreferences();
 
     /**
      * Creates a new open dialog.
@@ -189,6 +195,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         searchTxt = new javax.swing.JTextField();
         editSearchButton = new javax.swing.JButton();
         editImportFilterButton = new javax.swing.JButton();
+        importFiltersLabel1 = new javax.swing.JLabel();
+        preferencesTxt = new javax.swing.JTextField();
+        editImportFilterButton1 = new javax.swing.JButton();
         inputFilesPanel = new javax.swing.JPanel();
         idFilesLabel = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -333,23 +342,44 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
         });
 
+        importFiltersLabel1.setText("Preferences:");
+
+        preferencesTxt.setEditable(false);
+        preferencesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        preferencesTxt.setText("Default");
+        preferencesTxt.setToolTipText("Minimum Peptide Length");
+
+        editImportFilterButton1.setText("Edit");
+        editImportFilterButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editImportFilterButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout processingParametersPanelLayout = new javax.swing.GroupLayout(processingParametersPanel);
         processingParametersPanel.setLayout(processingParametersPanelLayout);
         processingParametersPanelLayout.setHorizontalGroup(
             processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(importFiltersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
-                    .addComponent(importFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
+                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
+                        .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(importFiltersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
+                        .addComponent(importFiltersLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(64, 64, 64)))
+                .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(preferencesTxt)
+                    .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                    .addComponent(importFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(editSearchButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
+                .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editImportFilterButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addContainerGap())
         );
         processingParametersPanelLayout.setVerticalGroup(
@@ -365,7 +395,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     .addComponent(importFiltersLabel)
                     .addComponent(importFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editImportFilterButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(importFiltersLabel1)
+                    .addComponent(preferencesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editImportFilterButton1))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         inputFilesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Input Files"));
@@ -979,6 +1014,18 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private void replicateNumberIdtxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_replicateNumberIdtxtKeyReleased
         validateInput();
     }//GEN-LAST:event_replicateNumberIdtxtKeyReleased
+
+    private void editImportFilterButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButton1ActionPerformed
+        new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences);
+        if (processingPreferences.getProteinFDR() != 1
+                || processingPreferences.getPeptideFDR() != 1
+                || processingPreferences.getPsmFDR() != 1) {
+            preferencesTxt.setText("User Defined");
+        } else if (processingPreferences.isAScoreCalculated()) {
+            preferencesTxt.setText("A-Score calculation");
+        }
+    }//GEN-LAST:event_editImportFilterButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -988,6 +1035,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JButton clearSpectra;
     private javax.swing.JLabel databaseLabel;
     private javax.swing.JButton editImportFilterButton;
+    private javax.swing.JButton editImportFilterButton1;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JLabel exampleFilesLabel;
     private javax.swing.JTextField fastaFileTxt;
@@ -996,9 +1044,11 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JTextField idFilesTxt;
     private javax.swing.JTextField importFilterTxt;
     private javax.swing.JLabel importFiltersLabel;
+    private javax.swing.JLabel importFiltersLabel1;
     private javax.swing.JPanel inputFilesPanel;
     private javax.swing.JButton openButton;
     private javax.swing.JButton openDialogHelpJButton;
+    private javax.swing.JTextField preferencesTxt;
     private javax.swing.JPanel processingParametersPanel;
     private javax.swing.JPanel projectDetailsPanel;
     private javax.swing.JTextField projectNameIdTxt;
@@ -1121,7 +1171,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         peptideShakerGUI.getSearchParameters().setFastaFile(fastaFile);
         peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
                 spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(),
-                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails());
+                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(), 
+                processingPreferences);
     }
 
     /**
@@ -1323,6 +1374,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             importFilterTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
+            peptideShakerGUI.setProcessingPreferences(processingPreferences);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
             
             if (!searchParameters.getEnzyme().enzymeCleaves()) {

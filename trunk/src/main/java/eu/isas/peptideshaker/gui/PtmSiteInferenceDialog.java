@@ -633,7 +633,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                     if (proteins.contains(proteinMatch.getMainMatch())) {
                         try {
-                            miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false);
+                            miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getProcessingPreferences().isAScoreCalculated());
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }

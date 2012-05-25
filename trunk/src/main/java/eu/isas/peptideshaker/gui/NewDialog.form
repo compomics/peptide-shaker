@@ -244,20 +244,30 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="importFiltersLabel" alignment="0" max="32767" attributes="1"/>
-                          <Component id="searchParamsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
-                      </Group>
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="searchTxt" pref="483" max="32767" attributes="1"/>
-                          <Component id="importFilterTxt" alignment="0" pref="483" max="32767" attributes="3"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="importFiltersLabel" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="searchParamsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="importFiltersLabel1" max="32767" attributes="1"/>
+                              <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="preferencesTxt" max="32767" attributes="3"/>
+                          <Component id="searchTxt" pref="486" max="32767" attributes="1"/>
+                          <Component id="importFilterTxt" alignment="0" pref="486" max="32767" attributes="3"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="editSearchButton" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="editImportFilterButton1" max="32767" attributes="1"/>
+                          <Component id="editSearchButton" alignment="1" max="32767" attributes="1"/>
                           <Component id="editImportFilterButton" alignment="1" pref="141" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -279,7 +289,13 @@
                           <Component id="importFilterTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editImportFilterButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="importFiltersLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="preferencesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editImportFilterButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="17" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -324,6 +340,27 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editImportFilterButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="importFiltersLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Preferences:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="preferencesTxt">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="text" type="java.lang.String" value="Default"/>
+                <Property name="toolTipText" type="java.lang.String" value="Minimum Peptide Length"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="editImportFilterButton1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Edit"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editImportFilterButton1ActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
