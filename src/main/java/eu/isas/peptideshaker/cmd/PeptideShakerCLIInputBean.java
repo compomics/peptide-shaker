@@ -26,6 +26,11 @@ public class PeptideShakerCLIInputBean {
     // PeptideShaker output folder
     private File iOutput = null;
 
+    // Taskname which will be used to name the experiment
+    private String iExperimentID = "peptideshaker_cli_exp_default";
+
+    // Taskname which will be used to name the sample
+    private String iSampleID = "peptideshaker_cli_sample_default";
 
     /**
      * Construct a PeptideShakerCLIInputBean from a Apache CLI instance.
@@ -130,5 +135,33 @@ public class PeptideShakerCLIInputBean {
      */
     public void setOutput(File aOutput) {
         iOutput = aOutput;
+    }
+
+    /**
+     * Get the ID for the Experiment.
+     */
+    public String getExperimentID() {
+        return iExperimentID;
+    }
+
+    /**
+     * Set the ID for the Experiment.
+     */
+    public void setExperimentID(String aExperimentID) {
+        iExperimentID = aExperimentID;
+    }
+
+    /**
+     * Get the ID for the Sample.
+     */
+    public String getSampleID() {
+        return iSampleID;
+    }
+
+    /**
+     * Set the ID for the Sample.
+     */
+    public void setSampleID(String aSampleID) {
+        iSampleID = aSampleID;
     }
 }
