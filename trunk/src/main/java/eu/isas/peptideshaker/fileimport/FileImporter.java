@@ -889,6 +889,13 @@ public class FileImporter {
     }
 
     /**
+     * Returns whether the FileImporter is working in CLI modus.
+     */
+    public static boolean isCLIMode(){
+        return boolCLI;
+    }
+
+    /**
      * Set the modifications File to be used.
      *
      * @param aMODIFICATION_FILE
