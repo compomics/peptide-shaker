@@ -49,6 +49,7 @@ import eu.isas.peptideshaker.SearchGUIWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
+import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
 import eu.isas.peptideshaker.recalibration.FractionError;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -256,6 +257,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The parameters of the search.
      */
     private SearchParameters searchParameters = new SearchParameters();
+    /**
+     * The initial processing preferences
+     */
+    private ProcessingPreferences processingPreferences = new ProcessingPreferences();
     /**
      * The user preferences.
      */
@@ -631,6 +636,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu = new javax.swing.JMenu();
         searchParametersMenu = new javax.swing.JMenuItem();
         importFilterMenu = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         preferencesMenuItem = new javax.swing.JMenuItem();
@@ -1148,6 +1154,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(importFilterMenu);
+
+        jMenuItem1.setText("Processing Preferences");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        editMenu.add(jMenuItem1);
         editMenu.add(jSeparator4);
 
         annotationPreferencesMenu.setMnemonic('A');
@@ -2556,6 +2570,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new GettingStartedDialog(this, false);
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new ProcessingPreferencesDialog(this, false, processingPreferences);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
@@ -2701,6 +2719,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -2987,6 +3006,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumCountingPreferences.setValidatedHits(true);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
+        processingPreferences = new ProcessingPreferences();
     }
 
     /**
@@ -3303,6 +3323,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
     }
+    
+    /**
+     * Returns the initial processing preferences
+     * @return the initial processing preferences
+     */
+    public ProcessingPreferences getProcessingPreferences() {
+        if (processingPreferences == null) {
+            processingPreferences = new ProcessingPreferences();
+        }
+        return processingPreferences;
+    }
+
+    /**
+     * Sets the initial processing preferences
+     * @param processingPreferences the initial processing preferences
+     */
+    public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
+        this.processingPreferences = processingPreferences;
+    }
 
     /**
      * Updates the new annotation preferences.
@@ -3568,6 +3607,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         filterPreferences = new FilterPreferences();
         displayPreferences = new DisplayPreferences();
         searchParameters = new SearchParameters();
+        processingPreferences = new ProcessingPreferences();
         idFilter = new IdFilter();
 
         // reset enzymes, ptms and preferences
@@ -3855,7 +3895,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
         try {
             PeptideShaker miniShaker = new PeptideShaker(experiment, sample, replicateNumber);
-            miniShaker.scorePTMs(identification.getProteinMatch(selectedProteinKey), searchParameters, annotationPreferences, false);
+            miniShaker.scorePTMs(identification.getProteinMatch(selectedProteinKey), searchParameters, annotationPreferences, false, processingPreferences.isAScoreCalculated());
         } catch (Exception e) {
             catchException(e);
         }
@@ -4694,6 +4734,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
                     setProjectDetails(experimentSettings.getProjectDetails());
                     setSearchParameters(experimentSettings.getSearchParameters());
+                    setProcessingPreferences(experimentSettings.getProcessingPreferences());
                     setFilterPreferences(experimentSettings.getFilterPreferences());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
                     setMetrics(experimentSettings.getMetrics());
@@ -5618,7 +5659,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     // set the experiment parameters
-                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics));
+                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
 
                     File newFolder = getDefaultSerializationDirectory();
 
@@ -5950,22 +5991,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             debugFile = new File(selectedFolder, getRecalibratedFileName(fileName) + "_fragments.txt");
                             debugWriter = new BufferedWriter(new FileWriter(debugFile));
-                            debugWriter.write("mass\t0\t10\t20%\t30%\t40%\t50%\t60%\t70%\t80%\t90%\t100%\tn\n");
 
                             for (double rtKey : fileErrors.getPrecursorRTList()) {
                                 
-                                debugWriter.write(rtKey + "\n");
+                                debugWriter.write(rtKey + "\nm/z");
                                 
                                 for (double mzKey : fileErrors.getFragmentMZList(rtKey)) {
 
-                                debugWriter.write(mzKey + "\t");
+                                debugWriter.write("\t" + mzKey);
                                 
                                 }
-                                debugWriter.write("\n");
+                                debugWriter.write("\nError");
                                 
                                 for (double mzKey : fileErrors.getFragmentMZList(rtKey)) {
 
-                                debugWriter.write(fileErrors.getFragmentMzError(rtKey, mzKey) + "\t");
+                                debugWriter.write("\t" + fileErrors.getFragmentMzError(rtKey, mzKey));
                                 
                                 }
                                 debugWriter.write("\n");

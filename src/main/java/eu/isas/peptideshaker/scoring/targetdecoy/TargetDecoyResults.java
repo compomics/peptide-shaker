@@ -53,6 +53,14 @@ public class TargetDecoyResults implements Serializable {
      * A boolean indicating that everything was validated
      */
     private Boolean noValidated = false;
+    /**
+     * The user input which gave the displayed results
+     */
+    private Double userInput;
+    /**
+     * The type of input 0 -> confidence 1 -> FDR 2 -> FNR
+     */
+    private Integer inputType;
 
     /**
      * Constructor
@@ -225,5 +233,43 @@ public class TargetDecoyResults implements Serializable {
      */
     public void setNoValidated(boolean validateAll) {
         this.noValidated = validateAll;
+    }
+
+    /**
+     * Returns the type of input
+     * @return the type of input
+     */
+    public Integer getInputType() {
+        if (inputType == null) {
+            inputType = 1;
+        }
+        return inputType;
+    }
+
+    /**
+     * Sets the type of input
+     * @param inputType 
+     */
+    public void setInputType(Integer inputType) {
+        this.inputType = inputType;
+    }
+
+    /**
+     * Returns the user input
+     * @return the user input 
+     */
+    public Double getUserInput() {
+        if (userInput == null) {
+            userInput = 1.0;
+        }
+        return userInput;
+    }
+
+    /**
+     * Sets  the user input
+     * @param userInput  the user input
+     */
+    public void setUserInput(Double userInput) {
+        this.userInput = userInput;
     }
 }

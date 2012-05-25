@@ -1,12 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
-import eu.isas.peptideshaker.preferences.FilterPreferences;
-import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SearchParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.*;
 import eu.isas.peptideshaker.utils.Metrics;
 
 /**
@@ -24,6 +19,10 @@ public class PSSettings implements UrParameter {
      * The parameters linked to the search
      */
     private SearchParameters searchParameters;
+    /**
+     * The initial processing preferences
+     */
+    private ProcessingPreferences processingPreferences;
     /**
      * The annotation preferences
      */
@@ -72,7 +71,8 @@ public class PSSettings implements UrParameter {
             ProjectDetails projectDetails,
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
-            Metrics metrics) {
+            Metrics metrics,
+            ProcessingPreferences processingPreferences) {
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -80,6 +80,7 @@ public class PSSettings implements UrParameter {
         this.filterPreferences = filterPreferences;
         this.displayPreferences = displayPreferences;
         this.metrics = metrics;
+        this.processingPreferences = processingPreferences;
     }
 
     /**
@@ -129,6 +130,25 @@ public class PSSettings implements UrParameter {
      */
     public DisplayPreferences getDisplayPreferences() {
         return displayPreferences;
+    }
+
+    /**
+     * Returns the initial processing preferences
+     * @return the initial processing preferences
+     */
+    public ProcessingPreferences getProcessingPreferences() {
+        if (processingPreferences == null) {
+            processingPreferences = new ProcessingPreferences();
+        }
+        return processingPreferences;
+    }
+
+    /**
+     * Sets the initial processing preferences
+     * @param processingPreferences the initial processing preferences
+     */
+    public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
+        this.processingPreferences = processingPreferences;
     }
 
     /**

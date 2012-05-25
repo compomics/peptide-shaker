@@ -15,6 +15,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.NewDialog;
 import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -145,9 +146,11 @@ public class PeptideShakerCLI implements Callable {
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, lReplicaNumber);
 
         // Import the current files/settings
-        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails);
+        // @TODO: Kenny, can you check the processing preferences here?
+        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, new ProcessingPreferences());
 
         // Apply the FDR validation with the pre-defined FDR thresholds.
+        //@TODO: with the correct processing preferences we should not need this
         peptideShaker.fdrValidation(iWaitingHandler,
                 iPeptideShakerCLIInputBean.getPSMFDR(),
                 iPeptideShakerCLIInputBean.getPeptideFDR(),

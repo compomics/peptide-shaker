@@ -130,21 +130,21 @@ public class FractionError {
             }
         }
 
-        ArrayList<Double> mzList1 = new ArrayList<Double>(fragmentsRtDeviations.get(rtKey1).keySet());
-        Collections.sort(mzList1);
-        double mzKey1 = mzList1.get(0);
+        ArrayList<Double> mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtKey1).keySet());
+        Collections.sort(mzList);
+        double mzKey1 = mzList.get(0);
         double mzKey2 = mzKey1;
         if (fragmentMZ > mzKey1) {
-            mzKey1 = mzList1.get(mzList1.size() - 1);
+            mzKey1 = mzList.get(mzList.size() - 1);
             mzKey2 = mzKey1;
             if (fragmentMZ < mzKey1) {
-                for (int i = 0; i < mzList1.size() - 1; i++) {
-                    mzKey1 = mzList1.get(i);
+                for (int i = 0; i < mzList.size() - 1; i++) {
+                    mzKey1 = mzList.get(i);
                     if (fragmentMZ == mzKey1) {
                         mzKey2 = fragmentMZ;
                         break;
                     }
-                    mzKey2 = mzList1.get(i + 1);
+                    mzKey2 = mzList.get(i + 1);
                     if (mzKey1 < fragmentMZ && fragmentMZ < mzKey2) {
                         break;
                     }
@@ -155,21 +155,21 @@ public class FractionError {
         double correction12 = fragmentsRtDeviations.get(rtKey1).get(mzKey2);
         double correction1 = correction11 * mzKey1 / (mzKey1 + mzKey2) + correction12 * mzKey2 / (mzKey1 + mzKey2);
 
-        ArrayList<Double> mzList2 = new ArrayList<Double>(fragmentsRtDeviations.get(rtKey2).keySet());
-        Collections.sort(mzList2);
-        mzKey1 = mzList2.get(0);
+        mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtKey2).keySet());
+        Collections.sort(mzList);
+        mzKey1 = mzList.get(0);
         mzKey2 = mzKey1;
         if (fragmentMZ > mzKey1) {
-            mzKey1 = mzList1.get(mzList2.size() - 1);
+            mzKey1 = mzList.get(mzList.size() - 1);
             mzKey2 = mzKey1;
             if (fragmentMZ < mzKey1) {
-                for (int i = 0; i < mzList2.size() - 1; i++) {
-                    mzKey1 = mzList2.get(i);
+                for (int i = 0; i < mzList.size() - 1; i++) {
+                    mzKey1 = mzList.get(i);
                     if (fragmentMZ == mzKey1) {
                         mzKey2 = fragmentMZ;
                         break;
                     }
-                    mzKey2 = mzList2.get(i + 1);
+                    mzKey2 = mzList.get(i + 1);
                     if (mzKey1 < fragmentMZ && fragmentMZ < mzKey2) {
                         break;
                     }
@@ -185,12 +185,13 @@ public class FractionError {
 
     public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
         HashMap<Double, Peak> recalibratedPeakList = new HashMap<Double, Peak>(originalPeakList.size());
-        double correction;
+        double correction, newMz;
         Peak peak;
         for (double mz : originalPeakList.keySet()) {
             correction = getFragmentMzError(precursorRT, mz);
-            peak = new Peak(mz - correction, originalPeakList.get(mz).intensity);
-            recalibratedPeakList.put(mz, peak);
+            newMz = mz - correction;
+            peak = new Peak(newMz, originalPeakList.get(mz).intensity);
+            recalibratedPeakList.put(newMz, peak);
         }
         return recalibratedPeakList;
     }
@@ -261,7 +262,7 @@ public class FractionError {
                         roundedValue = (int) (fragmentMz / ms2Bin);
                         fragmentMzKey = (double) roundedValue * ms2Bin;
 
-                        if (!fragmentRawMap.containsKey(fragmentMzKey)) {
+                        if (!spectrumFragmentMap.containsKey(fragmentMzKey)) {
                             spectrumFragmentMap.put(fragmentMzKey, new ArrayList<Double>());
                         }
 
@@ -351,19 +352,9 @@ public class FractionError {
                 precursorGrades.put(rtRef, grade);
                 precursorOffsets.put(rtRef, offset);
 
-                for (double tempRt : rtList) {
-                    tempValues = precursorTempMap.get(tempRt);
-                    for (ArrayList<Double> errors : tempValues.values()) {
-                        cpt1 -= errors.size();
-                    }
-                    precursorTempMap.remove(tempRt);
-                    if (cpt1 <= rtBinSize) {
-                        break;
-                    }
-                }
-
+                fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
                 mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
-                for (HashMap<Double, ArrayList<Double>> errors : precursorTempMap.values()) {
+                for (HashMap<Double, ArrayList<Double>> errors : fragmentTempMap.values()) {
                     for (double mz : errors.keySet()) {
                         if (!mzToErrorMap.containsKey(mz)) {
                             mzToErrorMap.put(mz, new ArrayList<Double>());
@@ -374,19 +365,20 @@ public class FractionError {
 
                 mzList = new ArrayList<Double>(mzToErrorMap.keySet());
                 Collections.sort(mzList);
-                Collections.sort(mzList);
                 mz1 = new ArrayList<Double>();
                 mz2 = new ArrayList<Double>();
                 err1 = new ArrayList<Double>();
                 err2 = new ArrayList<Double>();
+                mzRef = -1;
                 for (double mz : mzList) {
                     mz1.add(mz);
                     err1.addAll(mzToErrorMap.get(mz));
                     if (err1.size() >= mzBinSize) {
                         mzRef = BasicMathFunctions.median(mz1);
                         error = BasicMathFunctions.median(err1);
-                        fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
                         fragmentsRtDeviations.get(rtRef).put(mzRef, error);
+                        mz2.clear();
+                        err2.clear();
                         mz2.addAll(mz1);
                         err2.addAll(err1);
                         mz1.clear();
@@ -394,15 +386,26 @@ public class FractionError {
                     }
                 }
                 if (!mz1.isEmpty()) {
-                    mzList = new ArrayList<Double>(fragmentsRtDeviations.get(rtRef).keySet());
-                    Collections.sort(mzList);
-                    fragmentsRtDeviations.remove(mzList.get(mzList.size() - 1));
+                    if (fragmentsRtDeviations.get(rtRef) != null) {
+                        fragmentsRtDeviations.get(rtRef).remove(mzRef);
+                    }
                     mz1.addAll(mz2);
                     err1.addAll(err2);
                     mzRef = BasicMathFunctions.median(mz1);
                     error = BasicMathFunctions.median(err1);
-                    fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
                     fragmentsRtDeviations.get(rtRef).put(mzRef, error);
+                }
+
+                for (double tempRt : rtList) {
+                    tempValues = precursorTempMap.get(tempRt);
+                    for (ArrayList<Double> errors : tempValues.values()) {
+                        cpt1 -= errors.size();
+                    }
+                    precursorTempMap.remove(tempRt);
+                    fragmentTempMap.remove(tempRt);
+                    if (cpt1 <= rtBinSize) {
+                        break;
+                    }
                 }
             }
         }
@@ -472,6 +475,7 @@ public class FractionError {
                 }
             }
 
+            fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
             mzList = new ArrayList<Double>(mzToErrorMap.keySet());
             Collections.sort(mzList);
             Collections.sort(mzList);
@@ -485,7 +489,6 @@ public class FractionError {
                 if (err1.size() >= mzBinSize) {
                     mzRef = BasicMathFunctions.median(mz1);
                     error = BasicMathFunctions.median(err1);
-                    fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
                     fragmentsRtDeviations.get(rtRef).put(mzRef, error);
                     mz2.addAll(mz1);
                     err2.addAll(err1);
@@ -501,7 +504,6 @@ public class FractionError {
                 err1.addAll(err2);
                 mzRef = BasicMathFunctions.median(mz1);
                 error = BasicMathFunctions.median(err1);
-                fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
                 fragmentsRtDeviations.get(rtRef).put(mzRef, error);
             }
         }

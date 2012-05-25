@@ -123,11 +123,11 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
     /**
      * The last threshold input.
      */
-    private double lastThreshold = 1;
+    private HashMap<Integer, Double> lastThresholds = new HashMap<Integer, Double>();
     /**
      * The last threshold type 0 -> confidence 1 -> FDR 2 -> FNR
      */
-    private int lastThresholdType = 1;
+    private HashMap<Integer, Integer> lastThresholdTypes = new HashMap<Integer, Integer>();
     /**
      * The confidence threshold marker.
      */
@@ -1603,12 +1603,14 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
      */
     private void thresholdInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdInputActionPerformed
         try {
-            lastThreshold = new Double(thresholdInput.getText());
+            double lastThreshold = new Double(thresholdInput.getText());
 
             if (lastThreshold < 0 || lastThreshold > 100) {
                 JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
             } else {
-                lastThresholdType = thresholdTypeCmb.getSelectedIndex();
+                int selectedGroup = groupSelectionTable.getSelectedRow();
+                lastThresholds.put(selectedGroup, lastThreshold);
+                lastThresholdTypes.put(selectedGroup, thresholdTypeCmb.getSelectedIndex());
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 updateResults();
                 updateDisplayedComponents();
@@ -1650,8 +1652,9 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
      * @param evt
      */
     private void confidenceSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceSliderMouseReleased
-        lastThreshold = new Double(confidenceSlider.getValue());
-        lastThresholdType = 0;
+        int selectedGroup = groupSelectionTable.getSelectedRow();
+        lastThresholds.put(selectedGroup, new Double(confidenceSlider.getValue()));
+        lastThresholdTypes.put(selectedGroup, 0);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         updateResults();
         updateDisplayedComponents();
@@ -1686,8 +1689,9 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
      * @param evt
      */
     private void fdrSlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider1MouseReleased
-        lastThreshold = new Double(fdrSlider1.getValue());
-        lastThresholdType = 1;
+        int selectedGroup = groupSelectionTable.getSelectedRow();
+        lastThresholds.put(selectedGroup, new Double(fdrSlider1.getValue()));
+        lastThresholdTypes.put(selectedGroup, 1);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         updateResults();
         updateDisplayedComponents();
@@ -1799,7 +1803,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
             } else {
                 recalculatePeptidesAndProteins();
             }
-            
+
             peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
@@ -1954,7 +1958,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
      */
     private void validateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateButtonActionPerformed
 
-        lastThreshold = new Double(thresholdInput.getText());
+        double lastThreshold = new Double(thresholdInput.getText());
 
         thresholdInputActionPerformed(null);
 
@@ -2000,6 +2004,9 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
                     dataValidated = true;
                     validateButton.setEnabled(false);
+                    TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+                    currentResults.setUserInput(new Double(thresholdInput.getText()));
+                    currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -2059,16 +2066,6 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_thresholdHelpJButtonActionPerformed
 
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
     /**
      * Opens a help dialog.
      *
@@ -2259,7 +2256,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
      */
     private void thresholdInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_thresholdInputKeyReleased
         try {
-            lastThreshold = new Double(thresholdInput.getText());
+            double lastThreshold = new Double(thresholdInput.getText());
 
             if (lastThreshold < 0 || lastThreshold > 100) {
                 JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
@@ -2318,91 +2315,6 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 }//GEN-LAST:event_nMaxHelpJButtonMouseEntered
 
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Opens a help dialog.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
     /**
      * Change the cursor to a hand cursor.
      *
@@ -3139,6 +3051,9 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         if (currentTargetDecoyMap != null) {
 
             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+            int selectedGroup = groupSelectionTable.getSelectedRow();
+            int lastThresholdType = lastThresholdTypes.get(selectedGroup);
+            double lastThreshold = lastThresholds.get(selectedGroup);
 
             if (lastThresholdType == 0) {
                 currentResults.setConfidenceLimit(lastThreshold);
@@ -3162,6 +3077,11 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
         if (currentTargetDecoyMap != null) {
 
             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+            int selectedGroup = groupSelectionTable.getSelectedRow();
+            if (!lastThresholds.containsKey(selectedGroup)) {
+                lastThresholds.put(selectedGroup, currentResults.getUserInput());
+                lastThresholdTypes.put(selectedGroup, currentResults.getInputType());
+            }
             nTotalTxt.setText(Util.roundDouble(currentResults.getnTPTotal(), 2) + "");
             nValidatedTxt.setText(Util.roundDouble(currentResults.getN(), 2) + "");
             nFPTxt.setText(Util.roundDouble(currentResults.getnFP(), 2) + "");
@@ -3175,8 +3095,8 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
             windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
             Double newPosition = 50 * (Math.log10(currentTargetDecoyMap.getWindowSize() / (double) currentTargetDecoyMap.getnMax()) + 1);
             sensitivitySlider1.setValue(newPosition.intValue());
-            thresholdTypeCmb.setSelectedIndex(lastThresholdType);
-            thresholdInput.setText(lastThreshold + "");
+            thresholdTypeCmb.setSelectedIndex(lastThresholdTypes.get(selectedGroup));
+            thresholdInput.setText(lastThresholds.get(selectedGroup) + "");
 
             if (currentResults.isClassicalEstimators()) {
                 fdrCombo1.setSelectedIndex(0);
