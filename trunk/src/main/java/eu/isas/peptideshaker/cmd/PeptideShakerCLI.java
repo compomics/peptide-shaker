@@ -22,6 +22,7 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import org.apache.commons.cli.*;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -32,19 +33,18 @@ import java.util.concurrent.Callable;
  * @author Kenny Helsens
  */
 public class PeptideShakerCLI implements Callable {
-
     /**
      * The xml file containing the enzymes.
      */
-    private static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
+    private static final String ENZYME_FILE = "/resources/conf/peptideshaker_enzymes.xml";
     /**
      * Modification file.
      */
-    private static final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
+    private static final String MODIFICATIONS_FILE = "/resources/conf/peptideshaker_mods.xml";
     /**
      * User modification file.
      */
-    private static final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
+    private static final String USER_MODIFICATIONS_FILE = "/resources/conf/peptideshaker_usermods.xml";
     /**
      * User preferences file.
      */
@@ -56,7 +56,7 @@ public class PeptideShakerCLI implements Callable {
     /**
      * The CLI input parameters to start PeptideShaker from command line
      */
-    private PeptideShakerCLIInputBean iPeptideShakerCLIInputBean = null;
+    private PeptideShakerCLIInputBean iCLIInputBean = null;
     /**
      * The experiment conducted.
      */
@@ -109,24 +109,40 @@ public class PeptideShakerCLI implements Callable {
      * The project details.
      */
     private ProjectDetails projectDetails = null;
+    protected int iReplicaNumber = 1;
 
     /**
      * Construct a new PeptideShakerCLI runnable from a PeptideShakerCLI Bean.
      * When initialization is successful, calling "run" will start PeptideShaker and write the output files when finished.
      */
-    public PeptideShakerCLI(PeptideShakerCLIInputBean aPeptideShakerCLIInputBean) {
-        iPeptideShakerCLIInputBean = aPeptideShakerCLIInputBean;
+    public PeptideShakerCLI(PeptideShakerCLIInputBean aCLIInputBean) {
+        iCLIInputBean = aCLIInputBean;
 
         loadEnzymes();
 
         importSearchGUIFiles();
 
-        File lInputFolder = iPeptideShakerCLIInputBean.getInput();
+        File lInputFolder = iCLIInputBean.getInput();
         importSearchParameters(searchParametersFiles.get(0));
 
         File lSearchGUIMGFFiles = new File(lInputFolder, NewDialog.SEARCHGUI_INPUT);
         importMgfFiles(lSearchGUIMGFFiles);
 
+        // Define new sample and experiment if not existing so far.
+        experiment = new MsExperiment(aCLIInputBean.getExperimentID());
+        sample = new Sample(aCLIInputBean.getSampleID());
+
+        SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(iReplicaNumber));
+        experiment.addAnalysisSet(sample, analysisSet);
+
+        // Set the project details
+        projectDetails = new ProjectDetails();
+        try {
+            projectDetails.setModificationFile(getModificationFile());
+            projectDetails.setUserModificationFile(getUserModificationFile());
+        } catch (URISyntaxException e) {
+            System.err.println(e.getMessage());
+        }
 
     }
 
@@ -136,21 +152,15 @@ public class PeptideShakerCLI implements Callable {
     public Object call() {
 
         // Define new sample and experiment
-        experiment = new MsExperiment("peptideshaker_cli");
-        sample = new Sample("peptideshaker_cli_sample");
-        int lReplicaNumber = 1;
-        SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(lReplicaNumber));
-        experiment.addAnalysisSet(sample, analysisSet);
-
         // Create new PeptideShaker instance from this experiment and sample
-        PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, lReplicaNumber);
+        PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, iReplicaNumber);
 
         // Import the current files/settings
         ProcessingPreferences processingPreferences = new ProcessingPreferences();
-        processingPreferences.setPsmFDR(iPeptideShakerCLIInputBean.getPSMFDR());
-        processingPreferences.setPeptideFDR(iPeptideShakerCLIInputBean.getPeptideFDR());
-        processingPreferences.setProteinFDR(iPeptideShakerCLIInputBean.getProteinFDR());
-        processingPreferences.estimateAScore(true); //@TODO: Kenny you might want to make this optional
+        processingPreferences.setPsmFDR(iCLIInputBean.getPSMFDR());
+        processingPreferences.setPeptideFDR(iCLIInputBean.getPeptideFDR());
+        processingPreferences.setProteinFDR(iCLIInputBean.getProteinFDR());
+        processingPreferences.estimateAScore(iCLIInputBean.estimateAScore());
         peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, processingPreferences);
 
         // Creates a dummy IdentificationFeaturesGenerator instnace.
@@ -158,7 +168,7 @@ public class PeptideShakerCLI implements Callable {
 
         // Export the PeptideShaker project into a CSV file
         CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
-        exporter.exportResults(null, false, iPeptideShakerCLIInputBean.getOutput());
+        exporter.exportResults(null, false, iCLIInputBean.getOutput());
 
 
         // Finished!
@@ -197,6 +207,7 @@ public class PeptideShakerCLI implements Callable {
         aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id, true, PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.description);
         aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.description);
         aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.description);
+        aOptions.addOption(PeptideShakerCLIParams.ASCORE.id, false, PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.description);
     }
 
     /**
@@ -208,23 +219,41 @@ public class PeptideShakerCLI implements Callable {
         ptmFactory.reloadFactory();
         ptmFactory = PTMFactory.getInstance();
         try {
-            ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
+            ptmFactory.importModifications(getModificationFile(), false);
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
+            ptmFactory.importModifications(getUserModificationFile(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
+     * Returns a File handle from to the mods.xml file in tthe classpath
+     */
+    private File getModificationFile() throws URISyntaxException {
+        return new File(this.getClass().getResource(MODIFICATIONS_FILE).toURI());
+    }
+
+    /**
+     * Returns a File handle from to the mods.xml file in tthe classpath
+     */
+    private File getUserModificationFile() throws URISyntaxException {
+        return new File(this.getClass().getResource(USER_MODIFICATIONS_FILE).toURI());
+    }
+
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
         try {
-            enzymeFactory.importEnzymes(new File(ENZYME_FILE));
+
+            File lEnzymeFile = new File(this.getClass().getResource(ENZYME_FILE).toURI());
+
+            enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
             e.printStackTrace();
@@ -238,8 +267,9 @@ public class PeptideShakerCLI implements Callable {
     private void importSearchGUIFiles() {
 
         FileImporter.setCLIMode(true);
+        FileImporter.setReducedMemory(false);
 
-        File lInputFolder = iPeptideShakerCLIInputBean.getInput();
+        File lInputFolder = iCLIInputBean.getInput();
 
         File[] lInputList = lInputFolder.listFiles();
         for (File lInputFile : lInputList) {
@@ -666,7 +696,7 @@ public class PeptideShakerCLI implements Callable {
                 "annotationPreferences=" + annotationPreferences +
                 ", iWaitingHandler=" + iWaitingHandler +
                 ", fastaFile=" + fastaFile +
-                ", iPeptideShakerCLIInputBean=" + iPeptideShakerCLIInputBean +
+                ", iPeptideShakerCLIInputBean=" + iCLIInputBean +
                 ", experiment=" + experiment +
                 ", sample=" + sample +
                 ", idFiles=" + idFiles +

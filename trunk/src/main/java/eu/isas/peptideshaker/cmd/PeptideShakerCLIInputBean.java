@@ -19,6 +19,8 @@ public class PeptideShakerCLIInputBean {
     // Accepted Protein FDR
     private double iProteinFDR = 1.0;
 
+    // Include estimation of AScore
+    private boolean boolAScore = false;
 
     // SearchGUI input folder
     private File iInput = null;
@@ -49,6 +51,10 @@ public class PeptideShakerCLIInputBean {
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id)) {
+            iProteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.ASCORE.id)) {
             iProteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id));
         }
 
@@ -163,5 +169,19 @@ public class PeptideShakerCLIInputBean {
      */
     public void setSampleID(String aSampleID) {
         iSampleID = aSampleID;
+    }
+
+    /**
+     * Returns whether the AScore should be estimated for phospho peptides.
+     */
+    public boolean estimateAScore() {
+        return boolAScore;
+    }
+
+    /**
+     * Set if the AScore should be estimated for phospho peptides.
+     */
+    public void setEstimateAScore(boolean boolAScore) {
+        this.boolAScore = boolAScore;
     }
 }
