@@ -111,8 +111,8 @@ public class PeptideShaker {
      * Constructor without mass specification. Calculation will be done on new
      * maps which will be retrieved as compomics utilities parameters.
      *
-     * @param experiment The experiment conducted
-     * @param sample The sample analyzed
+     * @param experiment      The experiment conducted
+     * @param sample          The sample analyzed
      * @param replicateNumber The replicate number
      */
     public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber) {
@@ -127,10 +127,10 @@ public class PeptideShaker {
     /**
      * Constructor with map specifications.
      *
-     * @param experiment The experiment conducted
-     * @param sample The sample analyzed
+     * @param experiment      The experiment conducted
+     * @param sample          The sample analyzed
      * @param replicateNumber The replicate number
-     * @param psMaps the peptide shaker maps
+     * @param psMaps          the peptide shaker maps
      */
     public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber, PSMaps psMaps) {
         this.experiment = experiment;
@@ -144,20 +144,20 @@ public class PeptideShaker {
     /**
      * Method used to import identification from identification result files.
      *
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param idFilter The identification filter to use
-     * @param idFiles The files to import
-     * @param spectrumFiles The corresponding spectra (can be empty: spectra
-     * will not be loaded)
-     * @param fastaFile The database file in the fasta format
-     * @param searchParameters The search parameters
+     * @param waitingHandler        the handler displaying feedback to the user
+     * @param idFilter              The identification filter to use
+     * @param idFiles               The files to import
+     * @param spectrumFiles         The corresponding spectra (can be empty: spectra
+     *                              will not be loaded)
+     * @param fastaFile             The database file in the fasta format
+     * @param searchParameters      The search parameters
      * @param annotationPreferences The annotation preferences to use for PTM
-     * scoring
-     * @param projectDetails The project details
+     *                              scoring
+     * @param projectDetails        The project details
      * @param processingPreferences the initial processing preferences
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-            File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails, ProcessingPreferences processingPreferences) {
+                            File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails, ProcessingPreferences processingPreferences) {
 
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
 
@@ -168,6 +168,20 @@ public class PeptideShaker {
         identification.setAutomatedMemoryManagement(true);
         identification.setSerializationDirectory(SERIALIZATION_DIRECTORY);
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
+
+
+        if (FileImporter.isCLIMode()) {
+            // Needed for command line mode of operation, which requires dynamically setting of the search modification files
+            try {
+                fileImporter.setModificationFile(projectDetails.getModificationFile().getCanonicalPath());
+                fileImporter.setUserModificationFile(projectDetails.getUserModificationFile().getCanonicalPath());
+            } catch (IOException e) {
+                waitingHandler.appendReport("Error while setting the Modification files for the search.");
+
+            }
+
+        }
+
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, processingPreferences);
     }
 
@@ -175,8 +189,8 @@ public class PeptideShaker {
      * This method processes the identifications and fills the PeptideShaker
      * maps.
      *
-     * @param inputMap The input map
-     * @param waitingHandler the handler displaying feedback to the user
+     * @param inputMap              The input map
+     * @param waitingHandler        the handler displaying feedback to the user
      * @param searchParameters
      * @param annotationPreferences
      * @param idFilter
@@ -361,10 +375,10 @@ public class PeptideShaker {
      * Makes a preliminary validation of hits.
      *
      * @param waitingHandler the handler displaying feedback to the user
-     * @param aPSMFDR Accepted FDR at Peptide-Spectrum-Match level (e.g. '1.0'
-     * for 1% FDR)
-     * @param aPeptideFDR Accepted FDR at Peptide level (e.g. '1.0' for 1% FDR)
-     * @param aProteinFDR Accepted FDR at Protein level (e.g. '1.0' for 1% FDR)
+     * @param aPSMFDR        Accepted FDR at Peptide-Spectrum-Match level (e.g. '1.0'
+     *                       for 1% FDR)
+     * @param aPeptideFDR    Accepted FDR at Peptide level (e.g. '1.0' for 1% FDR)
+     * @param aProteinFDR    Accepted FDR at Protein level (e.g. '1.0' for 1% FDR)
      */
     public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR) {
 
@@ -422,7 +436,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the waiting handler
      * @throws Exception Exception thrown whenever it is attempted to attach
-     * more than one identification per search engine per spectrum
+     *                   more than one identification per search engine per spectrum
      */
     public void spectrumMapChanged(WaitingHandler waitingHandler) throws Exception {
         peptideMap = new PeptideSpecificMap();
@@ -443,7 +457,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the waiting handler
      * @throws Exception Exception thrown whenever it is attempted to attach
-     * more than one identification per search engine per spectrum
+     *                   more than one identification per search engine per spectrum
      */
     public void peptideMapChanged(WaitingHandler waitingHandler) throws Exception {
         proteinMap = new ProteinMap();
@@ -525,7 +539,7 @@ public class PeptideShaker {
     /**
      * Fills the psm specific map.
      *
-     * @param inputMap The input map
+     * @param inputMap       The input map
      * @param waitingHandler the handler displaying feedback to the user
      */
     private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler) throws Exception {
@@ -724,12 +738,12 @@ public class PeptideShaker {
      * Attaches scores to possible PTM locations to spectrum matches.
      *
      * @param inspectedSpectra
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param waitingHandler        the handler displaying feedback to the user
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated
      * @throws Exception
      */
     public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean estimateAscore) throws Exception {
@@ -752,14 +766,14 @@ public class PeptideShaker {
     /**
      * Scores the PTMs of all validated peptides.
      *
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param waitingHandler        the handler displaying feedback to the user
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated
      * @throws Exception exception thrown whenever a problem occurred while
-     * deserializing a match
+     *                   deserializing a match
      */
     public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean estimateAscore) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -783,14 +797,14 @@ public class PeptideShaker {
     /**
      * Scores the PTMs of all validated proteins.
      *
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param waitingHandler        the handler displaying feedback to the user
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated
      * @throws Exception exception thrown whenever a problem occurred while
-     * deserializing a match
+     *                   deserializing a match
      */
     public void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean estimateAscore) throws Exception {
         scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, null, estimateAscore);
@@ -799,15 +813,15 @@ public class PeptideShaker {
     /**
      * Scores the PTMs of all validated proteins.
      *
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param waitingHandler        the handler displaying feedback to the user
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param idFilter the identification filter, needed only to get max values
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated for the metrics, can be null when rescoring PTMs
+     * @param idFilter              the identification filter, needed only to get max values
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated for the metrics, can be null when rescoring PTMs
      * @throws Exception exception thrown whenever a problem occurred while
-     * deserializing a match
+     *                   deserializing a match
      */
     private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter, boolean estimateAscore) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -855,15 +869,15 @@ public class PeptideShaker {
     /**
      * Scores ptms in a protein match.
      *
-     * @param proteinMatch the protein match
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param proteinMatch          the protein match
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param scorePeptides if true peptide scores will be recalculated
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param scorePeptides         if true peptide scores will be recalculated
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated
      * @throws Exception exception thrown whenever an error occurred while
-     * deserilalizing a match
+     *                   deserilalizing a match
      */
     public void scorePTMs(ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean scorePeptides, boolean estimateAscore) throws Exception {
 
@@ -906,10 +920,10 @@ public class PeptideShaker {
     /**
      * Returns the protein indexes of a modification found in a peptide.
      *
-     * @param proteinSequence The protein sequence
-     * @param peptideSequence The peptide sequence
+     * @param proteinSequence   The protein sequence
+     * @param peptideSequence   The peptide sequence
      * @param positionInPeptide The position(s) of the modification in the
-     * peptide sequence
+     *                          peptide sequence
      * @return the possible modification sites in a protein
      */
     public static ArrayList<Integer> getProteinModificationIndexes(String proteinSequence, String peptideSequence, ArrayList<Integer> positionInPeptide) {
@@ -929,14 +943,14 @@ public class PeptideShaker {
     /**
      * Scores the PTMs for a peptide match.
      *
-     * @param peptideMatch the peptide match of interest
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param peptideMatch          the peptide match of interest
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated
      * @throws Exception exception thrown whenever an error occurred while
-     * deserializing a match
+     *                   deserializing a match
      */
     public void scorePTMs(PeptideMatch peptideMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean estimateAscore) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -1023,14 +1037,14 @@ public class PeptideShaker {
     /**
      * Scores PTM locations for a desired spectrumMatch.
      *
-     * @param spectrumMatch The spectrum match of interest
-     * @param searchParameters the search preferences containing the m/z
-     * tolerances
+     * @param spectrumMatch         The spectrum match of interest
+     * @param searchParameters      the search preferences containing the m/z
+     *                              tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param estimateAscore        a boolean indicating whether the A-score should be
+     *                              estimated
      * @throws Exception exception thrown whenever an error occurred while
-     * reading/writing the an identification match
+     *                   reading/writing the an identification match
      */
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean estimateAscore) throws Exception {
 
@@ -1084,7 +1098,7 @@ public class PeptideShaker {
      *
      * @param spectrumMatch the spectrum match of interest
      * @throws Exception exception thrown whenever an error occurred while
-     * reading/writing the an identification match
+     *                   reading/writing the an identification match
      */
     private void attachDeltaScore(SpectrumMatch spectrumMatch) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -1407,9 +1421,9 @@ public class PeptideShaker {
      * Solves protein inference issues when possible.
      *
      * @param waitingHandler the handler displaying feedback to the user
-     * @throws Exception exception thrown whenever it is attempted to attach two
-     * different spectrum matches to the same spectrum from the same search
-     * engine.
+     * @throws Exception                exception thrown whenever it is attempted to attach two
+     *                                  different spectrum matches to the same spectrum from the same search
+     *                                  engine.
      * @throws IOException
      * @throws IllegalArgumentException
      */
@@ -1716,7 +1730,7 @@ public class PeptideShaker {
      * Simplistic method comparing protein descriptions. Returns true if both
      * descriptions are of same length and present more than half similar words.
      *
-     * @param primaryDescription The parsed description of the first protein
+     * @param primaryDescription   The parsed description of the first protein
      * @param secondaryDescription The parsed description of the second protein
      * @return a boolean indicating whether the descriptions are similar
      */
@@ -1757,7 +1771,7 @@ public class PeptideShaker {
      * Replaces the needed PTMs by PeptideShaker PTMs in the factory.
      *
      * @param searchParameters the search parameters containing the modification
-     * profile to use
+     *                         profile to use
      */
     public static void setPeptideShakerPTMs(SearchParameters searchParameters) {
         ArrayList<String> residues, utilitiesNames;
