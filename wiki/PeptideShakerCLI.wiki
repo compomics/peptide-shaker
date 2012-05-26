@@ -1,3 +1,5 @@
+#instructions to use PeptideShaker from CommandLine or from other Java applications
+
 =PeptideShaker Command Line Interface=
 
 The PeptideShaker command line tool takes a SearchGUI result folder, performs the X!Tandem/OMSSA integrated FDR calculations, and subsequently generates PSM, peptide and protein an output files.
