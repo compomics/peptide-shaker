@@ -1,4 +1,4 @@
-#instructions to use PeptideShaker from CommandLine or from other Java applications
+#summary Instructions to use PeptideShaker from CommandLine or from other Java applications
 
 =PeptideShaker Command Line Interface=
 
