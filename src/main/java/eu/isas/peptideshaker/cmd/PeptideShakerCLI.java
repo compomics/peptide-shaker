@@ -207,7 +207,7 @@ public class PeptideShakerCLI implements Callable {
         aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id, true, PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.description);
         aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.description);
         aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.description);
-        aOptions.addOption(PeptideShakerCLIParams.ASCORE.id, false, PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.description);
+        aOptions.addOption(PeptideShakerCLIParams.ASCORE.id, false, PeptideShakerCLIParams.ASCORE.description);
     }
 
     /**
