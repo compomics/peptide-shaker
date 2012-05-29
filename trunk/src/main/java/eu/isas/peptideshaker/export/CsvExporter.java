@@ -112,9 +112,9 @@ public class CsvExporter {
         this.enzyme = enzyme;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
 
-        proteinFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
-        peptideFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
-        psmFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_psms.txt";
+        proteinFile = "PeptideShaker_" + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
+        peptideFile = "PeptideShaker_" + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
+        psmFile = "PeptideShaker_" + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_psms.txt";
         //assumptionFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_assumptions.txt";
     }
 
