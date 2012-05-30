@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.17.1 (May 30. 2012):*
+ * NEW FEATURE: Added an initial Command Line Interface (CLI) functionality. (see [http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI wiki page] for details)
+
+ * FEATURE IMPROVEMENT: Allowed the user to tune the default FDR and disable A-score calculation.
+ * FEATURE IMPROVEMENT: Improved the spectra recalibration method.
+
+ * BUG FIX: Corrected bugs in the stats panel where thresholds were not remembered/saved.
+ * BUG FIX: Fixed a bug where the BugReport could not locate the log file.
+ * BUG FIX: Fixed a bug impairing the modification of the PTM list from the new dialog.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.4.22.
+
+----
+
 *Changes in PeptideShaker 0.17.0 (May 10. 2012):*
  * NEW FEATURE: Added a Protein Fractions tab.
  * NEW FEATURE: Added method for spectra recalibration.
@@ -15,6 +29,8 @@
  * BUG FIX: Fixed a GUI resizing issue in the SearchPreferencesDialog.
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.19.
+
+Download Count: 49
 
 ----
 
