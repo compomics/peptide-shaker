@@ -1,4 +1,4 @@
-#summary Instructions to use PeptideShaker from CommandLine or from other Java applications
+#summary How to use PeptideShaker from CommandLine or from other Java applications
 
 =PeptideShaker Command Line Interface=
 
@@ -26,11 +26,14 @@ To show the usage description in the command line, start PeptideShakerCLI withou
 
 An example command line:
 {{{
-java -cp PeptideShaker-X.Y.Z eu.isas.peptideshaker.cmd.PeptideShakerCLI -search_gui_results ~/tmp/searchgui_result_folder_projectA/ -out ~/tmp/peptidshaker_projectA/  -pep 1 -prot 1 -psm 1 -ascore
-
+java -cp PeptideShaker-X.Y.Z eu.isas.peptideshaker.cmd.PeptideShakerCLI 
+  -search_gui_results ~/tmp/searchgui_result_folder_projectA/ 
+  -out ~/tmp/peptidshaker_projectA/  -pep 1 -prot 1 -psm 1 -ascore
 }}}
 
 This will start *PeptideShaker* and import the X!Tandem, OMSSA and/or Mascot results files in the specified SearchGUI output folder. After importing and integrating the identification files, the PSMs/Peptides/Proteins will be validated to a resulting 1% FDR. 
+
+----
 
 =PeptideShaker API=
 
