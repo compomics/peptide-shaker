@@ -197,7 +197,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         editImportFilterButton = new javax.swing.JButton();
         importFiltersLabel1 = new javax.swing.JLabel();
         preferencesTxt = new javax.swing.JTextField();
-        editImportFilterButton1 = new javax.swing.JButton();
+        editPreferencesButton = new javax.swing.JButton();
         inputFilesPanel = new javax.swing.JPanel();
         idFilesLabel = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -285,8 +285,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     .addComponent(sampleNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-                    .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
+                    .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                    .addComponent(sampleNameIdtxt))
                 .addGap(20, 20, 20)
                 .addComponent(replicateLabel)
                 .addGap(18, 18, 18)
@@ -320,9 +320,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         importFilterTxt.setText("Default");
         importFilterTxt.setToolTipText("Minimum Peptide Length");
 
-        importFiltersLabel.setText("Import Filters:");
+        importFiltersLabel.setText("Import Filters");
 
-        searchParamsLabel.setText("Search Parameters:");
+        searchParamsLabel.setText("Search Parameters");
 
         searchTxt.setEditable(false);
         searchTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -342,17 +342,17 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
         });
 
-        importFiltersLabel1.setText("Preferences:");
+        importFiltersLabel1.setText("Preferences");
 
         preferencesTxt.setEditable(false);
         preferencesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         preferencesTxt.setText("Default");
         preferencesTxt.setToolTipText("Minimum Peptide Length");
 
-        editImportFilterButton1.setText("Edit");
-        editImportFilterButton1.addActionListener(new java.awt.event.ActionListener() {
+        editPreferencesButton.setText("Edit");
+        editPreferencesButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editImportFilterButton1ActionPerformed(evt);
+                editPreferencesButtonActionPerformed(evt);
             }
         });
 
@@ -363,21 +363,18 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
-                        .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(importFiltersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(processingParametersPanelLayout.createSequentialGroup()
-                        .addComponent(importFiltersLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(64, 64, 64)))
+                    .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(importFiltersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                        .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                    .addComponent(importFiltersLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(preferencesTxt)
-                    .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                    .addComponent(importFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
+                    .addComponent(importFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                    .addComponent(preferencesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                    .addComponent(searchTxt, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(editImportFilterButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(editPreferencesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(editImportFilterButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
                 .addContainerGap())
@@ -399,8 +396,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importFiltersLabel1)
                     .addComponent(preferencesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editImportFilterButton1))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .addComponent(editPreferencesButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         inputFilesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Input Files"));
@@ -476,7 +473,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inputFilesPanelLayout.createSequentialGroup()
                         .addComponent(idFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(idFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                        .addComponent(idFilesTxt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(browseId)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -484,7 +481,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     .addGroup(inputFilesPanelLayout.createSequentialGroup()
                         .addComponent(spectrumFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                        .addComponent(spectrumFilesTxt)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(browseSpectra)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -492,7 +489,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     .addGroup(inputFilesPanelLayout.createSequentialGroup()
                         .addComponent(databaseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fastaFileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                        .addComponent(fastaFileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(browseDbButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -570,19 +567,19 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sampleDetailsPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                    .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(inputFilesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(processingParametersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(helpLabel)
                         .addGap(18, 18, 18)
                         .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20))
-                    .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(inputFilesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(processingParametersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(17, 17, 17)))
                 .addContainerGap())
         );
         sampleDetailsPanelLayout.setVerticalGroup(
@@ -597,11 +594,10 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(openButton)
-                    .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                        .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(helpLabel)))
-                .addContainerGap())
+                    .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(openDialogHelpJButton)
+                    .addComponent(helpLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -905,7 +901,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        new SearchPreferencesDialog(peptideShakerGUI, true);
+        new SearchPreferencesDialog(peptideShakerGUI, this, true);
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
     /**
@@ -1015,7 +1011,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         validateInput();
     }//GEN-LAST:event_replicateNumberIdtxtKeyReleased
 
-    private void editImportFilterButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButton1ActionPerformed
+    /**
+     * Open the ProcessingPreferences dialog.
+     * 
+     * @param evt 
+     */
+    private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
         new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences);
         if (processingPreferences.getProteinFDR() != 1
                 || processingPreferences.getPeptideFDR() != 1
@@ -1024,7 +1025,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         } else if (processingPreferences.isAScoreCalculated()) {
             preferencesTxt.setText("A-Score calculation");
         }
-    }//GEN-LAST:event_editImportFilterButton1ActionPerformed
+    }//GEN-LAST:event_editPreferencesButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
@@ -1035,7 +1036,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JButton clearSpectra;
     private javax.swing.JLabel databaseLabel;
     private javax.swing.JButton editImportFilterButton;
-    private javax.swing.JButton editImportFilterButton1;
+    private javax.swing.JButton editPreferencesButton;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JLabel exampleFilesLabel;
     private javax.swing.JTextField fastaFileTxt;
@@ -1065,12 +1066,21 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Sets the fileter settings field to the given text.
+     * Sets the filter settings field to the given text.
      *
      * @param text
      */
     public void updateFilterSettingsField(String text) {
         importFilterTxt.setText(text);
+    }
+    
+    /**
+     * Sets the search params field to the given text.
+     *
+     * @param text
+     */
+    public void updateSearchParamsField(String text) {
+        searchTxt.setText(text);
     }
 
     /**
