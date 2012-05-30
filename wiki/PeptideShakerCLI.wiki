@@ -1,9 +1,8 @@
-#summary How to use PeptideShaker from CommandLine or from other Java applications
+#summary How to use PeptideShaker from the command line or from other Java applications
 
 =PeptideShaker Command Line Interface=
 
-The PeptideShaker command line tool takes a SearchGUI result folder, performs the X!Tandem/OMSSA integrated FDR calculations, and subsequently generates PSM, peptide and protein an output files.
-
+The PeptideShaker command line tool takes a [http://searchgui.googlecode.com SearchGUI] result folder, performs the X!Tandem/OMSSA integrated FDR calculations, and subsequently generates PSM, peptide and protein an output files.
 
 To make use of *PeptideShakerCLI* from the command line use the following command:
 
@@ -39,7 +38,6 @@ This will start *PeptideShaker* and import the X!Tandem, OMSSA and/or Mascot res
 
 Other applications can also make use of the PeptideShaker API by creating PeptideShakerCLI instances. To make such an instance, you first need to fill a dedicated Java Bean (PeptideShakerCLIInputBean) with the required parameters.
 
-
 {{{
 PeptideShakerCLIInputBean:
 
@@ -69,6 +67,3 @@ private String iSampleID = "peptideshaker_cli_sample_default";
 }}}
 
 Using one such Bean will, you can create a Callable PeptideShakerCLI instance which will start *PeptideShaker* and import the X!Tandem, OMSSA and/or Mascot results files in the specified SearchGUI output folder. After importing and integrating the identification files, the PSMs/Peptides/Proteins will be validated to a resulting 1% FDR. 
-
-
- 
