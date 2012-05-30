@@ -48,22 +48,22 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="10" pref="10" max="10" attributes="0"/>
-                          <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                          <Component id="exampleFilesLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="99" max="32767" attributes="0"/>
-                          <Component id="openButton" min="-2" pref="141" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      </Group>
                       <Component id="projectDetailsPanel" alignment="0" max="32767" attributes="2"/>
                       <Component id="inputFilesPanel" alignment="0" max="32767" attributes="2"/>
                       <Component id="processingParametersPanel" alignment="0" max="32767" attributes="2"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                          <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="exampleFilesLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="openButton" min="-2" pref="141" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -81,13 +81,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="openButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="2" groupAlignment="2" attributes="0">
-                          <Component id="exampleFilesLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="openDialogHelpJButton" alignment="2" max="32767" attributes="1"/>
-                          <Component id="helpLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="exampleFilesLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="openDialogHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="helpLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -134,8 +132,8 @@
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="projectNameIdTxt" pref="480" max="32767" attributes="2"/>
-                          <Component id="sampleNameIdtxt" alignment="0" pref="480" max="32767" attributes="2"/>
+                          <Component id="projectNameIdTxt" pref="484" max="32767" attributes="2"/>
+                          <Component id="sampleNameIdtxt" max="32767" attributes="2"/>
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="replicateLabel" min="-2" max="-2" attributes="0"/>
@@ -245,32 +243,27 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="importFiltersLabel" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="searchParamsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="importFiltersLabel" alignment="0" pref="130" max="32767" attributes="1"/>
+                              <Component id="searchParamsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="importFiltersLabel1" max="32767" attributes="1"/>
-                              <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="importFiltersLabel1" min="-2" pref="131" max="-2" attributes="1"/>
                       </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="preferencesTxt" max="32767" attributes="3"/>
-                          <Component id="searchTxt" pref="486" max="32767" attributes="1"/>
-                          <Component id="importFilterTxt" alignment="0" pref="486" max="32767" attributes="3"/>
+                          <Component id="importFilterTxt" pref="486" max="32767" attributes="3"/>
+                          <Component id="preferencesTxt" pref="486" max="32767" attributes="3"/>
+                          <Component id="searchTxt" alignment="1" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="editImportFilterButton1" max="32767" attributes="1"/>
+                          <Component id="editPreferencesButton" max="32767" attributes="1"/>
                           <Component id="editSearchButton" alignment="1" max="32767" attributes="1"/>
                           <Component id="editImportFilterButton" alignment="1" pref="141" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -293,9 +286,9 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="importFiltersLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="preferencesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="editImportFilterButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editPreferencesButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="17" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -311,12 +304,12 @@
             </Component>
             <Component class="javax.swing.JLabel" name="importFiltersLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Import Filters:"/>
+                <Property name="text" type="java.lang.String" value="Import Filters"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="searchParamsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Search Parameters:"/>
+                <Property name="text" type="java.lang.String" value="Search Parameters"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="searchTxt">
@@ -344,7 +337,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="importFiltersLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Preferences:"/>
+                <Property name="text" type="java.lang.String" value="Preferences"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="preferencesTxt">
@@ -355,12 +348,12 @@
                 <Property name="toolTipText" type="java.lang.String" value="Minimum Peptide Length"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="editImportFilterButton1">
+            <Component class="javax.swing.JButton" name="editPreferencesButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editImportFilterButton1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editPreferencesButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -384,7 +377,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="idFilesLabel" min="-2" pref="130" max="-2" attributes="1"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="idFilesTxt" pref="484" max="32767" attributes="0"/>
+                              <Component id="idFilesTxt" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Component id="browseId" linkSize="2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -393,7 +386,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="spectrumFilesLabel" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="spectrumFilesTxt" pref="484" max="32767" attributes="0"/>
+                              <Component id="spectrumFilesTxt" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Component id="browseSpectra" linkSize="4" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -402,7 +395,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="databaseLabel" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="fastaFileTxt" pref="484" max="32767" attributes="0"/>
+                              <Component id="fastaFileTxt" pref="488" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Component id="browseDbButton" linkSize="5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>

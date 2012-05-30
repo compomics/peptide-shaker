@@ -636,7 +636,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu = new javax.swing.JMenu();
         searchParametersMenu = new javax.swing.JMenuItem();
         importFilterMenu = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        processingParametersMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         preferencesMenuItem = new javax.swing.JMenuItem();
@@ -1155,13 +1155,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(importFilterMenu);
 
-        jMenuItem1.setText("Processing Preferences");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        processingParametersMenuItem.setMnemonic('c');
+        processingParametersMenuItem.setText("Processing Preferences");
+        processingParametersMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                processingParametersMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem1);
+        editMenu.add(processingParametersMenuItem);
         editMenu.add(jSeparator4);
 
         annotationPreferencesMenu.setMnemonic('A');
@@ -2570,9 +2571,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new GettingStartedDialog(this, false);
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
         new ProcessingPreferencesDialog(this, false, processingPreferences);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_processingParametersMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -2719,7 +2720,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -2752,6 +2752,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckMenu;
     private javax.swing.JMenuItem preferencesMenuItem;
+    private javax.swing.JMenuItem processingParametersMenuItem;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
     private javax.swing.JPanel proteinFractionsJPanel;
     private javax.swing.JPanel proteinStructureJPanel;

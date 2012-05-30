@@ -377,7 +377,7 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                         ptmsCheck.isSelected()));
                 
                 if (newDialog != null) {
-                    newDialog.updateFilterSettingsField("User Edit");
+                    newDialog.updateFilterSettingsField("User Defined");
                 }
                 
                 dispose();

@@ -1,45 +1,40 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.isas.peptideshaker.preferences;
 
 import java.io.Serializable;
 
 /**
- * This class groups the user preferences for the initial processing
+ * This class groups the user preferences for the initial processing.
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class ProcessingPreferences implements Serializable {
 
     /**
-     * boolean indicating whether the A-score should be estimated
+     * Boolean indicating whether the A-score should be estimated.
      */
     private boolean aScore = false;
     /**
-     * The default protein FDR
+     * The default protein FDR.
      */
     private double proteinFDR = 1.0;
     /**
-     * The default peptide FDR
+     * The default peptide FDR.
      */
     private double peptideFDR = 1.0;
     /**
-     * The default PSM FDR
+     * The default PSM FDR.
      */
     private double psmFDR = 1.0;
-    
+
     /**
-     * Constructor with default settings
+     * Constructor with default settings.
      */
     public ProcessingPreferences() {
-        
     }
 
     /**
-     * Indicates whether the A-score should be calculated
+     * Indicates whether the A-score should be calculated.
+     *
      * @return a boolean indicating whether the A-score should be calculated
      */
     public boolean isAScoreCalculated() {
@@ -47,15 +42,17 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * sets whether the A-score should be calculated
-     * @param aScore whether the A-score should be calculated
+     * Sets whether the A-score should be calculated.
+     *
+     * @param shouldEstimateAScore whether the A-score should be calculated
      */
     public void estimateAScore(boolean shouldEstimateAScore) {
         this.aScore = shouldEstimateAScore;
     }
 
     /**
-     * returns the initial peptide FDR
+     * Returns the initial peptide FDR.
+     *
      * @return the initial peptide FDR
      */
     public double getPeptideFDR() {
@@ -63,7 +60,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * Sets the initial peptide FDR
+     * Sets the initial peptide FDR.
+     *
      * @param peptideFDR the initial peptide FDR
      */
     public void setPeptideFDR(double peptideFDR) {
@@ -71,7 +69,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * returns the initial protein FDR
+     * Returns the initial protein FDR.
+     *
      * @return the initial protein FDR
      */
     public double getProteinFDR() {
@@ -79,7 +78,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * Sets the initial protein FDR
+     * Sets the initial protein FDR.
+     *
      * @param proteinFDR the initial protein FDR
      */
     public void setProteinFDR(double proteinFDR) {
@@ -87,7 +87,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * Returns the initial PSM FDR
+     * Returns the initial PSM FDR.
+     *
      * @return the initial PSM FDR
      */
     public double getPsmFDR() {
@@ -95,7 +96,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * Sets the initial PSM FDR
+     * Sets the initial PSM FDR.
+     *
      * @param psmFDR the initial PSM FDR
      */
     public void setPsmFDR(double psmFDR) {

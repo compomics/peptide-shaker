@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
+import eu.isas.peptideshaker.gui.NewDialog;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -100,7 +101,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * The ptm to pride map.
      */
     private PtmToPrideMap ptmToPrideMap;
-
+    /**
+     * The new dialog. Can be null.
+     */
+    private NewDialog newDialog;
+    
     /**
      * Create a new SearchPreferencesDialog.
      *
@@ -108,10 +113,22 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * @param editable
      */
     public SearchPreferencesDialog(PeptideShakerGUI parent, boolean editable) {
+        this(parent, null, editable);
+    }
+
+    /**
+     * Create a new SearchPreferencesDialog.
+     *
+     * @param parent the PeptideShaker parent
+     * @param newDialog the new dialog, can be null
+     * @param editable
+     */
+    public SearchPreferencesDialog(PeptideShakerGUI parent, NewDialog newDialog, boolean editable) {
         super(parent, true);
 
         this.editable = editable;
         this.peptideShakerGUI = parent;
+        this.newDialog = newDialog;
         this.searchParameters = parent.getSearchParameters();
         this.profileFile = parent.getModificationProfileFile();
 
@@ -792,6 +809,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
             peptideShakerGUI.setModificationProfileFile(profileFile);
             peptideShakerGUI.setDataSaved(false); //@TODO this should be set to false only if a change was made
+            
+            if (newDialog != null) {
+                if (fileTxt.getText().length() > 0) { 
+                    File paramsFile = searchParameters.getParametersFile();
+                    newDialog.updateSearchParamsField(paramsFile.getName().substring(0, paramsFile.getName().lastIndexOf(".")));
+                } else {
+                    newDialog.updateSearchParamsField("User Defined");
+                }
+            }
+            
             this.dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
