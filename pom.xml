@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.17.1</version.number>
+        <version.number>0.17.2</version.number>
     </properties>
 
 
@@ -271,7 +271,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.4.22</version>
+            <version>3.4.23</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -385,6 +385,13 @@
             <artifactId>commons-cli</artifactId>
             <version>1.2</version>
         </dependency>
+        
+        <!--<dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.8.2.2</version>
+        </dependency>-->
+            
 
     </dependencies>
 

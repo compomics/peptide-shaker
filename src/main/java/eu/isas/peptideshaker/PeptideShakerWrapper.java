@@ -348,9 +348,10 @@ public class PeptideShakerWrapper {
             if (error) {
 
                 firstTry = false;
+                temp = temp.toLowerCase();
 
-                //if needed, try relaunching with reduced memory settings
-                if (temp.contains("Could not create the Java virtual machine")) {
+                // if needed, try re-launching with reduced memory settings
+                if (temp.contains("could not create the java virtual machine")) {
                     if (userPreferences.getMemoryPreference() > 3 * 1024) {
                         userPreferences.setMemoryPreference(userPreferences.getMemoryPreference() - 1024);
                         saveNewSettings();

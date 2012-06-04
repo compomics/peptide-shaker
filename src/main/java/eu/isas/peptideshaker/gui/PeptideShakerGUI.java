@@ -5313,16 +5313,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         knownMassDeltas.put(AminoAcid.W.monoisotopicMass, "W");
         knownMassDeltas.put(AminoAcid.Y.monoisotopicMass, "Y");
         knownMassDeltas.put(AminoAcid.V.monoisotopicMass, "V");
+        knownMassDeltas.put(AminoAcid.U.monoisotopicMass, "U");
+        knownMassDeltas.put(AminoAcid.O.monoisotopicMass, "O");
 
 
         // add default neutral losses
-        knownMassDeltas.put(NeutralLoss.H2O.mass, "H2O");
-        knownMassDeltas.put(NeutralLoss.NH3.mass, "NH3");
-        knownMassDeltas.put(NeutralLoss.CH4OS.mass, "CH4OS");
-        knownMassDeltas.put(NeutralLoss.H3PO4.mass, "H3PO4");
-        knownMassDeltas.put(NeutralLoss.HPO3.mass, "HPO3");
-        knownMassDeltas.put(4d, "18O"); // @TODO: should this be added to neutral losses??
-        knownMassDeltas.put(44d, "(P)EG"); // @TODO: should this be added to neutral losses??
+//        knownMassDeltas.put(NeutralLoss.H2O.mass, "H2O");
+//        knownMassDeltas.put(NeutralLoss.NH3.mass, "NH3");
+//        knownMassDeltas.put(NeutralLoss.CH4OS.mass, "CH4OS");
+//        knownMassDeltas.put(NeutralLoss.H3PO4.mass, "H3PO4");
+//        knownMassDeltas.put(NeutralLoss.HPO3.mass, "HPO3");
+//        knownMassDeltas.put(4d, "18O"); // @TODO: should this be added to neutral losses??
+//        knownMassDeltas.put(44d, "PEG"); // @TODO: should this be added to neutral losses??
 
 
         // add the modifications
@@ -5335,7 +5337,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         for (String ptm : ptmFactory.getPTMs()) {
             ptms.put(ptm, ptmFactory.getPTM(ptm));
         }
-
+        
+        
+        // @TODO: add only currently selected ptms?? (In other words, only the list shown in the PTM tab.)
+        
         // iterate the modifications list and add the non-terminal modifications
         for (int i = 0; i < modificationList.size(); i++) {
             String utilitiesName = modificationList.get(i);
