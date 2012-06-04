@@ -3,6 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.17.2 (June 4. 2012):*
+ * NEW FEATURE: The amino acids Selenocysteine and Pyrrolysine are now supported.
+
+ * FEATURE IMPROVEMENT: Improved the look and feel of the manual de novo sequencing.
+ * FEATURE IMPROVEMENT: The Search Parameters dialog is now resizable.
+ * FEATURE IMPROVEMENT: Missing GO conf files during startup no longer crash the tool.
+
+ * BUG FIX: Fixed a bug in the wrapper where the upper memory limit was not automatically set when using Java 1.7.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.4.23.
+
+----
+
 *Changes in PeptideShaker 0.17.1 (May 30. 2012):*
  * NEW FEATURE: Added an initial Command Line Interface (CLI) functionality. (see [http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI wiki page] for details)
 
@@ -14,6 +27,8 @@
  * BUG FIX: Fixed a bug impairing the modification of the PTM list from the new dialog.
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.22.
+
+Download Count: 19
 
 ----
 
