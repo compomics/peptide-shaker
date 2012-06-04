@@ -3,8 +3,10 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -17,12 +19,7 @@ import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.spectrum.FragmentIonTable;
-import com.compomics.util.gui.spectrum.IntensityHistogram;
-import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
-import com.compomics.util.gui.spectrum.MassErrorPlot;
-import com.compomics.util.gui.spectrum.SequenceFragmentationPanel;
-import com.compomics.util.gui.spectrum.SpectrumPanel;
+import com.compomics.util.gui.spectrum.*;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -607,6 +604,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumSplitPane = new javax.swing.JSplitPane();
         secondarySpectrumPlotsJPanel = new javax.swing.JPanel();
+        spectrumOuterJPanel = new javax.swing.JPanel();
+        spectrumPaddingPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
         slidersPanel = new javax.swing.JPanel();
         accuracySlider = new javax.swing.JSlider();
@@ -1362,8 +1361,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
-                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
+                    .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE))
                 .addContainerGap())
         );
         fragmentIonJPanelLayout.setVerticalGroup(
@@ -1397,10 +1396,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE))
+                .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
         );
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1436,9 +1435,40 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         secondarySpectrumPlotsJPanel.setLayout(new javax.swing.BoxLayout(secondarySpectrumPlotsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         spectrumSplitPane.setTopComponent(secondarySpectrumPlotsJPanel);
 
+        spectrumOuterJPanel.setOpaque(false);
+
+        spectrumPaddingPanel.setOpaque(false);
+
+        javax.swing.GroupLayout spectrumPaddingPanelLayout = new javax.swing.GroupLayout(spectrumPaddingPanel);
+        spectrumPaddingPanel.setLayout(spectrumPaddingPanelLayout);
+        spectrumPaddingPanelLayout.setHorizontalGroup(
+            spectrumPaddingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 417, Short.MAX_VALUE)
+        );
+        spectrumPaddingPanelLayout.setVerticalGroup(
+            spectrumPaddingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 17, Short.MAX_VALUE)
+        );
+
         spectrumJPanel.setOpaque(false);
         spectrumJPanel.setLayout(new java.awt.BorderLayout());
-        spectrumSplitPane.setRightComponent(spectrumJPanel);
+
+        javax.swing.GroupLayout spectrumOuterJPanelLayout = new javax.swing.GroupLayout(spectrumOuterJPanel);
+        spectrumOuterJPanel.setLayout(spectrumOuterJPanelLayout);
+        spectrumOuterJPanelLayout.setHorizontalGroup(
+            spectrumOuterJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(spectrumPaddingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        spectrumOuterJPanelLayout.setVerticalGroup(
+            spectrumOuterJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumOuterJPanelLayout.createSequentialGroup()
+                .addComponent(spectrumPaddingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
+        );
+
+        spectrumSplitPane.setRightComponent(spectrumOuterJPanel);
 
         javax.swing.GroupLayout spectrumContainerJPanelLayout = new javax.swing.GroupLayout(spectrumContainerJPanel);
         spectrumContainerJPanel.setLayout(spectrumContainerJPanelLayout);
@@ -1446,9 +1476,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             spectrumContainerJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumContainerJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+            .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
         spectrumContainerJPanelLayout.setVerticalGroup(
             spectrumContainerJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -3195,6 +3225,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private javax.swing.JLayeredPane spectrumLayeredPane;
     private javax.swing.JPanel spectrumMainJPanel;
     private javax.swing.JPanel spectrumMainPanel;
+    private javax.swing.JPanel spectrumOuterJPanel;
+    private javax.swing.JPanel spectrumPaddingPanel;
     private javax.swing.JSplitPane spectrumSplitPane;
     private javax.swing.JToolBar toolBar;
     // End of variables declaration//GEN-END:variables
@@ -3834,6 +3866,49 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
 
                             spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+
+                            // add de novo sequencing
+//                            IonMatch[] bIons = new IonMatch[currentPeptide.getSequence().length()];
+//                            IonMatch[] yIons = new IonMatch[currentPeptide.getSequence().length()];
+//
+//                            // iterate the annotations and find de novo tags
+//                            for (int i = 0; i < annotations.size(); i++) {
+//
+//                                IonMatch tempMatch = annotations.get(i);
+//
+//                                if (tempMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION && tempMatch.ion.getNeutralLosses().isEmpty()
+//                                        && tempMatch.charge.value == 1) {
+//
+//                                    PeptideFragmentIon fragmentIon = (PeptideFragmentIon) tempMatch.ion;
+//
+//                                    if (fragmentIon.getSubType() == PeptideFragmentIon.B_ION) {
+//                                        bIons[fragmentIon.getNumber() - 1] = tempMatch;
+//                                    } else if (fragmentIon.getSubType() == PeptideFragmentIon.Y_ION) {
+//                                        yIons[fragmentIon.getNumber() - 1] = tempMatch;
+//                                    }
+//                                }
+//                            }
+//
+//                            // add y ion de novo tags
+//                            for (int i = 1; i < yIons.length; i++) {
+//                                if (yIons[i] != null && yIons[i - 1] != null) {
+//                                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
+//                                            "y" + i,
+//                                            currentPeptide.getSequence().substring(currentPeptide.getSequence().length() - i - 1, currentPeptide.getSequence().length() - i),
+//                                            yIons[i - 1].peak.mz, yIons[i].peak.mz, Color.RED, 0.2f, false, true, Color.RED, true, Color.lightGray, 0.2f, 1));
+//                                }
+//                            }
+//
+//                            // add b ion de novo tags
+//                            for (int i = 1; i < bIons.length; i++) {
+//                                if (bIons[i] != null && bIons[i - 1] != null) {
+//                                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
+//                                            "b" + i,
+//                                            currentPeptide.getSequence().substring(i, i + 1),
+//                                            bIons[i - 1].peak.mz, bIons[i].peak.mz, Color.BLUE, 0.2f, false, true, Color.BLUE, true, Color.lightGray, 0.2f, 0.9));
+//                                }
+//                            }
+                            
 
                             // add the spectrum panel to the frame
                             spectrumJPanel.removeAll();
