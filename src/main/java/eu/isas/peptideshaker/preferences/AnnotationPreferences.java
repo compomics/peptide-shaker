@@ -78,6 +78,14 @@ public class AnnotationPreferences implements Serializable {
      * The charge of the currently inspected precursor.
      */
     private int currentPrecursorCharge = 0;
+    /**
+     * If true, the automatic forward ion de novo tags are shown.
+     */
+    private boolean showForwardIonDeNovoTags = false;
+    /**
+     * If true, the automatic rewind ion de novo tags are shown.
+     */
+    private boolean showRewindIonDeNovoTags = false;
 
     /**
      * Constructor.
@@ -409,5 +417,41 @@ public class AnnotationPreferences implements Serializable {
         if (neutralLossesMap == null) {
             neutralLossesMap = new NeutralLossesMap();
         }
+    }
+
+    /**
+     * Returns true if the automatic forward ion de novo tags are to be shown.
+     * 
+     * @return the showForwardIonDeNovoTags
+     */
+    public boolean showForwardIonDeNovoTags() {
+        return showForwardIonDeNovoTags;
+    }
+
+    /**
+     * Set if the automatic forward ion de novo tags are to be shown.
+     * 
+     * @param showForwardIonDeNovoTags the showForwardIonDeNovoTags to set
+     */
+    public void setShowForwardIonDeNovoTags(boolean showFowardIonDeNovoTags) {
+        this.showForwardIonDeNovoTags = showFowardIonDeNovoTags;
+    }
+
+    /**
+     * Returns true if the automatic rewind ion de novo tags are to be shown.
+     * 
+     * @return the showRewindIonDeNovoTags
+     */
+    public boolean showRewindIonDeNovoTags() {
+        return showRewindIonDeNovoTags;
+    }
+
+    /**
+     * Set if the automatic rewind ion de novo tags are to be shown.
+     * 
+     * @param showRewindIonDeNovoTags the showRewindIonDeNovoTags to set
+     */
+    public void setShowRewindIonDeNovoTags(boolean showRewindIonDeNovoTags) {
+        this.showRewindIonDeNovoTags = showRewindIonDeNovoTags;
     }
 }

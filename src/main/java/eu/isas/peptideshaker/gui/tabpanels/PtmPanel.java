@@ -3964,6 +3964,9 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                
+                // add de novo sequencing
+                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
                 spectrumChartJPanel.add(spectrum);
                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
