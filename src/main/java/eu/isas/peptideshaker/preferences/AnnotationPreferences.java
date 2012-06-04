@@ -433,8 +433,8 @@ public class AnnotationPreferences implements Serializable {
      * 
      * @param showForwardIonDeNovoTags the showForwardIonDeNovoTags to set
      */
-    public void setShowForwardIonDeNovoTags(boolean showFowardIonDeNovoTags) {
-        this.showForwardIonDeNovoTags = showFowardIonDeNovoTags;
+    public void setShowForwardIonDeNovoTags(boolean showForwardIonDeNovoTags) {
+        this.showForwardIonDeNovoTags = showForwardIonDeNovoTags;
     }
 
     /**
