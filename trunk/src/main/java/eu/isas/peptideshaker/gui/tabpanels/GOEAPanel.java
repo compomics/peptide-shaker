@@ -170,7 +170,6 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
         // load the go mapping files
         loadSpeciesAndGoDomains();
-        speciesJComboBoxActionPerformed(null);
     }
 
     /**
