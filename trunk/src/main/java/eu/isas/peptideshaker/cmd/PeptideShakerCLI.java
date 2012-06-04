@@ -33,6 +33,7 @@ import java.util.concurrent.Callable;
  * @author Kenny Helsens
  */
 public class PeptideShakerCLI implements Callable {
+
     /**
      * The xml file containing the enzymes.
      */
@@ -50,11 +51,12 @@ public class PeptideShakerCLI implements Callable {
      */
     private static final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
     /**
-     * The Progress messaging handler reports the status throughout all PeptideShaker processes
+     * The Progress messaging handler reports the status throughout all
+     * PeptideShaker processes.
      */
     private WaitingHandler iWaitingHandler = new WaitingHandlerCLIImpl();
     /**
-     * The CLI input parameters to start PeptideShaker from command line
+     * The CLI input parameters to start PeptideShaker from command line.
      */
     private PeptideShakerCLIInputBean iCLIInputBean = null;
     /**
@@ -66,19 +68,19 @@ public class PeptideShakerCLI implements Callable {
      */
     private Sample sample;
     /**
-     * The list of identification files
+     * The list of identification files.
      */
     private ArrayList<File> idFiles = new ArrayList<File>();
     /**
-     * The parameters files found
+     * The parameters files found.
      */
     private ArrayList<File> searchParametersFiles = new ArrayList<File>();
     /**
-     * The list of spectrum files
+     * The list of spectrum files.
      */
     private ArrayList<File> spectrumFiles = new ArrayList<File>();
     /**
-     * The xml modification files found
+     * The xml modification files found.
      */
     private ArrayList<File> modificationFiles = new ArrayList<File>();
     /**
@@ -113,7 +115,10 @@ public class PeptideShakerCLI implements Callable {
 
     /**
      * Construct a new PeptideShakerCLI runnable from a PeptideShakerCLI Bean.
-     * When initialization is successful, calling "run" will start PeptideShaker and write the output files when finished.
+     * When initialization is successful, calling "run" will start PeptideShaker
+     * and write the output files when finished.
+     * 
+     * @param aCLIInputBean the PeptideShakerCLIInputBean
      */
     public PeptideShakerCLI(PeptideShakerCLIInputBean aCLIInputBean) {
         iCLIInputBean = aCLIInputBean;
@@ -137,13 +142,13 @@ public class PeptideShakerCLI implements Callable {
 
         // Set the project details
         projectDetails = new ProjectDetails();
+        
         try {
             projectDetails.setModificationFile(getModificationFile());
             projectDetails.setUserModificationFile(getUserModificationFile());
         } catch (URISyntaxException e) {
             System.err.println(e.getMessage());
         }
-
     }
 
     /**
@@ -195,11 +200,13 @@ public class PeptideShakerCLI implements Callable {
                 + "\n"
                 + "----------------------\n"
                 + "";
-
     }
 
     /**
-     * @param aOptions Apache Commons CLI Options instance to set the possible parameters that can be passed to PeptideShakerCLI.
+     * CreateOptionsCLI. 
+     * 
+     * @param aOptions Apache Commons CLI Options instance to set the possible
+     * parameters that can be passed to PeptideShakerCLI.
      */
     private static void createOptionsCLI(Options aOptions) {
         aOptions.addOption(PeptideShakerCLIParams.FDR_LEVEL_PSM.id, true, PeptideShakerCLIParams.FDR_LEVEL_PSM.description);
@@ -231,28 +238,29 @@ public class PeptideShakerCLI implements Callable {
     }
 
     /**
-     * Returns a File handle from to the mods.xml file in tthe classpath
+     * Returns a File handle from to the mods.xml file in the classpath.
+     * 
+     * @return a File handle from to the mods.xml file in the classpath
      */
     private File getModificationFile() throws URISyntaxException {
         return new File(this.getClass().getResource(MODIFICATIONS_FILE).toURI());
     }
 
     /**
-     * Returns a File handle from to the mods.xml file in tthe classpath
+     * Returns a File handle from to the mods.xml file in the classpath.
+     * 
+     * @return a File handle from to the mods.xml file in the classpath
      */
     private File getUserModificationFile() throws URISyntaxException {
         return new File(this.getClass().getResource(USER_MODIFICATIONS_FILE).toURI());
     }
-
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
         try {
-
             File lEnzymeFile = new File(this.getClass().getResource(ENZYME_FILE).toURI());
-
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
@@ -261,8 +269,8 @@ public class PeptideShakerCLI implements Callable {
     }
 
     /**
-     * Initialize the SearchGUI result folder.
-     * Loads the identification files, the mgf files and other parameter files located in that folder.
+     * Initialize the SearchGUI result folder. Loads the identification files,
+     * the mgf files and other parameter files located in that folder.
      */
     private void importSearchGUIFiles() {
 
@@ -270,8 +278,8 @@ public class PeptideShakerCLI implements Callable {
         FileImporter.setReducedMemory(false);
 
         File lInputFolder = iCLIInputBean.getInput();
-
         File[] lInputList = lInputFolder.listFiles();
+        
         for (File lInputFile : lInputList) {
             if (lInputFile.getName().toLowerCase().endsWith("dat")
                     || lInputFile.getName().toLowerCase().endsWith("omx")
@@ -388,7 +396,6 @@ public class PeptideShakerCLI implements Callable {
                         output += ".\nPlease import it by editing the search parameters.";
                         System.err.print(output);
                     }
-
                 }
             }
 
@@ -488,8 +495,6 @@ public class PeptideShakerCLI implements Callable {
                 e.printStackTrace();
                 System.err.println("FASTA file \'" + temp + "\' not found.\nPlease locate it manually.");
             }
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.err.println(searchGUIFile.getName() + " not found.");
@@ -504,7 +509,7 @@ public class PeptideShakerCLI implements Callable {
      * Imports the mgf files from a searchGUI file.
      *
      * @param searchGUIFile a searchGUI file @returns true of the mgf files were
-     *                      imported successfully
+     * imported successfully
      */
     private void importMgfFiles(File searchGUIFile) {
 
@@ -557,7 +562,7 @@ public class PeptideShakerCLI implements Callable {
     /**
      * Verifies the command line start parameters.
      *
-     * @return
+     * @return true if the startup was valid
      */
     private static boolean isValidStartup(CommandLine aLine) throws IOException {
         // No params.
@@ -582,6 +587,7 @@ public class PeptideShakerCLI implements Callable {
 
         // Folder contains "SearchGUI.properties" file?
         boolean hasSearchGUIProperties = lInputFile.listFiles(new FileFilter() {
+
             @Override
             public boolean accept(File aFile) {
                 return aFile.getName().equals("SearchGUI.properties");
@@ -645,6 +651,8 @@ public class PeptideShakerCLI implements Callable {
     /**
      * Starts the launcher by calling the launch method. Use this as the main
      * class in the jar file.
+     * 
+     * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
@@ -672,16 +680,12 @@ public class PeptideShakerCLI implements Callable {
                 lPrintWriter.close();
 
                 System.exit(0);
-
-
             } else {
                 System.out.println("PeptideShaker-CLI startup parameters ok!");
 
                 PeptideShakerCLIInputBean lCLIBean = new PeptideShakerCLIInputBean(line);
                 PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI(lCLIBean);
                 lPeptideShakerCLI.call();
-
-
             }
         } catch (ParseException e) {
             System.err.println(e.getMessage());
@@ -692,23 +696,22 @@ public class PeptideShakerCLI implements Callable {
 
     @Override
     public String toString() {
-        return "PeptideShakerCLI{" +
-                "annotationPreferences=" + annotationPreferences +
-                ", iWaitingHandler=" + iWaitingHandler +
-                ", fastaFile=" + fastaFile +
-                ", iPeptideShakerCLIInputBean=" + iCLIInputBean +
-                ", experiment=" + experiment +
-                ", sample=" + sample +
-                ", idFiles=" + idFiles +
-                ", searchParametersFiles=" + searchParametersFiles +
-                ", spectrumFiles=" + spectrumFiles +
-                ", modificationFiles=" + modificationFiles +
-                ", ptmFactory=" + ptmFactory +
-                ", enzymeFactory=" + enzymeFactory +
-                ", searchParameters=" + searchParameters +
-                ", idFilter=" + idFilter +
-                ", projectDetails=" + projectDetails +
-                '}';
+        return "PeptideShakerCLI{"
+                + "annotationPreferences=" + annotationPreferences
+                + ", iWaitingHandler=" + iWaitingHandler
+                + ", fastaFile=" + fastaFile
+                + ", iPeptideShakerCLIInputBean=" + iCLIInputBean
+                + ", experiment=" + experiment
+                + ", sample=" + sample
+                + ", idFiles=" + idFiles
+                + ", searchParametersFiles=" + searchParametersFiles
+                + ", spectrumFiles=" + spectrumFiles
+                + ", modificationFiles=" + modificationFiles
+                + ", ptmFactory=" + ptmFactory
+                + ", enzymeFactory=" + enzymeFactory
+                + ", searchParameters=" + searchParameters
+                + ", idFilter=" + idFilter
+                + ", projectDetails=" + projectDetails
+                + '}';
     }
 }
-

@@ -7,27 +7,30 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.HashMap;
 
-
 /**
- * This class is an implementation of the WaitingHandler interface
- * to be used when operating through the Command Line Interface.
+ * This class is an implementation of the WaitingHandler interface to be used
+ * when operating through the Command Line Interface.
+ *
+ * @author Kenny Helsens
  */
 public class WaitingHandlerCLIImpl implements WaitingHandler {
 
-    // Make use of the System Printstreams to log the messages
+    /**
+     * Make use of the System Printstreams to log the messages.
+     */
     private PrintStream err = System.err;
     private PrintStream out = System.out;
-
-    // The running value of the progress monitor
+    /**
+     * The running value of the progress monitor.
+     */
     private int iRunningProgressValue = 0;
     private int iRunningProgressValueSecondary = 0;
-
-    // The upper value of the progress monitor
+    /** 
+     * The upper value of the progress monitor.
+     */
     private int iMaxProgressValue = 1;
     private int iMaxProgressValueSecondary = 1;
-
     private boolean boolSecondaryIntermediate = false;
-
     private boolean boolFinished = false;
     private boolean boolCanceled = false;
     protected String iReport = "";
@@ -189,10 +192,10 @@ public class WaitingHandlerCLIImpl implements WaitingHandler {
      * example a warning or error message. Usually in a separate dialog if a
      * grahical waiting handler is used.
      *
-     * @param message     the message to display
-     * @param title       the title of the message
+     * @param message the message to display
+     * @param title the title of the message
      * @param messageType the message type in the, e.g.,
-     *                    JOptionPane.INFORMATION_MESSAGE
+     * JOptionPane.INFORMATION_MESSAGE
      */
     @Override
     public void displayMessage(String message, String title, int messageType) {
@@ -216,7 +219,6 @@ public class WaitingHandlerCLIImpl implements WaitingHandler {
     public void displayHtmlMessage(JEditorPane messagePane, String title, int messageType) {
         displayMessage(messagePane.getText(), title, messageType);
     }
-
 
     /**
      * Display a message that mgf files are missing.
@@ -243,5 +245,4 @@ public class WaitingHandlerCLIImpl implements WaitingHandler {
         displayMessage("WaitingMessage", text, 1);
 
     }
-
 }
