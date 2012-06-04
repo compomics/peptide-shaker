@@ -324,7 +324,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Search Parameters");
-        setResizable(false);
+        setMinimumSize(new java.awt.Dimension(810, 650));
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -400,7 +400,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fragmentIonAccuracyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(enzymesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(enzymesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(59, 59, 59)
                 .addGroup(enzymeAndFragmentIonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
@@ -601,7 +601,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 .addComponent(expectedModsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                     .addGroup(modProfilePanelLayout.createSequentialGroup()
                         .addComponent(loadProfileBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -618,12 +618,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     .addComponent(availableModsLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(availableModsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                     .addComponent(loadAvailableModsButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
-
-        modProfilePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {availableModsScrollPane, expectedModsScrollPane});
 
         modProfilePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addModifications, clearProfileBtn, loadAvailableModsButton, loadProfileBtn, removeModification, saveAsProfileBtn});
 
@@ -700,12 +698,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         .addGap(10, 10, 10)
                         .addComponent(searchPreferencesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(helpLineLabel)
+                        .addComponent(helpLineLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(185, 185, 185)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(cancelButton))
                     .addComponent(enzymeAndFragmentIonsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(searchGuiParamsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -719,13 +716,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 .addContainerGap()
                 .addComponent(enzymeAndFragmentIonsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(modProfilePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(modProfilePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchGuiParamsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpLineLabel)
-                    .addComponent(searchPreferencesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchPreferencesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(okButton)
                     .addComponent(cancelButton))
                 .addContainerGap())
@@ -735,11 +732,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -1386,6 +1383,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void addAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAvailablePtmJMenuItemActionPerformed
         addModificationsActionPerformed(null);
     }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
@@ -1569,7 +1567,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         }
 
         precursorAccuracy.setText(temp.trim());
-
     }
 
     /**
@@ -1631,7 +1628,15 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         setIons();
         if (searchParameters.getParametersFile() != null) {
+            
+            // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+            
             fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());
+            }
+                    });
         }
     }
 
