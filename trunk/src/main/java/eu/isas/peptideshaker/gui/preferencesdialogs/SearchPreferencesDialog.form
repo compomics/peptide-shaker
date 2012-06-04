@@ -284,7 +284,7 @@
             <Component class="javax.swing.JComboBox" name="ion1Cmb">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new DefaultComboBoxModel(searchParameters.getIons())" type="code"/>
+                  <Connection code="new DefaultComboBoxModel(searchParameters.getForwardIons())" type="code"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Fragment ion types"/>
               </Properties>
@@ -292,7 +292,7 @@
             <Component class="javax.swing.JComboBox" name="ion2Cmb">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="new DefaultComboBoxModel(searchParameters.getIons())" type="code"/>
+                  <Connection code="new DefaultComboBoxModel(searchParameters.getRewindIons())" type="code"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Fragment ion types"/>
               </Properties>

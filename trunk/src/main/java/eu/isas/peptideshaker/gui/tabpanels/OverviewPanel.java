@@ -3,10 +3,8 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -3868,48 +3866,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                             // add de novo sequencing
-//                            IonMatch[] bIons = new IonMatch[currentPeptide.getSequence().length()];
-//                            IonMatch[] yIons = new IonMatch[currentPeptide.getSequence().length()];
-//
-//                            // iterate the annotations and find de novo tags
-//                            for (int i = 0; i < annotations.size(); i++) {
-//
-//                                IonMatch tempMatch = annotations.get(i);
-//
-//                                if (tempMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION && tempMatch.ion.getNeutralLosses().isEmpty()
-//                                        && tempMatch.charge.value == 1) {
-//
-//                                    PeptideFragmentIon fragmentIon = (PeptideFragmentIon) tempMatch.ion;
-//
-//                                    if (fragmentIon.getSubType() == PeptideFragmentIon.B_ION) {
-//                                        bIons[fragmentIon.getNumber() - 1] = tempMatch;
-//                                    } else if (fragmentIon.getSubType() == PeptideFragmentIon.Y_ION) {
-//                                        yIons[fragmentIon.getNumber() - 1] = tempMatch;
-//                                    }
-//                                }
-//                            }
-//
-//                            // add y ion de novo tags
-//                            for (int i = 1; i < yIons.length; i++) {
-//                                if (yIons[i] != null && yIons[i - 1] != null) {
-//                                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
-//                                            "y" + i,
-//                                            currentPeptide.getSequence().substring(currentPeptide.getSequence().length() - i - 1, currentPeptide.getSequence().length() - i),
-//                                            yIons[i - 1].peak.mz, yIons[i].peak.mz, Color.RED, 0.2f, false, true, Color.RED, true, Color.lightGray, 0.2f, 1));
-//                                }
-//                            }
-//
-//                            // add b ion de novo tags
-//                            for (int i = 1; i < bIons.length; i++) {
-//                                if (bIons[i] != null && bIons[i - 1] != null) {
-//                                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
-//                                            "b" + i,
-//                                            currentPeptide.getSequence().substring(i, i + 1),
-//                                            bIons[i - 1].peak.mz, bIons[i].peak.mz, Color.BLUE, 0.2f, false, true, Color.BLUE, true, Color.lightGray, 0.2f, 0.9));
-//                                }
-//                            }
+                            peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrumPanel);
                             
-
                             // add the spectrum panel to the frame
                             spectrumJPanel.removeAll();
                             spectrumJPanel.add(spectrumPanel);
@@ -4589,8 +4547,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        HashMap<String, Color> ptmColors = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors();
-
         try {
 
             // update the peptide table
@@ -4605,6 +4561,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 updateSequenceCoverage(proteinMatch.getMainMatch());
             }
+            
+            // reset the row selections
+            updateSelection();
 
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

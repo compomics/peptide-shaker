@@ -170,6 +170,35 @@
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="deNovoMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="De novo"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="forwardIonsDeNovoCheckBoxMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="f-ions"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="forwardIonsDeNovoCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="rewindIonsDeNovoCheckBoxMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="r-ions"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rewindIonsDeNovoCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="splitterMenu9">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="|"/>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="settingsMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Settings"/>

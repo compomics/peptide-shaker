@@ -366,10 +366,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         jLabel2.setText("Fragment Ion Types:");
 
-        ion1Cmb.setModel(new DefaultComboBoxModel(searchParameters.getIons()));
+        ion1Cmb.setModel(new DefaultComboBoxModel(searchParameters.getForwardIons()));
         ion1Cmb.setToolTipText("Fragment ion types");
 
-        ion2Cmb.setModel(new DefaultComboBoxModel(searchParameters.getIons()));
+        ion2Cmb.setModel(new DefaultComboBoxModel(searchParameters.getRewindIons()));
         ion2Cmb.setToolTipText("Fragment ion types");
 
         jLabel9.setText("Prec. Tol.:");
@@ -805,7 +805,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
             peptideShakerGUI.setModificationProfileFile(profileFile);
-            peptideShakerGUI.setDataSaved(false); //@TODO this should be set to false only if a change was made
+            peptideShakerGUI.setDataSaved(false); //@TODO: this should be set to false only if a change was made
             
             if (newDialog != null) {
                 if (fileTxt.getText().length() > 0) { 

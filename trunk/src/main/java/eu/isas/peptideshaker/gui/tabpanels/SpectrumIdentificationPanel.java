@@ -3155,6 +3155,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                
+                                // add de novo sequencing
+                                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
                             }
@@ -3199,6 +3202,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                
+                                // add de novo sequencing
+                                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
 
@@ -3244,6 +3250,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                
+                                // add de novo sequencing
+                                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
                             }

@@ -19,6 +19,7 @@ import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.spectrum.*;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -583,6 +584,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         splitterMenu2 = new javax.swing.JMenu();
         chargeMenu = new javax.swing.JMenu();
         splitterMenu3 = new javax.swing.JMenu();
+        deNovoMenu = new javax.swing.JMenu();
+        forwardIonsDeNovoCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        rewindIonsDeNovoCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        splitterMenu9 = new javax.swing.JMenu();
         settingsMenu = new javax.swing.JMenu();
         allCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         barsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -805,6 +810,30 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         splitterMenu3.setText("|");
         splitterMenu3.setEnabled(false);
         annotationMenuBar.add(splitterMenu3);
+
+        deNovoMenu.setText("De novo");
+
+        forwardIonsDeNovoCheckBoxMenuItem.setText("f-ions");
+        forwardIonsDeNovoCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forwardIonsDeNovoCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        deNovoMenu.add(forwardIonsDeNovoCheckBoxMenuItem);
+
+        rewindIonsDeNovoCheckBoxMenuItem.setText("r-ions");
+        rewindIonsDeNovoCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rewindIonsDeNovoCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        deNovoMenu.add(rewindIonsDeNovoCheckBoxMenuItem);
+
+        annotationMenuBar.add(deNovoMenu);
+
+        splitterMenu9.setText("|");
+        splitterMenu9.setEnabled(false);
+        annotationMenuBar.add(splitterMenu9);
 
         settingsMenu.setText("Settings");
         settingsMenu.setEnabled(false);
@@ -2576,6 +2605,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_processingParametersMenuItemActionPerformed
 
     /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void forwardIonsDeNovoCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardIonsDeNovoCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_forwardIonsDeNovoCheckBoxMenuItemActionPerformed
+
+    /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void rewindIonsDeNovoCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rewindIonsDeNovoCheckBoxMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_rewindIonsDeNovoCheckBoxMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2691,6 +2734,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JCheckBoxMenuItem cIonCheckBoxMenuItem;
     private javax.swing.JMenu chargeMenu;
+    private javax.swing.JMenu deNovoMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
@@ -2707,6 +2751,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
+    private javax.swing.JCheckBoxMenuItem forwardIonsDeNovoCheckBoxMenuItem;
     private javax.swing.JMenuItem gettingStartedMenuItem;
     private javax.swing.JPanel goJPanel;
     private javax.swing.JPanel gradientPanel;
@@ -2760,6 +2805,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
     private javax.swing.JCheckBoxMenuItem reporterIonsCheckMenu;
+    private javax.swing.JCheckBoxMenuItem rewindIonsDeNovoCheckBoxMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
@@ -2778,6 +2824,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu splitterMenu6;
     private javax.swing.JMenu splitterMenu7;
     private javax.swing.JMenu splitterMenu8;
+    private javax.swing.JMenu splitterMenu9;
     private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JMenuItem startSearchGuiMenuItem;
     private javax.swing.JPanel statsJPanel;
@@ -3021,6 +3068,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferences.addIonType(Ion.IonType.IMMONIUM_ION);
         annotationPreferences.addIonType(Ion.IonType.REPORTER_ION);
         annotationPreferences.setFragmentIonAccuracy(searchParameters.getFragmentIonAccuracy());
+        
+        if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
+            forwardIonsDeNovoCheckBoxMenuItem.setText("a-ions");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
+            forwardIonsDeNovoCheckBoxMenuItem.setText("b-ions");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
+            forwardIonsDeNovoCheckBoxMenuItem.setText("c-ions");
+        }
+        
+        forwardIonsDeNovoCheckBoxMenuItem.repaint();
+        
+        if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
+            rewindIonsDeNovoCheckBoxMenuItem.setText("x-ions");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
+            rewindIonsDeNovoCheckBoxMenuItem.setText("y-ions");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
+            rewindIonsDeNovoCheckBoxMenuItem.setText("z-ions");
+        }
+        
+        rewindIonsDeNovoCheckBoxMenuItem.repaint();
     }
 
     /**
@@ -3324,9 +3391,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
     }
-    
+
     /**
-     * Returns the initial processing preferences
+     * Returns the initial processing preferences.
+     *
      * @return the initial processing preferences
      */
     public ProcessingPreferences getProcessingPreferences() {
@@ -3337,7 +3405,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Sets the initial processing preferences
+     * Sets the initial processing preferences.
+     *
      * @param processingPreferences the initial processing preferences
      */
     public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
@@ -4505,6 +4574,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
         annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
 
+        annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
+        annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
+
         updateSpectrumAnnotations();
         setDataSaved(false);
     }
@@ -5337,10 +5409,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         for (String ptm : ptmFactory.getPTMs()) {
             ptms.put(ptm, ptmFactory.getPTM(ptm));
         }
-        
-        
+
+
         // @TODO: add only currently selected ptms?? (In other words, only the list shown in the PTM tab.)
-        
+
         // iterate the modifications list and add the non-terminal modifications
         for (int i = 0; i < modificationList.size(); i++) {
             String utilitiesName = modificationList.get(i);
@@ -5999,24 +6071,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             debugWriter = new BufferedWriter(new FileWriter(debugFile));
 
                             for (double rtKey : fileErrors.getPrecursorRTList()) {
-                                
+
                                 debugWriter.write(rtKey + "\nm/z");
-                                
+
                                 for (double mzKey : fileErrors.getFragmentMZList(rtKey)) {
 
-                                debugWriter.write("\t" + mzKey);
-                                
+                                    debugWriter.write("\t" + mzKey);
+
                                 }
                                 debugWriter.write("\nError");
-                                
+
                                 for (double mzKey : fileErrors.getFragmentMZList(rtKey)) {
 
-                                debugWriter.write("\t" + fileErrors.getFragmentMzError(rtKey, mzKey));
-                                
+                                    debugWriter.write("\t" + fileErrors.getFragmentMzError(rtKey, mzKey));
+
                                 }
                                 debugWriter.write("\n");
-                                
-                                
+
+
                             }
                             debugWriter.flush();
                             debugWriter.close();
@@ -6142,6 +6214,71 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
                 }
             }, "SearchGUI").start();
+        }
+    }
+
+    /**
+     * Add reference areas annotating the de novo tags.
+     * 
+     * @param currentPeptide the current peptide sequence
+     * @param annotations the current fragment ion annotations
+     * @param spectrumPanel the spectrum panel to add the reference area to 
+     */
+    public void addAutomaticDeNovoSequencing(Peptide currentPeptide, ArrayList<IonMatch> annotations, SpectrumPanel spectrumPanel) {
+
+        int forwardIon = searchParameters.getIonSearched1();
+        int rewindIon = searchParameters.getIonSearched2();
+        
+        IonMatch[] forwardIons = new IonMatch[currentPeptide.getSequence().length()];
+        IonMatch[] rewindIons = new IonMatch[currentPeptide.getSequence().length()];
+
+        // iterate the annotations and find the de novo tags
+        for (int i = 0; i < annotations.size(); i++) {
+
+            IonMatch tempMatch = annotations.get(i);
+
+            if (tempMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION 
+                    && tempMatch.ion.getNeutralLosses().isEmpty()
+                    && tempMatch.charge.value == 1) {
+
+                PeptideFragmentIon fragmentIon = (PeptideFragmentIon) tempMatch.ion;
+
+                if (fragmentIon.getSubType() == forwardIon) {
+                    forwardIons[fragmentIon.getNumber() - 1] = tempMatch;
+                } else if (fragmentIon.getSubType() == rewindIon) {
+                    rewindIons[fragmentIon.getNumber() - 1] = tempMatch;
+                }
+            }
+        }
+
+        // add rewind ion de novo tags (x, y or c)
+        if (annotationPreferences.showRewindIonDeNovoTags()) {
+            
+            Color annotationColor = SpectrumPanel.determineFragmentIonColor(Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, rewindIon), false);
+            
+            for (int i = 1; i < rewindIons.length; i++) {
+                if (rewindIons[i] != null && rewindIons[i - 1] != null) {
+                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
+                            "r" + i,
+                            currentPeptide.getSequence().substring(currentPeptide.getSequence().length() - i - 1, currentPeptide.getSequence().length() - i),
+                            rewindIons[i - 1].peak.mz, rewindIons[i].peak.mz, annotationColor, 0.2f, false, true, annotationColor, true, Color.lightGray, 0.2f, 1));
+                }
+            }
+        }
+
+        // add forward ion de novo tags (a, b or c)
+        if (annotationPreferences.showForwardIonDeNovoTags()) {
+            
+            Color annotationColor = SpectrumPanel.determineFragmentIonColor(Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, forwardIon), false);
+            
+            for (int i = 1; i < forwardIons.length; i++) {
+                if (forwardIons[i] != null && forwardIons[i - 1] != null) {
+                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
+                            "f" + i,
+                            currentPeptide.getSequence().substring(i, i + 1),
+                            forwardIons[i - 1].peak.mz, forwardIons[i].peak.mz, annotationColor, 0.2f, false, true, annotationColor, true, Color.lightGray, 0.2f, 0.9));
+                }
+            }
         }
     }
 }
