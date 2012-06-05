@@ -38,17 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import javax.swing.ImageIcon;
-import javax.swing.JColorChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -83,7 +73,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
      */
     private enum TableIndex {
 
-        MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE, RELATED_PSMS_TABLE
+        MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE, RELATED_PSMS_TABLE, PTM_TABLE, A_SCORES_TABLE, DELTA_SCORES_TABLE
     };
     /**
      * The currently selected row in the PTM table.
@@ -198,15 +188,15 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
     }
-    
+
     /**
-     * Adds the gradient score colors for the A and Delta score tables. 
+     * Adds the gradient score colors for the A and Delta score tables.
      */
     private void addGradientScoreColors() {
-        
+
         final Color startColor = Color.WHITE;
         final Color endColor = Color.BLUE;
-        
+
         JPanel deltaScoreGradientJPanel = new JPanel() {
 
             @Override
@@ -216,11 +206,11 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
                 GradientPaint gp = new GradientPaint(
-                        0, getHeight()/2,
+                        0, getHeight() / 2,
                         startColor,
-                        getWidth(), getHeight()/2,
+                        getWidth(), getHeight() / 2,
                         endColor);
-                        
+
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
 
@@ -230,7 +220,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         deltaScoreGradientJPanel.setOpaque(false);
         deltaScoreGradientPanel.add(deltaScoreGradientJPanel);
-        
+
         JPanel aScoreGradientJPanel = new JPanel() {
 
             @Override
@@ -240,11 +230,11 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
                 GradientPaint gp = new GradientPaint(
-                        0, getHeight()/2,
+                        0, getHeight() / 2,
                         startColor,
-                        getWidth(), getHeight()/2,
+                        getWidth(), getHeight() / 2,
                         endColor);
-                        
+
 
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -2918,44 +2908,68 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         JPopupMenu popupMenu = new JPopupMenu();
 
+        JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideShakerGUI.exportSpectrumAsFigure();
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Spectrum As MGF");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideShakerGUI.exportSpectrumAsMgf();
+            }
+        });
+
+        popupMenu.add(menuItem);
+
         int index = spectrumTabbedPane.getSelectedIndex();
+        
+        if (index == 0) { // ptm table
 
-        if (index == 2) { // spectrum
+            // @TODO: implement me!
+            
+//            menuItem = new JMenuItem("Table to Clipboard");
+//            menuItem.addActionListener(new java.awt.event.ActionListener() {
+//
+//                public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                    copyTableContentToClipboard(TableIndex.PTM_TABLE);
+//                }
+//            });
+//
+//            popupMenu.add(new JSeparator());
+//            popupMenu.add(menuItem);
 
-            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+        } else if (index == 1) { // a-scores table
+
+            menuItem = new JMenuItem("Table to Clipboard");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsFigure();
+                    copyTableContentToClipboard(TableIndex.A_SCORES_TABLE);
                 }
             });
 
+            popupMenu.add(new JSeparator());
             popupMenu.add(menuItem);
 
-            menuItem = new JMenuItem("Spectrum As MGF");
+        } else if (index == 2) { // delta scores table
+
+            menuItem = new JMenuItem("Table to Clipboard");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
+                    copyTableContentToClipboard(TableIndex.DELTA_SCORES_TABLE);
                 }
             });
 
+            popupMenu.add(new JSeparator());
             popupMenu.add(menuItem);
-
-        } else if (index == 1) { // ptm table
-
-            JMenuItem menuItem = new JMenuItem("Spectrum As MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-        } else if (index == 0) {
-            // @TODO: implement export of the mod profiles
         }
 
         popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
@@ -3964,7 +3978,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                
+
                 // add de novo sequencing
                 peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
@@ -4377,12 +4391,12 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         try {
                             Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey); // @TODO: there is sometimes an IOException when closing the tool...
-                            
+
                             if (precursor != null) {
                                 return precursor.getRt();
                             } else {
                                 return null;
-                            }   
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                             return null;
@@ -4708,7 +4722,10 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE
                 || tableIndex == TableIndex.RELATED_PEPTIDES_TABLE
                 || tableIndex == TableIndex.MODIFIED_PSMS_TABLE
-                || tableIndex == TableIndex.RELATED_PSMS_TABLE) {
+                || tableIndex == TableIndex.RELATED_PSMS_TABLE
+                || tableIndex == TableIndex.PTM_TABLE
+                || tableIndex == TableIndex.A_SCORES_TABLE
+                || tableIndex == TableIndex.DELTA_SCORES_TABLE) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
             progressDialog.setIndeterminate(true);
@@ -4743,6 +4760,13 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                             clipboardString = getPsmTableAsString(true);
                         } else if (tableIndex == TableIndex.RELATED_PSMS_TABLE) {
                             clipboardString = getPsmTableAsString(false);
+                        } else if (tableIndex == TableIndex.PTM_TABLE) {
+                            // @TODO: implement me!!
+                            clipboardString = "not yet implemented...";
+                        } else if (tableIndex == TableIndex.A_SCORES_TABLE) {
+                            clipboardString = Util.tableToText(psmAScoresTable, "\t", progressDialog, false);
+                        } else if (tableIndex == TableIndex.DELTA_SCORES_TABLE) {
+                            clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
                         }
 
                         if (!cancelProgress) {
