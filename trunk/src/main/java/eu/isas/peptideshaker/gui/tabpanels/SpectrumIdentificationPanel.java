@@ -43,6 +43,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -228,8 +230,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
         mascotTable.getTableHeader().setReorderingAllowed(false);
         xTandemTable.getTableHeader().setReorderingAllowed(false);
 
-        //spectrumTable.setAutoCreateRowSorter(true); // @TODO: perhaps this should be enabled later
+        spectrumTable.setAutoCreateRowSorter(true);
         searchEngineTable.setAutoCreateRowSorter(true);
+
+        // make sure that the user is made aware that the tool is doing something during sorting of the spectrum table
+        spectrumTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+
+                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    spectrumTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    
+                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    spectrumTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                }
+            }
+        });
 
         peptideShakerJTable.getColumn(" ").setMinWidth(30);
         peptideShakerJTable.getColumn(" ").setMaxWidth(30);
@@ -2570,7 +2595,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
-                        
+
                         showSparkLines(peptideShakerGUI.showSparklines());
 
                         searchEngineTable.revalidate();
@@ -3155,7 +3180,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                                
+
                                 // add de novo sequencing
                                 peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
@@ -3202,7 +3227,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                                
+
                                 // add de novo sequencing
                                 peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 
@@ -3250,7 +3275,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                                
+
                                 // add de novo sequencing
                                 peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
 

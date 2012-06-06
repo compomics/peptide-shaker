@@ -39,6 +39,8 @@ import java.text.DecimalFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -303,6 +305,28 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), true));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
+
+        // make sure that the user is made aware that the tool is doing something during sorting of the protein table
+        proteinTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+
+                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                }
+            }
+        });
     }
 
     /**
@@ -881,6 +905,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      */
     private void updateGoPlots() {
 
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
         DefaultCategoryDataset frquencyPlotDataset = new DefaultCategoryDataset();
         DefaultCategoryDataset significancePlotDataset = new DefaultCategoryDataset();
         ArrayList<Color> significanceColors = new ArrayList<Color>();
@@ -1038,6 +1064,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         goSignificancePlotPanel.repaint();
 
         updatePlotMarkers();
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -2421,6 +2449,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      */
     private void updatePlotMarkers() {
 
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
         if (signChartPanel != null && goMappingsTable.getSelectedRow() != -1) {
 
             removePlotMarkers();
@@ -2438,7 +2468,10 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         } else {
             ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
         }
+
         plotPanel.repaint();
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -2666,6 +2699,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
         // @TODO: order the proteins in some way?
 
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
         if (goMappingsTable.getSelectedRow() != -1) {
 
             // clear the old data
@@ -2695,6 +2730,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
             }
 
             setProteinGoTableProperties();
+            ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
             if (proteinTable.getRowCount() > 0) {
 
@@ -2712,6 +2748,8 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                 peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             }
         }
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     @Override
