@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.17.3 (June 7. 2012):*
+ * NEW FEATURE: Added automatic de novo sequencing.
+
+ * FEATURE IMPROVEMENT: Re-enabled row sorting in the spectrum table in the Spectrum IDs tab.
+ * FEATURE IMPROVEMENT: Sorting by clicking the table headers now results in the cursor changing into a waiting cursor and the PeptideShaker icon turning orange.
+ * FEATURE IMPROVEMENT: The size of the accession column in the Fractions tab is now set to the same width as the other tabs.
+ * FEATURE IMPROVEMENT: Updated the default human GO mappings to Ensembl version 67.
+
+ * BUG FIX: Fixed a bug where the row selection in the Overview tab was not reset correctly after closing the SearchParameters dialog.
+ * BUG FIX: Fixed some bugs with the contextual export options for the spectrum panel in the PTM tab.
+ * BUG FIX: Fixed a bug in the GO tab that could result in issues if switching between rows in the GO table too fast.
+
+----
+
 *Changes in PeptideShaker 0.17.2 (June 4. 2012):*
  * NEW FEATURE: The amino acids Selenocysteine and Pyrrolysine are now supported.
 
@@ -13,6 +27,8 @@
  * BUG FIX: Fixed a bug in the wrapper where the upper memory limit was not automatically set when using Java 1.7.
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.23.
+
+Download Count: 16
 
 ----
 
