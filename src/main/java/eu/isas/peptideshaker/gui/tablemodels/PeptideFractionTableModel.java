@@ -93,17 +93,6 @@ public class PeptideFractionTableModel extends DefaultTableModel {
         }
         
         Collections.sort(fileNames);
-
-//        fileNames.add("COFRADIC Cys");
-//        fractionNames.put("COFRADIC Cys", "COFRADIC Cys");
-//        fileNames.add("COFRADIC Met");
-//        fractionNames.put("COFRADIC Met", "COFRADIC Met");
-//        fileNames.add("HILIC");
-//        fractionNames.put("HILIC", "HILIC");
-//        fileNames.add("IEF");
-//        fractionNames.put("IEF", "IEF");
-//        fileNames.add("SCX");
-//        fractionNames.put("SCX", "SCX");
     }
 
     /**

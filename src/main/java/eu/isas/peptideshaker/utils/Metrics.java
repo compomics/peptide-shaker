@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class contains metrics from the dataset for later use.
@@ -10,6 +11,7 @@ import java.util.ArrayList;
  * into something more descriptive like DatasetMetrics
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class Metrics implements Serializable {
 
@@ -63,6 +65,11 @@ public class Metrics implements Serializable {
      * List of modifications found in the dataset
      */
     private ArrayList<String> foundModifications = null;
+    /**
+     * The psm matches for each fraction for each peptide. Key: 'fraction
+     * name'_'peptide key'. Values: arraylist of spectrum keys.
+     */
+    private HashMap<String, ArrayList<String>> fractionPsmMatches;
 
     /**
      * Constructor.
@@ -235,19 +242,19 @@ public class Metrics implements Serializable {
     public void setProteinKeys(ArrayList<String> proteinKeys) {
         this.proteinKeys = proteinKeys;
     }
-    
+
     /**
      * Sets the max protein key length.
-     * 
+     *
      * @param maxProteinKeyLength the length to set
      */
     public void setMaxProteinKeyLength(Integer maxProteinKeyLength) {
         this.maxProteinKeyLength = maxProteinKeyLength;
     }
-    
+
     /**
      * Returns the max protein key length.
-     * 
+     *
      * @return the max protein key length
      */
     public Integer getMaxProteinKeyLength() {
@@ -292,5 +299,29 @@ public class Metrics implements Serializable {
      */
     public void setFoundModifications(ArrayList<String> foundModifications) {
         this.foundModifications = foundModifications;
+    }
+
+    /**
+     * Set the fraction psm matches. Key: 'fraction name'_'peptide key'. Values:
+     * arraylist of spectrum keys.
+     *
+     * @param fractionPsmMatches the fraction psm matches
+     */
+    public void setFractionPsmMatches(HashMap<String, ArrayList<String>> fractionPsmMatches) {
+        this.fractionPsmMatches = fractionPsmMatches;
+    }
+
+    /**
+     * Returns the list of fraction psm matches. Key: 'fraction name'_'peptide
+     * key'. Values: arraylist of spectrum keys.
+     *
+     * @return he list of fraction psm matches
+     */
+    public HashMap<String, ArrayList<String>> getFractionPsmMatches() {
+        if (fractionPsmMatches != null) {
+            return fractionPsmMatches;
+        } else {
+            return new HashMap<String, ArrayList<String>>();
+        }
     }
 }

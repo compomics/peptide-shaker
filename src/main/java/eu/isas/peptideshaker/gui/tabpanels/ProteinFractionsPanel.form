@@ -146,20 +146,20 @@
               <SubComponents>
                 <Container class="javax.swing.JTabbedPane" name="peptidesTabbedPane">
                   <Properties>
-                    <Property name="selectedIndex" type="int" value="1"/>
+                    <Property name="selectedIndex" type="int" value="2"/>
                     <Property name="tabPlacement" type="int" value="3"/>
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
-                    <Container class="javax.swing.JPanel" name="plotOuterPanel">
+                    <Container class="javax.swing.JPanel" name="spectraPlotOuterPanel">
                       <Properties>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Plot">
-                            <Property name="tabTitle" type="java.lang.String" value="Plot"/>
+                          <JTabbedPaneConstraints tabName="Spectrum Plot">
+                            <Property name="tabTitle" type="java.lang.String" value="Spectrum Plot"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -167,20 +167,57 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="plotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
+                              <Component id="spectraPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="plotPanel" pref="142" max="32767" attributes="0"/>
+                                  <Component id="spectraPlotPanel" pref="142" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Container class="javax.swing.JPanel" name="plotPanel">
+                        <Container class="javax.swing.JPanel" name="spectraPlotPanel">
+                          <Properties>
+                            <Property name="opaque" type="boolean" value="false"/>
+                          </Properties>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="peptidePlotOuterPanel">
+                      <Properties>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Peptide Plot">
+                            <Property name="tabTitle" type="java.lang.String" value="Peptide Plot"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="peptidePlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="peptidePlotPanel" pref="142" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Container class="javax.swing.JPanel" name="peptidePlotPanel">
                           <Properties>
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
@@ -195,8 +232,8 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Table">
-                            <Property name="tabTitle" type="java.lang.String" value="Table"/>
+                          <JTabbedPaneConstraints tabName="Peptide Table">
+                            <Property name="tabTitle" type="java.lang.String" value="Peptide Table"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
