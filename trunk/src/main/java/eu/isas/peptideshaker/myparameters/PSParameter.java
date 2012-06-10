@@ -503,7 +503,7 @@ public class PSParameter implements UrParameter {
      * Returns the fraction confidence.
      *
      * @param fraction
-     * @return the fraction confidence 
+     * @return the fraction confidence
      */
     public double getFractionConfidence(String fraction) {
         return 100 * (1 - fractionPEP.get(fraction));

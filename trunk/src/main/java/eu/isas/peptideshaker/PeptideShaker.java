@@ -1257,42 +1257,66 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIntermediate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
 
-        HashMap<String, Double> fractionScores;
-        String fraction;
         ArrayList<String> foundModifications = new ArrayList<String>();
+        HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
 
         for (String peptideKey : identification.getPeptideIdentification()) {
+            
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
                     foundModifications.add(modification);
                 }
             }
+            
             double probaScore = 1;
-            fractionScores = new HashMap<String, Double>();
+            HashMap<String, Double> fractionScores = new HashMap<String, Double>();
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            
+            // get the fraction scores
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                
                 psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
-                fraction = Spectrum.getSpectrumFile(spectrumKey);
+                String fraction = Spectrum.getSpectrumFile(spectrumKey);
+                
                 if (!fractionScores.containsKey(fraction)) {
                     fractionScores.put(fraction, 1.0);
                 }
+                
                 fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getPsmProbability());
+                
+                if (!fractionPsmMatches.containsKey(fraction + "_" + peptideKey)) {
+                    ArrayList<String> spectrumMatches = new ArrayList<String>(1);
+                    spectrumMatches.add(spectrumKey);
+                    fractionPsmMatches.put(fraction + "_" + peptideKey, spectrumMatches);
+                } else {
+                    fractionPsmMatches.get(fraction + "_" + peptideKey).add(spectrumKey);
+                }
             }
+            
             psParameter = new PSParameter();
             psParameter.setPeptideProbabilityScore(probaScore);
             psParameter.setSecificMapKey(peptideMap.getKey(peptideMatch));
+            
+            // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
+            
             identification.addMatchParameter(peptideKey, psParameter);
             peptideMap.addPoint(probaScore, peptideMatch);
 
             waitingHandler.increaseSecondaryProgressValue();
+            
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
+        
+        // set the fraction psm matches
+        metrics.setFractionPsmMatches(fractionPsmMatches);
+        
+        // set the ptms
         metrics.setFoundModifications(foundModifications);
 
         waitingHandler.setSecondaryProgressDialogIntermediate(true);
@@ -1340,16 +1364,12 @@ public class PeptideShaker {
         waitingHandler.setWaitingText("Filling Protein Map. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        double probaScore;
         PSParameter psParameter = new PSParameter();
-        ProteinMatch proteinMatch;
 
         int max = identification.getProteinIdentification().size();
 
         waitingHandler.setSecondaryProgressDialogIntermediate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
-
-        HashMap<String, Double> fractionScores;
 
         for (String proteinKey : identification.getProteinIdentification()) {
 
@@ -1358,10 +1378,11 @@ public class PeptideShaker {
                 return;
             }
 
-            fractionScores = new HashMap<String, Double>();
-
-            probaScore = 1;
-            proteinMatch = identification.getProteinMatch(proteinKey);
+            HashMap<String, Double> fractionScores = new HashMap<String, Double>();
+            double probaScore = 1;
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            
+            // get the fraction scores
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
                 probaScore = probaScore * psParameter.getPeptideProbability();
@@ -1372,11 +1393,15 @@ public class PeptideShaker {
                     fractionScores.put(fraction, fractionScores.get(fraction) * psParameter.getFractionPEP(fraction));
                 }
             }
+            
             psParameter = new PSParameter();
             psParameter.setProteinProbabilityScore(probaScore);
+            
+            // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
+            
             identification.addMatchParameter(proteinKey, psParameter);
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }

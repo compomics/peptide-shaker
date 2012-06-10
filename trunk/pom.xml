@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.17.3</version.number>
+        <version.number>0.17.4</version.number>
     </properties>
 
 
@@ -271,7 +271,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.4.23</version>
+            <version>3.4.25</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
