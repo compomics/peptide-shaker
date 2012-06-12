@@ -9,65 +9,68 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * This class groups the display filter preferences
+ * This class groups the display filter preferences.
  *
  * @author Marc Vaudel
  */
 public class FilterPreferences implements Serializable {
 
     /**
-     * Serial number for serialization compatibility
+     * Serial number for serialization compatibility.
      */
     static final long serialVersionUID = -348520469065277089L;
     /**
-     * The protein star filters
+     * The protein star filters.
      */
     private HashMap<String, ProteinFilter> proteinStarFilters = new HashMap<String, ProteinFilter>();
     /**
-     * The protein hide filters
+     * The protein hide filters.
      */
     private HashMap<String, ProteinFilter> proteinHideFilters = new HashMap<String, ProteinFilter>();
     /**
-     * The peptide star filters
+     * The peptide star filters.
      */
     private HashMap<String, PeptideFilter> peptideStarFilters = new HashMap<String, PeptideFilter>();
     /**
-     * The peptide hide filters
+     * The peptide hide filters.
      */
     private HashMap<String, PeptideFilter> peptideHideFilters = new HashMap<String, PeptideFilter>();
     /**
-     * The psm star filters
+     * The psm star filters.
      */
     private HashMap<String, PsmFilter> psmStarFilters = new HashMap<String, PsmFilter>();
     /**
-     * The psm hide filters
+     * The psm hide filters.
      */
     private HashMap<String, PsmFilter> psmHideFilters = new HashMap<String, PsmFilter>();
+
     /**
-     * Constructors
+     * Constructors.
      */
     public FilterPreferences() {
     }
 
-
     /**
-     * Returns the protein hide filters
-     * @return the protein hide filters 
+     * Returns the protein hide filters.
+     *
+     * @return the protein hide filters
      */
     public HashMap<String, ProteinFilter> getProteinHideFilters() {
         return proteinHideFilters;
     }
 
     /**
-     * Sets  the protein hide filters
-     * @param proteinHideFilters  the protein hide filters
+     * Sets the protein hide filters.
+     *
+     * @param proteinHideFilters the protein hide filters
      */
     public void setProteinHideFilters(HashMap<String, ProteinFilter> proteinHideFilters) {
         this.proteinHideFilters = proteinHideFilters;
     }
 
     /**
-     * Returns the protein star filters
+     * Returns the protein star filters.
+     *
      * @return the protein star filters
      */
     public HashMap<String, ProteinFilter> getProteinStarFilters() {
@@ -75,7 +78,8 @@ public class FilterPreferences implements Serializable {
     }
 
     /**
-     * Sets the protein star filters
+     * Sets the protein star filters.
+     *
      * @param proteinStarFilters the protein star filters
      */
     public void setProteinStarFilters(HashMap<String, ProteinFilter> proteinStarFilters) {
@@ -83,23 +87,26 @@ public class FilterPreferences implements Serializable {
     }
 
     /**
-     * Returns the peptide hide filters
-     * @return the peptide hide filters 
+     * Returns the peptide hide filters.
+     *
+     * @return the peptide hide filters
      */
     public HashMap<String, PeptideFilter> getPeptideHideFilters() {
         return peptideHideFilters;
     }
 
     /**
-     * Sets  the peptide hide filters
-     * @param peptideHideFilters  the peptide hide filters
+     * Sets the peptide hide filters.
+     *
+     * @param peptideHideFilters the peptide hide filters
      */
     public void setPeptideHideFilters(HashMap<String, PeptideFilter> peptideHideFilters) {
         this.peptideHideFilters = peptideHideFilters;
     }
 
     /**
-     * Returns the peptide star filters
+     * Returns the peptide star filters.
+     *
      * @return the peptide star filters
      */
     public HashMap<String, PeptideFilter> getPeptideStarFilters() {
@@ -107,7 +114,8 @@ public class FilterPreferences implements Serializable {
     }
 
     /**
-     * Sets the peptide star filters
+     * Sets the peptide star filters.
+     *
      * @param peptideStarFilters the peptide star filters
      */
     public void setPeptideStarFilters(HashMap<String, PeptideFilter> peptideStarFilters) {
@@ -115,23 +123,26 @@ public class FilterPreferences implements Serializable {
     }
 
     /**
-     * Returns the psm hide filters
-     * @return the psm hide filters 
+     * Returns the psm hide filters.
+     *
+     * @return the psm hide filters
      */
     public HashMap<String, PsmFilter> getPsmHideFilters() {
         return psmHideFilters;
     }
 
     /**
-     * Sets  the psm hide filters
-     * @param psmHideFilters  the psm hide filters
+     * Sets the psm hide filters.
+     *
+     * @param psmHideFilters the psm hide filters
      */
     public void setPsmHideFilters(HashMap<String, PsmFilter> psmHideFilters) {
         this.psmHideFilters = psmHideFilters;
     }
 
     /**
-     * Returns the psm star filters
+     * Returns the psm star filters.
+     *
      * @return the psm star filters
      */
     public HashMap<String, PsmFilter> getPsmStarFilters() {
@@ -139,15 +150,18 @@ public class FilterPreferences implements Serializable {
     }
 
     /**
-     * Sets the psm star filters
+     * Sets the psm star filters.
+     *
      * @param psmStarFilters the psm star filters
      */
     public void setPsmStarFilters(HashMap<String, PsmFilter> psmStarFilters) {
         this.psmStarFilters = psmStarFilters;
     }
-    
+
     /**
-     * Adds a starring filter (previous filter with same name will silently be overwritten)
+     * Adds a starring filter (previous filter with same name will silently be
+     * overwritten).
+     *
      * @param matchFilter the new filter
      */
     public void addStarringFilter(MatchFilter matchFilter) {
@@ -159,9 +173,11 @@ public class FilterPreferences implements Serializable {
             psmStarFilters.put(matchFilter.getName(), (PsmFilter) matchFilter);
         }
     }
-    
+
     /**
-     * Adds a hiding filter (previous filter with same name will silently be overwritten)
+     * Adds a hiding filter (previous filter with same name will silently be
+     * overwritten).
+     *
      * @param matchFilter the new filter
      */
     public void addHidingFilter(MatchFilter matchFilter) {
@@ -173,15 +189,18 @@ public class FilterPreferences implements Serializable {
             psmHideFilters.put(matchFilter.getName(), (PsmFilter) matchFilter);
         }
     }
-    
+
     /**
-     * Returns a boolean indicating whether the name of this filter is already taken or not
+     * Returns a boolean indicating whether the name of this filter is already
+     * taken or not.
+     *
      * @param filtername the name of the new filter
-     * @return a boolean indicating whether the name of this filter is already taken or not
+     * @return a boolean indicating whether the name of this filter is already
+     * taken or not
      */
     public boolean filterExists(String filtername) {
-        return proteinHideFilters.containsKey(filtername)|| proteinStarFilters.containsKey(filtername)
-                || peptideHideFilters.containsKey(filtername)|| peptideStarFilters.containsKey(filtername)
-                || psmHideFilters.containsKey(filtername)|| psmStarFilters.containsKey(filtername);
+        return proteinHideFilters.containsKey(filtername) || proteinStarFilters.containsKey(filtername)
+                || peptideHideFilters.containsKey(filtername) || peptideStarFilters.containsKey(filtername)
+                || psmHideFilters.containsKey(filtername) || psmStarFilters.containsKey(filtername);
     }
 }
