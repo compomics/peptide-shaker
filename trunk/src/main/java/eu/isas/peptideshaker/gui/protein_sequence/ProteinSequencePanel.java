@@ -41,7 +41,7 @@ public class ProteinSequencePanel {
     private Color referenceLineColor = Color.BLACK;
 
     /**
-     * Created a new ProteinSequencePanel object. Use getSequencePlot() to get
+     * Creates a new ProteinSequencePanel object. Use getSequencePlot() to get
      * the plot/chart.
      *
      * @param backgroundColor the plot/chart background color

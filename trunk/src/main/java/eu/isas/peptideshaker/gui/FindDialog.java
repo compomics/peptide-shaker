@@ -43,34 +43,34 @@ import org.jfree.chart.plot.PlotOrientation;
 
 /**
  * The main filter dialog.
- * 
+ *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
 public class FindDialog extends javax.swing.JDialog {
 
     /**
-     * The main GUI instance
+     * The main GUI instance.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The current protein filter
+     * The current protein filter.
      */
     private ProteinFilter proteinFilter = null;
     /**
-     * The current peptide filter
+     * The current peptide filter.
      */
     private PeptideFilter peptideFilter = null;
     /**
-     * The current PSM filter
+     * The current PSM filter.
      */
     private PsmFilter psmFilter = null;
     /**
@@ -111,7 +111,8 @@ public class FindDialog extends javax.swing.JDialog {
     private FiltersDialog filterDialog;
 
     /**
-     * Creates a new find dialog
+     * Creates a new find dialog.
+     *
      * @param peptideShakerGUI the main GUI
      */
     public FindDialog(PeptideShakerGUI peptideShakerGUI) {
@@ -119,38 +120,41 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates a new find dialog
-     * @param peptideShakerGUI  the main GUI
-     * @param filterDialog      a reference to the filter selection dialog
-     * @param selectedTab       the tab to select
-     * @param filterType        the current filter type 
+     * Creates a new find dialog.
+     *
+     * @param peptideShakerGUI the main GUI
+     * @param filterDialog a reference to the filter selection dialog
+     * @param selectedTab the tab to select
+     * @param filterType the current filter type
      */
     public FindDialog(PeptideShakerGUI peptideShakerGUI, FiltersDialog filterDialog, int selectedTab, FilterType filterType) {
         new FindDialog(peptideShakerGUI, filterDialog, null, null, null, selectedTab, filterType);
     }
 
     /**
-     * Creates a new find dialog
-     * @param peptideShakerGUI  the main GUI
-     * @param filterDialog      a reference to the filter selection dialog
-     * @param proteinFilter     the protein filter to edit (can be null)
-     * @param peptideFilter     the peptide filter to edit (can be null)
-     * @param psmFilter         the psm filter to edit (can be null)
-     * @param filterType        the current filter type 
+     * Creates a new find dialog.
+     *
+     * @param peptideShakerGUI the main GUI
+     * @param filterDialog a reference to the filter selection dialog
+     * @param proteinFilter the protein filter to edit (can be null)
+     * @param peptideFilter the peptide filter to edit (can be null)
+     * @param psmFilter the psm filter to edit (can be null)
+     * @param filterType the current filter type
      */
     public FindDialog(PeptideShakerGUI peptideShakerGUI, FiltersDialog filterDialog, ProteinFilter proteinFilter, PeptideFilter peptideFilter, PsmFilter psmFilter, FilterType filterType) {
         new FindDialog(peptideShakerGUI, filterDialog, proteinFilter, peptideFilter, psmFilter, 0, filterType);
     }
 
     /**
-     * Creates a new find dialog
-     * @param peptideShakerGUI  the main GUI
-     * @param filterDialog      a reference to the filter selection dialog
-     * @param proteinFilter     the protein filter to edit (can be null)
-     * @param peptideFilter     the peptide filter to edit (can be null)
-     * @param psmFilter         the psm filter to edit (can be null)
-     * @param selectedTab       the tab to select
-     * @param filterType        the current filter type 
+     * Creates a new find dialog.
+     *
+     * @param peptideShakerGUI the main GUI
+     * @param filterDialog a reference to the filter selection dialog
+     * @param proteinFilter the protein filter to edit (can be null)
+     * @param peptideFilter the peptide filter to edit (can be null)
+     * @param psmFilter the psm filter to edit (can be null)
+     * @param selectedTab the tab to select
+     * @param filterType the current filter type
      */
     public FindDialog(PeptideShakerGUI peptideShakerGUI, FiltersDialog filterDialog, ProteinFilter proteinFilter, PeptideFilter peptideFilter, PsmFilter psmFilter, int selectedTab, FilterType filterType) {
         super(peptideShakerGUI, true);
@@ -265,8 +269,8 @@ public class FindDialog extends javax.swing.JDialog {
         psmTablePanel.repaint();
 
         peptideTable.revalidate();
-        peptideTable.repaint(); 
-        
+        peptideTable.repaint();
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -456,10 +460,10 @@ public class FindDialog extends javax.swing.JDialog {
                 "Starred", null, null));
         psmTable.getColumn("H").setCellRenderer(new NimbusCheckBoxRenderer());
         psmTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMaxMz(), peptideShakerGUI.getSparklineColor()));
-        psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 
+        psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
         psmTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
-                        SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
+                SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesIntervalChartTableCellRenderer) psmTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
@@ -479,9 +483,10 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Fills the protein tab
+     * Fills the protein tab.
      */
     private void fillProteinTab() {
+
         if (proteinFilter.getIdentifierRegex() != null) {
             proteinAccessionTxt.setText(proteinFilter.getIdentifierRegex());
         }
@@ -513,8 +518,10 @@ public class FindDialog extends javax.swing.JDialog {
             proteinConfidenceTxt.setText(proteinFilter.getProteinConfidence() + "");
             proteinConfidenceCmb.setSelectedIndex(getComparisonIndex(proteinFilter.getProteinConfidenceComparison()));
         }
+
         boolean first = true;
         String text = "";
+
         for (String key : proteinFilter.getManualValidation()) {
             if (first) {
                 first = false;
@@ -523,9 +530,11 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += key;
         }
+
         proteinManualValidationTxt.setText(text);
         first = true;
         text = "";
+
         for (String key : proteinFilter.getExceptions()) {
             if (first) {
                 first = false;
@@ -534,13 +543,15 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += key;
         }
+
         proteinExceptionsTxt.setText(text);
     }
 
     /**
-     * Fills the peptide tab
+     * Fills the peptide tab.
      */
     private void fillPeptideTab() {
+
         if (peptideFilter.getProtein() != null) {
             peptideProteinTxt.setText(peptideFilter.getProtein());
         }
@@ -572,8 +583,10 @@ public class FindDialog extends javax.swing.JDialog {
                 modificationTable.setValueAt(false, row, 0);
             }
         }
+
         boolean first = true;
         String text = "";
+
         for (String key : peptideFilter.getManualValidation()) {
             if (first) {
                 first = false;
@@ -582,9 +595,11 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += key;
         }
+
         peptideManualValidationTxt.setText(text);
         first = true;
         text = "";
+
         for (String accession : peptideFilter.getExceptions()) {
             if (first) {
                 first = false;
@@ -593,13 +608,15 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += accession;
         }
+
         peptideExceptionsTxt.setText(text);
     }
 
     /**
-     * Fills the psm tab
+     * Fills the psm tab.
      */
     private void fillPsmTab() {
+
         if (psmFilter.getPrecursorRT() != null) {
             precursorRTTxt.setText(psmFilter.getPrecursorRT() + "");
             precursorRTCmb.setSelectedIndex(getComparisonIndex(psmFilter.getPrecursorRTComparison()));
@@ -630,8 +647,10 @@ public class FindDialog extends javax.swing.JDialog {
                 spectrumFilesTable.setValueAt(false, row, 0);
             }
         }
+
         boolean first = true;
         String text = "";
+
         for (String key : psmFilter.getManualValidation()) {
             if (first) {
                 first = false;
@@ -640,9 +659,11 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += key;
         }
+
         psmManualValidationTxt.setText(text);
         first = true;
         text = "";
+
         for (String accession : psmFilter.getExceptions()) {
             if (first) {
                 first = false;
@@ -651,11 +672,13 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += accession;
         }
+
         psmExceptionsTxt.setText(text);
     }
 
     /**
-     * Validates the input
+     * Validates the input.
+     *
      * @return a boolean indicating whether the input is valid
      */
     public boolean validateInput() {
@@ -776,11 +799,14 @@ public class FindDialog extends javax.swing.JDialog {
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * Convenience method returning the comparison type based on the selected item in the < = > combo boxes
+     * Convenience method returning the comparison type based on the selected
+     * item in the < = > combo boxes.
+     *
      * @param selectedItem the index of the item selected
      * @return the corresponding comparison type
      */
@@ -800,7 +826,9 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Convenience method returning the combo box index based on a ComparisonType
+     * Convenience method returning the combo box index based on a
+     * ComparisonType.
+     *
      * @param comparisonType the comparison type
      * @return the corresponding index to select
      */
@@ -903,7 +931,7 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates the protein filter according to the users input
+     * Creates the protein filter according to the users input.
      */
     public void createProteinFilter() {
         if (validateInput()) {
@@ -945,13 +973,14 @@ public class FindDialog extends javax.swing.JDialog {
                 proteinFilter.setProteinConfidence(new Double(proteinConfidenceTxt.getText().trim()));
                 proteinFilter.setProteinConfidenceComparison(getComparisonType(proteinConfidenceCmb.getSelectedIndex()));
             }
+
             proteinFilter.setManualValidation(parseAccessions(proteinManualValidationTxt.getText()));
             proteinFilter.setExceptions(parseAccessions(proteinExceptionsTxt.getText()));
         }
     }
 
     /**
-     * Table model for the protein table
+     * Table model for the protein table.
      */
     private class ProteinTable extends DefaultTableModel {
 
@@ -1045,7 +1074,7 @@ public class FindDialog extends javax.swing.JDialog {
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             cpt += peptideMatch.getSpectrumCount();
-                                }
+                        }
                         return cpt;
                     case 10:
                         return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
@@ -1146,6 +1175,7 @@ public class FindDialog extends javax.swing.JDialog {
             List<RowFilter<Object, Object>> ptmFilters = new ArrayList<RowFilter<Object, Object>>();
             List<RowFilter<Object, Object>> noPtmFilters = new ArrayList<RowFilter<Object, Object>>();
             boolean noPTMSelected = false;
+
             for (int row = 0; row < modificationTable.getRowCount(); row++) {
                 text = (String) modificationTable.getValueAt(row, 2);
                 if (!text.equals(PtmPanel.NO_MODIFICATION)) {
@@ -1157,9 +1187,11 @@ public class FindDialog extends javax.swing.JDialog {
                     noPTMSelected = true;
                 }
             }
+
             if (noPTMSelected) {
                 ptmFilters.add(RowFilter.notFilter(RowFilter.orFilter(noPtmFilters)));
             }
+
             filters.add(RowFilter.orFilter(ptmFilters));
 
             // set the filters to the table
@@ -1175,7 +1207,7 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates a peptide filter based on the users input
+     * Creates a peptide filter based on the users input.
      */
     public void createPeptideFilter() {
         if (validateInput()) {
@@ -1221,11 +1253,11 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Table model for the peptide table
-     * @TODO: Can we hide the last column?
+     * Table model for the peptide table.
      */
     private class PeptideTable extends DefaultTableModel {
 
+        // @TODO: Can we hide the last column?
         @Override
         public int getRowCount() {
             return identification.getPeptideIdentification().size();
@@ -1427,7 +1459,7 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates the PSM filter based on the users input
+     * Creates the PSM filter based on the users input.
      */
     public void createPsmFilter() {
 
@@ -1481,7 +1513,7 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Table model for the psm table
+     * Table model for the psm table.
      */
     private class PsmTable extends DefaultTableModel {
 
@@ -1590,8 +1622,10 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Indicates whether something was input for the protein filter
-     * @return a boolean indicating whether something was input for the protein filter
+     * Indicates whether something was input for the protein filter.
+     *
+     * @return a boolean indicating whether something was input for the protein
+     * filter
      */
     private boolean proteinInput() {
         return !proteinAccessionTxt.getText().trim().equals("")
@@ -1601,12 +1635,14 @@ public class FindDialog extends javax.swing.JDialog {
                 || !nPeptidesTxt.getText().trim().equals("")
                 || !proteinsNSpectraTxt.getText().trim().equals("")
                 || !proteinScoreTxt.getText().trim().equals("")
-                || !proteinCoverageTxt.getText().trim().equals("");
+                || !proteinConfidenceTxt.getText().trim().equals("");
     }
 
     /**
-     * Indicates whether something was input for the peptide filter
-     * @return a boolean indicating whether something was input for the peptide filter
+     * Indicates whether something was input for the peptide filter.
+     *
+     * @return a boolean indicating whether something was input for the peptide
+     * filter
      */
     private boolean peptideInput() {
         if (!peptideProteinTxt.getText().trim().equals("")
@@ -1626,8 +1662,10 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Indicates whether something was input for the psm filter
-     * @return a boolean indicating whether something was input for the psm filter
+     * Indicates whether something was input for the psm filter.
+     *
+     * @return a boolean indicating whether something was input for the psm
+     * filter
      */
     private boolean psmInput() {
         if (!precursorRTTxt.getText().trim().equals("")
@@ -1653,9 +1691,11 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Convenience method parsing keys in the manual validation/exception text fields
-     * @param text  the text in the text field
-     * @return      a list of the parsed keys
+     * Convenience method parsing keys in the manual validation/exception text
+     * fields.
+     *
+     * @param text the text in the text field
+     * @return a list of the parsed keys
      */
     private ArrayList<String> parseAccessions(String text) {
         ArrayList<String> result = new ArrayList<String>();
@@ -1668,10 +1708,10 @@ public class FindDialog extends javax.swing.JDialog {
         return result;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -1817,11 +1857,10 @@ public class FindDialog extends javax.swing.JDialog {
                 return new JTableHeader(columnModel) {
 
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) spectrumFilesTableToolTips.get(realIndex);
+                        String tip = (String) spectrumFilesTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -3047,6 +3086,11 @@ public class FindDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Clears the data and closes the dialog without saving the changes.
+     *
+     * @param evt
+     */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
 
         if (filterDialog != null) {
@@ -3056,6 +3100,11 @@ public class FindDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
 
+    /**
+     * Updates the PSM selection.
+     *
+     * @param evt
+     */
     private void psmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseReleased
         int row = psmTable.getSelectedRow();
 
@@ -3066,6 +3115,11 @@ public class FindDialog extends javax.swing.JDialog {
         }
 }//GEN-LAST:event_psmTableMouseReleased
 
+    /**
+     * Updates the peptide selection.
+     *
+     * @param evt
+     */
     private void peptideTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseReleased
         int row = peptideTable.getSelectedRow();
 
@@ -3076,6 +3130,11 @@ public class FindDialog extends javax.swing.JDialog {
         }
 }//GEN-LAST:event_peptideTableMouseReleased
 
+    /**
+     * Updates the protein selection.
+     *
+     * @param evt
+     */
     private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
         int row = proteinTable.getSelectedRow();
 
@@ -3086,118 +3145,263 @@ public class FindDialog extends javax.swing.JDialog {
         }
 }//GEN-LAST:event_proteinTableMouseReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinAccessionTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinAccessionTxtActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinAccessionTxtActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinAccessionTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinAccessionTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_proteinAccessionTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinPICmbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinPICmbKeyReleased
         filterProteins();
     }//GEN-LAST:event_proteinPICmbKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void spectrumCountingTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spectrumCountingTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_spectrumCountingTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinCoverageTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinCoverageTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_proteinCoverageTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void nPeptidesTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nPeptidesTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_nPeptidesTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinsNSpectraTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinsNSpectraTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_proteinsNSpectraTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinScoreTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinScoreTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_proteinScoreTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinConfidenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinConfidenceTxtKeyReleased
         filterProteins();
     }//GEN-LAST:event_proteinConfidenceTxtKeyReleased
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinPiComparisonCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinPiComparisonCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinPiComparisonCmbActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void spectrumCountingCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumCountingCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_spectrumCountingCmbActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinCoverageCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinCoverageCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinCoverageCmbActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void nPeptidesCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nPeptidesCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_nPeptidesCmbActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinNSpectraCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinNSpectraCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinNSpectraCmbActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinScoreCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinScoreCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinScoreCmbActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinConfidenceCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinConfidenceCmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinConfidenceCmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideProteinTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideProteinTxtKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptideProteinTxtKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideSequenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideSequenceTxtKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptideSequenceTxtKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptidePICmbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidePICmbKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptidePICmbKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptidePiComparisonCmbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidePiComparisonCmbKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptidePiComparisonCmbKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideNSpectraTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideNSpectraTxtKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptideNSpectraTxtKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideNSpectraCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideNSpectraCmbActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptideNSpectraCmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptidePiComparisonCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidePiComparisonCmbActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptidePiComparisonCmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideScoreTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideScoreTxtKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptideScoreTxtKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideScoreCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideScoreCmbActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptideScoreCmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideConfidenceTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideConfidenceTxtActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptideConfidenceTxtActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideConfidenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideConfidenceTxtKeyReleased
         filterPeptides();
     }//GEN-LAST:event_peptideConfidenceTxtKeyReleased
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptideConfidenceCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideConfidenceCmbActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptideConfidenceCmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void modificationTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modificationTableMouseReleased
         if (evt.getButton() == MouseEvent.BUTTON3) {
             selectPtmsJPopupMenu.show(modificationTable, evt.getX(), evt.getY());
@@ -3206,38 +3410,83 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_modificationTableMouseReleased
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void precursorRTTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorRTTxtKeyReleased
         filterPsms();
     }//GEN-LAST:event_precursorRTTxtKeyReleased
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void precursorMzTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorMzTxtKeyReleased
         filterPsms();
     }//GEN-LAST:event_precursorMzTxtKeyReleased
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void precursorErrorTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorErrorTxtKeyReleased
         filterPsms();
     }//GEN-LAST:event_precursorErrorTxtKeyReleased
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void psmConfidenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_psmConfidenceTxtKeyReleased
         filterPsms();
     }//GEN-LAST:event_psmConfidenceTxtKeyReleased
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void precursorRTCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorRTCmbActionPerformed
         filterPsms();
     }//GEN-LAST:event_precursorRTCmbActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void precursorMzCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorMzCmbActionPerformed
         filterPsms();
     }//GEN-LAST:event_precursorMzCmbActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void precursorErrorCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorErrorCmbActionPerformed
         filterPsms();
     }//GEN-LAST:event_precursorErrorCmbActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void psmConfidenceCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmConfidenceCmbActionPerformed
         filterPsms();
     }//GEN-LAST:event_psmConfidenceCmbActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void spectrumFilesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumFilesTableMouseReleased
         if (evt.getButton() == MouseEvent.BUTTON3) {
             selectFilesJPopupMenu.show(spectrumFilesTable, evt.getX(), evt.getY());
@@ -3246,6 +3495,11 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_spectrumFilesTableMouseReleased
 
+    /**
+     * Save the current filter.
+     *
+     * @param evt
+     */
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
 
         if (proteinFilter != null) {
@@ -3312,30 +3566,65 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void charge2CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_charge2CheckBoxActionPerformed
         filterPsms();
     }//GEN-LAST:event_charge2CheckBoxActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void charge3CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_charge3CheckBoxActionPerformed
         filterPsms();
     }//GEN-LAST:event_charge3CheckBoxActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void charge4CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_charge4CheckBoxActionPerformed
         filterPsms();
     }//GEN-LAST:event_charge4CheckBoxActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void chargeOver4CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chargeOver4CheckBoxActionPerformed
         filterPsms();
     }//GEN-LAST:event_chargeOver4CheckBoxActionPerformed
 
+    /**
+     * Filter the proteins.
+     *
+     * @param evt
+     */
     private void proteinPICmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinPICmbActionPerformed
         filterProteins();
     }//GEN-LAST:event_proteinPICmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void peptidePICmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidePICmbActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptidePICmbActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void selectAllPtmsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllPtmsMenuItemActionPerformed
         for (int i = 0; i < modificationTable.getRowCount(); i++) {
             modificationTable.setValueAt(true, i, modificationTable.getColumn(" ").getModelIndex());
@@ -3343,6 +3632,11 @@ public class FindDialog extends javax.swing.JDialog {
         filterPeptides();
     }//GEN-LAST:event_selectAllPtmsMenuItemActionPerformed
 
+    /**
+     * Filter the peptides.
+     *
+     * @param evt
+     */
     private void deselectAllPtmsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllPtmsMenuItemActionPerformed
 
         for (int i = 0; i < modificationTable.getRowCount(); i++) {
@@ -3351,6 +3645,11 @@ public class FindDialog extends javax.swing.JDialog {
         filterPeptides();
     }//GEN-LAST:event_deselectAllPtmsMenuItemActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void selectAllFilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllFilesMenuItemActionPerformed
         for (int i = 0; i < spectrumFilesTable.getRowCount(); i++) {
             spectrumFilesTable.setValueAt(true, i, spectrumFilesTable.getColumn(" ").getModelIndex());
@@ -3358,6 +3657,11 @@ public class FindDialog extends javax.swing.JDialog {
         filterPsms();
     }//GEN-LAST:event_selectAllFilesMenuItemActionPerformed
 
+    /**
+     * Filter the PSMs.
+     *
+     * @param evt
+     */
     private void deselectAllFilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllFilesMenuItemActionPerformed
         for (int i = 0; i < spectrumFilesTable.getRowCount(); i++) {
             spectrumFilesTable.setValueAt(false, i, spectrumFilesTable.getColumn(" ").getModelIndex());
@@ -3367,8 +3671,8 @@ public class FindDialog extends javax.swing.JDialog {
 
     /**
      * Change the cursor icon to a hand icon.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void openDialogHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -3376,8 +3680,8 @@ public class FindDialog extends javax.swing.JDialog {
 
     /**
      * Change the cursor icon to the default icon.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void openDialogHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -3385,8 +3689,8 @@ public class FindDialog extends javax.swing.JDialog {
 
     /**
      * Open the help dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
