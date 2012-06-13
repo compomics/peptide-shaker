@@ -274,7 +274,7 @@ public class CsvExporter {
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
         PSParameter probabilities = new PSParameter();
-        probabilities = (PSParameter) identification.getMatchParameter(proteinKey, probabilities);
+        probabilities = (PSParameter) identification.getProteinMatchPArameter(proteinKey, probabilities);
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String line = proteinMatch.getMainMatch() + SEPARATOR;
 
@@ -295,7 +295,7 @@ public class CsvExporter {
 
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             nSpectra += peptideMatch.getSpectrumCount();
-            psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
             if (psParameter.isValidated()) {
 
@@ -303,7 +303,7 @@ public class CsvExporter {
 
                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
-                    psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                     if (psParameter.isValidated()) {
                         nValidatedPsms++;
@@ -452,14 +452,14 @@ public class CsvExporter {
         int nSpectraValidated = 0;
         
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-            probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
+            probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
             if (probabilities.isValidated()) {
                 nSpectraValidated++;
             }
         }
         
         line += nSpectraValidated + SEPARATOR;
-        probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
+        probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
 
         line += probabilities.getPeptideProbabilityScore() + SEPARATOR
                 + probabilities.getPeptideProbability() + SEPARATOR;
@@ -662,7 +662,7 @@ public class CsvExporter {
 
         line += SEPARATOR;
         PSParameter probabilities = new PSParameter();
-        probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
+        probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
         line += probabilities.getPsmProbabilityScore() + SEPARATOR
                 + probabilities.getPsmProbability() + SEPARATOR;

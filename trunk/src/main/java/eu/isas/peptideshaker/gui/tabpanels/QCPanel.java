@@ -1568,7 +1568,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     double value = 0;
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                         if (psParameter.isValidated() && !psParameter.isHidden()) {
                             value++;
                         }
@@ -1576,7 +1576,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     if (value > maxValue) {
                         maxValue = value;
                     }
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1613,7 +1613,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     }
                     
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1662,7 +1662,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     }
                     
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1708,7 +1708,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         mainMatch = proteinMatch.getMainMatch();
                     }
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1777,7 +1777,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                             break;
                         }
                         
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
                         if (psParameter.isValidated() && !psParameter.isHidden()) {
                             value = value + 1;
                         }
@@ -1785,7 +1785,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     if (value > maxValue) {
                         maxValue = value;
                     }
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1822,7 +1822,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     }
                     
                     PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1865,7 +1865,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     }
                     
                     PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1929,7 +1929,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     }
                     
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1973,7 +1973,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     }
                     
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         

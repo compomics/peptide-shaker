@@ -2620,7 +2620,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                 for (String peptideKey : peptideKeys) {
                     currentMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, probabilities);
+                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities);
 
                     if (!probabilities.isHidden()) {
 
@@ -2635,7 +2635,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                         validatedSpectraCounter = 0;
                         for (String spectrumKey : currentMatch.getSpectrumMatches()) {
-                            secondaryPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, secondaryPSParameter);
+                            secondaryPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
                             if (secondaryPSParameter.isValidated()) {
                                 validatedSpectraCounter++;
                             }
@@ -3375,8 +3375,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
+                try {
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
                 peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return;
+                }
             } else {
                 peptideShakerGUI.resetSelectedItems();
             }
@@ -3385,11 +3390,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                try {
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
                 if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
                     proteinKey = possibleKey;
                     peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                     break;
+                }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return;
                 }
             }
         }

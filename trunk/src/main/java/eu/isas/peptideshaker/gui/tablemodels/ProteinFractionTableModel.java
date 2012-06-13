@@ -165,7 +165,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 String fraction = fileNames.get(column - 3);
                 PSParameter pSParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
-                pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
+                pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, pSParameter);
                 if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
@@ -182,12 +182,12 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             } else if (column == fileNames.size() + 4) {
                 String proteinKey = proteinKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
+                pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, pSParameter);
                 return pSParameter.getProteinConfidence();
             } else if (column == fileNames.size() + 5) {
                 String proteinKey = proteinKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, pSParameter);
+                pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, pSParameter);
                 return pSParameter.isValidated();
             } else {
                 return "";

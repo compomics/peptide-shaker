@@ -728,7 +728,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 for (String proteinKey : inspectedProteins) {
 
                                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
 
                                     if (idSelectionCmb.getSelectedIndex() == 0
                                             || idSelectionCmb.getSelectedIndex() == 1
@@ -737,7 +737,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
                                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
-                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
 
                                             if (idSelectionCmb.getSelectedIndex() == 0
                                                     || idSelectionCmb.getSelectedIndex() == 1 && psParameter.isValidated()
@@ -757,7 +757,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
-                                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
 
                                                         if (psParameter.isValidated()) {
                                                             b.write(getInclusionListLine(spectrumKey, retentionTimes));
@@ -941,7 +941,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                     b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
                                     b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + "\n");
                                 } else if (includeNonValidatedInUnidentifiedFastaCheckBox.isSelected()) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
 
                                     if (!probabilities.isValidated()) {
                                         b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
@@ -1043,7 +1043,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 if (!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
                                     b.write(accessions.get(i) + "\n");
                                 } else if (includeNonValidatedInProteinUnidentifiedCsvCheckBox.isSelected()) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
 
                                     if (!probabilities.isValidated()) {
                                         b.write(accessions.get(i) + "\n");
@@ -1142,7 +1142,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                             if (!tempProtein.isDecoy()) {
                                 if (peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
 
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
 
                                     if (probabilities.isValidated()) {
                                         b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
@@ -1244,7 +1244,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                             if (!tempProtein.isDecoy()) {
                                 if (peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
 
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
 
                                     if (probabilities.isValidated()) {
                                         b.write(accessions.get(i) + "\n");
@@ -1281,7 +1281,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-                    
+
                     cancelProgress = false;
                 }
             }.start();
@@ -1290,18 +1290,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
     /**
      * Recalibrate the spectra.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void recalibrateMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalibrateMgfButtonActionPerformed
-       boolean ms1 = true;
-       boolean ms2 = true;
-       if (spectrumRecalibrationCmb.getSelectedIndex() == 1) {
-           ms2 = false;
-       } else if (spectrumRecalibrationCmb.getSelectedIndex() == 2) {
-           ms1 = false;
-       }
-       peptideShakerGUI.recalibrateSpectra(ms1, ms2);
+        boolean ms1 = true;
+        boolean ms2 = true;
+        if (spectrumRecalibrationCmb.getSelectedIndex() == 1) {
+            ms2 = false;
+        } else if (spectrumRecalibrationCmb.getSelectedIndex() == 2) {
+            ms1 = false;
+        }
+        peptideShakerGUI.recalibrateSpectra(ms1, ms2);
     }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
 
     /**
@@ -1314,7 +1314,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
     private boolean isValidated(String spectrumKey) {
         PSParameter psParameter = new PSParameter();
         if (peptideShakerGUI.getIdentification().matchExists(spectrumKey)) {
-            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+            try {
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return false;
+            }
         } else {
             return false;
         }
@@ -1327,7 +1332,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                 }
                 try {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumMatch.getBestAssumption().getPeptide().getKey(), psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(spectrumMatch.getBestAssumption().getPeptide().getKey(), psParameter);
                     return psParameter.isValidated();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -1341,7 +1346,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     for (String protein : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
                         for (String proteinMatch : peptideShakerGUI.getIdentification().getProteinMap().get(protein)) {
-                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinMatch, psParameter);
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinMatch, psParameter);
                             if (psParameter != null && psParameter.isValidated()) {
                                 return true;
                             }
@@ -1384,7 +1389,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
         }
         if (isoformsCheck.isSelected() || isoformsUnrelatedCheck.isSelected() || unrelatedCheck.isSelected()) {
             PSParameter pSParameter = new PSParameter();
-            pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, pSParameter);
+            try {
+                pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(proteinKey, pSParameter);
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return false;
+            }
             if (isoformsCheck.isSelected() && pSParameter.getGroupClass() == PSParameter.ISOFORMS) {
                 return true;
             }

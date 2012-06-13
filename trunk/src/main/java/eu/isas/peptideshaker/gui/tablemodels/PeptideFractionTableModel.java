@@ -146,7 +146,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 String fraction = fileNames.get(column - 2);
                 PSParameter pSParameter = new PSParameter();
                 String peptideKey = peptideKeys.get(row);
-                pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
+                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                 if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                     return pSParameter.getFractionConfidence(fraction);
                 } else {
@@ -155,12 +155,12 @@ public class PeptideFractionTableModel extends DefaultTableModel {
             } else if (column == fileNames.size() + 2) {
                 String peptideKey = peptideKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
+                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                 return pSParameter.getPeptideConfidence();
             } else if (column == fileNames.size() + 3) {
                 String peptideKey = peptideKeys.get(row);
                 PSParameter pSParameter = new PSParameter();
-                pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
+                pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                 return pSParameter.isValidated();
             } else {
                 return "";

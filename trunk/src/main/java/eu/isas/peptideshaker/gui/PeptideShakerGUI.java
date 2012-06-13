@@ -1842,7 +1842,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             // update the basic protein annotation
             if (selectedIndex == ANNOTATION_TAB_INDEX) {
+                try {
                 annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
+                } catch (Exception e) {
+                    catchException(e);
+                }
             }
 
             // move the spectrum annotation menu bar and set the intensity slider value
@@ -5765,7 +5769,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     // make the new save folder and save the project
                     if (!cancelProgress) {
                         newFolder.mkdir();
-                        identification.save(newFolder, progressDialog, cancelProgress);
+//                        identification.save(newFolder, progressDialog, cancelProgress);
                         progressDialog.setIndeterminate(true);
                         experimentIO.save(currentPSFile, experiment);
                     }

@@ -128,7 +128,7 @@ public class PsmTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String psmKey = psmKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getMatchParameter(psmKey, new PSParameter());
+                    PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
                     return pSParameter.isStarred();
                 case 2:
                     psmKey = psmKeys.get(row);
@@ -151,7 +151,7 @@ public class PsmTableModel extends DefaultTableModel {
                     return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 case 6:
                     psmKey = psmKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(psmKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getPsmScore();
                     } else {
@@ -159,7 +159,7 @@ public class PsmTableModel extends DefaultTableModel {
                     }
                 case 7:
                     psmKey = psmKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(psmKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
                     return pSParameter.isValidated();
                 default:
                     return "";

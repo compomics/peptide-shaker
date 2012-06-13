@@ -56,7 +56,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = aPeptideShakerGUI;
 
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideMatch, psParameter);
+        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
         protInferenceTypeCmb.setSelectedIndex(psParameter.getGroupClass());
 
         protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -548,13 +548,20 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideMatch, psParameter);
+        try {
+        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
         if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
             psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
+            peptideShakerGUI.getIdentification().updatePeptideMatchParameter(peptideMatch, psParameter);
             peptideShakerGUI.setDataSaved(false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
             peptideShakerGUI.updateTabbedPanes();
+        }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            this.dispose();
+            return;
         }
         this.setVisible(false);
         this.dispose();

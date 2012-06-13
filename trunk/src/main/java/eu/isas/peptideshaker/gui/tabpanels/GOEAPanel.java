@@ -544,8 +544,12 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                         // store the go term to protein mappings
                                         if (peptideShakerGUI.getIdentification().matchExists(proteinAccession)) { // @TODO: this might be slow?? but i don't see i way around this?
 
-                                            proteinPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccession, proteinPSParameter);
-                                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinAccession, probabilities);
+                                            try {
+                                                proteinPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinAccession, proteinPSParameter);
+                                                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinAccession, probabilities);
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                            }
 
                                             if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(proteinAccession) && !probabilities.isHidden()) {
 
@@ -585,15 +589,24 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 progressDialog.incrementValue();
 
                                 try {
-                                    proteinPSParameter = (PSParameter) identification.getMatchParameter(matchKey, proteinPSParameter);
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(matchKey, probabilities);
+                                    try {
+                                    proteinPSParameter = (PSParameter) identification.getProteinMatchPArameter(matchKey, proteinPSParameter);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(matchKey, probabilities);
+                                    } catch (Exception e) {
+                                        peptideShakerGUI.catchException(e);
+                                    }
 
                                     if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(matchKey) && !probabilities.isHidden()) {
 
                                         String mainAccession;
 
                                         if (ProteinMatch.getNProteins(matchKey) > 1) {
+                                            try {
                                             mainAccession = identification.getProteinMatch(matchKey).getMainMatch();
+                                            } catch (Exception e) {
+                                                peptideShakerGUI.catchException(e);
+                                                mainAccession = "error";
+                                            }
                                         } else {
                                             mainAccession = matchKey;
                                         }

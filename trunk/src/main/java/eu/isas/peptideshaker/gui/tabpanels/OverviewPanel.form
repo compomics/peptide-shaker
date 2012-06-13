@@ -1192,7 +1192,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="slidersSplitPane" pref="458" max="32767" attributes="0"/>
+                                              <Component id="slidersSplitPane" max="32767" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -1257,7 +1257,7 @@
                                                       <Group type="102" alignment="1" attributes="0">
                                                           <EmptySpace max="-2" attributes="0"/>
                                                           <Group type="103" groupAlignment="1" attributes="0">
-                                                              <Component id="fragmentIonsJScrollPane" alignment="0" pref="397" max="32767" attributes="0"/>
+                                                              <Component id="fragmentIonsJScrollPane" alignment="0" pref="405" max="32767" attributes="0"/>
                                                               <Component id="ionTableJToolBar" alignment="0" pref="397" max="32767" attributes="0"/>
                                                           </Group>
                                                           <EmptySpace max="-2" attributes="0"/>
@@ -1328,11 +1328,11 @@
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Group type="102" alignment="0" attributes="0">
                                                           <EmptySpace max="-2" attributes="0"/>
-                                                          <Component id="bubblePlotJToolBar" pref="397" max="32767" attributes="0"/>
+                                                          <Component id="bubblePlotJToolBar" pref="405" max="32767" attributes="0"/>
                                                           <EmptySpace max="-2" attributes="0"/>
                                                       </Group>
                                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                                          <Component id="bubbleJPanel" alignment="0" pref="417" max="32767" attributes="0"/>
+                                                          <Component id="bubbleJPanel" alignment="0" pref="425" max="32767" attributes="0"/>
                                                       </Group>
                                                   </Group>
                                                 </DimensionLayout>
@@ -1404,7 +1404,7 @@
                                                           <Component id="spectrumJToolBar" max="32767" attributes="0"/>
                                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                                       </Group>
-                                                      <Component id="spectrumSplitPane" alignment="0" pref="417" max="32767" attributes="0"/>
+                                                      <Component id="spectrumSplitPane" alignment="0" pref="425" max="32767" attributes="0"/>
                                                   </Group>
                                                 </DimensionLayout>
                                                 <DimensionLayout dim="1">
@@ -1500,7 +1500,7 @@
                                                           <Layout>
                                                             <DimensionLayout dim="0">
                                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                                  <EmptySpace min="0" pref="417" max="32767" attributes="0"/>
+                                                                  <EmptySpace min="0" pref="425" max="32767" attributes="0"/>
                                                               </Group>
                                                             </DimensionLayout>
                                                             <DimensionLayout dim="1">
