@@ -1183,7 +1183,7 @@ public class IdentificationFeaturesGenerator {
             ArrayList<Double> scores = new ArrayList<Double>();
             PSParameter probabilities = new PSParameter();
             int maxPeptides = 0, maxSpectra = 0;
-            double tempSpectrumCounting, maxSpectrumCounting = 0, mw, maxMW = 0;
+            double maxSpectrumCounting = 0, maxMW = 0;
             Protein currentProtein = null;
             int nValidatedProteins = 0;
 
@@ -1207,7 +1207,7 @@ public class IdentificationFeaturesGenerator {
                                 maxSpectra = -nSpectra;
                             }
 
-                            tempSpectrumCounting = estimateSpectrumCounting(proteinKey);
+                            double tempSpectrumCounting = estimateSpectrumCounting(proteinKey);
 
                             if (tempSpectrumCounting > maxSpectrumCounting) {
                                 maxSpectrumCounting = tempSpectrumCounting;
@@ -1220,7 +1220,7 @@ public class IdentificationFeaturesGenerator {
                             }
 
                             if (currentProtein != null) {
-                                mw = currentProtein.computeMolecularWeight() / 1000;
+                                double mw = currentProtein.computeMolecularWeight() / 1000;
                                 if (mw > maxMW) {
                                     maxMW = mw;
                                 }
@@ -1265,8 +1265,6 @@ public class IdentificationFeaturesGenerator {
 
             ArrayList<Double> scoreList = new ArrayList<Double>(orderMap.keySet());
             Collections.sort(scoreList);
-            ArrayList<Integer> nPeptideList, nPsmList;
-            ArrayList<String> tempList;
 
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
@@ -1277,16 +1275,16 @@ public class IdentificationFeaturesGenerator {
 
             for (double currentScore : scoreList) {
 
-                nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
+                ArrayList<Integer> nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
                 Collections.sort(nPeptideList);
 
                 for (int currentNPeptides : nPeptideList) {
 
-                    nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
+                    ArrayList<Integer> nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
                     Collections.sort(nPsmList);
 
                     for (int currentNPsms : nPsmList) {
-                        tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
+                        ArrayList<String> tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                         Collections.sort(tempList);
                         proteinList.addAll(tempList);
                         if (progressDialog != null) {
@@ -1300,10 +1298,12 @@ public class IdentificationFeaturesGenerator {
                 progressDialog.setIndeterminate(true);
             }
         }
+        
         if (hidingNeeded() || proteinListAfterHiding == null) {
             proteinListAfterHiding = new ArrayList<String>();
             PSParameter psParameter = new PSParameter();
             int nValidatedProteins = 0;
+            
             for (String proteinKey : proteinList) {
                 psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
                 if (!psParameter.isHidden()) {
@@ -1313,6 +1313,7 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
             }
+            
             peptideShakerGUI.getMetrics().setnValidatedProteins(nValidatedProteins);
         }
         
