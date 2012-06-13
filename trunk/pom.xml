@@ -311,7 +311,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
-            <version>0.5.36</version>
+            <version>0.5.37</version>
         </dependency>
 
         <dependency>
