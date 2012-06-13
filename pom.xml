@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.17.4</version.number>
+        <version.number>0.18.0</version.number>
     </properties>
 
 
@@ -251,27 +251,10 @@
     <!-- Dependencies -->
     <dependencies>
 
-        <!-- The junit JAR file -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- This project depends on the JAR file "xpp-1.1.3.4.jar" (XmlPullParser)
-             the remote repository root of which is 'http://genesis.UGent.be/maven'. -->
-        <dependency>
-            <groupId>xpp3</groupId>
-            <artifactId>xpp3</artifactId>
-            <version>1.1.3.4-RC3</version>
-            <type>jar</type>
-        </dependency>
-
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.4.25</version>
+            <version>3.5.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -294,6 +277,23 @@
                     <groupId>org.swinglabs</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- The junit JAR file -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- This project depends on the JAR file "xpp-1.1.3.4.jar" (XmlPullParser)
+             the remote repository root of which is 'http://genesis.UGent.be/maven'. -->
+        <dependency>
+            <groupId>xpp3</groupId>
+            <artifactId>xpp3</artifactId>
+            <version>1.1.3.4-RC3</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>

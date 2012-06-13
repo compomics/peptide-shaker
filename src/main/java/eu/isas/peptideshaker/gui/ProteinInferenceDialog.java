@@ -119,7 +119,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         groupClassJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
-        PSParameter psParameter = (PSParameter) identification.getMatchParameter(inspectedMatch, new PSParameter());
+        PSParameter psParameter = new PSParameter();
+        try {
+            psParameter = (PSParameter) identification.getProteinMatchPArameter(inspectedMatch, psParameter);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
         matchInfoLbl.setText("[Score: " + Util.roundDouble(psParameter.getProteinScore(), 2)
                 + ", Confidence: " + Util.roundDouble(psParameter.getProteinConfidence(), 2) + "]");
 
@@ -539,15 +544,27 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
         String selectedMatch = accessions.get(mainMatch);
-        PSParameter psParameter = (PSParameter) identification.getMatchParameter(inspectedMatch.getKey(), new PSParameter());
+        PSParameter psParameter = new PSParameter();
+        try {
+            psParameter = (PSParameter) identification.getProteinMatchPArameter(inspectedMatch.getKey(), psParameter);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            this.dispose();
+            return;
+        }
         if (!inspectedMatch.getMainMatch().equals(selectedMatch)
                 || groupClassJComboBox.getSelectedIndex() != psParameter.getGroupClass()) {
-            if (!inspectedMatch.getMainMatch().equals(selectedMatch)) {
-                inspectedMatch.setMainMatch(selectedMatch);
-                peptideShakerGUI.getIdentification().setMatchChanged(inspectedMatch);
+            try {
+                if (!inspectedMatch.getMainMatch().equals(selectedMatch)) {
+                    inspectedMatch.setMainMatch(selectedMatch);
+                    peptideShakerGUI.getIdentification().setMatchChanged(inspectedMatch);
+                }
+                psParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
+                identification.updateProteinMatchParameter(inspectedMatch.getKey(), psParameter);
+                peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
             }
-            psParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
-            peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
             peptideShakerGUI.setDataSaved(false);
         }
         this.dispose();
@@ -898,7 +915,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
 
-            PSParameter pSParameter = (PSParameter) identification.getMatchParameter(uniqueMatches.get(row), new PSParameter());
+            PSParameter pSParameter = new PSParameter();
+            try {
+                pSParameter = (PSParameter) identification.getProteinMatchPArameter(uniqueMatches.get(row), pSParameter);
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
 
             switch (column) {
                 case 0:
@@ -964,8 +986,12 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
 
-            PSParameter pSParameter = (PSParameter) identification.getMatchParameter(associatedMatches.get(row), new PSParameter());
-
+            PSParameter pSParameter = new PSParameter();
+            try {
+                pSParameter = (PSParameter) identification.getProteinMatchPArameter(associatedMatches.get(row), pSParameter);
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
             switch (column) {
                 case 0:
                     return (row + 1);

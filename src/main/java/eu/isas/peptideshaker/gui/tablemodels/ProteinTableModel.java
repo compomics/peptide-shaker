@@ -140,11 +140,11 @@ public class ProteinTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String proteinKey = proteinKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                     return pSParameter.isStarred();
                 case 2:
                     proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                     return pSParameter.getGroupClass();
                 case 3:
                     proteinKey = proteinKeys.get(row);
@@ -189,7 +189,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     }
                 case 10:
                     proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getProteinScore();
                     } else {
@@ -197,7 +197,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     }
                 case 11:
                     proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                     return pSParameter.isValidated();
                 default:
                     return "";

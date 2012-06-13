@@ -81,7 +81,7 @@ public class StarHider implements ProgressDialogParent {
             public void run() {
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
+try {
                 Identification identification = peptideShakerGUI.getIdentification();
                 progressDialog.setIndeterminate(false);
                 progressDialog.setMax(identification.getProteinIdentification().size());
@@ -112,7 +112,7 @@ public class StarHider implements ProgressDialogParent {
                                 break;
                             }
 
-                            psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                             if (isPsmHidden(spectrumKey)) {
                                 psParameter.setHidden(true);
@@ -121,9 +121,10 @@ public class StarHider implements ProgressDialogParent {
                                 psmSurvived = true;
                             }
                             psParameter.setStarred(isPsmStarred(spectrumKey));
+                            identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
                         }
 
-                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
                         if (!psmSurvived) {
                             psParameter.setHidden(true);
@@ -135,9 +136,11 @@ public class StarHider implements ProgressDialogParent {
                         }
 
                         psParameter.setStarred(isPeptideStarred(peptideKey));
+                        
+                        identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
 
-                    psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
 
                     if (!peptideSurvived) {
                         psParameter.setHidden(true);
@@ -146,8 +149,13 @@ public class StarHider implements ProgressDialogParent {
                     }
 
                     psParameter.setStarred(isProteinStarred(proteinKey));
+                    
+                    identification.updateProteinMatchParameter(proteinKey, psParameter);
                     progressDialog.incrementValue();
                 }
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
 
                 progressDialog.dispose();
                 cancelProgress = false;
@@ -164,11 +172,11 @@ public class StarHider implements ProgressDialogParent {
      * @param match the key of the match
      */
     public void starProtein(String match) {
-
+try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
         boolean validated = false;
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
@@ -193,7 +201,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setStarred(true);
+        identification.updateProteinMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -203,10 +215,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void unStarProtein(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
@@ -218,7 +231,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setStarred(false);
+        identification.updateProteinMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -228,10 +245,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void hideProtein(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
         boolean validated = false;
 
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
@@ -256,7 +274,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setHidden(true);
+        identification.updateProteinMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -266,10 +288,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void unHideProtein(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
         for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
                 matchFilter.removeManualValidation(match);
@@ -280,7 +303,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setHidden(true);
+        identification.updateProteinMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -290,10 +317,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void starPeptide(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
         boolean validated = false;
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
@@ -318,7 +346,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setStarred(true);
+        identification.updatePeptideMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -328,10 +360,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void unStarPeptide(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
@@ -343,7 +376,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setStarred(false);
+        identification.updatePeptideMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -353,10 +390,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void hidePeptide(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
         boolean validated = false;
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
@@ -381,7 +419,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setHidden(true);
+        identification.updatePeptideMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -391,10 +433,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void unHidePeptide(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
 
         for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
@@ -406,7 +449,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setHidden(false);
+        identification.updatePeptideMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -416,10 +463,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void starPsm(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
         boolean validated = false;
 
         if (!validated) {
@@ -443,7 +491,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setStarred(true);
+        identification.updateSpectrumMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -453,10 +505,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void unStarPsm(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
 
         for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
@@ -468,7 +521,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setStarred(false);
+        identification.updateSpectrumMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -478,10 +535,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void hidePsm(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
         boolean validated = false;
 
         if (!validated) {
@@ -505,7 +563,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setHidden(true);
+        identification.updateSpectrumMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -515,10 +577,11 @@ public class StarHider implements ProgressDialogParent {
      */
     public void unHidePsm(String match) {
 
+        try {
         Identification identification = peptideShakerGUI.getIdentification();
         FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
 
         for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
             if (matchFilter.getManualValidation().contains(match)) {
@@ -530,7 +593,11 @@ public class StarHider implements ProgressDialogParent {
         }
 
         psParameter.setHidden(false);
+        identification.updateSpectrumMatchParameter(match, psParameter);
         peptideShakerGUI.setDataSaved(false);
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
     }
 
     /**
@@ -654,20 +721,20 @@ public class StarHider implements ProgressDialogParent {
     /**
      * Tests whether a protein match is validated by a given filter.
      *
-     * @param match the key of the protein match
+     * @param proteinKey the key of the protein match
      * @param proteinFilter the filter
      * @return a boolean indicating whether a protein match is validated by a
      * given filter
      */
-    public boolean isValidated(String match, ProteinFilter proteinFilter) {
+    public boolean isValidated(String proteinKey, ProteinFilter proteinFilter) {
 
         try {
-            if (proteinFilter.getExceptions().contains(match)) {
+            if (proteinFilter.getExceptions().contains(proteinKey)) {
                 return false;
             }
 
             if (proteinFilter.getManualValidation().size() > 0) {
-                if (proteinFilter.getManualValidation().contains(match)) {
+                if (proteinFilter.getManualValidation().contains(proteinKey)) {
                     return true;
                 } else {
                     return false;
@@ -675,10 +742,10 @@ public class StarHider implements ProgressDialogParent {
             }
 
             if (proteinFilter.getIdentifierRegex() != null) {
-                String test = "test_" + match + "_test";
+                String test = "test_" + proteinKey + "_test";
                 if (test.split(proteinFilter.getIdentifierRegex()).length == 1) {
                     boolean found = false;
-                    for (String accession : ProteinMatch.getAccessions(match)) {
+                    for (String accession : ProteinMatch.getAccessions(proteinKey)) {
                         test = "test_" + sequenceFactory.getHeader(accession).getDescription().toLowerCase() + "_test";
                         if (test.split(proteinFilter.getIdentifierRegex().toLowerCase()).length > 1) {
                             found = true;
@@ -693,7 +760,7 @@ public class StarHider implements ProgressDialogParent {
 
             PSParameter psParameter = new PSParameter();
             Identification identification = peptideShakerGUI.getIdentification();
-            psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+            psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
 
             if (proteinFilter.getPi() != 5) {
                 if (proteinFilter.getPiComparison() == ComparisonType.NOT_EQUAL
@@ -749,7 +816,7 @@ public class StarHider implements ProgressDialogParent {
                     || proteinFilter.getProteinNSpectra() != null
                     || proteinFilter.getProteinCoverage() != null
                     || proteinFilter.getSpectrumCounting() != null) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(match);
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
                 if (proteinFilter.getnPeptides() != null) {
                     if (proteinFilter.getnPeptidesComparison() == ComparisonType.AFTER) {
@@ -773,26 +840,26 @@ public class StarHider implements ProgressDialogParent {
                 IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
                 if (proteinFilter.getProteinNSpectra() != null) {
                     if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
-                        if (identificationFeaturesGenerator.getNSpectra(match) <= proteinFilter.getProteinNSpectra()) {
+                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) <= proteinFilter.getProteinNSpectra()) {
                             return false;
                         }
                     } else if (proteinFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                        if (identificationFeaturesGenerator.getNSpectra(match) >= proteinFilter.getProteinNSpectra()) {
+                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) >= proteinFilter.getProteinNSpectra()) {
                             return false;
                         }
                     } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                        if (identificationFeaturesGenerator.getNSpectra(match) != proteinFilter.getProteinNSpectra()) {
+                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) != proteinFilter.getProteinNSpectra()) {
                             return false;
                         }
                     } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                        if (identificationFeaturesGenerator.getNSpectra(match) == proteinFilter.getProteinNSpectra()) {
+                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) == proteinFilter.getProteinNSpectra()) {
                             return false;
                         }
                     }
                 }
 
                 if (proteinFilter.getProteinCoverage() != null) {
-                    double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(match);
+                    double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
                     if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
                         if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
                             return false;
@@ -813,7 +880,7 @@ public class StarHider implements ProgressDialogParent {
                 }
 
                 if (proteinFilter.getSpectrumCounting() != null) {
-                    double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(match);
+                    double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                     if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
                         if (spectrumCounting <= proteinFilter.getSpectrumCounting()) {
                             return false;
@@ -845,20 +912,20 @@ public class StarHider implements ProgressDialogParent {
     /**
      * Tests whether a peptide match is validated by a given filter.
      *
-     * @param match the key of the peptide match
+     * @param peptideKey the key of the peptide match
      * @param peptideFilter the filter
      * @return a boolean indicating whether a peptide match is validated by a
      * given filter
      */
-    public boolean isValidated(String match, PeptideFilter peptideFilter) {
+    public boolean isValidated(String peptideKey, PeptideFilter peptideFilter) {
 
         try {
-            if (peptideFilter.getExceptions().contains(match)) {
+            if (peptideFilter.getExceptions().contains(peptideKey)) {
                 return false;
             }
 
             if (peptideFilter.getManualValidation().size() > 0) {
-                if (peptideFilter.getManualValidation().contains(match)) {
+                if (peptideFilter.getManualValidation().contains(peptideKey)) {
                     return true;
                 } else {
                     return false;
@@ -870,12 +937,12 @@ public class StarHider implements ProgressDialogParent {
 
             for (String ptm : peptideFilter.getModificationStatus()) {
                 if (ptm.equals(PtmPanel.NO_MODIFICATION)) {
-                    if (!Peptide.isModified(match)) {
+                    if (!Peptide.isModified(peptideKey)) {
                         found = true;
                         break;
                     }
                 } else {
-                    if (Peptide.isModified(match, ptm)) {
+                    if (Peptide.isModified(peptideKey, ptm)) {
                         found = true;
                         break;
                     }
@@ -887,7 +954,7 @@ public class StarHider implements ProgressDialogParent {
             }
 
             Identification identification = peptideShakerGUI.getIdentification();
-            psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
 
             if (peptideFilter.getPi() != 5) {
                 if (peptideFilter.getPiComparison() == ComparisonType.NOT_EQUAL
@@ -941,7 +1008,7 @@ public class StarHider implements ProgressDialogParent {
 
             if (peptideFilter.getNSpectra() != null
                     || peptideFilter.getProtein() != null) {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(match);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                 if (peptideFilter.getNSpectra() != null) {
                     if (peptideFilter.getnSpectraComparison() == ComparisonType.AFTER) {
                         if (peptideMatch.getSpectrumCount() <= peptideFilter.getNSpectra()) {
@@ -989,21 +1056,21 @@ public class StarHider implements ProgressDialogParent {
     }
 
     /**
-     * Tests whether a psm match is validated by a given filter.
+     * Tests whether a spectrum match is validated by a given filter.
      *
-     * @param match the key of the psm match
+     * @param spectrumKey the key of the spectrum match
      * @param psmFilter the filter
-     * @return a boolean indicating whether a psm match is validated by a given
+     * @return a boolean indicating whether a spectrum match is validated by a given
      * filter
      */
-    public boolean isValidated(String match, PsmFilter psmFilter) {
+    public boolean isValidated(String spectrumKey, PsmFilter psmFilter) {
 
         try {
-            if (psmFilter.getExceptions().contains(match)) {
+            if (psmFilter.getExceptions().contains(spectrumKey)) {
                 return false;
             }
             if (psmFilter.getManualValidation().size() > 0) {
-                if (psmFilter.getManualValidation().contains(match)) {
+                if (psmFilter.getManualValidation().contains(spectrumKey)) {
                     return true;
                 } else {
                     return false;
@@ -1015,7 +1082,7 @@ public class StarHider implements ProgressDialogParent {
 
             if (psmFilter.getPsmScore() != null
                     || psmFilter.getPsmConfidence() != null) {
-                psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (psmFilter.getPsmScore() != null) {
                     if (psmFilter.getPsmScoreComparison() == ComparisonType.AFTER) {
@@ -1061,7 +1128,7 @@ public class StarHider implements ProgressDialogParent {
             if (psmFilter.getPrecursorMz() != null
                     || psmFilter.getPrecursorRT() != null
                     || psmFilter.getPrecursorMzError() != null) {
-                Precursor precursor = peptideShakerGUI.getPrecursor(match);
+                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                 if (psmFilter.getPrecursorMz() != null) {
                     if (psmFilter.getPrecursorMzComparison() == ComparisonType.AFTER) {
                         if (precursor.getMz() <= psmFilter.getPrecursorMz()) {
@@ -1103,7 +1170,7 @@ public class StarHider implements ProgressDialogParent {
                 }
 
                 if (psmFilter.getPrecursorMzError() != null) {
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(match);
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     double error = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.AFTER) {
                         if (error <= psmFilter.getPrecursorMzError()) {
@@ -1125,14 +1192,14 @@ public class StarHider implements ProgressDialogParent {
                 }
             }
             if (psmFilter.getCharges().size() != peptideShakerGUI.getMetrics().getFoundCharges().size()) {
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(match);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 int charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                 if (!psmFilter.getCharges().contains(charge)) {
                     return false;
                 }
             }
 
-            if (!psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(match))) {
+            if (!psmFilter.getFileNames().contains(Spectrum.getSpectrumFile(spectrumKey))) {
                 return false;
             }
             return true;

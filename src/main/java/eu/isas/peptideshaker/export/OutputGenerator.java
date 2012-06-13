@@ -256,7 +256,7 @@ public class OutputGenerator implements ProgressDialogParent {
                                 break;
                             }
                             
-                            proteinPSParameter = (PSParameter) identification.getMatchParameter(proteinKey, proteinPSParameter);
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, proteinPSParameter);
                             
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
@@ -578,7 +578,7 @@ public class OutputGenerator implements ProgressDialogParent {
                             
                             boolean shared = false;
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                            peptidePSParameter = (PSParameter) identification.getMatchParameter(peptideKey, peptidePSParameter);
+                            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
                             
                             if (!peptideMatch.isDecoy() || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.isValidated()) || !onlyValidated) {
@@ -774,7 +774,7 @@ public class OutputGenerator implements ProgressDialogParent {
                                                 if (nSpectra) {
                                                     int cpt = 0;
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                                                        secondaryPSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, secondaryPSParameter);
+                                                        secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
                                                         if (secondaryPSParameter.isValidated()) {
                                                             cpt++;
                                                         }
@@ -989,7 +989,7 @@ public class OutputGenerator implements ProgressDialogParent {
                             }
                             
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-                            psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
                             PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                             
                             if (!bestAssumption.isDecoy() || !onlyValidated) {
@@ -1209,9 +1209,9 @@ public class OutputGenerator implements ProgressDialogParent {
         int progress = 0;
         
         for (String psmKey : psmKeys) {
-            
+            try {
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-            psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
             PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
             
             if (!bestAssumption.isDecoy() && psParameter.isValidated()) { // note that the validation is for the psm and not for the peptide
@@ -1297,7 +1297,10 @@ public class OutputGenerator implements ProgressDialogParent {
                     writer.write("\n");
                 }
             }
-            
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                    writer.write("Error\n");
+            }
             if (progressDialog != null) {
                 progressDialog.setValue(++progress);
             }
@@ -1443,7 +1446,7 @@ public class OutputGenerator implements ProgressDialogParent {
                             }
                             
                             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                             
                             if (!onlyValidated || psParameter.isValidated()) {
                                 for (int se : spectrumMatch.getAdvocates()) {
@@ -1595,11 +1598,15 @@ public class OutputGenerator implements ProgressDialogParent {
 
         // find all unique the charges
         for (int i = 0; i < spectrumKeys.size(); i++) {
-            
+            try {
             int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestAssumption().getIdentificationCharge().value;
             
             if (!charges.contains(tempCharge)) {
                 charges.add(tempCharge);
+            }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return "Error";
             }
         }
 

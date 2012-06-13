@@ -179,7 +179,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
 
         peptideTableToolTips.add("Peptide Confidence");
         peptideTableToolTips.add("Validated");
-        
+
         coverageTableToolTips = new ArrayList<String>();
         coverageTableToolTips.add(null);
         coverageTableToolTips.add("Fraction");
@@ -364,12 +364,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
 
             @Override
             public void run() {
-                
+
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
-                
+
                 progressDialog.setIndeterminate(true);
                 progressDialog.setTitle("Loading Fractions. Please Wait...");
 
@@ -391,7 +391,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
                         dm.fireTableDataChanged();
                         updateSelection();
                         proteinTable.requestFocus();
-                        
+
                         setProteinTableProperties();
                         showSparkLines(peptideShakerGUI.showSparklines());
                         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
@@ -417,39 +417,45 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
      * Update the selection.
      */
     public void updatePeptideTable() {
-        int row = proteinTable.getSelectedRow();
-        int proteinIndex = proteinTable.convertRowIndexToModel(row);
-        String proteinKey = proteinKeys.get(proteinIndex);
-        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-        peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
+        try {
+            int row = proteinTable.getSelectedRow();
+            int proteinIndex = proteinTable.convertRowIndexToModel(row);
+            String proteinKey = proteinKeys.get(proteinIndex);
+            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+            peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
 
-        // update the table model
-        if (peptideTable.getModel() instanceof PeptideFractionTableModel
-                && ((PeptideFractionTableModel) peptideTable.getModel()).isModelInitiated()) {
-            ((PeptideFractionTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, peptideKeys);
-        } else {
-            PeptideFractionTableModel peptideTableModel = new PeptideFractionTableModel(peptideShakerGUI, peptideKeys);
-            peptideTable.setModel(peptideTableModel);
-        }
+            // update the table model
+            if (peptideTable.getModel() instanceof PeptideFractionTableModel
+                    && ((PeptideFractionTableModel) peptideTable.getModel()).isModelInitiated()) {
+                ((PeptideFractionTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, peptideKeys);
+            } else {
+                PeptideFractionTableModel peptideTableModel = new PeptideFractionTableModel(peptideShakerGUI, peptideKeys);
+                peptideTable.setModel(peptideTableModel);
+            }
 
-        ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
-        setPeptideTableProperties();
-        setCoverageTableProperties();
-        showSparkLines(peptideShakerGUI.showSparklines());
+            ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
+            setPeptideTableProperties();
+            setCoverageTableProperties();
+            showSparkLines(peptideShakerGUI.showSparklines());
 
-        // update the border titles
-        ((TitledBorder) proteinPanel.getBorder()).setTitle("Proteins ("
-                + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")");
-        proteinPanel.repaint();
+            // update the border titles
+            ((TitledBorder) proteinPanel.getBorder()).setTitle("Proteins ("
+                    + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")");
+            proteinPanel.repaint();
 
-        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-        ((TitledBorder) peptidePanel.getBorder()).setTitle("Peptides (" + nValidatedPeptides + "/" + proteinMatch.getPeptideCount() + ")");
-        peptidePanel.repaint();
+            int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+            ((TitledBorder) peptidePanel.getBorder()).setTitle("Peptides (" + nValidatedPeptides + "/" + proteinMatch.getPeptideCount() + ")");
+            peptidePanel.repaint();
 
-        // select the first row in the table
-        if (peptideTable.getRowCount() > 0) {
-            peptideTable.setRowSelectionInterval(0, 0);
-            updatePlots();
+            // select the first row in the table
+            if (peptideTable.getRowCount() > 0) {
+                peptideTable.setRowSelectionInterval(0, 0);
+                updatePlots();
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            peptideKeys = new ArrayList<String>();
+            ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
         }
     }
 
@@ -457,210 +463,218 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
      * Update the peptide counts plot.
      */
     private void updatePlots() {
-        
-        // @TODO: this method should be split into smaller methods...
-
-        ArrayList<String> fileNames = new ArrayList<String>();
-
-        for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-            String fileName = Util.getFileName(filePath);
-            fileNames.add(fileName);
-        }
-
-        Collections.sort(fileNames);
-        PSParameter pSParameter = new PSParameter();
-        DefaultCategoryDataset peptidePlotDataset = new DefaultCategoryDataset();
-
-        int row = proteinTable.getSelectedRow();
-        int proteinIndex = proteinTable.convertRowIndexToModel(row);
-        String proteinKey = proteinKeys.get(proteinIndex);
-        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-        String currentProteinSequence = "";
-
         try {
+            // @TODO: this method should be split into smaller methods...
+
+            ArrayList<String> fileNames = new ArrayList<String>();
+
+            for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
+                String fileName = Util.getFileName(filePath);
+                fileNames.add(fileName);
+            }
+
+            Collections.sort(fileNames);
+            PSParameter pSParameter = new PSParameter();
+            DefaultCategoryDataset peptidePlotDataset = new DefaultCategoryDataset();
+
+            int row = proteinTable.getSelectedRow();
+            int proteinIndex = proteinTable.convertRowIndexToModel(row);
+            String proteinKey = proteinKeys.get(proteinIndex);
+            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+            String currentProteinSequence = "";
+
             currentProteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        int[][] coverage = new int[fileNames.size()][currentProteinSequence.length() + 1];
+            int[][] coverage = new int[fileNames.size()][currentProteinSequence.length() + 1];
 
 
-        // get the chart data
-        for (int i = 0; i < fileNames.size(); i++) {
+            // get the chart data
+            for (int i = 0; i < fileNames.size(); i++) {
 
-            String fraction = fileNames.get(i);
-            int validatedPeptideCounter = 0;
-            int notValidatedPeptideCounter = 0;
+                String fraction = fileNames.get(i);
+                int validatedPeptideCounter = 0;
+                int notValidatedPeptideCounter = 0;
 
-            for (int j = 0; j < peptideKeys.size(); j++) {
+                for (int j = 0; j < peptideKeys.size(); j++) {
 
-                String peptideKey = peptideKeys.get(j);
-                pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, pSParameter);
+                    String peptideKey = peptideKeys.get(j);
+                    try {
+                        pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, pSParameter);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
 
-                if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
-                    if (pSParameter.isValidated()) {
-                        validatedPeptideCounter++;
+                    if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
+                        if (pSParameter.isValidated()) {
+                            validatedPeptideCounter++;
 
-                        String peptideSequence = Peptide.getSequence(peptideKey);
-                        String tempSequence = currentProteinSequence;
+                            String peptideSequence = Peptide.getSequence(peptideKey);
+                            String tempSequence = currentProteinSequence;
 
-                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                            for (int k = peptideTempStart; k < peptideTempEnd; k++) {
-                                coverage[i][k]++;
+                            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                                int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                                int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                                for (int k = peptideTempStart; k < peptideTempEnd; k++) {
+                                    coverage[i][k]++;
+                                }
+                                tempSequence = currentProteinSequence.substring(0, peptideTempStart);
                             }
-                            tempSequence = currentProteinSequence.substring(0, peptideTempStart);
+                        } else {
+                            notValidatedPeptideCounter++;
+                        }
+                    }
+                }
+
+                peptidePlotDataset.addValue(validatedPeptideCounter, "Validated Peptides", "" + (i + 1));
+                peptidePlotDataset.addValue(notValidatedPeptideCounter, "Not Validated Peptides", "" + (i + 1));
+            }
+
+            // update the coverage table
+            DefaultTableModel coverageTableModel = (DefaultTableModel) coverageTable.getModel();
+            coverageTableModel.getDataVector().removeAllElements();
+
+
+            for (int i = 0; i < fileNames.size(); i++) {
+
+                // create the coverage plot
+                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
+
+                for (int j = 0; j < currentProteinSequence.length(); j++) {
+
+                    boolean covered = coverage[i][j] > 0;
+
+                    int sequenceCounter = 1;
+
+                    if (covered) {
+                        while (j + 1 < coverage[0].length && coverage[i][j + 1] > 0) {
+                            sequenceCounter++;
+                            j++;
                         }
                     } else {
-                        notValidatedPeptideCounter++;
-                    }
-                }
-            }
-
-            peptidePlotDataset.addValue(validatedPeptideCounter, "Validated Peptides", "" + (i + 1));
-            peptidePlotDataset.addValue(notValidatedPeptideCounter, "Not Validated Peptides", "" + (i + 1));
-        }
-
-        // update the coverage table
-        DefaultTableModel coverageTableModel = (DefaultTableModel) coverageTable.getModel();
-        coverageTableModel.getDataVector().removeAllElements();
-
-
-        for (int i = 0; i < fileNames.size(); i++) {
-
-            // create the coverage plot
-            ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
-
-            for (int j = 0; j < currentProteinSequence.length(); j++) {
-
-                boolean covered = coverage[i][j] > 0;
-
-                int sequenceCounter = 1;
-
-                if (covered) {
-                    while (j + 1 < coverage[0].length && coverage[i][j + 1] > 0) {
-                        sequenceCounter++;
-                        j++;
-                    }
-                } else {
-                    while (j + 1 < coverage[0].length && coverage[i][j + 1] == 0) {
-                        sequenceCounter++;
-                        j++;
-                    }
-                }
-
-
-                ArrayList<Double> data = new ArrayList<Double>();
-                data.add(new Double(sequenceCounter));
-
-                JSparklinesDataSeries sparklineDataseries;
-
-                if (covered) {
-                    sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
-                } else {
-                    sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
-                }
-
-
-                sparkLineDataSeriesCoverage.add(sparklineDataseries);
-            }
-
-            ChartPanel coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage),
-                    new HashMap<Integer, ArrayList<ResidueAnnotation>>(), true, true);
-
-            ((DefaultTableModel) coverageTable.getModel()).addRow(new Object[]{(i + 1), fileNames.get(i), coverageChart});
-        }
-
-        // create the peptide chart
-        JFreeChart chart = ChartFactory.createBarChart(null, "Fraction", "#Peptides", peptidePlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        ChartPanel chartPanel = new ChartPanel(chart);
-
-        // set up the renderer
-        StackedBarRenderer renderer = new StackedBarRenderer();
-        renderer.setShadowVisible(false);
-        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-        renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-        renderer.setSeriesPaint(1, Color.RED);
-        chart.getCategoryPlot().setRenderer(renderer);
-
-        // set background color
-        chart.getPlot().setBackgroundPaint(Color.WHITE);
-        chart.setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
-
-        // hide the outline
-        chart.getPlot().setOutlineVisible(false);
-
-        // clear the peptide plot
-        peptidePlotPanel.removeAll();
-
-        // add the new plot
-        peptidePlotPanel.add(chartPanel);
-
-
-
-        // spectrum plot
-        DefaultCategoryDataset spectrumPlotDataset = new DefaultCategoryDataset();
-
-        // get the psms per fraction
-        HashMap<String, ArrayList<String>> fractionPsmMatches = peptideShakerGUI.getMetrics().getFractionPsmMatches();
-
-        for (int i = 0; i < fileNames.size(); i++) {
-
-            String fraction = fileNames.get(i);
-            int validatedSpectraCounter = 0;
-            int notValidatedSpectraCounter = 0;
-
-            for (int j = 0; j < peptideKeys.size(); j++) {
-
-                String currentPeptideKey = peptideKeys.get(j);
-
-                if (fractionPsmMatches.get(fraction + "_" + currentPeptideKey) != null) {
-                    ArrayList<String> spectrumKeys = fractionPsmMatches.get(fraction + "_" + currentPeptideKey);
-
-                    for (int k = 0; k < spectrumKeys.size(); k++) {
-                        pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKeys.get(k), new PSParameter());
-
-                        if (pSParameter.isValidated()) {
-                            validatedSpectraCounter++;
-                        } else {
-                            notValidatedSpectraCounter++;
+                        while (j + 1 < coverage[0].length && coverage[i][j + 1] == 0) {
+                            sequenceCounter++;
+                            j++;
                         }
                     }
+
+
+                    ArrayList<Double> data = new ArrayList<Double>();
+                    data.add(new Double(sequenceCounter));
+
+                    JSparklinesDataSeries sparklineDataseries;
+
+                    if (covered) {
+                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
+                    } else {
+                        sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+                    }
+
+
+                    sparkLineDataSeriesCoverage.add(sparklineDataseries);
+                }
+
+                ChartPanel coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage),
+                        new HashMap<Integer, ArrayList<ResidueAnnotation>>(), true, true);
+
+                ((DefaultTableModel) coverageTable.getModel()).addRow(new Object[]{(i + 1), fileNames.get(i), coverageChart});
+            }
+
+            // create the peptide chart
+            JFreeChart chart = ChartFactory.createBarChart(null, "Fraction", "#Peptides", peptidePlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            ChartPanel chartPanel = new ChartPanel(chart);
+
+            // set up the renderer
+            StackedBarRenderer renderer = new StackedBarRenderer();
+            renderer.setShadowVisible(false);
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            renderer.setSeriesPaint(1, Color.RED);
+            chart.getCategoryPlot().setRenderer(renderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            peptidePlotPanel.removeAll();
+
+            // add the new plot
+            peptidePlotPanel.add(chartPanel);
+
+
+
+            // spectrum plot
+            DefaultCategoryDataset spectrumPlotDataset = new DefaultCategoryDataset();
+
+            // get the psms per fraction
+            HashMap<String, ArrayList<String>> fractionPsmMatches = peptideShakerGUI.getMetrics().getFractionPsmMatches();
+
+            for (int i = 0; i < fileNames.size(); i++) {
+                try {
+
+                    String fraction = fileNames.get(i);
+                    int validatedSpectraCounter = 0;
+                    int notValidatedSpectraCounter = 0;
+
+                    for (int j = 0; j < peptideKeys.size(); j++) {
+
+                        String currentPeptideKey = peptideKeys.get(j);
+
+                        if (fractionPsmMatches.get(fraction + "_" + currentPeptideKey) != null) {
+                            ArrayList<String> spectrumKeys = fractionPsmMatches.get(fraction + "_" + currentPeptideKey);
+
+                            for (int k = 0; k < spectrumKeys.size(); k++) {
+                                pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKeys.get(k), new PSParameter());
+
+                                if (pSParameter.isValidated()) {
+                                    validatedSpectraCounter++;
+                                } else {
+                                    notValidatedSpectraCounter++;
+                                }
+                            }
+                        }
+                    }
+
+                    spectrumPlotDataset.addValue(validatedSpectraCounter, "Validated Spectra", "" + (i + 1));
+                    spectrumPlotDataset.addValue(notValidatedSpectraCounter, "Not Validated Spectra", "" + (i + 1));
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
             }
 
-            spectrumPlotDataset.addValue(validatedSpectraCounter, "Validated Spectra", "" + (i + 1));
-            spectrumPlotDataset.addValue(notValidatedSpectraCounter, "Not Validated Spectra", "" + (i + 1));
+            // create the peptide chart
+            chart = ChartFactory.createBarChart(null, "Fraction", "#Spectra", spectrumPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            chartPanel = new ChartPanel(chart);
+
+            // set up the renderer
+            renderer = new StackedBarRenderer();
+            renderer.setShadowVisible(false);
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            renderer.setSeriesPaint(1, Color.RED);
+            chart.getCategoryPlot().setRenderer(renderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            spectraPlotPanel.removeAll();
+
+            // add the new plot
+            spectraPlotPanel.add(chartPanel);
+
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        // create the peptide chart
-        chart = ChartFactory.createBarChart(null, "Fraction", "#Spectra", spectrumPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        chartPanel = new ChartPanel(chart);
-
-        // set up the renderer
-        renderer = new StackedBarRenderer();
-        renderer.setShadowVisible(false);
-        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-        renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-        renderer.setSeriesPaint(1, Color.RED);
-        chart.getCategoryPlot().setRenderer(renderer);
-
-        // set background color
-        chart.getPlot().setBackgroundPaint(Color.WHITE);
-        chart.setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
-
-        // hide the outline
-        chart.getPlot().setOutlineVisible(false);
-
-        // clear the peptide plot
-        spectraPlotPanel.removeAll();
-
-        // add the new plot
-        spectraPlotPanel.add(chartPanel);
     }
 
     /**
@@ -677,8 +691,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
                 && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
-                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-                peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+                try {
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+                    peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return;
+                }
             } else {
                 peptideShakerGUI.resetSelectedItems();
             }
@@ -687,11 +706,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
-                    proteinKey = possibleKey;
-                    peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
-                    break;
+                try {
+                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
+                    if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                        proteinKey = possibleKey;
+                        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
+                        break;
+                    }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return;
                 }
             }
         }

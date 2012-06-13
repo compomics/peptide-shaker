@@ -2482,7 +2482,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                         mascot = false;
                         omssa = false;
                         xTandem = false;
-                        probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
+                        probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
                         if (probabilities.isValidated()) {
                             if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
@@ -2950,7 +2950,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
                     PSParameter probabilities = new PSParameter();
-                    probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
+                    probabilities = (PSParameter) identification.getSpectrumMatchParameter(key, probabilities);
 
                     IdentificationFeaturesGenerator featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
                     // Fill peptide shaker table
@@ -3420,7 +3420,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                         String key = getSelectedSpectrumKey();
                                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
                                         PSParameter probabilities = new PSParameter();
-                                        probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
+                                        probabilities = (PSParameter) identification.getSpectrumMatchParameter(key, probabilities);
 
                                         writer.write("1\t");
 
@@ -3522,8 +3522,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
 
                     result += currentAssumption.getPeptide().getModifiedSequenceAsString(true) + "\t";
                     result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
+                    try {
                     result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
                             identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    result+= "error\t";
+                }
 
                     result += currentAssumption.getEValue() + "\t";
                     result += probabilities.getSearchEngineConfidence() + "\t";

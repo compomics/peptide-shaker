@@ -1988,7 +1988,7 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
 
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
+try {
                     PSMaps pSMaps = new PSMaps();
                     pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
@@ -2007,7 +2007,9 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
                     TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
                     currentResults.setUserInput(new Double(thresholdInput.getText()));
                     currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
-
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     progressDialog.dispose();
@@ -3674,14 +3676,16 @@ public class StatsPanel extends javax.swing.JPanel implements ProgressDialogPare
 
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
+try {
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 miniShaker.proteinMapChanged(progressDialogWaitingHandler);
                 modifiedMaps.put(0, false);
-
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 progressDialogWaitingHandler.dispose();

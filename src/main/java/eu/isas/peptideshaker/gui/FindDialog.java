@@ -1039,13 +1039,13 @@ public class FindDialog extends javax.swing.JDialog {
                     case 0:
                         return row + 1;
                     case 1:
-                        psParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                         return psParameter.isStarred();
                     case 2:
-                        psParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                         return psParameter.isHidden();
                     case 3:
-                        psParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                         return psParameter.getGroupClass();
                     case 4:
                         proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1079,10 +1079,10 @@ public class FindDialog extends javax.swing.JDialog {
                     case 10:
                         return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                     case 11:
-                        psParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                         return psParameter.getProteinScore();
                     case 12:
-                        psParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
                         return psParameter.getProteinConfidence();
                     default:
                         return "";
@@ -1308,13 +1308,13 @@ public class FindDialog extends javax.swing.JDialog {
                     case 0:
                         return row + 1;
                     case 1:
-                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
                         return psParameter.isStarred();
                     case 2:
-                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
                         return psParameter.isHidden();
                     case 3:
-                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
                         return psParameter.getGroupClass();
                     case 4:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -1338,10 +1338,10 @@ public class FindDialog extends javax.swing.JDialog {
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         return peptideMatch.getSpectrumCount();
                     case 8:
-                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
                         return psParameter.getPeptideScore();
                     case 9:
-                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
                         return psParameter.getPeptideConfidence();
                     case 10:
                         return peptideKey;
@@ -1566,10 +1566,10 @@ public class FindDialog extends javax.swing.JDialog {
                     case 0:
                         return row + 1;
                     case 1:
-                        psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
                         return psParameter.isStarred();
                     case 2:
-                        psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
                         return psParameter.isHidden();
                     case 3:
                         return Spectrum.getSpectrumFile(spectrumKey);
@@ -1589,7 +1589,7 @@ public class FindDialog extends javax.swing.JDialog {
                         precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                         return Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     case 9:
-                        psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
                         return psParameter.getPsmConfidence();
                     default:
                         return "";

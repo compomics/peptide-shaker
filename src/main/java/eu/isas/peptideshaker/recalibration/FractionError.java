@@ -226,8 +226,11 @@ public class FractionError {
             String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumName);
 
             if (identification.matchExists(spectrumKey)) {
-
-                psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+                try {
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
 
                 if (psParameter.isValidated()) {
 
@@ -242,6 +245,7 @@ public class FractionError {
                         precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<Double>());
                     }
 
+                    try {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, false);
                     precursorRawMap.get(precursorRT).get(precursorMz).add(error);
@@ -268,6 +272,10 @@ public class FractionError {
 
                         spectrumFragmentMap.get(fragmentMzKey).add(ionMatch.getAbsoluteError());
                     }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return;
+                }
 
                     if (!fragmentRawMap.containsKey(precursorRT)) {
                         fragmentRawMap.put(precursorRT, new HashMap<Double, ArrayList<Double>>());

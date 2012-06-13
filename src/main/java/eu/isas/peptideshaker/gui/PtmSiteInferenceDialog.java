@@ -114,8 +114,12 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         updateSequenceLabel();
 
         // set the modification tooltip
+        try {
         String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide());
         sequenceLabel.setToolTipText(tooltip);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -183,6 +187,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * Updates the sequence label based on the selection in the table.
      */
     private void updateSequenceLabel() {
+        try {
         PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
         PSPtmScores ptmScores = new PSPtmScores();
         ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
@@ -222,6 +227,10 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         sequenceLabel.setText(Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(),
                 true, peptideMatch.getTheoreticPeptide(), mainLocations, secondaryLocations));
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            sequenceLabel.setText("Error");
+        }
     }
 
     /**
@@ -601,6 +610,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         }
 
         if (changed) {
+            try {
             // save changes in the peptide match
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
@@ -639,6 +649,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                         }
                     }
                 }
+            }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
             }
         }
         dispose();

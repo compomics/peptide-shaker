@@ -321,7 +321,11 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                                     if (!ProteinMatch.isDecoy(proteinKey)) {
-                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                                        try {
+                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                                        } catch (Exception e) {
+                                            peptideShakerGUI.catchException(e);
+                                        }
                                         if (!psParameter.isHidden()) {
                                             if (proteinKey.toLowerCase().contains(input)) {
                                                 possibilities.get(jumpType).add(proteinKey);
@@ -347,7 +351,13 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 PeptideMatch peptideMatch;
 
                                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                                    try {
+                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+
+                                    } catch (Exception e) {
+                                        peptideShakerGUI.catchException(e);
+                                        return;
+                                    }
                                     if (!psParameter.isHidden()) {
                                         if (peptideKey.toLowerCase().startsWith(input)) {
                                             possibilities.get(jumpType).add(peptideKey);
@@ -359,9 +369,13 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 }
 
                                 for (String secondaryCandidate : secondaryCandidates) {
+                                    try {
+                                        peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
 
-                                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
-
+                                    } catch (Exception e) {
+                                        peptideShakerGUI.catchException(e);
+                                        return;
+                                    }
                                     for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
                                         if (!ProteinMatch.isDecoy(protein)) {
                                             possibilities.get(jumpType).add(secondaryCandidate);

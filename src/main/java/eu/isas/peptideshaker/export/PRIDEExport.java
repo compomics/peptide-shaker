@@ -269,6 +269,7 @@ public class PRIDEExport {
      */
     private void writePsms(ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
         
+            try {
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
         Identification identification = peptideShakerGUI.getIdentification();
         PSParameter proteinProbabilities = new PSParameter();
@@ -318,9 +319,8 @@ public class PRIDEExport {
             if (prideExportDialog.progressCancelled()) {
                 break;
             }
-            
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            proteinProbabilities = (PSParameter) identification.getMatchParameter(proteinKey, proteinProbabilities);
+            proteinProbabilities = (PSParameter) identification.getProteinMatchPArameter(proteinKey, proteinProbabilities);
             double confidenceThreshold = proteinTargetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
             
             br.write(getCurrentTabSpace() + "<GelFreeIdentification>\n");
@@ -337,7 +337,7 @@ public class PRIDEExport {
                 }
                 
                 PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
-                peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, peptideProbabilities);
+                peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideProbabilities);
                 
                 for (String spectrumKey : currentMatch.getSpectrumMatches()) {
                     
@@ -345,7 +345,7 @@ public class PRIDEExport {
                         break;
                     }
                     
-                    psmProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psmProbabilities);
+                    psmProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psmProbabilities);
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                     Peptide tempPeptide = bestAssumption.getPeptide();
@@ -420,6 +420,9 @@ public class PRIDEExport {
             progress += increment;
             progressDialog.setValue((int) ((100 * progress) / totalProgress));
         }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
     }
 
     /**
