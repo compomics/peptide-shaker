@@ -5114,7 +5114,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         return;
                     }
 
-                    identification.setSerializationDirectory(getDefaultSerializationDirectory().getAbsolutePath());
+                    identification.setDirectory(getDefaultSerializationDirectory().getAbsolutePath());
 
                     File mgfFile;
                     int cpt = 1;
