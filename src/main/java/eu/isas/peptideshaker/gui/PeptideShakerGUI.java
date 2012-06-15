@@ -68,6 +68,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +82,10 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.jimmc.jshortcut.JShellLink;
+import org.apache.commons.compress.archivers.*;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.compressors.CompressorOutputStream;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -1501,11 +1506,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
-        File selectedFile = getUserSelectedFile(".cps", "(Compomics Peptide Shaker format) *.cps", "Save As...", false);
-
-        if (selectedFile != null) {
-            saveProjectAs(selectedFile, false);
-        }
+        saveProjectAs(false);
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
     /**
@@ -1843,7 +1844,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             // update the basic protein annotation
             if (selectedIndex == ANNOTATION_TAB_INDEX) {
                 try {
-                annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
+                    annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
                 } catch (Exception e) {
                     catchException(e);
                 }
@@ -3072,7 +3073,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferences.addIonType(Ion.IonType.IMMONIUM_ION);
         annotationPreferences.addIonType(Ion.IonType.REPORTER_ION);
         annotationPreferences.setFragmentIonAccuracy(searchParameters.getFragmentIonAccuracy());
-        
+
         if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("a-ions");
         } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
@@ -3080,9 +3081,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("c-ions");
         }
-        
+
         forwardIonsDeNovoCheckBoxMenuItem.repaint();
-        
+
         if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("x-ions");
         } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
@@ -3090,7 +3091,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("z-ions");
         }
-        
+
         rewindIonsDeNovoCheckBoxMenuItem.repaint();
     }
 
@@ -4246,26 +4247,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     progressDialog.setMax(files.length);
                     int cpt = 0;
 
-                    // remove match files from cache
-                    for (String matchFile : files) {
-
-                        if (cancelProgress) {
-                            break;
-                        }
-
-                        if (matchFile.endsWith(Identification.EXTENTION)) {
-                            File newFile = new File(serializationFolder.getPath(), matchFile);
-                            newFile.delete();
-                        }
-                        progressDialog.setValue(++cpt);
-                    }
-
                     // close the files and save the user preferences
                     if (!cancelProgress) {
                         spectrumFactory.closeFiles();
                         sequenceFactory.closeFile();
                         saveUserPreferences();
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     catchException(e);
@@ -4274,6 +4262,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 // close peptide shaker
                 if (!cancelProgress) {
                     progressDialog.dispose();
+                    try {
+                        identification.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        catchException(e);
+                    }
                     System.exit(0);
                 }
 
@@ -4794,15 +4788,67 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             public void run() {
 
                 try {
-                    // reset enzymes, ptms and preferences
+                    // reset enzymes, ptms and preferences. Close any open connection to an identification database
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
+                    if (identification != null) {
+                        identification.close();
+                    }
 
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                    MsExperiment tempExperiment = experimentIO.loadExperiment(currentPSFile);
+                    File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
+                    File destinationFile, destinationFolder, matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+                    for (File file : matchFolder.listFiles()) {
+                        if (file.isDirectory()) {
+                            Util.deleteDir(file);
+                        } else {
+                            file.delete();
+                        }
+                    }
+                    final int BUFFER = 2048;
+                    byte data[] = new byte[BUFFER];
+                    FileInputStream fi = new FileInputStream(currentPSFile);
+                    BufferedInputStream bis = new BufferedInputStream(fi, BUFFER);
+                    try {
+                        ArchiveInputStream tarInput = new ArchiveStreamFactory().createArchiveInputStream(bis);
+                        ArchiveEntry archiveEntry;
+                        progressDialog.setMax(100);
+                        progressDialog.setValue(0);
+                        progressDialog.setIndeterminate(false);
+                        int progress;
+                        long fileLength = currentPSFile.length();
+                        while ((archiveEntry = tarInput.getNextEntry()) != null) {
+                            destinationFile = new File(archiveEntry.getName());
+                            destinationFolder = destinationFile.getParentFile();
+                            if (!destinationFolder.exists()) {
+                                destinationFolder.mkdirs();
+                            }
+                            FileOutputStream fos = new FileOutputStream(destinationFile);
+                            BufferedOutputStream bos = new BufferedOutputStream(fos);
+                            int count;
+                            while ((count = tarInput.read(data, 0, BUFFER)) != -1 && !cancelProgress) {
+                                bos.write(data, 0, count);
+                            }
+                            bos.close();
+                            fos.close();
+                            progress = (int) (100 * tarInput.getBytesRead() / fileLength);
+                            progressDialog.setValue(progress);
+                        }
+                        progressDialog.setIndeterminate(true);
+                        tarInput.close();
+                    } catch (ArchiveException e) {
+                        //Most likely an old project
+                        experimentFile = currentPSFile;
+                    }
+                    fi.close();
+                    bis.close();
+                    fi.close();
+
+                    MsExperiment tempExperiment = experimentIO.loadExperiment(experimentFile);
+
                     Sample tempSample = null;
 
                     PSSettings experimentSettings = new PSSettings();
@@ -5114,7 +5160,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         return;
                     }
 
-                    identification.setDirectory(getDefaultSerializationDirectory().getAbsolutePath());
+                    if (identification.isDB()) {
+                        identification.establishConnection();
+                    } else {
+                        int outcome = JOptionPane.showConfirmDialog(PeptideShakerGUI.this,
+                                "The format used to create this project is now obsolete. Would you like to convert the project to the current PeptideShaker format? \nThis operation might take a few minutes, please do not interrupt it.", "Obsolete Format!",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        if (outcome == JOptionPane.YES_OPTION) {
+                            progressDialog.setTitle("Converting project. Please Wait...");
+                            identification.convert(progressDialog, cancelProgress, PeptideShaker.SERIALIZATION_DIRECTORY);
+                            saveProjectProcess();
+                        }
+                    }
 
                     File mgfFile;
                     int cpt = 1;
@@ -5483,14 +5540,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                    // empty the cache
-                    identification.emptyCache(progressDialog, cancelProgress);
-
-                    // save the project
-                    if (!cancelProgress) {
-                        experimentIO.save(currentPSFile, experiment);
-                    }
+saveProjectProcess();
 
                     progressDialog.dispose();
 
@@ -5678,134 +5728,44 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the default serialization directory for the currently loaded.
-     * cpsFile
-     *
-     * @return the default serialization directory for the currently loaded
-     * cpsFile
-     */
-    private File getDefaultSerializationDirectory() {
-        String folderPath = currentPSFile.getParentFile().getAbsolutePath();
-        return new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
-    }
-
-    /**
      * Save the project to the currentPSFile location.
      */
     private void saveProjectAs(boolean closeWhenDone) {
         File selectedFile = getUserSelectedFile(".cps", "(Compomics Peptide Shaker format) *.cps", "Save As...", false);
-
+        currentPSFile = selectedFile;
         if (selectedFile != null) {
-            saveProjectAs(selectedFile, closeWhenDone);
+            saveProject(closeWhenDone);
         }
     }
-
+    
     /**
-     * Save the project to the currentPSFile location.
-     *
-     * @param newFile the file to save the project to
-     * @param closeWhenDone if true, PeptideShaker closes after saving
+     * This method contains the different operations to be conducted in order to save a file.
+     * @throws FileNotFoundException 
+     * @throws IOException 
+     * @throws SQLException
+     * @throws ArchiveException 
      */
-    private void saveProjectAs(File newFile, boolean aCloseWhenDone) {
-
-        final boolean closeWhenDone = aCloseWhenDone;
-
-        currentPSFile = newFile;
-        lastSelectedFolder = currentPSFile.getAbsolutePath();
-
-        progressDialog = new ProgressDialogX(this, this, true);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Saving. Please Wait...");
-        progressDialog.setUnstoppable(true);
-
-        final PeptideShakerGUI tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("SaveThread") {
-
-            @Override
-            public void run() {
-
-                try {
-                    // change the peptide shaker icon to a "waiting version"
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
+    private void saveProjectProcess() throws FileNotFoundException, IOException, SQLException, ArchiveException {
+        
                     // set the experiment parameters
                     experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
 
-                    File newFolder = getDefaultSerializationDirectory();
+                    identification.emptyCache(progressDialog, cancelProgress);
+                    identification.close();
 
-                    // delete the old data
-                    if (newFolder.exists()) {
-                        String[] fileList = newFolder.list();
-                        progressDialog.setMax(fileList.length);
-                        progressDialog.setTitle("Deleting Old Data. Please Wait...");
-
-                        int cpt = 0;
-                        for (String fileName : fileList) {
-
-                            if (cancelProgress) {
-                                break;
-                            }
-
-                            File toDelete = new File(newFolder.getPath(), fileName);
-                            toDelete.delete();
-                            progressDialog.setValue(++cpt);
-                        }
-
-                        progressDialog.setIndeterminate(true);
-                    }
-
-                    // make the new save folder and save the project
+                    // transfer all files in the match directory
                     if (!cancelProgress) {
-                        newFolder.mkdir();
-//                        identification.save(newFolder, progressDialog, cancelProgress);
                         progressDialog.setIndeterminate(true);
-                        experimentIO.save(currentPSFile, experiment);
+                        File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
+                        experimentIO.save(experimentFile, experiment);
                     }
 
-                    progressDialog.dispose();
+                    identification.establishConnection();
 
-                    // return the peptide shaker icon to the standard version
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
+                    // tar everything in the current cps file file
                     if (!cancelProgress) {
-                        userPreferences.addRecentProject(currentPSFile);
-                        updateRecentProjectsList();
-
-                        if (closeWhenDone) {
-                            closePeptideShaker();
-                        } else {
-                            JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
-                            dataSaved = true;
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
+                        tarFolder();
                     }
-                } catch (Exception e) {
-
-                    // return the peptide shaker icon to the standard version
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    progressDialog.dispose();
-
-                    JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                }
-
-                cancelProgress = false;
-            }
-        }.start();
     }
 
     /**
@@ -6166,7 +6126,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             String iconFileLocation = jarFilePath + "\\resources\\peptide-shaker.ico";
             String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
-            
+
             try {
                 JShellLink link = new JShellLink();
                 link.setFolder(JShellLink.getDirectory("desktop"));
@@ -6221,16 +6181,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Add reference areas annotating the de novo tags.
-     * 
+     *
      * @param currentPeptide the current peptide sequence
      * @param annotations the current fragment ion annotations
-     * @param spectrumPanel the spectrum panel to add the reference area to 
+     * @param spectrumPanel the spectrum panel to add the reference area to
      */
     public void addAutomaticDeNovoSequencing(Peptide currentPeptide, ArrayList<IonMatch> annotations, SpectrumPanel spectrumPanel) {
 
         int forwardIon = searchParameters.getIonSearched1();
         int rewindIon = searchParameters.getIonSearched2();
-        
+
         IonMatch[] forwardIons = new IonMatch[currentPeptide.getSequence().length()];
         IonMatch[] rewindIons = new IonMatch[currentPeptide.getSequence().length()];
 
@@ -6239,7 +6199,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             IonMatch tempMatch = annotations.get(i);
 
-            if (tempMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION 
+            if (tempMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION
                     && tempMatch.ion.getNeutralLosses().isEmpty()
                     && tempMatch.charge.value == 1) {
 
@@ -6255,9 +6215,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // add rewind ion de novo tags (x, y or c)
         if (annotationPreferences.showRewindIonDeNovoTags()) {
-            
+
             Color annotationColor = SpectrumPanel.determineFragmentIonColor(Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, rewindIon), false);
-            
+
             for (int i = 1; i < rewindIons.length; i++) {
                 if (rewindIons[i] != null && rewindIons[i - 1] != null) {
                     spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
@@ -6270,9 +6230,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // add forward ion de novo tags (a, b or c)
         if (annotationPreferences.showForwardIonDeNovoTags()) {
-            
+
             Color annotationColor = SpectrumPanel.determineFragmentIonColor(Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, forwardIon), false);
-            
+
             for (int i = 1; i < forwardIons.length; i++) {
                 if (forwardIons[i] != null && forwardIons[i - 1] != null) {
                     spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
@@ -6280,6 +6240,40 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             currentPeptide.getSequence().substring(i, i + 1),
                             forwardIons[i - 1].peak.mz, forwardIons[i].peak.mz, annotationColor, 0.2f, false, true, annotationColor, true, Color.lightGray, 0.2f, 0.9));
                 }
+            }
+        }
+    }
+
+    public void tarFolder() throws FileNotFoundException, ArchiveException, IOException {
+        FileOutputStream fos = new FileOutputStream(currentPSFile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        ArchiveOutputStream tarOutput = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.TAR, bos);
+        File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+        addFolderContent(tarOutput, matchFolder);
+        tarOutput.close();
+        bos.close();
+        fos.close();
+    }
+
+    public void addFolderContent(ArchiveOutputStream tarOutput, File folder) throws FileNotFoundException, IOException {
+
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                addFolderContent(tarOutput, file);
+            } else {
+                final int BUFFER = 2048;
+                FileInputStream fi = new FileInputStream(file);
+                BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
+                byte data[] = new byte[BUFFER];
+                TarArchiveEntry entry = new TarArchiveEntry(file);
+                tarOutput.putArchiveEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1 && !cancelProgress) {
+                    tarOutput.write(data, 0, count);
+                }
+                tarOutput.closeArchiveEntry();
+                origin.close();
+                fi.close();
             }
         }
     }
