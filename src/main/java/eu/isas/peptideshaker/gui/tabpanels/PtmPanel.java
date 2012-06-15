@@ -4768,16 +4768,26 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         // change the peptide shaker icon to a "waiting version"
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                        String clipboardString = "";
-
+                OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
+String clipboardString = null;
                         if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
-                            clipboardString = getPeptidesTableAsString(true);
+                    outputGenerator.getPeptidesOutput(
+                            displayedPeptides, null, true, false, true, true, true, true,
+                            true, true, true, true, true, true, true, true, false, false, false, null);
                         } else if (tableIndex == TableIndex.RELATED_PEPTIDES_TABLE) {
-                            clipboardString = getPeptidesTableAsString(false);
+                    outputGenerator.getPeptidesOutput(
+                            relatedPeptides, null, true, false, true, true, true, true,
+                            true, true, true, true, true, true, true, true, false, false, false, null);
                         } else if (tableIndex == TableIndex.MODIFIED_PSMS_TABLE) {
-                            clipboardString = getPsmTableAsString(true);
+                    outputGenerator.getPSMsOutput(
+                            identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches(), 
+                            true, false, true, true, true, true,
+                            true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.RELATED_PSMS_TABLE) {
-                            clipboardString = getPsmTableAsString(false);
+                    outputGenerator.getPSMsOutput(
+                            identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches(), 
+                            true, false, true, true, true, true,
+                            true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.PTM_TABLE) {
                             // @TODO: implement me!!
                             clipboardString = "not yet implemented...";
@@ -4787,7 +4797,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                             clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
                         }
 
-                        if (!cancelProgress) {
+                        if (!cancelProgress && clipboardString !=null) {
                             StringSelection stringSelection = new StringSelection(clipboardString);
                             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                             clipboard.setContents(stringSelection, peptideShakerGUI);
@@ -4797,7 +4807,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         progressDialog.dispose();
 
-                        if (!cancelProgress) {
+                        if (!cancelProgress && clipboardString !=null) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
