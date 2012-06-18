@@ -464,12 +464,11 @@ public class PRIDEExport {
      */
     private void writeFragmentIon(IonMatch ionMatch) throws IOException {
         
-        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
         // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
 
-        CvTerm fragmentIonTerm = fragmentIon.getPrideCvTerm();
+        CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
         
         if (fragmentIonTerm != null) {
             br.write(getCurrentTabSpace() + "<FragmentIon>\n");

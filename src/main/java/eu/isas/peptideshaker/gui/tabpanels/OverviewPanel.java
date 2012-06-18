@@ -4788,7 +4788,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Updates the visability of the show panels buttons at the bottom of the
+     * Updates the visibility of the show panels buttons at the bottom of the
      * screen.
      *
      * @return true of all panels are currently displayed
