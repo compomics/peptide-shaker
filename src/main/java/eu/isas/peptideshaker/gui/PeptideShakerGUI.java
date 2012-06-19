@@ -2363,18 +2363,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 origin.close();
 
 
-                                // add the cps folder
+                                // add the cps folder if present (obsolete structure)
                                 String cpsFolderName = currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps";
                                 File cpsFolder = new File(projectFolder, cpsFolderName);
 
-                                if (!cpsFolder.exists()) {
-                                    progressDialog.dispose();
-                                    // return the peptide shaker icon to the standard version
-                                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                                    JOptionPane.showMessageDialog(tempRef, "cps folder not found!", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
-                                    return;
-                                }
-
+                                if (cpsFolder.exists()) {
                                 String files[] = cpsFolder.list();
 
                                 progressDialog.setTitle("Zipping PeptideShaker Folder. Please Wait...");
@@ -2395,6 +2388,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     }
                                     origin.close();
                                 }
+                                }
+
 
 
                                 // add the data files
