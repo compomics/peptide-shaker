@@ -16,7 +16,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -381,6 +381,7 @@ public class PeptideShaker {
         waitingHandler.appendReport(report);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
         waitingHandler.setRunFinished();
+        
     }
 
     /**

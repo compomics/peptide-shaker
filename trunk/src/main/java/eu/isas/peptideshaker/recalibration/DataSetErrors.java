@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.recalibration;
 
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -7,8 +7,7 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.dialogs.PtmDialog;
 import com.compomics.util.gui.dialogs.PtmDialogParent;
@@ -46,7 +45,7 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmDialogParent, ProgressDialogParent {
+public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmDialogParent {
 
     /**
      * The tooltips for the expected variable mods.
@@ -89,10 +88,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
     /**
      * boolean indicating whether import-related data can be edited.
      */
@@ -1021,7 +1016,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true); // note: not really possible to cancel this one...
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true); // note: not really possible to cancel this one...
 
             final PeptideShakerGUI tempRef = peptideShakerGUI; // needed due to threading issues
 
@@ -1956,10 +1951,5 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     public void updateModifications() {
         // @TODO: should something be done here..? this method is called when the user click the OK button in the PTM Dialog
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }

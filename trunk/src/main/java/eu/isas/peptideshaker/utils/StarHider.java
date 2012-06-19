@@ -8,8 +8,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -27,7 +26,7 @@ import javax.swing.RowFilter.ComparisonType;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class StarHider implements ProgressDialogParent {
+public class StarHider {
 
     /**
      * PeptideShakerGUI instance.
@@ -41,10 +40,6 @@ public class StarHider implements ProgressDialogParent {
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
 
     /**
      * Constructor.
@@ -60,7 +55,7 @@ public class StarHider implements ProgressDialogParent {
      */
     public void starHide() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
 
         new Thread(new Runnable() {
@@ -84,13 +79,13 @@ public class StarHider implements ProgressDialogParent {
 try {
                 Identification identification = peptideShakerGUI.getIdentification();
                 progressDialog.setIndeterminate(false);
-                progressDialog.setMax(identification.getProteinIdentification().size());
+                progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
 
                 PSParameter psParameter = new PSParameter();
 
                 for (String proteinKey : identification.getProteinIdentification()) {
 
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
@@ -99,7 +94,7 @@ try {
 
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
-                        if (cancelProgress) {
+                        if (progressDialog.isRunCanceled()) {
                             break;
                         }
 
@@ -108,7 +103,7 @@ try {
 
                         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
@@ -151,14 +146,13 @@ try {
                     psParameter.setStarred(isProteinStarred(proteinKey));
                     
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
 } catch (Exception e) {
     peptideShakerGUI.catchException(e);
 }
 
                 progressDialog.dispose();
-                cancelProgress = false;
 
                 // change the peptide shaker icon back to the default version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1208,10 +1202,5 @@ try {
             peptideShakerGUI.catchException(e);
             return false;
         }
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }

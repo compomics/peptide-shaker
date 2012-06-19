@@ -16,7 +16,7 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
@@ -215,7 +215,7 @@ public class PRIDEExport {
         }
         totalProgress = 2 * totalProgress;
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(100);
+        progressDialog.setMaxProgressValue(100);
         progressDialog.setValue(0);
         
         if (prideExportDialog.progressCancelled()) {

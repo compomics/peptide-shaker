@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.HelpDialog;
@@ -19,7 +18,7 @@ import javax.swing.filechooser.FileFilter;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class FeaturesPreferencesDialog extends javax.swing.JDialog implements ProgressDialogParent {
+public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Peptide-Shaker main GUI.
@@ -33,10 +32,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
 
     /**
      * Creates a new ExportPreferencesDialog.
@@ -1116,7 +1111,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
 
             peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1143,14 +1138,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
 
                     CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdentificationFeaturesGenerator());
-                    boolean exported = exporter.exportResults(progressDialog, cancelProgress, fileChooser.getSelectedFile());
+                    boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
 
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     progressDialog.dispose();
 
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
 
                         if (exported) {
                             JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
@@ -1159,8 +1154,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
                             JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See resources/conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1590,8 +1583,4 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
-    }
 }

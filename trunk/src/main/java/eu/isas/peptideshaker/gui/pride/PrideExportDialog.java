@@ -8,8 +8,7 @@ import com.compomics.util.pride.prideobjects.Sample;
 import com.compomics.util.pride.prideobjects.Instrument;
 import com.compomics.util.pride.prideobjects.Protocol;
 import com.compomics.util.pride.PtmToPrideMap;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
 import eu.isas.peptideshaker.export.PRIDEExport;
@@ -35,16 +34,12 @@ import javax.swing.table.JTableHeader;
  *
  * @author Harald Barsnes
  */
-public class PrideExportDialog extends javax.swing.JDialog implements ProgressDialogParent {
+public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
     /**
      * The PeptideShakerGUI main class.
      */
@@ -1136,7 +1131,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         final String prideFileName = fileName;
         final PrideExportDialog prideExportDialog = this; // needed due to threading issues
-        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog = new ProgressDialogX(this, true);
         progressDialog.setIndeterminate(true);
 
         new Thread(new Runnable() {
@@ -1205,7 +1200,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // display a conversion complete message to the user
-                if (conversionCompleted && !cancelProgress) {
+                if (conversionCompleted && !progressDialog.isRunCanceled()) {
 
                     // create an empty label to put the message in
                     JLabel label = new JLabel();
@@ -1235,11 +1230,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                     dispose();
                 }
                 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE XML conversion cancelled by the user.", "PRIDE XML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
                 }
-                
-                cancelProgress = false;
             }
         }.start();
     }//GEN-LAST:event_convertJButtonActionPerformed
@@ -1543,19 +1536,14 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         return ontology;
     }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
-    }
     
     /**
-     * Returns true if the user has cancelled the progress.
+     * Returns true if the user has canceled the progress.
      * 
      * 
-     * @return true if the user has cancelled the progress
+     * @return true if the user has canceled the progress
      */
     public boolean progressCancelled() {
-        return cancelProgress;
+        return progressDialog.isRunCanceled();
     }
 }

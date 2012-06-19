@@ -6,8 +6,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -60,7 +59,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class ProteinFractionsPanel extends javax.swing.JPanel implements ProgressDialogParent, ProteinSequencePanelParent {
+public class ProteinFractionsPanel extends javax.swing.JPanel implements ProteinSequencePanelParent {
 
     /**
      * A reference to the main PeptideShakerGUI.
@@ -90,10 +89,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
     /**
      * The sequence factory.
      */
@@ -344,7 +339,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Loading Fractions. Please Wait...");
         progressDialog.setUnstoppable(true);
@@ -1682,7 +1677,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
             // change the peptide shaker icon to a "waiting version"
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
@@ -1706,9 +1701,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
                         BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
 
                         if (tableIndex == TableIndex.PROTEIN_TABLE) {
-                            Util.tableToFile(proteinTable, "\t", progressDialog, cancelProgress, true, writer);
+                            Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
                         } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
-                            Util.tableToFile(peptideTable, "\t", progressDialog, cancelProgress, true, writer);
+                            Util.tableToFile(peptideTable, "\t", progressDialog, true, writer);
                         }
 
                         writer.close();
@@ -1718,7 +1713,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (IOException e) {
@@ -1728,8 +1723,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
                         JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
 
@@ -1737,11 +1730,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Progres
             // change the peptide shaker icon back to the default version
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         }
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 
     @Override

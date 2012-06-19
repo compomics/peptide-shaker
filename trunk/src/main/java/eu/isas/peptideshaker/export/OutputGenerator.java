@@ -14,8 +14,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -37,7 +36,7 @@ import javax.swing.JOptionPane;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class OutputGenerator implements ProgressDialogParent {
+public class OutputGenerator {
 
     /**
      * The main gui.
@@ -67,10 +66,6 @@ public class OutputGenerator implements ProgressDialogParent {
      * The writer used to send the output to file.
      */
     private BufferedWriter writer;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
 
     /**
      * Constructor.
@@ -128,8 +123,6 @@ public class OutputGenerator implements ProgressDialogParent {
     public void getProteinsOutput(ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
             boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) throws IOException {
-
-        cancelProgress = false;
         
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -170,7 +163,7 @@ public class OutputGenerator implements ProgressDialogParent {
                 proteinKeys = aProteinKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             progressDialog.setIndeterminate(true);
             
@@ -248,11 +241,11 @@ public class OutputGenerator implements ProgressDialogParent {
                         int progress = 0, proteinCounter = 0;
                         
                         progressDialog.setIndeterminate(false);
-                        progressDialog.setMax(proteinKeys.size());
+                        progressDialog.setMaxProgressValue(proteinKeys.size());
                         
                         for (String proteinKey : proteinKeys) {
                             
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                             
@@ -389,7 +382,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }                        
                     } catch (Exception e) {
@@ -399,8 +392,6 @@ public class OutputGenerator implements ProgressDialogParent {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-                    
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -437,8 +428,6 @@ public class OutputGenerator implements ProgressDialogParent {
             boolean aLocation, boolean aSurroundings, boolean aSequence, boolean aModifications, boolean aPtmLocations, boolean aCharges,
             boolean aNSpectra, boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred,
             boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) throws IOException {
-
-        cancelProgress = false;
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> peptideKeys;
@@ -480,7 +469,7 @@ public class OutputGenerator implements ProgressDialogParent {
                 peptideKeys = aPeptideKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             
@@ -502,7 +491,7 @@ public class OutputGenerator implements ProgressDialogParent {
                     
                     try {
                         progressDialog.setIndeterminate(false);
-                        progressDialog.setMax(peptideKeys.size());
+                        progressDialog.setMaxProgressValue(peptideKeys.size());
                         
                         if (includeHeader) {
                             if (indexes) {
@@ -572,7 +561,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         
                         for (String peptideKey : peptideKeys) {
                             
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                             
@@ -820,7 +809,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -830,8 +819,6 @@ public class OutputGenerator implements ProgressDialogParent {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-                    
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -862,8 +849,6 @@ public class OutputGenerator implements ProgressDialogParent {
     public void getPSMsOutput(ArrayList<String> aPsmKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccessions, boolean aProteinDescription, boolean aSequence, boolean aModification,
             boolean aLocation, boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScore, boolean aConfidence, boolean aIncludeHeader,
             boolean aOnlyStarred, boolean aIncludeHidden) throws IOException {
-
-        cancelProgress = false;
         
         // create final versions of all variables to use inside the export thread
         final ArrayList<String> psmKeys;
@@ -901,7 +886,7 @@ public class OutputGenerator implements ProgressDialogParent {
                 psmKeys = aPsmKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             
@@ -923,7 +908,7 @@ public class OutputGenerator implements ProgressDialogParent {
                     
                     try {
                         progressDialog.setIndeterminate(false);
-                        progressDialog.setMax(psmKeys.size());
+                        progressDialog.setMaxProgressValue(psmKeys.size());
                         
                         if (includeHeader) {
                             if (indexes) {
@@ -984,7 +969,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         
                         for (String psmKey : psmKeys) {
                             
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                             
@@ -1158,7 +1143,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -1168,8 +1153,6 @@ public class OutputGenerator implements ProgressDialogParent {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-                    
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1180,19 +1163,18 @@ public class OutputGenerator implements ProgressDialogParent {
      * as supported by Progenesis.
      *
      * @param progressDialog the progress dialog (can be null)
-     * @param cancelProgress if set to true the export is cancelled
      * @param psmKeys
      * @param writer the buffered writer to send the output to
      * @throws IOException
      */
-    public void getPSMsProgenesisExport(ProgressDialogX progressDialog, boolean cancelProgress, ArrayList<String> psmKeys, BufferedWriter writer) throws IOException {
+    public void getPSMsProgenesisExport(ProgressDialogX progressDialog, ArrayList<String> psmKeys, BufferedWriter writer) throws IOException {
          
         if (psmKeys == null) {
             psmKeys = identification.getSpectrumIdentification();
         }
         if (progressDialog != null) {
             progressDialog.setIndeterminate(false);
-            progressDialog.setMax(psmKeys.size());
+            progressDialog.setMaxProgressValue(psmKeys.size());
         }
         
         writer.write("sequence" + SEPARATOR);
@@ -1218,7 +1200,7 @@ public class OutputGenerator implements ProgressDialogParent {
 
                 for (int j = 0; j < bestAssumption.getPeptide().getParentProteins().size(); j++) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
@@ -1229,7 +1211,7 @@ public class OutputGenerator implements ProgressDialogParent {
                     HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
                     for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
                         
-                        if (cancelProgress) {
+                        if (progressDialog.isRunCanceled()) {
                             break;
                         }
                         
@@ -1245,7 +1227,7 @@ public class OutputGenerator implements ProgressDialogParent {
                     
                     for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
                         
-                        if (cancelProgress) {
+                        if (progressDialog.isRunCanceled()) {
                             break;
                         }
                         
@@ -1253,7 +1235,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         
                         for (int k = 0; k < mods.size(); k++) {
                             
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                             
@@ -1305,7 +1287,7 @@ public class OutputGenerator implements ProgressDialogParent {
                 progressDialog.setValue(++progress);
             }
             
-            if (cancelProgress) {
+            if (progressDialog.isRunCanceled()) {
                 break;
             }
         }
@@ -1365,7 +1347,7 @@ public class OutputGenerator implements ProgressDialogParent {
                 psmKeys = aPsmKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             
@@ -1437,11 +1419,11 @@ public class OutputGenerator implements ProgressDialogParent {
                         int rank, progress = 0;
                         
                         progressDialog.setIndeterminate(false);
-                        progressDialog.setMax(psmKeys.size());
+                        progressDialog.setMaxProgressValue(psmKeys.size());
                         
                         for (String spectrumKey : psmKeys) {
                             
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                             
@@ -1564,7 +1546,7 @@ public class OutputGenerator implements ProgressDialogParent {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -1574,8 +1556,6 @@ public class OutputGenerator implements ProgressDialogParent {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-                    
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1720,9 +1700,4 @@ public class OutputGenerator implements ProgressDialogParent {
         
         return result;
     }
-    
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
-}

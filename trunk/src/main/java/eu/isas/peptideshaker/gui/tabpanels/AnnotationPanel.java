@@ -3,8 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -29,7 +28,7 @@ import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
  *
  * @author Harald Barsnes
  */
-public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialogParent {
+public class AnnotationPanel extends javax.swing.JPanel {
 
     /**
      * The current protein accession number.
@@ -47,10 +46,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private boolean cancelProgress = false;
 
     /**
      * Creates a new AnnotationPanel.
@@ -1185,7 +1180,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             
             clearOldData();
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
 
             new Thread(new Runnable() {
 
@@ -1220,7 +1215,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
                             int counter = 0;
 
-                            if (iterator.hasNext() && !cancelProgress) {
+                            if (iterator.hasNext() && !progressDialog.isRunCanceled()) {
 
                                 UniProtEntry uniProtEntry = iterator.next();
 
@@ -1270,7 +1265,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 counter++;
                             }
 
-                            if (!cancelProgress) {
+                            if (!progressDialog.isRunCanceled()) {
 
                                 if (counter > 1) {
                                     JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in more than 1 hit!", JOptionPane.WARNING_MESSAGE);
@@ -1303,16 +1298,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-
-                    cancelProgress = false;
                     progressDialog.dispose();
                 }
             }.start();
         }
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }

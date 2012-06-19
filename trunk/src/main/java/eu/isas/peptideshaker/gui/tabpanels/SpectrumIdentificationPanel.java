@@ -14,8 +14,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
@@ -60,16 +59,12 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class SpectrumIdentificationPanel extends javax.swing.JPanel implements ProgressDialogParent {
+public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
     /**
      * Needed in order to not update the file selection too many times.
      */
@@ -2405,7 +2400,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
 
         new Thread(new Runnable() {
 
@@ -2442,7 +2437,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                     SpectrumMatch spectrumMatch;
 
                     progressDialog.setIndeterminate(false);
-                    progressDialog.setMax(identification.getSpectrumIdentification().size());
+                    progressDialog.setMaxProgressValue(identification.getSpectrumIdentification().size());
                     progressDialog.setValue(0);
 
 
@@ -2474,7 +2469,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
 
                     for (String spectrumKey : identification.getSpectrumIdentification()) {
 
-                        if (cancelProgress) {
+                        if (progressDialog.isRunCanceled()) {
                             break;
                         }
 
@@ -2534,10 +2529,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                             no_o++;
                         }
 
-                        progressDialog.incrementValue();
+                        progressDialog.increaseProgressValue();
                     }
 
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
 
                         progressDialog.setIndeterminate(true);
                         progressDialog.setTitle("Updating Tables. Please Wait...");
@@ -2635,7 +2630,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         fileSelectionChanged();
                     }
 
@@ -2646,8 +2641,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
-
-                cancelProgress = false;
             }
         }.start();
     }
@@ -2779,7 +2772,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
      */
     private void fileSelectionChanged() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
 
         new Thread(new Runnable() {
@@ -2807,22 +2800,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                 int identifiedCounter = 0;
 
                 progressDialog.setIndeterminate(false);
-                progressDialog.setMax(identification.getSpectrumIdentification().size());
+                progressDialog.setMaxProgressValue(identification.getSpectrumIdentification().size());
                 progressDialog.setValue(0);
 
                 for (String spectrumKey : identification.getSpectrumIdentification()) {
 
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
                     if (Spectrum.getSpectrumFile(spectrumKey).equals(fileSelected)) {
                         identifiedCounter++;
                     }
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
 
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (identifiedCounter) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")");
                     spectrumSelectionPanel.repaint();
 
@@ -2836,7 +2829,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
 
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                cancelProgress = false;
             }
         });
     }
@@ -3384,7 +3376,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                 try {
                     final BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
 
-                    progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+                    progressDialog = new ProgressDialogX(peptideShakerGUI, true);
 
                     new Thread(new Runnable() {
 
@@ -3407,9 +3399,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                             try {
 
                                 if (tableIndex == TableIndex.SEARCH_ENGINE_PERFORMANCE) {
-                                    Util.tableToFile(searchEngineTable, "\t", progressDialog, cancelProgress, true, writer);
+                                    Util.tableToFile(searchEngineTable, "\t", progressDialog, true, writer);
                                 } else if (tableIndex == TableIndex.SPECTRUM_FILES) {
-                                    Util.tableToFile(spectrumTable, "\t", progressDialog, cancelProgress, true, writer);
+                                    Util.tableToFile(spectrumTable, "\t", progressDialog, true, writer);
                                 } else if (tableIndex == TableIndex.PSM_TABLES) {
 
                                     writer.write("PeptideShaker\n\n");
@@ -3464,7 +3456,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
 
                                 progressDialog.dispose();
 
-                                if (!cancelProgress) {
+                                if (!progressDialog.isRunCanceled()) {
                                     JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to file:\n" + selectedFile.getPath(), "Copied to File", JOptionPane.INFORMATION_MESSAGE);
                                 }
 
@@ -3473,8 +3465,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
-
-                            cancelProgress = false;
                         }
                     }.start();
 
@@ -3798,10 +3788,5 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel implements P
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
         }
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }

@@ -9,8 +9,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -36,7 +35,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent {
+public class QCPanel extends javax.swing.JPanel {
 
     /**
      * The main peptide shaker gui.
@@ -55,10 +54,6 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
     /**
      * Values of the validated target hits.
      */
@@ -1092,7 +1087,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 || (proteinNumberValidatedPeptidesJRadioButton.isSelected() && currentProteinPlotType != PlotType.Protein_Validated_Peptides)
                 || (proteinSequenceLengthJRadioButton.isSelected() && currentProteinPlotType != PlotType.Protein_Sequence_Length)) {
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             
             new Thread(new Runnable() {
                 
@@ -1113,7 +1108,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 public void run() {
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getProteinIdentification().size());
                     
                     progressDialog.setTitle("Getting Protein Dataset. Please Wait...");
                     getProteinDataset();
@@ -1208,7 +1203,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         currentProteinPlotType = PlotType.Protein_Sequence_Length;
                     }
                     
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         
                         JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Amount of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
                         
@@ -1265,7 +1260,6 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1281,7 +1275,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 || (peptideMissedCleavagesJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Missed_Cleavages)
                 || (peptideLengthJRadioButton.isSelected() && currentPeptidePlotType != PlotType.Peptide_Length)) {
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             
             new Thread(new Runnable() {
                 
@@ -1298,7 +1292,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 public void run() {
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
                     
                     progressDialog.setTitle("Getting Peptide Dataset. Please Wait...");
                     getPeptideDataset();
@@ -1359,7 +1353,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         currentPeptidePlotType = PlotType.Peptide_Length;
                     }
                     
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         
                         JFreeChart peptideChart = ChartFactory.createStackedBarChart(null, null, "Amount of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
                         
@@ -1408,7 +1402,6 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1423,7 +1416,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
         if ((psmPrecursorMassErrorJRadioButton.isSelected() && currentPsmPlotType != PlotType.PSM_Precursor_Mass_Error)
                 || (psmPrecursorChargeJRadioButton.isSelected() && currentPsmPlotType != PlotType.PSM_Precursor_Charge)) {
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             
             new Thread(new Runnable() {
                 
@@ -1444,7 +1437,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 public void run() {
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
                     
                     progressDialog.setTitle("Getting PSM Dataset. Please Wait...");
                     getPsmDataset();
@@ -1488,7 +1481,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         currentPsmPlotType = PlotType.PSM_Precursor_Charge;
                     }
                     
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         
                         JFreeChart psmChart = ChartFactory.createStackedBarChart(null, null, "Amount of PSMs", dataset, PlotOrientation.VERTICAL, true, true, true);
                         
@@ -1533,7 +1526,6 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1545,7 +1537,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
     private void getProteinDataset() {
         
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getProteinIdentification().size());
         progressDialog.setValue(0);
         
         try {
@@ -1561,7 +1553,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1595,7 +1587,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
                 
             } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
@@ -1608,7 +1600,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1645,7 +1637,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
 
@@ -1657,7 +1649,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1686,7 +1678,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             } else if (proteinSequenceLengthJRadioButton.isSelected()) {
                 // Values for the sequence length
@@ -1697,7 +1689,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1733,7 +1725,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             }
         } catch (Exception e) {
@@ -1747,7 +1739,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
     private void getPeptideDataset() {
         
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
         progressDialog.setValue(0);
         
         try {
@@ -1764,7 +1756,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1773,7 +1765,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                     
                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                         
-                        if (cancelProgress) {
+                        if (progressDialog.isRunCanceled()) {
                             break;
                         }
                         
@@ -1804,7 +1796,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
 
@@ -1817,7 +1809,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1848,7 +1840,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             } else if (peptideLengthJRadioButton.isSelected()) {
 
@@ -1860,7 +1852,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1891,7 +1883,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             }
         } catch (Exception e) {
@@ -1905,7 +1897,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
     private void getPsmDataset() {
         
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
         progressDialog.setValue(0);
         
         try {
@@ -1924,7 +1916,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1956,7 +1948,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
@@ -1968,7 +1960,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
                     
@@ -1997,7 +1989,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                         }
                     }
                     
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             }
         } catch (Exception e) {
@@ -2034,11 +2026,11 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
         
         int[] binData = new int[bins.size() + 1];
         
-        for (int i = 0; i < values.size() && !cancelProgress; i++) {
+        for (int i = 0; i < values.size() && !progressDialog.isRunCanceled(); i++) {
             
             boolean binFound = false;
             
-            for (int j = 0; j < bins.size() && !binFound && !cancelProgress; j++) {
+            for (int j = 0; j < bins.size() && !binFound && !progressDialog.isRunCanceled(); j++) {
                 if (values.get(i) <= bins.get(j)) {
                     binData[j]++;
                     binFound = true;
@@ -2051,7 +2043,7 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
         }
         
         
-        for (int i = 0; i < bins.size() + 1 && !cancelProgress; i++) {
+        for (int i = 0; i < bins.size() + 1 && !progressDialog.isRunCanceled(); i++) {
             if (i == 0) {
                 if (bins.get(i) > 0.0) {
                     
@@ -2090,10 +2082,5 @@ public class QCPanel extends javax.swing.JPanel implements ProgressDialogParent 
                 }
             }
         }
-    }
-    
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }
