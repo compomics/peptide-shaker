@@ -88,14 +88,6 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private File fastaFile = null;
     /**
-     * Compomics experiment saver and opener.
-     */
-    private ExperimentIO experimentIO = new ExperimentIO();
-    /**
-     * A simple progress dialog.
-     */
-    private static ProgressDialogX progressDialog;
-    /**
      * The peptide shaker class which will take care of the pre-processing..
      */
     private PeptideShaker peptideShaker;

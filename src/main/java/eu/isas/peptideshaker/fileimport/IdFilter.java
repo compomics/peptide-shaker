@@ -63,7 +63,7 @@ public class IdFilter implements Serializable {
      */
     public IdFilter() {
         minPepLength = 6;
-        maxPepLength = 20;
+        maxPepLength = 30;
         mascotMaxEvalue = 10;
         omssaMaxEvalue = 10;
         xtandemMaxEvalue = 10;
