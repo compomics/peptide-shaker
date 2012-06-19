@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.scoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -10,8 +10,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -36,7 +35,7 @@ import javax.swing.filechooser.FileFilter;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class FollowupPreferencesDialog extends javax.swing.JDialog implements ProgressDialogParent {
+public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * The main GUI.
@@ -50,10 +49,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
 
     /**
      * Creates a new FollowupPreferencesDialog.
@@ -538,7 +533,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
         if (finalOutputFile != null) {
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -565,7 +560,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         for (String mgfFile : spectrumFactory.getMgfFileNames()) {
                             total += spectrumFactory.getSpectrumTitles(mgfFile).size();
                         }
-                        progressDialog.setMax(total);
+                        progressDialog.setMaxProgressValue(total);
 
                         FileWriter f = new FileWriter(finalOutputFile);
                         BufferedWriter b = new BufferedWriter(f);
@@ -576,14 +571,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 if (!isValidated(spectrumKey)) {
                                     b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
                                 }
-                                progressDialog.incrementValue();
+                                progressDialog.increaseProgressValue();
 
-                                if (cancelProgress) {
+                                if (progressDialog.isRunCanceled()) {
                                     break;
                                 }
                             }
 
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                         }
@@ -596,7 +591,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -609,8 +604,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -684,7 +677,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         }
                     }
 
-                    progressDialog = new ProgressDialogX(this, this, true);
+                    progressDialog = new ProgressDialogX(this, true);
 
                     // needed due to threading issues
                     final File outputFile = tempOutputFile;
@@ -718,7 +711,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 }
 
                                 progressDialog.setIndeterminate(false);
-                                progressDialog.setMax(inspectedProteins.size());
+                                progressDialog.setMaxProgressValue(inspectedProteins.size());
                                 ArrayList<String> displayedPeptides = peptideShakerGUI.getDisplayedPeptides();
                                 FileWriter f = new FileWriter(outputFile);
                                 BufferedWriter b = new BufferedWriter(f);
@@ -766,7 +759,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                                 }
                                             }
 
-                                            if (cancelProgress) {
+                                            if (progressDialog.isRunCanceled()) {
                                                 break;
                                             }
                                         }
@@ -775,7 +768,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                     cpt++;
                                     progressDialog.setValue(cpt);
 
-                                    if (cancelProgress) {
+                                    if (progressDialog.isRunCanceled()) {
                                         break;
                                     }
                                 }
@@ -788,7 +781,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                                if (!cancelProgress) {
+                                if (!progressDialog.isRunCanceled()) {
                                     JOptionPane.showMessageDialog(tempRef, "Inclusion list saved to " + fileChooser.getSelectedFile().getName() + ".",
                                             "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                                 }
@@ -802,8 +795,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                             if (progressDialog != null) {
                                 progressDialog.dispose();
                             }
-
-                            cancelProgress = false;
                         }
                     }.start();
                 }
@@ -826,7 +817,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             new Thread(new Runnable() {
 
@@ -854,14 +845,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         BufferedWriter b = new BufferedWriter(f);
 
                         OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-                        outputGenerator.getPSMsProgenesisExport(progressDialog, cancelProgress, null, b);
+                        outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
 
                         b.close();
                         f.close();
 
                         progressDialog.dispose();
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
 
@@ -876,8 +867,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -895,7 +884,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -924,7 +913,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         progressDialog.setIndeterminate(false);
 
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setMax(sequenceFactory.getNTargetSequences());
+                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
                         BufferedWriter b = new BufferedWriter(f);
@@ -950,9 +939,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 }
                             }
 
-                            progressDialog.incrementValue();
+                            progressDialog.increaseProgressValue();
 
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                         }
@@ -965,7 +954,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -978,8 +967,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -998,7 +985,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1027,7 +1014,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         progressDialog.setIndeterminate(false);
 
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setMax(sequenceFactory.getNTargetSequences());
+                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
                         BufferedWriter b = new BufferedWriter(f);
@@ -1051,9 +1038,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 }
                             }
 
-                            progressDialog.incrementValue();
+                            progressDialog.increaseProgressValue();
 
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                         }
@@ -1066,7 +1053,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -1079,8 +1066,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1098,7 +1083,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1127,7 +1112,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         progressDialog.setIndeterminate(false);
 
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setMax(sequenceFactory.getNTargetSequences());
+                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
                         BufferedWriter b = new BufferedWriter(f);
@@ -1151,9 +1136,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 }
                             }
 
-                            progressDialog.incrementValue();
+                            progressDialog.increaseProgressValue();
 
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                         }
@@ -1167,7 +1152,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -1180,8 +1165,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1200,7 +1183,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(this, this, true);
+            progressDialog = new ProgressDialogX(this, true);
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1229,7 +1212,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         progressDialog.setIndeterminate(false);
 
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setMax(sequenceFactory.getNTargetSequences());
+                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
                         BufferedWriter b = new BufferedWriter(f);
@@ -1252,9 +1235,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                                 }
                             }
 
-                            progressDialog.incrementValue();
+                            progressDialog.increaseProgressValue();
 
-                            if (cancelProgress) {
+                            if (progressDialog.isRunCanceled()) {
                                 break;
                             }
                         }
@@ -1268,7 +1251,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -1281,8 +1264,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
                     if (progressDialog != null) {
                         progressDialog.dispose();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
         }
@@ -1532,8 +1513,4 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog implements Pr
     private javax.swing.JComboBox vendorCmb;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
-    }
 }

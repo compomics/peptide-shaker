@@ -1,7 +1,8 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import eu.isas.peptideshaker.gui.WaitingDialog;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
+import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

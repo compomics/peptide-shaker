@@ -17,7 +17,8 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
+import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -46,7 +47,6 @@ public class FileImporter {
      * This boolean sets the FileImporter to be aware that PeptideShaker is working in CLI.
      */
     private static boolean boolCLI = false;
-
     /**
      * The class which will load the information into the various maps and do
      * the associated calculations
@@ -105,8 +105,6 @@ public class FileImporter {
      * Metrics of the dataset picked-up while loading the data
      */
     private Metrics metrics;
-
-
     /**
      * Boolean whether to use the reduced memory feature of PeptideShaker.
      */
@@ -566,7 +564,24 @@ public class FileImporter {
                 }
 
                 while (!missingMgfFiles.isEmpty()) {
-                    waitingHandler.displayMissingMgfFilesMessage(missingMgfFiles);
+                    if (boolCLI) {
+                        String missingFiles = "";
+                        boolean first = true;
+                        for (File mgfFile : missingMgfFiles.keySet()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                missingFiles += ", ";
+                            }
+                            missingFiles += mgfFile.getName();
+                        }
+                        waitingHandler.displayMessage("MGF files missing", missingFiles, 1);
+                    } else {
+                        new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
+                    if (waitingHandler.isRunCanceled()) {
+                        return 1;
+                    }
+                    }
                     waitingHandler.appendReport("Processing files with the new input.");
                     ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
                     File newFile;
@@ -654,7 +669,7 @@ public class FileImporter {
             }
 
             waitingHandler.setSecondaryProgressDialogIntermediate(false);
-            HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingHandler.getSecondaryProgressBar());
+            HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
             fileReader.close();
             Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 

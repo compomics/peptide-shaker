@@ -17,7 +17,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -122,11 +122,10 @@ public class CsvExporter {
      * Exports the results to csv files.
      *
      * @param progressDialog a progress dialog, can be null
-     * @param cancelProgress
      * @param folder the folder to store the results in.
      * @return true if the export was sucessfull
      */
-    public boolean exportResults(ProgressDialogX progressDialog, boolean cancelProgress, File folder) {
+    public boolean exportResults(ProgressDialogX progressDialog, File folder) {
 
         try {
             // write the proteins
@@ -147,7 +146,7 @@ public class CsvExporter {
 
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
-                progressDialog.setMax(identification.getProteinIdentification().size()
+                progressDialog.setMaxProgressValue(identification.getProteinIdentification().size()
                         + identification.getPeptideIdentification().size()
                         + 2 * identification.getSpectrumIdentification().size());
             }
@@ -162,7 +161,7 @@ public class CsvExporter {
                     progressDialog.setValue(++progress);
                 }
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     break;
                 }
             }
@@ -191,7 +190,7 @@ public class CsvExporter {
                     progressDialog.setValue(++progress);
                 }
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     break;
                 }
             }
@@ -223,7 +222,7 @@ public class CsvExporter {
                     progressDialog.setValue(++progress);
                 }
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     break;
                 }
             }

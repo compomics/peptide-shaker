@@ -13,7 +13,8 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.NewDialog;
-import eu.isas.peptideshaker.gui.interfaces.WaitingHandler;
+import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -173,7 +174,7 @@ public class PeptideShakerCLI implements Callable {
 
         // Export the PeptideShaker project into a CSV file
         CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
-        exporter.exportResults(null, false, iCLIInputBean.getOutput());
+        exporter.exportResults(null, iCLIInputBean.getOutput()); //@TODO you might want to use other kind of output
 
 
         // Finished!

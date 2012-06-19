@@ -12,8 +12,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -57,16 +56,12 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent {
+public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
 
     /**
      * Indexes for the data tables.
@@ -1972,7 +1967,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         final MouseEvent finalEvt = evt;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Getting Peptides. Please Wait...");
 
@@ -1998,17 +1993,17 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                     relatedSelected = false;
 
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         updateRelatedPeptidesTable(progressDialog);
                     }
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         updateSelectedPsmTable(progressDialog, true);
                     }
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         updateRelatedPsmTable(progressDialog, false);
                     }
 
-                    if (row != -1 && !cancelProgress) {
+                    if (row != -1 && !progressDialog.isRunCanceled()) {
 
                         peptidesTable.setRowSelectionInterval(row, row);
 
@@ -2031,30 +2026,29 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                     }
                 } else {
                     relatedSelected = false;
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         updateRelatedPeptidesTable(progressDialog);
                     }
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         updateSelectedPsmTable(progressDialog, true);
                     }
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         updateRelatedPsmTable(progressDialog, false);
                     }
                 }
 
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     updateModificationProfiles(progressDialog);
                 }
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     updateModificationProfilesTable(progressDialog);
                 }
 
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     newItemSelection();
                 }
 
                 progressDialog.dispose();
-                cancelProgress = false;
             }
         };
 
@@ -2080,7 +2074,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         final MouseEvent finalEvt = evt;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Getting Related Peptides. Please Wait...");
 
@@ -2100,14 +2094,14 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
             public void run() {
 
                 relatedSelected = true;
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     updateSelectedPsmTable(progressDialog, false);
                 }
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     updateRelatedPsmTable(progressDialog, true);
                 }
 
-                if (finalEvt != null && !cancelProgress) {
+                if (finalEvt != null && !progressDialog.isRunCanceled()) {
 
                     int row = relatedPeptidesTable.rowAtPoint(finalEvt.getPoint());
                     int column = relatedPeptidesTable.columnAtPoint(finalEvt.getPoint());
@@ -2135,18 +2129,17 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                     }
                 }
 
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     updateModificationProfiles(progressDialog);
                 }
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     updateModificationProfilesTable(progressDialog);
                 }
-                if (!cancelProgress) {
+                if (!progressDialog.isRunCanceled()) {
                     newItemSelection();
                 }
 
                 progressDialog.dispose();
-                cancelProgress = false;
             }
         });
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
@@ -2284,7 +2277,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         final MouseEvent finalEvt = evt;
         final JPanel finalRef = this;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Getting Modifications. Please Wait...");
 
@@ -2334,7 +2327,6 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 currentPtmRow = row;
 
                 progressDialog.dispose();
-                cancelProgress = false;
             }
         });
     }//GEN-LAST:event_ptmJTableMouseReleased
@@ -2348,7 +2340,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
                 || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Getting Peptides. Please Wait...");
 
@@ -2370,7 +2362,6 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                     updatePeptideTable(progressDialog);
                     progressDialog.dispose();
-                    cancelProgress = false;
                 }
             };
 
@@ -3273,7 +3264,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 peptideMap.get(NO_MODIFICATION).add(peptideKey);
             }
             if (progressDialogX != null) {
-                progressDialogX.incrementValue();
+                progressDialogX.increaseProgressValue();
             }
         }
     }
@@ -3292,7 +3283,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Updating Data. Please Wait...");
 
@@ -3507,7 +3498,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
      */
     public void updateSelection() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Updating Selection. Please Wait...");
 
@@ -3554,7 +3545,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                 for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
@@ -3576,7 +3567,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                     }
                 }
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     return;
                 }
 
@@ -3588,7 +3579,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                 for (double score : scores) {
 
-                    if (cancelProgress) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
@@ -3597,7 +3588,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                     displayedPeptides.addAll(tempList);
                 }
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     return;
                 }
 
@@ -3645,19 +3636,17 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
                 updateSelectedPsmTable(progressDialog, true);
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     return;
                 }
 
                 updateRelatedPsmTable(progressDialog, false);
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     return;
                 }
 
                 updateSelection(progressDialog);
-
-                cancelProgress = false;
 
             } catch (Exception e) {
                 progressDialog.dispose();
@@ -3681,15 +3670,15 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
         progressDialog.setIndeterminate(false);
         progressDialog.setValue(0);
-        progressDialog.setMax(identification.getPeptideIdentification().size());
+        progressDialog.setMaxProgressValue(identification.getPeptideIdentification().size());
 
         for (String newKey : identification.getPeptideIdentification()) {
 
-            if (cancelProgress) {
+            if (progressDialog.isRunCanceled()) {
                 break;
             }
 
-            progressDialog.incrementValue();
+            progressDialog.increaseProgressValue();
 
             currentSequence = Peptide.getSequence(newKey);
 
@@ -3715,7 +3704,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
             }
         }
 
-        if (!cancelProgress) {
+        if (!progressDialog.isRunCanceled()) {
 
             progressDialog.setTitle("Sorting Related Peptides. Please Wait...");
             progressDialog.setIndeterminate(true);
@@ -3726,7 +3715,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
 
             progressDialog.setIndeterminate(false);
             progressDialog.setValue(0);
-            progressDialog.setMax(scores.size());
+            progressDialog.setMaxProgressValue(scores.size());
 
             for (Double score : scores) {
                 relatedPeptides.addAll(scoreToKeyMap.get(score));
@@ -3840,12 +3829,12 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 progressDialog.setTitle("Updating Selected PSMs. Please Wait...");
                 progressDialog.setIndeterminate(false);
                 progressDialog.setValue(0);
-                progressDialog.setMax(relatedPsmsTable.getRowCount());
+                progressDialog.setMaxProgressValue(relatedPsmsTable.getRowCount());
             }
 
             for (int i = 0; i < relatedPsmsTable.getRowCount(); i++) {
 
-                progressDialog.incrementValue();
+                progressDialog.increaseProgressValue();
 
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(i);
                 Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
@@ -4745,7 +4734,7 @@ public class PtmPanel extends javax.swing.JPanel implements ProgressDialogParent
                 || tableIndex == TableIndex.A_SCORES_TABLE
                 || tableIndex == TableIndex.DELTA_SCORES_TABLE) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to Clipboard. Please Wait...");
 
@@ -4797,7 +4786,7 @@ String clipboardString = null;
                             clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
                         }
 
-                        if (!cancelProgress && clipboardString !=null) {
+                        if (!progressDialog.isRunCanceled() && clipboardString !=null) {
                             StringSelection stringSelection = new StringSelection(clipboardString);
                             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                             clipboard.setContents(stringSelection, peptideShakerGUI);
@@ -4807,7 +4796,7 @@ String clipboardString = null;
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         progressDialog.dispose();
 
-                        if (!cancelProgress && clipboardString !=null) {
+                        if (!progressDialog.isRunCanceled() && clipboardString !=null) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -4856,16 +4845,16 @@ String clipboardString = null;
                 peptides = relatedPeptides;
             }
 
-            progressDialog.setMax(table.getRowCount());
+            progressDialog.setMaxProgressValue(table.getRowCount());
 
             for (int i = 0; i < table.getRowCount(); i++) {
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     return "";
                 }
 
                 results += (i + 1) + "\t";
-                progressDialog.incrementValue();
+                progressDialog.increaseProgressValue();
 
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getPeptideMatchParameter(peptides.get(i), probabilities);
@@ -4913,16 +4902,16 @@ String clipboardString = null;
                 table = relatedPsmsTable;
             }
 
-            progressDialog.setMax(table.getRowCount());
+            progressDialog.setMaxProgressValue(table.getRowCount());
 
             for (int i = 0; i < table.getRowCount(); i++) {
 
-                if (cancelProgress) {
+                if (progressDialog.isRunCanceled()) {
                     return "";
                 }
 
                 results += (i + 1) + "\t";
-                progressDialog.incrementValue();
+                progressDialog.increaseProgressValue();
 
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
                 results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t";
@@ -5121,10 +5110,5 @@ String clipboardString = null;
                 ((JSparklinesBarChartTableCellRenderer) psmDeltaScoresTable.getColumn(psmDeltaScoresTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
             }
         }
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }

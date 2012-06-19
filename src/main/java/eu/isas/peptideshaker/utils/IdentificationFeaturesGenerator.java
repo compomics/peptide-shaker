@@ -13,7 +13,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -1180,7 +1180,7 @@ public class IdentificationFeaturesGenerator {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setTitle("Loading Protein Information. Please Wait...");
-                progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getProteinIdentification().size());
                 progressDialog.setValue(0);
             }
             boolean needMaxValues = (peptideShakerGUI.getMetrics().getMaxNPeptides() == null)
@@ -1264,7 +1264,7 @@ public class IdentificationFeaturesGenerator {
                 }
                 
                 if (progressDialog != null) {
-                    progressDialog.incrementValue();
+                    progressDialog.increaseProgressValue();
                 }
             }
 
@@ -1284,7 +1284,7 @@ public class IdentificationFeaturesGenerator {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setTitle("Updating Protein Table. Please Wait...");
-                progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getProteinIdentification().size());
                 progressDialog.setValue(0);
             }
 
@@ -1303,7 +1303,7 @@ public class IdentificationFeaturesGenerator {
                         Collections.sort(tempList);
                         proteinList.addAll(tempList);
                         if (progressDialog != null) {
-                            progressDialog.incrementValue(tempList.size());
+                            progressDialog.increaseProgressValue(tempList.size());
                         }
                     }
                 }

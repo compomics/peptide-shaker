@@ -5,8 +5,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
@@ -81,7 +80,7 @@ import org.xml.sax.SAXException;
  *
  * @author Harald Barsnes
  */
-public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParent {
+public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * The protein table column header tooltips.
@@ -149,10 +148,6 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      * The species separator used in the species combobox.
      */
     private String speciesSeparator = "------------------------------------------------------------";
-    /**
-     * If true the progress bar is disposed of.
-     */
-    private static boolean cancelProgress = false;
 
     /**
      * Creates a new GOEAPanel.
@@ -449,7 +444,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
             if (goMappingsFile.exists()) {
 
-                progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+                progressDialog = new ProgressDialogX(peptideShakerGUI, true);
                 progressDialog.setIndeterminate(true);
 
                 new Thread(new Runnable() {
@@ -511,7 +506,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             PSParameter proteinPSParameter = new PSParameter();
                             PSParameter probabilities = new PSParameter();
 
-                            while (line != null && !cancelProgress) {
+                            while (line != null && !progressDialog.isRunCanceled()) {
 
                                 String[] elements = line.split("\\t");
 
@@ -578,15 +573,15 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             progressDialog.setTitle("Mapping GO Terms. Please Wait...");
                             progressDialog.setIndeterminate(false);
                             progressDialog.setValue(0);
-                            progressDialog.setMax(identification.getProteinIdentification().size());
+                            progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
 
                             for (String matchKey : identification.getProteinIdentification()) {
 
-                                if (cancelProgress) {
+                                if (progressDialog.isRunCanceled()) {
                                     break;
                                 }
 
-                                progressDialog.incrementValue();
+                                progressDialog.increaseProgressValue();
 
                                 try {
                                     try {
@@ -639,7 +634,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                             progressDialog.setTitle("Creating GO Plots. Please Wait...");
                             progressDialog.setValue(0);
-                            progressDialog.setMax(totalGoTermUsage.entrySet().size());
+                            progressDialog.setMaxProgressValue(totalGoTermUsage.entrySet().size());
 
 
                             // update the table
@@ -653,11 +648,11 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
 
-                                if (cancelProgress) {
+                                if (progressDialog.isRunCanceled()) {
                                     break;
                                 }
 
-                                progressDialog.incrementValue();
+                                progressDialog.increaseProgressValue();
 
                                 String goTerm = entry.getKey();
                                 Integer frequencyAll = entry.getValue();
@@ -766,7 +761,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 significanceLevel = 0.01;
                             }
 
-                            if (!cancelProgress) {
+                            if (!progressDialog.isRunCanceled()) {
 
                                 ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
@@ -785,7 +780,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                 for (int i = 1; i < pValues.size(); i++) {
 
-                                    if (cancelProgress) {
+                                    if (progressDialog.isRunCanceled()) {
                                         break;
                                     }
 
@@ -805,7 +800,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 r.close();
                             }
 
-                            if (!cancelProgress) {
+                            if (!progressDialog.isRunCanceled()) {
 
                                 ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
                                 mappingsPanel.repaint();
@@ -905,8 +900,6 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         }
-
-                        cancelProgress = false;
                     }
                 }.start();
             }
@@ -1871,7 +1864,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      */
     private void exportMappingsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMappingsJButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
 
         new Thread(new Runnable() {
@@ -1887,14 +1880,14 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
             @Override
             public void run() {
                 try {
-                    String clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, cancelProgress, true);
+                    String clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, true);
                     StringSelection stringSelection = new StringSelection(clipboardString);
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(stringSelection, peptideShakerGUI);
 
                     progressDialog.dispose();
 
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (Exception e) {
@@ -1903,8 +1896,6 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
-
-                cancelProgress = false;
             }
         }.start();
     }//GEN-LAST:event_exportMappingsJButtonActionPerformed
@@ -1988,7 +1979,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+                progressDialog = new ProgressDialogX(peptideShakerGUI, true);
                 progressDialog.setIndeterminate(true);
 
                 new Thread(new Runnable() {
@@ -2010,7 +2001,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                         try {
                             BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
-                            Util.tableToFile(proteinTable, "\t", progressDialog, cancelProgress, true, writer);
+                            Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
                             writer.close();
 
                             progressDialog.dispose();
@@ -2018,7 +2009,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                            if (!cancelProgress) {
+                            if (!progressDialog.isRunCanceled()) {
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                             }
                         } catch (IOException e) {
@@ -2028,8 +2019,6 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
                         }
-
-                        cancelProgress = false;
                     }
                 }.start();
 
@@ -2047,7 +2036,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
      */
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
 
         new Thread(new Runnable() {
 
@@ -2079,7 +2068,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                     boolean ensemblVersionFound = false;
                     String ensemblVersion = "?";
 
-                    while ((inputLine = in.readLine()) != null && !ensemblVersionFound && !cancelProgress) {
+                    while ((inputLine = in.readLine()) != null && !ensemblVersionFound && !progressDialog.isRunCanceled()) {
                         if (inputLine.indexOf("database=\"ensembl_mart_") != -1) {
                             ensemblVersion = inputLine.substring(inputLine.indexOf("database=\"ensembl_mart_") + "database=\"ensembl_mart_".length());
                             ensemblVersion = ensemblVersion.substring(0, ensemblVersion.indexOf("\""));
@@ -2103,7 +2092,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             + "</Dataset>"
                             + "</Query>";
 
-                    if (!cancelProgress) {
+                    if (!progressDialog.isRunCanceled()) {
 
                         // Send data
                         url = new URL("http://www.biomart.org/biomart/martservice/result");
@@ -2113,7 +2102,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                         wr.write(requestXml);
                         wr.flush();
 
-                        if (!cancelProgress) {
+                        if (!progressDialog.isRunCanceled()) {
 
                             // Get the response
                             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -2134,7 +2123,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                                 JOptionPane.showMessageDialog(peptideShakerGUI, rowLine, "Query Error", JOptionPane.ERROR_MESSAGE);
                             } else {
 
-                                while (rowLine != null && !cancelProgress) {
+                                while (rowLine != null && !progressDialog.isRunCanceled()) {
                                     progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
                                     bw.write(rowLine + "\n");
                                     rowLine = br.readLine();
@@ -2146,7 +2135,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                             wr.close();
                             br.close();
 
-                            if (!cancelProgress) {
+                            if (!progressDialog.isRunCanceled()) {
 
                                 // update the Ensembl species versions
                                 w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
@@ -2156,7 +2145,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                                 Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
 
-                                while (iterator.hasNext() && !cancelProgress) {
+                                while (iterator.hasNext() && !progressDialog.isRunCanceled()) {
                                     String key = iterator.next();
                                     bw.write(key + "\t" + ensemblVersionsMap.get(key) + "\n");
                                 }
@@ -2170,7 +2159,7 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
 
                             progressDialog.dispose();
 
-                            if (!cancelProgress) {
+                            if (!progressDialog.isRunCanceled()) {
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "GO mappings downloaded.\nRe-select to use.", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
                                 loadSpeciesAndGoDomains();
                                 speciesJComboBox.setSelectedIndex(0);
@@ -2192,8 +2181,6 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured when downloading the mappings.", "Download Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
-
-                cancelProgress = false;
             }
         }.start();
     }//GEN-LAST:event_downloadButtonActionPerformed
@@ -2763,10 +2750,5 @@ public class GOEAPanel extends javax.swing.JPanel implements ProgressDialogParen
         }
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 }

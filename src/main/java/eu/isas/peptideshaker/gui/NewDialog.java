@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
@@ -11,8 +12,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
-import com.compomics.util.gui.dialogs.ProgressDialogParent;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProcessingPreferencesDialog;
@@ -37,7 +37,7 @@ import java.util.Properties;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class NewDialog extends javax.swing.JDialog implements ProgressDialogParent {
+public class NewDialog extends javax.swing.JDialog {
 
     /**
      * The compomics PTM factory.
@@ -95,11 +95,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
-    /**
-     * If set to true the progress stopped and the simple progress dialog.
-     * disposed.
-     */
-    private boolean cancelProgress = false;
     /**
      * The peptide shaker class which will take care of the pre-processing..
      */
@@ -636,8 +631,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             peptideShakerGUI.setProjectDetails(getProjectDetails());
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
-
-            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
+            
+            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference(), peptideShakerGUI.getTips());
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
 
@@ -1484,11 +1479,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
 
         return success;
-    }
-
-    @Override
-    public void cancelProgress() {
-        cancelProgress = true;
     }
 
     /**
