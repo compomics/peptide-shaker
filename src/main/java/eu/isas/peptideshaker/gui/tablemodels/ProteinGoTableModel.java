@@ -155,14 +155,14 @@ public class ProteinGoTableModel extends DefaultTableModel {
                 case 6:
                     return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                 case 7:
-                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getProteinScore();
                     } else {
                         return pSParameter.getProteinConfidence();
                     }
                 case 8:
-                    pSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                     return pSParameter.isValidated();
                 default:
                     return "";

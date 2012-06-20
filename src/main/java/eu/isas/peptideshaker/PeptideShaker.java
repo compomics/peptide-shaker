@@ -514,7 +514,7 @@ public class PeptideShaker {
         double proteinThreshold = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
         boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
         for (String proteinKey : identification.getProteinIdentification()) {
-            psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
+            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
                 psParameter.setValidated(true);
             } else {
@@ -865,7 +865,7 @@ public class PeptideShaker {
             scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, estimateAscore);
 
             if (metrics != null) {
-                psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 if (psParameter.isValidated()) {
                     nValidatedProteins++;
                 }
@@ -1444,7 +1444,7 @@ public class PeptideShaker {
         PSParameter psParameter = new PSParameter();
         double proteinProbability;
         for (String proteinKey : identification.getProteinIdentification()) {
-            psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
+            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
             psParameter.setProteinProbability(proteinProbability);
             for (String fraction : psParameter.getFractions()) {
@@ -1487,13 +1487,13 @@ public class PeptideShaker {
         for (String proteinSharedKey : identification.getProteinIdentification()) {
 
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
-                psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinSharedKey, psParameter);
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
                 double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
                 if (sharedProteinProbabilityScore < 1) {
                     boolean better = false;
                     for (String proteinUniqueKey : identification.getProteinIdentification()) {
                         if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinUniqueKey, psParameter);
+                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
                             double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
                             ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
                             ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
@@ -1519,7 +1519,7 @@ public class PeptideShaker {
         }
 
         for (String proteinKey : toRemove) {
-            psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
+            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
             identification.removeProteinMatch(proteinKey);
             waitingHandler.increaseSecondaryProgressValue();
@@ -1542,7 +1542,7 @@ public class PeptideShaker {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
             if (!SequenceFactory.isDecoy(proteinKey)) {
-                probabilities = (PSParameter) identification.getProteinMatchPArameter(proteinKey, probabilities);
+                probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
                 double score = probabilities.getProteinProbabilityScore();
                 int nPeptides = -proteinMatch.getPeptideMatches().size();
                 int nSpectra = 0;
@@ -1591,7 +1591,7 @@ public class PeptideShaker {
             if (accessions.size() > 1) {
                 boolean similarityFound = false;
                 boolean allSimilar = false;
-                psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (int i = 0; i < accessions.size() - 1; i++) {
                     ArrayList<String> primaryDescription = parseDescription(accessions.get(i));
                     for (int j = i + 1; j < accessions.size(); j++) {

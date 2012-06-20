@@ -173,6 +173,14 @@ public class GOEAPanel extends javax.swing.JPanel {
      * Set up the GUI details.
      */
     private void setupGUI() {
+        
+        // correct the color for the upper right corner
+        JPanel proteinCorner = new JPanel();
+        proteinCorner.setBackground(goMappingsTable.getTableHeader().getBackground());
+        proteinsScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, proteinCorner);
+        JPanel goMappingsCorner = new JPanel();
+        goMappingsCorner.setBackground(goMappingsTable.getTableHeader().getBackground());
+        proteinGoMappingsScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, goMappingsCorner);
 
         JTableHeader header = goMappingsTable.getTableHeader();
         header.addMouseListener(new MouseAdapter() {
@@ -540,8 +548,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         if (peptideShakerGUI.getIdentification().matchExists(proteinAccession)) { // @TODO: this might be slow?? but i don't see i way around this?
 
                                             try {
-                                                proteinPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinAccession, proteinPSParameter);
-                                                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinAccession, probabilities);
+                                                proteinPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinAccession, proteinPSParameter);
+                                                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinAccession, probabilities);
                                             } catch (Exception e) {
                                                 peptideShakerGUI.catchException(e);
                                             }
@@ -585,8 +593,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 try {
                                     try {
-                                    proteinPSParameter = (PSParameter) identification.getProteinMatchPArameter(matchKey, proteinPSParameter);
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(matchKey, probabilities);
+                                    proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(matchKey, proteinPSParameter);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(matchKey, probabilities);
                                     } catch (Exception e) {
                                         peptideShakerGUI.catchException(e);
                                     }
@@ -1389,7 +1397,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 mappingsHelpJButtonActionPerformed(evt);
             }
         });
-        mappingsHelpJButton.setBounds(990, 0, 10, 25);
+        mappingsHelpJButton.setBounds(990, 0, 10, 19);
         mappingsTableLayeredPane.add(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1413,7 +1421,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 exportMappingsJButtonActionPerformed(evt);
             }
         });
-        exportMappingsJButton.setBounds(980, 0, 10, 25);
+        exportMappingsJButton.setBounds(980, 0, 10, 19);
         mappingsTableLayeredPane.add(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1426,10 +1434,10 @@ public class GOEAPanel extends javax.swing.JPanel {
         );
         contextMenuMappingsBackgroundPanelLayout.setVerticalGroup(
             contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
+        contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 19);
         mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Enrichment Analysis"));
@@ -1549,7 +1557,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 plotHelpJButtonActionPerformed(evt);
             }
         });
-        plotHelpJButton.setBounds(990, 0, 10, 25);
+        plotHelpJButton.setBounds(990, 0, 10, 19);
         plotLayeredPane.add(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1573,7 +1581,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 exportPlotsJButtonActionPerformed(evt);
             }
         });
-        exportPlotsJButton.setBounds(980, 0, 10, 25);
+        exportPlotsJButton.setBounds(980, 0, 10, 19);
         plotLayeredPane.add(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1586,10 +1594,10 @@ public class GOEAPanel extends javax.swing.JPanel {
         );
         contextMenuPlotsBackgroundPanelLayout.setVerticalGroup(
             contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 20);
+        contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 19);
         plotLayeredPane.add(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

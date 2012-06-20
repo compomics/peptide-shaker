@@ -1039,13 +1039,13 @@ public class FindDialog extends javax.swing.JDialog {
                     case 0:
                         return row + 1;
                     case 1:
-                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                         return psParameter.isStarred();
                     case 2:
-                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                         return psParameter.isHidden();
                     case 3:
-                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                         return psParameter.getGroupClass();
                     case 4:
                         proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1079,10 +1079,10 @@ public class FindDialog extends javax.swing.JDialog {
                     case 10:
                         return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                     case 11:
-                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                         return psParameter.getProteinScore();
                     case 12:
-                        psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, new PSParameter());
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                         return psParameter.getProteinConfidence();
                     default:
                         return "";

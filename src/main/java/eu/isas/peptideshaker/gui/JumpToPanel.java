@@ -322,7 +322,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                                     if (!ProteinMatch.isDecoy(proteinKey)) {
                                         try {
-                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                                         } catch (Exception e) {
                                             peptideShakerGUI.catchException(e);
                                         }

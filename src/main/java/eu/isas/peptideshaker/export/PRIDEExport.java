@@ -320,7 +320,7 @@ public class PRIDEExport {
                 break;
             }
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            proteinProbabilities = (PSParameter) identification.getProteinMatchPArameter(proteinKey, proteinProbabilities);
+            proteinProbabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinProbabilities);
             double confidenceThreshold = proteinTargetDecoyMap.getTargetDecoyMap().getTargetDecoyResults().getConfidenceLimit();
             
             br.write(getCurrentTabSpace() + "<GelFreeIdentification>\n");

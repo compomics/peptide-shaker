@@ -433,7 +433,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         loadUserPreferences();
-
+        
+        // set the font color for the titlted borders, looks better than the default black
+        UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
+        
         initComponents();
 
         // add icons to the tab componets
@@ -3800,6 +3803,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public OverviewPanel getOverviewPanel() {
         return overviewPanel;
+    }
+    
+    /**
+     * Returns the ProteinFractionsPanel.
+     *
+     * @return the ProteinFractionsPanel
+     */
+    public ProteinFractionsPanel getProteinFractionsPanel() {
+        return proteinFractionsPanel;
     }
 
     /**

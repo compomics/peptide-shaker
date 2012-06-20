@@ -273,7 +273,7 @@ public class CsvExporter {
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
         PSParameter probabilities = new PSParameter();
-        probabilities = (PSParameter) identification.getProteinMatchPArameter(proteinKey, probabilities);
+        probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String line = proteinMatch.getMainMatch() + SEPARATOR;
 

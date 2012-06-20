@@ -20,10 +20,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -162,6 +159,11 @@ public class StatsPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = parent;
 
         initComponents();
+        
+        // correct the color for the upper right corner
+        JPanel groupSelectionCorner = new JPanel();
+        groupSelectionCorner.setBackground(groupSelectionTable.getTableHeader().getBackground());
+        groupSelectionScrollPaneScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, groupSelectionCorner);
 
         // add the default values to the group selection
         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{1, "Proteins"});

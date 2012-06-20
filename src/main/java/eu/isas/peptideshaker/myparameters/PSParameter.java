@@ -490,10 +490,10 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the fraction confidence. null if not found.
+     * Returns the fraction pep. null if not found.
      *
      * @param fraction
-     * @return the fraction confidence
+     * @return the fraction pep
      */
     public double getFractionPEP(String fraction) {
         return fractionPEP.get(fraction);

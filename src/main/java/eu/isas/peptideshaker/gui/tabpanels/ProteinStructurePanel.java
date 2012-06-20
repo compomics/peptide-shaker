@@ -38,11 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
@@ -226,6 +222,20 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         pdbChainsTableToolTips.add("Chain Label");
         pdbChainsTableToolTips.add("Protein-PDB Alignment");
         pdbChainsTableToolTips.add("Protein Coverage for PDB Sequence");
+        
+        // correct the color for the upper right corner
+        JPanel proteinCorner = new JPanel();
+        proteinCorner.setBackground(proteinTable.getTableHeader().getBackground());
+        proteinScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, proteinCorner);
+        JPanel peptideCorner = new JPanel();
+        peptideCorner.setBackground(peptideTable.getTableHeader().getBackground());
+        peptideScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, peptideCorner);
+        JPanel pdbMatchesCorner = new JPanel();
+        pdbMatchesCorner.setBackground(pdbMatchesJTable.getTableHeader().getBackground());
+        pdbJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, pdbMatchesCorner);
+        JPanel pdbChainsCorner = new JPanel();
+        pdbChainsCorner.setBackground(pdbChainsJTable.getTableHeader().getBackground());
+        pdbChainsJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, pdbChainsCorner);
     }
 
     /**
@@ -730,7 +740,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbStructureHelpJButtonActionPerformed(evt);
             }
         });
-        pdbStructureHelpJButton.setBounds(440, 0, 10, 25);
+        pdbStructureHelpJButton.setBounds(440, 0, 10, 19);
         pdbStructureLayeredPane.add(pdbStructureHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbStructureJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -754,7 +764,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPdbStructureJButtonActionPerformed(evt);
             }
         });
-        exportPdbStructureJButton.setBounds(430, 0, 10, 25);
+        exportPdbStructureJButton.setBounds(430, 0, 10, 19);
         pdbStructureLayeredPane.add(exportPdbStructureJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPdbStructureBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -767,10 +777,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         contextMenuPdbStructureBackgroundPanelLayout.setVerticalGroup(
             contextMenuPdbStructureBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPdbStructureBackgroundPanel.setBounds(420, 0, 30, 20);
+        contextMenuPdbStructureBackgroundPanel.setBounds(420, 0, 30, 19);
         pdbStructureLayeredPane.add(contextMenuPdbStructureBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbStructureJPanelLayout = new javax.swing.GroupLayout(pdbStructureJPanel);
@@ -857,7 +867,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 proteinsHelpJButtonActionPerformed(evt);
             }
         });
-        proteinsHelpJButton.setBounds(930, 0, 10, 25);
+        proteinsHelpJButton.setBounds(930, 0, 10, 19);
         proteinsLayeredPane.add(proteinsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -881,7 +891,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportProteinsJButtonActionPerformed(evt);
             }
         });
-        exportProteinsJButton.setBounds(920, 0, 10, 25);
+        exportProteinsJButton.setBounds(920, 0, 10, 19);
         proteinsLayeredPane.add(exportProteinsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuProteinsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -894,10 +904,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         contextMenuProteinsBackgroundPanelLayout.setVerticalGroup(
             contextMenuProteinsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuProteinsBackgroundPanel.setBounds(920, 0, 30, 20);
+        contextMenuProteinsBackgroundPanel.setBounds(920, 0, 30, 19);
         proteinsLayeredPane.add(contextMenuProteinsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout proteinsJPanelLayout = new javax.swing.GroupLayout(proteinsJPanel);
@@ -1006,7 +1016,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptidesHelpJButtonActionPerformed(evt);
             }
         });
-        peptidesHelpJButton.setBounds(460, 0, 10, 25);
+        peptidesHelpJButton.setBounds(460, 0, 10, 19);
         peptidesLayeredPane.add(peptidesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1030,7 +1040,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPeptidesJButtonActionPerformed(evt);
             }
         });
-        exportPeptidesJButton.setBounds(450, 0, 10, 25);
+        exportPeptidesJButton.setBounds(450, 0, 10, 19);
         peptidesLayeredPane.add(exportPeptidesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1043,10 +1053,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         contextMenuPeptidesBackgroundPanelLayout.setVerticalGroup(
             contextMenuPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPeptidesBackgroundPanel.setBounds(440, 0, 30, 20);
+        contextMenuPeptidesBackgroundPanel.setBounds(440, 0, 30, 19);
         peptidesLayeredPane.add(contextMenuPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout peptidesJPanelLayout = new javax.swing.GroupLayout(peptidesJPanel);
@@ -1155,7 +1165,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbMatchesHelpJButtonActionPerformed(evt);
             }
         });
-        pdbMatchesHelpJButton.setBounds(460, 0, 10, 25);
+        pdbMatchesHelpJButton.setBounds(460, 0, 10, 19);
         pdbMatchesLayeredPane.add(pdbMatchesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbMatchesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1179,7 +1189,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPdbMatchesJButtonActionPerformed(evt);
             }
         });
-        exportPdbMatchesJButton.setBounds(450, 0, 10, 25);
+        exportPdbMatchesJButton.setBounds(450, 0, 10, 19);
         pdbMatchesLayeredPane.add(exportPdbMatchesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPdbMatchesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1192,10 +1202,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         contextMenuPdbMatchesBackgroundPanelLayout.setVerticalGroup(
             contextMenuPdbMatchesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPdbMatchesBackgroundPanel.setBounds(440, 0, 30, 20);
+        contextMenuPdbMatchesBackgroundPanel.setBounds(440, 0, 30, 19);
         pdbMatchesLayeredPane.add(contextMenuPdbMatchesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbMatchesJPanelLayout = new javax.swing.GroupLayout(pdbMatchesJPanel);
@@ -1296,7 +1306,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 pdbChainHelpJButtonActionPerformed(evt);
             }
         });
-        pdbChainHelpJButton.setBounds(460, 0, 10, 25);
+        pdbChainHelpJButton.setBounds(460, 0, 10, 19);
         pdbChainsLayeredPane.add(pdbChainHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbChainsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1320,7 +1330,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 exportPdbChainsJButtonActionPerformed(evt);
             }
         });
-        exportPdbChainsJButton.setBounds(450, 0, 10, 25);
+        exportPdbChainsJButton.setBounds(450, 0, 10, 19);
         pdbChainsLayeredPane.add(exportPdbChainsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPdbChainsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1333,10 +1343,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         );
         contextMenuPdbChainsBackgroundPanelLayout.setVerticalGroup(
             contextMenuPdbChainsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPdbChainsBackgroundPanel.setBounds(440, 0, 30, 20);
+        contextMenuPdbChainsBackgroundPanel.setBounds(440, 0, 30, 19);
         pdbChainsLayeredPane.add(contextMenuPdbChainsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbChainsJPanelLayout = new javax.swing.GroupLayout(pdbChainsJPanel);

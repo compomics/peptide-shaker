@@ -1568,7 +1568,7 @@ public class QCPanel extends javax.swing.JPanel {
                     if (value > maxValue) {
                         maxValue = value;
                     }
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1605,7 +1605,7 @@ public class QCPanel extends javax.swing.JPanel {
                     }
                     
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1654,7 +1654,7 @@ public class QCPanel extends javax.swing.JPanel {
                     }
                     
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
@@ -1700,7 +1700,7 @@ public class QCPanel extends javax.swing.JPanel {
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         mainMatch = proteinMatch.getMainMatch();
                     }
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                     
                     if (!psParameter.isHidden()) {
                         
