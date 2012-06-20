@@ -5174,6 +5174,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY);
                             saveProjectProcess();
                         }
+                        updateAnnotationPreferencesFromSearchSettings();
+                        annotationPreferences.useAutomaticAnnotation(true);
                     }
 
                     File mgfFile;
