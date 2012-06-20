@@ -19,7 +19,7 @@ import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.scoring.InputMap;
@@ -187,7 +187,7 @@ public class FileImporter {
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".");
             waitingHandler.setSecondaryProgressDialogIntermediate(false);
-            sequenceFactory.loadFastaFile(fastaFile, waitingHandler.getSecondaryProgressBar());
+            sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
             if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
@@ -848,7 +848,7 @@ public class FileImporter {
                 waitingHandler.appendReport("Importing " + targetFileName);
                 waitingHandler.setSecondaryProgressDialogIntermediate(false);
                 waitingHandler.resetSecondaryProgressBar();
-                spectrumFactory.addSpectra(spectrumFile, waitingHandler.getSecondaryProgressBar());
+                spectrumFactory.addSpectra(spectrumFile, waitingHandler);
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.increaseProgressValue();
                 searchParameters.addSpectrumFile(spectrumFile.getAbsolutePath());

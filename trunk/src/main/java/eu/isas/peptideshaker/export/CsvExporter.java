@@ -486,11 +486,11 @@ public class CsvExporter {
      * @param spectrumMatch the spectrum match to export
      * @return the spectrum match as a line of text
      */
-    private String getSpectrumLine(String spectrumKey) throws Exception {
+    private String getSpectrumLine(String psmKey) throws Exception {
         
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
-        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
 
         String line = "";
@@ -661,7 +661,7 @@ public class CsvExporter {
 
         line += SEPARATOR;
         PSParameter probabilities = new PSParameter();
-        probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
+        probabilities = (PSParameter) identification.getSpectrumMatchParameter(psmKey, probabilities);
 
         line += probabilities.getPsmProbabilityScore() + SEPARATOR
                 + probabilities.getPsmProbability() + SEPARATOR;

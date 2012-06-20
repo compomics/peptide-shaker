@@ -15,7 +15,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.NewDialog;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;

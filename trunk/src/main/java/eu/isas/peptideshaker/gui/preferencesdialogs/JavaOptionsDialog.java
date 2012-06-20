@@ -26,7 +26,7 @@ public class JavaOptionsDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-        memoryTxt.setText(peptideShakerGUI.getUserPreferences().getMemoryPreference() + "");
+        memoryTxt.setText(peptideShakerGUI.getUtilitiesUserPreferences().getMemoryPreference() + "");
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -200,8 +200,8 @@ public class JavaOptionsDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             int newValue = new Integer(memoryTxt.getText().trim());
-            if (newValue != peptideShakerGUI.getUserPreferences().getMemoryPreference()) {
-                peptideShakerGUI.getUserPreferences().setMemoryPreference(newValue);
+            if (newValue != peptideShakerGUI.getUtilitiesUserPreferences().getMemoryPreference()) {
+                peptideShakerGUI.getUtilitiesUserPreferences().setMemoryPreference(newValue);
                 int outcome = JOptionPane.showConfirmDialog(this, "PeptideShaker needs to restart in order to take the new settings into account. Restart now?",
                         "Restart Requested", JOptionPane.OK_CANCEL_OPTION);
                 if (outcome == JOptionPane.OK_OPTION) {

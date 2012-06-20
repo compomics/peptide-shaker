@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.util.gui.UtilitiesGUIDefaults;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
@@ -39,13 +40,9 @@ public class PeptideShakerWrapper {
      */
     private boolean proxySettingsFound = false;
     /**
-     * User preferences file.
-     */
-    private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
-    /**
      * The user preferences.
      */
-    private UserPreferences userPreferences;
+    private UtilitiesUserPreferences userPreferences;
 
     /**
      * Starts the launcher by calling the launch method. Use this as the main
@@ -59,7 +56,11 @@ public class PeptideShakerWrapper {
         UtilitiesGUIDefaults.setLookAndFeel();
 
         try {
-            loadUserPreferences();
+            try {
+                userPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             if (useStartUpLog) {
                 String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
@@ -289,7 +290,7 @@ public class PeptideShakerWrapper {
         // add the classpath for the uniprot proxy file
         if (proxySettingsFound) {
             uniprotProxyClassPath = path + "resources/conf/proxy";
-            
+
             // set the correct slashes for the proxy path
             if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
                 uniprotProxyClassPath = uniprotProxyClassPath.replace("/", "\\");
@@ -299,7 +300,7 @@ public class PeptideShakerWrapper {
                     uniprotProxyClassPath = uniprotProxyClassPath.substring(1);
                 }
             }
-            
+
             uniprotProxyClassPath = ";" + quote + uniprotProxyClassPath + quote;
         }
 
@@ -398,56 +399,15 @@ public class PeptideShakerWrapper {
     }
 
     /**
-     * Loads the user preferences.
-     */
-    private void loadUserPreferences() {
-        try {
-            File file = new File(USER_PREFERENCES_FILE);
-            if (!file.exists()) {
-                userPreferences = new UserPreferences();
-                saveUserPreferences();
-            } else {
-                FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                ObjectInputStream in = new ObjectInputStream(bis);
-                Object inObject = in.readObject();
-                fis.close();
-                bis.close();
-                in.close();
-                userPreferences = (UserPreferences) inObject;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Saves the new memory settings.
      */
     private void saveNewSettings() {
-        saveUserPreferences();
-        saveJavaOptions();
-    }
-
-    /**
-     * Saves the user preferences.
-     */
-    private void saveUserPreferences() {
         try {
-            File file = new File(USER_PREFERENCES_FILE);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdir();
-            }
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(userPreferences);
-            oos.close();
-            bos.close();
-            fos.close();
+            UtilitiesUserPreferences.saveUserPreferences(userPreferences);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        saveJavaOptions();
     }
 
     /**

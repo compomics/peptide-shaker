@@ -26,7 +26,6 @@ import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Component;
 import java.awt.MediaTracker;
@@ -52,6 +51,7 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
+import com.compomics.util.preferences.AnnotationPreferences;
 
 /**
  * The Spectrum ID panel.
@@ -3117,10 +3117,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                         spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
                         spectrum.setBorder(null);
-                        spectrum.setDataPointAndLineColor(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
-                        spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
-                        spectrum.setPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
-                        spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
+                        spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                        spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
+                        spectrum.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
+                        spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
                     }
                 }
 

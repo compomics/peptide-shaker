@@ -19,38 +19,47 @@ public class UserPreferences implements Serializable {
     static final long serialVersionUID = 3298905131097982664L;
     /**
      * The width to use for the annotated peaks.
+     * @deprecated use the utilities version instead
      */
     private Float spectrumAnnotatedPeakWidth = 1.0f;
     /**
      * The width to use for the background peaks.
+     * @deprecated use the utilities version instead
      */
     private Float spectrumBackgroundPeakWidth = 1.0f;
     /**
      * The color to use for the annotated peaks.
+     * @deprecated use the utilities version instead
      */
     private Color spectrumAnnotatedPeakColor = Color.RED;
     /**
      * The color to use for the background peaks.
+     * @deprecated use the utilities version instead
      */
     private Color spectrumBackgroundPeakColor = new Color(100, 100, 100, 50);
     /**
      * The color used for the sparkline bar chart plots.
+     * @deprecated use the utilities version instead
      */
     private Color sparklineColor = new Color(110, 196, 97);
     /**
      * The color used for the non-validated sparkline bar chart plots.
+     * @deprecated use the utilities version instead
      */
     private Color sparklineColorNonValidated = new Color(208, 19, 19);
     /**
      * The color used for the not found sparkline bar chart plots.
+     * @deprecated use the utilities version instead
      */
     private Color sparklineColorNotFound = new Color(222, 222, 222);
     /**
      * The color used for the possible values sparkline bar chart plots.
+     * @deprecated use the utilities version instead
      */
     private Color sparklineColorPossible = new Color(100, 150, 255);
     /**
      * The color of the selected peptide.
+     * @deprecated use the utilities version instead
      */
     private Color peptideSelected = new Color(0, 0, 255);
     /**
@@ -63,6 +72,7 @@ public class UserPreferences implements Serializable {
     private boolean showSliders = false;
     /**
      * The memory to use by PeptideShaker.
+     * @deprecated use the utilities version instead
      */
     private int memoryPreference = 4 * 1024;
     /**
@@ -77,6 +87,7 @@ public class UserPreferences implements Serializable {
      * The path to the SearchGUI installation (if any). Makes it possible to
      * start SearchGUI directly from PeptideShaker. Set to null if no path is
      * provided.
+     * @deprecated use the utilities version instead
      */
     private String searchGuiPath = null;
 
@@ -89,6 +100,7 @@ public class UserPreferences implements Serializable {
     /**
      * Getter for the sparkline color.
      *
+     * @deprecated use the utilities version instead
      * @return the sparkline color
      */
     public Color getSparklineColor() {
@@ -98,6 +110,7 @@ public class UserPreferences implements Serializable {
     /**
      * Setter for the sparkline color.
      *
+     * @deprecated use the utilities version instead
      * @param sparklineColor the sparkline color
      */
     public void setSparklineColor(Color sparklineColor) {
@@ -107,6 +120,7 @@ public class UserPreferences implements Serializable {
     /**
      * Getter for the non-validated sparkline color.
      *
+     * @deprecated use the utilities version instead
      * @return the non-validated sparkline color
      */
     public Color getSparklineColorNonValidated() {
@@ -119,6 +133,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the color for a selected peptide.
      *
+     * @deprecated use the utilities version instead
      * @return the color for a selected peptide
      */
     public Color getPeptideSelected() {
@@ -131,6 +146,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the color for a not found sparkline bar chart plots.
      *
+     * @deprecated use the utilities version instead
      * @return the color for a not found sparkline bar chart plots
      */
     public Color getSparklineColorNotFound() {
@@ -143,6 +159,7 @@ public class UserPreferences implements Serializable {
     /**
      * Setter for the non-validated sparkline color.
      *
+     * @deprecated use the utilities version instead
      * @param sparklineColorNonValidated the non-validated sparkline color
      */
     public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
@@ -152,6 +169,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the color for a possible sparkline bar chart plots.
      *
+     * @deprecated use the utilities version instead
      * @return the color for a possible sparkline bar chart plots
      */
     public Color getSparklineColorPossible() {
@@ -164,6 +182,7 @@ public class UserPreferences implements Serializable {
     /**
      * Setter for the possible sparkline color.
      *
+     * @deprecated use the utilities version instead
      * @param sparklineColorPossible the possible sparkline color
      */
     public void setSparklineColorPossible(Color sparklineColorPossible) {
@@ -235,6 +254,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the preferred upper memory limit.
      *
+     * @deprecated use the utilities version instead
      * @return the preferred upper memory limit
      */
     public int getMemoryPreference() {
@@ -248,6 +268,7 @@ public class UserPreferences implements Serializable {
     /**
      * Sets the preferred upper memory limit.
      *
+     * @deprecated use the utilities version instead
      * @param memoryPreference the preferred upper memory limit
      */
     public void setMemoryPreference(int memoryPreference) {
@@ -299,6 +320,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the color to use for the annotated peaks.
      *
+     * @deprecated use the utilities version instead
      * @return the spectrumAnnotatedPeakColor
      */
     public Color getSpectrumAnnotatedPeakColor() {
@@ -313,6 +335,7 @@ public class UserPreferences implements Serializable {
     /**
      * Set the color to use for the annotated peaks.
      *
+     * @deprecated use the utilities version instead
      * @param spectrumAnnotatedPeakColor the spectrumAnnotatedPeakColor to set
      */
     public void setSpectrumAnnotatedPeakColor(Color spectrumAnnotatedPeakColor) {
@@ -322,6 +345,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the color to use for the background peaks.
      *
+     * @deprecated use the utilities version instead
      * @return the spectrumBackgroundPeakColor
      */
     public Color getSpectrumBackgroundPeakColor() {
@@ -336,6 +360,7 @@ public class UserPreferences implements Serializable {
     /**
      * Set the color to use for the background peaks.
      *
+     * @deprecated use the utilities version instead
      * @param spectrumBackgroundPeakColor the spectrumBackgroundPeakColor to set
      */
     public void setSpectrumBackgroundPeakColor(Color spectrumBackgroundPeakColor) {
@@ -345,6 +370,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the width of the annotated peaks.
      *
+     * @deprecated use the utilities version instead
      * @return the spectrumAnnotatedPeakWidth
      */
     public Float getSpectrumAnnotatedPeakWidth() {
@@ -359,6 +385,7 @@ public class UserPreferences implements Serializable {
     /**
      * Set the width of the annotated peaks.
      *
+     * @deprecated use the utilities version instead
      * @param spectrumAnnotatedPeakWidth the spectrumAnnotatedPeakWidth to set
      */
     public void setSpectrumAnnotatedPeakWidth(float spectrumAnnotatedPeakWidth) {
@@ -368,6 +395,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the width of the background peaks.
      *
+     * @deprecated use the utilities version instead
      * @return the spectrumBackgroundPeakWidth
      */
     public Float getSpectrumBackgroundPeakWidth() {
@@ -382,6 +410,7 @@ public class UserPreferences implements Serializable {
     /**
      * Set the width of the background peaks.
      *
+     * @deprecated use the utilities version instead
      * @param spectrumBackgroundPeakWidth the spectrumBackgroundPeakWidth to set
      */
     public void setSpectrumBackgroundPeakWidth(float spectrumBackgroundPeakWidth) {
@@ -391,6 +420,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the path to the SearchGUI installation.
      * 
+     * @deprecated use the utilities version instead
      * @return the path to the SearchGUI installation
      */
     public String getSearchGuiPath() {
@@ -400,6 +430,7 @@ public class UserPreferences implements Serializable {
     /**
      * Set the path to the SearchGUI installation.
      * 
+     * @deprecated use the utilities version instead
      * @param searchGuiPath the path to the SearchGUI installation
      */
     public void setSearchGuiPath(String searchGuiPath) {
