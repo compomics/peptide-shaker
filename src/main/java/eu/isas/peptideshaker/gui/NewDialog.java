@@ -624,7 +624,10 @@ public class NewDialog extends javax.swing.JDialog {
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
             
-            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference(), peptideShakerGUI.getTips());
+            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, 
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), 
+                    true, peptideShakerGUI.getTips(), true);
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
 
