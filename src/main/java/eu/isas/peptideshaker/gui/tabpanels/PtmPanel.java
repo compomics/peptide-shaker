@@ -18,7 +18,7 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -3958,10 +3958,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                 spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                 spectrum.setBorder(null);
-                spectrum.setDataPointAndLineColor(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
-                spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
-                spectrum.setPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
-                spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
+                spectrum.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                spectrum.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
+                spectrum.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
+                spectrum.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
 
                 // get the spectrum annotations
                 Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();

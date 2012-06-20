@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.ptm.PtmtableContent;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.AnnotationPreferences;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

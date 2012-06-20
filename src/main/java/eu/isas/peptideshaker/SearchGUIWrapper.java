@@ -45,7 +45,7 @@ public class SearchGUIWrapper {
     private void launch() throws Exception {
 
         // check if searchgui file exists
-        if (!new File(peptideShakerGUI.getUserPreferences().getSearchGuiPath()).exists()) {
+        if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath()).exists()) {
             JOptionPane.showMessageDialog(peptideShakerGUI,
                     "SearchGUI installation not found!\n"
                     + "Check Edit > SearchGUI Settings", "SearchGUI Error", JOptionPane.WARNING_MESSAGE);
@@ -59,7 +59,7 @@ public class SearchGUIWrapper {
             quote = "\"";
         }
 
-        String cmdLine = "java -jar " + quote + peptideShakerGUI.getUserPreferences().getSearchGuiPath() + quote;
+        String cmdLine = "java -jar " + quote + peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath() + quote;
 
         if (debug) {
             System.out.println(cmdLine);

@@ -20,6 +20,8 @@ import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
+import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -33,7 +35,6 @@ import eu.isas.peptideshaker.gui.tabpanels.QCPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSSettings;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ModificationProfile;
@@ -271,6 +272,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The user preferences.
      */
     private UserPreferences userPreferences;
+    /**
+     * The utilities user preferences.
+     */
+    private UtilitiesUserPreferences utilitiesUserPreferences;
     /**
      * The identification filter used for this project.
      */
@@ -2933,9 +2938,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
+     * Returns the user preferences.
+     *
+     * @return the user preferences
+     */
+    public UtilitiesUserPreferences getUtilitiesUserPreferences() {
+        return utilitiesUserPreferences;
+    }
+
+    /**
      * Loads the user preferences.
      */
     private void loadUserPreferences() {
+        try {
+            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         try {
             File file = new File(USER_PREFERENCES_FILE);
             if (!file.exists()) {
@@ -2961,23 +2980,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Checks the version compatibility and makes the necessary adjustments.
      */
     private void checkVersionCompatibility() {
-        // Resets the user preferences keeping the the link to other projects
-        UserPreferences tempPreferences = new UserPreferences();
-
-        // have to be added in reverse order
-        for (int i = userPreferences.getRecentProjects().size(); i > 0; i--) {
-            File tempFile = new File(userPreferences.getRecentProjects().get(i - 1));
-            tempPreferences.addRecentProject(tempFile);
-        }
-
-        tempPreferences.setShowSliders(userPreferences.showSliders());
-        tempPreferences.setDeltaScoreThreshold(userPreferences.getDeltaScoreThreshold());
-        tempPreferences.setAScoreThreshold(userPreferences.getAScoreThreshold());
-        tempPreferences.setMemoryPreference(userPreferences.getMemoryPreference());
-        tempPreferences.setSearchGuiPath(userPreferences.getSearchGuiPath());
-        userPreferences = tempPreferences;
-
-        // Copy Pride default files // TODO???
+        // should be good now
     }
 
     /**
@@ -2996,6 +2999,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             oos.close();
             bos.close();
             fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3460,7 +3468,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @return the sparklineColor
      */
     public Color getSparklineColor() {
-        return userPreferences.getSparklineColor();
+        return utilitiesUserPreferences.getSparklineColor();
     }
 
     /**
@@ -3469,7 +3477,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param sparklineColor the sparklineColor to set
      */
     public void setSparklineColor(Color sparklineColor) {
-        userPreferences.setSparklineColor(sparklineColor);
+        utilitiesUserPreferences.setSparklineColor(sparklineColor);
     }
 
     /**
@@ -3478,7 +3486,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @return the non-validated sparklineColor
      */
     public Color getSparklineColorNonValidated() {
-        return userPreferences.getSparklineColorNonValidated();
+        return utilitiesUserPreferences.getSparklineColorNonValidated();
     }
 
     /**
@@ -3487,7 +3495,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param sparklineColorNonValidated the non-validated sparklineColor to set
      */
     public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
-        userPreferences.setSparklineColorNonValidated(sparklineColorNonValidated);
+        utilitiesUserPreferences.setSparklineColorNonValidated(sparklineColorNonValidated);
     }
 
     /**
@@ -3496,7 +3504,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @return the possible sparklineColor
      */
     public Color getSparklineColorPossible() {
-        return userPreferences.getSparklineColorPossible();
+        return utilitiesUserPreferences.getSparklineColorPossible();
     }
 
     /**
@@ -3505,7 +3513,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param sparklineColorPossible the possible sparklineColor to set
      */
     public void setSparklineColorPossible(Color sparklineColorPossible) {
-        userPreferences.setSparklineColorPossible(sparklineColorPossible);
+        utilitiesUserPreferences.setSparklineColorPossible(sparklineColorPossible);
     }
 
     /**
@@ -4886,7 +4894,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 searchParameters.setFastaFile(fastaFile);
                                 try {
                                     progressDialog.setTitle("Importing FASTA File. Please Wait...");
-                                    SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog.getProgressBar());
+                                    SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog);
                                 } catch (Exception e2) {
                                     e2.printStackTrace();
                                     JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -4923,7 +4931,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             searchParameters.setFastaFile(fastaFile);
                             try {
                                 progressDialog.setTitle("Importing FASTA File. Please Wait...");
-                                SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog.getProgressBar());
+                                SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog);
                             } catch (Exception e2) {
                                 e2.printStackTrace();
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -5174,7 +5182,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                         try {
                             mgfFile = new File(spectrumFile);
-                            spectrumFactory.addSpectra(mgfFile, progressDialog.getProgressBar());
+                            spectrumFactory.addSpectra(mgfFile, progressDialog);
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                     "An error occured while importing " + spectrumFile + ".",
@@ -5196,13 +5204,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     if (compatibilityIssue) {
                         JOptionPane.showMessageDialog(null,
                                 "The annotation preferences for this project may have changed.\n\n"
-                                + "Please check Edit > Spectrum Annotation and resave project.\n\n"
                                 + "Note that PeptideShaker has substancially improved, we strongly\n"
                                 + "recommend reprocessing your identification files.",
                                 "Annotation Preferences",
                                 JOptionPane.INFORMATION_MESSAGE);
                         searchParameters.updateVersion();
-                        annotationPreferences.updateVersion();
                         updateAnnotationPreferencesFromSearchSettings();
                     }
 
@@ -6100,6 +6106,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             if (jarFilePath.startsWith("\\") && !jarFilePath.startsWith("\\\\")) {
                 jarFilePath = jarFilePath.substring(1);
             }
+            
+            utilitiesUserPreferences.setPeptideShakerPath(jarFilePath);
 
             String iconFileLocation = jarFilePath + "\\resources\\peptide-shaker.ico";
             String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";
@@ -6122,13 +6130,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Open SearchGUI.
      */
     public void startSearchGui() {
-        String path = userPreferences.getSearchGuiPath();
+        String path = utilitiesUserPreferences.getSearchGuiPath();
 
         final PeptideShakerGUI finalRef = this;
 
         if (path == null) {
             new SearchGuiSetupDialog(this, true);
-            path = userPreferences.getSearchGuiPath();
+            path = utilitiesUserPreferences.getSearchGuiPath();
 
             if (path != null) {
                 new Thread(new Runnable() {

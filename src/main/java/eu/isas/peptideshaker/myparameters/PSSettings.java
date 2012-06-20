@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.*;
 import eu.isas.peptideshaker.utils.Metrics;
 
@@ -24,9 +25,9 @@ public class PSSettings implements UrParameter {
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The annotation preferences
+     * The utilities annotation preferences
      */
-    private AnnotationPreferences annotationPreferences;
+    private AnnotationPreferences utilitiesAnnotationPreferences = null;
     /**
      * The spectrum counting preferences
      */
@@ -74,7 +75,7 @@ public class PSSettings implements UrParameter {
             Metrics metrics,
             ProcessingPreferences processingPreferences) {
         this.searchParameters = searchParameters;
-        this.annotationPreferences = annotationPreferences;
+        this.utilitiesAnnotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
         this.filterPreferences = filterPreferences;
@@ -89,7 +90,11 @@ public class PSSettings implements UrParameter {
      * @return the annotation preferences 
      */
     public AnnotationPreferences getAnnotationPreferences() {
-        return annotationPreferences;
+        if (utilitiesAnnotationPreferences == null) {
+            // most likely a compatibility issue, reset the annotation preferences
+            utilitiesAnnotationPreferences = new AnnotationPreferences();
+        }
+        return utilitiesAnnotationPreferences;
     }
 
     /**

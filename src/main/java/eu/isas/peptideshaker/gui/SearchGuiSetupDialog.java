@@ -29,8 +29,8 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
         initComponents();
 
         // display the current searchgui path
-        if (peptideShakerGUI.getUserPreferences().getSearchGuiPath() != null) {
-            searchGuiInstallationJTextField.setText(peptideShakerGUI.getUserPreferences().getSearchGuiPath());
+        if (peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath() != null) {
+            searchGuiInstallationJTextField.setText(peptideShakerGUI.getUtilitiesUserPreferences().getSearchGuiPath());
         }
 
         setLocationRelativeTo(peptideShakerGUI);
@@ -279,7 +279,7 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        peptideShakerGUI.getUserPreferences().setSearchGuiPath(searchGuiInstallationJTextField.getText());
+        peptideShakerGUI.getUtilitiesUserPreferences().setSearchGuiPath(searchGuiInstallationJTextField.getText());
         peptideShakerGUI.saveUserPreferences();
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed

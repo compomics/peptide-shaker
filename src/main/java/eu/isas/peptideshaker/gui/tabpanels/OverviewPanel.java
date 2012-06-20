@@ -17,6 +17,7 @@ import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -30,7 +31,6 @@ import eu.isas.peptideshaker.gui.tablemodels.PsmTableModel;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -384,7 +384,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
-                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), true));
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
         proteinTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
@@ -3718,7 +3718,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
 
                         if (selectedPeptideEnd.contains(new Integer(i + 1))) {
-                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getPeptideSelected(), null);
+                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getPeptideSelected(), null);
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
@@ -3726,7 +3726,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
                         annotations.add(new ResidueAnnotation("Possible to cover (" + (i - sequenceCounter + 1) + "-" + i + ")", null, false));
                         proteinTooltips.put(sparkLineDataSeriesCoverage.size(), annotations);
-                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
+                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), null);
                     } else {
                         sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     }
@@ -3904,10 +3904,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                             spectrumPanel.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                             spectrumPanel.setBorder(null);
-                            spectrumPanel.setDataPointAndLineColor(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
-                            spectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakColor());
-                            spectrumPanel.setPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumAnnotatedPeakWidth());
-                            spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUserPreferences().getSpectrumBackgroundPeakWidth());
+                            spectrumPanel.setDataPointAndLineColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakColor(), 0);
+                            spectrumPanel.setPeakWaterMarkColor(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakColor());
+                            spectrumPanel.setPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumAnnotatedPeakWidth());
+                            spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
 
                             // get the spectrum annotations
                             int peptideIndex = peptideTable.convertRowIndexToModel(peptideTable.getSelectedRow());
