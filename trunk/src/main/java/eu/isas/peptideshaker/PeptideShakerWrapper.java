@@ -53,8 +53,6 @@ public class PeptideShakerWrapper {
         // get the version number set in the pom file
         jarFileName = jarFileName + new Properties().getVersion() + ".jar";
 
-        UtilitiesGUIDefaults.setLookAndFeel();
-
         try {
             try {
                 userPreferences = UtilitiesUserPreferences.loadUserPreferences();
@@ -72,6 +70,8 @@ public class PeptideShakerWrapper {
                 bw = new BufferedWriter(new FileWriter(debugOutput));
                 bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
             }
+            
+            UtilitiesGUIDefaults.setLookAndFeel();
 
             launch();
 
@@ -79,8 +79,20 @@ public class PeptideShakerWrapper {
                 bw.flush();
                 bw.close();
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+
+            // perhaps not the optimal way of catching this error, but seems to work
+            JOptionPane.showMessageDialog(null,
+                    "Seems like you are trying to start PeptideShaker from within a zip file!",
+                    "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
+            
+            JOptionPane.showMessageDialog(null,
+                    "Failed to start PeptideShaker:\n"
+                    + e.getMessage(),
+                    "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -135,6 +147,7 @@ public class PeptideShakerWrapper {
                                         bw.write("New memory setting saved: " + userPreferences.getMemoryPreference() + "\n");
                                     }
                                 } catch (Exception e) {
+
                                     javax.swing.JOptionPane.showMessageDialog(null,
                                             "PeptideShaker could not parse the memory setting:" + currentOption
                                             + ". The value was reset to" + userPreferences.getMemoryPreference() + ".",
@@ -383,11 +396,17 @@ public class PeptideShakerWrapper {
                         bw.close();
                     }
 
-                    javax.swing.JOptionPane.showMessageDialog(null,
-                            "An error occurred when starting PeptideShaker.\n\n"
-                            + "Inspect the log file for details: resources/conf/startup.log.\n\n"
-                            + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
-                            "PeptideShaker - Startup Error", JOptionPane.ERROR_MESSAGE);
+                    if (temp.lastIndexOf("NoClassDefFound") != -1) {
+                        JOptionPane.showMessageDialog(null,
+                                "Seems like you are trying to start PeptideShaker from within a zip file!",
+                                "PeptideShaker - PeptideShaker Failed", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(null,
+                                "An error occurred when starting PeptideShaker.\n\n"
+                                + "Inspect the log file for details: resources/conf/startup.log.\n\n"
+                                + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
+                                "PeptideShaker - Startup Error", JOptionPane.ERROR_MESSAGE);
+                    }
 
                     System.exit(0);
                 }

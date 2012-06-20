@@ -606,7 +606,7 @@ public class IdentificationFeaturesGenerator {
         try {
         for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
-                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, probabilities);
+                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, probabilities);
                 if (probabilities.isValidated()) {
                     cpt++;
                 }
@@ -1205,7 +1205,7 @@ public class IdentificationFeaturesGenerator {
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
 
                 if (!SequenceFactory.isDecoy(proteinKey)) {
-                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, probabilities);
+                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, probabilities);
                     if (!probabilities.isHidden()) {
                         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         double score = probabilities.getProteinProbabilityScore();
@@ -1320,7 +1320,7 @@ public class IdentificationFeaturesGenerator {
             int nValidatedProteins = 0;
             
             for (String proteinKey : proteinList) {
-                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                 if (!psParameter.isHidden()) {
                     proteinListAfterHiding.add(proteinKey);
                     if (psParameter.isValidated()) {

@@ -246,6 +246,32 @@ public class PtmPanel extends javax.swing.JPanel {
      * Set up the properties of the tables.
      */
     private void setTableProperties() {
+        
+        // correct the color for the upper right corner
+        JPanel ptmCorner = new JPanel();
+        ptmCorner.setBackground(ptmJTable.getTableHeader().getBackground());
+        ptmJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ptmCorner);
+        JPanel modifiedPeptidesCorner = new JPanel();
+        modifiedPeptidesCorner.setBackground(peptidesTable.getTableHeader().getBackground());
+        peptidesTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, modifiedPeptidesCorner);
+        JPanel relatedPeptidesCorner = new JPanel();
+        relatedPeptidesCorner.setBackground(relatedPeptidesTable.getTableHeader().getBackground());
+        relatedPeptidesTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, relatedPeptidesCorner);
+        JPanel psmMatchesCorner = new JPanel();
+        psmMatchesCorner.setBackground(selectedPsmsTable.getTableHeader().getBackground());
+        psmsModifiedTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, psmMatchesCorner);
+        JPanel psmRelatedMatchesCorner = new JPanel();
+        psmRelatedMatchesCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
+        psmsRelatedTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, psmRelatedMatchesCorner);
+        JPanel ptmTableCorner = new JPanel();
+        ptmTableCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
+        ptmTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ptmTableCorner);
+        JPanel aScoreTableCorner = new JPanel();
+        aScoreTableCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
+        psmAScoresScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, aScoreTableCorner);
+        JPanel deltaScoreTableCorner = new JPanel();
+        deltaScoreTableCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
+        psmDeltaScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, deltaScoreTableCorner);
 
         ptmJTable.getColumn("  ").setMaxWidth(35);
         ptmJTable.getColumn("  ").setMinWidth(35);
@@ -750,7 +776,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 ptmSelectionHelpJButtonActionPerformed(evt);
             }
         });
-        ptmSelectionHelpJButton.setBounds(240, 0, 10, 25);
+        ptmSelectionHelpJButton.setBounds(240, 0, 10, 19);
         ptmLayeredLayeredPane.add(ptmSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPtmBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -763,10 +789,10 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         contextMenuPtmBackgroundPanelLayout.setVerticalGroup(
             contextMenuPtmBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPtmBackgroundPanel.setBounds(230, 0, 20, 20);
+        contextMenuPtmBackgroundPanel.setBounds(230, 0, 20, 19);
         ptmLayeredLayeredPane.add(contextMenuPtmBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout ptmPanelLayout = new javax.swing.GroupLayout(ptmPanel);
@@ -869,7 +895,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 modificationProfileHelpJButtonActionPerformed(evt);
             }
         });
-        modificationProfileHelpJButton.setBounds(747, 0, 10, 25);
+        modificationProfileHelpJButton.setBounds(747, 0, 10, 19);
         modifiedPeptidesLayeredPane.add(modificationProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -891,7 +917,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportModifiedPeptideProfileJButtonMouseReleased(evt);
             }
         });
-        exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 25);
+        exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 19);
         modifiedPeptidesLayeredPane.add(exportModifiedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuModifiedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -904,10 +930,10 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         contextMenuModifiedPeptidesBackgroundPanelLayout.setVerticalGroup(
             contextMenuModifiedPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuModifiedPeptidesBackgroundPanel.setBounds(730, 0, 30, 20);
+        contextMenuModifiedPeptidesBackgroundPanel.setBounds(730, 0, 30, 19);
         modifiedPeptidesLayeredPane.add(contextMenuModifiedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout modifiedPeptidesPanelLayout = new javax.swing.GroupLayout(modifiedPeptidesPanel);
@@ -1012,7 +1038,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 relatedProfileHelpJButtonActionPerformed(evt);
             }
         });
-        relatedProfileHelpJButton.setBounds(750, 0, 10, 25);
+        relatedProfileHelpJButton.setBounds(750, 0, 10, 19);
         relatedPeptiesLayeredPane.add(relatedProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1034,7 +1060,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportRelatedPeptideProfileJButtonMouseReleased(evt);
             }
         });
-        exportRelatedPeptideProfileJButton.setBounds(740, 0, 10, 25);
+        exportRelatedPeptideProfileJButton.setBounds(740, 0, 10, 19);
         relatedPeptiesLayeredPane.add(exportRelatedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuRelatedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1047,10 +1073,10 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         contextMenuRelatedPeptidesBackgroundPanelLayout.setVerticalGroup(
             contextMenuRelatedPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuRelatedPeptidesBackgroundPanel.setBounds(730, 0, 30, 20);
+        contextMenuRelatedPeptidesBackgroundPanel.setBounds(730, 0, 30, 19);
         relatedPeptiesLayeredPane.add(contextMenuRelatedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout relatedPeptidesJPanelLayout = new javax.swing.GroupLayout(relatedPeptidesJPanel);
@@ -1404,7 +1430,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrumHelpJButtonActionPerformed(evt);
             }
         });
-        spectrumHelpJButton.setBounds(540, 0, 10, 25);
+        spectrumHelpJButton.setBounds(540, 0, 10, 19);
         spectrumLayeredPane.add(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1426,7 +1452,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportSpectrumJButtonMouseReleased(evt);
             }
         });
-        exportSpectrumJButton.setBounds(530, 0, 10, 25);
+        exportSpectrumJButton.setBounds(530, 0, 10, 19);
         spectrumLayeredPane.add(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1439,10 +1465,10 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         contextMenuSpectrumBackgroundPanelLayout.setVerticalGroup(
             contextMenuSpectrumBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuSpectrumBackgroundPanel.setBounds(530, 0, 30, 20);
+        contextMenuSpectrumBackgroundPanel.setBounds(530, 0, 30, 19);
         spectrumLayeredPane.add(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumAndFragmentIonJPanelLayout = new javax.swing.GroupLayout(spectrumAndFragmentIonJPanel);
@@ -1535,7 +1561,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 modifiedPsmsHelpJButtonActionPerformed(evt);
             }
         });
-        modifiedPsmsHelpJButton.setBounds(480, 0, 10, 25);
+        modifiedPsmsHelpJButton.setBounds(480, 0, 10, 19);
         psmsModPeptidesLayeredPane.add(modifiedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1559,7 +1585,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportModifiedPsmsJButtonActionPerformed(evt);
             }
         });
-        exportModifiedPsmsJButton.setBounds(470, 0, 10, 25);
+        exportModifiedPsmsJButton.setBounds(470, 0, 10, 19);
         psmsModPeptidesLayeredPane.add(exportModifiedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuModPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1572,10 +1598,10 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         contextMenuModPsmsBackgroundPanelLayout.setVerticalGroup(
             contextMenuModPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuModPsmsBackgroundPanel.setBounds(460, 0, 30, 20);
+        contextMenuModPsmsBackgroundPanel.setBounds(460, 0, 30, 19);
         psmsModPeptidesLayeredPane.add(contextMenuModPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout modPsmsPanelLayout = new javax.swing.GroupLayout(modPsmsPanel);
@@ -1661,7 +1687,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 relatedPsmsHelpJButtonActionPerformed(evt);
             }
         });
-        relatedPsmsHelpJButton.setBounds(480, 0, 10, 25);
+        relatedPsmsHelpJButton.setBounds(480, 0, 10, 19);
         psmsRelatedPeptidesJLayeredPane.add(relatedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1685,7 +1711,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportRelatedPsmsJButtonActionPerformed(evt);
             }
         });
-        exportRelatedPsmsJButton.setBounds(470, 0, 10, 25);
+        exportRelatedPsmsJButton.setBounds(470, 0, 10, 19);
         psmsRelatedPeptidesJLayeredPane.add(exportRelatedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuRelatedPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1698,10 +1724,10 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         contextMenuRelatedPsmsBackgroundPanelLayout.setVerticalGroup(
             contextMenuRelatedPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuRelatedPsmsBackgroundPanel.setBounds(460, 0, 30, 20);
+        contextMenuRelatedPsmsBackgroundPanel.setBounds(460, 0, 30, 19);
         psmsRelatedPeptidesJLayeredPane.add(contextMenuRelatedPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout relatedPsmsJPanelLayout = new javax.swing.GroupLayout(relatedPsmsJPanel);

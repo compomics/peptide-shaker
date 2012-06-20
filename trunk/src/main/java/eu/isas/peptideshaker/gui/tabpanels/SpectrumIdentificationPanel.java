@@ -212,6 +212,21 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Set up the properties of the tables.
      */
     private void setTableProperties() {
+        
+        // correct the color for the upper right corner
+        JPanel spectrumCorner = new JPanel();
+        spectrumCorner.setBackground(spectrumTable.getTableHeader().getBackground());
+        spectrumTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, spectrumCorner);
+        JPanel omssaCorner = new JPanel();
+        omssaCorner.setBackground(omssaTable.getTableHeader().getBackground());
+        omssaTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, omssaCorner);
+        JPanel xtandemCorner = new JPanel();
+        xtandemCorner.setBackground(xTandemTable.getTableHeader().getBackground());
+        xTandemTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, xtandemCorner);
+        JPanel mascotCorner = new JPanel();
+        mascotCorner.setBackground(omssaTable.getTableHeader().getBackground());
+        mascotTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, mascotCorner);
+        
 
         peptideShakerJTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
@@ -694,7 +709,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 searchEnginesHelpJButtonActionPerformed(evt);
             }
         });
-        searchEnginesHelpJButton.setBounds(1290, 0, 10, 25);
+        searchEnginesHelpJButton.setBounds(1290, 0, 10, 19);
         searchEnginesJLayeredPane.add(searchEnginesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSearchEnginePerformanceJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -716,7 +731,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportSearchEnginePerformanceJButtonMouseReleased(evt);
             }
         });
-        exportSearchEnginePerformanceJButton.setBounds(1280, 0, 10, 25);
+        exportSearchEnginePerformanceJButton.setBounds(1280, 0, 10, 19);
         searchEnginesJLayeredPane.add(exportSearchEnginePerformanceJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSearchEnginesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -729,10 +744,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         );
         contextMenuSearchEnginesBackgroundPanelLayout.setVerticalGroup(
             contextMenuSearchEnginesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuSearchEnginesBackgroundPanel.setBounds(1280, 0, 30, 20);
+        contextMenuSearchEnginesBackgroundPanel.setBounds(1280, 0, 30, 19);
         searchEnginesJLayeredPane.add(contextMenuSearchEnginesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout searchEnginesJPanelLayout = new javax.swing.GroupLayout(searchEnginesJPanel);
@@ -1065,7 +1080,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 psmsHelpJButtonActionPerformed(evt);
             }
         });
-        psmsHelpJButton.setBounds(1290, 0, 10, 25);
+        psmsHelpJButton.setBounds(1290, 0, 10, 19);
         psmsLayeredPane.add(psmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1089,7 +1104,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportPsmsJButtonActionPerformed(evt);
             }
         });
-        exportPsmsJButton.setBounds(1280, 0, 10, 25);
+        exportPsmsJButton.setBounds(1280, 0, 10, 19);
         psmsLayeredPane.add(exportPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1102,10 +1117,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         );
         contextMenuPsmsBackgroundPanelLayout.setVerticalGroup(
             contextMenuPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPsmsBackgroundPanel.setBounds(1280, 0, 30, 20);
+        contextMenuPsmsBackgroundPanel.setBounds(1280, 0, 30, 19);
         psmsLayeredPane.add(contextMenuPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout psmsJPanelLayout = new javax.swing.GroupLayout(psmsJPanel);
@@ -1200,7 +1215,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumSelectionHelpJButtonActionPerformed(evt);
             }
         });
-        spectrumSelectionHelpJButton.setBounds(660, 0, 10, 25);
+        spectrumSelectionHelpJButton.setBounds(660, 0, 10, 19);
         spectrumSelectionLayeredPane.add(spectrumSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumSelectionJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1224,7 +1239,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportSpectrumSelectionJButtonActionPerformed(evt);
             }
         });
-        exportSpectrumSelectionJButton.setBounds(650, 0, 10, 25);
+        exportSpectrumSelectionJButton.setBounds(650, 0, 10, 19);
         spectrumSelectionLayeredPane.add(exportSpectrumSelectionJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumSelectionBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1237,10 +1252,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         );
         contextMenuSpectrumSelectionBackgroundPanelLayout.setVerticalGroup(
             contextMenuSpectrumSelectionBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuSpectrumSelectionBackgroundPanel.setBounds(640, 0, 30, 20);
+        contextMenuSpectrumSelectionBackgroundPanel.setBounds(640, 0, 30, 19);
         spectrumSelectionLayeredPane.add(contextMenuSpectrumSelectionBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumSelectionJPanelLayout = new javax.swing.GroupLayout(spectrumSelectionJPanel);
@@ -1312,7 +1327,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         slidersPanelLayout.setHorizontalGroup(
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, slidersPanelLayout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+                .addContainerGap(547, Short.MAX_VALUE)
                 .addGroup(slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(accuracySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1350,9 +1365,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+            .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         spectrumJPanel1Layout.setVerticalGroup(
             spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1402,7 +1417,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumHelpJButtonActionPerformed(evt);
             }
         });
-        spectrumHelpJButton.setBounds(610, 0, 10, 25);
+        spectrumHelpJButton.setBounds(610, 0, 10, 19);
         spectrumLayeredPane.add(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
@@ -1424,7 +1439,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportSpectrumJButtonMouseReleased(evt);
             }
         });
-        exportSpectrumJButton.setBounds(600, 0, 10, 25);
+        exportSpectrumJButton.setBounds(600, 0, 10, 19);
         spectrumLayeredPane.add(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1437,10 +1452,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         );
         contextMenuSpectrumBackgroundPanelLayout.setVerticalGroup(
             contextMenuSpectrumBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
+            .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuSpectrumBackgroundPanel.setBounds(590, 0, 30, 20);
+        contextMenuSpectrumBackgroundPanel.setBounds(590, 0, 30, 19);
         spectrumLayeredPane.add(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumJPanelLayout = new javax.swing.GroupLayout(spectrumJPanel);

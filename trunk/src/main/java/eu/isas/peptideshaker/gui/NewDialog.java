@@ -1268,7 +1268,6 @@ public class NewDialog extends javax.swing.JDialog {
                         output += ".\nPlease import it by editing the search parameters.";
                         JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
                     }
-
                 }
             }
 

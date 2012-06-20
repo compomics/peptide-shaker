@@ -76,81 +76,81 @@ public class StarHider {
             public void run() {
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-try {
-                Identification identification = peptideShakerGUI.getIdentification();
-                progressDialog.setIndeterminate(false);
-                progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
+                try {
+                    Identification identification = peptideShakerGUI.getIdentification();
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
 
-                PSParameter psParameter = new PSParameter();
+                    PSParameter psParameter = new PSParameter();
 
-                for (String proteinKey : identification.getProteinIdentification()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                    boolean peptideSurvived = false;
-
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    for (String proteinKey : identification.getProteinIdentification()) {
 
                         if (progressDialog.isRunCanceled()) {
                             break;
                         }
 
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        boolean psmSurvived = false;
+                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                        boolean peptideSurvived = false;
 
-                        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
-                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                            boolean psmSurvived = false;
 
-                            if (isPsmHidden(spectrumKey)) {
+                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+
+                                if (progressDialog.isRunCanceled()) {
+                                    break;
+                                }
+
+                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                                if (isPsmHidden(spectrumKey)) {
+                                    psParameter.setHidden(true);
+                                } else {
+                                    psParameter.setHidden(false);
+                                    psmSurvived = true;
+                                }
+                                psParameter.setStarred(isPsmStarred(spectrumKey));
+                                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+                            }
+
+                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+
+                            if (!psmSurvived) {
+                                psParameter.setHidden(true);
+                            } else if (isPeptideHidden(peptideKey)) {
                                 psParameter.setHidden(true);
                             } else {
                                 psParameter.setHidden(false);
-                                psmSurvived = true;
+                                peptideSurvived = true;
                             }
-                            psParameter.setStarred(isPsmStarred(spectrumKey));
-                            identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+
+                            psParameter.setStarred(isPeptideStarred(peptideKey));
+
+                            identification.updatePeptideMatchParameter(peptideKey, psParameter);
                         }
 
-                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
 
-                        if (!psmSurvived) {
-                            psParameter.setHidden(true);
-                        } else if (isPeptideHidden(peptideKey)) {
+                        if (!peptideSurvived) {
                             psParameter.setHidden(true);
                         } else {
-                            psParameter.setHidden(false);
-                            peptideSurvived = true;
+                            psParameter.setHidden(isProteinHidden(proteinKey));
                         }
 
-                        psParameter.setStarred(isPeptideStarred(peptideKey));
-                        
-                        identification.updatePeptideMatchParameter(peptideKey, psParameter);
+                        psParameter.setStarred(isProteinStarred(proteinKey));
+
+                        identification.updateProteinMatchParameter(proteinKey, psParameter);
+                        progressDialog.increaseProgressValue();
                     }
-
-                    psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
-
-                    if (!peptideSurvived) {
-                        psParameter.setHidden(true);
-                    } else {
-                        psParameter.setHidden(isProteinHidden(proteinKey));
-                    }
-
-                    psParameter.setStarred(isProteinStarred(proteinKey));
-                    
-                    identification.updateProteinMatchParameter(proteinKey, psParameter);
-                    progressDialog.increaseProgressValue();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
 
                 progressDialog.dispose();
 
@@ -166,40 +166,40 @@ try {
      * @param match the key of the match
      */
     public void starProtein(String match) {
-try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
-        boolean validated = false;
+        try {
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getProteinMatchParameter(match, psParameter);
+            boolean validated = false;
 
-        for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
-            if (matchFilter.getExceptions().contains(match)) {
-                matchFilter.removeException(match);
+            for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+                if (matchFilter.getExceptions().contains(match)) {
+                    matchFilter.removeException(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    validated = true;
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                validated = true;
+
+            if (!validated) {
+                ProteinFilter proteinFilter;
+                if (!filterPreferences.getProteinStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+                    proteinFilter = new ProteinFilter(MatchFilter.MANUAL_SELECTION);
+                    proteinFilter.setDescription("Manual selection via the graphical interface");
+                    filterPreferences.getProteinStarFilters().put(proteinFilter.getName(), proteinFilter);
+                } else {
+                    proteinFilter = filterPreferences.getProteinStarFilters().get(MatchFilter.MANUAL_SELECTION);
+                }
+                proteinFilter.addManualValidation(match);
             }
+
+            psParameter.setStarred(true);
+            identification.updateProteinMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        if (!validated) {
-            ProteinFilter proteinFilter;
-            if (!filterPreferences.getProteinStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                proteinFilter = new ProteinFilter(MatchFilter.MANUAL_SELECTION);
-                proteinFilter.setDescription("Manual selection via the graphical interface");
-                filterPreferences.getProteinStarFilters().put(proteinFilter.getName(), proteinFilter);
-            } else {
-                proteinFilter = filterPreferences.getProteinStarFilters().get(MatchFilter.MANUAL_SELECTION);
-            }
-            proteinFilter.addManualValidation(match);
-        }
-
-        psParameter.setStarred(true);
-        identification.updateProteinMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -210,26 +210,26 @@ try {
     public void unStarProtein(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getProteinMatchParameter(match, psParameter);
 
-        for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
-            if (matchFilter.getManualValidation().contains(match)) {
-                matchFilter.removeManualValidation(match);
+            for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+                if (matchFilter.getManualValidation().contains(match)) {
+                    matchFilter.removeManualValidation(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    matchFilter.addException(match);
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                matchFilter.addException(match);
-            }
+
+            psParameter.setStarred(false);
+            identification.updateProteinMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setStarred(false);
-        identification.updateProteinMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -240,39 +240,39 @@ try {
     public void hideProtein(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
-        boolean validated = false;
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getProteinMatchParameter(match, psParameter);
+            boolean validated = false;
 
-        for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
-            if (matchFilter.getExceptions().contains(match)) {
-                matchFilter.removeException(match);
+            for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+                if (matchFilter.getExceptions().contains(match)) {
+                    matchFilter.removeException(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    validated = true;
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                validated = true;
+
+            if (!validated) {
+                ProteinFilter proteinFilter;
+                if (!filterPreferences.getProteinHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+                    proteinFilter = new ProteinFilter(MatchFilter.MANUAL_SELECTION);
+                    proteinFilter.setDescription("Manual selection via the graphical interface");
+                    filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
+                } else {
+                    proteinFilter = filterPreferences.getProteinHideFilters().get(MatchFilter.MANUAL_SELECTION);
+                }
+                proteinFilter.addManualValidation(match);
             }
+
+            psParameter.setHidden(true);
+            identification.updateProteinMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        if (!validated) {
-            ProteinFilter proteinFilter;
-            if (!filterPreferences.getProteinHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                proteinFilter = new ProteinFilter(MatchFilter.MANUAL_SELECTION);
-                proteinFilter.setDescription("Manual selection via the graphical interface");
-                filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
-            } else {
-                proteinFilter = filterPreferences.getProteinHideFilters().get(MatchFilter.MANUAL_SELECTION);
-            }
-            proteinFilter.addManualValidation(match);
-        }
-
-        psParameter.setHidden(true);
-        identification.updateProteinMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -283,25 +283,25 @@ try {
     public void unHideProtein(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getProteinMatchPArameter(match, psParameter);
-        for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
-            if (matchFilter.getManualValidation().contains(match)) {
-                matchFilter.removeManualValidation(match);
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getProteinMatchParameter(match, psParameter);
+            for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+                if (matchFilter.getManualValidation().contains(match)) {
+                    matchFilter.removeManualValidation(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    matchFilter.addException(match);
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                matchFilter.addException(match);
-            }
-        }
 
-        psParameter.setHidden(true);
-        identification.updateProteinMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
+            psParameter.setHidden(true);
+            identification.updateProteinMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
     }
 
     /**
@@ -312,39 +312,39 @@ try {
     public void starPeptide(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
-        boolean validated = false;
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
+            boolean validated = false;
 
-        for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
-            if (matchFilter.getExceptions().contains(match)) {
-                matchFilter.removeException(match);
+            for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+                if (matchFilter.getExceptions().contains(match)) {
+                    matchFilter.removeException(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    validated = true;
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                validated = true;
+
+            if (!validated) {
+                PeptideFilter peptideFilter;
+                if (!filterPreferences.getPeptideStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundModifications());
+                    peptideFilter.setDescription("Manual selection via the graphical interface");
+                    filterPreferences.getPeptideStarFilters().put(peptideFilter.getName(), peptideFilter);
+                } else {
+                    peptideFilter = filterPreferences.getPeptideStarFilters().get(MatchFilter.MANUAL_SELECTION);
+                }
+                peptideFilter.addManualValidation(match);
             }
+
+            psParameter.setStarred(true);
+            identification.updatePeptideMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        if (!validated) {
-            PeptideFilter peptideFilter;
-            if (!filterPreferences.getPeptideStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundModifications());
-                peptideFilter.setDescription("Manual selection via the graphical interface");
-                filterPreferences.getPeptideStarFilters().put(peptideFilter.getName(), peptideFilter);
-            } else {
-                peptideFilter = filterPreferences.getPeptideStarFilters().get(MatchFilter.MANUAL_SELECTION);
-            }
-            peptideFilter.addManualValidation(match);
-        }
-
-        psParameter.setStarred(true);
-        identification.updatePeptideMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -355,26 +355,26 @@ try {
     public void unStarPeptide(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
 
-        for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
-            if (matchFilter.getManualValidation().contains(match)) {
-                matchFilter.removeManualValidation(match);
+            for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+                if (matchFilter.getManualValidation().contains(match)) {
+                    matchFilter.removeManualValidation(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    matchFilter.addException(match);
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                matchFilter.addException(match);
-            }
+
+            psParameter.setStarred(false);
+            identification.updatePeptideMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setStarred(false);
-        identification.updatePeptideMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -385,39 +385,39 @@ try {
     public void hidePeptide(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
-        boolean validated = false;
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
+            boolean validated = false;
 
-        for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
-            if (matchFilter.getExceptions().contains(match)) {
-                matchFilter.removeException(match);
+            for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+                if (matchFilter.getExceptions().contains(match)) {
+                    matchFilter.removeException(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    validated = true;
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                validated = true;
+
+            if (!validated) {
+                PeptideFilter peptideFilter;
+                if (!filterPreferences.getPeptideHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundModifications());
+                    peptideFilter.setDescription("Manual selection via the graphical interface");
+                    filterPreferences.getPeptideHideFilters().put(peptideFilter.getName(), peptideFilter);
+                } else {
+                    peptideFilter = filterPreferences.getPeptideHideFilters().get(MatchFilter.MANUAL_SELECTION);
+                }
+                peptideFilter.addManualValidation(match);
             }
+
+            psParameter.setHidden(true);
+            identification.updatePeptideMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        if (!validated) {
-            PeptideFilter peptideFilter;
-            if (!filterPreferences.getPeptideHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundModifications());
-                peptideFilter.setDescription("Manual selection via the graphical interface");
-                filterPreferences.getPeptideHideFilters().put(peptideFilter.getName(), peptideFilter);
-            } else {
-                peptideFilter = filterPreferences.getPeptideHideFilters().get(MatchFilter.MANUAL_SELECTION);
-            }
-            peptideFilter.addManualValidation(match);
-        }
-
-        psParameter.setHidden(true);
-        identification.updatePeptideMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -428,26 +428,26 @@ try {
     public void unHidePeptide(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getPeptideMatchParameter(match, psParameter);
 
-        for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
-            if (matchFilter.getManualValidation().contains(match)) {
-                matchFilter.removeManualValidation(match);
+            for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+                if (matchFilter.getManualValidation().contains(match)) {
+                    matchFilter.removeManualValidation(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    matchFilter.addException(match);
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                matchFilter.addException(match);
-            }
+
+            psParameter.setHidden(false);
+            identification.updatePeptideMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setHidden(false);
-        identification.updatePeptideMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -458,38 +458,38 @@ try {
     public void starPsm(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
-        boolean validated = false;
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
+            boolean validated = false;
 
-        if (!validated) {
-            for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
-                if (matchFilter.getExceptions().contains(match)) {
-                    matchFilter.removeException(match);
+            if (!validated) {
+                for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+                    if (matchFilter.getExceptions().contains(match)) {
+                        matchFilter.removeException(match);
+                    }
+                    if (isValidated(match, matchFilter)) {
+                        validated = true;
+                    }
                 }
-                if (isValidated(match, matchFilter)) {
-                    validated = true;
+                PsmFilter psmFilter;
+                if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+                    psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
+                    psmFilter.setDescription("Manual selection via the graphical interface");
+                    filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
+                } else {
+                    psmFilter = filterPreferences.getPsmStarFilters().get(MatchFilter.MANUAL_SELECTION);
                 }
+                psmFilter.addManualValidation(match);
             }
-            PsmFilter psmFilter;
-            if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
-                psmFilter.setDescription("Manual selection via the graphical interface");
-                filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
-            } else {
-                psmFilter = filterPreferences.getPsmStarFilters().get(MatchFilter.MANUAL_SELECTION);
-            }
-            psmFilter.addManualValidation(match);
+
+            psParameter.setStarred(true);
+            identification.updateSpectrumMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setStarred(true);
-        identification.updateSpectrumMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -500,26 +500,26 @@ try {
     public void unStarPsm(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
 
-        for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
-            if (matchFilter.getManualValidation().contains(match)) {
-                matchFilter.removeManualValidation(match);
+            for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+                if (matchFilter.getManualValidation().contains(match)) {
+                    matchFilter.removeManualValidation(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    matchFilter.addException(match);
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                matchFilter.addException(match);
-            }
+
+            psParameter.setStarred(false);
+            identification.updateSpectrumMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setStarred(false);
-        identification.updateSpectrumMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -530,38 +530,38 @@ try {
     public void hidePsm(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
-        boolean validated = false;
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
+            boolean validated = false;
 
-        if (!validated) {
-            for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
-                if (matchFilter.getExceptions().contains(match)) {
-                    matchFilter.removeException(match);
+            if (!validated) {
+                for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+                    if (matchFilter.getExceptions().contains(match)) {
+                        matchFilter.removeException(match);
+                    }
+                    if (isValidated(match, matchFilter)) {
+                        validated = true;
+                    }
                 }
-                if (isValidated(match, matchFilter)) {
-                    validated = true;
+                PsmFilter psmFilter;
+                if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
+                    psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
+                    psmFilter.setDescription("Manual selection via the graphical interface");
+                    filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
+                } else {
+                    psmFilter = filterPreferences.getPsmHideFilters().get(MatchFilter.MANUAL_SELECTION);
                 }
+                psmFilter.addManualValidation(match);
             }
-            PsmFilter psmFilter;
-            if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
-                psmFilter.setDescription("Manual selection via the graphical interface");
-                filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
-            } else {
-                psmFilter = filterPreferences.getPsmHideFilters().get(MatchFilter.MANUAL_SELECTION);
-            }
-            psmFilter.addManualValidation(match);
+
+            psParameter.setHidden(true);
+            identification.updateSpectrumMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setHidden(true);
-        identification.updateSpectrumMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -572,26 +572,26 @@ try {
     public void unHidePsm(String match) {
 
         try {
-        Identification identification = peptideShakerGUI.getIdentification();
-        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
+            Identification identification = peptideShakerGUI.getIdentification();
+            FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(match, psParameter);
 
-        for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
-            if (matchFilter.getManualValidation().contains(match)) {
-                matchFilter.removeManualValidation(match);
+            for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+                if (matchFilter.getManualValidation().contains(match)) {
+                    matchFilter.removeManualValidation(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    matchFilter.addException(match);
+                }
             }
-            if (isValidated(match, matchFilter)) {
-                matchFilter.addException(match);
-            }
+
+            psParameter.setHidden(false);
+            identification.updateSpectrumMatchParameter(match, psParameter);
+            peptideShakerGUI.setDataSaved(false);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
-
-        psParameter.setHidden(false);
-        identification.updateSpectrumMatchParameter(match, psParameter);
-        peptideShakerGUI.setDataSaved(false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
     }
 
     /**
@@ -754,7 +754,7 @@ try {
 
             PSParameter psParameter = new PSParameter();
             Identification identification = peptideShakerGUI.getIdentification();
-            psParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, psParameter);
+            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
 
             if (proteinFilter.getPi() != 5) {
                 if (proteinFilter.getPiComparison() == ComparisonType.NOT_EQUAL
@@ -1054,8 +1054,8 @@ try {
      *
      * @param spectrumKey the key of the spectrum match
      * @param psmFilter the filter
-     * @return a boolean indicating whether a spectrum match is validated by a given
-     * filter
+     * @return a boolean indicating whether a spectrum match is validated by a
+     * given filter
      */
     public boolean isValidated(String spectrumKey, PsmFilter psmFilter) {
 

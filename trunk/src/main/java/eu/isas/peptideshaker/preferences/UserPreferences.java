@@ -419,7 +419,7 @@ public class UserPreferences implements Serializable {
 
     /**
      * Returns the path to the SearchGUI installation.
-     * 
+     *
      * @deprecated use the utilities version instead
      * @return the path to the SearchGUI installation
      */
@@ -429,7 +429,7 @@ public class UserPreferences implements Serializable {
 
     /**
      * Set the path to the SearchGUI installation.
-     * 
+     *
      * @deprecated use the utilities version instead
      * @param searchGuiPath the path to the SearchGUI installation
      */

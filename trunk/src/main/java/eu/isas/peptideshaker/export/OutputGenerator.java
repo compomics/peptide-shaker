@@ -249,7 +249,7 @@ public class OutputGenerator {
                                 break;
                             }
                             
-                            proteinPSParameter = (PSParameter) identification.getProteinMatchPArameter(proteinKey, proteinPSParameter);
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
                             
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {

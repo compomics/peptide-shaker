@@ -721,7 +721,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 for (String proteinKey : inspectedProteins) {
 
                                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinKey, psParameter);
+                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
                                     if (idSelectionCmb.getSelectedIndex() == 0
                                             || idSelectionCmb.getSelectedIndex() == 1
@@ -930,7 +930,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
                                     b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + "\n");
                                 } else if (includeNonValidatedInUnidentifiedFastaCheckBox.isSelected()) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (!probabilities.isValidated()) {
                                         b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
@@ -1030,7 +1030,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 if (!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
                                     b.write(accessions.get(i) + "\n");
                                 } else if (includeNonValidatedInProteinUnidentifiedCsvCheckBox.isSelected()) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (!probabilities.isValidated()) {
                                         b.write(accessions.get(i) + "\n");
@@ -1127,7 +1127,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             if (!tempProtein.isDecoy()) {
                                 if (peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
 
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (probabilities.isValidated()) {
                                         b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
@@ -1227,7 +1227,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             if (!tempProtein.isDecoy()) {
                                 if (peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
 
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(accessions.get(i), probabilities);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (probabilities.isValidated()) {
                                         b.write(accessions.get(i) + "\n");
@@ -1327,7 +1327,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     for (String protein : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
                         for (String proteinMatch : peptideShakerGUI.getIdentification().getProteinMap().get(protein)) {
-                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchPArameter(proteinMatch, psParameter);
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinMatch, psParameter);
                             if (psParameter != null && psParameter.isValidated()) {
                                 return true;
                             }
