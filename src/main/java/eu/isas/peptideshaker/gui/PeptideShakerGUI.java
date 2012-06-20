@@ -4242,7 +4242,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 if (!progressDialog.isRunCanceled()) {
                     progressDialog.dispose();
                     try {
-                        identification.close();
+                        if (identification != null) {
+                            identification.close();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         catchException(e);
