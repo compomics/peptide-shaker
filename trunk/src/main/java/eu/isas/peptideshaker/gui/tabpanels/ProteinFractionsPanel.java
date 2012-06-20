@@ -1913,8 +1913,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-
-                    cancelProgress = false;
                 }
             }.start();
 
