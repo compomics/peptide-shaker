@@ -202,7 +202,7 @@ public class OutputGenerator {
                             }
                             if (sequenceCoverage) {
                                 writer.write("Sequence Coverage (%)" + SEPARATOR);
-                                writer.write("Maximal Expected Sequence Coverage (%)" + SEPARATOR);
+                                writer.write("Observable Coverage (%)" + SEPARATOR);
                             }
                             if (ptmSummary) {
                                 writer.write("Confident PTM Sites" + SEPARATOR);
