@@ -202,6 +202,7 @@ public class OutputGenerator {
                             }
                             if (sequenceCoverage) {
                                 writer.write("Sequence Coverage (%)" + SEPARATOR);
+                                writer.write("Maximal Expected Sequence Coverage (%)" + SEPARATOR);
                             }
                             if (ptmSummary) {
                                 writer.write("Confident PTM Sites" + SEPARATOR);
@@ -292,6 +293,7 @@ public class OutputGenerator {
                                             if (sequenceCoverage) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     if (nPeptides) {
                                                         writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
