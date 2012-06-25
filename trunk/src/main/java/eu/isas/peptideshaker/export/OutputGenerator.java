@@ -117,12 +117,10 @@ public class OutputGenerator {
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
-     * @throws IOException exception thrown whenever an error occurred while
-     * writing the results
      */
     public void getProteinsOutput(ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
-            boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) throws IOException {
+            boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
         
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -151,11 +149,14 @@ public class OutputGenerator {
         if (selectedFile != null) {
             
             final String filePath = selectedFile.getPath();
-
-            // change the peptide shaker icon to a "waiting version"
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             
-            writer = new BufferedWriter(new FileWriter(selectedFile));
+            try {
+                writer = new BufferedWriter(new FileWriter(selectedFile));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return;
+            }
             
             if (aProteinKeys == null) {
                 proteinKeys = identification.getProteinIdentification();
@@ -163,7 +164,10 @@ public class OutputGenerator {
                 proteinKeys = aProteinKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             progressDialog.setIndeterminate(true);
             
@@ -380,17 +384,14 @@ public class OutputGenerator {
                         
                         writer.close();
                         
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
                         
-                        if (!progressDialog.isRunCanceled()) {
+                        if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }                        
                     } catch (Exception e) {
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -423,13 +424,12 @@ public class OutputGenerator {
      * @param aIncludeHidden
      * @param aUniqueOnly
      * @param aProteinKey
-     * @throws IOException
      */
     public void getPeptidesOutput(ArrayList<String> aPeptideKeys,
             ArrayList<String> aPeptidePdbArray, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aProteinDescription,
             boolean aLocation, boolean aSurroundings, boolean aSequence, boolean aModifications, boolean aPtmLocations, boolean aCharges,
             boolean aNSpectra, boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred,
-            boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) throws IOException {
+            boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> peptideKeys;
@@ -459,11 +459,14 @@ public class OutputGenerator {
         if (selectedFile != null) {
             
             final String filePath = selectedFile.getPath();
-
-            // change the peptide shaker icon to a "waiting version"
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             
-            writer = new BufferedWriter(new FileWriter(selectedFile));
+            try {
+                writer = new BufferedWriter(new FileWriter(selectedFile));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return;
+            }
             
             if (aPeptideKeys == null) {
                 peptideKeys = identification.getPeptideIdentification();
@@ -471,7 +474,10 @@ public class OutputGenerator {
                 peptideKeys = aPeptideKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             
@@ -807,17 +813,15 @@ public class OutputGenerator {
                         
                         writer.close();
                         
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
                         
-                        if (!progressDialog.isRunCanceled()) {
+                        if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
+
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -846,11 +850,10 @@ public class OutputGenerator {
      * @param aIncludeHeader
      * @param aOnlyStarred
      * @param aIncludeHidden
-     * @throws IOException
      */
     public void getPSMsOutput(ArrayList<String> aPsmKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccessions, boolean aProteinDescription, boolean aSequence, boolean aModification,
             boolean aLocation, boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScore, boolean aConfidence, boolean aIncludeHeader,
-            boolean aOnlyStarred, boolean aIncludeHidden) throws IOException {
+            boolean aOnlyStarred, boolean aIncludeHidden) {
         
         // create final versions of all variables to use inside the export thread
         final ArrayList<String> psmKeys;
@@ -876,11 +879,14 @@ public class OutputGenerator {
         if (selectedFile != null) {
             
             final String filePath = selectedFile.getPath();
-
-            // change the peptide shaker icon to a "waiting version"
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             
-            writer = new BufferedWriter(new FileWriter(selectedFile));
+            try {
+                writer = new BufferedWriter(new FileWriter(selectedFile));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return;
+            }
             
             if (aPsmKeys == null) {
                 psmKeys = identification.getSpectrumIdentification();
@@ -888,7 +894,10 @@ public class OutputGenerator {
                 psmKeys = aPsmKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             
@@ -1141,17 +1150,14 @@ public class OutputGenerator {
                         
                         writer.close();
                         
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
                         
-                        if (!progressDialog.isRunCanceled()) {
+                        if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1311,11 +1317,10 @@ public class OutputGenerator {
      * @param aScores
      * @param aConfidence
      * @param aIncludeHeader
-     * @throws IOException
      */
     public void getAssumptionsOutput(ArrayList<String> aPsmKeys, boolean aOnlyValidated,
             boolean aAccession, boolean aProteinDescription, boolean aSequence, boolean aModifications,
-            boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScores, boolean aConfidence, boolean aIncludeHeader) throws IOException {
+            boolean aFile, boolean aTitle, boolean aPrecursor, boolean aScores, boolean aConfidence, boolean aIncludeHeader) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> psmKeys;
@@ -1337,11 +1342,14 @@ public class OutputGenerator {
         if (selectedFile != null) {
             
             final String filePath = selectedFile.getPath();
-
-            // change the peptide shaker icon to a "waiting version"
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             
-            writer = new BufferedWriter(new FileWriter(selectedFile));
+            try {
+                writer = new BufferedWriter(new FileWriter(selectedFile));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return;
+            }
             
             if (aPsmKeys == null) {
                 psmKeys = identification.getSpectrumIdentification();
@@ -1349,7 +1357,10 @@ public class OutputGenerator {
                 psmKeys = aPsmKeys;
             }
             
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
             
@@ -1544,17 +1555,14 @@ public class OutputGenerator {
                         
                         writer.close();
                         
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
                         
-                        if (!progressDialog.isRunCanceled()) {
+                        if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }

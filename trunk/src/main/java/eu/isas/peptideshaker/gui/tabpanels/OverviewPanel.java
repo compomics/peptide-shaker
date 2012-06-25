@@ -170,12 +170,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         this.peptideShakerGUI = parent;
 
         initComponents();
-        
+
         // set main table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
         peptideTable.getTableHeader().setReorderingAllowed(false);
         psmTable.getTableHeader().setReorderingAllowed(false);
-        
+
         // correct the color for the upper right corner
         JPanel proteinCorner = new JPanel();
         proteinCorner.setBackground(proteinTable.getTableHeader().getBackground());
@@ -189,7 +189,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         JPanel ionTableCorner = new JPanel();
         ionTableCorner.setBackground(proteinTable.getTableHeader().getBackground());
         fragmentIonsJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ionTableCorner);
-        
+
         proteinTable.setAutoCreateRowSorter(true);
         peptideTable.setAutoCreateRowSorter(true);
         psmTable.setAutoCreateRowSorter(true);
@@ -3075,8 +3075,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             PSParameter psParameter = new PSParameter();
             try {
                 psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(key, psParameter);
-            psParameter.setStarred(true);
-            peptideShakerGUI.getIdentification().updateProteinMatchParameter(key, psParameter);
+                psParameter.setStarred(true);
+                peptideShakerGUI.getIdentification().updateProteinMatchParameter(key, psParameter);
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
@@ -4217,7 +4217,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Loading Overview. Please Wait...");
 
@@ -4238,8 +4241,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             public void run() {
 
                 try {
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
@@ -4305,19 +4306,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             updateSelection();
                             proteinTable.requestFocus();
 
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                            progressDialog.dispose();
+                            progressDialog.setRunFinished();
                         }
                     });
 
                 } catch (Exception e) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.catchException(e);
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                 }
             }
         }.start();
@@ -4769,32 +4766,25 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 || tableIndex == TableIndex.PEPTIDE_TABLE
                 || tableIndex == TableIndex.PSM_TABLE) {
 
-            try {
-                OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
+            OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
 
-                if (tableIndex == TableIndex.PROTEIN_TABLE) {
-                    ArrayList<String> selectedProteins = getDisplayedProteins();
-                    outputGenerator.getProteinsOutput(
-                            selectedProteins, true, false, true, true, true,
-                            true, true, true, true, false, true,
-                            true, true, true, true, false, true, false);
-                } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
-                    ArrayList<String> selectedPeptides = getDisplayedPeptides();
-                    String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
-                    outputGenerator.getPeptidesOutput(
-                            selectedPeptides, null, true, false, true, true, true, true,
-                            true, true, true, true, true, true, true, true, false, false, false, proteinKey);
-                } else if (tableIndex == TableIndex.PSM_TABLE) {
-                    ArrayList<String> selectedPsms = getDisplayedPsms();
-                    outputGenerator.getPSMsOutput(
-                            selectedPsms, true, false, true, true, true, true,
-                            true, true, true, true, true, true, true, false, false);
-                }
-            } catch (IOException e) {
-                // change the peptide shaker icon back to the default version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                JOptionPane.showMessageDialog(this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+            if (tableIndex == TableIndex.PROTEIN_TABLE) {
+                ArrayList<String> selectedProteins = getDisplayedProteins();
+                outputGenerator.getProteinsOutput(
+                        selectedProteins, true, false, true, true, true,
+                        true, true, true, true, false, true,
+                        true, true, true, true, false, true, false);
+            } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
+                ArrayList<String> selectedPeptides = getDisplayedPeptides();
+                String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+                outputGenerator.getPeptidesOutput(
+                        selectedPeptides, null, true, false, true, true, true, true,
+                        true, true, true, true, true, true, true, true, false, false, false, proteinKey);
+            } else if (tableIndex == TableIndex.PSM_TABLE) {
+                ArrayList<String> selectedPsms = getDisplayedPsms();
+                outputGenerator.getPSMsOutput(
+                        selectedPsms, true, false, true, true, true, true,
+                        true, true, true, true, true, true, true, false, false);
             }
         }
     }
@@ -4843,8 +4833,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
                 try {
-                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
-                peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+                    peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return;
@@ -4859,12 +4849,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             ProteinMatch proteinMatch;
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 try {
-                proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
-                if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
-                    proteinKey = possibleKey;
-                    peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
-                    break;
-                }
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
+                    if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                        proteinKey = possibleKey;
+                        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
+                        break;
+                    }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return;
@@ -5054,11 +5044,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>();
         try {
-        int proteinIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
-        String proteinMatchKey = proteinKeys.get(proteinIndex);
-        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
+            int proteinIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
+            String proteinMatchKey = proteinKeys.get(proteinIndex);
+            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
 
-        PSParameter psParameter = new PSParameter();
+            PSParameter psParameter = new PSParameter();
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             for (String peptideKey : peptideKeys) {
                 String peptideSequence = Peptide.getSequence(peptideKey);

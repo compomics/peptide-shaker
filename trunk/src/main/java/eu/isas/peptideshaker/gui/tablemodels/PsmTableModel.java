@@ -40,18 +40,18 @@ public class PsmTableModel extends DefaultTableModel {
     public PsmTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
         setUpTableModel(peptideShakerGUI, psmKeys);
     }
-    
+
     /**
      * Update the data in the table model without having to reset the whole
      * table model. This keeps the sorting order of the table.
      *
      * @param peptideShakerGUI
-     * @param psmKeys  
+     * @param psmKeys
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> psmKeys) {
         setUpTableModel(peptideShakerGUI, psmKeys);
     }
-    
+
     /**
      * Set up the table model.
      *
@@ -137,8 +137,13 @@ public class PsmTableModel extends DefaultTableModel {
                 case 3:
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey);
-                    PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
-                    return bestAssumption.getPeptide().getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+
+                    if (spectrumMatch != null) {
+                        PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                        return bestAssumption.getPeptide().getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                    } else {
+                        return null;
+                    }
                 case 4:
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey);
@@ -146,7 +151,7 @@ public class PsmTableModel extends DefaultTableModel {
                 case 5:
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey);
-                    bestAssumption = spectrumMatch.getBestAssumption();
+                    PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                     Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
                     return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 case 6:

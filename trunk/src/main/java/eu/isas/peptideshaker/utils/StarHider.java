@@ -55,13 +55,16 @@ public class StarHider {
      */
     public void starHide() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
                 try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
@@ -74,8 +77,7 @@ public class StarHider {
 
             @Override
             public void run() {
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                 try {
                     Identification identification = peptideShakerGUI.getIdentification();
                     progressDialog.setIndeterminate(false);
@@ -152,10 +154,7 @@ public class StarHider {
                     peptideShakerGUI.catchException(e);
                 }
 
-                progressDialog.dispose();
-
-                // change the peptide shaker icon back to the default version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                progressDialog.setRunFinished();
             }
         }.start();
     }

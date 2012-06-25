@@ -349,7 +349,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Loading Fractions. Please Wait...");
         progressDialog.setUnstoppable(true);
@@ -369,9 +372,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             @Override
             public void run() {
-
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
 
@@ -408,10 +408,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         exportProteinsJButton.setEnabled(true);
                         exportPeptidesJButton.setEnabled(true);
 
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
                     }
                 });
             }
@@ -1864,10 +1861,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (selectedFile != null) {
 
-            // change the peptide shaker icon to a "waiting version"
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
@@ -1898,27 +1895,20 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                         writer.close();
 
-                        progressDialog.dispose();
-
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setVisible(false);
 
                         if (!progressDialog.isRunCanceled()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
+                        
+                        progressDialog.setRunFinished();
                     } catch (IOException e) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
                 }
             }.start();
-
-
-            // change the peptide shaker icon back to the default version
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         }
     }
 
