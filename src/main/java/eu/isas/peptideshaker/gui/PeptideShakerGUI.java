@@ -2277,7 +2277,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
 
                     final PeptideShakerGUI tempRef = this; // needed due to threading issues
-                    progressDialog = new ProgressDialogX(this, true);
+                    progressDialog = new ProgressDialogX(this, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            true);
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting Project. Please Wait...");
 
@@ -2298,9 +2301,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         @Override
                         public void run() {
 
-                            // change the peptide shaker icon to a "waiting version"
-                            tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                             progressDialog.setTitle("Getting FASTA File. Please Wait...");
 
                             File projectFolder = currentPSFile.getParentFile();
@@ -2313,7 +2313,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             if (indexFile.exists()) {
                                 dataFiles.add(indexFile.getAbsolutePath());
                             }
-
 
                             progressDialog.setTitle("Getting Spectrum Files. Please Wait...");
                             progressDialog.setIndeterminate(false);
@@ -2428,26 +2427,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
 
-                                progressDialog.dispose();
-                                // return the peptide shaker icon to the standard version
-                                tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(tempRef, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             } catch (IOException e) {
                                 e.printStackTrace();
 
-                                progressDialog.dispose();
-                                // return the peptide shaker icon to the standard version
-                                tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(tempRef, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                 return;
                             }
 
-                            progressDialog.dispose();
-                            // return the peptide shaker icon to the standard version
-                            tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            boolean processCancelled = progressDialog.isRunCanceled();
+                            progressDialog.setRunFinished();
 
-                            if (!progressDialog.isRunCanceled()) {
+                            if (!processCancelled) {
                                 // get the size (in MB) of the zip file
                                 final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
                                 double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
@@ -4215,7 +4209,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void closePeptideShaker() {
 
-        progressDialog = new ProgressDialogX(this, true);
+        progressDialog = new ProgressDialogX(this, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setTitle("Closing. Please Wait...");
         progressDialog.setIndeterminate(true);
         progressDialog.setUnstoppable(true);
@@ -4236,15 +4233,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             @Override
             public void run() {
                 try {
-                    // change the peptide shaker icon to a "waiting version"
-                    setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                     File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
                     String[] files = serializationFolder.list();
 
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMaxProgressValue(files.length);
-                    int cpt = 0;
 
                     // close the files and save the user preferences
                     if (!progressDialog.isRunCanceled()) {
@@ -4260,7 +4253,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 // close peptide shaker
                 if (!progressDialog.isRunCanceled()) {
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                     try {
                         if (identification != null) {
                             identification.close();
@@ -4271,9 +4264,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
                     System.exit(0);
                 }
-
-                // change the peptide shaker icon back to the default version
-                setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
         }.start();
     }
@@ -4302,13 +4292,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         }
 
-        progressDialog = new ProgressDialogX(this, true);
+        progressDialog = new ProgressDialogX(this, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Closing. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Closing. Please Wait...");
                 try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
@@ -4329,11 +4322,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     e.printStackTrace();
                     catchException(e);
                 }
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
                 PeptideShakerGUI.this.dispose();
+                
                 // @TODO: pass the current project to the new instance of PeptideShaker.
                 new PeptideShakerWrapper();
-
             }
         }.start();
     }
@@ -4766,7 +4759,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         currentPSFile = aPsFile;
 
         final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
-        progressDialog = new ProgressDialogX(this, true);
+        
+        progressDialog = new ProgressDialogX(this, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Importing Project. Please Wait...");
 
@@ -4796,9 +4793,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         identification.close();
                     }
 
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                     File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
                     File destinationFile, destinationFolder, matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
                     for (File file : matchFolder.listFiles()) {
@@ -4813,43 +4807,52 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     byte data[] = new byte[BUFFER];
                     FileInputStream fi = new FileInputStream(currentPSFile);
                     BufferedInputStream bis = new BufferedInputStream(fi, BUFFER);
+                    
                     try {
                         ArchiveInputStream tarInput = new ArchiveStreamFactory().createArchiveInputStream(bis);
-                        ArchiveEntry archiveEntry;
+                        
                         progressDialog.setMaxProgressValue(100);
                         progressDialog.setValue(0);
                         progressDialog.setIndeterminate(false);
-                        int progress;
+
                         long fileLength = currentPSFile.length();
+                        
+                        ArchiveEntry archiveEntry;
+                        
                         while ((archiveEntry = tarInput.getNextEntry()) != null) {
                             destinationFile = new File(archiveEntry.getName());
                             destinationFolder = destinationFile.getParentFile();
+                            
                             if (!destinationFolder.exists()) {
                                 destinationFolder.mkdirs();
                             }
+                            
                             FileOutputStream fos = new FileOutputStream(destinationFile);
                             BufferedOutputStream bos = new BufferedOutputStream(fos);
                             int count;
+                            
                             while ((count = tarInput.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
                                 bos.write(data, 0, count);
                             }
+                            
                             bos.close();
                             fos.close();
-                            progress = (int) (100 * tarInput.getBytesRead() / fileLength);
+                            int progress = (int) (100 * tarInput.getBytesRead() / fileLength);
                             progressDialog.setValue(progress);
+                            
                             if (progressDialog.isRunCanceled()) {
-                                progressDialog.dispose();
-                                // change the peptide shaker icon back to the default version
-                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                progressDialog.setRunFinished();
                                 return;
                             }
                         }
+                        
                         progressDialog.setIndeterminate(true);
                         tarInput.close();
                     } catch (ArchiveException e) {
                         //Most likely an old project
                         experimentFile = currentPSFile;
                     }
+                    
                     fi.close();
                     bis.close();
                     fi.close();
@@ -4873,9 +4876,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     identificationFeaturesGenerator = new IdentificationFeaturesGenerator(peptideShakerGUI);
 
                     if (progressDialog.isRunCanceled()) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         return;
                     }
 
@@ -4902,6 +4903,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     + "\n\nPlease select the FASTA file manually.",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
                             File fastaFile = locateFastaFileManually();
+                            
                             if (fastaFile != null) {
                                 searchParameters.setFastaFile(fastaFile);
                                 try {
@@ -4916,20 +4918,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     clearData();
                                     clearPreferences();
 
-
-                                    progressDialog.dispose();
-                                    // change the peptide shaker icon back to the default version
-                                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                    progressDialog.setRunFinished();
                                     return;
                                 }
                             } else {
                                 clearData();
                                 clearPreferences();
 
-
-                                progressDialog.dispose();
-                                // change the peptide shaker icon back to the default version
-                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                progressDialog.setRunFinished();
                                 return;
                             }
                         }
@@ -4939,6 +4935,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 + "\n\nPlease select the FASTA file manually.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                         File fastaFile = locateFastaFileManually();
+                        
                         if (fastaFile != null) {
                             searchParameters.setFastaFile(fastaFile);
                             try {
@@ -4953,20 +4950,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 clearData();
                                 clearPreferences();
 
-
-                                progressDialog.dispose();
-                                // change the peptide shaker icon back to the default version
-                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                progressDialog.setRunFinished();
                                 return;
                             }
                         } else {
                             clearData();
                             clearPreferences();
 
-
-                            progressDialog.dispose();
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            progressDialog.setRunFinished();
                             return;
                         }
                     }
@@ -4975,9 +4966,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     ArrayList<String> spectrumFiles = new ArrayList<String>();
 
                     if (progressDialog.isRunCanceled()) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         return;
                     }
 
@@ -5063,22 +5052,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                         clearData();
                                         clearPreferences();
 
-
-                                        progressDialog.dispose();
-
-                                        // change the peptide shaker icon back to the default version
-                                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                        progressDialog.setRunFinished();
                                         return;
                                     }
                                 } else {
                                     clearData();
                                     clearPreferences();
 
-
-                                    progressDialog.dispose();
-
-                                    // change the peptide shaker icon back to the default version
-                                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                    progressDialog.setRunFinished();
                                     return;
                                 }
                             }
@@ -5089,11 +5070,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             clearData();
                             clearPreferences();
 
-
-                            progressDialog.dispose();
-
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            progressDialog.setRunFinished();
                             e.printStackTrace();
                             return;
                         }
@@ -5104,9 +5081,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     getSearchParameters().setSpectrumFiles(spectrumFiles);
 
                     if (progressDialog.isRunCanceled()) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         return;
                     }
 
@@ -5131,9 +5106,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (progressDialog.isRunCanceled()) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         return;
                     }
 
@@ -5157,9 +5130,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     setProject(tempExperiment, tempSample, tempReplicate);
 
                     if (progressDialog.isRunCanceled()) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         return;
                     }
 
@@ -5167,13 +5138,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         identification.establishConnection();
                     } else {
                         int outcome = JOptionPane.showConfirmDialog(PeptideShakerGUI.this,
-                                "The format used to create this project is now obsolete. Would you like to convert the project to the current PeptideShaker format? \nThis operation might take a few minutes, please do not interrupt it.", "Obsolete Format!",
+                                "The format used to create this project is now obsolete.\n"
+                                + "Would you like to convert the project to the current PeptideShaker format?\n"
+                                + "This operation might take a few minutes, please do not interrupt it.", "Obsolete Format!",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting project. Please Wait...");
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY);
                             saveProjectProcess();
                         }
+                        
                         updateAnnotationPreferencesFromSearchSettings();
                         annotationPreferences.useAutomaticAnnotation(true);
                     }
@@ -5186,9 +5160,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     for (String spectrumFile : spectrumFiles) {
 
                         if (progressDialog.isRunCanceled()) {
-                            progressDialog.dispose();
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            progressDialog.setRunFinished();
                             return;
                         }
 
@@ -5204,17 +5176,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             clearData();
                             clearPreferences();
 
-
-                            progressDialog.dispose();
-
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            progressDialog.setRunFinished();
                             e.printStackTrace();
                             return;
                         }
                     }
+                    
                     boolean compatibilityIssue = getSearchParameters().getIonSearched1() == null
                             || getSearchParameters().getIonSearched2() == null;
+                    
                     if (compatibilityIssue) {
                         JOptionPane.showMessageDialog(null,
                                 "The annotation preferences for this project may have changed.\n\n"
@@ -5227,22 +5197,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (progressDialog.isRunCanceled()) {
-                        progressDialog.dispose();
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        progressDialog.setRunFinished();
                         return;
                     }
 
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
 
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.setFrameTitle(experiment.getReference());
 
                     dataSaved = !compatibilityIssue;
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 } catch (OutOfMemoryError error) {
                     System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
@@ -5252,19 +5217,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             + "Memory boundaries are set in ../resources/conf/JavaOptions.txt.",
                             "Out Of Memory Error",
                             JOptionPane.ERROR_MESSAGE);
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    progressDialog.dispose();
-
+                    progressDialog.setRunFinished();
                     error.printStackTrace();
                 } catch (EOFException e) {
 
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + currentPSFile + ".\n\n"
@@ -5273,10 +5230,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     e.printStackTrace();
                 } catch (Exception e) {
 
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + currentPSFile + ".\n\n"
@@ -5514,7 +5468,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         final boolean closeWhenDone = aCloseWhenDone;
 
-        progressDialog = new ProgressDialogX(this, true);
+        progressDialog = new ProgressDialogX(this, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Saving. Please Wait...");
         progressDialog.setUnstoppable(true);
@@ -5537,16 +5494,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             @Override
             public void run() {
                 try {
-                    // change the peptide shaker icon to a "waiting version"
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                     saveProjectProcess();
 
-                    progressDialog.dispose();
-
-                    // return the peptide shaker icon to the standard version
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
                     if (!progressDialog.isRunCanceled()) {
+                        progressDialog.setRunFinished();
                         userPreferences.addRecentProject(currentPSFile);
                         updateRecentProjectsList();
 
@@ -5557,6 +5508,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             dataSaved = true;
                         }
                     } else {
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (Exception e) {
@@ -5962,10 +5914,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public void writeRecalibratedSpectra(File outputFolder, boolean ms1, boolean ms2) {
 
-        progressDialog = new ProgressDialogX(this, true);
+        progressDialog = new ProgressDialogX(this, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Saving. Please Wait...");
         progressDialog.setUnstoppable(true);
+        
         final File selectedFolder = outputFolder;
         final boolean precursors = ms1;
         final boolean fragments = ms2;
@@ -5991,9 +5947,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 try {
 
                     boolean debug = true; // the debug mode exports the ion distributions and the titles of the processed spectra
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     DataSetErrors dataSetErrors = new DataSetErrors(PeptideShakerGUI.this);
                     int progress = 1;
@@ -6071,38 +6024,43 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             if (debug) {
                                 System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
                             }
+                            
                             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle);
                             Precursor precursor = spectrum.getPrecursor();
                             double precursorMz = precursor.getMz();
                             double precursorRT = precursor.getRt();
                             double correction = 0.0;
+                            
                             if (precursors) {
                                 correction = fileErrors.getPrecursorMzCorrection(precursorMz, precursorRT);
                             }
+                            
                             Precursor newPrecursor = spectrum.getPrecursor().getRecalibratedPrecursor(correction, 0.0);
                             HashMap<Double, Peak> peakList = spectrum.getPeakMap();
+                            
                             if (fragments) {
                                 peakList = fileErrors.recalibratePeakList(precursorRT, spectrum.getPeakMap());
                             }
+                            
                             MSnSpectrum newSpectrum = new MSnSpectrum(2, newPrecursor, spectrumTitle, peakList, fileName);
                             newSpectrum.writeMgf(writer1);
                             writer1.flush();
+                            
                             if (progressDialog != null) {
                                 progressDialog.increaseProgressValue();
                             }
                         }
+                        
                         writer1.close();
-                    }
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    }  
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    progressDialog.setRunFinished();
                 }
 
-                progressDialog.setVisible(false);
+                if (progressDialog != null) {
+                    progressDialog.setRunFinished();
+                }
             }
         }.start();
     }

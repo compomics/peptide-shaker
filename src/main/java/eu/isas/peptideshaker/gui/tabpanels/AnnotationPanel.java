@@ -7,6 +7,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1180,13 +1181,16 @@ public class AnnotationPanel extends javax.swing.JPanel {
             
             clearOldData();
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+            progressDialog.setTitle("Loading Basic Protein Annotation. Please Wait...");
+            progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setTitle("Loading Basic Protein Annotation. Please Wait...");
-                    progressDialog.setIndeterminate(true);
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
@@ -1298,7 +1302,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
                                 "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-                    progressDialog.dispose();
+                    
+                    progressDialog.setRunFinished();
                 }
             }.start();
         }

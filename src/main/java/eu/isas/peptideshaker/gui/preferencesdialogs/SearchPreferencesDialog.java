@@ -20,6 +20,7 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.gui.NewDialog;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
@@ -1016,15 +1017,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true); // note: not really possible to cancel this one...
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true); // note: not really possible to cancel this one...
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Saving. Please Wait...");
 
             final PeptideShakerGUI tempRef = peptideShakerGUI; // needed due to threading issues
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Saving. Please Wait...");
+                    
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {
@@ -1054,7 +1059,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     }
 
                     if (outcome != JOptionPane.YES_OPTION) {
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
                         return;
                     }
 
@@ -1069,10 +1074,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         fos.close();
                         profileFile = newFile;
                         expectedModsLabel.setText("Expected Variable Modifications (" + newFile.getName().substring(0, newFile.getName().lastIndexOf(".")) + ")");
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
 
                     } catch (Exception e) {
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1210,7 +1215,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         BareBonesBrowserLaunch.openURL(link);
                         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } else {
-                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+                        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
+                            && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(ptmIndex)));
+                        
+                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)), userMod);
                     }
                 }
             }
@@ -1277,7 +1285,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         BareBonesBrowserLaunch.openURL(link);
                         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } else {
-                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)));
+                        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
+                            && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(ptmIndex)));
+                        
+                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)), userMod);
                     }
                 }
             }
@@ -1318,11 +1329,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void editExpectedPtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editExpectedPtmJMenuItemActionPerformed
         int row = expectedModificationsTable.getSelectedRow();
         int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
+        
         String name = modificationList.get(ptmIndex);
         if (!ptmFactory.containsPTM(name)) {
             name = searchParameters.getModificationProfile().getPeptideShakerName(name);
         }
-        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(name));
+        
+        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
+                            && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(ptmIndex)));
+        
+        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(name), userMod);
     }//GEN-LAST:event_editExpectedPtmJMenuItemActionPerformed
 
     /**
@@ -1358,7 +1374,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void editAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAvailablePtmJMenuItemActionPerformed
         int row = availableModificationsTable.getSelectedRow();
-        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM((String) availableModificationsTable.getValueAt(row, 1)));
+        int ptmIndex = availableModificationsTable.convertRowIndexToModel(row);
+        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
+                            && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(ptmIndex)));
+        
+        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM((String) availableModificationsTable.getValueAt(row, 1)), userMod);
     }//GEN-LAST:event_editAvailablePtmJMenuItemActionPerformed
 
     /**

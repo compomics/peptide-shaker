@@ -1003,18 +1003,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void proteinExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportAllActionPerformed
-
-        try {
-            outputGenerator.getProteinsOutput(null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
-                    proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
-                    proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(),
-                    true, proteinHidden.isSelected());
-        } catch (IOException e) {
-            // change the peptide shaker icon back to the default version
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            JOptionPane.showMessageDialog(this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+        outputGenerator.getProteinsOutput(null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
+                proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
+                proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(),
+                true, proteinHidden.isSelected());
     }//GEN-LAST:event_proteinExportAllActionPerformed
 
     /**
@@ -1023,19 +1015,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void peptideExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportAllActionPerformed
+        outputGenerator.getPeptidesOutput(null, null, false, peptideValidated.isSelected(),
+                peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
+                peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
+                peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
 
-        try {
-            outputGenerator.getPeptidesOutput(null, null, false, peptideValidated.isSelected(),
-                    peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
-                    peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
-                    peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
-
-        } catch (IOException e) {
-            // change the peptide shaker icon back to the default version
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            JOptionPane.showMessageDialog(this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
     }//GEN-LAST:event_peptideExportAllActionPerformed
 
     /**
@@ -1044,18 +1028,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void psmExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmExportAllActionPerformed
-
-        try {
-            outputGenerator.getPSMsOutput(null, false, psmValidated.isSelected(), psmAccession.isSelected(), proteinDescriptionPsmTab.isSelected(), psmSequence.isSelected(),
-                    psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
-                    psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true, psmStarred.isSelected(), psmHidden.isSelected());
-
-        } catch (IOException e) {
-            // change the peptide shaker icon back to the default version
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            JOptionPane.showMessageDialog(this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+        outputGenerator.getPSMsOutput(null, false, psmValidated.isSelected(), psmAccession.isSelected(), proteinDescriptionPsmTab.isSelected(), psmSequence.isSelected(),
+                psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
+                psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true, psmStarred.isSelected(), psmHidden.isSelected());
     }//GEN-LAST:event_psmExportAllActionPerformed
 
     /**
@@ -1064,18 +1039,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void assumptionExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionExportAllActionPerformed
-
-        try {
-            outputGenerator.getAssumptionsOutput(null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), proteinDescriptionSerarchEnginesTab.isSelected(),
-                    assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
-                    assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
-
-        } catch (IOException e) {
-            // change the peptide shaker icon back to the default version
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            JOptionPane.showMessageDialog(this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+        outputGenerator.getAssumptionsOutput(null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), proteinDescriptionSerarchEnginesTab.isSelected(),
+                assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
+                assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
     }//GEN-LAST:event_assumptionExportAllActionPerformed
 
     /**
@@ -1111,15 +1077,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
             peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 
-            progressDialog = new ProgressDialogX(this, true);
-
             final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Exporting. Please Wait...");
+
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Exporting. Please Wait...");
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {
@@ -1133,19 +1103,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
 
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                     CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdentificationFeaturesGenerator());
                     boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
 
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    boolean processCancelled = progressDialog.isRunCanceled();
+                    progressDialog.setRunFinished();
 
-                    progressDialog.dispose();
-
-                    if (!progressDialog.isRunCanceled()) {
+                    if (!processCancelled) {
 
                         if (exported) {
                             JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
@@ -1582,5 +1547,4 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel slashLabel4;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
-
 }

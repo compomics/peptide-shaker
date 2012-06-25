@@ -159,7 +159,7 @@ public class StatsPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = parent;
 
         initComponents();
-        
+
         // correct the color for the upper right corner
         JPanel groupSelectionCorner = new JPanel();
         groupSelectionCorner.setBackground(groupSelectionTable.getTableHeader().getBackground());
@@ -1711,16 +1711,19 @@ public class StatsPanel extends javax.swing.JPanel {
             } else {
                 currentTargetDecoyMap.setWindowSize(newWindow);
 
-                progressDialogX = new ProgressDialogX(peptideShakerGUI, true);
-                progressDialogX.setTitle("Recalculating. Please Wait...");
-                progressDialogX.setIndeterminate(true);
-                progressDialogX.setUnstoppable(true);
+                progressDialog = new ProgressDialogX(peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+                progressDialog.setTitle("Recalculating. Please Wait...");
+                progressDialog.setIndeterminate(true);
+                progressDialog.setUnstoppable(true);
 
                 new Thread(new Runnable() {
 
                     public void run() {
                         try {
-                            progressDialogX.setVisible(true);
+                            progressDialog.setVisible(true);
                         } catch (IndexOutOfBoundsException e) {
                             // ignore
                         }
@@ -1732,10 +1735,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     @Override
                     public void run() {
 
-                        // change the peptide shaker icon to a "waiting version"
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                        currentTargetDecoyMap.estimateProbabilities(progressDialogX);
+                        currentTargetDecoyMap.estimateProbabilities(progressDialog);
                         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
                         updateResults();
                         updateDisplayedComponents();
@@ -1743,9 +1743,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         applyButton.setEnabled(true);
                         pepWindowApplied = false;
 
-                        // return the peptide shaker icon to the standard version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        progressDialogX.dispose();
+                        progressDialog.setRunFinished();
                     }
                 }.start();
             }
@@ -1963,7 +1961,10 @@ public class StatsPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
         } else {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setTitle("Recalculating. Please Wait...");
             progressDialog.setIndeterminate(true);
 
@@ -1983,33 +1984,30 @@ public class StatsPanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
 
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-try {
-                    PSMaps pSMaps = new PSMaps();
-                    pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
+                    try {
+                        PSMaps pSMaps = new PSMaps();
+                        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                        PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                    miniShaker.validateIdentifications(progressDialog.getProgressBar());
+                        miniShaker.validateIdentifications(progressDialog.getProgressBar());
 
-                    // update the other tabs
-                    peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
-                    dataValidated = true;
-                    validateButton.setEnabled(false);
-                    TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-                    currentResults.setUserInput(new Double(thresholdInput.getText()));
-                    currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
-                    // return the peptide shaker icon to the standard version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    progressDialog.dispose();
+                        // update the other tabs
+                        peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+                        peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+                        dataValidated = true;
+                        validateButton.setEnabled(false);
+                        TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+                        currentResults.setUserInput(new Double(thresholdInput.getText()));
+                        currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+
+                    progressDialog.setRunFinished();
                 }
             }.start();
         }
@@ -2855,18 +2853,22 @@ try {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
-
-        // change the peptide shaker icon to a "waiting version"
-        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Updating Validation Data. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Updating Validation Data. Please Wait...");
-                progressDialog.setVisible(true);
-            }
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
         }, "ProgressDialog").start();
 
         new Thread("DisplayThread") {
@@ -2903,7 +2905,7 @@ try {
                 } else {
                     for (String peptideKey : peptideKeys) {
 
-                        if (progressDialogX.isRunCanceled()) {
+                        if (progressDialog.isRunCanceled()) {
                             break;
                         }
 
@@ -2922,7 +2924,7 @@ try {
 
                 for (Integer psmKey : psmKeys.keySet()) {
 
-                    if (progressDialogX.isRunCanceled()) {
+                    if (progressDialog.isRunCanceled()) {
                         break;
                     }
 
@@ -2939,7 +2941,7 @@ try {
                     groupSelectionTable.setRowSelectionInterval(0, 0);
                 }
 
-                if (!progressDialogX.isRunCanceled()) {
+                if (!progressDialog.isRunCanceled()) {
                     groupSelectionChanged();
 
                     // enable the contextual export options
@@ -2952,9 +2954,7 @@ try {
                     tabInitiated = true;
                 }
 
-                // change the peptide shaker icon back to the default version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
             }
         }.start();
     }
@@ -3543,16 +3543,19 @@ try {
      */
     private void recalculatePeptidesAndProteins() {
 
-        progressDialogX = new ProgressDialogX(peptideShakerGUI, true);
-        progressDialogX.setTitle("Recalculating. Please Wait...");
-        progressDialogX.setIndeterminate(true);
-        progressDialogX.setUnstoppable(true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setTitle("Recalculating. Please Wait...");
+        progressDialog.setIndeterminate(true);
+        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
             public void run() {
                 try {
-                    progressDialogX.setVisible(true);
+                    progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
                     // ignore
                 }
@@ -3564,15 +3567,12 @@ try {
             @Override
             public void run() {
 
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.spectrumMapChanged(progressDialogX);
+                    miniShaker.spectrumMapChanged(progressDialog);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                             "Identification Conflict", JOptionPane.WARNING_MESSAGE);
@@ -3584,8 +3584,7 @@ try {
                     modifiedMaps.put(key, false);
                 }
 
-                // return the peptide shaker icon to the standard version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                progressDialog.setRunFinished();
             }
         }.start();
     }
@@ -3595,16 +3594,19 @@ try {
      */
     private void recalculateProteins() {
 
-        progressDialogX = new ProgressDialogX(peptideShakerGUI, true);
-        progressDialogX.setTitle("Recalculating. Please Wait...");
-        progressDialogX.setIndeterminate(true);
-        progressDialogX.setUnstoppable(true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setTitle("Recalculating. Please Wait...");
+        progressDialog.setIndeterminate(true);
+        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
             public void run() {
                 try {
-                    progressDialogX.setVisible(true);
+                    progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
                     // ignore
                 }
@@ -3616,15 +3618,12 @@ try {
             @Override
             public void run() {
 
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(progressDialogX);
+                    miniShaker.peptideMapChanged(progressDialog);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                             "Identification Conflict", JOptionPane.WARNING_MESSAGE);
@@ -3636,9 +3635,7 @@ try {
                     modifiedMaps.put(key, false);
                 }
 
-                // return the peptide shaker icon to the standard version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                progressDialogX.dispose();
+                progressDialog.setRunFinished();
             }
         }.start();
     }
@@ -3648,16 +3645,19 @@ try {
      */
     private void applyProteins() {
 
-        progressDialogX = new ProgressDialogX(peptideShakerGUI, true);
-        progressDialogX.setTitle("Recalculating. Please Wait...");
-        progressDialogX.setIndeterminate(true);
-        progressDialogX.setUnstoppable(true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setTitle("Recalculating. Please Wait...");
+        progressDialog.setIndeterminate(true);
+        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
             public void run() {
                 try {
-                    progressDialogX.setVisible(true);
+                    progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
                     // ignore
                 }
@@ -3669,21 +3669,18 @@ try {
             @Override
             public void run() {
 
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-try {
-                PSMaps pSMaps = new PSMaps();
-                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
+                try {
+                    PSMaps pSMaps = new PSMaps();
+                    pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                    PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                miniShaker.proteinMapChanged(progressDialogX);
-                modifiedMaps.put(0, false);
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
-                // return the peptide shaker icon to the standard version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                progressDialogX.dispose();
+                    miniShaker.proteinMapChanged(progressDialog);
+                    modifiedMaps.put(0, false);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+                
+                progressDialog.setRunFinished();
             }
         }.start();
     }

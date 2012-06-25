@@ -212,7 +212,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Set up the properties of the tables.
      */
     private void setTableProperties() {
-        
+
         // correct the color for the upper right corner
         JPanel spectrumCorner = new JPanel();
         spectrumCorner.setBackground(spectrumTable.getTableHeader().getBackground());
@@ -226,7 +226,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         JPanel mascotCorner = new JPanel();
         mascotCorner.setBackground(omssaTable.getTableHeader().getBackground());
         mascotTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, mascotCorner);
-        
+
 
         peptideShakerJTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
@@ -255,11 +255,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    
+
                 } else if (e.getType() == RowSorterEvent.Type.SORTED) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     spectrumTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        
+
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
@@ -2415,13 +2415,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Loading Data. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Loading Data. Please Wait...");
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
@@ -2430,9 +2433,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 try {
                     identification = peptideShakerGUI.getIdentification();
@@ -2640,21 +2640,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         peptideShakerGUI.setUpdated(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX, true);
                     }
 
-                    progressDialog.dispose();
+                    boolean processCancelled = progressDialog.isRunCanceled();
 
-                    // return the peptide shaker icon to the standard version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    progressDialog.setRunFinished();
 
-                    if (!progressDialog.isRunCanceled()) {
+
+                    if (!processCancelled) {
                         fileSelectionChanged();
                     }
 
                 } catch (Exception e) {
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                     peptideShakerGUI.catchException(e);
-
-                    // return the peptide shaker icon to the standard version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }
         }.start();
@@ -2787,14 +2784,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void fileSelectionChanged() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
                 progressDialog.setVisible(true);
-                progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
             }
         }, "ProgressDialog").start();
 
@@ -2803,8 +2803,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 DefaultTableModel dm = (DefaultTableModel) spectrumTable.getModel();
                 dm.getDataVector().removeAllElements();
@@ -2840,10 +2838,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     peptideShakerGUI.mgfFileSelectionChanged(fileSelected);
                 }
 
-                progressDialog.dispose();
-
-                // return the peptide shaker icon to the standard version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                progressDialog.setRunFinished();
             }
         });
     }
@@ -3391,13 +3386,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 try {
                     final BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
 
-                    progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+                    progressDialog = new ProgressDialogX(peptideShakerGUI,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Copying to File. Please Wait...");
 
                     new Thread(new Runnable() {
 
                         public void run() {
-                            progressDialog.setIndeterminate(true);
-                            progressDialog.setTitle("Copying to File. Please Wait...");
                             try {
                                 progressDialog.setVisible(true);
                             } catch (IndexOutOfBoundsException e) {
@@ -3468,15 +3466,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 }
 
                                 writer.close();
+                                
+                                boolean processCancelled = progressDialog.isRunCanceled();
 
-                                progressDialog.dispose();
+                                progressDialog.setRunFinished();
 
-                                if (!progressDialog.isRunCanceled()) {
+                                if (!processCancelled) {
                                     JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to file:\n" + selectedFile.getPath(), "Copied to File", JOptionPane.INFORMATION_MESSAGE);
                                 }
 
                             } catch (IOException e) {
-                                progressDialog.dispose();
+                                progressDialog.setRunFinished();
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
@@ -3484,7 +3484,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }.start();
 
                 } catch (IOException e) {
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
@@ -3528,12 +3528,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     result += currentAssumption.getPeptide().getModifiedSequenceAsString(true) + "\t";
                     result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
                     try {
-                    result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
-                            identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    result+= "error\t";
-                }
+                        result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
+                                identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        result += "error\t";
+                    }
 
                     result += currentAssumption.getEValue() + "\t";
                     result += probabilities.getSearchEngineConfidence() + "\t";

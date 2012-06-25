@@ -246,7 +246,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * Set up the properties of the tables.
      */
     private void setTableProperties() {
-        
+
         // correct the color for the upper right corner
         JPanel ptmCorner = new JPanel();
         ptmCorner.setBackground(ptmJTable.getTableHeader().getBackground());
@@ -1993,7 +1993,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         final MouseEvent finalEvt = evt;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Getting Peptides. Please Wait...");
 
@@ -2074,7 +2077,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     newItemSelection();
                 }
 
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
             }
         };
 
@@ -2100,7 +2103,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         final MouseEvent finalEvt = evt;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Getting Related Peptides. Please Wait...");
 
@@ -2165,7 +2171,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     newItemSelection();
                 }
 
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
             }
         });
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
@@ -2303,7 +2309,10 @@ public class PtmPanel extends javax.swing.JPanel {
         final MouseEvent finalEvt = evt;
         final JPanel finalRef = this;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Getting Modifications. Please Wait...");
 
@@ -2352,7 +2361,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 currentPtmRow = row;
 
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
             }
         });
     }//GEN-LAST:event_ptmJTableMouseReleased
@@ -2366,7 +2375,10 @@ public class PtmPanel extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
                 || evt.getKeyCode() == KeyEvent.VK_PAGE_UP || evt.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Getting Peptides. Please Wait...");
 
@@ -2387,7 +2399,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 public void run() {
 
                     updatePeptideTable(progressDialog);
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                 }
             };
 
@@ -3309,7 +3321,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Updating Data. Please Wait...");
 
@@ -3328,9 +3343,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 // now we have date so we can update the RT cell renderers max and min values
                 selectedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
@@ -3398,9 +3410,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     updatePeptideTable(progressDialog);
                 }
 
-                // change the peptide shaker icon back to the default version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
             }
         });
     }
@@ -3524,7 +3534,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public void updateSelection() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Updating Selection. Please Wait...");
 
@@ -3544,7 +3557,7 @@ public class PtmPanel extends javax.swing.JPanel {
             @Override
             public void run() {
                 updateSelection(progressDialog);
-                progressDialog.dispose();
+                progressDialog.setRunFinished();
             }
         });
     }
@@ -4760,7 +4773,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 || tableIndex == TableIndex.A_SCORES_TABLE
                 || tableIndex == TableIndex.DELTA_SCORES_TABLE) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Copying to Clipboard. Please Wait...");
 
@@ -4780,29 +4796,28 @@ public class PtmPanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
                     try {
-                        // change the peptide shaker icon to a "waiting version"
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-String clipboardString = null;
+                        OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
+                        String clipboardString = null;
+                        
                         if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
-                    outputGenerator.getPeptidesOutput(
-                            displayedPeptides, null, true, false, true, true, true, true,
-                            true, true, true, true, true, true, true, true, false, false, false, null);
+                            outputGenerator.getPeptidesOutput(
+                                    displayedPeptides, null, true, false, true, true, true, true,
+                                    true, true, true, true, true, true, true, true, false, false, false, null);
                         } else if (tableIndex == TableIndex.RELATED_PEPTIDES_TABLE) {
-                    outputGenerator.getPeptidesOutput(
-                            relatedPeptides, null, true, false, true, true, true, true,
-                            true, true, true, true, true, true, true, true, false, false, false, null);
+                            outputGenerator.getPeptidesOutput(
+                                    relatedPeptides, null, true, false, true, true, true, true,
+                                    true, true, true, true, true, true, true, true, false, false, false, null);
                         } else if (tableIndex == TableIndex.MODIFIED_PSMS_TABLE) {
-                    outputGenerator.getPSMsOutput(
-                            identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches(), 
-                            true, false, true, true, true, true,
-                            true, true, true, true, true, true, true, false, false);
+                            outputGenerator.getPSMsOutput(
+                                    identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches(),
+                                    true, false, true, true, true, true,
+                                    true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.RELATED_PSMS_TABLE) {
-                    outputGenerator.getPSMsOutput(
-                            identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches(), 
-                            true, false, true, true, true, true,
-                            true, true, true, true, true, true, true, false, false);
+                            outputGenerator.getPSMsOutput(
+                                    identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches(),
+                                    true, false, true, true, true, true,
+                                    true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.PTM_TABLE) {
                             // @TODO: implement me!!
                             clipboardString = "not yet implemented...";
@@ -4812,23 +4827,20 @@ String clipboardString = null;
                             clipboardString = Util.tableToText(psmDeltaScoresTable, "\t", progressDialog, false);
                         }
 
-                        if (!progressDialog.isRunCanceled() && clipboardString !=null) {
+                        if (!progressDialog.isRunCanceled() && clipboardString != null) {
                             StringSelection stringSelection = new StringSelection(clipboardString);
                             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                             clipboard.setContents(stringSelection, peptideShakerGUI);
                         }
 
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        progressDialog.dispose();
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
 
-                        if (!progressDialog.isRunCanceled() && clipboardString !=null) {
+                        if (!processCancelled && clipboardString != null) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
-                        // change the peptide shaker icon back to the default version
-                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }

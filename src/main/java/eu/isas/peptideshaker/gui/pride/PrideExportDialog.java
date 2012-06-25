@@ -1131,14 +1131,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         final String prideFileName = fileName;
         final PrideExportDialog prideExportDialog = this; // needed due to threading issues
-        progressDialog = new ProgressDialogX(this, true);
+        
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
 
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
                 try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
@@ -1151,9 +1154,6 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
             @Override
             public void run() {
-
-                // change the peptide shaker icon to a "waiting version"
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 // get the references, if any
                 ArrayList<Reference> references = new ArrayList<Reference>();
@@ -1194,13 +1194,12 @@ public class PrideExportDialog extends javax.swing.JDialog {
                 }
 
                 // close the progress dialog
-                progressDialog.dispose();
+                boolean processCancelled = progressDialog.isRunCanceled();
+                progressDialog.setRunFinished();
 
-                // return the peptide shaker icon to the standard version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // display a conversion complete message to the user
-                if (conversionCompleted && !progressDialog.isRunCanceled()) {
+                if (conversionCompleted && !processCancelled) {
 
                     // create an empty label to put the message in
                     JLabel label = new JLabel();
@@ -1230,7 +1229,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     dispose();
                 }
                 
-                if (progressDialog.isRunCanceled()) {
+                if (processCancelled) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE XML conversion cancelled by the user.", "PRIDE XML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
                 }
             }

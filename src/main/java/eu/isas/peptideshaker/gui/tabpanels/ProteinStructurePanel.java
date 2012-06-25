@@ -1757,20 +1757,23 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             updatePeptideToPdbMapping();
         } else {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
             progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Loading PDB Structure. Please Wait...");
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setTitle("Loading PDB Structure. Please Wait...");
                     try {
                         progressDialog.setVisible(true);
                     } catch (IndexOutOfBoundsException e) {
                         // ignore
                     }
                 }
-            }, "ProgressDialog2").start();
+            }, "PdbChaingThread").start();
 
             new Thread("StructureThread") {
 
@@ -1811,7 +1814,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         updatePeptideToPdbMapping();
                     }
 
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
             }.start();
@@ -2718,7 +2721,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Updating Data. Please Wait...");
 
@@ -2739,8 +2745,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             public void run() {
 
                 try {
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
@@ -2782,10 +2786,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Preparing 3D Structure Tab. Please Wait...");
 
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
 
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
@@ -2799,9 +2801,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     });
 
                 } catch (Exception e) {
-                    progressDialog.dispose();
+                    progressDialog.setRunFinished();
                     peptideShakerGUI.catchException(e);
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }
         }.start();
@@ -2831,7 +2832,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         final String proteinKey = aProteinKey;
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
         progressDialog.setIndeterminate(true);
 
         new Thread(new Runnable() {
@@ -2852,9 +2856,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             public void run() {
 
                 try {
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
                     // get the accession number of the main match
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                     String tempAccession = proteinMatch.getMainMatch();
@@ -2910,14 +2911,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         pdbChainsPanel.repaint();
                     }
 
-                    progressDialog.dispose();
-                    // return the peptide shaker icon to the standard version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    progressDialog.setRunFinished();
 
                 } catch (Exception e) {
+                    progressDialog.setRunFinished();
                     peptideShakerGUI.catchException(e);
-                    // return the peptide shaker icon to the standard version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }
         }.start();
