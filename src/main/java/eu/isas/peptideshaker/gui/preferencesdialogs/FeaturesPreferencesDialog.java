@@ -7,7 +7,6 @@ import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -1003,7 +1002,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void proteinExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportAllActionPerformed
-        outputGenerator.getProteinsOutput(null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
+        outputGenerator.getProteinsOutput(this, null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
                 proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
                 proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(),
                 true, proteinHidden.isSelected());
@@ -1015,7 +1014,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void peptideExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportAllActionPerformed
-        outputGenerator.getPeptidesOutput(null, null, false, peptideValidated.isSelected(),
+        outputGenerator.getPeptidesOutput(this, null, null, false, peptideValidated.isSelected(),
                 peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
                 peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
                 peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
@@ -1028,7 +1027,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void psmExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmExportAllActionPerformed
-        outputGenerator.getPSMsOutput(null, false, psmValidated.isSelected(), psmAccession.isSelected(), proteinDescriptionPsmTab.isSelected(), psmSequence.isSelected(),
+        outputGenerator.getPSMsOutput(this, null, false, psmValidated.isSelected(), psmAccession.isSelected(), proteinDescriptionPsmTab.isSelected(), psmSequence.isSelected(),
                 psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
                 psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true, psmStarred.isSelected(), psmHidden.isSelected());
     }//GEN-LAST:event_psmExportAllActionPerformed
@@ -1039,7 +1038,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void assumptionExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionExportAllActionPerformed
-        outputGenerator.getAssumptionsOutput(null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), proteinDescriptionSerarchEnginesTab.isSelected(),
+        outputGenerator.getAssumptionsOutput(this, null, assumptionValidated.isSelected(), assumptionAccession.isSelected(), proteinDescriptionSerarchEnginesTab.isSelected(),
                 assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
                 assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
     }//GEN-LAST:event_assumptionExportAllActionPerformed

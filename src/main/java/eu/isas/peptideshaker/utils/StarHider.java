@@ -150,11 +150,12 @@ public class StarHider {
                         identification.updateProteinMatchParameter(proteinKey, psParameter);
                         progressDialog.increaseProgressValue();
                     }
+                    
+                    progressDialog.setRunFinished();
+                    
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
-
-                progressDialog.setRunFinished();
             }
         }.start();
     }

@@ -1895,13 +1895,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                         writer.close();
 
-                        progressDialog.setVisible(false);
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
 
-                        if (!progressDialog.isRunCanceled()) {
+                        if (!processCancelled) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
-                        
-                        progressDialog.setRunFinished();
                     } catch (IOException e) {
                         progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);

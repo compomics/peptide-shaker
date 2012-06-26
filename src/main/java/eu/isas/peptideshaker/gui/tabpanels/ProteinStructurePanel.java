@@ -3308,14 +3308,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 if (tableIndex == TableIndex.PROTEIN_TABLE) {
                     ArrayList<String> selectedProteins = getDisplayedProteins();
                     outputGenerator.getProteinsOutput(
-                            selectedProteins, true, false, true, true, true,
+                            null, selectedProteins, true, false, true, true, true,
                             true, true, true, true, false, true,
                             true, true, true, true, false, true, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
                     String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
                     outputGenerator.getPeptidesOutput(
-                            selectedPeptides, peptidePdbArray, true, false, true, true, true, true,
+                            null, selectedPeptides, peptidePdbArray, true, false, true, true, true, true,
                             true, true, true, true, true, true, true, true, false, false, false, proteinKey);
                 } else if (tableIndex == TableIndex.PDB_MATCHES || tableIndex == TableIndex.PDB_CHAINS) {
 

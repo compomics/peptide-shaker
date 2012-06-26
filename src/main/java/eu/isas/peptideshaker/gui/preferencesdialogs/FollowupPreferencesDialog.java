@@ -535,7 +535,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
+            progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -545,7 +545,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setVisible(true);
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
             }, "ProgressDialog").start();
 
@@ -597,10 +601,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setRunFinished();
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                    if (progressDialog != null) {
-                        progressDialog.setRunFinished();
                     }
                 }
             }.start();
@@ -675,7 +675,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         }
                     }
 
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    progressDialog = new ProgressDialogX(this,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true);
@@ -742,11 +742,20 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                                     ArrayList<Double> retentionTimes = new ArrayList<Double>();
 
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+
+                                                        if (progressDialog.isRunCanceled()) {
+                                                            break;
+                                                        }
+
                                                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                                                         retentionTimes.add(precursor.getRt());
                                                     }
 
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+
+                                                        if (progressDialog.isRunCanceled()) {
+                                                            break;
+                                                        }
 
                                                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
 
@@ -786,10 +795,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 e.printStackTrace();
                                 JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             }
-
-                            if (progressDialog != null) {
-                                progressDialog.setRunFinished();
-                            }
                         }
                     }.start();
                 }
@@ -812,7 +817,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
+            progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -837,8 +842,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setTitle("Exporting. Please Wait...");
 
                         FileWriter f = new FileWriter(finalOutputFile);
                         BufferedWriter b = new BufferedWriter(f);
@@ -865,10 +868,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
-
-                    if (progressDialog != null) {
-                        progressDialog.setRunFinished();
-                    }
                 }
             }.start();
         }
@@ -888,7 +887,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
+            progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -913,10 +912,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-
-                        progressDialog.setIndeterminate(false);
-
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                        progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
@@ -964,10 +961,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    if (progressDialog != null) {
-                        progressDialog.setRunFinished();
-                    }
                 }
             }.start();
         }
@@ -988,7 +981,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
+            progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -1012,10 +1005,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-
-                        progressDialog.setIndeterminate(false);
-
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                        progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
@@ -1061,10 +1052,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    if (progressDialog != null) {
-                        progressDialog.setRunFinished();
-                    }
                 }
             }.start();
         }
@@ -1084,7 +1071,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
+            progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -1108,10 +1095,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-
-                        progressDialog.setIndeterminate(false);
-
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                        progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
@@ -1158,10 +1143,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    if (progressDialog != null) {
-                        progressDialog.setRunFinished();
-                    }
                 }
             }.start();
         }
@@ -1182,7 +1163,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
+            progressDialog = new ProgressDialogX(this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -1207,10 +1188,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-
-                        progressDialog.setIndeterminate(false);
-
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                        progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
 
                         FileWriter f = new FileWriter(selectedFile);
@@ -1256,10 +1235,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    if (progressDialog != null) {
-                        progressDialog.setRunFinished();
-                    }
                 }
             }.start();
         }
@@ -1278,7 +1253,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         } else if (spectrumRecalibrationCmb.getSelectedIndex() == 2) {
             ms1 = false;
         }
-        peptideShakerGUI.recalibrateSpectra(ms1, ms2);
+        peptideShakerGUI.recalibrateSpectra(this, ms1, ms2);
     }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
 
     /**
