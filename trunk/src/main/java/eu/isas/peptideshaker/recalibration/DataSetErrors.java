@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.recalibration;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -39,6 +38,8 @@ public class DataSetErrors {
      * @param progressDialog a dialog displaying progress to the user. Can be
      * null
      * @return the peak matching errors
+     * @throws IOException
+     * @throws MzMLUnmarshallerException  
      */
     public FractionError getFileErrors(String fileName, ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
         if (!errors.containsKey(fileName)) {

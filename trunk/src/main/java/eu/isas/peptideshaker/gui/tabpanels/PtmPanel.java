@@ -4802,20 +4802,20 @@ public class PtmPanel extends javax.swing.JPanel {
                         
                         if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
                             outputGenerator.getPeptidesOutput(
-                                    displayedPeptides, null, true, false, true, true, true, true,
+                                    null, displayedPeptides, null, true, false, true, true, true, true,
                                     true, true, true, true, true, true, true, true, false, false, false, null);
                         } else if (tableIndex == TableIndex.RELATED_PEPTIDES_TABLE) {
                             outputGenerator.getPeptidesOutput(
-                                    relatedPeptides, null, true, false, true, true, true, true,
+                                    null, relatedPeptides, null, true, false, true, true, true, true,
                                     true, true, true, true, true, true, true, true, false, false, false, null);
                         } else if (tableIndex == TableIndex.MODIFIED_PSMS_TABLE) {
                             outputGenerator.getPSMsOutput(
-                                    identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches(),
+                                    null, identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches(),
                                     true, false, true, true, true, true,
                                     true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.RELATED_PSMS_TABLE) {
                             outputGenerator.getPSMsOutput(
-                                    identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches(),
+                                    null, identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches(),
                                     true, false, true, true, true, true,
                                     true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.PTM_TABLE) {

@@ -1040,7 +1040,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
                     try {
                         outputGenerator.getProteinsOutput(
-                                null, false, true, true, false, false, false,
+                                null, null, false, true, true, false, false, false,
                                 false, false, false, false, false, false,
                                 false, false, false, false, false, false);
                     } catch (Exception e) {
