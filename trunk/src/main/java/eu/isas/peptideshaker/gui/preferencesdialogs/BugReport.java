@@ -74,6 +74,7 @@ public class BugReport extends javax.swing.JDialog {
         infoJPanel = new javax.swing.JPanel();
         infoJScrollPane = new javax.swing.JScrollPane();
         infoJEditorPane = new javax.swing.JEditorPane();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PeptideShaker Bug Report");
@@ -127,7 +128,7 @@ public class BugReport extends javax.swing.JDialog {
             logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(logJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(logJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                .addComponent(logJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(saveJButton)
@@ -165,6 +166,16 @@ public class BugReport extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        jButton1.setText("Exit");
+        jButton1.setMaximumSize(new java.awt.Dimension(57, 23));
+        jButton1.setMinimumSize(new java.awt.Dimension(57, 23));
+        jButton1.setPreferredSize(new java.awt.Dimension(57, 23));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -173,7 +184,10 @@ public class BugReport extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(infoJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(logJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(logJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -183,6 +197,8 @@ public class BugReport extends javax.swing.JDialog {
                 .addComponent(infoJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -277,12 +293,18 @@ public class BugReport extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_saveJButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton clearJButton;
     private javax.swing.JEditorPane infoJEditorPane;
     private javax.swing.JPanel infoJPanel;
     private javax.swing.JScrollPane infoJScrollPane;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel logJPanel;
     private javax.swing.JScrollPane logJScrollPane;
     private javax.swing.JTextArea logTxt;

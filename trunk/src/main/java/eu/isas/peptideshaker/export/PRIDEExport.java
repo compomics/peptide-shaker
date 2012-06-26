@@ -2,6 +2,8 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.BinaryArrayImpl;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.Ion;
+import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -471,6 +473,10 @@ public class PRIDEExport {
         CvTerm fragmentIonTerm = ionMatch.ion.getPrideCvTerm();
         
         if (fragmentIonTerm != null) {
+            if (ionMatch.ion.getType() == IonType.PEPTIDE_FRAGMENT_ION
+                    || ionMatch.ion.getType() == IonType.IMMONIUM_ION
+                    || ionMatch.ion.getType() == IonType.PRECURSOR_ION
+                    || ionMatch.ion.getType() == IonType.REPORTER_ION) {
             br.write(getCurrentTabSpace() + "<FragmentIon>\n");
             tabCounter++;
             writeCvTerm(fragmentIonTerm);
@@ -480,6 +486,7 @@ public class PRIDEExport {
             writeCvTerm(ionMatch.getChargePrideCvTerm());
             tabCounter--;
             br.write(getCurrentTabSpace() + "</FragmentIon>\n");
+            }
         }
     }
 

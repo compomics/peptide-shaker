@@ -5133,7 +5133,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (identification.isDB()) {
-                        identification.establishConnection();
+                        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
                     } else {
                         int outcome = JOptionPane.showConfirmDialog(PeptideShakerGUI.this,
                                 "The format used to create this project is now obsolete.\n"
@@ -5709,7 +5709,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             ExperimentIO.save(experimentFile, experiment);
         }
 
-        identification.establishConnection();
+        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
 
         // tar everything in the current cps file file
         if (!progressDialog.isRunCanceled()) {
