@@ -2338,6 +2338,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 }
                             }
 
+                            // @TODO: tar the match files before zipping!!
+
 
                             progressDialog.setTitle("Zipping Project. Please Wait...");
                             progressDialog.setIndeterminate(true);

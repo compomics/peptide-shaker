@@ -44,7 +44,7 @@ public class PsmSpecificMap implements Serializable {
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
         int max = getMapsSize();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (int charge : psmsMaps.keySet()) {
@@ -56,7 +56,7 @@ public class PsmSpecificMap implements Serializable {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
