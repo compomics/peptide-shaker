@@ -4213,7 +4213,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Displays the results in the result tables.
+     * Displays the results in the tables.
      */
     public void displayResults() {
 
@@ -4321,7 +4321,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * updates the results in the protein table and reselect the desired
+     * Updates the results in the protein table and reselect the desired
      * protein.
      */
     public void updateProteinTable() {

@@ -49,7 +49,7 @@ public class InputMap {
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
         int max = getNEntries();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (TargetDecoyMap hitmap : inputMap.values()) {
@@ -60,7 +60,7 @@ public class InputMap {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**

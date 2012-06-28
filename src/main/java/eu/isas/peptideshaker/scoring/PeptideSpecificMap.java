@@ -55,7 +55,7 @@ public class PeptideSpecificMap implements Serializable {
         waitingHandler.setWaitingText("Estimating Probabilities. Please Wait...");
 
         int max = getNEntries();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String modifications : peptideMaps.keySet()) {
@@ -67,7 +67,7 @@ public class PeptideSpecificMap implements Serializable {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**

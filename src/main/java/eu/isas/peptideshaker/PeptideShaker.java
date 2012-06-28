@@ -171,14 +171,16 @@ public class PeptideShaker {
         Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.setInMemory(false);
         identification.setAutomatedMemoryManagement(true);
-        identification.setIsDB(true);
+        identification.setIsDB(true); // @TODO: switch back on before committing!
+        
         try {
-            identification.setDirectory(SERIALIZATION_DIRECTORY);
-        } catch (Exception e) {
+            identification.setDirectory(SERIALIZATION_DIRECTORY); // @TODO: tried replacing this, resulted in a database exception
+        } catch (SQLException e) {
             e.printStackTrace();
             waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
             identification.setIsDB(false);
         }
+        
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
 
 
@@ -191,7 +193,6 @@ public class PeptideShaker {
                 waitingHandler.appendReport("Error while setting the Modification files for the search.");
 
             }
-
         }
 
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, processingPreferences);
@@ -380,8 +381,7 @@ public class PeptideShaker {
 
         waitingHandler.appendReport(report);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
-        waitingHandler.setRunFinished();
-        
+        waitingHandler.setRunFinished();    
     }
 
     /**
@@ -405,7 +405,7 @@ public class PeptideShaker {
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
         int max = peptideMap.getKeys().size() + psmMap.getKeys().keySet().size();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String mapKey : peptideMap.getKeys()) {
@@ -438,7 +438,7 @@ public class PeptideShaker {
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
 
         try {
             validateIdentifications(waitingHandler.getSecondaryProgressBar());
@@ -446,7 +446,7 @@ public class PeptideShaker {
             waitingHandler.appendReport("An error occurred while validating the results.");
             waitingHandler.setRunCanceled();
         }
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -567,7 +567,7 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         int max = identification.getSpectrumIdentification().size();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
         ArrayList<String> identifications;
         // map of the first hits for this spectrum: score -> max protein count -> max search engine votes
@@ -664,7 +664,7 @@ public class PeptideShaker {
         // the protein count map is no longer needed
         proteinCount.clear();
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -678,7 +678,7 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getSpectrumIdentification().size();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String spectrumKey : identification.getSpectrumIdentification()) {
@@ -718,7 +718,7 @@ public class PeptideShaker {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -733,7 +733,7 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentification().size());
 
         PSParameter psParameter = new PSParameter();
@@ -752,7 +752,7 @@ public class PeptideShaker {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -772,7 +772,7 @@ public class PeptideShaker {
         SpectrumMatch spectrumMatch;
 
         int max = inspectedSpectra.size();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String spectrumKey : inspectedSpectra) {
@@ -781,7 +781,7 @@ public class PeptideShaker {
             scorePTMs(spectrumMatch, searchParameters, annotationPreferences, estimateAscore);
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -800,7 +800,7 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getPeptideIdentification().size();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String peptideKey : identification.getPeptideIdentification()) {
@@ -812,7 +812,7 @@ public class PeptideShaker {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -849,7 +849,7 @@ public class PeptideShaker {
         ProteinMatch proteinMatch;
 
         int max = identification.getProteinIdentification().size();
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
@@ -884,7 +884,7 @@ public class PeptideShaker {
             metrics.setnValidatedProteins(nValidatedProteins);
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -1275,7 +1275,7 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
 
         ArrayList<String> foundModifications = new ArrayList<String>();
@@ -1338,7 +1338,7 @@ public class PeptideShaker {
         // set the ptms
         metrics.setFoundModifications(foundModifications);
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -1354,7 +1354,7 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
 
         for (String peptideKey : identification.getPeptideIdentification()) {
@@ -1370,7 +1370,7 @@ public class PeptideShaker {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -1387,7 +1387,7 @@ public class PeptideShaker {
 
         int max = identification.getProteinIdentification().size();
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String proteinKey : identification.getProteinIdentification()) {
@@ -1424,7 +1424,7 @@ public class PeptideShaker {
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -1438,7 +1438,7 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
 
         PSParameter psParameter = new PSParameter();
@@ -1457,7 +1457,7 @@ public class PeptideShaker {
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -1481,7 +1481,7 @@ public class PeptideShaker {
 
         int max = 3 * identification.getProteinIdentification().size();
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
@@ -1749,7 +1749,7 @@ public class PeptideShaker {
         metrics.setMaxMW(maxMW);
         metrics.setMaxProteinKeyLength(maxProteinKeyLength);
 
-        waitingHandler.setSecondaryProgressDialogIntermediate(true);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
         waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");
     }
 
