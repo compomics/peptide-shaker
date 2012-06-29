@@ -220,7 +220,9 @@ public class OutputGenerator {
                             }
                             if (ptmSummary) {
                                 writer.write("Confident PTM Sites" + SEPARATOR);
+                                writer.write("# Confident" + SEPARATOR);
                                 writer.write("Other PTM Sites" + SEPARATOR);
+                                writer.write("# Other" + SEPARATOR);
                             }
                             if (nPeptides) {
                                 writer.write("#Validated Peptides" + SEPARATOR);
