@@ -134,7 +134,7 @@ public class BugReport extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        logJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, saveJButton});
+        logJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, exitButton, saveJButton});
 
         logJPanelLayout.setVerticalGroup(
             logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,6 +148,8 @@ public class BugReport extends javax.swing.JDialog {
                     .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6))
         );
+
+        logJPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {clearJButton, exitButton, saveJButton});
 
         infoJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
         infoJPanel.setOpaque(false);

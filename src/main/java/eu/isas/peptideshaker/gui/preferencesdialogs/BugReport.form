@@ -89,7 +89,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="clearJButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="exitButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="exitButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -103,9 +103,9 @@
                       <Component id="logJScrollPane" pref="279" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="saveJButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="clearJButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exitButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="saveJButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="clearJButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exitButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   </Group>
