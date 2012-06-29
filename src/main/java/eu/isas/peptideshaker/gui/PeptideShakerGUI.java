@@ -6121,7 +6121,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         final PeptideShakerGUI finalRef = this;
 
-        if (path == null) {
+        if (path == null || path.equalsIgnoreCase(".")) {
             new SearchGuiSetupDialog(this, true);
             path = utilitiesUserPreferences.getSearchGuiPath();
 

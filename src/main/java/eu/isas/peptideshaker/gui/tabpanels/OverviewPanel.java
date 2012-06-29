@@ -3974,13 +3974,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumJPanel.repaint();
 
                             // create and display the fragment ion table
-                            if (psmTable.getSelectedRowCount() == 1 && !peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
-                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, annotations, annotationPreferences.getFragmentIonTypes(),
+                            ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
+                            
+                            if (!peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
+                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
                             } else {
-                                ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
@@ -4041,7 +4042,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             if (psmTable.getSelectedRowCount() > 1) {
                                 spectrumJTabbedPane.setToolTipTextAt(2, "Available for single spectrum selection only");
-                                peptideShakerGUI.getAnnotationPreferences().setIntensityIonTable(true);
                             } else {
                                 spectrumJTabbedPane.setToolTipTextAt(2, null);
                             }

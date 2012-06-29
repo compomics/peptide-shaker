@@ -117,7 +117,7 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
         searchGuiInfoLabel.setFont(searchGuiInfoLabel.getFont().deriveFont(searchGuiInfoLabel.getFont().getStyle() | java.awt.Font.BOLD));
         searchGuiInfoLabel.setText("SearchGUI -  a graphical user interface for proteomics identification search engines");
 
-        searchGuiDownloadLinkLabel.setText("<html><a href>http://searchgui.googlecode.com</a></html>");
+        searchGuiDownloadLinkLabel.setText("<html>Download here: <a href> http://searchgui.googlecode.com</a></html>");
         searchGuiDownloadLinkLabel.setToolTipText("Go to http://searchgui.googlecode.com");
         searchGuiDownloadLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -154,10 +154,14 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
             searchGuiDownloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchGuiDownloadPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(searchGuiDownloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(searchGuiDownloadLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchGuiInfoLabel))
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(searchGuiDownloadPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(searchGuiDownloadPanelLayout.createSequentialGroup()
+                        .addComponent(searchGuiInfoLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchGuiDownloadPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(searchGuiDownloadLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(searchGuiButton)
                 .addContainerGap())
         );
@@ -166,12 +170,9 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
             .addGroup(searchGuiDownloadPanelLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(searchGuiInfoLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchGuiDownloadLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(searchGuiDownloadPanelLayout.createSequentialGroup()
-                .addComponent(searchGuiButton)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(searchGuiDownloadLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(searchGuiButton)
         );
 
         okButton.setText("OK");
@@ -230,7 +231,7 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -337,6 +338,7 @@ public class SearchGuiSetupDialog extends javax.swing.JDialog {
     private void searchGuiButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchGuiButtonMouseClicked
         openSearchGuiWebPage();
     }//GEN-LAST:event_searchGuiButtonMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton browseButton;
