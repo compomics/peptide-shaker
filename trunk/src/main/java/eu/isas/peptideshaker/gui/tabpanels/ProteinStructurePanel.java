@@ -1633,6 +1633,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         }
 
         if (loadStructure) {
+            
+            // just a trick to make sure that the users cannot select another row until the selection has been updated
+            this.setEnabled(false);
 
             DefaultTableModel dm = (DefaultTableModel) pdbChainsJTable.getModel();
             dm.getDataVector().removeAllElements();
@@ -1726,6 +1729,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 ((TitledBorder) pdbChainsPanel.getBorder()).setTitle("PDB Chains");
                 pdbChainsPanel.repaint();
             }
+            
+            // give the power back to the user ;)
+            this.setEnabled(true);
         } else {
 
             // open protein link in web browser
