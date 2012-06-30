@@ -207,6 +207,7 @@ public class PeptideShaker {
      * @param searchParameters
      * @param annotationPreferences
      * @param idFilter
+     * @param processingPreferences 
      * @throws IllegalArgumentException
      * @throws IOException
      * @throws Exception
@@ -490,6 +491,9 @@ public class PeptideShaker {
      * Processes the identifications if a change occured in the protein map.
      *
      * @param waitingHandler the waiting handler
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException  
      */
     public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException {
         attachProteinProbabilities(waitingHandler);
@@ -499,6 +503,9 @@ public class PeptideShaker {
      * This method will flag validated identifications.
      *
      * @param progressBar the progress bar
+     * @throws SQLException
+     * @throws IOException 
+     * @throws ClassNotFoundException  
      */
     public void validateIdentifications(JProgressBar progressBar) throws SQLException, IOException, ClassNotFoundException {
 
