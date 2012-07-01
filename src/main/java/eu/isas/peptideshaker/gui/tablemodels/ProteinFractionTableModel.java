@@ -88,7 +88,8 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         identification = peptideShakerGUI.getIdentification();
         
         if (identification != null) {
-            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
+            //proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
+            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null); // show all proteins
         }
         
         fileNames = new ArrayList<String>();
@@ -175,7 +176,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                     if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
                         return pSParameter.getFractionConfidence(fraction);
                     } else {
-                        return null;
+                        return 0.0;
                     }
                     
                 } else if (peptideShakerGUI.getProteinFractionsPanel().isProteinPeptideCountSelected()) {
@@ -252,7 +253,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                     }
                     
                     if (intensitySum == 0) {
-                        return null;
+                        return 0.0;
                     }
                     
                     return intensitySum / intensityCounter; // @TODO: make it possible to return sum and median intensity as well?
