@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class provides identification features at the protein level
+ * This class provides identification features at the protein level.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -104,9 +104,13 @@ public class IdentificationFeaturesGenerator {
      */
     private ArrayList<String> proteinListAfterHiding = null;
     /**
-     * back-up list for when proteins are hidden
+     * Back-up list for when proteins are hidden.
      */
     private ArrayList<String> proteinList = null;
+    /**
+     * List of the validated proteins.
+     */
+    private ArrayList<String> validatedProteinList = null;
     /**
      * The peptide list.
      */
@@ -121,16 +125,16 @@ public class IdentificationFeaturesGenerator {
      */
     private boolean filtered = false;
     /**
-     * the max m/z value across the selected spectra
+     * The max m/z value across the selected spectra.
      */
     private double maxPsmMzValue;
     /**
      * The maximum number of psms across all peptides of the last selected
-     * protein
+     * protein.
      */
     private int maxSpectrumCount;
     /**
-     * The number of calidated psms in the currently selected peptide
+     * The number of calidated psms in the currently selected peptide.
      */
     private int nValidatedPsms;
 
@@ -438,6 +442,9 @@ public class IdentificationFeaturesGenerator {
      * @param maxPepLength the maximal length accepted for a peptide
      * @return the spectrum counting index
      * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException  
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException {
@@ -1176,6 +1183,16 @@ public class IdentificationFeaturesGenerator {
             return "Error";
         }
     }
+    
+    /**
+     * Returns the list of validated protein keys. Returns null if the proteins 
+     * have yet to be validated.
+     * 
+     * @return the list of validated protein keys
+     */
+    public ArrayList<String> getValidatedProteins() {
+        return validatedProteinList;
+    }
 
     /**
      * Returns the sorted list of protein keys.
@@ -1325,6 +1342,7 @@ public class IdentificationFeaturesGenerator {
 
             if (hidingNeeded() || proteinListAfterHiding == null) {
                 proteinListAfterHiding = new ArrayList<String>();
+                validatedProteinList = new ArrayList<String>();
                 PSParameter psParameter = new PSParameter();
                 int nValidatedProteins = 0;
 
@@ -1334,6 +1352,7 @@ public class IdentificationFeaturesGenerator {
                         proteinListAfterHiding.add(proteinKey);
                         if (psParameter.isValidated()) {
                             nValidatedProteins++;
+                            validatedProteinList.add(proteinKey);
                         }
                     }
                 }
@@ -1344,6 +1363,7 @@ public class IdentificationFeaturesGenerator {
             peptideShakerGUI.catchException(e);
             proteinListAfterHiding = new ArrayList<String>();
         }
+        
         return proteinListAfterHiding;
     }
 

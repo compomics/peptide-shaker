@@ -18,9 +18,7 @@ import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -41,6 +39,7 @@ import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.extra.ChartPanelTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import no.uib.jsparklines.renderers.util.GradientColorCoding;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartPanel;
@@ -146,6 +145,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         JPanel peptideCorner = new JPanel();
         peptideCorner.setBackground(peptideTable.getTableHeader().getBackground());
         peptideTableScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, peptideCorner);
+        
+        addHeatMapGradientColors();
     }
 
     /**
@@ -331,8 +332,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
@@ -636,12 +637,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 spectrumPlotDataset.addValue(validatedSpectraCounter, "Validated Spectra", "" + (i + 1));
                 spectrumPlotDataset.addValue(notValidatedSpectraCounter, "Not Validated Spectra", "" + (i + 1));
-                
+
                 if (intensitySum > 0) {
                     intensityPlotDataset.addValue(intensitySum / intensityCounter, "Total Intensity", "" + (i + 1));
                 } else {
                     intensityPlotDataset.addValue(0.0, "Total Intensity", "" + (i + 1));
-                } 
+                }
             }
 
             // create the spectrum chart
@@ -846,6 +847,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void initComponents() {
 
         proteinTableTypeButtonGroup = new javax.swing.ButtonGroup();
+        chartTypeButtonGroup = new javax.swing.ButtonGroup();
         disclamierPanel = new javax.swing.JPanel();
         disclaimerLabel = new javax.swing.JLabel();
         proteinPeptideSplitPane = new javax.swing.JSplitPane();
@@ -913,6 +915,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         numberOfPeptidesJRadioButton = new javax.swing.JRadioButton();
         confidenceJRadioButton = new javax.swing.JRadioButton();
         intensityJRadioButton = new javax.swing.JRadioButton();
+        barChartRadioButton = new javax.swing.JRadioButton();
+        heatMapRadioButton = new javax.swing.JRadioButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        deltaScoreMinValueJLabel = new javax.swing.JLabel();
+        gradientColorPanel = new javax.swing.JPanel();
+        deltaScoreMaxValueJLabel = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
         proteinsHelpJButton = new javax.swing.JButton();
         exportProteinsJButton = new javax.swing.JButton();
         contextMenuProteinsBackgroundPanel = new javax.swing.JPanel();
@@ -1113,7 +1122,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addComponent(peptidesTabbedPane)
                 .addContainerGap())
         );
 
@@ -1188,7 +1197,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinPanel.setOpaque(false);
 
         proteinTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel());
-        proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        proteinTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
@@ -1250,40 +1259,98 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         });
 
+        chartTypeButtonGroup.add(barChartRadioButton);
+        barChartRadioButton.setSelected(true);
+        barChartRadioButton.setText("Bar Chart");
+        barChartRadioButton.setIconTextGap(10);
+        barChartRadioButton.setOpaque(false);
+        barChartRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                barChartRadioButtonActionPerformed(evt);
+            }
+        });
+
+        chartTypeButtonGroup.add(heatMapRadioButton);
+        heatMapRadioButton.setText("Heat Map");
+        heatMapRadioButton.setIconTextGap(10);
+        heatMapRadioButton.setOpaque(false);
+        heatMapRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                heatMapRadioButtonActionPerformed(evt);
+            }
+        });
+
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        deltaScoreMinValueJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        deltaScoreMinValueJLabel.setText("0%");
+
+        gradientColorPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
+        gradientColorPanel.setToolTipText("Heat Map Color Coding");
+        gradientColorPanel.setLayout(new java.awt.BorderLayout());
+
+        deltaScoreMaxValueJLabel.setText("100%");
+
+        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
         javax.swing.GroupLayout proteinPanelLayout = new javax.swing.GroupLayout(proteinPanel);
         proteinPanel.setLayout(proteinPanelLayout);
         proteinPanelLayout.setHorizontalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
                     .addGroup(proteinPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(deltaScoreMinValueJLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(gradientColorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(deltaScoreMaxValueJLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(barChartRadioButton)
+                        .addGap(10, 10, 10)
+                        .addComponent(heatMapRadioButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(confidenceJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(numberOfPeptidesJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(numberOfSpectraJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(intensityJRadioButton))
-                    .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE))
+                        .addComponent(intensityJRadioButton)))
                 .addContainerGap())
         );
 
         proteinPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {confidenceJRadioButton, intensityJRadioButton, numberOfPeptidesJRadioButton, numberOfSpectraJRadioButton});
 
+        proteinPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {barChartRadioButton, heatMapRadioButton});
+
+        proteinPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deltaScoreMaxValueJLabel, deltaScoreMinValueJLabel});
+
         proteinPanelLayout.setVerticalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                .addGap(7, 7, 7)
-                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(numberOfSpectraJRadioButton)
-                    .addComponent(numberOfPeptidesJRadioButton)
+                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(deltaScoreMinValueJLabel)
+                    .addComponent(gradientColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deltaScoreMaxValueJLabel)
+                    .addComponent(barChartRadioButton)
+                    .addComponent(heatMapRadioButton)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(confidenceJRadioButton)
+                    .addComponent(numberOfPeptidesJRadioButton)
+                    .addComponent(numberOfSpectraJRadioButton)
                     .addComponent(intensityJRadioButton))
-                .addContainerGap())
+                .addGap(4, 4, 4))
         );
 
         proteinPanel.setBounds(0, 0, 940, 200);
@@ -1709,20 +1776,56 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinTable.revalidate();
         proteinTable.repaint();
     }//GEN-LAST:event_intensityJRadioButtonActionPerformed
+
+    /**
+     * Update the data type in the protein table.
+     *
+     * @param evt
+     */
+    private void barChartRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barChartRadioButtonActionPerformed
+        updateProteinTableSparklines();
+        updatePeptideTableSparklines();
+        proteinTable.revalidate();
+        proteinTable.repaint();
+        peptideTable.revalidate();
+        peptideTable.repaint();
+    }//GEN-LAST:event_barChartRadioButtonActionPerformed
+
+    /**
+     * Update the data type in the protein table.
+     *
+     * @param evt
+     */
+    private void heatMapRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_heatMapRadioButtonActionPerformed
+        updateProteinTableSparklines();
+        updatePeptideTableSparklines();
+        proteinTable.revalidate();
+        proteinTable.repaint();
+        peptideTable.revalidate();
+        peptideTable.repaint();
+    }//GEN-LAST:event_heatMapRadioButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton barChartRadioButton;
+    private javax.swing.ButtonGroup chartTypeButtonGroup;
     private javax.swing.JRadioButton confidenceJRadioButton;
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuProteinsBackgroundPanel;
     private javax.swing.JTable coverageTable;
     private javax.swing.JPanel coverageTablePanel;
     private javax.swing.JScrollPane coverageTableScrollPane;
+    private javax.swing.JLabel deltaScoreMaxValueJLabel;
+    private javax.swing.JLabel deltaScoreMinValueJLabel;
     private javax.swing.JLabel disclaimerLabel;
     private javax.swing.JPanel disclamierPanel;
     private javax.swing.JButton exportPeptidesJButton;
     private javax.swing.JButton exportProteinsJButton;
+    private javax.swing.JPanel gradientColorPanel;
+    private javax.swing.JRadioButton heatMapRadioButton;
     private javax.swing.JRadioButton intensityJRadioButton;
     private javax.swing.JPanel intensityPlotOuterPanel;
     private javax.swing.JPanel intensityPlotPanel;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JRadioButton numberOfPeptidesJRadioButton;
     private javax.swing.JRadioButton numberOfSpectraJRadioButton;
     private javax.swing.JPanel peptidePanel;
@@ -1838,10 +1941,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (selectedFile != null) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
@@ -1901,14 +2004,14 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     public ArrayList<String> getPeptideKeys() {
         return peptideKeys;
     }
-    
+
     /**
      * Updates the protein table sparklines.
      */
     private void updateProteinTableSparklines() {
-        
+
         double maxValue = 100;
-        
+
         if (numberOfPeptidesJRadioButton.isSelected()) {
             maxValue = peptideShakerGUI.getMetrics().getMaxNPeptides();
         } else if (numberOfSpectraJRadioButton.isSelected()) {
@@ -1916,35 +2019,78 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         } else if (intensityJRadioButton.isSelected()) {
             maxValue = spectrumFactory.getMaxIntensity();
         }
-        
+
         for (int i = 3; i < proteinTable.getColumnCount() - 3; i++) {
+
+            proteinTable.getColumn(proteinTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
+
             if (peptideShakerGUI.showSparklines()) {
-                proteinTable.getColumn(proteinTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
-                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showNumberAndChart(
-                        true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                if (barChartRadioButton.isSelected()) {
+                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showNumberAndChart(
+                            true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                } else { // heat map
+                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(GradientColorCoding.ColorGradient.GreenWhiteBlue);
+                }
             } else {
-                proteinTable.getColumn(proteinTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
                 ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
+            }
+        }
+    }
+
+    /**
+     * Updates the peptide table sparklines.
+     */
+    private void updatePeptideTableSparklines() {
+
+        double maxValue = 100;
+
+        for (int i = 2; i < peptideTable.getColumnCount() - 2; i++) {
+
+            peptideTable.getColumn(peptideTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
+
+            if (peptideShakerGUI.showSparklines()) {
+                if (barChartRadioButton.isSelected()) {
+                    ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumberAndChart(
+                            true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                } else { // heat map
+                    ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(GradientColorCoding.ColorGradient.GreenWhiteBlue);
+                }
+            } else {
+                ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
             }
         }
     }
     
     /**
-     * Updates the peptide table sparklines.
+     * Show the heat map gradient color coding..
      */
-    private void updatePeptideTableSparklines () {
-        
-        double maxValue = 100;
-        
-        for (int i = 2; i < peptideTable.getColumnCount() - 2; i++) {
-            if (peptideShakerGUI.showSparklines()) {
-                peptideTable.getColumn(peptideTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
-                ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumberAndChart(
-                        true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-            } else {
-                peptideTable.getColumn(peptideTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
-                ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
+    private void addHeatMapGradientColors() {
+
+        final Color startColor = Color.WHITE;
+        final Color endColor = Color.BLUE;
+
+        JPanel gradientJPanel = new JPanel() {
+
+            @Override
+            protected void paintComponent(Graphics grphcs) {
+                Graphics2D g2d = (Graphics2D) grphcs;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+
+                GradientPaint gp = new GradientPaint(
+                        0, getHeight() / 2,
+                        startColor,
+                        getWidth(), getHeight() / 2,
+                        endColor);
+
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                super.paintComponent(grphcs);
             }
-        }
+        };
+
+        gradientJPanel.setOpaque(false);
+        gradientColorPanel.add(gradientJPanel);
     }
 }
