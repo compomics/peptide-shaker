@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import eu.isas.peptideshaker.gui.FractionOrderDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -46,6 +47,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -145,7 +147,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         JPanel peptideCorner = new JPanel();
         peptideCorner.setBackground(peptideTable.getTableHeader().getBackground());
         peptideTableScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, peptideCorner);
-        
+
         addHeatMapGradientColors();
     }
 
@@ -164,8 +166,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             String fileName = Util.getFileName(filePath);
             fileNames.add(fileName);
         }
-
-        Collections.sort(fileNames);
 
         for (int i = 0; i < fileNames.size(); i++) {
             proteinTableToolTips.add(fileNames.get(i));
@@ -331,6 +331,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * Display the results.
      */
     public void displayResults() {
+
+        new FractionOrderDialog(peptideShakerGUI, true);
 
         progressDialog = new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -698,6 +700,45 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // add the new plot
             intensityPlotPanel.add(chartPanel);
 
+
+            // molecular mass plot
+            DefaultCategoryDataset mwPlotDataset = new DefaultCategoryDataset();
+
+            HashMap<String, Double> molecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
+            ArrayList<String> spectrumFiles = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+
+            for (int i = 0; i < spectrumFiles.size(); i++) {
+                Double mw = molecularWeights.get(spectrumFiles.get(i));
+                mwPlotDataset.addValue(mw, "Expected MW", "" + (i + 1));
+                mwPlotDataset.addValue(peptideShakerGUI.getMetrics().getObservedFractionalMasses().get(Util.getFileName(spectrumFiles.get(i))), "Observed MW", "" + (i + 1));
+            }
+
+            // create the mw chart
+            chart = ChartFactory.createBarChart(null, "Fraction", "Expected MW", mwPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            chartPanel = new ChartPanel(chart);
+
+            // set up the renderer
+            BarRenderer barRenderer = new BarRenderer();
+            barRenderer.setShadowVisible(false);
+            barRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            barRenderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            barRenderer.setSeriesPaint(1, Color.RED);
+            chart.getCategoryPlot().setRenderer(barRenderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            mwPlotPanel.removeAll();
+
+            // add the new plot
+            mwPlotPanel.add(chartPanel);
+
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
@@ -877,6 +918,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 };
             }
         };
+        mwPanel = new javax.swing.JPanel();
+        mwPlotPanel = new javax.swing.JPanel();
         peptideTablePanel = new javax.swing.JPanel();
         peptideTableScrollPane = new javax.swing.JScrollPane();
         peptideTable = new JTable() {
@@ -1073,6 +1116,26 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Coverage", coverageTablePanel);
 
+        mwPanel.setOpaque(false);
+
+        mwPlotPanel.setOpaque(false);
+        mwPlotPanel.setLayout(new javax.swing.BoxLayout(mwPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout mwPanelLayout = new javax.swing.GroupLayout(mwPanel);
+        mwPanel.setLayout(mwPanelLayout);
+        mwPanelLayout.setHorizontalGroup(
+            mwPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mwPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE)
+        );
+        mwPanelLayout.setVerticalGroup(
+            mwPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mwPanelLayout.createSequentialGroup()
+                .addComponent(mwPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        peptidesTabbedPane.addTab("Molecular Weight", mwPanel);
+
         peptideTablePanel.setOpaque(false);
 
         peptideTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel());
@@ -1107,7 +1170,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Peptide Table", peptideTablePanel);
 
-        peptidesTabbedPane.setSelectedIndex(4);
+        peptidesTabbedPane.setSelectedIndex(5);
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
         peptidePanel.setLayout(peptidePanelLayout);
@@ -1826,6 +1889,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private javax.swing.JPanel intensityPlotPanel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JPanel mwPanel;
+    private javax.swing.JPanel mwPlotPanel;
     private javax.swing.JRadioButton numberOfPeptidesJRadioButton;
     private javax.swing.JRadioButton numberOfSpectraJRadioButton;
     private javax.swing.JPanel peptidePanel;
@@ -2060,7 +2125,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         }
     }
-    
+
     /**
      * Show the heat map gradient color coding..
      */

@@ -79,6 +79,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSelectAllLabel = new javax.swing.JLabel();
         proteinDeselectAllLabel = new javax.swing.JLabel();
         slashLabel1 = new javax.swing.JLabel();
+        molecularWeight = new javax.swing.JCheckBox();
         peptidesPanel = new javax.swing.JPanel();
         peptideAccession = new javax.swing.JCheckBox();
         peptideModification = new javax.swing.JCheckBox();
@@ -247,6 +248,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         slashLabel1.setText("/");
 
+        molecularWeight.setText("Molecular Weight");
+        molecularWeight.setIconTextGap(10);
+        molecularWeight.setOpaque(false);
+
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
         proteinsPanelLayout.setHorizontalGroup(
@@ -272,7 +277,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(proteinValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(proteinHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ptmSummary, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(ptmSummary, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(molecularWeight, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 8, Short.MAX_VALUE))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
                         .addComponent(proteinSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -301,12 +307,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinScore))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addComponent(ptmSummary))
-                    .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addComponent(proteinEmpai)
+                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(proteinsPanelLayout.createSequentialGroup()
+                                .addGap(46, 46, 46)
+                                .addComponent(ptmSummary))
+                            .addGroup(proteinsPanelLayout.createSequentialGroup()
+                                .addComponent(proteinEmpai)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(proteinNsaf)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinNsaf)))
+                        .addComponent(molecularWeight)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(proteinConfidence)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1004,7 +1014,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void proteinExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportAllActionPerformed
         outputGenerator.getProteinsOutput(this, null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
                 proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
-                proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(),
+                proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), molecularWeight.isSelected(), true, proteinStarred.isSelected(),
                 true, proteinHidden.isSelected());
     }//GEN-LAST:event_proteinExportAllActionPerformed
 
@@ -1480,6 +1490,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel featuresPanel;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JCheckBox molecularWeight;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
     private javax.swing.JLabel peptideDeselectAllLabel;

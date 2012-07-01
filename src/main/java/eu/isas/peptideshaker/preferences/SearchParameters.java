@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class will compile the search options
@@ -59,6 +60,11 @@ public class SearchParameters implements Serializable {
      * The list of spectrum files.
      */
     private ArrayList<String> spectrumFiles = new ArrayList<String>();
+    /**
+     * The list of fraction molecular weights. The key is the fraction file
+     * path.
+     */
+    private HashMap<String, Double> fractionMolecularWeights = new HashMap<String, Double>();
     /**
      * The first kind of ions searched for (typically a, b or c).
      */
@@ -300,34 +306,34 @@ public class SearchParameters implements Serializable {
     public String[] getIons() {
         return ions;
     }
-    
+
     /**
      * Returns the list of forward ions.
-     * 
+     *
      * @return the forwardIons
      */
     public String[] getForwardIons() {
-        
+
         // neeed for backwards compatibility
         if (forwardIons == null) {
             forwardIons = new String[]{"a", "b", "c"};
         }
-        
+
         return forwardIons;
     }
-    
+
     /**
      * Returns the list of rewind ions.
-     * 
+     *
      * @return the rewindIons
      */
     public String[] getRewindIons() {
-        
+
         // neeed for backwards compatibility
         if (rewindIons == null) {
             rewindIons = new String[]{"x", "y", "z"};
         }
-        
+
         return rewindIons;
     }
 
@@ -386,5 +392,25 @@ public class SearchParameters implements Serializable {
         if (rewindIon == null) {
             rewindIon = PeptideFragmentIon.Y_ION;
         }
+    }
+
+    /**
+     * Returns the user provided molecular weights of the fractions. The key is
+     * the fraction file path.
+     *
+     * @return the user provided molecular weights of the fractions
+     */
+    public HashMap<String, Double> getFractionMolecularWeights() {
+        return fractionMolecularWeights;
+    }
+
+    /**
+     * Set the user provided molecular weights of the fractions. The key is the
+     * fraction file path.
+     *
+     * @param fractionMolecularWeights the fractionMolecularWeights to set
+     */
+    public void setFractionMolecularWeights(HashMap<String, Double> fractionMolecularWeights) {
+        this.fractionMolecularWeights = fractionMolecularWeights;
     }
 }

@@ -111,6 +111,8 @@ public class OutputGenerator {
      * output
      * @param aConfidence boolean indicating whether the confidence shall be
      * output
+     * @param aMW boolean indicating whether the molecular weight is to be 
+     * included in the output
      * @param aIncludeHeader boolean indicating whether the header shall be
      * output
      * @param aOnlyStarred boolean indicating whether only starred proteins
@@ -122,7 +124,7 @@ public class OutputGenerator {
      */
     public void getProteinsOutput(JDialog parentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
-            boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
+            boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -140,6 +142,7 @@ public class OutputGenerator {
         final boolean nsaf = aNsaf;
         final boolean score = aScore;
         final boolean confidence = aConfidence;
+        final boolean mw = aMW;
         final boolean includeHeader = aIncludeHeader;
         final boolean onlyStarred = aOnlyStarred;
         final boolean showStar = aShowStar;
@@ -235,6 +238,9 @@ public class OutputGenerator {
                             }
                             if (nsaf) {
                                 writer.write("NSAF" + SEPARATOR);
+                            }
+                            if (mw) {
+                                writer.write("MW (kDa)" + SEPARATOR);
                             }
                             if (score) {
                                 writer.write("Score" + SEPARATOR);
@@ -365,7 +371,10 @@ public class OutputGenerator {
                                                     }
                                                 }
                                             }
-
+                                            if (mw) {
+                                                Double proteinMW = sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight() / 1000;
+                                                writer.write(proteinMW + SEPARATOR);
+                                            }
                                             if (score) {
                                                 writer.write(proteinPSParameter.getProteinScore() + SEPARATOR);
                                             }

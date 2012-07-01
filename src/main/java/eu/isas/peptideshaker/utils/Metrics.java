@@ -70,6 +70,10 @@ public class Metrics implements Serializable {
      * name'_'peptide key'. Values: arraylist of spectrum keys.
      */
     private HashMap<String, ArrayList<String>> fractionPsmMatches;
+    /**
+     * The observed average molecular masses in kDa for each fraction.
+     */
+    private HashMap<String, Double> observedFractionalMasses;
 
     /**
      * Constructor.
@@ -323,5 +327,29 @@ public class Metrics implements Serializable {
         } else {
             return new HashMap<String, ArrayList<String>>();
         }
+    }
+
+    /**
+     * Returns the observed average molecular masses in kDa for each fraction. The key 
+     * is the file path of the fraction.
+     * 
+     * @return the observed average molecular masses for each fraction
+     */
+    public HashMap<String, Double> getObservedFractionalMasses() {
+        if (observedFractionalMasses != null) {
+            return observedFractionalMasses;
+        } else {
+            return new HashMap<String, Double>();
+        }  
+    }
+
+    /**
+     * Set the observed average molecular masses for each fraction in kDa. The key 
+     * is the file path of the fraction.
+     * 
+     * @param observedFractionalMasses the observedFractionalMasses to set
+     */
+    public void setObservedFractionalMasses(HashMap<String, Double> observedFractionalMasses) {
+        this.observedFractionalMasses = observedFractionalMasses;
     }
 }
