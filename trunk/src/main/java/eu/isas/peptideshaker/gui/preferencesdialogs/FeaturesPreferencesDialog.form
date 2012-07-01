@@ -161,6 +161,7 @@
                                           <Component id="proteinStarred" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="proteinHidden" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="ptmSummary" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="molecularWeight" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
                                   </Group>
@@ -192,14 +193,20 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinScore" linkSize="15" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="46" pref="46" max="-2" attributes="0"/>
-                                      <Component id="ptmSummary" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="proteinEmpai" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace min="46" pref="46" max="-2" attributes="0"/>
+                                              <Component id="ptmSummary" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="proteinEmpai" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="proteinNsaf" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="proteinNsaf" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                      <Component id="molecularWeight" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -367,6 +374,13 @@
                     <Component class="javax.swing.JLabel" name="slashLabel1">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="/"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="molecularWeight">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Molecular Weight"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>

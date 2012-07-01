@@ -5,8 +5,6 @@ import com.compomics.util.experiment.identification.Identification;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -34,10 +32,6 @@ public class PeptideFractionTableModel extends DefaultTableModel {
      * A list of ordered file names.
      */
     private ArrayList<String> fileNames = new ArrayList<String>();
-    /**
-     * A map of all fraction names.
-     */
-    private HashMap<String, String> fractionNames = new HashMap<String, String>();
     /**
      * Set to true as soon as the real model is initiated. False means that only 
      * the dummy constructor has been used.
@@ -89,10 +83,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
         for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
             String fileName = Util.getFileName(filePath);
             fileNames.add(fileName);
-            fractionNames.put(fileName, fileName);
         }
-        
-        Collections.sort(fileNames);
     }
 
     /**
@@ -123,7 +114,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
         } else if (column == 1) {
             return "Sequence";
         } else if (column > 1 && column - 2 < fileNames.size()) {
-            return fractionNames.get(fileNames.get(column - 2));
+            return fileNames.get(column - 2);
         } else if (column == fileNames.size() + 2) {
             return "Confidence";
         } else if (column == fileNames.size() + 3) {

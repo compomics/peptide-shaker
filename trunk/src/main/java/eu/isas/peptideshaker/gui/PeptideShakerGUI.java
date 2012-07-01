@@ -5155,11 +5155,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     if (identification.isDB()) {
                         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
                     } else {
+                        
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        
                         int outcome = JOptionPane.showConfirmDialog(PeptideShakerGUI.this,
                                 "The format used to create this project is now obsolete.\n"
                                 + "Would you like to convert the project to the current PeptideShaker format?\n"
                                 + "This operation might take a few minutes, please do not interrupt it.", "Obsolete Format!",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                        
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting project. Please Wait...");
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY);

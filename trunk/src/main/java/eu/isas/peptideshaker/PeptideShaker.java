@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class will be responsible for the identification import and the
@@ -172,7 +173,7 @@ public class PeptideShaker {
         identification.setInMemory(false);
         identification.setAutomatedMemoryManagement(true);
         identification.setIsDB(true); // @TODO: switch back on before committing!
-        
+
         try {
             identification.setDirectory(SERIALIZATION_DIRECTORY); // @TODO: tried replacing this, resulted in a database exception
         } catch (SQLException e) {
@@ -180,7 +181,7 @@ public class PeptideShaker {
             waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
             identification.setIsDB(false);
         }
-        
+
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
 
 
@@ -207,7 +208,7 @@ public class PeptideShaker {
      * @param searchParameters
      * @param annotationPreferences
      * @param idFilter
-     * @param processingPreferences 
+     * @param processingPreferences
      * @throws IllegalArgumentException
      * @throws IOException
      * @throws Exception
@@ -382,7 +383,7 @@ public class PeptideShaker {
 
         waitingHandler.appendReport(report);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
-        waitingHandler.setRunFinished();    
+        waitingHandler.setRunFinished();
     }
 
     /**
@@ -493,7 +494,7 @@ public class PeptideShaker {
      * @param waitingHandler the waiting handler
      * @throws SQLException
      * @throws IOException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException {
         attachProteinProbabilities(waitingHandler);
@@ -504,8 +505,8 @@ public class PeptideShaker {
      *
      * @param progressBar the progress bar
      * @throws SQLException
-     * @throws IOException 
-     * @throws ClassNotFoundException  
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     public void validateIdentifications(JProgressBar progressBar) throws SQLException, IOException, ClassNotFoundException {
 
@@ -1427,6 +1428,7 @@ public class PeptideShaker {
             for (String fractionName : fractionScores.keySet()) {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
+
             identification.addProteinMatchParameter(proteinKey, psParameter);
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
@@ -1449,20 +1451,52 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
 
         PSParameter psParameter = new PSParameter();
-        double proteinProbability;
+        HashMap<String, Double> fractionMW = new HashMap<String, Double>();
+        HashMap<String, Integer> fractionMWCounter = new HashMap<String, Integer>();
+
         for (String proteinKey : identification.getProteinIdentification()) {
+
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            Double proteinMW = sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight();
+
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-            proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
+            double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
             psParameter.setProteinProbability(proteinProbability);
+
             for (String fraction : psParameter.getFractions()) {
                 psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
+
+                // set the fraction molecular weights
+                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > 95) { // @TODO: this limit should not be hardcoded here!!!
+                    if (fractionMW.containsKey(fraction)) {
+                        fractionMW.put(fraction, fractionMW.get(fraction) + proteinMW);
+                        fractionMWCounter.put(fraction, fractionMWCounter.get(fraction) + 1);
+                    } else {
+                        fractionMW.put(fraction, proteinMW);
+                        fractionMWCounter.put(fraction, 1);
+                    }
+                }
             }
+
             identification.updateProteinMatchParameter(proteinKey, psParameter);
             waitingHandler.increaseSecondaryProgressValue();
+
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
+
+        // set the observed fractional molecular weights per fraction
+        Iterator<String> iterator = fractionMW.keySet().iterator();
+
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            Double totalMass = fractionMW.get(key);
+            Double averageMass = totalMass / fractionMWCounter.get(key);
+            fractionMW.put(key, averageMass / 1000); // divide to get kDa
+        }
+
+        metrics.setObservedFractionalMasses(fractionMW);
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }

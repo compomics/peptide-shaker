@@ -9,7 +9,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
@@ -41,10 +40,6 @@ public class ProteinFractionTableModel extends DefaultTableModel {
      * A list of ordered file names.
      */
     private ArrayList<String> fileNames = new ArrayList<String>();
-    /**
-     * A map of all fraction names.
-     */
-    private HashMap<String, String> fractionNames = new HashMap<String, String>();
     /**
      * Set to true as soon as the real model is initiated. False means that only
      * the dummy constructor has been used.
@@ -88,20 +83,16 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         identification = peptideShakerGUI.getIdentification();
         
         if (identification != null) {
-            //proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
-            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null); // show all proteins
+            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
+            //proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null); // show all proteins
         }
         
         fileNames = new ArrayList<String>();
-        fractionNames = new HashMap<String, String>();
         
         for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
             String fileName = Util.getFileName(filePath);
             fileNames.add(fileName);
-            fractionNames.put(fileName, fileName);
         }
-        
-        Collections.sort(fileNames);
     }
 
     /**
@@ -134,7 +125,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         } else if (column == 2) {
             return "Description";
         } else if (column > 2 && column - 3 < fileNames.size()) {
-            return fractionNames.get(fileNames.get(column - 3));
+            return fileNames.get(column - 3);
         } else if (column == fileNames.size() + 3) {
             return "MW";
         } else if (column == fileNames.size() + 4) {
@@ -166,7 +157,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 return description;
             } else if (column > 2 && column - 3 < fileNames.size()) {
                 
-                String fraction = fractionNames.get(fileNames.get(column - 3));
+                String fraction = fileNames.get(column - 3);
                 PSParameter pSParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
                 
