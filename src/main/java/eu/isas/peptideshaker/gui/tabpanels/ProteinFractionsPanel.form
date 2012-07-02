@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
-  <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="proteinTableTypeButtonGroup">
-    </Component>
-    <Component class="javax.swing.ButtonGroup" name="chartTypeButtonGroup">
-    </Component>
-  </NonVisualComponents>
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -544,32 +538,25 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="proteinTableScrollPane" pref="908" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
-                                  <Component id="deltaScoreMinValueJLabel" linkSize="3" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="gradientColorPanel" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="gradientColorMinValueJLabel" linkSize="3" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="deltaScoreMaxValueJLabel" linkSize="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="gradientColorPanel" linkSize="4" min="-2" pref="96" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="gradientColorMaxValueJLabel" linkSize="3" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="jSeparator2" min="-2" pref="12" max="-2" attributes="0"/>
+                                  <Component id="gradientSeparator" min="-2" pref="12" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="barChartRadioButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                  <Component id="heatMapRadioButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="chartTypeComboBox" linkSize="4" min="-2" pref="160" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jSeparator1" min="-2" pref="12" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="confidenceJRadioButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="numberOfPeptidesJRadioButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="numberOfSpectraJRadioButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="intensityJRadioButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="dataTypeComboBox" linkSize="4" min="-2" pref="147" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -579,21 +566,17 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="proteinTableScrollPane" pref="122" max="32767" attributes="0"/>
-                          <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="deltaScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="gradientColorMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                               <Component id="gradientColorPanel" alignment="2" min="-2" pref="17" max="-2" attributes="0"/>
-                              <Component id="deltaScoreMaxValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="barChartRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="heatMapRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="jSeparator2" alignment="2" min="-2" pref="21" max="-2" attributes="0"/>
+                              <Component id="gradientColorMaxValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="gradientSeparator" alignment="2" min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="jSeparator1" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
-                              <Component id="confidenceJRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="numberOfPeptidesJRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="numberOfSpectraJRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="intensityJRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="chartTypeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="dataTypeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       </Group>
@@ -632,92 +615,12 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JRadioButton" name="numberOfSpectraJRadioButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="proteinTableTypeButtonGroup"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="#Spectra"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="numberOfSpectraJRadioButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JRadioButton" name="numberOfPeptidesJRadioButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="proteinTableTypeButtonGroup"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="#Peptides"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="numberOfPeptidesJRadioButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JRadioButton" name="confidenceJRadioButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="proteinTableTypeButtonGroup"/>
-                    </Property>
-                    <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Confidence"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="confidenceJRadioButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JRadioButton" name="intensityJRadioButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="proteinTableTypeButtonGroup"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Intensity"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="intensityJRadioButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JRadioButton" name="barChartRadioButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="chartTypeButtonGroup"/>
-                    </Property>
-                    <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Bar Chart"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="barChartRadioButtonActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JRadioButton" name="heatMapRadioButton">
-                  <Properties>
-                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                      <ComponentRef name="chartTypeButtonGroup"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Heat Map"/>
-                    <Property name="iconTextGap" type="int" value="10"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="heatMapRadioButtonActionPerformed"/>
-                  </Events>
-                </Component>
                 <Component class="javax.swing.JSeparator" name="jSeparator1">
                   <Properties>
                     <Property name="orientation" type="int" value="1"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="deltaScoreMinValueJLabel">
+                <Component class="javax.swing.JLabel" name="gradientColorMinValueJLabel">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="0%"/>
@@ -737,15 +640,43 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
                 </Container>
-                <Component class="javax.swing.JLabel" name="deltaScoreMaxValueJLabel">
+                <Component class="javax.swing.JLabel" name="gradientColorMaxValueJLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="100%"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JSeparator" name="jSeparator2">
+                <Component class="javax.swing.JSeparator" name="gradientSeparator">
                   <Properties>
                     <Property name="orientation" type="int" value="1"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="chartTypeComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="2">
+                        <StringItem index="0" value="Bar Chart"/>
+                        <StringItem index="1" value="Heat Map"/>
+                      </StringArray>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chartTypeComboBoxActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="dataTypeComboBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="4">
+                        <StringItem index="0" value="Confidence"/>
+                        <StringItem index="1" value="#Peptides"/>
+                        <StringItem index="2" value="#Spectra"/>
+                        <StringItem index="3" value="Intensity"/>
+                      </StringArray>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dataTypeComboBoxActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
