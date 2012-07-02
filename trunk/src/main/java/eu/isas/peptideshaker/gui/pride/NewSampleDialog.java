@@ -56,9 +56,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private HashMap<String, String> cellTypeMap;
     /**
-     * The species separator used in the species combobox.
+     * The separator used in the comboboxes.
      */
-    private String speciesSeparator = "------------";
+    private String comboboxSeparator = "------------";
     /**
      * The last valid input for contact name
      */
@@ -162,14 +162,14 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 String[] temp = line.split("\t");
 
                 if (temp[0].equalsIgnoreCase("0000")) {
-                    species.add(speciesSeparator);
-
+                    species.add(comboboxSeparator);
                 } else {
                     species.add(temp[1]);
                     speciesMap.put(temp[1], temp[0]);
                 }
             }
 
+            species.add(comboboxSeparator);
             species.add("Other (Please Add Below)");
             speciesJComboBox.setModel(new DefaultComboBoxModel(species));
             speciesJComboBox.setSelectedIndex(0);
@@ -194,6 +194,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 tissueMap.put(temp[1], temp[0]);
             }
 
+            tissue.add(comboboxSeparator);
             tissue.add("Other (Please Add Below)");
             tissueJComboBox.setModel(new DefaultComboBoxModel(tissue));
             tissueJComboBox.setSelectedIndex(0);
@@ -218,6 +219,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 cellTypeMap.put(temp[1], temp[0]);
             }
 
+            cellType.add(comboboxSeparator);
             cellType.add("Other (Please Add Below)");
             cellTypeJComboBox.setModel(new DefaultComboBoxModel(cellType));
             cellTypeJComboBox.setSelectedIndex(0);
@@ -636,7 +638,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         if (speciesJComboBox.getSelectedIndex() > 0
                 && speciesJComboBox.getSelectedIndex() < speciesJComboBox.getItemCount() - 1) {
 
-            if (!((String) speciesJComboBox.getSelectedItem()).equalsIgnoreCase(speciesSeparator)) {
+            if (!((String) speciesJComboBox.getSelectedItem()).equalsIgnoreCase(comboboxSeparator)) {
                 cvTerms.add(new CvTerm(
                         "NEWT",
                         speciesMap.get((String) speciesJComboBox.getSelectedItem()),
@@ -649,24 +651,28 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         if (tissueJComboBox.getSelectedIndex() > 0
                 && tissueJComboBox.getSelectedIndex() < tissueJComboBox.getItemCount() - 1) {
 
-            cvTerms.add(new CvTerm(
-                    "BTO",
-                    tissueMap.get((String) tissueJComboBox.getSelectedItem()),
-                    (String) tissueJComboBox.getSelectedItem(),
-                    null));
+            if (!((String) tissueJComboBox.getSelectedItem()).equalsIgnoreCase(comboboxSeparator)) {
+                cvTerms.add(new CvTerm(
+                        "BTO",
+                        tissueMap.get((String) tissueJComboBox.getSelectedItem()),
+                        (String) tissueJComboBox.getSelectedItem(),
+                        null));
+            }
         }
 
         // add cell type
         if (cellTypeJComboBox.getSelectedIndex() > 0
                 && cellTypeJComboBox.getSelectedIndex() < cellTypeJComboBox.getItemCount() - 1) {
 
-            cvTerms.add(new CvTerm(
-                    "CL",
-                    cellTypeMap.get((String) cellTypeJComboBox.getSelectedItem()),
-                    (String) cellTypeJComboBox.getSelectedItem(),
-                    null));
+            if (!((String) cellTypeJComboBox.getSelectedItem()).equalsIgnoreCase(comboboxSeparator)) {
+                cvTerms.add(new CvTerm(
+                        "CL",
+                        cellTypeMap.get((String) cellTypeJComboBox.getSelectedItem()),
+                        (String) cellTypeJComboBox.getSelectedItem(),
+                        null));
+            }
         }
-        
+
         // add additional cv terms
         for (int i = 0; i < sampleCvTermsJTable.getRowCount(); i++) {
             cvTerms.add(new CvTerm(
@@ -735,18 +741,18 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * Enables the OK button if a valid sample set is selected.
      */
     private void validateInput() {
-        
+
         String input = sampleNameJTextField.getText();
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in sample name.",
-                    "Forbidden Character", JOptionPane.ERROR_MESSAGE);
+                        "Forbidden Character", JOptionPane.ERROR_MESSAGE);
                 sampleNameJTextField.setText(lastNameInput);
                 return;
             }
         }
         lastNameInput = input;
-        
+
         boolean allValidated = true;
 
         // highlight the fields that have not been filled
@@ -757,10 +763,8 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
             allValidated = false;
         }
 
-        if (speciesJComboBox.getSelectedIndex() > 0
-                && speciesJComboBox.getSelectedIndex() < speciesJComboBox.getItemCount() - 1) {
-
-            if (!((String) speciesJComboBox.getSelectedItem()).equalsIgnoreCase(speciesSeparator)) {
+        if (speciesJComboBox.getSelectedIndex() > 0) {
+            if (!((String) speciesJComboBox.getSelectedItem()).equalsIgnoreCase(comboboxSeparator)) {
                 speciesLabel.setForeground(Color.BLACK);
             } else {
                 speciesLabel.setForeground(Color.RED);
