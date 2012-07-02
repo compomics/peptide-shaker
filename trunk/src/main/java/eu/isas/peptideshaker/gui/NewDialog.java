@@ -668,6 +668,7 @@ public class NewDialog extends javax.swing.JDialog {
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
                 peptideShakerGUI.setFrameTitle(projectNameIdTxt.getText().trim());
+                peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));
                 this.dispose();
             }
         }
