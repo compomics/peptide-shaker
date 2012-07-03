@@ -172,18 +172,9 @@ public class PeptideShaker {
         Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.setInMemory(false);
         identification.setAutomatedMemoryManagement(true);
-        identification.setIsDB(true); // @TODO: switch back on before committing!
-
-        try {
-            identification.setDirectory(SERIALIZATION_DIRECTORY); // @TODO: tried replacing this, resulted in a database exception
-        } catch (SQLException e) {
-            e.printStackTrace();
-            waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
-            identification.setIsDB(false);
-        }
+        identification.setIsDB(true);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
-
 
         if (FileImporter.isCLIMode()) {
             // Needed for command line mode of operation, which requires dynamically setting of the search modification files
@@ -192,10 +183,9 @@ public class PeptideShaker {
                 fileImporter.setUserModificationFile(projectDetails.getUserModificationFile().getCanonicalPath());
             } catch (IOException e) {
                 waitingHandler.appendReport("Error while setting the Modification files for the search.");
-
             }
         }
-
+        
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, processingPreferences);
     }
 

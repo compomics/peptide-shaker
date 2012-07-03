@@ -609,7 +609,6 @@ public class NewDialog extends javax.swing.JDialog {
         if (validateReplicateNumberAndFastaFile()) {
 
             this.setVisible(false);
-
             peptideShakerGUI.clearData();
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
@@ -621,10 +620,10 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.setProjectDetails(getProjectDetails());
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
-            
-            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, 
+
+            WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), 
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true, peptideShakerGUI.getTips(), true);
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
@@ -1002,8 +1001,8 @@ public class NewDialog extends javax.swing.JDialog {
 
     /**
      * Open the ProcessingPreferences dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
         new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences);
@@ -1015,7 +1014,6 @@ public class NewDialog extends javax.swing.JDialog {
             preferencesTxt.setText("A-Score calculation");
         }
     }//GEN-LAST:event_editPreferencesButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -1062,7 +1060,7 @@ public class NewDialog extends javax.swing.JDialog {
     public void updateFilterSettingsField(String text) {
         importFilterTxt.setText(text);
     }
-    
+
     /**
      * Sets the search params field to the given text.
      *
@@ -1167,10 +1165,12 @@ public class NewDialog extends javax.swing.JDialog {
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
+
         peptideShakerGUI.getSearchParameters().setFastaFile(fastaFile);
+
         peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
                 spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(),
-                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(), 
+                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
                 processingPreferences);
     }
 
@@ -1188,19 +1188,19 @@ public class NewDialog extends javax.swing.JDialog {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
             ArrayList<String> searchedMods = new ArrayList<String>();
             String temp = props.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
-            
+
             if (temp != null && !temp.trim().equals("")) {
                 searchedMods = IdentificationParametersReader.parseModificationLine(temp);
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.FIXED_MODIFICATIONS);
-            
+
             if (temp != null && !temp.trim().equals("")) {
                 searchedMods.addAll(IdentificationParametersReader.parseModificationLine(temp));
             }
-            
+
             ArrayList<String> missing = new ArrayList<String>();
-            
+
             for (String name : searchedMods) {
                 if (!ptmFactory.containsPTM(name)) {
                     missing.add(name);
@@ -1218,7 +1218,7 @@ public class NewDialog extends javax.swing.JDialog {
                             searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
                             searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                         }
-                        
+
                         ArrayList<String> conflicts = new ArrayList<String>();
 
                         for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
@@ -1368,13 +1368,13 @@ public class NewDialog extends javax.swing.JDialog {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             }
-            
+
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             importFilterTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.setProcessingPreferences(processingPreferences);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
-            
+
             if (!searchParameters.getEnzyme().enzymeCleaves()) {
                 // create an empty label to put the message in
                 JLabel label = new JLabel();
