@@ -33,6 +33,7 @@ import javax.swing.event.HyperlinkListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -550,6 +551,24 @@ public class FileImporter {
         @Override
         protected Object doInBackground() throws Exception {
 
+            waitingHandler.appendReport("Establishing database connection.");
+
+            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            identification.setIsDB(true);
+
+            try {
+                // @TODO: this should work, but does not...
+//                if (identification != null) {
+//                    identification.close();
+//                }
+
+                identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
+                identification.setIsDB(false);
+            }
+
             for (File idFile : idFiles) {
                 int searchEngine = readerFactory.getSearchEngine(idFile);
                 if (searchEngine == Advocate.XTANDEM) {
@@ -685,7 +704,7 @@ public class FileImporter {
             idReport = false;
             ArrayList<Integer> charges = new ArrayList<Integer>();
             double maxErrorPpm = 0, maxErrorDa = 0;
-            
+
             while (matchIt.hasNext()) {
 
                 SpectrumMatch match = matchIt.next();
@@ -909,7 +928,7 @@ public class FileImporter {
 
     /**
      * Returns whether the FileImporter is working in CLI modus.
-     * 
+     *
      * @return true if the file importer is working in command line mode
      */
     public static boolean isCLIMode() {
@@ -936,8 +955,9 @@ public class FileImporter {
 
     /**
      * Set whether to use the Reduced Memory application logic.
-     * 
-     * @param aReducedMemory set whether to use the Reduced Memory application logic
+     *
+     * @param aReducedMemory set whether to use the Reduced Memory application
+     * logic
      */
     public static void setReducedMemory(boolean aReducedMemory) {
         boolReducedMemory = aReducedMemory;
