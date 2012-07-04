@@ -10,6 +10,8 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
@@ -25,6 +27,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
@@ -628,6 +631,7 @@ public class NewDialog extends javax.swing.JDialog {
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
 
+            progressCounter++; // establishing the database connection
             progressCounter++; // the FASTA file
             progressCounter++; // the peptide to protein map
             progressCounter += 6; // computing probabilities etc
@@ -669,6 +673,17 @@ public class NewDialog extends javax.swing.JDialog {
                 peptideShakerGUI.setFrameTitle(projectNameIdTxt.getText().trim());
                 peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));
                 this.dispose();
+            } else if (waitingDialog.isRunCanceled()) {
+
+                // close the database
+                try {
+                    ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+                    Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+                    identification.close();
+                } catch (SQLException e) {
+                    System.out.println("Failed to close the database!");
+                    e.printStackTrace();
+                }
             }
         }
 }//GEN-LAST:event_openButtonActionPerformed
@@ -1160,7 +1175,7 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Imports identifications form identification files.
+     * Imports identifications from identification files.
      *
      * @param waitingDialog a dialog to display feedback to the user
      */

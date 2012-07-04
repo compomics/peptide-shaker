@@ -408,6 +408,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         // set up the ErrorLog
         setUpLogFile();
+        
+        loadUserPreferences();
 
         // add desktop shortcut?
         if (!getJarFilePath().equalsIgnoreCase(".")
@@ -429,8 +431,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 addShortcutAtDeskTop();
             }
         }
-
-        loadUserPreferences();
 
         // set the font color for the titlted borders, looks better than the default black
         UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
@@ -2947,6 +2947,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Loads the user preferences.
      */
     private void loadUserPreferences() {
+
         try {
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
         } catch (Exception e) {
@@ -4246,7 +4247,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         }, "ProgressDialog").start();
 
-        new Thread("CloseThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
@@ -4263,6 +4264,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         sequenceFactory.closeFile();
                         saveUserPreferences();
                     }
+                    
+                    // clear the content as well, in order to not get conflicts with the GUI and database
+                    clearData();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -4280,10 +4284,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         e.printStackTrace();
                         catchException(e);
                     }
+                    
                     System.exit(0);
                 }
             }
-        }.start();
+        });
     }
 
     /**
@@ -4803,21 +4808,33 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             public void run() {
 
                 try {
-                    // reset enzymes, ptms and preferences. Close any open connection to an identification database
+                    // reset enzymes, ptms and preferences
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
+                    
+                    // close any open connection to an identification database
                     if (identification != null) {
                         identification.close();
                     }
 
                     File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
-                    File destinationFile, destinationFolder, matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+                    File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+                    
+                    // empty the existing files in the matches folder
                     for (File file : matchFolder.listFiles()) {
                         if (file.isDirectory()) {
-                            Util.deleteDir(file);
+                            boolean deleted = Util.deleteDir(file);
+                            
+                            if (!deleted) {
+                                System.out.println("Failed to delete folder: " + file.getPath());
+                            }
                         } else {
-                            file.delete();
+                            boolean deleted = file.delete();
+                            
+                            if (!deleted) {
+                                System.out.println("Failed to delete file: " + file.getPath());
+                            }
                         }
                     }
 
@@ -4838,8 +4855,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         ArchiveEntry archiveEntry;
 
                         while ((archiveEntry = tarInput.getNextEntry()) != null) {
-                            destinationFile = new File(archiveEntry.getName());
-                            destinationFolder = destinationFile.getParentFile();
+                            File destinationFile = new File(archiveEntry.getName());
+                            File destinationFolder = destinationFile.getParentFile();
 
                             if (!destinationFolder.exists()) {
                                 destinationFolder.mkdirs();
@@ -5153,7 +5170,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (identification.isDB()) {
-                        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
+                        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false);
                     } else {
                         
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -5725,7 +5742,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
 
-        identification.emptyCache(progressDialog);
+        identification.emptyCache(progressDialog); // @TODO: is this really needed? aren't the matches already in the database at this point?
         identification.close();
 
         // transfer all files in the match directory
@@ -5734,8 +5751,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
             ExperimentIO.save(experimentFile, experiment);
         }
-
-        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
+        
+        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false);
 
         // tar everything in the current cps file file
         if (!progressDialog.isRunCanceled()) {

@@ -94,7 +94,7 @@ public class PeptideShaker {
     /**
      * The location of the folder used for serialization of matches.
      */
-    public final static String SERIALIZATION_DIRECTORY = "resources/matches"; //@TODO I think we talked about changing that but can't remember why
+    public final static String SERIALIZATION_DIRECTORY = "resources/matches";
     /**
      * The name of the serialized experiment
      */
