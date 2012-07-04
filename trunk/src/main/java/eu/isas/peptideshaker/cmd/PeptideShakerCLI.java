@@ -169,13 +169,12 @@ public class PeptideShakerCLI implements Callable {
         processingPreferences.estimateAScore(iCLIInputBean.estimateAScore());
         peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, processingPreferences);
 
-        // Creates a dummy IdentificationFeaturesGenerator instnace.
+        // Creates a dummy IdentificationFeaturesGenerator instance
         IdentificationFeaturesGenerator lIdentificationFeaturesGenerator = new IdentificationFeaturesGenerator(null);
 
         // Export the PeptideShaker project into a CSV file
         CsvExporter exporter = new CsvExporter(experiment, sample, 1, searchParameters.getEnzyme(), lIdentificationFeaturesGenerator);
         exporter.exportResults(null, iCLIInputBean.getOutput()); //@TODO you might want to use other kind of output
-
 
         // Finished!
         System.out.println("finished PeptideShaker-CLI");

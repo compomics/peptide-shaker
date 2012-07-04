@@ -557,17 +557,14 @@ public class FileImporter {
             identification.setIsDB(true);
 
             try {
-                // @TODO: this should work, but does not...
-//                if (identification != null) {
-//                    identification.close();
-//                }
-
-                identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY);
+                identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, true);
             } catch (SQLException e) {
                 e.printStackTrace();
                 waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
                 identification.setIsDB(false);
             }
+            
+            waitingHandler.increaseProgressValue();
 
             for (File idFile : idFiles) {
                 int searchEngine = readerFactory.getSearchEngine(idFile);
