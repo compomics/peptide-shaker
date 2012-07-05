@@ -58,12 +58,17 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="searchJButton" min="-2" pref="250" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="gettingStartedJButton" min="-2" pref="250" max="-2" attributes="1"/>
+                                          <Component id="quantifyJButton" min="-2" pref="250" max="-2" attributes="1"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="newJButton" min="-2" pref="250" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="openJButton" min="-2" pref="250" max="-2" attributes="1"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="reshakeJButton" min="-2" pref="250" max="-2" attributes="0"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="gettingStartedJButton1" min="-2" pref="250" max="-2" attributes="1"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -98,9 +103,14 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="searchJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="gettingStartedJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="quantifyJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="reshakeJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="gettingStartedJButton1" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="recentProjectsLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="0" max="-2" attributes="0"/>
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
@@ -232,24 +242,25 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="gettingStartedJButton">
+        <Component class="javax.swing.JButton" name="quantifyJButton">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
               <FontInfo relative="true">
-                <Font bold="true" component="gettingStartedJButton" property="font" relativeSize="true" size="3"/>
+                <Font bold="true" component="quantifyJButton" property="font" relativeSize="true" size="3"/>
               </FontInfo>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help-medium-shadow.png"/>
+              <Image iconType="3" name="/icons/reporter_logo.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Getting Started"/>
-            <Property name="toolTipText" type="java.lang.String" value="Open the Getting Started tutorial"/>
+            <Property name="text" type="java.lang.String" value="Quantify"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Quantify your proteins using reporter ions.&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="iconTextGap" type="int" value="20"/>
+            <Property name="iconTextGap" type="int" value="11"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gettingStartedJButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="quantifyJButtonActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="recentProjectsLabel">
@@ -270,6 +281,47 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="recentProjectsLabelMouseClicked"/>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="recentProjectsLabelMouseEntered"/>
             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="recentProjectsLabelMouseExited"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="reshakeJButton">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+              <FontInfo relative="true">
+                <Font bold="true" component="reshakeJButton" property="font" relativeSize="true" size="3"/>
+              </FontInfo>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/relims_logo.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Reshake"/>
+            <Property name="toolTipText" type="java.lang.String" value="Reanalyze a PRIDE or ms-lims experiment."/>
+            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusPainted" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="iconTextGap" type="int" value="23"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reshakeJButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="gettingStartedJButton1">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+              <FontInfo relative="true">
+                <Font bold="true" component="gettingStartedJButton1" property="font" relativeSize="true" size="3"/>
+              </FontInfo>
+            </Property>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help-medium-shadow.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Getting Started"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the Getting Started tutorial"/>
+            <Property name="focusPainted" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="2"/>
+            <Property name="iconTextGap" type="int" value="20"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gettingStartedJButton1ActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

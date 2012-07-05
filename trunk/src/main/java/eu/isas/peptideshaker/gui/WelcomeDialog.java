@@ -60,8 +60,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
         isasButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         searchJButton = new javax.swing.JButton();
-        gettingStartedJButton = new javax.swing.JButton();
+        quantifyJButton = new javax.swing.JButton();
         recentProjectsLabel = new javax.swing.JLabel();
+        reshakeJButton = new javax.swing.JButton();
+        gettingStartedJButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Welcome to PeptideShaker");
@@ -165,16 +167,17 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        gettingStartedJButton.setFont(gettingStartedJButton.getFont().deriveFont(gettingStartedJButton.getFont().getStyle() | java.awt.Font.BOLD, gettingStartedJButton.getFont().getSize()+3));
-        gettingStartedJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help-medium-shadow.png"))); // NOI18N
-        gettingStartedJButton.setText("Getting Started");
-        gettingStartedJButton.setToolTipText("Open the Getting Started tutorial");
-        gettingStartedJButton.setFocusPainted(false);
-        gettingStartedJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        gettingStartedJButton.setIconTextGap(20);
-        gettingStartedJButton.addActionListener(new java.awt.event.ActionListener() {
+        quantifyJButton.setFont(quantifyJButton.getFont().deriveFont(quantifyJButton.getFont().getStyle() | java.awt.Font.BOLD, quantifyJButton.getFont().getSize()+3));
+        quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
+        quantifyJButton.setText("Quantify");
+        quantifyJButton.setToolTipText("<html>\nQuantify your proteins using reporter ions.<br>\n(Coming soon...)\n</html>");
+        quantifyJButton.setEnabled(false);
+        quantifyJButton.setFocusPainted(false);
+        quantifyJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        quantifyJButton.setIconTextGap(11);
+        quantifyJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gettingStartedJButtonActionPerformed(evt);
+                quantifyJButtonActionPerformed(evt);
             }
         });
 
@@ -195,6 +198,33 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
+        reshakeJButton.setFont(reshakeJButton.getFont().deriveFont(reshakeJButton.getFont().getStyle() | java.awt.Font.BOLD, reshakeJButton.getFont().getSize()+3));
+        reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
+        reshakeJButton.setText("Reshake");
+        reshakeJButton.setToolTipText("Reanalyze a PRIDE or ms-lims experiment.");
+        reshakeJButton.setEnabled(false);
+        reshakeJButton.setFocusPainted(false);
+        reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        reshakeJButton.setIconTextGap(23);
+        reshakeJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reshakeJButtonActionPerformed(evt);
+            }
+        });
+
+        gettingStartedJButton1.setFont(gettingStartedJButton1.getFont().deriveFont(gettingStartedJButton1.getFont().getStyle() | java.awt.Font.BOLD, gettingStartedJButton1.getFont().getSize()+3));
+        gettingStartedJButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help-medium-shadow.png"))); // NOI18N
+        gettingStartedJButton1.setText("Getting Started");
+        gettingStartedJButton1.setToolTipText("Open the Getting Started tutorial");
+        gettingStartedJButton1.setFocusPainted(false);
+        gettingStartedJButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        gettingStartedJButton1.setIconTextGap(20);
+        gettingStartedJButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gettingStartedJButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -212,11 +242,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
                                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                                         .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(gettingStartedJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(quantifyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                                         .addComponent(newJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(openJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(openJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                                        .addComponent(reshakeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(backgroundPanelLayout.createSequentialGroup()
                                 .addGap(31, 31, 31)
                                 .addComponent(compomicsButton)
@@ -240,8 +274,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(gettingStartedJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(quantifyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(reshakeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -433,13 +471,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_searchJButtonActionPerformed
 
     /**
-     * Open the Getting Started tutorial.
+     * Start Reporter.
      *
      * @param evt
      */
-    private void gettingStartedJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedJButtonActionPerformed
-        new GettingStartedDialog(peptideShakerGUI, true);
-    }//GEN-LAST:event_gettingStartedJButtonActionPerformed
+    private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
+        // @TODO: implement me!!
+    }//GEN-LAST:event_quantifyJButtonActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -469,16 +507,37 @@ public class WelcomeDialog extends javax.swing.JDialog {
         peptideShakerGUI.loadRecentProjectsList(popupMenu, this);
         popupMenu.show(recentProjectsLabel, evt.getX(), evt.getY());
     }//GEN-LAST:event_recentProjectsLabelMouseClicked
+
+    /**
+     * Open Relims.
+     * 
+     * @param evt 
+     */
+    private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
+        // @TODO: implement me!!
+    }//GEN-LAST:event_reshakeJButtonActionPerformed
+
+    /**
+     * Open the Getting Started tutorial.
+     *
+     * @param evt
+     */
+    private void gettingStartedJButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedJButton1ActionPerformed
+        new GettingStartedDialog(peptideShakerGUI, true);
+    }//GEN-LAST:event_gettingStartedJButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton compomicsButton;
-    private javax.swing.JButton gettingStartedJButton;
+    private javax.swing.JButton gettingStartedJButton1;
     private javax.swing.JButton isasButton;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton newJButton;
     private javax.swing.JButton openJButton;
     private javax.swing.JButton probeButton;
+    private javax.swing.JButton quantifyJButton;
     private javax.swing.JLabel recentProjectsLabel;
+    private javax.swing.JButton reshakeJButton;
     private javax.swing.JButton searchJButton;
     // End of variables declaration//GEN-END:variables
 }
