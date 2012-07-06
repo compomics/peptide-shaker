@@ -1191,6 +1191,9 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     conversionCompleted = true;
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
+                    progressDialog.setRunCanceled();
+                    progressDialog.dispose();
+                    return;
                 }
 
                 // close the progress dialog

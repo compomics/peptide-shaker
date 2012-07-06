@@ -64,9 +64,9 @@ public class IdFilter implements Serializable {
     public IdFilter() {
         minPepLength = 6;
         maxPepLength = 30;
-        mascotMaxEvalue = 10;
-        omssaMaxEvalue = 10;
-        xtandemMaxEvalue = 10;
+        mascotMaxEvalue = 100;
+        omssaMaxEvalue = 100;
+        xtandemMaxEvalue = 100;
         maxMassDeviation = 10;
         isPpm = true;
         unknownPtm = true;
@@ -149,7 +149,7 @@ public class IdFilter implements Serializable {
 
         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
         
-        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation * assumption.getIdentificationCharge().value && maxMassDeviation > 0) {
+        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
             return false;
         }
 
