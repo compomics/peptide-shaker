@@ -10,7 +10,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
-import eu.isas.peptideshaker.gui.FractionOrderDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -27,7 +26,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -150,10 +148,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         peptideTableScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, peptideCorner);
 
         addHeatMapGradientColors();
-        
+
         chartTypeComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         dataTypeComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        
+
         gradientColorPanel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
         gradientColorMinValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
         gradientColorMaxValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
@@ -341,8 +339,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     public void displayResults() {
 
-        new FractionOrderDialog(peptideShakerGUI, true);
-
         progressDialog = new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -381,13 +377,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     proteinTable.setModel(proteinTableModel);
                 }
 
-
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
                         DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-                        dm.fireTableDataChanged();
+                        dm.fireTableStructureChanged();
                         updateSelection();
                         proteinTable.requestFocus();
 
@@ -430,7 +425,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 peptideTable.setModel(peptideTableModel);
             }
 
-            ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
+            ((DefaultTableModel) peptideTable.getModel()).fireTableStructureChanged();
             setPeptideTableProperties();
             setCoverageTableProperties();
             showSparkLines(peptideShakerGUI.showSparklines());
@@ -472,7 +467,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 fileNames.add(fileName);
             }
 
-            Collections.sort(fileNames);
             PSParameter pSParameter = new PSParameter();
             DefaultCategoryDataset peptidePlotDataset = new DefaultCategoryDataset();
 
@@ -717,7 +711,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             ArrayList<String> spectrumFiles = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
 
             for (int i = 0; i < spectrumFiles.size(); i++) {
-                Double mw = molecularWeights.get(spectrumFiles.get(i));
+
+                Double mw = null;
+
+                if (molecularWeights != null) {
+                    mw = molecularWeights.get(spectrumFiles.get(i));
+                }
+
                 mwPlotDataset.addValue(mw, "Expected MW", "" + (i + 1));
                 mwPlotDataset.addValue(peptideShakerGUI.getMetrics().getObservedFractionalMasses().get(Util.getFileName(spectrumFiles.get(i))), "Observed MW", "" + (i + 1));
             }
@@ -1752,7 +1752,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             peptideTable.revalidate();
             peptideTable.repaint();
         }
-        
+
         gradientColorPanel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
         gradientColorMinValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
         gradientColorMaxValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
@@ -1774,7 +1774,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             peptideTable.repaint();
         }
     }//GEN-LAST:event_dataTypeComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox chartTypeComboBox;
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
@@ -1817,7 +1816,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Returns true if protein confidence is selected as the data type.
-     * 
+     *
      * @return true if protein confidence is selected as the data type
      */
     public boolean isProteinConfidenceSelected() {
@@ -1826,7 +1825,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Returns true if peptide count is selected as the data type.
-     * 
+     *
      * @return true if peptide count is selected as the data type
      */
     public boolean isProteinPeptideCountSelected() {
@@ -1835,16 +1834,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Returns true if spectrum count is selected as the data type.
-     * 
+     *
      * @return true if spectrum count is selected as the data type
      */
     public boolean isProteinSpectumCountSelected() {
         return dataTypeComboBox.getSelectedIndex() == 2;
     }
-    
+
     /**
      * Returns true if intensity is selected as the data type.
-     * 
+     *
      * @return true if intensityis selected as the data type
      */
     public boolean isIntensitySelected() {

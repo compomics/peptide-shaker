@@ -15,7 +15,7 @@ import javax.swing.table.JTableHeader;
  *
  * @author Harald Barsnes
  */
-public class FractionOrderDialog extends javax.swing.JDialog {
+public class FractionDetailsDialog extends javax.swing.JDialog {
 
     /**
      * The PeptideShakerGUI parent.
@@ -31,12 +31,12 @@ public class FractionOrderDialog extends javax.swing.JDialog {
     private HashMap<String, String> spectrumFileNameMap;
 
     /**
-     * Creates a new FractionOrderDialog.
+     * Creates a new FractionDetailsDialog.
      *
      * @param peptideShakerGUI
      * @param modal
      */
-    public FractionOrderDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
+    public FractionDetailsDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         initComponents();
 
@@ -164,10 +164,10 @@ public class FractionOrderDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        fractionTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        fractionTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         fractionTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fractionTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fractionTableMouseReleased(evt);
             }
         });
         fractionTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -184,6 +184,7 @@ public class FractionOrderDialog extends javax.swing.JDialog {
         moveUpButton.setToolTipText("Move Up");
         moveUpButton.setBorderPainted(false);
         moveUpButton.setContentAreaFilled(false);
+        moveUpButton.setEnabled(false);
         moveUpButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrowUp.png"))); // NOI18N
         moveUpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -195,6 +196,7 @@ public class FractionOrderDialog extends javax.swing.JDialog {
         moveTopButton.setToolTipText("Move to Top");
         moveTopButton.setBorderPainted(false);
         moveTopButton.setContentAreaFilled(false);
+        moveTopButton.setEnabled(false);
         moveTopButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrowUpTop.png"))); // NOI18N
         moveTopButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -206,6 +208,7 @@ public class FractionOrderDialog extends javax.swing.JDialog {
         moveDownButton.setToolTipText("Move Down");
         moveDownButton.setBorderPainted(false);
         moveDownButton.setContentAreaFilled(false);
+        moveDownButton.setEnabled(false);
         moveDownButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrowDown.png"))); // NOI18N
         moveDownButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -217,6 +220,7 @@ public class FractionOrderDialog extends javax.swing.JDialog {
         moveBottomButton.setToolTipText("Move to Bottom");
         moveBottomButton.setBorderPainted(false);
         moveBottomButton.setContentAreaFilled(false);
+        moveBottomButton.setEnabled(false);
         moveBottomButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrowDownBottom.png"))); // NOI18N
         moveBottomButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -352,15 +356,14 @@ public class FractionOrderDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void moveTopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveTopButtonActionPerformed
+        int[] selectedRows = fractionTable.getSelectedRows();
 
-        int selectedRow = fractionTable.getSelectedRow();
-
-        if (selectedRow != -1 && selectedRow > 0) {
+        if (selectedRows.length > 0 && selectedRows[0] > 0) {
             DefaultTableModel model = ((DefaultTableModel) fractionTable.getModel());
-            model.moveRow(selectedRow, selectedRow, 0);
-            fractionTable.setRowSelectionInterval(0, 0);
+            model.moveRow(selectedRows[0], selectedRows[selectedRows.length - 1], 0);
+            fractionTable.setRowSelectionInterval(0, selectedRows.length - 1);
             resetTableIndexes();
-            fractionTableMouseClicked(null);
+            fractionTableMouseReleased(null);
         }
     }//GEN-LAST:event_moveTopButtonActionPerformed
 
@@ -370,14 +373,14 @@ public class FractionOrderDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void moveUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpButtonActionPerformed
-        int selectedRow = fractionTable.getSelectedRow();
+        int[] selectedRows = fractionTable.getSelectedRows();
 
-        if (selectedRow != -1 && selectedRow > 0) {
+        if (selectedRows.length > 0 && selectedRows[0] > 0) {
             DefaultTableModel model = ((DefaultTableModel) fractionTable.getModel());
-            model.moveRow(selectedRow, selectedRow, selectedRow - 1);
-            fractionTable.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
+            model.moveRow(selectedRows[0], selectedRows[selectedRows.length - 1], selectedRows[0] - 1);
+            fractionTable.setRowSelectionInterval(selectedRows[0] - 1, selectedRows[0] - 1 + selectedRows.length - 1);
             resetTableIndexes();
-            fractionTableMouseClicked(null);
+            fractionTableMouseReleased(null);
         }
     }//GEN-LAST:event_moveUpButtonActionPerformed
 
@@ -387,14 +390,14 @@ public class FractionOrderDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void moveDownButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownButtonActionPerformed
-        int selectedRow = fractionTable.getSelectedRow();
+        int[] selectedRows = fractionTable.getSelectedRows();
 
-        if (selectedRow != -1 && selectedRow < fractionTable.getRowCount() - 1) {
+        if (selectedRows.length > 0 && selectedRows[selectedRows.length - 1] < fractionTable.getRowCount() - 1) {
             DefaultTableModel model = ((DefaultTableModel) fractionTable.getModel());
-            model.moveRow(selectedRow, selectedRow, selectedRow + 1);
-            fractionTable.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
+            model.moveRow(selectedRows[0], selectedRows[selectedRows.length - 1], selectedRows[0] + 1);
+            fractionTable.setRowSelectionInterval(selectedRows[0] + 1, selectedRows[0] + selectedRows.length);
             resetTableIndexes();
-            fractionTableMouseClicked(null);
+            fractionTableMouseReleased(null);
         }
     }//GEN-LAST:event_moveDownButtonActionPerformed
 
@@ -404,38 +407,25 @@ public class FractionOrderDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void moveBottomButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveBottomButtonActionPerformed
-        int selectedRow = fractionTable.getSelectedRow();
+        int[] selectedRows = fractionTable.getSelectedRows();
 
-        if (selectedRow != -1 && selectedRow < fractionTable.getRowCount() - 1) {
+        if (selectedRows.length > 0 && selectedRows[selectedRows.length - 1] < fractionTable.getRowCount() - 1) {
             DefaultTableModel model = ((DefaultTableModel) fractionTable.getModel());
-            model.moveRow(selectedRow, selectedRow, fractionTable.getRowCount() - 1);
-            fractionTable.setRowSelectionInterval(fractionTable.getRowCount() - 1, fractionTable.getRowCount() - 1);
+            model.moveRow(selectedRows[0], selectedRows[selectedRows.length - 1], fractionTable.getRowCount() - selectedRows.length);
+            fractionTable.setRowSelectionInterval(fractionTable.getRowCount() - selectedRows.length, fractionTable.getRowCount() - 1);
             resetTableIndexes();
-            fractionTableMouseClicked(null);
+            fractionTableMouseReleased(null);
         }
     }//GEN-LAST:event_moveBottomButtonActionPerformed
 
-    /**
-     * Enable/disable the move options based on which row that is selected.
-     *
-     * @param evt
-     */
-    private void fractionTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fractionTableMouseClicked
-        int selectedRow = fractionTable.getSelectedRow();
-
-        moveUpButton.setEnabled(selectedRow != 0);
-        moveTopButton.setEnabled(selectedRow != 0);
-        moveDownButton.setEnabled(selectedRow != fractionTable.getRowCount() - 1);
-        moveBottomButton.setEnabled(selectedRow != fractionTable.getRowCount() - 1);
-    }//GEN-LAST:event_fractionTableMouseClicked
-
+    
     /**
      * Enable/disable the move options based on which row that is selected.
      *
      * @param evt
      */
     private void fractionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fractionTableKeyReleased
-        fractionTableMouseClicked(null);
+        fractionTableMouseReleased(null);
     }//GEN-LAST:event_fractionTableKeyReleased
 
     /**
@@ -455,10 +445,38 @@ public class FractionOrderDialog extends javax.swing.JDialog {
             molecularWeights.put(filePath, mw);
         }
 
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+
+        if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX) {
+            peptideShakerGUI.getProteinFractionsPanel().displayResults();
+        }
+
         peptideShakerGUI.getSearchParameters().setSpectrumFiles(spectrumFiles);
         peptideShakerGUI.getSearchParameters().setFractionMolecularWeights(molecularWeights);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
+
+    /**
+     * Enable/disable the move options based on which rows that are selected.
+     *
+     * @param evt
+     */
+    private void fractionTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fractionTableMouseReleased
+        int selectedRows[] = fractionTable.getSelectedRows();
+
+        if (selectedRows.length > 0) {
+            moveUpButton.setEnabled(selectedRows[0] > 0);
+            moveTopButton.setEnabled(selectedRows[0] > 0);
+            moveDownButton.setEnabled(selectedRows[selectedRows.length - 1] < fractionTable.getRowCount() - 1);
+            moveBottomButton.setEnabled(selectedRows[selectedRows.length - 1] < fractionTable.getRowCount() - 1);
+        } else {
+            moveUpButton.setEnabled(false);
+            moveTopButton.setEnabled(false);
+            moveDownButton.setEnabled(false);
+            moveBottomButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_fractionTableMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
@@ -482,5 +500,26 @@ public class FractionOrderDialog extends javax.swing.JDialog {
         for (int i = 0; i < fractionTable.getRowCount(); i++) {
             fractionTable.setValueAt((i + 1), i, 0);
         }
+    }
+
+    /**
+     * Moves all rows contained between the positions start and end to the
+     * position specified by dest.
+     *
+     * @param model
+     * @param start
+     * @param end
+     * @param dest
+     */
+    public static void moveRows(DefaultTableModel model, int start, int end, int dest) {
+        int count = end - start;
+        if (count <= 0) {
+            return;
+        }
+        if (dest > start) {
+            dest = Math.max(start, dest - count);
+        }
+        end--;
+        model.moveRow(start, end, dest);
     }
 }
