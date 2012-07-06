@@ -50,6 +50,10 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jSeparator1" max="32767" attributes="1"/>
                       </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="recentProjectsLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
@@ -75,17 +79,13 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                                   <Component id="compomicsButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="probeButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                   <Component id="isasButton" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          <Component id="recentProjectsLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="10" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -254,7 +254,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Quantify"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Quantify your proteins using reporter ions.&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="11"/>
@@ -295,7 +294,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Reshake"/>
             <Property name="toolTipText" type="java.lang.String" value="Reanalyze a PRIDE or ms-lims experiment."/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="23"/>

@@ -647,6 +647,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         processingParametersMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
+        fractionDetailsJMenuItem = new javax.swing.JMenuItem();
         preferencesMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
@@ -1205,6 +1206,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         editMenu.add(annotationPreferencesMenu);
+
+        fractionDetailsJMenuItem.setText("Fraction Details");
+        fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fractionDetailsJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(fractionDetailsJMenuItem);
 
         preferencesMenuItem.setMnemonic('P');
         preferencesMenuItem.setText("Preferences");
@@ -2611,6 +2620,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_rewindIonsDeNovoCheckBoxMenuItemActionPerformed
 
     /**
+     * Open the fraction details dialog.
+     * 
+     * @param evt 
+     */
+    private void fractionDetailsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionDetailsJMenuItemActionPerformed
+        new FractionDetailsDialog(this, true);
+    }//GEN-LAST:event_fractionDetailsJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2744,6 +2762,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JCheckBoxMenuItem forwardIonsDeNovoCheckBoxMenuItem;
+    private javax.swing.JMenuItem fractionDetailsJMenuItem;
     private javax.swing.JMenuItem gettingStartedMenuItem;
     private javax.swing.JPanel goJPanel;
     private javax.swing.JPanel gradientPanel;

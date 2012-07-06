@@ -547,6 +547,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="annotationPreferencesMenuActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="fractionDetailsJMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Fraction Details"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fractionDetailsJMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="preferencesMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="80"/>

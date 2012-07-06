@@ -171,7 +171,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
         quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
         quantifyJButton.setText("Quantify");
         quantifyJButton.setToolTipText("<html>\nQuantify your proteins using reporter ions.<br>\n(Coming soon...)\n</html>");
-        quantifyJButton.setEnabled(false);
         quantifyJButton.setFocusPainted(false);
         quantifyJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         quantifyJButton.setIconTextGap(11);
@@ -202,7 +201,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
         reshakeJButton.setText("Reshake");
         reshakeJButton.setToolTipText("Reanalyze a PRIDE or ms-lims experiment.");
-        reshakeJButton.setEnabled(false);
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         reshakeJButton.setIconTextGap(23);
@@ -234,6 +232,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jSeparator1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(backgroundPanelLayout.createSequentialGroup()
@@ -254,14 +255,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             .addGroup(backgroundPanelLayout.createSequentialGroup()
                                 .addGap(31, 31, 31)
                                 .addComponent(compomicsButton)
-                                .addGap(2, 2, 2)
+                                .addGap(18, 18, 18)
                                 .addComponent(probeButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(10, 10, 10)
                                 .addComponent(isasButton)))
-                        .addGap(21, 21, 21))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 10, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
