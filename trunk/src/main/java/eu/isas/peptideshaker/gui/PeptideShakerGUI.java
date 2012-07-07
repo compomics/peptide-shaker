@@ -47,7 +47,8 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
-import eu.isas.peptideshaker.SearchGUIWrapper;
+import eu.isas.peptideshaker.ToolsWrapper;
+import eu.isas.peptideshaker.ToolsWrapper.ToolType;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
@@ -408,7 +409,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         // set up the ErrorLog
         setUpLogFile();
-        
+
         loadUserPreferences();
 
         // add desktop shortcut?
@@ -632,6 +633,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         newJMenuItem = new javax.swing.JMenuItem();
         startSearchGuiMenuItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
+        reshakeMenuItem = new javax.swing.JMenuItem();
+        quantifyMenuItem = new javax.swing.JMenuItem();
+        jSeparator18 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -655,7 +659,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         findJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
         jSeparator15 = new javax.swing.JPopupMenu.Separator();
+        toolsMenu = new javax.swing.JMenu();
         searchGuiPreferencesJMenuItem = new javax.swing.JMenuItem();
+        reporterPreferencesJMenuItem = new javax.swing.JMenuItem();
+        relimsPreferencesJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
@@ -1107,6 +1114,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         fileJMenu.add(startSearchGuiMenuItem);
         fileJMenu.add(jSeparator8);
 
+        reshakeMenuItem.setText("Reshake...");
+        reshakeMenuItem.setToolTipText("Re-analyze public PRIDE projects");
+        reshakeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reshakeMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(reshakeMenuItem);
+
+        quantifyMenuItem.setText("Quantify...");
+        quantifyMenuItem.setToolTipText("Quantify based on reporter ions.");
+        quantifyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quantifyMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(quantifyMenuItem);
+        fileJMenu.add(jSeparator18);
+
         openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         openJMenuItem.setMnemonic('O');
         openJMenuItem.setText("Open Project...");
@@ -1260,13 +1286,33 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         editMenu.add(starHideJMenuItem);
         editMenu.add(jSeparator15);
 
-        searchGuiPreferencesJMenuItem.setText("SearchGUI Settings");
+        toolsMenu.setText("Tools");
+
+        searchGuiPreferencesJMenuItem.setText("SearchGUI");
         searchGuiPreferencesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchGuiPreferencesJMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(searchGuiPreferencesJMenuItem);
+        toolsMenu.add(searchGuiPreferencesJMenuItem);
+
+        reporterPreferencesJMenuItem.setText("Reporter");
+        reporterPreferencesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reporterPreferencesJMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(reporterPreferencesJMenuItem);
+
+        relimsPreferencesJMenuItem.setText("Relims");
+        relimsPreferencesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relimsPreferencesJMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(relimsPreferencesJMenuItem);
+
+        editMenu.add(toolsMenu);
 
         menuBar.add(editMenu);
 
@@ -2589,7 +2635,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void startSearchGuiMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSearchGuiMenuItemActionPerformed
-        startSearchGui();
+        startTool(ToolType.SEARCHGUI);
     }//GEN-LAST:event_startSearchGuiMenuItemActionPerformed
 
     /**
@@ -2621,12 +2667,48 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Open the fraction details dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void fractionDetailsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionDetailsJMenuItemActionPerformed
         new FractionDetailsDialog(this, true);
     }//GEN-LAST:event_fractionDetailsJMenuItemActionPerformed
+
+    /**
+     * Open the RelimsSetupDialog were the user can setup the Relims link.
+     *
+     * @param evt
+     */
+    private void relimsPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relimsPreferencesJMenuItemActionPerformed
+        new RelimsSetupDialog(this, true);
+    }//GEN-LAST:event_relimsPreferencesJMenuItemActionPerformed
+
+    /**
+     * Start Relims.
+     *
+     * @param evt
+     */
+    private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
+        startTool(ToolType.RELIMS);
+    }//GEN-LAST:event_reshakeMenuItemActionPerformed
+
+    /**
+     * Start Reporter.
+     *
+     * @param evt
+     */
+    private void quantifyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyMenuItemActionPerformed
+        startTool(ToolType.REPORTER);
+    }//GEN-LAST:event_quantifyMenuItemActionPerformed
+
+    /**
+     * Open the ReporterSetupDialog were the user can setup the Relims link.
+     *
+     * @param evt
+     */
+    private void reporterPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reporterPreferencesJMenuItemActionPerformed
+        new ReporterSetupDialog(this, true);
+    }//GEN-LAST:event_reporterPreferencesJMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -2785,6 +2867,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JPopupMenu.Separator jSeparator15;
     private javax.swing.JPopupMenu.Separator jSeparator16;
     private javax.swing.JPopupMenu.Separator jSeparator17;
+    private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -2815,7 +2898,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
+    private javax.swing.JMenuItem quantifyMenuItem;
+    private javax.swing.JMenuItem relimsPreferencesJMenuItem;
     private javax.swing.JCheckBoxMenuItem reporterIonsCheckMenu;
+    private javax.swing.JMenuItem reporterPreferencesJMenuItem;
+    private javax.swing.JMenuItem reshakeMenuItem;
     private javax.swing.JCheckBoxMenuItem rewindIonsDeNovoCheckBoxMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
@@ -2839,6 +2926,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JMenuItem startSearchGuiMenuItem;
     private javax.swing.JPanel statsJPanel;
+    private javax.swing.JMenu toolsMenu;
     private javax.swing.JMenu viewJMenu;
     private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem yIonCheckBoxMenuItem;
@@ -3445,7 +3533,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // reset ptm factory
         ptmFactory.reloadFactory();
         ptmFactory = PTMFactory.getInstance();
-        
+
         try {
             ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
         } catch (Exception e) {
@@ -3453,7 +3541,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         try {
             ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
         } catch (Exception e) {
@@ -3673,9 +3761,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         spectrumFactory = SpectrumFactory.getInstance(100);
         sequenceFactory.clearFactory();
         sequenceFactory = SequenceFactory.getInstance(1000);
-        
+
         searchParameters.clearSpectrumFilesList();
-        
+
         exceptionCaught = new ArrayList<String>();
         identifiedModifications = null;
 
@@ -4274,8 +4362,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
                     String[] files = serializationFolder.list();
 
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setMaxProgressValue(files.length);
+                    if (files != null) {
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMaxProgressValue(files.length);
+                    }
 
                     // close the files and save the user preferences
                     if (!progressDialog.isRunCanceled()) {
@@ -4283,7 +4373,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         sequenceFactory.closeFile();
                         saveUserPreferences();
                     }
-                    
+
                     // clear the content as well, in order to not get conflicts with the GUI and database
                     clearData();
 
@@ -4303,7 +4393,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         e.printStackTrace();
                         catchException(e);
                     }
-                    
+
                     System.exit(0);
                 }
             }
@@ -4831,7 +4921,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
-                    
+
                     // close any open connection to an identification database
                     if (identification != null) {
                         identification.close();
@@ -4839,18 +4929,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
                     File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
-                    
+
                     // empty the existing files in the matches folder
                     for (File file : matchFolder.listFiles()) {
                         if (file.isDirectory()) {
                             boolean deleted = Util.deleteDir(file);
-                            
+
                             if (!deleted) {
                                 System.out.println("Failed to delete folder: " + file.getPath());
                             }
                         } else {
                             boolean deleted = file.delete();
-                            
+
                             if (!deleted) {
                                 System.out.println("Failed to delete file: " + file.getPath());
                             }
@@ -5191,17 +5281,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     if (identification.isDB()) {
                         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false);
                     } else {
-                        
+
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        
+
                         int outcome = JOptionPane.showConfirmDialog(PeptideShakerGUI.this,
                                 "The format used to create this project is now obsolete.\n"
                                 + "Would you like to convert the project to the current PeptideShaker format?\n"
                                 + "This operation might take a few minutes, please do not interrupt it.", "Obsolete Format!",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                        
+
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                        
+
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting project. Please Wait...");
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY);
@@ -5770,7 +5860,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
             ExperimentIO.save(experimentFile, experiment);
         }
-        
+
         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false);
 
         // tar everything in the current cps file file
@@ -6174,40 +6264,62 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Open SearchGUI.
+     * Open SearchGUI, Reporter or Relims.
+     *
+     * @param aTooltype the tool type to start
      */
-    public void startSearchGui() {
-        String path = utilitiesUserPreferences.getSearchGuiPath();
+    public void startTool(ToolType aTooltype) {
+
+        final ToolType tooltype = aTooltype;
+        String path;
+
+        if (tooltype == ToolType.SEARCHGUI) {
+            path = utilitiesUserPreferences.getSearchGuiPath();
+        } else if (tooltype == ToolType.RELIMS) {
+            path = utilitiesUserPreferences.getRelimsPath();
+        } else { // tooltype == ToolType.REPORTER
+            path = utilitiesUserPreferences.getReporterPath();
+        }
+
 
         final PeptideShakerGUI finalRef = this;
 
         if (path == null || path.equalsIgnoreCase(".")) {
-            new SearchGuiSetupDialog(this, true);
-            path = utilitiesUserPreferences.getSearchGuiPath();
+
+            if (tooltype == ToolType.SEARCHGUI) {
+                new SearchGuiSetupDialog(this, true);
+                path = utilitiesUserPreferences.getSearchGuiPath();
+            } else if (tooltype == ToolType.RELIMS) {
+                new RelimsSetupDialog(this, true);
+                path = utilitiesUserPreferences.getRelimsPath();
+            } else { // tooltype == ToolType.REPORTER
+                new ReporterSetupDialog(this, true);
+                path = utilitiesUserPreferences.getReporterPath();
+            }
 
             if (path != null) {
                 new Thread(new Runnable() {
 
                     public void run() {
                         try {
-                            new SearchGUIWrapper(finalRef);
+                            new ToolsWrapper(finalRef, tooltype);
                         } catch (IndexOutOfBoundsException e) {
                             // ignore
                         }
                     }
-                }, "SearchGUI").start();
+                }, "Start Tool").start();
             }
         } else {
             new Thread(new Runnable() {
 
                 public void run() {
                     try {
-                        new SearchGUIWrapper(finalRef);
+                        new ToolsWrapper(finalRef, tooltype);
                     } catch (IndexOutOfBoundsException e) {
                         // ignore
                     }
                 }
-            }, "SearchGUI").start();
+            }, "Start Tool").start();
         }
     }
 

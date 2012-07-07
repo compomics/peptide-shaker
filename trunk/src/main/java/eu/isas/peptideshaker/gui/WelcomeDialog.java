@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import eu.isas.peptideshaker.ToolsWrapper.ToolType;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import java.io.File;
 import java.util.ArrayList;
@@ -465,7 +466,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
-        peptideShakerGUI.startSearchGui();
+        peptideShakerGUI.startTool(ToolType.SEARCHGUI);
     }//GEN-LAST:event_searchJButtonActionPerformed
 
     /**
@@ -474,7 +475,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
-        // @TODO: implement me!!
+        peptideShakerGUI.startTool(ToolType.REPORTER);
     }//GEN-LAST:event_quantifyJButtonActionPerformed
 
     /**
@@ -512,7 +513,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        // @TODO: implement me!!
+        peptideShakerGUI.startTool(ToolType.RELIMS);
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
