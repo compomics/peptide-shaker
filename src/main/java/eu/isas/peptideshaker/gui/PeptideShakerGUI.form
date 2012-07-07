@@ -434,6 +434,26 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reshake..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Re-analyze public PRIDE projects"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reshakeMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="quantifyMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Quantify..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Quantify based on reporter ions."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="quantifyMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator18">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="openJMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -607,14 +627,37 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator15">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="searchGuiPreferencesJMenuItem">
+            <Menu class="javax.swing.JMenu" name="toolsMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="SearchGUI Settings"/>
+                <Property name="text" type="java.lang.String" value="Tools"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchGuiPreferencesJMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="searchGuiPreferencesJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="SearchGUI"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchGuiPreferencesJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="reporterPreferencesJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Reporter"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reporterPreferencesJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="relimsPreferencesJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Relims"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="relimsPreferencesJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="exportJMenu">
