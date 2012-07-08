@@ -172,7 +172,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="deNovoMenu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="De novo"/>
+            <Property name="text" type="java.lang.String" value="De Novo"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="forwardIonsDeNovoCheckBoxMenuItem">
@@ -189,6 +189,31 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rewindIonsDeNovoCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator19">
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="deNovoChargeOneJRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="deNovoChargeButtonGroup"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Single Charge"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deNovoChargeOneJRadioButtonMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="deNovoChargeTwoJRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="deNovoChargeButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Double Charge"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deNovoChargeTwoJRadioButtonMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -396,6 +421,8 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.ButtonGroup" name="ionTableButtonGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="deNovoChargeButtonGroup">
     </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <Properties>

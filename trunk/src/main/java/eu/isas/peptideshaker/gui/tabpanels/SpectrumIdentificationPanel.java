@@ -3137,6 +3137,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 if (identification.matchExists(key)) {
 
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
+                    
+                    int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
+                    int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
 
                     if (currentSpectrum != null) {
 
@@ -3181,10 +3184,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 // add the spectrum annotations
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                                spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
                                 // add de novo sequencing
-                                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
+                                spectrum.addAutomaticDeNovoSequencing(currentPeptide, annotations, 
+                                    forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(), 
+                                    annotationPreferences.showForwardIonDeNovoTags(), 
+                                    annotationPreferences.showRewindIonDeNovoTags());
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
                             }
@@ -3228,10 +3234,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 // add the spectrum annotations
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                                spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
                                 // add de novo sequencing
-                                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
+                                spectrum.addAutomaticDeNovoSequencing(currentPeptide, annotations, 
+                                    forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(), 
+                                    annotationPreferences.showForwardIonDeNovoTags(), 
+                                    annotationPreferences.showRewindIonDeNovoTags());
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
 
@@ -3276,10 +3285,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 // add the spectrum annotations
                                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                                spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
                                 // add de novo sequencing
-                                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
+                                spectrum.addAutomaticDeNovoSequencing(currentPeptide, annotations, 
+                                    forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(), 
+                                    annotationPreferences.showForwardIonDeNovoTags(), 
+                                    annotationPreferences.showRewindIonDeNovoTags());
 
                                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
                             }

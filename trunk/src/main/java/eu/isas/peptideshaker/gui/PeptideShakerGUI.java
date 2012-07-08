@@ -591,6 +591,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         deNovoMenu = new javax.swing.JMenu();
         forwardIonsDeNovoCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         rewindIonsDeNovoCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator19 = new javax.swing.JPopupMenu.Separator();
+        deNovoChargeOneJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        deNovoChargeTwoJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         splitterMenu9 = new javax.swing.JMenu();
         settingsMenu = new javax.swing.JMenu();
         allCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -617,6 +620,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         helpMenuItem = new javax.swing.JMenuItem();
         splitterMenu7 = new javax.swing.JMenu();
         ionTableButtonGroup = new javax.swing.ButtonGroup();
+        deNovoChargeButtonGroup = new javax.swing.ButtonGroup();
         gradientPanel = new javax.swing.JPanel();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
@@ -822,7 +826,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         splitterMenu3.setEnabled(false);
         annotationMenuBar.add(splitterMenu3);
 
-        deNovoMenu.setText("De novo");
+        deNovoMenu.setText("De Novo");
 
         forwardIonsDeNovoCheckBoxMenuItem.setText("f-ions");
         forwardIonsDeNovoCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -839,6 +843,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         deNovoMenu.add(rewindIonsDeNovoCheckBoxMenuItem);
+        deNovoMenu.add(jSeparator19);
+
+        deNovoChargeButtonGroup.add(deNovoChargeOneJRadioButtonMenuItem);
+        deNovoChargeOneJRadioButtonMenuItem.setSelected(true);
+        deNovoChargeOneJRadioButtonMenuItem.setText("Single Charge");
+        deNovoChargeOneJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deNovoChargeOneJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        deNovoMenu.add(deNovoChargeOneJRadioButtonMenuItem);
+
+        deNovoChargeButtonGroup.add(deNovoChargeTwoJRadioButtonMenuItem);
+        deNovoChargeTwoJRadioButtonMenuItem.setText("Double Charge");
+        deNovoChargeTwoJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deNovoChargeTwoJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        deNovoMenu.add(deNovoChargeTwoJRadioButtonMenuItem);
 
         annotationMenuBar.add(deNovoMenu);
 
@@ -2711,6 +2735,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_reporterPreferencesJMenuItemActionPerformed
 
     /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void deNovoChargeOneJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deNovoChargeOneJRadioButtonMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_deNovoChargeOneJRadioButtonMenuItemActionPerformed
+
+    /**
+     * @see #updateAnnotationPreferences()
+     */
+    private void deNovoChargeTwoJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
+        updateAnnotationPreferences();
+    }//GEN-LAST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2826,6 +2864,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JCheckBoxMenuItem cIonCheckBoxMenuItem;
     private javax.swing.JMenu chargeMenu;
+    private javax.swing.ButtonGroup deNovoChargeButtonGroup;
+    private javax.swing.JRadioButtonMenuItem deNovoChargeOneJRadioButtonMenuItem;
+    private javax.swing.JRadioButtonMenuItem deNovoChargeTwoJRadioButtonMenuItem;
     private javax.swing.JMenu deNovoMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
@@ -2868,6 +2909,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JPopupMenu.Separator jSeparator16;
     private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator18;
+    private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -3191,6 +3233,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         rewindIonsDeNovoCheckBoxMenuItem.repaint();
+        
+        if (annotationPreferences.getDeNovoCharge() == 1) {
+            deNovoChargeOneJRadioButtonMenuItem.isSelected();
+        } else {
+            deNovoChargeTwoJRadioButtonMenuItem.isSelected();
+        }
     }
 
     /**
@@ -4699,6 +4747,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
         annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
+        
+        if (deNovoChargeOneJRadioButtonMenuItem.isSelected()) {
+            annotationPreferences.setDeNovoCharge(1);
+        } else {
+            annotationPreferences.setDeNovoCharge(2);
+        }
 
         updateSpectrumAnnotations();
         setDataSaved(false);
@@ -6322,72 +6376,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }, "Start Tool").start();
         }
     }
-
+    
     /**
-     * Add reference areas annotating the de novo tags.
-     *
-     * @param currentPeptide the current peptide sequence
-     * @param annotations the current fragment ion annotations
-     * @param spectrumPanel the spectrum panel to add the reference area to
+     * Tar the PS folder.
+     * 
+     * @throws FileNotFoundException
+     * @throws ArchiveException
+     * @throws IOException 
      */
-    public void addAutomaticDeNovoSequencing(Peptide currentPeptide, ArrayList<IonMatch> annotations, SpectrumPanel spectrumPanel) {
-
-        int forwardIon = searchParameters.getIonSearched1();
-        int rewindIon = searchParameters.getIonSearched2();
-
-        IonMatch[] forwardIons = new IonMatch[currentPeptide.getSequence().length()];
-        IonMatch[] rewindIons = new IonMatch[currentPeptide.getSequence().length()];
-
-        // iterate the annotations and find the de novo tags
-        for (int i = 0; i < annotations.size(); i++) {
-
-            IonMatch tempMatch = annotations.get(i);
-
-            if (tempMatch.ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION
-                    && tempMatch.ion.getNeutralLosses().isEmpty()
-                    && tempMatch.charge.value == 1) {
-
-                PeptideFragmentIon fragmentIon = (PeptideFragmentIon) tempMatch.ion;
-
-                if (fragmentIon.getSubType() == forwardIon) {
-                    forwardIons[fragmentIon.getNumber() - 1] = tempMatch;
-                } else if (fragmentIon.getSubType() == rewindIon) {
-                    rewindIons[fragmentIon.getNumber() - 1] = tempMatch;
-                }
-            }
-        }
-
-        // add rewind ion de novo tags (x, y or c)
-        if (annotationPreferences.showRewindIonDeNovoTags()) {
-
-            Color annotationColor = SpectrumPanel.determineFragmentIonColor(Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, rewindIon), false);
-
-            for (int i = 1; i < rewindIons.length; i++) {
-                if (rewindIons[i] != null && rewindIons[i - 1] != null) {
-                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
-                            "r" + i,
-                            currentPeptide.getSequence().substring(currentPeptide.getSequence().length() - i - 1, currentPeptide.getSequence().length() - i),
-                            rewindIons[i - 1].peak.mz, rewindIons[i].peak.mz, annotationColor, 0.2f, false, true, annotationColor, true, Color.lightGray, 0.2f, 1));
-                }
-            }
-        }
-
-        // add forward ion de novo tags (a, b or c)
-        if (annotationPreferences.showForwardIonDeNovoTags()) {
-
-            Color annotationColor = SpectrumPanel.determineFragmentIonColor(Ion.getGenericIon(Ion.IonType.PEPTIDE_FRAGMENT_ION, forwardIon), false);
-
-            for (int i = 1; i < forwardIons.length; i++) {
-                if (forwardIons[i] != null && forwardIons[i - 1] != null) {
-                    spectrumPanel.addReferenceAreaXAxis(new ReferenceArea(
-                            "f" + i,
-                            currentPeptide.getSequence().substring(i, i + 1),
-                            forwardIons[i - 1].peak.mz, forwardIons[i].peak.mz, annotationColor, 0.2f, false, true, annotationColor, true, Color.lightGray, 0.2f, 0.9));
-                }
-            }
-        }
-    }
-
     public void tarFolder() throws FileNotFoundException, ArchiveException, IOException {
         FileOutputStream fos = new FileOutputStream(currentPSFile);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -6399,6 +6395,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         fos.close();
     }
 
+    /**
+     * Add content to the tar file.
+     * 
+     * @param tarOutput
+     * @param folder
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public void addFolderContent(ArchiveOutputStream tarOutput, File folder) throws FileNotFoundException, IOException {
 
         for (File file : folder.listFiles()) {

@@ -4019,10 +4019,16 @@ public class PtmPanel extends javax.swing.JPanel {
                 // add the spectrum annotations
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                spectrum.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
 
+                int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
+                int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
+                
                 // add de novo sequencing
-                peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrum);
+                spectrum.addAutomaticDeNovoSequencing(currentPeptide, annotations, 
+                                    forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(), 
+                                    annotationPreferences.showForwardIonDeNovoTags(), 
+                                    annotationPreferences.showRewindIonDeNovoTags());
 
                 spectrumChartJPanel.add(spectrum);
                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
