@@ -3666,6 +3666,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // an array containing the coverage index for each residue
                 coverage = new int[currentProteinSequence.length() + 1];
 
+                double maxCoverageValue = 0;
+
                 PSParameter pSParameter = new PSParameter();
                 // iterate the peptide table and store the coverage for each validated peptide
                 for (String peptideKey : peptideKeys) {
@@ -3674,14 +3676,21 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         String peptideSequence = Peptide.getSequence(peptideKey);
                         tempSequence = currentProteinSequence;
 
-                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                            for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                                coverage[j]++;
+                        //if (!peptideSequence.endsWith("R") && !peptideSequence.endsWith("K")) {
+
+                            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                                int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                                int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                                    coverage[j]++;
+
+                                    if (coverage[j] > maxCoverageValue) {
+                                        maxCoverageValue = coverage[j];
+                                    }
+                                }
+                                tempSequence = currentProteinSequence.substring(0, peptideTempStart);
                             }
-                            tempSequence = currentProteinSequence.substring(0, peptideTempStart);
-                        }
+                        //}
                     }
                 }
 
@@ -3735,12 +3744,30 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     JSparklinesDataSeries sparklineDataseries;
 
                     if (covered) {
-                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
+                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i, false));
 
                         if (selectedPeptideEnd.contains(new Integer(i + 1))) {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getPeptideSelected(), null);
                         } else {
-                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
+                            //sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
+
+                            Color peptideColor = peptideShakerGUI.getSparklineColor();
+
+//                            if (coverage[i] < maxCoverageValue * 0.25) {
+//                                peptideColor = new Color((int) (peptideShakerGUI.getSparklineColor().getRed() * 0.25),
+//                                        (int) (peptideShakerGUI.getSparklineColor().getGreen() * 0.25),
+//                                        (int) (peptideShakerGUI.getSparklineColor().getBlue() * 0.25));
+//                            } else if (coverage[i] < maxCoverageValue * 0.5) {
+//                                peptideColor = new Color((int) (peptideShakerGUI.getSparklineColor().getRed() * 0.5),
+//                                        (int) (peptideShakerGUI.getSparklineColor().getGreen() * 0.5),
+//                                        (int) (peptideShakerGUI.getSparklineColor().getBlue() * 0.5));
+//                            } else if (coverage[i] < maxCoverageValue * 0.75) {
+//                                peptideColor = new Color((int) (peptideShakerGUI.getSparklineColor().getRed() * 0.75),
+//                                        (int) (peptideShakerGUI.getSparklineColor().getGreen() * 0.75),
+//                                        (int) (peptideShakerGUI.getSparklineColor().getBlue() * 0.75));
+//                            }
+
+                            sparklineDataseries = new JSparklinesDataSeries(data, peptideColor, null);
                         }
                     } else if (possibleToCoverCounter > 0) {
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
@@ -3960,12 +3987,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             currentSpectrumKey = spectrumKey;
 
                             // show all or just the annotated peaks
-                            spectrumPanel.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
-
-                            spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
+                            spectrumPanel.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
+                            spectrumPanel.setYAxisZoomExcludesBackgroundPeaks(annotationPreferences.yAxisZoomExcludesBackgroundPeaks());
+                            
+                            int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
+                            int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
 
                             // add de novo sequencing
-                            peptideShakerGUI.addAutomaticDeNovoSequencing(currentPeptide, annotations, spectrumPanel);
+                            spectrumPanel.addAutomaticDeNovoSequencing(currentPeptide, annotations, 
+                                    forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(), 
+                                    annotationPreferences.showForwardIonDeNovoTags(), 
+                                    annotationPreferences.showRewindIonDeNovoTags());
 
                             // add the spectrum panel to the frame
                             spectrumJPanel.removeAll();
@@ -3975,24 +4007,22 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create and display the fragment ion table
                             ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
-                            
+
                             if (!peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
-                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
-                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
+                                        annotationPreferences.getValidatedCharges().contains(new Integer(1)),
+                                        annotationPreferences.getValidatedCharges().contains(new Integer(2))));
                             } else {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
-                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
-                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
+                                        annotationPreferences.getValidatedCharges().contains(new Integer(1)),
+                                        annotationPreferences.getValidatedCharges().contains(new Integer(2))));
                             }
 
                             // create the sequence fragment ion view
                             secondarySpectrumPlotsJPanel.removeAll();
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
-                            int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
-                            int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
                                     peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
                                     annotations, true, true,
@@ -5040,7 +5070,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * @param endIndex the end index in the protein sequence
      * @return a list of the residue annotation
      */
-    public ArrayList<ResidueAnnotation> getResidueAnnotations(int startIndex, int endIndex) {
+    public ArrayList<ResidueAnnotation> getResidueAnnotations(int startIndex, int endIndex, boolean nonEnzmaticPeptidesOnly) {
 
         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>();
         try {
@@ -5050,17 +5080,27 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             PSParameter psParameter = new PSParameter();
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+
             for (String peptideKey : peptideKeys) {
                 String peptideSequence = Peptide.getSequence(peptideKey);
-                for (int peptideStart : currentProtein.getPeptideStart(peptideSequence)) {
-                    int peptideEnd = peptideStart + peptideSequence.length() - 1;
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
-                    if (((startIndex <= peptideStart && peptideStart <= endIndex)
-                            || (endIndex <= peptideEnd && peptideEnd <= endIndex))
-                            && psParameter.isValidated()
-                            && !psParameter.isHidden()) {
-                        String modifiedSequence = peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, false);
-                        annotations.add(new ResidueAnnotation(peptideStart + " - " + modifiedSequence + " - " + peptideEnd, peptideKey, true));
+
+                boolean includePeptide = true;
+                
+                if (nonEnzmaticPeptidesOnly && (peptideSequence.endsWith("R") || peptideSequence.endsWith("K"))) {
+                    includePeptide = false;
+                }
+
+                if (includePeptide) {
+                    for (int peptideStart : currentProtein.getPeptideStart(peptideSequence)) {
+                        int peptideEnd = peptideStart + peptideSequence.length() - 1;
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+                        if (((startIndex <= peptideStart && peptideStart <= endIndex)
+                                || (endIndex <= peptideEnd && peptideEnd <= endIndex))
+                                && psParameter.isValidated()
+                                && !psParameter.isHidden()) {
+                            String modifiedSequence = peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, false);
+                            annotations.add(new ResidueAnnotation(peptideStart + " - " + modifiedSequence + " - " + peptideEnd, peptideKey, true));
+                        }
                     }
                 }
             }
