@@ -10,6 +10,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -95,6 +96,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * True if the fraction order has been okey'ed by the user.
+     */
+    private boolean fractionOrderSet = false;
 
     /**
      * Indexes for the three main data tables.
@@ -338,6 +343,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * Display the results.
      */
     public void displayResults() {
+        
+        if (!fractionOrderSet) {
+            fractionOrderSet = true;
+            new FractionDetailsDialog(peptideShakerGUI, true);
+        }
 
         progressDialog = new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -347,7 +357,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         progressDialog.setTitle("Loading Fractions. Please Wait...");
         progressDialog.setUnstoppable(true);
 
-        new Thread(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 try {
@@ -356,7 +366,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     // ignore
                 }
             }
-        }, "ProgressDialog").start();
+        });
 
         new Thread("DisplayThread") {
 
@@ -505,13 +515,30 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                 String peptideSequence = Peptide.getSequence(peptideKey);
                                 String tempSequence = currentProteinSequence;
 
-                                while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                                    int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                                    for (int k = peptideTempStart; k < peptideTempEnd; k++) {
-                                        coverage[i][k]++;
+                                boolean includePeptide = false;
+
+                                if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
+                                    includePeptide = true;
+                                } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
+                                    if (peptideSequence.endsWith("R") || peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
+                                        includePeptide = true;
                                     }
-                                    tempSequence = currentProteinSequence.substring(0, peptideTempStart);
+                                } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
+                                    if (!peptideSequence.endsWith("R") && !peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
+                                        includePeptide = true;
+                                    }
+                                }
+
+                                if (includePeptide) {
+
+                                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                                        int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                                        int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                                        for (int k = peptideTempStart; k < peptideTempEnd; k++) {
+                                            coverage[i][k]++;
+                                        }
+                                        tempSequence = currentProteinSequence.substring(0, peptideTempStart);
+                                    }
                                 }
                             } else {
                                 notValidatedPeptideCounter++;
@@ -896,6 +923,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        sequenceCoverageJPopupMenu = new javax.swing.JPopupMenu();
+        coverageShowAllPeptidesJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        coveragePeptideTypesButtonGroup = new javax.swing.ButtonGroup();
         disclamierPanel = new javax.swing.JPanel();
         disclaimerLabel = new javax.swing.JLabel();
         proteinPeptideSplitPane = new javax.swing.JSplitPane();
@@ -944,6 +976,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         };
         peptidesHelpJButton = new javax.swing.JButton();
         exportPeptidesJButton = new javax.swing.JButton();
+        sequenceCoverageOptionsJButton = new javax.swing.JButton();
         contextMenuPeptidesBackgroundPanel = new javax.swing.JPanel();
         proteinsLayeredPane = new javax.swing.JLayeredPane();
         proteinPanel = new javax.swing.JPanel();
@@ -971,6 +1004,34 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinsHelpJButton = new javax.swing.JButton();
         exportProteinsJButton = new javax.swing.JButton();
         contextMenuProteinsBackgroundPanel = new javax.swing.JPanel();
+
+        coveragePeptideTypesButtonGroup.add(coverageShowAllPeptidesJRadioButtonMenuItem);
+        coverageShowAllPeptidesJRadioButtonMenuItem.setSelected(true);
+        coverageShowAllPeptidesJRadioButtonMenuItem.setText("All Peptides");
+        coverageShowAllPeptidesJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        sequenceCoverageJPopupMenu.add(coverageShowAllPeptidesJRadioButtonMenuItem);
+
+        coveragePeptideTypesButtonGroup.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
+        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Enzymatic Peptides");
+        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        sequenceCoverageJPopupMenu.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
+
+        coveragePeptideTypesButtonGroup.add(coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem);
+        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Truncated Peptides");
+        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        sequenceCoverageJPopupMenu.add(coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1008,12 +1069,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinPeptideSplitPane.setResizeWeight(0.5);
         proteinPeptideSplitPane.setOpaque(false);
 
+        peptidePanel.setBackground(new java.awt.Color(255, 255, 255));
         peptidePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
-        peptidePanel.setOpaque(false);
 
+        peptidesTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         peptidesTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
-        intensityPlotOuterPanel.setOpaque(false);
+        intensityPlotOuterPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         intensityPlotPanel.setOpaque(false);
         intensityPlotPanel.setLayout(new javax.swing.BoxLayout(intensityPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1033,7 +1095,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Intensity Plot", intensityPlotOuterPanel);
 
-        spectraPlotOuterPanel.setOpaque(false);
+        spectraPlotOuterPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         spectraPlotPanel.setOpaque(false);
         spectraPlotPanel.setLayout(new javax.swing.BoxLayout(spectraPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1053,7 +1115,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Spectrum Plot", spectraPlotOuterPanel);
 
-        peptidePlotOuterPanel.setOpaque(false);
+        peptidePlotOuterPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         peptidePlotPanel.setOpaque(false);
         peptidePlotPanel.setLayout(new javax.swing.BoxLayout(peptidePlotPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1073,7 +1135,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Peptide Plot", peptidePlotOuterPanel);
 
-        coverageTablePanel.setOpaque(false);
+        coverageTablePanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        coverageTableScrollPane.setOpaque(false);
 
         coverageTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1098,6 +1162,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 return canEdit [columnIndex];
             }
         });
+        coverageTable.setOpaque(false);
         coverageTableScrollPane.setViewportView(coverageTable);
 
         javax.swing.GroupLayout coverageTablePanelLayout = new javax.swing.GroupLayout(coverageTablePanel);
@@ -1119,7 +1184,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Coverage", coverageTablePanel);
 
-        mwPanel.setOpaque(false);
+        mwPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         mwPlotPanel.setOpaque(false);
         mwPlotPanel.setLayout(new javax.swing.BoxLayout(mwPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1139,9 +1204,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Molecular Weight", mwPanel);
 
-        peptideTablePanel.setOpaque(false);
+        peptideTablePanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        peptideTableScrollPane.setOpaque(false);
 
         peptideTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel());
+        peptideTable.setOpaque(false);
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 peptideTableMouseReleased(evt);
@@ -1241,26 +1309,48 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         exportPeptidesJButton.setBounds(920, 0, 10, 19);
         peptidesLayeredPane.add(exportPeptidesJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
+        sequenceCoverageOptionsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/contextual_menu_gray.png"))); // NOI18N
+        sequenceCoverageOptionsJButton.setToolTipText("Coverage Options");
+        sequenceCoverageOptionsJButton.setBorder(null);
+        sequenceCoverageOptionsJButton.setBorderPainted(false);
+        sequenceCoverageOptionsJButton.setContentAreaFilled(false);
+        sequenceCoverageOptionsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/contextual_menu_black.png"))); // NOI18N
+        sequenceCoverageOptionsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                sequenceCoverageOptionsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                sequenceCoverageOptionsJButtonMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                sequenceCoverageOptionsJButtonMouseReleased(evt);
+            }
+        });
+        sequenceCoverageOptionsJButton.setBounds(895, 5, 10, 19);
+        peptidesLayeredPane.add(sequenceCoverageOptionsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         contextMenuPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout contextMenuPeptidesBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPeptidesBackgroundPanel);
         contextMenuPeptidesBackgroundPanel.setLayout(contextMenuPeptidesBackgroundPanelLayout);
         contextMenuPeptidesBackgroundPanelLayout.setHorizontalGroup(
             contextMenuPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
+            .addGap(0, 50, Short.MAX_VALUE)
         );
         contextMenuPeptidesBackgroundPanelLayout.setVerticalGroup(
             contextMenuPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 19, Short.MAX_VALUE)
         );
 
-        contextMenuPeptidesBackgroundPanel.setBounds(910, 0, 40, 19);
+        contextMenuPeptidesBackgroundPanel.setBounds(890, 0, 50, 19);
         peptidesLayeredPane.add(contextMenuPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         proteinPeptideSplitPane.setRightComponent(peptidesLayeredPane);
 
         proteinPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
         proteinPanel.setOpaque(false);
+
+        proteinTableScrollPane.setOpaque(false);
 
         proteinTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel());
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -1320,7 +1410,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
                     .addGroup(proteinPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(gradientColorMinValueJLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(gradientColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1609,13 +1698,19 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         peptidesLayeredPane.getComponent(1).getHeight());
 
                 peptidesLayeredPane.getComponent(2).setBounds(
-                        peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(2).getWidth() - 5,
-                        -3,
+                        peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(2).getWidth() - 34,
+                        0,
                         peptidesLayeredPane.getComponent(2).getWidth(),
                         peptidesLayeredPane.getComponent(2).getHeight());
 
+                peptidesLayeredPane.getComponent(3).setBounds(
+                        peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(3).getWidth() - 5,
+                        -3,
+                        peptidesLayeredPane.getComponent(3).getWidth(),
+                        peptidesLayeredPane.getComponent(3).getHeight());
+
                 // resize the plot area
-                peptidesLayeredPane.getComponent(3).setBounds(0, 0, peptidesLayeredPane.getWidth(), peptidesLayeredPane.getHeight());
+                peptidesLayeredPane.getComponent(4).setBounds(0, 0, peptidesLayeredPane.getWidth(), peptidesLayeredPane.getHeight());
                 peptidesLayeredPane.revalidate();
                 peptidesLayeredPane.repaint();
             }
@@ -1774,10 +1869,70 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             peptideTable.repaint();
         }
     }//GEN-LAST:event_dataTypeComboBoxActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void sequenceCoverageOptionsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sequenceCoverageOptionsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_sequenceCoverageOptionsJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void sequenceCoverageOptionsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sequenceCoverageOptionsJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_sequenceCoverageOptionsJButtonMouseExited
+
+    /**
+     * Show the sequence coverage options.
+     *
+     * @param evt
+     */
+    private void sequenceCoverageOptionsJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sequenceCoverageOptionsJButtonMouseReleased
+        sequenceCoverageJPopupMenu.show(sequenceCoverageOptionsJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_sequenceCoverageOptionsJButtonMouseReleased
+
+    /**
+     * Update the sequence coverage maps.
+     * 
+     * @param evt 
+     */
+    private void coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed
+        if (proteinTable.getSelectedRow() != -1) {
+            try {
+                updatePlots();
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
+        }
+    }//GEN-LAST:event_coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed
+
+    /**
+     * @see #coverageShowAllPeptidesJRadioButtonMenuItem
+     */
+    private void coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed
+        coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(null);
+    }//GEN-LAST:event_coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed
+
+    /**
+     * @see #coverageShowAllPeptidesJRadioButtonMenuItem
+     */
+    private void coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed
+        coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(null);
+    }//GEN-LAST:event_coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox chartTypeComboBox;
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuProteinsBackgroundPanel;
+    private javax.swing.ButtonGroup coveragePeptideTypesButtonGroup;
+    private javax.swing.JRadioButtonMenuItem coverageShowAllPeptidesJRadioButtonMenuItem;
+    private javax.swing.JRadioButtonMenuItem coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem;
+    private javax.swing.JRadioButtonMenuItem coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem;
     private javax.swing.JTable coverageTable;
     private javax.swing.JPanel coverageTablePanel;
     private javax.swing.JScrollPane coverageTableScrollPane;
@@ -1810,6 +1965,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private javax.swing.JScrollPane proteinTableScrollPane;
     private javax.swing.JButton proteinsHelpJButton;
     private javax.swing.JLayeredPane proteinsLayeredPane;
+    private javax.swing.JPopupMenu sequenceCoverageJPopupMenu;
+    private javax.swing.JButton sequenceCoverageOptionsJButton;
     private javax.swing.JPanel spectraPlotOuterPanel;
     private javax.swing.JPanel spectraPlotPanel;
     // End of variables declaration//GEN-END:variables

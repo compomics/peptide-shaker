@@ -526,8 +526,8 @@ public class PeptideShaker {
 
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-            double peptideThreshold = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getScoreLimit();
-            noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().noValidated();
+            double peptideThreshold = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getScoreLimit();
+            noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
             if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
                 psParameter.setValidated(true);
             } else {
@@ -541,8 +541,8 @@ public class PeptideShaker {
 
         for (String spectrumKey : identification.getSpectrumIdentification()) {
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-            double psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getScoreLimit();
-            noValidated = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().noValidated();
+            double psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getScoreLimit();
+            noValidated = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
             if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
                 psParameter.setValidated(true);
             } else {
@@ -650,7 +650,7 @@ public class PeptideShaker {
             psParameter = new PSParameter();
             psParameter.setSpectrumProbabilityScore(p);
             psmMap.addPoint(p, spectrumMatch);
-            psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
+            psParameter.setSpecificMapKey(psmMap.getKey(spectrumMatch) + "");
             identification.addSpectrumMatchParameter(spectrumKey, psParameter);
             identification.setMatchChanged(spectrumMatch);
             waitingHandler.increaseSecondaryProgressValue();
@@ -739,7 +739,7 @@ public class PeptideShaker {
         for (String spectrumKey : identification.getSpectrumIdentification()) {
 
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-            psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPsmProbabilityScore()));
+            psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
             identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
             waitingHandler.increaseSecondaryProgressValue();
 
@@ -844,7 +844,6 @@ public class PeptideShaker {
      */
     private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter, boolean estimateAscore) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        ProteinMatch proteinMatch;
 
         int max = identification.getProteinIdentification().size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
@@ -858,8 +857,9 @@ public class PeptideShaker {
         double tempSpectrumCounting, maxSpectrumCounting = 0;
         Enzyme enzyme = searchParameters.getEnzyme();
         int maxPepLength = idFilter.getMaxPepLength();
+        
         for (String proteinKey : identification.getProteinIdentification()) {
-            proteinMatch = identification.getProteinMatch(proteinKey);
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
             scorePTMs(proteinMatch, searchParameters, annotationPreferences, false, estimateAscore);
 
             if (metrics != null) {
@@ -1314,7 +1314,7 @@ public class PeptideShaker {
 
             psParameter = new PSParameter();
             psParameter.setPeptideProbabilityScore(probaScore);
-            psParameter.setSecificMapKey(peptideMap.getKey(peptideMatch));
+            psParameter.setSpecificMapKey(peptideMap.getKey(peptideMatch));
 
             // set the fraction scores
             for (String fractionName : fractionScores.keySet()) {
@@ -1357,9 +1357,9 @@ public class PeptideShaker {
 
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-            psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPeptideProbabilityScore()));
+            psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPeptideProbabilityScore()));
             for (String fraction : psParameter.getFractions()) {
-                psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getFractionScore(fraction)));
+                psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getFractionScore(fraction)));
             }
             identification.updatePeptideMatchParameter(peptideKey, psParameter);
             waitingHandler.increaseSecondaryProgressValue();
@@ -1443,7 +1443,7 @@ public class PeptideShaker {
         PSParameter psParameter = new PSParameter();
         HashMap<String, Double> fractionMW = new HashMap<String, Double>();
         HashMap<String, Integer> fractionMWCounter = new HashMap<String, Integer>();
-
+        
         for (String proteinKey : identification.getProteinIdentification()) {
 
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);

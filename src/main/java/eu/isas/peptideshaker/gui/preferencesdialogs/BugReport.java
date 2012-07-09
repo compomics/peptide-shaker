@@ -47,9 +47,9 @@ public class BugReport extends javax.swing.JDialog {
                 log += line + "\n";
             }
         } catch (FileNotFoundException e) {
-            log = "resources/conf/peptideshaker.log not found.";
+            log = "resources/PeptideShaker.log not found.";
         } catch (IOException e) {
-            log = "An error occured while reafing resources/peptideshaker.log.";
+            log = "An error occured while reading resources/PeptideShaker.log.";
         }
 
         logTxt.setText(log);
@@ -275,7 +275,7 @@ public class BugReport extends javax.swing.JDialog {
 
             try {
 
-                File logFile = new File("resources/conf/PeptideShaker.log");
+                File logFile = new File("resources/PeptideShaker.log");
 
                 if (logFile.exists()) {
                     Util.copyFile(logFile, finalOutputFile);

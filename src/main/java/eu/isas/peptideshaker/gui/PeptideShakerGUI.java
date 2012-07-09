@@ -19,7 +19,6 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -394,8 +393,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public static void main(String[] args) {
 
         // update the look and feel after adding the panels
-        UtilitiesGUIDefaults.setLookAndFeel();
+        boolean numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
 
+        if (!numbusLookAndFeelSet) {
+            JOptionPane.showMessageDialog(null, 
+                    "Failed to set the default look and feel. Using backup look and feel.\n"
+                    + "PeptideShaker will work but not look as good as it should...", "Look and Feel",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+        
         new PeptideShakerGUI();
     }
 
