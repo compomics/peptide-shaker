@@ -17,7 +17,7 @@ public class PSParameter implements UrParameter {
     /**
      * Serial version UID for post-serialization compatibility.
      */
-    static final long serialVersionUID = 2846587135366515967L; // @TODO: has to be updated after fixing typo, secificMapKey > specificMapKey!!
+    static final long serialVersionUID = 2846587135366515967L;
     /**
      * Posterior error probability estimated for the search engine results.
      */
@@ -62,7 +62,7 @@ public class PSParameter implements UrParameter {
     /**
      * the key in the corresponding specific map.
      */
-    private String specificMapKey;
+    private String secificMapKey; // yes, we know about the typo, but cannot change it for backwards compatability reasons...
     /**
      * Protein groups can belong to the following groups according to the static
      * field indexing.
@@ -433,8 +433,8 @@ public class PSParameter implements UrParameter {
      *
      * @return the match key in the corresponding specific map
      */
-    public String getSpecificMapKey() {
-        return specificMapKey;
+    public String getSecificMapKey() { // yes, we know about the typo, but cannot change it for backwards compatability reasons...
+        return secificMapKey;
     }
 
     /**
@@ -442,8 +442,8 @@ public class PSParameter implements UrParameter {
      *
      * @param specificMapKey the match key in the corresponding specific map
      */
-    public void setSpecificMapKey(String specificMapKey) {
-        this.specificMapKey = specificMapKey;
+    public void setSecificMapKey(String specificMapKey) { // yes, we know about the typo, but cannot change it for backwards compatability reasons...
+        this.secificMapKey = specificMapKey;
     }
 
     /**
