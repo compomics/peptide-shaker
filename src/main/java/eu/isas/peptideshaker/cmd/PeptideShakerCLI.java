@@ -275,7 +275,6 @@ public class PeptideShakerCLI implements Callable {
     private void importSearchGUIFiles() {
 
         FileImporter.setCLIMode(true);
-        FileImporter.setReducedMemory(false);
 
         File lInputFolder = iCLIInputBean.getInput();
         File[] lInputList = lInputFolder.listFiles();

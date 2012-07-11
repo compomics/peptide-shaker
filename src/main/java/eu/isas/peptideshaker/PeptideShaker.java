@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.*;
@@ -112,6 +113,10 @@ public class PeptideShaker {
      * whenever this protein was found more than one time
      */
     private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
+    /**
+     * A cache where the objects will be saved
+     */
+    private ObjectsCache objectsCache;
 
     /**
      * Constructor without mass specification. Calculation will be done on new
@@ -164,14 +169,15 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails, ProcessingPreferences processingPreferences) {
-
+        
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
 
+objectsCache = new ObjectsCache();
+objectsCache.setAutomatedMemoryManagement(true);
+
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
+        analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
         Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        identification.setInMemory(false);
-        identification.setAutomatedMemoryManagement(true);
         identification.setIsDB(true);
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
@@ -187,6 +193,22 @@ public class PeptideShaker {
         }
         
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, processingPreferences);
+    }
+    
+    /**
+     * Returns the object cache
+     * @return the object cache
+     */
+    public ObjectsCache getCache() {
+        return objectsCache;
+    }
+    
+    /**
+     * Returns the reference identifying the identification under process
+     * @return a String identifying the identification under process
+     */
+    public String getIdentificationReference() {
+        return Identification.getDefaultReference(experiment.getReference(), sample.getReference(), replicateNumber);
     }
 
     /**
@@ -207,7 +229,7 @@ public class PeptideShaker {
             throws IllegalArgumentException, IOException, Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        if (!identification.memoryCheck()) {
+        if (!objectsCache.memoryCheck()) {
             waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.");
         }
         if (waitingHandler.isRunCanceled()) {
@@ -652,7 +674,7 @@ public class PeptideShaker {
             psmMap.addPoint(p, spectrumMatch);
             psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
             identification.addSpectrumMatchParameter(spectrumKey, psParameter);
-            identification.setMatchChanged(spectrumMatch);
+            identification.updateSpectrumMatch(spectrumMatch);
             waitingHandler.increaseSecondaryProgressValue();
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -710,7 +732,7 @@ public class PeptideShaker {
                 }
             }
 
-            identification.setMatchChanged(spectrumMatch);
+            identification.updateSpectrumMatch(spectrumMatch);
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
@@ -933,7 +955,7 @@ public class PeptideShaker {
         }
 
         proteinMatch.addUrParam(proteinScores);
-        identification.setMatchChanged(proteinMatch);
+        identification.updateProteinMatch(proteinMatch);
     }
 
     /**
@@ -1049,7 +1071,7 @@ public class PeptideShaker {
             }
 
             peptideMatch.addUrParam(peptideScores);
-            identification.setMatchChanged(peptideMatch);
+            identification.updatePeptideMatch(peptideMatch);
         }
     }
 
@@ -1182,7 +1204,7 @@ public class PeptideShaker {
                 }
 
                 spectrumMatch.addUrParam(ptmScores);
-                identification.setMatchChanged(spectrumMatch);
+                identification.updateSpectrumMatch(spectrumMatch);
             }
         }
     }
@@ -1255,7 +1277,7 @@ public class PeptideShaker {
                 }
 
                 spectrumMatch.addUrParam(ptmScores);
-                identification.setMatchChanged(spectrumMatch);
+                identification.updateSpectrumMatch(spectrumMatch);
             }
         }
     }
@@ -1531,7 +1553,7 @@ public class PeptideShaker {
                             for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
                                 proteinUnique.addPeptideMatch(sharedPeptideKey);
                             }
-                            identification.setMatchChanged(proteinUnique);
+                            identification.updateProteinMatch(proteinUnique);
                             if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
                                 better = true;
                             }
@@ -1733,7 +1755,7 @@ public class PeptideShaker {
             if (ProteinMatch.getNProteins(proteinKey) > 1) {
                 if (!proteinMatch.getMainMatch().equals(mainKey)) {
                     proteinMatch.setMainMatch(mainKey);
-                    identification.setMatchChanged(proteinMatch);
+                    identification.updateProteinMatch(proteinMatch);
                 }
             }
 

@@ -107,10 +107,6 @@ public class FileImporter {
      * Metrics of the dataset picked-up while loading the data.
      */
     private Metrics metrics;
-    /**
-     * Boolean whether to use the reduced memory feature of PeptideShaker.
-     */
-    private static boolean boolReducedMemory = true;
 
     /**
      * Constructor for the importer.
@@ -557,13 +553,13 @@ public class FileImporter {
             identification.setIsDB(true);
 
             try {
-                identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, true);
+                identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, true, peptideShaker.getCache());
             } catch (SQLException e) {
                 e.printStackTrace();
                 waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
                 identification.setIsDB(false);
             }
-            
+
             waitingHandler.increaseProgressValue();
 
             for (File idFile : idFiles) {
@@ -845,8 +841,15 @@ public class FileImporter {
             waitingHandler.appendReport("Reducing memory consumption.");
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
 
-            if (boolReducedMemory) {
-                identification.reduceMemoryConsumtion(waitingHandler.getSecondaryProgressBar());
+            // Free at least 1GB for the next parser if not anymore available
+            // (not elegant so most likely not optimal)
+            if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
+                System.gc();
+                if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
+                    double share = 1073741824 / Runtime.getRuntime().totalMemory();
+                    peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
+                    System.gc();
+                }
             }
 
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
@@ -948,15 +951,5 @@ public class FileImporter {
      */
     public void setUserModificationFile(String aUSER_MODIFICATION_FILE) {
         USER_MODIFICATION_FILE = aUSER_MODIFICATION_FILE;
-    }
-
-    /**
-     * Set whether to use the Reduced Memory application logic.
-     *
-     * @param aReducedMemory set whether to use the Reduced Memory application
-     * logic
-     */
-    public static void setReducedMemory(boolean aReducedMemory) {
-        boolReducedMemory = aReducedMemory;
     }
 }

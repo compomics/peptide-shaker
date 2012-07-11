@@ -624,7 +624,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 scores.addSecondaryModificationSite(ptm.getName(), secondaryLocation);
             }
 
-            peptideShakerGUI.getIdentification().setMatchChanged(peptideMatch);
+            peptideShakerGUI.getIdentification().updatePeptideMatch(peptideMatch);
 
             // update protein level PTM scoring
             PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
