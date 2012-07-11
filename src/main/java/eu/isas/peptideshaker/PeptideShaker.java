@@ -747,9 +747,9 @@ objectsCache.setAutomatedMemoryManagement(true);
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException {
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
 
-        waitingHandler.setWaitingText("Attaching Spectrum Probabilities. Please Wait...");
+        waitingHandler.setWaitingText("Attaching Spectrum Probabilities, building peptides and proteins. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -763,10 +763,10 @@ objectsCache.setAutomatedMemoryManagement(true);
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
             psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPsmProbabilityScore()));
             identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-            waitingHandler.increaseSecondaryProgressValue();
 
             identification.buildPeptidesAndProteins(spectrumKey);
 
+            waitingHandler.increaseSecondaryProgressValue();
             if (waitingHandler.isRunCanceled()) {
                 return;
             }

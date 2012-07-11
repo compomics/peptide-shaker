@@ -5363,7 +5363,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting project. Please Wait...");
                             String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
-                            identification.convert(progressDialog, idReference, PeptideShaker.SERIALIZATION_DIRECTORY, objectsCache);
+                            identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache);
+                            progressDialog.setTitle("Saving. Please Wait...");
                             saveProjectProcess();
                         }
 
