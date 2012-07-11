@@ -559,7 +559,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             try {
                 if (!inspectedMatch.getMainMatch().equals(selectedMatch)) {
                     inspectedMatch.setMainMatch(selectedMatch);
-                    peptideShakerGUI.getIdentification().setMatchChanged(inspectedMatch);
+                    peptideShakerGUI.getIdentification().updateProteinMatch(inspectedMatch);
                 }
                 psParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
                 identification.updateProteinMatchParameter(inspectedMatch.getKey(), psParameter);
@@ -588,7 +588,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             if (column == 1) {
                 try {
                     inspectedMatch.setMainMatch(accessions.get(row));
-                    identification.setMatchChanged(inspectedMatch);
+                    identification.updateProteinMatch(inspectedMatch);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }

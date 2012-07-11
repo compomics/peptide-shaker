@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.gui.dialogs.SampleSelection;
 import com.compomics.util.Util;
+import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -377,6 +378,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private Metrics metrics;
     /**
+     * The object cache used for the identiifcationdatabase
+     */
+    private ObjectsCache objectsCache;
+    /**
      * The charge menus.
      */
     private HashMap<Integer, JCheckBoxMenuItem> chargeMenus = new HashMap<Integer, JCheckBoxMenuItem>();
@@ -472,7 +477,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         updateRecentProjectsList();
 
         // set the title
-        setFrameTitle(null);
+        updateFrameTitle();
 
         // set the title of the frame and add the icon
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -517,10 +522,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      *
      * @param experimentTitle the title to add
      */
-    public void setFrameTitle(String experimentTitle) {
+    public void updateFrameTitle() {
 
-        if (experimentTitle != null) {
-            this.setTitle("PeptideShaker " + getVersion() + " - " + experimentTitle);
+        if (experiment != null) {
+            this.setTitle("PeptideShaker " + getVersion() + " - " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")");
         } else {
             this.setTitle("PeptideShaker " + getVersion());
         }
@@ -2850,6 +2855,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
+        updateFrameTitle();
         ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
     }
@@ -5332,6 +5338,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     setProject(tempExperiment, tempSample, tempReplicate);
+                    
+                    objectsCache = new ObjectsCache();
 
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -5339,7 +5347,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (identification.isDB()) {
-                        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false);
+                        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
                     } else {
 
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -5354,7 +5362,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting project. Please Wait...");
-                            identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY);
+                            String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
+                            identification.convert(progressDialog, idReference, PeptideShaker.SERIALIZATION_DIRECTORY, objectsCache);
                             saveProjectProcess();
                         }
 
@@ -5415,7 +5424,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
-                    peptideShakerGUI.setFrameTitle(experiment.getReference());
+                    peptideShakerGUI.updateFrameTitle();
 
                     dataSaved = !compatibilityIssue;
 
@@ -5875,6 +5884,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
     }
+    
+    /**
+     * Sets the objects cache in use
+     * @param objectsCache the objects cache
+     */
+    public void setCache(ObjectsCache objectsCache) {
+        this.objectsCache = objectsCache;
+    }
 
     /**
      * Sets the new mgf file selected.
@@ -5911,7 +5928,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
 
-        identification.emptyCache(progressDialog); // @TODO: is this really needed? aren't the matches already in the database at this point?
+        objectsCache.emptyCache(progressDialog);
         identification.close();
 
         // transfer all files in the match directory
@@ -5921,7 +5938,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             ExperimentIO.save(experimentFile, experiment);
         }
 
-        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false);
+        objectsCache = new ObjectsCache(); // not necessary but will ensure a clean cache
+        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
 
         // tar everything in the current cps file file
         if (!progressDialog.isRunCanceled()) {

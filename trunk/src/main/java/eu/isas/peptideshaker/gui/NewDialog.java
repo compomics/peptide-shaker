@@ -609,7 +609,7 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-        if (validateReplicateNumberAndFastaFile()) {
+        if (validateUserInput()) {
 
             this.setVisible(false);
             peptideShakerGUI.clearData();
@@ -667,10 +667,10 @@ public class NewDialog extends javax.swing.JDialog {
             if (!needDialog || !waitingDialog.isRunCanceled()) {
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
+                peptideShakerGUI.setCache(peptideShaker.getCache());
                 peptideShakerGUI.setUpInitialFilters();
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
-                peptideShakerGUI.setFrameTitle(projectNameIdTxt.getText().trim());
                 peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));
                 this.dispose();
             } else if (waitingDialog.isRunCanceled()) {
@@ -1146,7 +1146,27 @@ public class NewDialog extends javax.swing.JDialog {
      *
      * @return true if the input is valid, false otherwise.
      */
-    private boolean validateReplicateNumberAndFastaFile() {
+    private boolean validateUserInput() {
+        
+        for (String forbiddenChar : Util.forbiddenCharacters) {
+            if (projectNameIdTxt.getText().contains(forbiddenChar)) {
+                JOptionPane.showMessageDialog(null, "The project name should not contain " + forbiddenChar + ".\n"
+                    + "Forbidden character in project name",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+                projectNameIdTxt.setForeground(Color.red);
+            return false;
+            }
+        }
+        for (String forbiddenChar : Util.forbiddenCharacters) {
+            if (sampleNameIdtxt.getText().contains(forbiddenChar)) {
+                JOptionPane.showMessageDialog(null, "The sample name should not contain " + forbiddenChar + ".\n"
+                    + "Forbidden character in sample name",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+                sampleNameIdtxt.setForeground(Color.red);
+            return false;
+            }
+        }
+        
         try {
             getReplicateNumber();
         } catch (Exception e) {
