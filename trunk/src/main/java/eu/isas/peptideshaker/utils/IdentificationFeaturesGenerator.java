@@ -252,7 +252,7 @@ public class IdentificationFeaturesGenerator {
      * @return the sequence coverage
      */
     public Double getSequenceCoverage(String proteinMatchKey) {
-
+try {
         Double result = sequenceCoverage.get(proteinMatchKey);
 
         if (result == null) {
@@ -280,6 +280,10 @@ public class IdentificationFeaturesGenerator {
             smallObjectsCache.add(proteinMatchKey);
         }
         return result;
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+    return Double.NaN;
+}
     }
 
     /**
@@ -373,7 +377,7 @@ public class IdentificationFeaturesGenerator {
      * @return the corresponding spectrum counting metric
      */
     public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
-
+try {
         if (method == peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod()) {
             Double result = spectrumCounting.get(proteinMatchKey);
 
@@ -405,14 +409,14 @@ public class IdentificationFeaturesGenerator {
         } else {
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
-            try {
                 return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, tempPreferences,
                         peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-                return 0.0;
-            }
+
         }
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+    return Double.NaN;
+}
     }
 
     /**
@@ -535,7 +539,7 @@ public class IdentificationFeaturesGenerator {
      * cleavage settings
      */
     public Double getObservableCoverage(String proteinMatchKey) {
-
+try {
         Double result = possibleCoverage.get(proteinMatchKey);
 
         if (result == null) {
@@ -563,6 +567,10 @@ public class IdentificationFeaturesGenerator {
             smallObjectsCache.add(proteinMatchKey);
         }
         return result;
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+    return Double.NaN;
+}
     }
 
     /**
@@ -658,6 +666,7 @@ public class IdentificationFeaturesGenerator {
      * @return the number of spectra for the given protein match
      */
     public Integer getNSpectra(String proteinMatchKey) {
+        try {
         Integer result = numberOfSpectra.get(proteinMatchKey);
 
         if (result == null) {
@@ -685,6 +694,10 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+    return 0;
+}
     }
 
     /**
@@ -731,6 +744,7 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated peptides
      */
     public int getNValidatedSpectra(String proteinMatchKey) {
+        try {
         Integer result = numberOfValidatedSpectra.get(proteinMatchKey);
         if (result == null) {
             if (smallObjectsCache.size() >= smallObjectsCacheSize) {
@@ -757,6 +771,11 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+    return 0;
+}
+        
     }
 
     /**
@@ -1382,8 +1401,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Repopulates the cache with the details of nProteins proteins
-     * first proteins
+     * Repopulates the cache with the details of nProteins proteins first
+     * proteins
      *
      * @param nProteins the number of proteins to load in the cache
      * @param waitingHandler a waiting handler displaying progress to the user.
@@ -1400,6 +1419,10 @@ public class IdentificationFeaturesGenerator {
             for (int i = 0; i < nProteins; i++) {
                 String proteinKey = proteinList.get(i);
                 psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                if (proteinMatch == null) {
+                    throw new IllegalArgumentException("Protein match " + proteinKey + " not found.");
+                }
                 getSequenceCoverage(proteinKey);
                 getObservableCoverage(proteinKey);
                 getNValidatedPeptides(proteinKey);
