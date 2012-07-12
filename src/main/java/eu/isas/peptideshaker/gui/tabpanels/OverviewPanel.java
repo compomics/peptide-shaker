@@ -4884,6 +4884,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 String before = "";
                 String after = "";
+
                 if (aaSurrounding.size() == 1) {
                     for (int index : aaSurrounding.keySet()) {
                         before = aaSurrounding.get(index)[0];

@@ -343,7 +343,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * Display the results.
      */
     public void displayResults() {
-        
+
         if (!fractionOrderSet) {
             fractionOrderSet = true;
             new FractionDetailsDialog(peptideShakerGUI, true);
@@ -368,15 +368,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         });
 
-        new Thread("DisplayThread") {
+        SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
 
                 proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
-
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Loading Fractions. Please Wait...");
 
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinFractionTableModel
@@ -387,31 +384,25 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     proteinTable.setModel(proteinTableModel);
                 }
 
-                // invoke later to give time for components to update
-                SwingUtilities.invokeLater(new Runnable() {
+                DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+                dm.fireTableStructureChanged();
+                updateSelection();
+                proteinTable.requestFocus();
 
-                    public void run() {
-                        DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-                        dm.fireTableStructureChanged();
-                        updateSelection();
-                        proteinTable.requestFocus();
+                setProteinTableProperties();
+                showSparkLines(peptideShakerGUI.showSparklines());
+                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
+                setUpTableHeaderToolTips();
 
-                        setProteinTableProperties();
-                        showSparkLines(peptideShakerGUI.showSparklines());
-                        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
-                        setUpTableHeaderToolTips();
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, true);
 
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, true);
+                // enable the contextual export options
+                exportProteinsJButton.setEnabled(true);
+                exportPeptidesJButton.setEnabled(true);
 
-                        // enable the contextual export options
-                        exportProteinsJButton.setEnabled(true);
-                        exportPeptidesJButton.setEnabled(true);
-
-                        progressDialog.setRunFinished();
-                    }
-                });
+                progressDialog.setRunFinished();
             }
-        }.start();
+        });
     }
 
     /**
@@ -1899,8 +1890,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Update the sequence coverage maps.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed
         if (proteinTable.getSelectedRow() != -1) {

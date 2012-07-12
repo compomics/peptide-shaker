@@ -1033,7 +1033,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
 
-            // has to be done lie this on order to avoid a ConcurrentModificationException
+            // has to be done like this on order to avoid a ConcurrentModificationException
             final Collection<ProteinFilter> values = proteinStarFilters.values();
             Iterator<ProteinFilter> iterator = values.iterator();
 
