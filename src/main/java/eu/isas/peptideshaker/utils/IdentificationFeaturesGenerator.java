@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -444,7 +445,7 @@ public class IdentificationFeaturesGenerator {
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException {
@@ -1183,11 +1184,11 @@ public class IdentificationFeaturesGenerator {
             return "Error";
         }
     }
-    
+
     /**
-     * Returns the list of validated protein keys. Returns null if the proteins 
+     * Returns the list of validated protein keys. Returns null if the proteins
      * have yet to be validated.
-     * 
+     *
      * @return the list of validated protein keys
      */
     public ArrayList<String> getValidatedProteins() {
@@ -1363,7 +1364,7 @@ public class IdentificationFeaturesGenerator {
             peptideShakerGUI.catchException(e);
             proteinListAfterHiding = new ArrayList<String>();
         }
-        
+
         return proteinListAfterHiding;
     }
 
@@ -1378,6 +1379,51 @@ public class IdentificationFeaturesGenerator {
             getProcessedProteinKeys(progressDialogX);
         }
         return proteinList;
+    }
+
+    /**
+     * Repopulates the cache with the protein match parameters and the nProteins first proteins
+     * @param nProteins the number of proteins to load in the cache
+     * @param waitingHandler a waiting handler displaying progress to the user. can be null. The progress will be displayed as secondary progress.
+     */
+    public void repopulateCache(int nProteins, WaitingHandler waitingHandler) {
+        try {
+            if (waitingHandler != null) {
+                waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+                waitingHandler.setSecondaryProgressValue(nProteins + proteinList.size());
+                waitingHandler.setSecondaryProgressValue(0);
+            }
+            PSParameter psParameter = new PSParameter();
+            for (String proteinKey : proteinList) {
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+            }
+            String proteinKey;
+            for (int i = 0; i < nProteins; i++) {
+                proteinKey = proteinList.get(i);
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+                    PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
+                    }
+                }
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
     }
 
     /**
