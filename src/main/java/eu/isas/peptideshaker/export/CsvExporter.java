@@ -207,7 +207,7 @@ public class CsvExporter {
             }
 
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "D-score" + SEPARATOR + "A-score" + SEPARATOR + "PTM location confidence" + SEPARATOR
                     + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
                     + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR
                     + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
@@ -542,7 +542,100 @@ public class CsvExporter {
         }
 
         line += SEPARATOR;
+
         PSPtmScores ptmScores = new PSPtmScores();
+
+        first = true;
+
+        for (String mod : modifications) {
+
+            if (first) {
+                first = false;
+            } else {
+                line += ", ";
+            }
+
+            if (spectrumMatch.getUrParam(ptmScores) != null) {
+
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                line += mod + " (";
+
+                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+
+                    String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                    if (location != null) {
+                        String[] split = location.split("|");
+                        first = true;
+                        String commaSeparated = "";
+                        for (String pos : split) {
+
+                            if (first) {
+                                first = false;
+                            } else {
+                                commaSeparated += ", ";
+                            }
+                            commaSeparated += pos;
+                        }
+                        line += commaSeparated + ": ";
+                        Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
+                        line += aScore + "";
+                    } else {
+                        line += "Not Scored";
+                    }
+                } else {
+                    line += "Not Scored";
+                }
+
+                line += ")";
+            }
+        }
+        line += SEPARATOR;
+
+        first = true;
+
+        for (String mod : modifications) {
+
+            if (first) {
+                first = false;
+            } else {
+                line += ", ";
+            }
+
+            if (spectrumMatch.getUrParam(ptmScores) != null) {
+
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                line += mod + " (";
+
+                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
+                    if (location != null) {
+                        String[] split = location.split("|");
+                        first = true;
+                        String commaSeparated = "";
+                        for (String pos : split) {
+
+                            if (first) {
+                                first = false;
+                            } else {
+                                commaSeparated += ", ";
+                            }
+                            commaSeparated += pos;
+                        }
+                        line += commaSeparated + ": ";
+                        double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
+                        line += dScore + "";
+                    } else {
+                        line += "Not Scored";
+                    }
+                } else {
+                    line += "Not Scored";
+                }
+
+                line += ")";
+            }
+        }
+        line += SEPARATOR;
+
         first = true;
 
         for (String mod : modifications) {
