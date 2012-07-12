@@ -184,7 +184,7 @@ public class FileImporter {
     public void importSequences(WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
 
         try {
-            waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".");
+            waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
             sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
 
@@ -207,7 +207,7 @@ public class FileImporter {
 
             if (needPeptideMap) {
                 if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
-                    waitingHandler.appendReport("Creating peptide to protein map.");
+                    waitingHandler.appendReport("Creating peptide to protein map.", true, true);
 
                     Enzyme enzyme = searchParameters.getEnzyme();
                     if (enzyme == null) {
@@ -254,35 +254,35 @@ public class FileImporter {
 
                     waitingHandler.setSecondaryProgressDialogIndeterminate(true);
                 } else {
-                    waitingHandler.appendReport("The database is too large to be parsed into peptides. Note that X!Tandem peptides might present protein inference issues.");
+                    waitingHandler.appendReport("The database is too large to be parsed into peptides. Note that X!Tandem peptides might present protein inference issues.", true, true);
                 }
             }
 
-            waitingHandler.appendReport("FASTA file import completed.");
+            waitingHandler.appendReport("FASTA file import completed.", true, true);
             waitingHandler.increaseProgressValue();
 
         } catch (FileNotFoundException e) {
-            waitingHandler.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.");
+            waitingHandler.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         } catch (IOException e) {
-            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".");
+            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         } catch (IllegalArgumentException e) {
-            waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.");
+            waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         } catch (ClassNotFoundException e) {
             waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
-                    + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.");
+                    + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         } catch (NullPointerException e) {
             waitingHandler.appendReport("The enzyme to use was not found.\n"
                     + "Please verify the Search Parameters given while creating the project.\n"
                     + "If the enzyme does not appear, verify that it is implemented in peptideshaker_enzymes.xml located in the conf folder of the PeptideShaker folder.\n\n"
-                    + "If the error persists please report bug at http://peptide-shaker.googlecode.com.");
+                    + "If the error persists please report bug at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         }
@@ -318,12 +318,12 @@ public class FileImporter {
                         }
                     } catch (IOException e) {
                         waitingHandler.appendReport("An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
+                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     } catch (IllegalArgumentException e) {
                         waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
-                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
+                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     }
@@ -530,7 +530,7 @@ public class FileImporter {
             try {
                 ptmFactory.importModifications(new File(MODIFICATION_FILE), false);
             } catch (Exception e) {
-                waitingHandler.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
+                waitingHandler.appendReport("Failed importing modifications from " + MODIFICATION_FILE, true, true);
                 waitingHandler.setRunCanceled();
                 e.printStackTrace();
             }
@@ -538,7 +538,7 @@ public class FileImporter {
             try {
                 ptmFactory.importModifications(new File(USER_MODIFICATION_FILE), true);
             } catch (Exception e) {
-                waitingHandler.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
+                waitingHandler.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE, true, true);
                 waitingHandler.setRunCanceled();
                 e.printStackTrace();
             }
@@ -547,7 +547,7 @@ public class FileImporter {
         @Override
         protected Object doInBackground() throws Exception {
 
-            waitingHandler.appendReport("Establishing database connection.");
+            waitingHandler.appendReport("Establishing database connection.", true, true);
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             identification.setIsDB(true);
@@ -556,7 +556,7 @@ public class FileImporter {
                 identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, true, peptideShaker.getCache());
             } catch (SQLException e) {
                 e.printStackTrace();
-                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.");
+                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.", true, true);
                 identification.setIsDB(false);
             }
 
@@ -575,7 +575,7 @@ public class FileImporter {
             try {
 
                 PeptideShaker.setPeptideShakerPTMs(searchParameters);
-                waitingHandler.appendReport("Reading identification files.");
+                waitingHandler.appendReport("Reading identification files.", true, true);
 
                 for (File idFile : idFiles) {
                     importPsms(idFile);
@@ -600,7 +600,7 @@ public class FileImporter {
                             return 1;
                         }
                     }
-                    waitingHandler.appendReport("Processing files with the new input.");
+                    waitingHandler.appendReport("Processing files with the new input.", true, true);
                     ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
                     File newFile;
                     for (String mgfName : missingMgfFiles.values()) {
@@ -622,28 +622,28 @@ public class FileImporter {
                 singleProteinList.clear();
 
                 if (nRetained == 0) {
-                    waitingHandler.appendReport("No identifications retained.");
+                    waitingHandler.appendReport("No identifications retained.", true, true);
                     waitingHandler.setRunCanceled();
                     return 1;
                 }
 
                 waitingHandler.appendReport("File import completed. "
-                        + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.");
-                waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]");
+                        + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.", true, true);
+                waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.setProteinCountMap(proteinCount);
                 peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences);
 
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occured while loading the identification files:");
-                waitingHandler.appendReport(e.getLocalizedMessage());
+                waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                 waitingHandler.setRunCanceled();
                 e.printStackTrace();
             } catch (OutOfMemoryError error) {
                 System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                 Runtime.getRuntime().gc();
                 waitingHandler.appendReportEndLine();
-                waitingHandler.appendReport("Ran out of memory!");
+                waitingHandler.appendReport("Ran out of memory!", true, true);
                 waitingHandler.setRunCanceled();
                 JOptionPane.showMessageDialog(null,
                         "The task used up all the available memory and had to be stopped.\n"
@@ -675,7 +675,7 @@ public class FileImporter {
             boolean idReport, goodFirstHit, unknown = false;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
-            waitingHandler.appendReport("Parsing " + idFile.getName() + ".");
+            waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
             IdfileReader fileReader;
 
             int searchEngine = readerFactory.getSearchEngine(idFile);
@@ -720,7 +720,7 @@ public class FileImporter {
                     match.setKey(spectrumKey);
                     if (spectrumFactory.fileLoaded(fileName)
                             && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-                        waitingHandler.appendReport("Spectrum " + oldTitle + " number " + spectrumTitle + " not found in file " + fileName + ".");
+                        waitingHandler.appendReport("Spectrum " + oldTitle + " number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
                         waitingHandler.setRunCanceled();
                         return;
                     }
@@ -735,12 +735,12 @@ public class FileImporter {
                         nSpectra += spectrumFactory.getNSpectra(fileName);
                     } else {
                         missingMgfFiles.put(idFile, fileName);
-                        waitingHandler.appendReport(fileName + " not found.");
+                        waitingHandler.appendReport(fileName + " not found.", true, true);
                         break;
                     }
                 }
                 if (!idReport) {
-                    waitingHandler.appendReport("Importing PSMs from " + idFile.getName());
+                    waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
                     idReport = true;
                 }
 
@@ -809,7 +809,7 @@ public class FileImporter {
                             if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
                                     waitingHandler.appendReport("An unknown modification was encountered and might impair further processing."
-                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
+                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
                                     unknown = true;
                                 }
                             }
@@ -838,7 +838,7 @@ public class FileImporter {
                 metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
             }
 
-            waitingHandler.appendReport("Reducing memory consumption.");
+            waitingHandler.appendReport("Reducing memory consumption.", true, true);
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
 
             // Free at least 1GB for the next parser if not anymore available
@@ -868,16 +868,16 @@ public class FileImporter {
             File spectrumFile = spectrumFiles.get(targetFileName);
 
             try {
-                waitingHandler.appendReport("Importing " + targetFileName);
+                waitingHandler.appendReport("Importing " + targetFileName, true, true);
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                 waitingHandler.resetSecondaryProgressBar();
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.increaseProgressValue();
                 searchParameters.addSpectrumFile(spectrumFile.getAbsolutePath());
-                waitingHandler.appendReport(targetFileName + " imported.");
+                waitingHandler.appendReport(targetFileName + " imported.", true, true);
             } catch (Exception e) {
-                waitingHandler.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".");
+                waitingHandler.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".", true, true);
                 e.printStackTrace();
             }
         }

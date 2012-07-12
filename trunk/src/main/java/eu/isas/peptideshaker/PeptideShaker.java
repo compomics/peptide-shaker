@@ -170,10 +170,10 @@ public class PeptideShaker {
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails, ProcessingPreferences processingPreferences) {
         
-        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
+        waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n", true, true);
 
-objectsCache = new ObjectsCache();
-objectsCache.setAutomatedMemoryManagement(true);
+        objectsCache = new ObjectsCache();
+        objectsCache.setAutomatedMemoryManagement(true);
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification(getIdentificationReference()));
@@ -188,7 +188,7 @@ objectsCache.setAutomatedMemoryManagement(true);
                 fileImporter.setModificationFile(projectDetails.getModificationFile().getCanonicalPath());
                 fileImporter.setUserModificationFile(projectDetails.getUserModificationFile().getCanonicalPath());
             } catch (IOException e) {
-                waitingHandler.appendReport("Error while setting the Modification files for the search.");
+                waitingHandler.appendReport("Error while setting the Modification files for the search.", true, true);
             }
         }
         
@@ -230,76 +230,76 @@ objectsCache.setAutomatedMemoryManagement(true);
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!objectsCache.memoryCheck()) {
-            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.");
+            waitingHandler.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.", true, true);
         }
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Computing assumptions probabilities.");
+        waitingHandler.appendReport("Computing assumptions probabilities.", true, true);
         inputMap.estimateProbabilities(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Saving assumptions probabilities.");
+        waitingHandler.appendReport("Saving assumptions probabilities.", true, true);
         attachAssumptionsProbabilities(inputMap, waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Selecting best peptide per spectrum.");
+        waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
         fillPsmMap(inputMap, waitingHandler);
         psmMap.cure();
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Computing PSM probabilities.");
+        waitingHandler.appendReport("Computing PSM probabilities.", true, true);
         psmMap.estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Saving probabilities, building peptides and proteins.");
+        waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Generating peptide map.");
+        waitingHandler.appendReport("Generating peptide map.", true, true);
         fillPeptideMaps(waitingHandler);
         peptideMap.cure();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Computing peptide probabilities.");
+        waitingHandler.appendReport("Computing peptide probabilities.", true, true);
         peptideMap.estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Saving peptide probabilities.");
+        waitingHandler.appendReport("Saving peptide probabilities.", true, true);
         attachPeptideProbabilities(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Generating protein map.");
+        waitingHandler.appendReport("Generating protein map.", true, true);
         fillProteinMap(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.");
+        waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true);
         cleanProteinGroups(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Correcting protein probabilities.");
+        waitingHandler.appendReport("Correcting protein probabilities.", true, true);
         proteinMap.estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Saving protein probabilities.");
+        waitingHandler.appendReport("Saving protein probabilities.", true, true);
         attachProteinProbabilities(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
@@ -308,22 +308,22 @@ objectsCache.setAutomatedMemoryManagement(true);
         if (processingPreferences.getPsmFDR() == 1
                 && processingPreferences.getPeptideFDR() == 1
                 && processingPreferences.getProteinFDR() == 1) {
-            waitingHandler.appendReport("Validating identifications at 1% FDR.");
+            waitingHandler.appendReport("Validating identifications at 1% FDR.", true, true);
         } else {
-            waitingHandler.appendReport("Validating identifications.");
+            waitingHandler.appendReport("Validating identifications.", true, true);
         }
         fdrValidation(waitingHandler, processingPreferences.getPsmFDR(), processingPreferences.getPeptideFDR(), processingPreferences.getProteinFDR());
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Scoring PTMs in peptides.");
+        waitingHandler.appendReport("Scoring PTMs in peptides.", true, true);
         scorePeptidePtms(waitingHandler, searchParameters, annotationPreferences, processingPreferences.isAScoreCalculated());
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Scoring PTMs in proteins.");
+        waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
         scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences.isAScoreCalculated());
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
@@ -393,7 +393,7 @@ objectsCache.setAutomatedMemoryManagement(true);
             }
         }
 
-        waitingHandler.appendReport(report);
+        waitingHandler.appendReport(report, true, true);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
         waitingHandler.setRunFinished();
     }
@@ -457,7 +457,7 @@ objectsCache.setAutomatedMemoryManagement(true);
         try {
             validateIdentifications(waitingHandler.getSecondaryProgressBar());
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while validating the results.");
+            waitingHandler.appendReport("An error occurred while validating the results.", true, true);
             waitingHandler.setRunCanceled();
         }
         waitingHandler.setSecondaryProgressDialogIndeterminate(true);
@@ -1603,7 +1603,7 @@ objectsCache.setAutomatedMemoryManagement(true);
                 try {
                     currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 } catch (Exception e) {
-                    waitingHandler.appendReport("Protein not found: " + proteinMatch.getMainMatch() + "."); // This error is likely to be caught at an earlier stage
+                    waitingHandler.appendReport("Protein not found: " + proteinMatch.getMainMatch() + ".", true, true); // This error is likely to be caught at an earlier stage
                 }
 
                 if (currentProtein != null) {
@@ -1803,7 +1803,7 @@ objectsCache.setAutomatedMemoryManagement(true);
         metrics.setMaxProteinKeyLength(maxProteinKeyLength);
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(true);
-        waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");
+        waitingHandler.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).", true, true);
     }
 
     /**

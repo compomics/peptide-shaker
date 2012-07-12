@@ -170,7 +170,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         quantifyJButton.setFont(quantifyJButton.getFont().deriveFont(quantifyJButton.getFont().getStyle() | java.awt.Font.BOLD, quantifyJButton.getFont().getSize()+3));
         quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
-        quantifyJButton.setText("Quantify");
+        quantifyJButton.setText("Reporter Ions");
         quantifyJButton.setToolTipText("<html>\nQuantify your proteins using reporter ions.<br>\n(Coming soon...)\n</html>");
         quantifyJButton.setFocusPainted(false);
         quantifyJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);

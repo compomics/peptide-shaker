@@ -5419,7 +5419,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     if (!progressDialog.isRunCanceled()) {
                     identificationFeaturesGenerator.setProteinKeys(getMetrics().getProteinKeys());
-                        progressDialog.setTitle("Loading protein details. Please Wait...");
+                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identificationFeaturesGenerator.repopulateCache(50, progressDialog);
                         progressDialog.setIndeterminate(true);
                     }
@@ -5964,7 +5964,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
 
         if (!progressDialog.isRunCanceled() && repopulateCache) {
-                        progressDialog.setTitle("Populating cache. Please Wait...");
+                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
             identificationFeaturesGenerator.repopulateCache(50, progressDialog);
         }
 

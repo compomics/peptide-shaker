@@ -252,7 +252,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/reporter_logo.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Quantify"/>
+            <Property name="text" type="java.lang.String" value="Reporter Ions"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Quantify your proteins using reporter ions.&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
