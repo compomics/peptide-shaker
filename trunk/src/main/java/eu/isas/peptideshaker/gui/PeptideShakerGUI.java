@@ -5365,7 +5365,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache);
                             progressDialog.setTitle("Saving. Please Wait...");
-                            saveProjectProcess();
+                            saveProjectProcess(true);
                         }
 
                         updateAnnotationPreferencesFromSearchSettings();
@@ -5714,7 +5714,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             @Override
             public void run() {
                 try {
-                    saveProjectProcess();
+                    
+                    saveProjectProcess(!closeWhenDone);
 
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -5919,12 +5920,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * This method contains the different operations to be conducted in order to
      * save a file.
      *
+     * @param repopulateCache a boolean indicating whether the cache should be repopulated after saving
      * @throws FileNotFoundException
      * @throws IOException
      * @throws SQLException
      * @throws ArchiveException
      */
-    private void saveProjectProcess() throws FileNotFoundException, IOException, SQLException, ArchiveException {
+    private void saveProjectProcess(boolean repopulateCache) throws FileNotFoundException, IOException, SQLException, ArchiveException {
 
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
@@ -5942,6 +5944,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         objectsCache = new ObjectsCache(); // not necessary but will ensure a clean cache
         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
 
+        if (!progressDialog.isRunCanceled() && repopulateCache) {
+            identificationFeaturesGenerator.repopulateCache(100, progressDialog);
+        }
+        
         // tar everything in the current cps file file
         if (!progressDialog.isRunCanceled()) {
             tarFolder();
