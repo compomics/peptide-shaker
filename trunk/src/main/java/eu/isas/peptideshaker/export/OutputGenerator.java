@@ -111,7 +111,7 @@ public class OutputGenerator {
      * output
      * @param aConfidence boolean indicating whether the confidence shall be
      * output
-     * @param aMW boolean indicating whether the molecular weight is to be 
+     * @param aMW boolean indicating whether the molecular weight is to be
      * included in the output
      * @param aIncludeHeader boolean indicating whether the header shall be
      * output
@@ -978,6 +978,8 @@ public class OutputGenerator {
                             }
                             if (location) {
                                 writer.write("Location Confidence" + SEPARATOR);
+                                writer.write("A-score" + SEPARATOR);
+                                writer.write("D-score" + SEPARATOR);
                             }
                             if (file) {
                                 writer.write("Spectrum File" + SEPARATOR);
@@ -1135,6 +1137,76 @@ public class OutputGenerator {
                                                             writer.write("Confident");
                                                         } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
                                                             writer.write("Very Confident");
+                                                        }
+                                                    } else {
+                                                        writer.write("Not Scored");
+                                                    }
+                                                    writer.write(")");
+                                                }
+                                                writer.write(SEPARATOR);
+                                                first = true;
+                                                for (String mod : modList) {
+                                                    if (first) {
+                                                        first = false;
+                                                    } else {
+                                                        writer.write(", ");
+                                                    }
+                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                                    writer.write(mod + " (");
+                                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                        String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                                                        if (location != null) {
+                                                            String[] split = location.split("|");
+                                                            first = true;
+                                                            String commaSeparated = "";
+                                                            for (String pos : split) {
+
+                                                                if (first) {
+                                                                    first = false;
+                                                                } else {
+                                                                    commaSeparated += ", ";
+                                                                }
+                                                                commaSeparated += pos;
+                                                            }
+                                                            writer.write(commaSeparated + ": ");
+                                                            Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
+                                                            writer.write(aScore + "");
+                                                        } else {
+                                                            writer.write("Not Scored");
+                                                        }
+                                                    } else {
+                                                        writer.write("Not Scored");
+                                                    }
+                                                    writer.write(")");
+                                                }
+                                                writer.write(SEPARATOR);
+                                                first = true;
+                                                for (String mod : modList) {
+                                                    if (first) {
+                                                        first = false;
+                                                    } else {
+                                                        writer.write(", ");
+                                                    }
+                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                                    writer.write(mod + " (");
+                                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                        String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
+                                                        if (location != null) {
+                                                            String[] split = location.split("|");
+                                                            first = true;
+                                                            String commaSeparated = "";
+                                                            for (String pos : split) {
+
+                                                                if (first) {
+                                                                    first = false;
+                                                                } else {
+                                                                    commaSeparated += ", ";
+                                                                }
+                                                                commaSeparated += pos;
+                                                            }
+                                                            writer.write(commaSeparated + ": ");
+                                                            double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
+                                                            writer.write(dScore + "");
                                                         }
                                                     } else {
                                                         writer.write("Not Scored");
@@ -1330,7 +1402,7 @@ public class OutputGenerator {
                 peptideShakerGUI.catchException(e);
                 writer.write("Error\n");
             }
-            
+
             if (progressDialog != null && progressDialog != null) {
                 progressDialog.setValue(++progress);
             }

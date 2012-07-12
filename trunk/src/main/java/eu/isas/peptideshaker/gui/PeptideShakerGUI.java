@@ -401,12 +401,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         boolean numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
 
         if (!numbusLookAndFeelSet) {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(null,
                     "Failed to set the default look and feel. Using backup look and feel.\n"
                     + "PeptideShaker will work but not look as good as it should...", "Look and Feel",
                     JOptionPane.WARNING_MESSAGE);
         }
-        
+
         new PeptideShakerGUI();
     }
 
@@ -3245,7 +3245,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         rewindIonsDeNovoCheckBoxMenuItem.repaint();
-        
+
         if (annotationPreferences.getDeNovoCharge() == 1) {
             deNovoChargeOneJRadioButtonMenuItem.isSelected();
         } else {
@@ -4759,7 +4759,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         annotationPreferences.setShowForwardIonDeNovoTags(forwardIonsDeNovoCheckBoxMenuItem.isSelected());
         annotationPreferences.setShowRewindIonDeNovoTags(rewindIonsDeNovoCheckBoxMenuItem.isSelected());
-        
+
         if (deNovoChargeOneJRadioButtonMenuItem.isSelected()) {
             annotationPreferences.setDeNovoCharge(1);
         } else {
@@ -5338,8 +5338,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     setProject(tempExperiment, tempSample, tempReplicate);
-                    
+
                     objectsCache = new ObjectsCache();
+                    objectsCache.setAutomatedMemoryManagement(true);
 
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -5414,6 +5415,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 JOptionPane.INFORMATION_MESSAGE);
                         searchParameters.updateVersion();
                         updateAnnotationPreferencesFromSearchSettings();
+                    }
+
+                    if (!progressDialog.isRunCanceled()) {
+                    identificationFeaturesGenerator.setProteinKeys(getMetrics().getProteinKeys());
+                        progressDialog.setTitle("Populating cache. Please Wait...");
+                        identificationFeaturesGenerator.repopulateCache(50, progressDialog);
+                        progressDialog.setIndeterminate(true);
                     }
 
                     if (progressDialog.isRunCanceled()) {
@@ -5714,7 +5722,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             @Override
             public void run() {
                 try {
-                    
+
                     saveProjectProcess(!closeWhenDone);
 
                     if (!progressDialog.isRunCanceled()) {
@@ -5886,13 +5894,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
     }
-    
+
     /**
      * Sets the objects cache in use
+     *
      * @param objectsCache the objects cache
      */
     public void setCache(ObjectsCache objectsCache) {
         this.objectsCache = objectsCache;
+    }
+
+    /**
+     * Returns the objects cache in use
+     *
+     * @return the objects cache
+     */
+    public ObjectsCache getCache() {
+        return objectsCache;
     }
 
     /**
@@ -5920,7 +5938,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * This method contains the different operations to be conducted in order to
      * save a file.
      *
-     * @param repopulateCache a boolean indicating whether the cache should be repopulated after saving
+     * @param repopulateCache a boolean indicating whether the cache should be
+     * repopulated after saving
      * @throws FileNotFoundException
      * @throws IOException
      * @throws SQLException
@@ -5945,9 +5964,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
 
         if (!progressDialog.isRunCanceled() && repopulateCache) {
-            identificationFeaturesGenerator.repopulateCache(100, progressDialog);
+                        progressDialog.setTitle("Populating cache. Please Wait...");
+            identificationFeaturesGenerator.repopulateCache(50, progressDialog);
         }
-        
+
         // tar everything in the current cps file file
         if (!progressDialog.isRunCanceled()) {
             tarFolder();
@@ -6407,13 +6427,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }, "Start Tool").start();
         }
     }
-    
+
     /**
      * Tar the PS folder.
-     * 
+     *
      * @throws FileNotFoundException
      * @throws ArchiveException
-     * @throws IOException 
+     * @throws IOException
      */
     public void tarFolder() throws FileNotFoundException, ArchiveException, IOException {
         FileOutputStream fos = new FileOutputStream(currentPSFile);
@@ -6428,11 +6448,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Add content to the tar file.
-     * 
+     *
      * @param tarOutput
      * @param folder
      * @throws FileNotFoundException
-     * @throws IOException 
+     * @throws IOException
      */
     public void addFolderContent(ArchiveOutputStream tarOutput, File folder) throws FileNotFoundException, IOException {
 

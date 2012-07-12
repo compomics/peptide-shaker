@@ -186,7 +186,7 @@ public class PtmScoring implements Serializable {
      * @param locationsKey the locations possibility given as a key
      * @return the delta score
      */
-    public double getDeltaScore(String locationsKey) {
+    public Double getDeltaScore(String locationsKey) {
         return deltaScores.get(locationsKey);
     }
 
@@ -197,7 +197,7 @@ public class PtmScoring implements Serializable {
      * @param locationsKey the locations possibility given as a key
      * @return the A-score
      */
-    public double getAScore(String locationsKey) {
+    public Double getAScore(String locationsKey) {
         return aScores.get(locationsKey);
     }
 

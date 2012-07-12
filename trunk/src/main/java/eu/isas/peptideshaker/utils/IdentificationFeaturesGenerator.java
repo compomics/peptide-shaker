@@ -45,7 +45,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * The number of values kept in memory for small objects.
      */
-    private final int smallObjectsCacheSize = 1000;
+    private final int smallObjectsCacheSize = 5000;
     /**
      * The number of values kept in memory for big objects.
      */
@@ -1382,43 +1382,37 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Repopulates the cache with the protein match parameters and the nProteins first proteins
+     * Repopulates the cache with the details of nProteins proteins
+     * first proteins
+     *
      * @param nProteins the number of proteins to load in the cache
-     * @param waitingHandler a waiting handler displaying progress to the user. can be null. The progress will be displayed as secondary progress.
+     * @param waitingHandler a waiting handler displaying progress to the user.
+     * can be null. The progress will be displayed as secondary progress.
      */
     public void repopulateCache(int nProteins, WaitingHandler waitingHandler) {
         try {
             if (waitingHandler != null) {
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                waitingHandler.setSecondaryProgressValue(nProteins + proteinList.size());
+                waitingHandler.setMaxSecondaryProgressValue(nProteins);
                 waitingHandler.setSecondaryProgressValue(0);
             }
             PSParameter psParameter = new PSParameter();
-            for (String proteinKey : proteinList) {
-                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-                if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressValue();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                }
-            }
-            String proteinKey;
             for (int i = 0; i < nProteins; i++) {
-                proteinKey = proteinList.get(i);
-                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
-                    PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
-                    }
-                }
+                String proteinKey = proteinList.get(i);
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+                getSequenceCoverage(proteinKey);
+                getObservableCoverage(proteinKey);
+                getNValidatedPeptides(proteinKey);
+                getNValidatedSpectra(proteinKey);
+                getSpectrumCounting(proteinKey);
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressValue();
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
+                }
+                if (!peptideShakerGUI.getCache().memoryCheck()) {
+                    break;
                 }
             }
         } catch (Exception e) {
