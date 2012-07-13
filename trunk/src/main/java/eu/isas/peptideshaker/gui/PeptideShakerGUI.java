@@ -6402,7 +6402,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 path = utilitiesUserPreferences.getReporterPath();
             }
 
-            if (path != null) {
+            if (path != null && !path.equalsIgnoreCase(".")) {
                 new Thread(new Runnable() {
 
                     public void run() {

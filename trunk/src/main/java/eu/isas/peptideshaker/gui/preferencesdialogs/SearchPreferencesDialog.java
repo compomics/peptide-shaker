@@ -1575,7 +1575,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         }
 
 
-        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
+        temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE);
 
         if (temp == null) {
             temp = "";
