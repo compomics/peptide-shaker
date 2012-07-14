@@ -244,7 +244,7 @@ public class PtmScoring implements Serializable {
         if (locationsKey.length() > 1) {
             String tempKey = locationsKey.substring(0, locationsKey.lastIndexOf(separator));
             int index;
-            while (tempKey.length() > 1) {
+            while (tempKey.length() >= 1) {
                 index = tempKey.lastIndexOf(separator);
                 result.add(new Integer(tempKey.substring(index + 1)));
                 if (index > -1) {
@@ -253,7 +253,6 @@ public class PtmScoring implements Serializable {
                     break;
                 }
             }
-            result.add(new Integer(tempKey));
         }
         return result;
     }

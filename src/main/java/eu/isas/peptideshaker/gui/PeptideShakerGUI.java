@@ -5723,7 +5723,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             public void run() {
                 try {
 
-                    saveProjectProcess(!closeWhenDone);
+                    saveProjectProcess(closeWhenDone);
 
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -5938,19 +5938,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * This method contains the different operations to be conducted in order to
      * save a file.
      *
-     * @param repopulateCache a boolean indicating whether the cache should be
+     * @param emptyCache a boolean indicating whether the cache should be
      * repopulated after saving
      * @throws FileNotFoundException
      * @throws IOException
      * @throws SQLException
      * @throws ArchiveException
      */
-    private void saveProjectProcess(boolean repopulateCache) throws FileNotFoundException, IOException, SQLException, ArchiveException {
+    private void saveProjectProcess(boolean emptyCache) throws FileNotFoundException, IOException, SQLException, ArchiveException {
 
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
 
-        objectsCache.emptyCache(progressDialog);
+        objectsCache.saveCache(progressDialog, emptyCache);
         identification.close();
 
         // transfer all files in the match directory
@@ -5960,13 +5960,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             ExperimentIO.save(experimentFile, experiment);
         }
 
-        objectsCache = new ObjectsCache(); // not necessary but will ensure a clean cache
         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
-
-        if (!progressDialog.isRunCanceled() && repopulateCache) {
-                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-            identificationFeaturesGenerator.repopulateCache(50, progressDialog);
-        }
 
         // tar everything in the current cps file file
         if (!progressDialog.isRunCanceled()) {

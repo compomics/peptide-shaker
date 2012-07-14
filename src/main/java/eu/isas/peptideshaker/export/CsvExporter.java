@@ -564,17 +564,17 @@ public class CsvExporter {
 
                     String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
                     if (location != null) {
-                        String[] split = location.split("|");
+                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
                         first = true;
                         String commaSeparated = "";
-                        for (String pos : split) {
+                        for (int aa : locations) {
 
                             if (first) {
                                 first = false;
                             } else {
                                 commaSeparated += ", ";
                             }
-                            commaSeparated += pos;
+                            commaSeparated += aa;
                         }
                         line += commaSeparated + ": ";
                         Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
@@ -609,17 +609,16 @@ public class CsvExporter {
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                     String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
                     if (location != null) {
-                        String[] split = location.split("|");
+                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
                         first = true;
                         String commaSeparated = "";
-                        for (String pos : split) {
-
+                        for (int aa : locations) {
                             if (first) {
                                 first = false;
                             } else {
                                 commaSeparated += ", ";
                             }
-                            commaSeparated += pos;
+                            commaSeparated += aa;
                         }
                         line += commaSeparated + ": ";
                         double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
