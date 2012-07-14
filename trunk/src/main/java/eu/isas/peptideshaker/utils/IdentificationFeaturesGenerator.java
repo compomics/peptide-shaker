@@ -1412,7 +1412,7 @@ try {
         try {
             if (waitingHandler != null) {
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressValue(nProteins);
+                waitingHandler.setMaxSecondaryProgressValue(2*nProteins);
                 waitingHandler.setSecondaryProgressValue(0);
             }
             PSParameter psParameter = new PSParameter();
@@ -1425,6 +1425,12 @@ try {
                 }
                 getSequenceCoverage(proteinKey);
                 getObservableCoverage(proteinKey);
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
                 getNValidatedPeptides(proteinKey);
                 getNValidatedSpectra(proteinKey);
                 getSpectrumCounting(proteinKey);

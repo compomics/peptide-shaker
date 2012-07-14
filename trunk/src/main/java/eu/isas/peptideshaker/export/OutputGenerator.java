@@ -261,7 +261,7 @@ public class OutputGenerator {
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
-                        int progress = 0, proteinCounter = 0;
+                        int proteinCounter = 0;
 
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(proteinKeys.size());
@@ -397,10 +397,10 @@ public class OutputGenerator {
                                             writer.write("\n");
                                         }
 
-                                        progressDialog.setValue(++progress);
                                     }
                                 }
                             }
+                            progressDialog.increaseProgressValue();
                         }
 
                         writer.close();
@@ -592,7 +592,7 @@ public class OutputGenerator {
 
                         PSParameter peptidePSParameter = new PSParameter();
                         PSParameter secondaryPSParameter = new PSParameter();
-                        int progress = 0, peptideCounter = 0;
+                        int peptideCounter = 0;
                         Protein currentProtein = null;
                         HashMap<Integer, String[]> surroundingAAs = null;
                         ProteinMatch proteinMatch = null;
@@ -835,10 +835,10 @@ public class OutputGenerator {
                                                 writer.write("\n");
                                             }
                                         }
-                                        progressDialog.setValue(++progress);
                                     }
                                 }
                             }
+                            progressDialog.increaseProgressValue();
                         }
 
                         writer.close();
@@ -1017,7 +1017,7 @@ public class OutputGenerator {
                         }
 
                         PSParameter psParameter = new PSParameter();
-                        int progress = 0, psmCounter = 0;
+                        int psmCounter = 0;
 
                         for (String psmKey : psmKeys) {
 
@@ -1156,17 +1156,16 @@ public class OutputGenerator {
                                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                         String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
                                                         if (location != null) {
-                                                            String[] split = location.split("|");
+                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
                                                             first = true;
                                                             String commaSeparated = "";
-                                                            for (String pos : split) {
-
+                                                            for (int aa : locations) {
                                                                 if (first) {
                                                                     first = false;
                                                                 } else {
                                                                     commaSeparated += ", ";
                                                                 }
-                                                                commaSeparated += pos;
+                                                                commaSeparated += aa;
                                                             }
                                                             writer.write(commaSeparated + ": ");
                                                             Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
@@ -1192,17 +1191,16 @@ public class OutputGenerator {
                                                     if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                         String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
                                                         if (location != null) {
-                                                            String[] split = location.split("|");
+                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
                                                             first = true;
                                                             String commaSeparated = "";
-                                                            for (String pos : split) {
-
+                                                            for (int aa : locations) {
                                                                 if (first) {
                                                                     first = false;
                                                                 } else {
                                                                     commaSeparated += ", ";
                                                                 }
-                                                                commaSeparated += pos;
+                                                                commaSeparated += aa;
                                                             }
                                                             writer.write(commaSeparated + ": ");
                                                             double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
@@ -1253,10 +1251,10 @@ public class OutputGenerator {
                                             writer.write("\n");
                                         }
 
-                                        progressDialog.setValue(++progress);
                                     }
                                 }
                             }
+                            progressDialog.increaseProgressValue();
                         }
 
                         writer.close();

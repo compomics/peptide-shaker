@@ -1420,6 +1420,9 @@ public class PeptideShaker {
             HashMap<String, Double> fractionScores = new HashMap<String, Double>();
             double probaScore = 1;
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            if (proteinMatch == null) {
+                throw new IllegalArgumentException("Protein match " + proteinKey + " not found.");
+            }
 
             // get the fraction scores
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
