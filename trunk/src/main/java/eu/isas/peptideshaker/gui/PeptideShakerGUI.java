@@ -5420,7 +5420,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (!progressDialog.isRunCanceled()) {
-                    identificationFeaturesGenerator.setProteinKeys(getMetrics().getProteinKeys());
+                        identificationFeaturesGenerator.setProteinKeys(getMetrics().getProteinKeys());
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identificationFeaturesGenerator.repopulateCache(50, progressDialog);
                         progressDialog.setIndeterminate(true);

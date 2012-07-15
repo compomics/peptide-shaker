@@ -142,7 +142,7 @@
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="3">
-                    <StringItem index="0" value="Non-Validated PSMs"/>
+                    <StringItem index="0" value="Non-Validated PSMs / Unidentified Spectra"/>
                     <StringItem index="1" value="Non-Validated Peptides"/>
                     <StringItem index="2" value="Non-Validated Proteins"/>
                   </StringArray>
@@ -493,8 +493,8 @@
                       </Group>
                       <EmptySpace pref="110" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="exportUnidentifiedSpectraAsCsvButton" pref="180" max="32767" attributes="0"/>
-                          <Component id="exportUnidentifiedSpectraAsFastaButton" pref="180" max="32767" attributes="0"/>
+                          <Component id="exportUnidentifiedProteinsAccessionNumbersAsCsvButton" pref="180" max="32767" attributes="0"/>
+                          <Component id="exportUnidentifiedProteinsAsFastaButton" pref="180" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -506,13 +506,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportUnidentifiedSpectraAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportUnidentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="includeNonValidatedInUnidentifiedFastaCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportUnidentifiedSpectraAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportUnidentifiedProteinsAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="includeNonValidatedInProteinUnidentifiedCsvCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -526,12 +526,12 @@
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins as a FASTA file:&lt;/html&gt;"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="exportUnidentifiedSpectraAsFastaButton">
+            <Component class="javax.swing.JButton" name="exportUnidentifiedProteinsAsFastaButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export as FASTA"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedSpectraAsFastaButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedProteinsAsFastaButtonActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="includeNonValidatedInUnidentifiedFastaCheckBox">
@@ -557,12 +557,12 @@
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="exportUnidentifiedSpectraAsCsvButton">
+            <Component class="javax.swing.JButton" name="exportUnidentifiedProteinsAccessionNumbersAsCsvButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export as CSV"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedSpectraAsCsvButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -588,8 +588,8 @@
                       </Group>
                       <EmptySpace pref="279" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="exportIdentifiedSpectraAsCsvButton" alignment="0" pref="180" max="32767" attributes="0"/>
-                          <Component id="exportIdentifiedSpectraAsFastaButton" alignment="0" pref="180" max="32767" attributes="0"/>
+                          <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="0" pref="180" max="32767" attributes="0"/>
+                          <Component id="exportIdentifiedProteinsAsFastaButton" alignment="0" pref="180" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -601,12 +601,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportIdentifiedSpectraAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportIdentifiedSpectraAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -619,12 +619,12 @@
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins as a FASTA file:&lt;/html&gt;"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="exportIdentifiedSpectraAsFastaButton">
+            <Component class="javax.swing.JButton" name="exportIdentifiedProteinsAsFastaButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export as FASTA"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIdentifiedSpectraAsFastaButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIdentifiedProteinsAsFastaButtonActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel13">
@@ -632,12 +632,12 @@
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins accession numbers:&lt;/html&gt;"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="exportIdentifiedSpectraAsCsvButton">
+            <Component class="javax.swing.JButton" name="exportIdentifiedProteinAccessionNumbersAsCsvButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export as CSV"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIdentifiedSpectraAsCsvButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
