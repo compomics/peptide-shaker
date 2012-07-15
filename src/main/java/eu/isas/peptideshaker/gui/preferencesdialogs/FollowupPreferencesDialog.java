@@ -108,16 +108,16 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         jLabel8 = new javax.swing.JLabel();
         unidentifiedProteinsPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        exportUnidentifiedSpectraAsFastaButton = new javax.swing.JButton();
+        exportUnidentifiedProteinsAsFastaButton = new javax.swing.JButton();
         includeNonValidatedInUnidentifiedFastaCheckBox = new javax.swing.JCheckBox();
         jLabel11 = new javax.swing.JLabel();
         includeNonValidatedInProteinUnidentifiedCsvCheckBox = new javax.swing.JCheckBox();
-        exportUnidentifiedSpectraAsCsvButton = new javax.swing.JButton();
+        exportUnidentifiedProteinsAccessionNumbersAsCsvButton = new javax.swing.JButton();
         unidentifiedProteinsPanel1 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        exportIdentifiedSpectraAsFastaButton = new javax.swing.JButton();
+        exportIdentifiedProteinsAsFastaButton = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
-        exportIdentifiedSpectraAsCsvButton = new javax.swing.JButton();
+        exportIdentifiedProteinAccessionNumbersAsCsvButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
@@ -130,7 +130,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Export Spectra:");
 
-        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs", "Non-Validated Peptides", "Non-Validated Proteins" }));
+        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs / Unidentified Spectra", "Non-Validated Peptides", "Non-Validated Proteins" }));
 
         exportMgfButton.setText("Export as MGF");
         exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
@@ -363,10 +363,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel10.setText("<html>Export all the <b>unidentified</b> proteins as a FASTA file:</html>");
 
-        exportUnidentifiedSpectraAsFastaButton.setText("Export as FASTA");
-        exportUnidentifiedSpectraAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
+        exportUnidentifiedProteinsAsFastaButton.setText("Export as FASTA");
+        exportUnidentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportUnidentifiedSpectraAsFastaButtonActionPerformed(evt);
+                exportUnidentifiedProteinsAsFastaButtonActionPerformed(evt);
             }
         });
 
@@ -384,10 +384,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         includeNonValidatedInProteinUnidentifiedCsvCheckBox.setIconTextGap(10);
         includeNonValidatedInProteinUnidentifiedCsvCheckBox.setOpaque(false);
 
-        exportUnidentifiedSpectraAsCsvButton.setText("Export as CSV");
-        exportUnidentifiedSpectraAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
+        exportUnidentifiedProteinsAccessionNumbersAsCsvButton.setText("Export as CSV");
+        exportUnidentifiedProteinsAccessionNumbersAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportUnidentifiedSpectraAsCsvButtonActionPerformed(evt);
+                exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed(evt);
             }
         });
 
@@ -408,8 +408,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exportUnidentifiedSpectraAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(exportUnidentifiedSpectraAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                    .addComponent(exportUnidentifiedProteinsAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(exportUnidentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addContainerGap())
         );
         unidentifiedProteinsPanelLayout.setVerticalGroup(
@@ -418,12 +418,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportUnidentifiedSpectraAsFastaButton)
+                    .addComponent(exportUnidentifiedProteinsAsFastaButton)
                     .addComponent(includeNonValidatedInUnidentifiedFastaCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportUnidentifiedSpectraAsCsvButton)
+                    .addComponent(exportUnidentifiedProteinsAccessionNumbersAsCsvButton)
                     .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -433,19 +433,19 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel12.setText("<html>Export all the <b>identified</b> proteins as a FASTA file:</html>");
 
-        exportIdentifiedSpectraAsFastaButton.setText("Export as FASTA");
-        exportIdentifiedSpectraAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
+        exportIdentifiedProteinsAsFastaButton.setText("Export as FASTA");
+        exportIdentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportIdentifiedSpectraAsFastaButtonActionPerformed(evt);
+                exportIdentifiedProteinsAsFastaButtonActionPerformed(evt);
             }
         });
 
         jLabel13.setText("<html>Export all the <b>identified</b> proteins accession numbers:</html>");
 
-        exportIdentifiedSpectraAsCsvButton.setText("Export as CSV");
-        exportIdentifiedSpectraAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
+        exportIdentifiedProteinAccessionNumbersAsCsvButton.setText("Export as CSV");
+        exportIdentifiedProteinAccessionNumbersAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportIdentifiedSpectraAsCsvButtonActionPerformed(evt);
+                exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed(evt);
             }
         });
 
@@ -460,8 +460,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exportIdentifiedSpectraAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(exportIdentifiedSpectraAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
+                    .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(exportIdentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addContainerGap())
         );
         unidentifiedProteinsPanel1Layout.setVerticalGroup(
@@ -470,11 +470,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportIdentifiedSpectraAsFastaButton))
+                    .addComponent(exportIdentifiedProteinsAsFastaButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportIdentifiedSpectraAsCsvButton))
+                    .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -878,7 +878,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void exportUnidentifiedSpectraAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedSpectraAsFastaButtonActionPerformed
+    private void exportUnidentifiedProteinsAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedProteinsAsFastaButtonActionPerformed
 
         // get the file to send the output to
         final File selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
@@ -964,7 +964,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-    }//GEN-LAST:event_exportUnidentifiedSpectraAsFastaButtonActionPerformed
+    }//GEN-LAST:event_exportUnidentifiedProteinsAsFastaButtonActionPerformed
 
     /**
      * Export all the unidentified protein accession numbers to a tab separated
@@ -972,7 +972,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void exportUnidentifiedSpectraAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedSpectraAsCsvButtonActionPerformed
+    private void exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed
 
         // get the file to send the output to
         final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
@@ -1055,14 +1055,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-    }//GEN-LAST:event_exportUnidentifiedSpectraAsCsvButtonActionPerformed
+    }//GEN-LAST:event_exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed
 
     /**
      * Export all the identified proteins to a FASTA file.
      *
      * @param evt
      */
-    private void exportIdentifiedSpectraAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedSpectraAsFastaButtonActionPerformed
+    private void exportIdentifiedProteinsAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
 
         // get the file to send the output to
         final File selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
@@ -1146,7 +1146,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-    }//GEN-LAST:event_exportIdentifiedSpectraAsFastaButtonActionPerformed
+    }//GEN-LAST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
 
     /**
      * Export all the identified protein accession numbers to a tab separated
@@ -1154,7 +1154,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void exportIdentifiedSpectraAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedSpectraAsCsvButtonActionPerformed
+    private void exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
 
         // get the file to send the output to
         final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
@@ -1238,7 +1238,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
-    }//GEN-LAST:event_exportIdentifiedSpectraAsCsvButtonActionPerformed
+    }//GEN-LAST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
 
     /**
      * Recalibrate the spectra.
@@ -1322,8 +1322,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @return a boolean indicating whether this peptide should be excluded
      */
     private boolean shallExclude(String proteinKey, Peptide peptide) {
-        if (miscleavedCheck.isSelected()
-                && peptide.getNMissedCleavages(peptideShakerGUI.getSearchParameters().getEnzyme()) > 0) {
+        if (miscleavedCheck.isSelected() && peptide.getNMissedCleavages(peptideShakerGUI.getSearchParameters().getEnzyme()) > 0) {
             return true;
         }
         if (reactiveCheck.isSelected()) {
@@ -1444,12 +1443,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox degeneratedCheck;
-    private javax.swing.JButton exportIdentifiedSpectraAsCsvButton;
-    private javax.swing.JButton exportIdentifiedSpectraAsFastaButton;
+    private javax.swing.JButton exportIdentifiedProteinAccessionNumbersAsCsvButton;
+    private javax.swing.JButton exportIdentifiedProteinsAsFastaButton;
     private javax.swing.JButton exportMgfButton;
     private javax.swing.JButton exportProgenesisButton;
-    private javax.swing.JButton exportUnidentifiedSpectraAsCsvButton;
-    private javax.swing.JButton exportUnidentifiedSpectraAsFastaButton;
+    private javax.swing.JButton exportUnidentifiedProteinsAccessionNumbersAsCsvButton;
+    private javax.swing.JButton exportUnidentifiedProteinsAsFastaButton;
     private javax.swing.JComboBox idSelectionCmb;
     private javax.swing.JCheckBox includeNonValidatedInProteinUnidentifiedCsvCheckBox;
     private javax.swing.JCheckBox includeNonValidatedInUnidentifiedFastaCheckBox;

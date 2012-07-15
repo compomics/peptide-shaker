@@ -1416,6 +1416,9 @@ try {
                 waitingHandler.setSecondaryProgressValue(0);
             }
             PSParameter psParameter = new PSParameter();
+            
+            // @TODO: perhaps this query can be grouped for speed as well?
+            
             for (int i = 0; i < nProteins; i++) {
                 String proteinKey = proteinList.get(i);
                 psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
