@@ -170,7 +170,7 @@ public class OutputGenerator {
             }
 
             if (parentDialog != null) {
-                progressDialog = new ProgressDialogX(parentDialog,
+                progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true);
@@ -497,7 +497,7 @@ public class OutputGenerator {
             }
 
             if (parentDialog != null) {
-                progressDialog = new ProgressDialogX(parentDialog,
+                progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true);
@@ -926,7 +926,7 @@ public class OutputGenerator {
             }
 
             if (parentDialog != null) {
-                progressDialog = new ProgressDialogX(parentDialog,
+                progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true);
@@ -1469,7 +1469,7 @@ public class OutputGenerator {
             }
 
             if (parentDialog != null) {
-                progressDialog = new ProgressDialogX(parentDialog,
+                progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true);
