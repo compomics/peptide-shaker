@@ -58,12 +58,21 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     private void addData() {
         ArrayList<String> spectrumFiles = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
         spectrumFileNameMap = new HashMap<String, String>();
+        
+        HashMap<String,Double> expectedMolecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
 
         for (int i = 0; i < spectrumFiles.size(); i++) {
+            
+            Double expectedMw = 0.0;
+            
+            if (expectedMolecularWeights.containsKey(spectrumFiles.get(i))) {
+                expectedMw = expectedMolecularWeights.get(spectrumFiles.get(i));
+            }
+            
             ((DefaultTableModel) fractionTable.getModel()).addRow(new Object[]{
                         (i + 1),
                         Util.getFileName(spectrumFiles.get(i)),
-                        0.0
+                        expectedMw
                     });
 
             spectrumFileNameMap.put(Util.getFileName(spectrumFiles.get(i)), spectrumFiles.get(i));

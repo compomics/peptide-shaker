@@ -597,6 +597,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="fractionDetailsJMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Fraction Details"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fractionDetailsJMenuItemActionPerformed"/>

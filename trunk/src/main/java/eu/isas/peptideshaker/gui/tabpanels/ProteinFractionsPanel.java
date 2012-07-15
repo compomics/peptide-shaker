@@ -662,9 +662,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 spectrumPlotDataset.addValue(notValidatedSpectraCounter, "Not Validated Spectra", "" + (i + 1));
 
                 if (intensitySum > 0) {
-                    intensityPlotDataset.addValue(intensitySum / intensityCounter, "Total Intensity", "" + (i + 1));
+                    intensityPlotDataset.addValue(intensitySum / intensityCounter, "Average Intensity", "" + (i + 1));
                 } else {
-                    intensityPlotDataset.addValue(0.0, "Total Intensity", "" + (i + 1));
+                    intensityPlotDataset.addValue(0.0, "Average Intensity", "" + (i + 1));
                 }
             }
 

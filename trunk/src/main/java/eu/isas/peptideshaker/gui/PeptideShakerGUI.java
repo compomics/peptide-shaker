@@ -1269,6 +1269,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         editMenu.add(annotationPreferencesMenu);
 
         fractionDetailsJMenuItem.setText("Fraction Details");
+        fractionDetailsJMenuItem.setEnabled(false);
         fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fractionDetailsJMenuItemActionPerformed(evt);
@@ -2810,6 +2811,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             exportProjectMenuItem.setEnabled(true);
             exportPrideXmlMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
+            fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
             starHideJMenuItem.setEnabled(true);
