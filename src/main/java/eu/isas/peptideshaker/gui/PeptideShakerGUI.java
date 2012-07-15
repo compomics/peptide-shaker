@@ -6169,7 +6169,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void writeRecalibratedSpectra(JDialog parentDialog, File outputFolder, boolean ms1, boolean ms2) {
 
         if (parentDialog != null) {
-            progressDialog = new ProgressDialogX(parentDialog,
+            progressDialog = new ProgressDialogX(parentDialog, this,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);

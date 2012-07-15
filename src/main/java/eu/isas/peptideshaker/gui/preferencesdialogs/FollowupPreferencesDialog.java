@@ -535,7 +535,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -675,7 +675,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         }
                     }
 
-                    progressDialog = new ProgressDialogX(this,
+                    progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true);
@@ -817,7 +817,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -887,7 +887,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -981,7 +981,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -1071,7 +1071,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
@@ -1163,7 +1163,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialogX(this,
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
