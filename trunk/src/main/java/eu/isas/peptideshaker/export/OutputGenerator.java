@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  * This class will generate the output as requested by the user.
@@ -46,7 +47,7 @@ public class OutputGenerator {
     /**
      * The progress dialog.
      */
-    private static ProgressDialogX progressDialog;
+    private ProgressDialogX progressDialog;
     /**
      * The corresponding identification.
      */
@@ -82,7 +83,7 @@ public class OutputGenerator {
      * Sends the desired protein output (based on the elements needed as
      * provided in arguments) to a user chosen file.
      *
-     * @param parentDialog the parent dialog, can be null.
+     * @param aParentDialog the parent dialog, can be null.
      * @param aProteinKeys The list of protein keys to output. If null, the
      * identification list will be used
      * @param aIndexes boolean indicating whether the first column shall be used
@@ -122,7 +123,7 @@ public class OutputGenerator {
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
      */
-    public void getProteinsOutput(JDialog parentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
+    public void getProteinsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
             boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
 
@@ -147,6 +148,8 @@ public class OutputGenerator {
         final boolean onlyStarred = aOnlyStarred;
         final boolean showStar = aShowStar;
         final boolean includeHidden = aIncludeHidden;
+
+        final JDialog parentDialog = aParentDialog;
 
         // get the file to send the output to
         final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
@@ -400,11 +403,12 @@ public class OutputGenerator {
                                     }
                                 }
                             }
+                            
                             progressDialog.increaseProgressValue();
                         }
 
                         writer.close();
-
+                        
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
