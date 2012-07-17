@@ -3790,10 +3790,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         try {
             currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
             String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
-            ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle("Protein Sequence Coverage ("
+            ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage ("
                     + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100, 2)
                     + "% of exp " + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100, 2) + "%"
-                    + "   " + currentProteinSequence.length() + " AA)");
+                    + "   " + currentProteinSequence.length() + " AA)" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             sequenceCoverageTitledPanel.repaint();
 
             if (currentProteinSequence.length() < MAX_SEQUENCE_LENGTH) {
@@ -4050,9 +4050,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 sequencePtmsPanel.repaint();
 
             } else {
-                ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle("Protein Sequence Coverage ("
+                ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage ("
                         + Util.roundDouble((Double) proteinTable.getValueAt(proteinTable.getSelectedRow(), proteinTable.getColumn("Coverage").getModelIndex()), 2)
-                        + "%, " + currentProteinSequence.length() + " AA)" + " - Too long to display...");
+                        + "%, " + currentProteinSequence.length() + " AA)" + " - Too long to display..." + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 sequenceCoverageTitledPanel.repaint();
             }
         } catch (ClassCastException e) {
@@ -4276,7 +4276,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             bubbleJPanel.revalidate();
             bubbleJPanel.repaint();
 
-            ((TitledBorder) spectrumMainPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
+            ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum & Fragment Ions"
+                    + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             spectrumMainPanel.repaint();
         }
     }
@@ -4315,7 +4316,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ((DefaultTableModel) psmTable.getModel()).fireTableDataChanged();
 
                 int nValidatedPsms = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPsms();
-                ((TitledBorder) psmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches (" + nValidatedPsms + "/" + psmTable.getRowCount() + ")");
+                ((TitledBorder) psmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches ("
+                        + nValidatedPsms + "/" + psmTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 psmsPanel.repaint();
 
                 // select the psm in the table
@@ -4373,7 +4375,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinMatchKey);
 
-                ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides (" + nValidatedPeptides + "/" + proteinMatch.getPeptideCount() + ")");
+                ((TitledBorder) peptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides ("
+                        + nValidatedPeptides + "/" + proteinMatch.getPeptideCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 peptidesPanel.repaint();
 
                 int maxPeptideSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxNSpectra();
@@ -4468,8 +4471,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
                     }
 
-                    ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins ("
-                            + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")");
+                    ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins ("
+                            + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")"
+                            + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                     proteinsLayeredPanel.repaint();
 
                     updateProteinTableCellRenderers();
@@ -4919,25 +4923,33 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                     String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
                     ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                            "Spectrum & Fragment Ions (" + before + modifiedSequence + after
+                            PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                            + "Spectrum & Fragment Ions (" + before + modifiedSequence + after
                             + "   " + peptideAssumption.getIdentificationCharge().toString() + "   "
-                            + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
+                            + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)"
+                            + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                     spectrumMainPanel.repaint();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                            "Spectrum & Fragment Ions");
+                            PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                            + "Spectrum & Fragment Ions"
+                            + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                     spectrumMainPanel.repaint();
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                        "Spectrum & Fragment Ions");
+                        PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                        + "Spectrum & Fragment Ions"
+                        + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumMainPanel.repaint();
             }
         } else {
             ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                    "Spectrum & Fragment Ions");
+                    PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                    + "Spectrum & Fragment Ions"
+                    + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             spectrumMainPanel.repaint();
         }
     }
@@ -5219,15 +5231,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumJPanel.removeAll();
         secondarySpectrumPlotsJPanel.removeAll();
 
-        ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins");
+        ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         proteinsLayeredPanel.repaint();
-        ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides");
+        ((TitledBorder) peptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         peptidesPanel.repaint();
-        ((TitledBorder) psmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches");
+        ((TitledBorder) psmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         psmsPanel.repaint();
-        ((TitledBorder) spectrumMainPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
+        ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum & Fragment Ions" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         spectrumMainPanel.repaint();
-        ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle("Protein Sequence Coverage");
+        ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         sequenceCoverageTitledPanel.repaint();
     }
 

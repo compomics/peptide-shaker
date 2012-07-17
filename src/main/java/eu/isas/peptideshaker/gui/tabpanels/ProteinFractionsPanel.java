@@ -432,12 +432,14 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             showSparkLines(peptideShakerGUI.showSparklines());
 
             // update the border titles
-            ((TitledBorder) proteinPanel.getBorder()).setTitle("Proteins ("
-                    + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")");
+            ((TitledBorder) proteinPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins ("
+                    + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")"
+                     + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             proteinPanel.repaint();
 
             int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-            ((TitledBorder) peptidePanel.getBorder()).setTitle("Peptides (" + nValidatedPeptides + "/" + proteinMatch.getPeptideCount() + ")");
+            ((TitledBorder) peptidePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (" + nValidatedPeptides + "/" 
+                    + proteinMatch.getPeptideCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             peptidePanel.repaint();
 
             // select the first row in the table
@@ -899,9 +901,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         peptideTableModel.fireTableDataChanged();
         proteinTableModel.fireTableDataChanged();
 
-        ((TitledBorder) proteinPanel.getBorder()).setTitle("Proteins");
+        ((TitledBorder) proteinPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         proteinPanel.repaint();
-        ((TitledBorder) peptidePanel.getBorder()).setTitle("Peptides");
+        ((TitledBorder) peptidePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         peptidePanel.repaint();
     }
 

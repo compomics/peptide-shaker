@@ -256,15 +256,18 @@ public class FindDialog extends javax.swing.JDialog {
             filterPsms();
         }
 
-        ((TitledBorder) proteinTablePanel.getBorder()).setTitle("Filtered Proteins (" + proteinTable.getRowCount() + ")");
+        ((TitledBorder) proteinTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Proteins ("
+                + proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         proteinTablePanel.revalidate();
         proteinTablePanel.repaint();
 
-        ((TitledBorder) peptideTablePanel.getBorder()).setTitle("Filtered Peptides (" + peptideTable.getRowCount() + ")");
+        ((TitledBorder) peptideTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Peptides ("
+                + peptideTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         peptideTablePanel.revalidate();
         peptideTablePanel.repaint();
 
-        ((TitledBorder) psmTablePanel.getBorder()).setTitle("Filtered PSMs (" + psmTable.getRowCount() + ")");
+        ((TitledBorder) psmTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered PSMs ("
+                + psmTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         psmTablePanel.revalidate();
         psmTablePanel.repaint();
 
@@ -922,7 +925,8 @@ public class FindDialog extends javax.swing.JDialog {
             RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
             ((TableRowSorter) proteinTable.getRowSorter()).setRowFilter(allFilters);
 
-            ((TitledBorder) proteinTablePanel.getBorder()).setTitle("Filtered Proteins (" + proteinTable.getRowCount() + ")");
+            ((TitledBorder) proteinTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Proteins ("
+                    + proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             proteinTablePanel.revalidate();
             proteinTablePanel.repaint();
 
@@ -1198,7 +1202,8 @@ public class FindDialog extends javax.swing.JDialog {
             RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
             ((TableRowSorter) peptideTable.getRowSorter()).setRowFilter(allFilters);
 
-            ((TitledBorder) peptideTablePanel.getBorder()).setTitle("Filtered Peptides (" + peptideTable.getRowCount() + ")");
+            ((TitledBorder) peptideTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Peptides ("
+                    + peptideTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             peptideTablePanel.revalidate();
             peptideTablePanel.repaint();
 
@@ -1450,7 +1455,8 @@ public class FindDialog extends javax.swing.JDialog {
             RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
             ((TableRowSorter) psmTable.getRowSorter()).setRowFilter(allFilters);
 
-            ((TitledBorder) psmTablePanel.getBorder()).setTitle("Filtered PSMs (" + psmTable.getRowCount() + ")");
+            ((TitledBorder) psmTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered PSMs ("
+                    + psmTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             psmTablePanel.revalidate();
             psmTablePanel.repaint();
 
