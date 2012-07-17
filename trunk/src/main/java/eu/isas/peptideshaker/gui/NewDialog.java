@@ -612,7 +612,7 @@ public class NewDialog extends javax.swing.JDialog {
         if (validateUserInput()) {
 
             this.setVisible(false);
-            peptideShakerGUI.clearData();
+            peptideShakerGUI.clearData(true);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());

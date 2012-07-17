@@ -3658,10 +3658,12 @@ public class PtmPanel extends javax.swing.JPanel {
                     selectedPTM = "- " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
                 }
 
-                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides " + selectedPTM + "(" + peptidesTable.getRowCount() + ")");
+                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Modified Peptides " 
+                        + selectedPTM + "(" + peptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 selectedPeptidesJPanel.repaint();
 
-                ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+                ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides (" 
+                        + relatedPeptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 relatedPeptidesPanel.repaint();
 
                 // set the preferred size of the sequence columns
@@ -3785,7 +3787,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             });
 
-            ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+            ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides (" 
+                    + relatedPeptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             relatedPeptidesPanel.repaint();
         }
     }
@@ -3828,7 +3831,8 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         }
 
-        ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Modified Peptide (" + selectedPsmsTable.getRowCount() + ")");
+        ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches - Modified Peptide (" 
+                + selectedPsmsTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         modsPsmsLayeredPanel.repaint();
     }
 
@@ -3909,7 +3913,8 @@ public class PtmPanel extends javax.swing.JPanel {
             e.printStackTrace();
         }
 
-        ((TitledBorder) relatedPsmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Related Peptide (" + relatedPsmsTable.getRowCount() + ")");
+        ((TitledBorder) relatedPsmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches - Related Peptide (" 
+                + relatedPsmsTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         relatedPsmsPanel.repaint();
     }
 
@@ -4034,7 +4039,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
-                        "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true) + ")");
+                        PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + 
+                        "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true) + ")"
+                         + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumAndFragmentIonPanel.revalidate();
                 spectrumAndFragmentIonPanel.repaint();
             }

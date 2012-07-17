@@ -472,7 +472,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="quantifyMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Quantify..."/>
+                <Property name="text" type="java.lang.String" value="Reporter Ions..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Quantify based on reporter ions."/>
               </Properties>
               <Events>

@@ -805,7 +805,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                             if (!progressDialog.isRunCanceled()) {
 
-                                ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
+                                ((TitledBorder) mappingsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                                        + "Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")"
+                                        + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                                 mappingsPanel.repaint();
 
                                 progressDialog.setIndeterminate(true);
@@ -2012,8 +2014,8 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
@@ -2435,10 +2437,12 @@ public class GOEAPanel extends javax.swing.JPanel {
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
                     Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
 
-            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis - "
-                    + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()));
+            ((TitledBorder) plotPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis - "
+                    + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
+                    + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         } else {
-            ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
+            ((TitledBorder) plotPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis"
+                    + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         }
 
         plotPanel.repaint();
@@ -2620,11 +2624,13 @@ public class GOEAPanel extends javax.swing.JPanel {
         goSignificancePlotPanel.revalidate();
         goSignificancePlotPanel.repaint();
 
-        ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings");
+        ((TitledBorder) mappingsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Mappings"
+                + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         mappingsPanel.revalidate();
         mappingsPanel.repaint();
 
-        ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis");
+        ((TitledBorder) plotPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis"
+                + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         plotPanel.repaint();
 
         goProteinCountLabel.setText("[GO Proteins: Ensembl: -, Project: -]");
@@ -2706,9 +2712,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             if (proteinTable.getRowCount() > 0) {
 
-                ((TitledBorder) plotPanel.getBorder()).setTitle("Gene Ontology Enrichment Analysis - "
+                ((TitledBorder) plotPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Gene Ontology Enrichment Analysis - "
                         + goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex())
-                        + " (" + proteinTable.getRowCount() + ")");
+                        + " (" + proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 plotPanel.repaint();
 
                 proteinTable.setRowSelectionInterval(0, 0);
