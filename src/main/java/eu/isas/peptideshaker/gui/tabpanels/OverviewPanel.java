@@ -2192,7 +2192,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     int row = psmTable.getSelectedRow();
                     updateSpectrum(row, true);
 
-
                     // remember the selection
                     newItemSelection();
 

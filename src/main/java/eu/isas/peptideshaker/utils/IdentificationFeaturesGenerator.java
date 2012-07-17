@@ -252,38 +252,38 @@ public class IdentificationFeaturesGenerator {
      * @return the sequence coverage
      */
     public Double getSequenceCoverage(String proteinMatchKey) {
-try {
-        Double result = sequenceCoverage.get(proteinMatchKey);
+        try {
+            Double result = sequenceCoverage.get(proteinMatchKey);
 
-        if (result == null) {
-            if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                ArrayList<String> toRemove = new ArrayList<String>();
+            if (result == null) {
+                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
+                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
+                    ArrayList<String> toRemove = new ArrayList<String>();
 
-                for (String tempKey : smallObjectsCache) {
-                    if (sequenceCoverage.containsKey(tempKey)) {
-                        toRemove.add(tempKey);
-                        if (toRemove.size() == nRemove) {
-                            break;
+                    for (String tempKey : smallObjectsCache) {
+                        if (sequenceCoverage.containsKey(tempKey)) {
+                            toRemove.add(tempKey);
+                            if (toRemove.size() == nRemove) {
+                                break;
+                            }
                         }
+                    }
+
+                    for (String tempKey : toRemove) {
+                        removeFromSmallCache(tempKey);
                     }
                 }
 
-                for (String tempKey : toRemove) {
-                    removeFromSmallCache(tempKey);
-                }
+                result = estimateSequenceCoverage(proteinMatchKey);
+                sequenceCoverage.put(proteinMatchKey, result);
+                smallObjectsCache.remove(proteinMatchKey);
+                smallObjectsCache.add(proteinMatchKey);
             }
-
-            result = estimateSequenceCoverage(proteinMatchKey);
-            sequenceCoverage.put(proteinMatchKey, result);
-            smallObjectsCache.remove(proteinMatchKey);
-            smallObjectsCache.add(proteinMatchKey);
+            return result;
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            return Double.NaN;
         }
-        return result;
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-    return Double.NaN;
-}
     }
 
     /**
@@ -377,46 +377,46 @@ try {
      * @return the corresponding spectrum counting metric
      */
     public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
-try {
-        if (method == peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod()) {
-            Double result = spectrumCounting.get(proteinMatchKey);
+        try {
+            if (method == peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod()) {
+                Double result = spectrumCounting.get(proteinMatchKey);
 
-            if (result == null) {
-                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                    ArrayList<String> toRemove = new ArrayList<String>();
+                if (result == null) {
+                    if (smallObjectsCache.size() >= smallObjectsCacheSize) {
+                        int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
+                        ArrayList<String> toRemove = new ArrayList<String>();
 
-                    for (String tempKey : smallObjectsCache) {
-                        if (spectrumCounting.containsKey(tempKey)) {
-                            toRemove.add(tempKey);
-                            if (toRemove.size() == nRemove) {
-                                break;
+                        for (String tempKey : smallObjectsCache) {
+                            if (spectrumCounting.containsKey(tempKey)) {
+                                toRemove.add(tempKey);
+                                if (toRemove.size() == nRemove) {
+                                    break;
+                                }
                             }
+                        }
+
+                        for (String tempKey : toRemove) {
+                            removeFromSmallCache(tempKey);
                         }
                     }
 
-                    for (String tempKey : toRemove) {
-                        removeFromSmallCache(tempKey);
-                    }
+                    result = estimateSpectrumCounting(proteinMatchKey);
+                    spectrumCounting.put(proteinMatchKey, result);
+                    smallObjectsCache.remove(proteinMatchKey);
+                    smallObjectsCache.add(proteinMatchKey);
                 }
-
-                result = estimateSpectrumCounting(proteinMatchKey);
-                spectrumCounting.put(proteinMatchKey, result);
-                smallObjectsCache.remove(proteinMatchKey);
-                smallObjectsCache.add(proteinMatchKey);
-            }
-            return result;
-        } else {
-            SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
-            tempPreferences.setSelectedMethod(method);
+                return result;
+            } else {
+                SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
+                tempPreferences.setSelectedMethod(method);
                 return estimateSpectrumCounting(peptideShakerGUI.getIdentification(), sequenceFactory, proteinMatchKey, tempPreferences,
                         peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdFilter().getMaxPepLength());
 
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            return Double.NaN;
         }
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-    return Double.NaN;
-}
     }
 
     /**
@@ -454,21 +454,21 @@ try {
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException {
 
-        double ratio, result;
         PSParameter pSParameter = new PSParameter();
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
+
         if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
 
             // NSAF
 
-            result = 0;
-            PeptideMatch peptideMatch;
-            ArrayList<String> possibleProteinMatches;
-            Protein currentProtein;
+            double result = 0;
             int peptideOccurrence = 0;
+
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                peptideMatch = identification.getPeptideMatch(peptideKey);
-                possibleProteinMatches = new ArrayList<String>();
+
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                ArrayList<String> possibleProteinMatches = new ArrayList<String>();
+
                 for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
                     if (identification.getProteinMap().get(protein) != null) {
                         for (String proteinKey : identification.getProteinMap().get(protein)) {
@@ -476,7 +476,7 @@ try {
                                 try {
                                     testMatch = identification.getProteinMatch(proteinKey);
                                     if (testMatch.getPeptideMatches().contains(peptideKey)) {
-                                        currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
+                                        Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
                                         peptideOccurrence += currentProtein.getPeptideStart(Peptide.getSequence(peptideKey)).size();
                                         possibleProteinMatches.add(proteinKey);
                                     }
@@ -488,11 +488,14 @@ try {
                         }
                     }
                 }
+
                 if (possibleProteinMatches.isEmpty()) {
                     System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of '" + proteinMatchKey + "'.");
                 }
-                ratio = 1.0 / peptideOccurrence;
+
+                double ratio = 1.0 / peptideOccurrence;
                 int cpt = 0;
+
                 for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, pSParameter);
                     if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.isValidated()) {
@@ -501,7 +504,9 @@ try {
                     }
                 }
             }
-            currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+
+            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+
             if (enzyme.enzymeCleaves()) {
                 return result / currentProtein.getObservableLength(enzyme, maxPepLength);
             } else {
@@ -510,8 +515,10 @@ try {
         } else {
 
             // emPAI
+            double result;
 
             if (spectrumCountingPreferences.isValidatedHits()) {
+
                 result = 0;
 
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
@@ -527,7 +534,6 @@ try {
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             return Math.pow(10, result / currentProtein.getNPossiblePeptides(enzyme)) - 1;
         }
-
     }
 
     /**
@@ -539,38 +545,38 @@ try {
      * cleavage settings
      */
     public Double getObservableCoverage(String proteinMatchKey) {
-try {
-        Double result = possibleCoverage.get(proteinMatchKey);
+        try {
+            Double result = possibleCoverage.get(proteinMatchKey);
 
-        if (result == null) {
-            if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                ArrayList<String> toRemove = new ArrayList<String>();
+            if (result == null) {
+                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
+                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
+                    ArrayList<String> toRemove = new ArrayList<String>();
 
-                for (String tempKey : smallObjectsCache) {
-                    if (possibleCoverage.containsKey(tempKey)) {
-                        toRemove.add(tempKey);
-                        if (toRemove.size() == nRemove) {
-                            break;
+                    for (String tempKey : smallObjectsCache) {
+                        if (possibleCoverage.containsKey(tempKey)) {
+                            toRemove.add(tempKey);
+                            if (toRemove.size() == nRemove) {
+                                break;
+                            }
                         }
+                    }
+
+                    for (String tempKey : toRemove) {
+                        removeFromSmallCache(tempKey);
                     }
                 }
 
-                for (String tempKey : toRemove) {
-                    removeFromSmallCache(tempKey);
-                }
+                result = estimateObservableCoverage(proteinMatchKey);
+                possibleCoverage.put(proteinMatchKey, result);
+                smallObjectsCache.remove(proteinMatchKey);
+                smallObjectsCache.add(proteinMatchKey);
             }
-
-            result = estimateObservableCoverage(proteinMatchKey);
-            possibleCoverage.put(proteinMatchKey, result);
-            smallObjectsCache.remove(proteinMatchKey);
-            smallObjectsCache.add(proteinMatchKey);
+            return result;
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            return Double.NaN;
         }
-        return result;
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-    return Double.NaN;
-}
     }
 
     /**
@@ -647,6 +653,7 @@ try {
         int cpt = 0;
         try {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                 if (pSParameter.isValidated()) {
@@ -667,37 +674,37 @@ try {
      */
     public Integer getNSpectra(String proteinMatchKey) {
         try {
-        Integer result = numberOfSpectra.get(proteinMatchKey);
+            Integer result = numberOfSpectra.get(proteinMatchKey);
 
-        if (result == null) {
-            if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                ArrayList<String> toRemove = new ArrayList<String>();
+            if (result == null) {
+                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
+                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
+                    ArrayList<String> toRemove = new ArrayList<String>();
 
-                for (String tempKey : smallObjectsCache) {
-                    if (numberOfSpectra.containsKey(tempKey)) {
-                        toRemove.add(tempKey);
-                        if (toRemove.size() == nRemove) {
-                            break;
+                    for (String tempKey : smallObjectsCache) {
+                        if (numberOfSpectra.containsKey(tempKey)) {
+                            toRemove.add(tempKey);
+                            if (toRemove.size() == nRemove) {
+                                break;
+                            }
                         }
                     }
-                }
 
-                for (String tempKey : toRemove) {
-                    removeFromSmallCache(tempKey);
+                    for (String tempKey : toRemove) {
+                        removeFromSmallCache(tempKey);
+                    }
                 }
+                result = estimateNSpectra(proteinMatchKey);
+                numberOfSpectra.put(proteinMatchKey, result);
+                smallObjectsCache.remove(proteinMatchKey);
+                smallObjectsCache.add(proteinMatchKey);
             }
-            result = estimateNSpectra(proteinMatchKey);
-            numberOfSpectra.put(proteinMatchKey, result);
-            smallObjectsCache.remove(proteinMatchKey);
-            smallObjectsCache.add(proteinMatchKey);
-        }
 
-        return result;
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-    return 0;
-}
+            return result;
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            return 0;
+        }
     }
 
     /**
@@ -745,37 +752,38 @@ try {
      */
     public int getNValidatedSpectra(String proteinMatchKey) {
         try {
-        Integer result = numberOfValidatedSpectra.get(proteinMatchKey);
-        if (result == null) {
-            if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                ArrayList<String> toRemove = new ArrayList<String>();
+            Integer result = numberOfValidatedSpectra.get(proteinMatchKey);
+            
+            if (result == null) {
+                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
+                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
+                    ArrayList<String> toRemove = new ArrayList<String>();
 
-                for (String tempKey : smallObjectsCache) {
-                    if (numberOfValidatedSpectra.containsKey(tempKey)) {
-                        toRemove.add(tempKey);
-                        if (toRemove.size() == nRemove) {
-                            break;
+                    for (String tempKey : smallObjectsCache) {
+                        if (numberOfValidatedSpectra.containsKey(tempKey)) {
+                            toRemove.add(tempKey);
+                            if (toRemove.size() == nRemove) {
+                                break;
+                            }
                         }
                     }
-                }
 
-                for (String tempKey : toRemove) {
-                    removeFromSmallCache(tempKey);
+                    for (String tempKey : toRemove) {
+                        removeFromSmallCache(tempKey);
+                    }
                 }
+                
+                result = estimateNValidatedSpectra(proteinMatchKey);
+                numberOfValidatedSpectra.put(proteinMatchKey, result);
+                smallObjectsCache.remove(proteinMatchKey);
+                smallObjectsCache.add(proteinMatchKey);
             }
-            result = estimateNValidatedSpectra(proteinMatchKey);
-            numberOfValidatedSpectra.put(proteinMatchKey, result);
-            smallObjectsCache.remove(proteinMatchKey);
-            smallObjectsCache.add(proteinMatchKey);
-        }
 
-        return result;
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-    return 0;
-}
-        
+            return result;
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            return 0;
+        }
     }
 
     /**
@@ -785,14 +793,16 @@ try {
      * @return the number of spectra where this protein was found
      */
     private int estimateNValidatedSpectra(String proteinMatchKey) {
+        
         Identification identification = peptideShakerGUI.getIdentification();
         int result = 0;
+        
         try {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-            PeptideMatch peptideMatch;
             PSParameter psParameter = new PSParameter();
+
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                peptideMatch = identification.getPeptideMatch(peptideKey);
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                     if (psParameter.isValidated()) {
@@ -1409,40 +1419,48 @@ try {
      * can be null. The progress will be displayed as secondary progress.
      */
     public void repopulateCache(int nProteins, WaitingHandler waitingHandler) {
+        
+         // @TODO: this information should rather be stored in the database instead of recreated!!
+        
+        //long start = System.currentTimeMillis();
+        
         try {
             if (waitingHandler != null) {
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressValue(2*nProteins);
+                waitingHandler.setMaxSecondaryProgressValue(2 * nProteins);
                 waitingHandler.setSecondaryProgressValue(0);
             }
-            PSParameter psParameter = new PSParameter();
-            
-            // @TODO: perhaps this query can be grouped for speed as well?
-            
+
             for (int i = 0; i < nProteins; i++) {
+                
                 String proteinKey = proteinList.get(i);
-                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                
                 if (proteinMatch == null) {
                     throw new IllegalArgumentException("Protein match " + proteinKey + " not found.");
                 }
+                
                 getSequenceCoverage(proteinKey);
                 getObservableCoverage(proteinKey);
+                
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressValue();
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
                 }
+                
                 getNValidatedPeptides(proteinKey);
                 getNValidatedSpectra(proteinKey);
                 getSpectrumCounting(proteinKey);
+                
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressValue();
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
                 }
+                
                 if (!peptideShakerGUI.getCache().memoryCheck()) {
                     break;
                 }
@@ -1450,6 +1468,9 @@ try {
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
+        
+        //long end = System.currentTimeMillis();  
+        //System.out.println("loading proteins total: " + (end-start));
     }
 
     /**

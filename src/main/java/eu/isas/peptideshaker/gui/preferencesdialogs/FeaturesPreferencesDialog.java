@@ -307,14 +307,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinScore))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(proteinsPanelLayout.createSequentialGroup()
-                                .addGap(46, 46, 46)
-                                .addComponent(ptmSummary))
-                            .addGroup(proteinsPanelLayout.createSequentialGroup()
-                                .addComponent(proteinEmpai)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(proteinNsaf)))
+                        .addComponent(proteinEmpai)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinNsaf)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ptmSummary)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(molecularWeight)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -342,7 +339,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore});
+        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {molecularWeight, proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
 
         tabbedPane.addTab("Proteins", proteinsPanel);
 
