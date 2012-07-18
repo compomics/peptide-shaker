@@ -602,9 +602,9 @@ public class FileImporter {
                     }
                     waitingHandler.appendReport("Processing files with the new input.", true, true);
                     ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
-                    File newFile;
+
                     for (String mgfName : missingMgfFiles.values()) {
-                        newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
+                        File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
                         spectrumFiles.put(newFile.getName(), newFile);
                     }
                     missingMgfFiles.clear();
