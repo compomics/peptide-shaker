@@ -2440,9 +2440,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 }
                             }
 
-                            // @TODO: tar the match files before zipping!!
-
-
                             progressDialog.setTitle("Zipping Project. Please Wait...");
                             progressDialog.setIndeterminate(true);
 
@@ -6064,6 +6061,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final String fileEnding = aFileEnding;
         final String fileFormatDescription = aFileFormatDescription;
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
+
         fileChooser.setDialogTitle(aDialogTitle);
         fileChooser.setMultiSelectionEnabled(false);
 
@@ -6091,8 +6089,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            
+            if (fileChooser.getSelectedFile().isDirectory()) {
+                lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
+            } else {
+                lastSelectedFolder = fileChooser.getSelectedFile().getParentFile().getAbsolutePath();
+            }
 
-            lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
             String selectedFile = fileChooser.getSelectedFile().getPath();
 
             if (!selectedFile.endsWith(fileEnding)) {
