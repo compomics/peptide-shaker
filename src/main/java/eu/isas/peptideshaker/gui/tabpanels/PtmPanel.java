@@ -4617,7 +4617,7 @@ public class PtmPanel extends javax.swing.JPanel {
         try {
             for (String spectrumKey : getSelectedPsm()) {
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                spectrumAsMgf += currentSpectrum.asMgf() + "\n";
+                spectrumAsMgf += currentSpectrum.asMgf() + System.getProperty("line.separator");
             }
             if (!spectrumAsMgf.isEmpty()) {
                 return spectrumAsMgf;
@@ -4883,7 +4883,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private String getPeptidesTableAsString(boolean modifiedPeptides) {
 
-        String results = "\tPI\tSequence\tVariable Modification\tLocation Confidence\tPeptide Confidence\tPeptide Validated\n";
+        String results = "\tPI\tSequence\tVariable Modification\tLocation Confidence\tPeptide Confidence\tPeptide Validated" + System.getProperty("line.separator");
         try {
             JTable table;
             ArrayList<String> peptides;
@@ -4922,7 +4922,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getPeptideMatchParameter(peptides.get(i), probabilities);
-                results += probabilities.isValidated() + "\n";
+                results += probabilities.isValidated() + System.getProperty("line.separator");
             }
 
         } catch (Exception e) {
@@ -4941,7 +4941,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private String getPsmTableAsString(boolean modifiedPeptides) {
 
-        String results = "\tSequence\tVariable Modification\tLocation Confidence\tCharge\tPSM Validated\n";
+        String results = "\tSequence\tVariable Modification\tLocation Confidence\tCharge\tPSM Validated" + System.getProperty("line.separator");
 
         try {
 
@@ -4974,7 +4974,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 PSParameter probabilities = new PSParameter();
                 spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
                 probabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, probabilities);
-                results += probabilities.isValidated() + "\n";
+                results += probabilities.isValidated() + System.getProperty("line.separator");
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

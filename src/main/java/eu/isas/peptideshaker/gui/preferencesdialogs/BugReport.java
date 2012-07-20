@@ -44,7 +44,7 @@ public class BugReport extends javax.swing.JDialog {
             BufferedReader br = new BufferedReader(new FileReader(new File("resources/PeptideShaker.log")));
             String line;
             while ((line = br.readLine()) != null) {
-                log += line + "\n";
+                log += line + System.getProperty("line.separator");
             }
         } catch (FileNotFoundException e) {
             log = "resources/PeptideShaker.log not found.";
@@ -250,7 +250,7 @@ public class BugReport extends javax.swing.JDialog {
         try {
             FileWriter w = new FileWriter(new File("resources/PeptideShaker.log"));
             BufferedWriter bw = new BufferedWriter(w);
-            bw.write("\n" + new Date() + ": PeptideShaker version " + peptideShakerGUI.getVersion() + ".\n");
+            bw.write(System.getProperty("line.separator") + new Date() + ": PeptideShaker version " + peptideShakerGUI.getVersion() + "." + System.getProperty("line.separator"));
             bw.close();
             w.close();
         } catch (FileNotFoundException e) {

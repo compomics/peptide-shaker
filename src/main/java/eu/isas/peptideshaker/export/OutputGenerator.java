@@ -260,7 +260,7 @@ public class OutputGenerator {
                             if (!onlyStarred && showStar) {
                                 writer.write("Starred" + SEPARATOR);
                             }
-                            writer.write("\n");
+                            writer.write(System.getProperty("line.separator"));
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
@@ -397,7 +397,7 @@ public class OutputGenerator {
                                             if (!onlyStarred && showStar) {
                                                 writer.write(proteinPSParameter.isStarred() + "");
                                             }
-                                            writer.write("\n");
+                                            writer.write(System.getProperty("line.separator"));
                                         }
 
                                     }
@@ -591,7 +591,7 @@ public class OutputGenerator {
                                 writer.write("Hidden" + SEPARATOR);
                             }
 
-                            writer.write("\n");
+                            writer.write(System.getProperty("line.separator"));
                         }
 
                         PSParameter peptidePSParameter = new PSParameter();
@@ -836,7 +836,7 @@ public class OutputGenerator {
                                                 if (includeHidden) {
                                                     writer.write(peptidePSParameter.isHidden() + SEPARATOR);
                                                 }
-                                                writer.write("\n");
+                                                writer.write(System.getProperty("line.separator"));
                                             }
                                         }
                                     }
@@ -1017,7 +1017,7 @@ public class OutputGenerator {
                                 writer.write("Hidden" + SEPARATOR);
                             }
 
-                            writer.write("\n");
+                            writer.write(System.getProperty("line.separator"));
                         }
 
                         PSParameter psParameter = new PSParameter();
@@ -1252,7 +1252,7 @@ public class OutputGenerator {
                                             if (includeHidden) {
                                                 writer.write(psParameter.isHidden() + SEPARATOR);
                                             }
-                                            writer.write("\n");
+                                            writer.write(System.getProperty("line.separator"));
                                         }
 
                                     }
@@ -1306,7 +1306,7 @@ public class OutputGenerator {
         writer.write("compound" + SEPARATOR);
         writer.write("jobid" + SEPARATOR);
         writer.write("pmkey" + SEPARATOR);
-        writer.write("\n");
+        writer.write(System.getProperty("line.separator"));
 
         PSParameter psParameter = new PSParameter();
         int progress = 0;
@@ -1397,12 +1397,12 @@ public class OutputGenerator {
                         writer.write("N/A" + SEPARATOR);
 
                         // new line
-                        writer.write("\n");
+                        writer.write(System.getProperty("line.separator"));
                     }
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
-                writer.write("Error\n");
+                writer.write("Error" + System.getProperty("line.separator"));
             }
 
             if (progressDialog != null && progressDialog != null) {
@@ -1548,7 +1548,7 @@ public class OutputGenerator {
                             }
                             writer.write("Retained as Main PSM" + SEPARATOR);
                             writer.write("Decoy" + SEPARATOR);
-                            writer.write("\n");
+                            writer.write(System.getProperty("line.separator"));
                         }
 
                         PSParameter psParameter = new PSParameter();
@@ -1666,7 +1666,7 @@ public class OutputGenerator {
                                             } else {
                                                 writer.write(0 + SEPARATOR);
                                             }
-                                            writer.write("\n");
+                                            writer.write(System.getProperty("line.separator"));
                                             rank++;
                                         }
                                     }
