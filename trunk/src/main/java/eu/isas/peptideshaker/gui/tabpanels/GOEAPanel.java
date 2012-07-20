@@ -716,7 +716,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         // read the GO domains
                                         FileWriter fr = new FileWriter(goDomainsFile, true);
                                         BufferedWriter dbr = new BufferedWriter(fr);
-                                        dbr.write(goAccession + "\t" + goDomain + "\n");
+                                        dbr.write(goAccession + "\t" + goDomain + System.getProperty("line.separator"));
 
                                         dbr.close();
                                         fr.close();
@@ -2104,7 +2104,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 while (rowLine != null && !progressDialog.isRunCanceled()) {
                                     progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
-                                    bw.write(rowLine + "\n");
+                                    bw.write(rowLine + System.getProperty("line.separator"));
                                     rowLine = br.readLine();
                                 }
                             }
@@ -2126,7 +2126,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 while (iterator.hasNext() && !progressDialog.isRunCanceled()) {
                                     String key = iterator.next();
-                                    bw.write(key + "\t" + ensemblVersionsMap.get(key) + "\n");
+                                    bw.write(key + "\t" + ensemblVersionsMap.get(key) + System.getProperty("line.separator"));
                                 }
 
                                 bw.close();

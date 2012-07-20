@@ -139,7 +139,7 @@ public class CsvExporter {
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
                     + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" + SEPARATOR + "Observable coverage" + SEPARATOR + "p score"
-                    + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
+                    + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + System.getProperty("line.separator");
             proteinWriter.write(content);
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -179,7 +179,7 @@ public class CsvExporter {
 
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             peptideWriter.write(content);
 
             for (String peptideKey : identification.getPeptideIdentification()) {
@@ -211,7 +211,7 @@ public class CsvExporter {
                     + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
                     + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR
                     + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
-                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             spectrumWriter.write(content);
 
             for (String spectrumKey : identification.getSpectrumIdentification()) {
@@ -239,7 +239,7 @@ public class CsvExporter {
 //            content = "Search Engine" + SEPARATOR + "Rank" + SEPARATOR + "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
 //                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
 //                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
-//                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+//                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
 //            assumptionWriter.write(content);
 
 //            for (String spectrumKey : identification.getSpectrumIdentification()) {
@@ -348,7 +348,7 @@ public class CsvExporter {
             line += "Protein not found";
         }
 
-        line += "\n";
+        line += System.getProperty("line.separator");
 
         return line;
     }
@@ -477,7 +477,7 @@ public class CsvExporter {
             line += "0";
         }
 
-        line += "\n";
+        line += System.getProperty("line.separator");
 
         return line;
     }
@@ -772,7 +772,7 @@ public class CsvExporter {
             line += "0";
         }
 
-        line += "\n";
+        line += System.getProperty("line.separator");
 
         return line;
     }
@@ -883,7 +883,7 @@ public class CsvExporter {
                         e.printStackTrace();
                     }
 
-                    line += "\n";
+                    line += System.getProperty("line.separator");
                     rank++;
                 }
             }

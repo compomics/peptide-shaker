@@ -3342,14 +3342,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                         if (tableIndex == TableIndex.PDB_CHAINS) {
 
-                            writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage\n");
+                            writer.write("\tChain\tPDB-Start\tPDB-End\tCoverage" + System.getProperty("line.separator"));
 
                             for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
                                 writer.write(pdbChainsJTable.getValueAt(i, 0) + "\t");
                                 writer.write(pdbChainsJTable.getValueAt(i, 1) + "\t");
                                 XYDataPoint pdbCoverage = (XYDataPoint) pdbChainsJTable.getValueAt(i, 2);
                                 writer.write(pdbCoverage.getX() + "\t" + pdbCoverage.getY() + "\t");
-                                writer.write(pdbChainsJTable.getValueAt(i, 3) + "\n");
+                                writer.write(pdbChainsJTable.getValueAt(i, 3) + System.getProperty("line.separator"));
                             }
 
                             writer.close();

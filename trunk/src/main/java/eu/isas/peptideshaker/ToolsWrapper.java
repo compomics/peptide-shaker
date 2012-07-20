@@ -125,7 +125,7 @@ public class ToolsWrapper {
             InputStreamReader isr = new InputStreamReader(stderr);
             BufferedReader br = new BufferedReader(isr);
 
-            String temp = "<ERROR>\n\n";
+            String temp = "<ERROR>" + System.getProperty("line.separator") + System.getProperty("line.separator");
 
             if (debug) {
                 System.out.println("<ERROR>");
@@ -141,7 +141,7 @@ public class ToolsWrapper {
                     System.out.println(line);
                 }
 
-                temp += line + "\n";
+                temp += line + System.getProperty("line.separator");
                 line = br.readLine();
                 error = true;
             }
@@ -150,9 +150,9 @@ public class ToolsWrapper {
                 System.out.println("</ERROR>");
             }
 
-            temp += "\nThe command line executed:\n";
-            temp += cmdLine + "\n";
-            temp += "\n</ERROR>\n";
+            temp += System.getProperty("line.separator") + "The command line executed:" + System.getProperty("line.separator");
+            temp += cmdLine + System.getProperty("line.separator");
+            temp += System.getProperty("line.separator") + "</ERROR>" + System.getProperty("line.separator");
             int exitVal = p.waitFor();
 
             if (debug) {
@@ -162,7 +162,7 @@ public class ToolsWrapper {
             if (error) {
                 File logFile = new File(peptideShakerGUI.getJarFilePath() + "/resources/conf", toolName + ".log");
                 FileWriter f = new FileWriter(logFile, true);
-                f.write("\n\n" + temp + "\n\n");
+                f.write(System.getProperty("line.separator") + System.getProperty("line.separator") + temp + System.getProperty("line.separator") + System.getProperty("line.separator"));
                 f.close();
 
                 javax.swing.JOptionPane.showMessageDialog(null,

@@ -928,14 +928,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                             if (!tempProtein.isDecoy()) {
                                 if (!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-                                    b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
-                                    b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + "\n");
+                                    b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + System.getProperty("line.separator"));
+                                    b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + System.getProperty("line.separator"));
                                 } else if (includeNonValidatedInUnidentifiedFastaCheckBox.isSelected()) {
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (!probabilities.isValidated()) {
-                                        b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
-                                        b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + "\n");
+                                        b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + System.getProperty("line.separator"));
+                                        b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + System.getProperty("line.separator"));
                                     }
                                 }
                             }
@@ -1021,12 +1021,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                             if (!tempProtein.isDecoy()) {
                                 if (!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-                                    b.write(accessions.get(i) + "\n");
+                                    b.write(accessions.get(i) + System.getProperty("line.separator"));
                                 } else if (includeNonValidatedInProteinUnidentifiedCsvCheckBox.isSelected()) {
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (!probabilities.isValidated()) {
-                                        b.write(accessions.get(i) + "\n");
+                                        b.write(accessions.get(i) + System.getProperty("line.separator"));
                                     }
                                 }
                             }
@@ -1115,8 +1115,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (probabilities.isValidated()) {
-                                        b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + "\n");
-                                        b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + "\n");
+                                        b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + System.getProperty("line.separator"));
+                                        b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + System.getProperty("line.separator"));
                                     }
                                 }
                             }
@@ -1208,7 +1208,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
 
                                     if (probabilities.isValidated()) {
-                                        b.write(accessions.get(i) + "\n");
+                                        b.write(accessions.get(i) + System.getProperty("line.separator"));
                                     }
                                 }
                             }
@@ -1406,11 +1406,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     rtMin = (retentionTimes.get(index) - minWindow / 2) / 60;
                     rtMax = (retentionTimes.get(index) + minWindow / 2) / 60;
                 }
-                return precursor.getMz() + "\t" + rtMin + "\t" + rtMax + "\n";
+                return precursor.getMz() + "\t" + rtMin + "\t" + rtMax + System.getProperty("line.separator");
             case 1:
                 index = (int) (0.5 * retentionTimes.size());
                 double rtInMin = retentionTimes.get(index) / 60;
-                return rtInMin + "\t" + precursor.getMz() + "\n";
+                return rtInMin + "\t" + precursor.getMz() + System.getProperty("line.separator");
             case 2:
                 index = (int) 0.5 * retentionTimes.size();
                 double rt = retentionTimes.get(index);
@@ -1424,18 +1424,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() / 1000000 * precursor.getMz();
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
-                    return rt + "," + range + "," + mzMin + "," + mzMax + "\n";
+                    return rt + "," + range + "," + mzMin + "," + mzMax + System.getProperty("line.separator");
                 } else { // Dalton
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() / spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
-                    return rt + "," + range + "," + mzMin + "," + mzMax + "\n";
+                    return rt + "," + range + "," + mzMin + "," + mzMax + System.getProperty("line.separator");
                 }
             case 3:
                 index = (int) (0.5 * retentionTimes.size());
                 rt = retentionTimes.get(index);
-                return precursor.getMz() + "," + rt + "\n";
+                return precursor.getMz() + "," + rt + System.getProperty("line.separator");
             default:
                 return "";
         }

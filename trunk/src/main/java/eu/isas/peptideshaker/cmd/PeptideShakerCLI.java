@@ -187,18 +187,18 @@ public class PeptideShakerCLI implements Callable {
      */
     private static String getHeader() {
         return ""
-                + "----------------------\n"
-                + "\n"
+                + "----------------------" + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
                 + "INFO"
-                + "\n"
-                + "----------------------\n"
-                + "\n"
+                + System.getProperty("line.separator")
+                + "----------------------" + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
                 + "The PeptideShaker command line tool takes a SearchGUI result folder and performs the X!Tandem/OMSSA integration including user specified FDR calculations generates PSM, peptide and protein an output files.\n"
-                + "\n"
-                + "----------------------\n"
-                + "OPTIONS\n"
-                + "\n"
-                + "----------------------\n"
+                + System.getProperty("line.separator")
+                + "----------------------" + System.getProperty("line.separator")
+                + "OPTIONS" + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + "----------------------" + System.getProperty("line.separator")
                 + "";
     }
 
@@ -380,9 +380,9 @@ public class PeptideShakerCLI implements Callable {
                 if (!missing2.isEmpty()) {
                     if (missing2.size() == 1) {
                         System.err.print("The following modification is currently not recognized by PeptideShaker: "
-                                + missing2.get(0) + ".\nPlease import it by editing the search parameters.");
+                                + missing2.get(0) + "." + System.getProperty("line.separator") + "Please import it by editing the search parameters.");
                     } else {
-                        String output = "The following modifications are currently not recognized by PeptideShaker:\n";
+                        String output = "The following modifications are currently not recognized by PeptideShaker:" + System.getProperty("line.separator");
                         boolean first = true;
                         for (String ptm : missing2) {
                             if (first) {
@@ -392,7 +392,7 @@ public class PeptideShakerCLI implements Callable {
                             }
                             output += ptm;
                         }
-                        output += ".\nPlease import it by editing the search parameters.";
+                        output += "." + System.getProperty("line.separator") + "Please import it by editing the search parameters.";
                         System.err.print(output);
                     }
                 }
@@ -486,20 +486,20 @@ public class PeptideShakerCLI implements Callable {
                         searchParameters.setFastaFile(new File(searchGUIFile.getParentFile(), file.getName()));
                         fastaFile = new File(searchGUIFile.getParentFile(), file.getName());
                     } else {
-                        System.err.println("FASTA file \'" + temp + "\' not found.\nPlease locate it manually.");
+                        System.err.println("FASTA file \'" + temp + "\' not found." + System.getProperty("line.separator") + "Please locate it manually.");
                     }
                 }
             } catch (Exception e) {
                 // file not found: use manual input
                 e.printStackTrace();
-                System.err.println("FASTA file \'" + temp + "\' not found.\nPlease locate it manually.");
+                System.err.println("FASTA file \'" + temp + "\' not found." + System.getProperty("line.separator") + "Please locate it manually.");
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.err.println(searchGUIFile.getName() + " not found.");
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("An error occured while reading " + searchGUIFile.getName() + ".\n"
+            System.err.println("An error occured while reading " + searchGUIFile.getName() + "." + System.getProperty("line.separator")
                     + "Please verify the version compatibility.");
         }
     }
@@ -539,7 +539,7 @@ public class PeptideShakerCLI implements Callable {
                                     names.add(new File(searchGUIFile.getParentFile(), newFile.getName()).getName());
                                     spectrumFiles.add(new File(searchGUIFile.getParentFile(), newFile.getName()));
                                 } else {
-                                    missing += newFile.getName() + "\n";
+                                    missing += newFile.getName() + System.getProperty("line.separator");
                                 }
                             }
                         }
@@ -549,7 +549,7 @@ public class PeptideShakerCLI implements Callable {
                 }
             }
             if (!missing.equals("")) {
-                System.err.println("Input file(s) not found:\n" + missing);
+                System.err.println("Input file(s) not found:" + System.getProperty("line.separator") + missing);
                 success = false;
             }
             br.close();
@@ -668,11 +668,11 @@ public class PeptideShakerCLI implements Callable {
                 HelpFormatter formatter = new HelpFormatter();
 
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("PeptideShaker-CLI\n");
+                lPrintWriter.print("PeptideShaker-CLI" + System.getProperty("line.separator"));
 
                 lPrintWriter.print(getHeader());
 
-                lPrintWriter.print("\nOptions:\n");
+                lPrintWriter.print(System.getProperty("line.separator") + "Options:" + System.getProperty("line.separator"));
                 formatter.printOptions(lPrintWriter, 200, lOptions, 0, 0);
 
                 lPrintWriter.flush();

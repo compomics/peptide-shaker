@@ -68,7 +68,7 @@ public class PeptideShakerWrapper {
                 path = path.replace("%5d", "]");
                 File debugOutput = new File(path + "resources/conf/startup.log");
                 bw = new BufferedWriter(new FileWriter(debugOutput));
-                bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
+                bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + System.getProperty("line.separator"));
             }
             
             UtilitiesGUIDefaults.setLookAndFeel();
@@ -90,7 +90,7 @@ public class PeptideShakerWrapper {
             e.printStackTrace();
             
             JOptionPane.showMessageDialog(null,
-                    "Failed to start PeptideShaker:\n"
+                    "Failed to start PeptideShaker:" + System.getProperty("line.separator")
                     + e.getMessage(),
                     "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -144,7 +144,7 @@ public class PeptideShakerWrapper {
                                     userPreferences.setMemoryPreference(new Integer(currentOption));
                                     saveNewSettings();
                                     if (useStartUpLog) {
-                                        bw.write("New memory setting saved: " + userPreferences.getMemoryPreference() + "\n");
+                                        bw.write("New memory setting saved: " + userPreferences.getMemoryPreference() + System.getProperty("line.separator"));
                                     }
                                 } catch (Exception e) {
 
@@ -164,13 +164,13 @@ public class PeptideShakerWrapper {
                             String[] tempProxySetting = currentOption.split("=");
 
                             if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyHost")) { // proxy host
-                                uniprotApiProperties += "proxy.host=" + tempProxySetting[1] + "\n";
+                                uniprotApiProperties += "proxy.host=" + tempProxySetting[1] + System.getProperty("line.separator");
                             } else if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyPort")) { // proxy port
-                                uniprotApiProperties += "proxy.port=" + tempProxySetting[1] + "\n";
+                                uniprotApiProperties += "proxy.port=" + tempProxySetting[1] + System.getProperty("line.separator");
                             } else if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyUser")) { // proxy user name
-                                uniprotApiProperties += "username=" + tempProxySetting[1] + "\n";
+                                uniprotApiProperties += "username=" + tempProxySetting[1] + System.getProperty("line.separator");
                             } else if (tempProxySetting[0].equalsIgnoreCase("-Dhttp.proxyPassword")) { // proxy password
-                                uniprotApiProperties += "password=" + tempProxySetting[1] + "\n";
+                                uniprotApiProperties += "password=" + tempProxySetting[1] + System.getProperty("line.separator");
                             }
                         }
 
@@ -261,7 +261,7 @@ public class PeptideShakerWrapper {
         }
 
         if (useStartUpLog) {
-            bw.write("original java.home: " + javaHome + "\n");
+            bw.write("original java.home: " + javaHome + System.getProperty("line.separator"));
         }
 
         // try to force the use of 64 bit Java if available
@@ -273,7 +273,7 @@ public class PeptideShakerWrapper {
             String tempJavaHome = javaHome.replaceAll(" \\(x86\\)", "");
 
             if (useStartUpLog) {
-                bw.write("temp java.home: " + tempJavaHome + "\n");
+                bw.write("temp java.home: " + tempJavaHome + System.getProperty("line.separator"));
             }
 
             if (new File(tempJavaHome).exists()) {
@@ -282,7 +282,7 @@ public class PeptideShakerWrapper {
         }
 
         if (useStartUpLog) {
-            bw.write("new java.home: " + javaHome + "\n");
+            bw.write("new java.home: " + javaHome + System.getProperty("line.separator"));
         }
 
         // get the splash 
@@ -323,8 +323,8 @@ public class PeptideShakerWrapper {
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
         if (useStartUpLog) {
-            System.out.println("\n" + cmdLine + "\n\n");
-            bw.write("\nCommand line: " + cmdLine + "\n\n");
+            System.out.println(System.getProperty("line.separator") + cmdLine + System.getProperty("line.separator") + System.getProperty("line.separator"));
+            bw.write(System.getProperty("line.separator") + "Command line: " + cmdLine + System.getProperty("line.separator") + System.getProperty("line.separator"));
         }
 
         // try to run the command line
@@ -343,10 +343,10 @@ public class PeptideShakerWrapper {
 
                 if (useStartUpLog) {
                     System.out.println(line);
-                    bw.write(line + "\n");
+                    bw.write(line + System.getProperty("line.separator"));
                 }
 
-                temp += line + "\n";
+                temp += line + System.getProperty("line.separator");
                 line = br.readLine();
                 error = true;
             }
@@ -355,7 +355,7 @@ public class PeptideShakerWrapper {
 
             if (useStartUpLog) {
                 System.out.println("Process exitValue: " + exitVal);
-                bw.write("Process exitValue: " + exitVal + "\n");
+                bw.write("Process exitValue: " + exitVal + System.getProperty("line.separator"));
             }
 
             // an error occured
@@ -376,7 +376,7 @@ public class PeptideShakerWrapper {
                         launch();
                     } else {
                         if (useStartUpLog) {
-                            bw.write("Memory Limit:" + userPreferences.getMemoryPreference() + "\n");
+                            bw.write("Memory Limit:" + userPreferences.getMemoryPreference() + System.getProperty("line.separator"));
                             bw.flush();
                             bw.close();
                         }
@@ -452,7 +452,7 @@ public class PeptideShakerWrapper {
 
                 while ((currentLine = b.readLine()) != null) {
                     if (!currentLine.startsWith("-Xmx")) {
-                        lines += currentLine + "\n";
+                        lines += currentLine + System.getProperty("line.separator");
                     }
                 }
                 b.close();
@@ -461,7 +461,7 @@ public class PeptideShakerWrapper {
                 FileWriter fw = new FileWriter(javaOptions);
                 BufferedWriter bow = new BufferedWriter(fw);
                 bow.write(lines);
-                bow.write("-Xmx" + userPreferences.getMemoryPreference() + "M\n");
+                bow.write("-Xmx" + userPreferences.getMemoryPreference() + "M" + System.getProperty("line.separator"));
 
                 bow.close();
                 fw.close();

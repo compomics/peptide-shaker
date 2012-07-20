@@ -3430,8 +3430,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     Util.tableToFile(spectrumTable, "\t", progressDialog, true, writer);
                                 } else if (tableIndex == TableIndex.PSM_TABLES) {
 
-                                    writer.write("PeptideShaker\n\n");
-                                    writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated\n");
+                                    writer.write("PeptideShaker" + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                                    writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated" + System.getProperty("line.separator"));
 
                                     try {
                                         // the PeptideShaker PSM table
@@ -3458,20 +3458,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                                 identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
-                                        writer.write(probabilities.isValidated() + "\n");
+                                        writer.write(probabilities.isValidated() + System.getProperty("line.separator"));
 
 
                                         // the search engine tables
-                                        writer.write("\n\nOMSSA\n\n");
-                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence\n");
+                                        writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "OMSSA" + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
                                         writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.OMSSA));
 
-                                        writer.write("\n\nX!Tandem\n\n");
-                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence\n");
+                                        writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "X!Tandem" + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
                                         writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.XTANDEM));
 
-                                        writer.write("\n\nMascot\n\n");
-                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence\n");
+                                        writer.write(System.getProperty("line.separator") + System.getProperty("line.separator") + "Mascot" + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                                        writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence" + System.getProperty("line.separator"));
                                         writer.write(getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.MASCOT));
                                     } catch (Exception e) {
                                         peptideShakerGUI.catchException(e);
