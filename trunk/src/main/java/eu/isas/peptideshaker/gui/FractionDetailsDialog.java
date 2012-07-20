@@ -65,7 +65,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
             
             Double expectedMw = 0.0;
             
-            if (expectedMolecularWeights.containsKey(spectrumFiles.get(i))) {
+            if (expectedMolecularWeights != null && expectedMolecularWeights.containsKey(spectrumFiles.get(i))) {
                 expectedMw = expectedMolecularWeights.get(spectrumFiles.get(i));
             }
             

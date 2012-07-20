@@ -18,7 +18,7 @@ public class Metrics implements Serializable {
     /**
      * Serial number for versions compatibility.
      */
-    static final long serialVersionUID = 5905881057533649517L;
+    static final long serialVersionUID = 5905881057533649517L; // @TODO: have to be updated??
     /**
      * The maximal precursor error in Da in all PSMs (only the best hit per
      * spectrum).
@@ -73,7 +73,23 @@ public class Metrics implements Serializable {
     /**
      * The observed average molecular masses in kDa for each fraction.
      */
-    private HashMap<String, Double> observedFractionalMasses;
+    private HashMap<String, Double> observedFractionalMasses; // @TODO: this one can be removed, but doing so results in backwards compatability issues...
+    /**
+     * The observed molecular masses in kDa for each fraction.
+     */
+    private HashMap<String, ArrayList<Double>> observedFractionalMassesAll;
+    /**
+     * The maximum number of peptides detected at the fraction level.
+     */
+    private Integer maxValidatedPeptidesPerFraction = null;
+    /**
+     * The maximum number of spectra at the fraction level.
+     */
+    private Integer maxValidatedSpectraPerFraction = null;
+    /**
+     * The maximum protein average precursor intensity.
+     */
+    private Double maxProteinAveragePrecursorIntensity = null;
 
     /**
      * Constructor.
@@ -351,5 +367,83 @@ public class Metrics implements Serializable {
      */
     public void setObservedFractionalMasses(HashMap<String, Double> observedFractionalMasses) {
         this.observedFractionalMasses = observedFractionalMasses;
+    }
+    
+    /**
+     * Returns the observed molecular masses in kDa for each fraction. The key 
+     * is the file path of the fraction.
+     * 
+     * @return the observed average molecular masses for each fraction
+     */
+    public HashMap<String, ArrayList<Double>> getObservedFractionalMassesAll() {
+        if (observedFractionalMassesAll != null) {
+            return observedFractionalMassesAll;
+        } else {
+            return new HashMap<String, ArrayList<Double>>();
+        }  
+    }
+
+    /**
+     * Set the observed molecular masses for each fraction in kDa. The key 
+     * is the file path of the fraction.
+     * 
+     * @param observedFractionalMassesAll the observedFractionalMasses to set
+     */
+    public void setObservedFractionalMassesAll(HashMap<String, ArrayList<Double>> observedFractionalMassesAll) {
+        this.observedFractionalMassesAll = observedFractionalMassesAll;
+    }
+
+    /**
+     * Returns the maximum validated peptides at the fraction level.
+     * 
+     * @return the maxValidatedPeptidesPerFraction
+     */
+    public Integer getMaxValidatedPeptidesPerFraction() {
+        return maxValidatedPeptidesPerFraction;
+    }
+
+    /**
+     * Set the maximum validated peptides at the fraction level.
+     * 
+     * @param maxValidatedPeptidesPerFraction the maxValidatedPeptidesPerFraction to set
+     */
+    public void setMaxValidatedPeptidesPerFraction(Integer maxValidatedPeptidesPerFraction) {
+        this.maxValidatedPeptidesPerFraction = maxValidatedPeptidesPerFraction;
+    }
+
+    /**
+     * Returns the maximum validated spectra at the fraction level.
+     * 
+     * @return the maxValidatedSpectraPerFraction
+     */
+    public Integer getMaxValidatedSpectraPerFraction() {
+        return maxValidatedSpectraPerFraction;
+    }
+
+    /**
+     * Set the maximum validated spectra at the fraction level.
+     * 
+     * @param maxValidatedSpectraPerFraction the maxValidatedSpectraPerFraction to set
+     */
+    public void setMaxValidatedSpectraPerFraction(Integer maxValidatedSpectraPerFraction) {
+        this.maxValidatedSpectraPerFraction = maxValidatedSpectraPerFraction;
+    }
+
+    /**
+     * Returns the maximum protein average precursor intensity.
+     * 
+     * @return the maxProteinAveragePrecursorIntensity
+     */
+    public Double getMaxProteinAveragePrecursorIntensity() {
+        return maxProteinAveragePrecursorIntensity;
+    }
+
+    /**
+     * Set the maximum protein average precursor intensity.
+     * 
+     * @param maxProteinAveragePrecursorIntensity the maxProteinAveragePrecursorIntensity to set
+     */
+    public void setMaxProteinAveragePrecursorIntensity(Double maxProteinAveragePrecursorIntensity) {
+        this.maxProteinAveragePrecursorIntensity = maxProteinAveragePrecursorIntensity;
     }
 }
