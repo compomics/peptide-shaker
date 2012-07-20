@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class PSParameter implements UrParameter {
     /**
      * Serial version UID for post-serialization compatibility.
      */
-    static final long serialVersionUID = 2846587135366515967L;
+    static final long serialVersionUID = 2846587135366515967L; // @TODO: has to be updated??
     /**
      * Posterior error probability estimated for the search engine results.
      */
@@ -97,6 +98,22 @@ public class PSParameter implements UrParameter {
      * The fraction confidence map.
      */
     private HashMap<String, Double> fractionScore = new HashMap<String, Double>();
+    /**
+     * The number of validated peptides per fraction.
+     */
+    private HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
+    /**
+     * The number of validated spectra per fraction.
+     */
+    private HashMap<String, Integer> validatedSpectraPerFraction = new HashMap<String, Integer>();
+    /**
+     * The precursor intensity per fraction.
+     */
+    private HashMap<String, ArrayList<Double>> precursorIntensityPerFraction = new HashMap<String, ArrayList<Double>>();
+    /**
+     * The average precursor intensity per fraction.
+     */
+    private HashMap<String, Double> precursorIntensityAveragePerFraction = new HashMap<String, Double>();
 
     /**
      * Constructor.
@@ -507,6 +524,105 @@ public class PSParameter implements UrParameter {
      */
     public double getFractionConfidence(String fraction) {
         return 100 * (1 - fractionPEP.get(fraction));
+    }
+    
+    /**
+     * Get the number of validated peptides in the given fraction.
+     * 
+     * @param fraction the fraction
+     * @return the number of validated peptides in the given fraction
+     */
+    public Integer getFractionValidatedPeptides(String fraction) {
+        if (validatedPeptidesPerFraction != null) {
+            return validatedPeptidesPerFraction.get(fraction);
+        } else {
+            return 0;
+        }   
+    }
+    
+    /**
+     * Get the number of validated peptides in the given fraction.
+     * 
+     * @param validatedPeptidesPerFraction 
+     */
+    public void setFractionValidatedPeptides(HashMap<String, Integer> validatedPeptidesPerFraction) {
+        this.validatedPeptidesPerFraction = validatedPeptidesPerFraction;
+    }
+    
+    /**
+     * Get the number of validated spectra in the given fraction.
+     * 
+     * @param fraction the fraction
+     * @return the number of validated spectra in the given fraction
+     */
+    public Integer getFractionValidatedSpectra(String fraction) {
+        if (validatedSpectraPerFraction != null) {
+            return validatedSpectraPerFraction.get(fraction);
+        } else {
+            return 0;
+        }   
+    }
+    
+    /**
+     * Get the number of validated spectra in the given fraction.
+     * 
+     * @param validatedSpectraPerFraction 
+     */
+    public void setFractionValidatedSpectra(HashMap<String, Integer> validatedSpectraPerFraction) {
+        this.validatedSpectraPerFraction = validatedSpectraPerFraction;
+    }
+    
+    /**
+     * Get the precursor intensity in the given fraction.
+     * 
+     * @param fraction the fraction
+     * @return the precursor intensity in the given fraction
+     */
+    public ArrayList<Double> getPrecursorIntensityPerFraction(String fraction) {
+        if (precursorIntensityPerFraction != null) {
+            return precursorIntensityPerFraction.get(fraction);
+        } else {
+            return new ArrayList<Double>();
+        }   
+    }
+    
+    /**
+     * Get the precursor intensity in the given fraction.
+     * 
+     * @param precursorIntensityPerFraction 
+     */
+    public void setPrecursorIntensityPerFraction(HashMap<String, ArrayList<Double>> precursorIntensityPerFraction) {
+        this.precursorIntensityPerFraction = precursorIntensityPerFraction;
+        
+        // calculate the average precursor intensities
+        for (String fraction : precursorIntensityPerFraction.keySet()) {
+            
+            Double sum = 0.0;
+            
+            for (Double intensity : precursorIntensityPerFraction.get(fraction)) {
+                sum += intensity;
+            }
+            
+            if (sum > 0) {
+                precursorIntensityAveragePerFraction.put(fraction, sum / precursorIntensityPerFraction.get(fraction).size());
+            } else {
+                precursorIntensityAveragePerFraction.put(fraction, null);
+            }   
+        }
+    }
+    
+    /**
+     * Get the average precursor intensity in the given fraction.
+     * 
+     * @param fraction the fraction
+     * @return the average precursor intensity in the given fraction
+     */
+    public Double getPrecursorIntensityAveragePerFraction(String fraction) {
+        if (precursorIntensityAveragePerFraction != null) {
+            return precursorIntensityAveragePerFraction.get(fraction);
+        } else {
+            return null;
+        }  
     }
 
     @Override

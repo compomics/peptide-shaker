@@ -5,11 +5,9 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -158,103 +156,29 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             } else if (column > 2 && column - 3 < fileNames.size()) {
                 
                 String fraction = fileNames.get(column - 3);
-                PSParameter pSParameter = new PSParameter();
+                PSParameter psParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
+                psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 
                 if (peptideShakerGUI.getProteinFractionsPanel().isProteinConfidenceSelected()) {
-                    
-                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, pSParameter);
-                    if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
-                        return pSParameter.getFractionConfidence(fraction);
+                    if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
+                        return psParameter.getFractionConfidence(fraction);
                     } else {
                         return 0.0;
                     }
-                    
                 } else if (peptideShakerGUI.getProteinFractionsPanel().isProteinPeptideCountSelected()) {
-
-                    int validatedPeptideCounter = 0;
-                    ArrayList<String> peptideKeys = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey).getPeptideMatches();
-                    
-                    for (int j = 0; j < peptideKeys.size(); j++) {
-                        
-                        String peptideKey = peptideKeys.get(j);
-                        pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, pSParameter);
-                        
-                        if (pSParameter.getFractions() != null && pSParameter.getFractions().contains(fraction)) {
-                            if (pSParameter.isValidated()) {
-                                validatedPeptideCounter++;
-                            }
-                        }
-                    }
-                    
-                    return validatedPeptideCounter;
-                    
+                    return psParameter.getFractionValidatedPeptides(fraction);
                 } else if (peptideShakerGUI.getProteinFractionsPanel().isProteinSpectumCountSelected()) {
-
-                    // get the psms per fraction
-                    HashMap<String, ArrayList<String>> fractionPsmMatches = peptideShakerGUI.getMetrics().getFractionPsmMatches();
-                    int validatedSpectraCounter = 0;
-                    ArrayList<String> peptideKeys = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey).getPeptideMatches();
-                    
-                    for (int j = 0; j < peptideKeys.size(); j++) {
-                        
-                        String currentPeptideKey = peptideKeys.get(j);
-                        
-                        if (fractionPsmMatches.get(fraction + "_" + currentPeptideKey) != null) {
-                            ArrayList<String> spectrumKeys = fractionPsmMatches.get(fraction + "_" + currentPeptideKey);
-
-                            for (int k = 0; k < spectrumKeys.size(); k++) {
-                                
-                                pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKeys.get(k), new PSParameter());
-                                
-                                if (pSParameter.isValidated()) {
-                                    validatedSpectraCounter++;
-                                }
-                            }
-                        }
-                    }
-                    
-                    return validatedSpectraCounter;
-                    
+                    return psParameter.getFractionValidatedSpectra(fraction);
                 } else { // intensity selected
-                    
-                    // get the psms per fraction
-                    HashMap<String, ArrayList<String>> fractionPsmMatches = peptideShakerGUI.getMetrics().getFractionPsmMatches();
-                    double intensitySum = 0.0;
-                    int intensityCounter = 0;
-                    ArrayList<String> peptideKeys = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey).getPeptideMatches();
-                    
-                    for (int j = 0; j < peptideKeys.size(); j++) {
-                        
-                        String currentPeptideKey = peptideKeys.get(j);
-                        
-                        if (fractionPsmMatches.get(fraction + "_" + currentPeptideKey) != null) {
-                            ArrayList<String> spectrumKeys = fractionPsmMatches.get(fraction + "_" + currentPeptideKey);
-
-                            for (int k = 0; k < spectrumKeys.size(); k++) {
-                                
-                                pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKeys.get(k), new PSParameter());
-                                
-                                if (pSParameter.isValidated()) {    
-                                    intensitySum += SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity();
-                                    intensityCounter++;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (intensitySum == 0) {
-                        return 0.0;
-                    }
-                    
-                    return intensitySum / intensityCounter; // @TODO: make it possible to return sum and median intensity as well?
+                    return psParameter.getPrecursorIntensityAveragePerFraction(fraction); // note this returns the average intensity, could be changed to total or median?
                 }
                 
             } else if (column == fileNames.size() + 3) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 if (currentProtein != null) {
-                    return currentProtein.computeMolecularWeight() / 1000;
+                    return currentProtein.computeMolecularWeight() / 1000; // @TODO: this should not be recalculated every time!!
                 } else {
                     return null;
                 }
