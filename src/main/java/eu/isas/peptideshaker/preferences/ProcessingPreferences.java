@@ -11,6 +11,7 @@ public class ProcessingPreferences implements Serializable {
 
     /**
      * Boolean indicating whether the A-score should be estimated.
+     * @deprecated use the PTM scoring preferences instead
      */
     private boolean aScore = false;
     /**
@@ -35,6 +36,7 @@ public class ProcessingPreferences implements Serializable {
     /**
      * Indicates whether the A-score should be calculated.
      *
+     * @deprecated use the PTM scoring preferences instead
      * @return a boolean indicating whether the A-score should be calculated
      */
     public boolean isAScoreCalculated() {
@@ -44,6 +46,7 @@ public class ProcessingPreferences implements Serializable {
     /**
      * Sets whether the A-score should be calculated.
      *
+     * @deprecated use the PTM scoring preferences instead
      * @param shouldEstimateAScore whether the A-score should be calculated
      */
     public void estimateAScore(boolean shouldEstimateAScore) {

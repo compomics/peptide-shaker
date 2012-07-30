@@ -403,12 +403,12 @@ public class OutputGenerator {
                                     }
                                 }
                             }
-                            
+
                             progressDialog.increaseProgressValue();
                         }
 
                         writer.close();
-                        
+
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
@@ -1122,98 +1122,106 @@ public class OutputGenerator {
                                                 PSPtmScores ptmScores = new PSPtmScores();
                                                 boolean first = true;
                                                 for (String mod : modList) {
-                                                    if (first) {
-                                                        first = false;
-                                                    } else {
-                                                        writer.write(", ");
-                                                    }
-                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                                    writer.write(mod + " (");
-                                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                                        int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
-                                                        if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                                            writer.write("Not Scored"); // Well this should not happen
-                                                        } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                                            writer.write("Random");
-                                                        } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                                            writer.write("Doubtfull");
-                                                        } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                                            writer.write("Confident");
-                                                        } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                                            writer.write("Very Confident");
+                                                    if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                                        if (first) {
+                                                            first = false;
+                                                        } else {
+                                                            writer.write(", ");
                                                         }
-                                                    } else {
-                                                        writer.write("Not Scored");
-                                                    }
-                                                    writer.write(")");
-                                                }
-                                                writer.write(SEPARATOR);
-                                                first = true;
-                                                for (String mod : modList) {
-                                                    if (first) {
-                                                        first = false;
-                                                    } else {
-                                                        writer.write(", ");
-                                                    }
-                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                                    writer.write(mod + " (");
-                                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                                        String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
-                                                        if (location != null) {
-                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                                            first = true;
-                                                            String commaSeparated = "";
-                                                            for (int aa : locations) {
-                                                                if (first) {
-                                                                    first = false;
-                                                                } else {
-                                                                    commaSeparated += ", ";
-                                                                }
-                                                                commaSeparated += aa;
+                                                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                                        writer.write(mod + " (");
+                                                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                            int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                                                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                                                writer.write("Not Scored"); // Well this should not happen
+                                                            } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                                                writer.write("Random");
+                                                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                                                writer.write("Doubtfull");
+                                                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                                                writer.write("Confident");
+                                                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                                                writer.write("Very Confident");
                                                             }
-                                                            writer.write(commaSeparated + ": ");
-                                                            Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
-                                                            writer.write(aScore + "");
                                                         } else {
                                                             writer.write("Not Scored");
                                                         }
-                                                    } else {
-                                                        writer.write("Not Scored");
+                                                        writer.write(")");
                                                     }
-                                                    writer.write(")");
                                                 }
                                                 writer.write(SEPARATOR);
                                                 first = true;
                                                 for (String mod : modList) {
-                                                    if (first) {
-                                                        first = false;
-                                                    } else {
-                                                        writer.write(", ");
-                                                    }
-                                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                                                    writer.write(mod + " (");
-                                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                                                        String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
-                                                        if (location != null) {
-                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                                                            first = true;
-                                                            String commaSeparated = "";
-                                                            for (int aa : locations) {
-                                                                if (first) {
-                                                                    first = false;
-                                                                } else {
-                                                                    commaSeparated += ", ";
-                                                                }
-                                                                commaSeparated += aa;
-                                                            }
-                                                            writer.write(commaSeparated + ": ");
-                                                            double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                                                            writer.write(dScore + "");
+                                                    if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                                        if (first) {
+                                                            first = false;
+                                                        } else {
+                                                            writer.write(", ");
                                                         }
-                                                    } else {
-                                                        writer.write("Not Scored");
+                                                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                                        writer.write(mod + " (");
+                                                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                            String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                                                            if (location != null) {
+                                                                ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                                                Collections.sort(locations);
+                                                                first = true;
+                                                                String commaSeparated = "";
+                                                                for (int aa : locations) {
+                                                                    if (first) {
+                                                                        first = false;
+                                                                    } else {
+                                                                        commaSeparated += ", ";
+                                                                    }
+                                                                    commaSeparated += aa;
+                                                                }
+                                                                writer.write(commaSeparated + ": ");
+                                                                Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
+                                                                writer.write(aScore + "");
+                                                            } else {
+                                                                writer.write("Not Scored");
+                                                            }
+                                                        } else {
+                                                            writer.write("Not Scored");
+                                                        }
+                                                        writer.write(")");
                                                     }
-                                                    writer.write(")");
+                                                }
+                                                writer.write(SEPARATOR);
+                                                first = true;
+                                                for (String mod : modList) {
+                                                    if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                                        if (first) {
+                                                            first = false;
+                                                        } else {
+                                                            writer.write(", ");
+                                                        }
+                                                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                                        writer.write(mod + " (");
+                                                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                            String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
+                                                            if (location != null) {
+                                                                ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                                                Collections.sort(locations);
+                                                                first = true;
+                                                                String commaSeparated = "";
+                                                                for (int aa : locations) {
+                                                                    if (first) {
+                                                                        first = false;
+                                                                    } else {
+                                                                        commaSeparated += ", ";
+                                                                    }
+                                                                    commaSeparated += aa;
+                                                                }
+                                                                writer.write(commaSeparated + ": ");
+                                                                double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
+                                                                writer.write(dScore + "");
+                                                            }
+                                                        } else {
+                                                            writer.write("Not Scored");
+                                                        }
+                                                        writer.write(")");
+                                                    }
                                                 }
                                                 writer.write(SEPARATOR);
                                             }

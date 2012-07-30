@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
+import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -25,13 +26,14 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class provides identification features at the protein level.
+ * This class provides identification features and stores them in cache.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -43,101 +45,18 @@ public class IdentificationFeaturesGenerator {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The number of values kept in memory for small objects.
-     */
-    private final int smallObjectsCacheSize = 5000;
-    /**
-     * The number of values kept in memory for big objects.
-     */
-    private final int bigObjectsCacheSize = 3;
-    /**
-     * The cached protein matches for small objects.
-     */
-    private ArrayList<String> smallObjectsCache = new ArrayList<String>();
-    /**
-     * The cached protein matches for big objects.
-     */
-    private ArrayList<String> bigObjectsCache = new ArrayList<String>();
-    /**
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The sequence coverage of the main match of the loaded protein match.
-     */
-    private HashMap<String, Double> sequenceCoverage = new HashMap<String, Double>();
-    /**
-     * The possible sequence coverage of the main match of the loaded protein.
-     * match
-     */
-    private HashMap<String, Double> possibleCoverage = new HashMap<String, Double>();
-    /**
-     * The spectrum counting metric of the loaded protein match.
-     */
-    private HashMap<String, Double> spectrumCounting = new HashMap<String, Double>();
-    /**
-     * The number of spectra.
-     */
-    private HashMap<String, Integer> numberOfSpectra = new HashMap<String, Integer>();
-    /**
-     * The number of validated spectra.
-     */
-    private HashMap<String, Integer> numberOfValidatedSpectra = new HashMap<String, Integer>();
     /**
      * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * A map containing the list of coverable amino acids for each protein in
-     * the big object cache.
+     * The identification features cache where the recently accessed
+     * identification features are stored
      */
-    private HashMap<String, boolean[]> coverableAA = new HashMap<String, boolean[]>();
-    /**
-     * The current protein key.
-     */
-    private String currentProteinKey = "";
-    /**
-     * The current peptide key.
-     */
-    private String currentPeptideKey = "";
-    /**
-     * The protein list.
-     */
-    private ArrayList<String> proteinListAfterHiding = null;
-    /**
-     * Back-up list for when proteins are hidden.
-     */
-    private ArrayList<String> proteinList = null;
-    /**
-     * List of the validated proteins.
-     */
-    private ArrayList<String> validatedProteinList = null;
-    /**
-     * The peptide list.
-     */
-    private ArrayList<String> peptideList;
-    /**
-     * The psm list.
-     */
-    private ArrayList<String> psmList;
-    /**
-     * Boolean indicating whether a filtering was already used. If yes, proteins
-     * might need to be unhiden.
-     */
-    private boolean filtered = false;
-    /**
-     * The max m/z value across the selected spectra.
-     */
-    private double maxPsmMzValue;
-    /**
-     * The maximum number of psms across all peptides of the last selected
-     * protein.
-     */
-    private int maxSpectrumCount;
-    /**
-     * The number of calidated psms in the currently selected peptide.
-     */
-    private int nValidatedPsms;
+    private IdentificationFeaturesCache identificationFeaturesCache = new IdentificationFeaturesCache();
 
     /**
      * Constructor.
@@ -157,27 +76,10 @@ public class IdentificationFeaturesGenerator {
      * peptides can generate peptides
      */
     public boolean[] getCoverableAA(String proteinMatchKey) {
-        boolean[] result = coverableAA.get(proteinMatchKey);
+        boolean[] result = (boolean[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey);
         if (result == null) {
-            if (bigObjectsCache.size() >= bigObjectsCacheSize) {
-                int nRemove = bigObjectsCache.size() - bigObjectsCacheSize + 1;
-                ArrayList<String> toRemove = new ArrayList<String>();
-                for (String tempKey : bigObjectsCache) {
-                    if (coverableAA.containsKey(tempKey)) {
-                        toRemove.add(tempKey);
-                        if (toRemove.size() == nRemove) {
-                            break;
-                        }
-                    }
-                }
-                for (String tempKey : toRemove) {
-                    removeFromSmallCache(tempKey);
-                }
-            }
             result = estimateCoverableAA(proteinMatchKey);
-            coverableAA.put(proteinMatchKey, result);
-            bigObjectsCache.remove(proteinMatchKey);
-            bigObjectsCache.add(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey, result);
         }
         return result;
     }
@@ -253,61 +155,17 @@ public class IdentificationFeaturesGenerator {
      */
     public Double getSequenceCoverage(String proteinMatchKey) {
         try {
-            Double result = sequenceCoverage.get(proteinMatchKey);
+            Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
 
             if (result == null) {
-                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                    ArrayList<String> toRemove = new ArrayList<String>();
-
-                    for (String tempKey : smallObjectsCache) {
-                        if (sequenceCoverage.containsKey(tempKey)) {
-                            toRemove.add(tempKey);
-                            if (toRemove.size() == nRemove) {
-                                break;
-                            }
-                        }
-                    }
-
-                    for (String tempKey : toRemove) {
-                        removeFromSmallCache(tempKey);
-                    }
-                }
-
                 result = estimateSequenceCoverage(proteinMatchKey);
-                sequenceCoverage.put(proteinMatchKey, result);
-                smallObjectsCache.remove(proteinMatchKey);
-                smallObjectsCache.add(proteinMatchKey);
+                identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
             }
             return result;
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return Double.NaN;
         }
-    }
-
-    /**
-     * Removes a key from the cache.
-     *
-     * @param key the key to remove
-     */
-    public void removeFromSmallCache(String key) {
-        smallObjectsCache.remove(key);
-        sequenceCoverage.remove(key);
-        possibleCoverage.remove(key);
-        spectrumCounting.remove(key);
-        numberOfValidatedSpectra.remove(key);
-        numberOfSpectra.remove(key);
-    }
-
-    /**
-     * Removes a key from the cache.
-     *
-     * @param key the key to remove
-     */
-    public void removeFromBigCache(String key) {
-        bigObjectsCache.remove(key);
-        coverableAA.remove(key);
     }
 
     /**
@@ -379,31 +237,11 @@ public class IdentificationFeaturesGenerator {
     public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
         try {
             if (method == peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod()) {
-                Double result = spectrumCounting.get(proteinMatchKey);
+                Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.spectrum_counting, proteinMatchKey);
 
                 if (result == null) {
-                    if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                        int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                        ArrayList<String> toRemove = new ArrayList<String>();
-
-                        for (String tempKey : smallObjectsCache) {
-                            if (spectrumCounting.containsKey(tempKey)) {
-                                toRemove.add(tempKey);
-                                if (toRemove.size() == nRemove) {
-                                    break;
-                                }
-                            }
-                        }
-
-                        for (String tempKey : toRemove) {
-                            removeFromSmallCache(tempKey);
-                        }
-                    }
-
                     result = estimateSpectrumCounting(proteinMatchKey);
-                    spectrumCounting.put(proteinMatchKey, result);
-                    smallObjectsCache.remove(proteinMatchKey);
-                    smallObjectsCache.add(proteinMatchKey);
+                    identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.spectrum_counting, proteinMatchKey, result);
                 }
                 return result;
             } else {
@@ -546,31 +384,11 @@ public class IdentificationFeaturesGenerator {
      */
     public Double getObservableCoverage(String proteinMatchKey) {
         try {
-            Double result = possibleCoverage.get(proteinMatchKey);
+            Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey);
 
             if (result == null) {
-                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                    ArrayList<String> toRemove = new ArrayList<String>();
-
-                    for (String tempKey : smallObjectsCache) {
-                        if (possibleCoverage.containsKey(tempKey)) {
-                            toRemove.add(tempKey);
-                            if (toRemove.size() == nRemove) {
-                                break;
-                            }
-                        }
-                    }
-
-                    for (String tempKey : toRemove) {
-                        removeFromSmallCache(tempKey);
-                    }
-                }
-
                 result = estimateObservableCoverage(proteinMatchKey);
-                possibleCoverage.put(proteinMatchKey, result);
-                smallObjectsCache.remove(proteinMatchKey);
-                smallObjectsCache.add(proteinMatchKey);
+                identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey, result);
             }
             return result;
         } catch (Exception e) {
@@ -674,30 +492,11 @@ public class IdentificationFeaturesGenerator {
      */
     public Integer getNSpectra(String proteinMatchKey) {
         try {
-            Integer result = numberOfSpectra.get(proteinMatchKey);
+            Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey);
 
             if (result == null) {
-                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                    ArrayList<String> toRemove = new ArrayList<String>();
-
-                    for (String tempKey : smallObjectsCache) {
-                        if (numberOfSpectra.containsKey(tempKey)) {
-                            toRemove.add(tempKey);
-                            if (toRemove.size() == nRemove) {
-                                break;
-                            }
-                        }
-                    }
-
-                    for (String tempKey : toRemove) {
-                        removeFromSmallCache(tempKey);
-                    }
-                }
                 result = estimateNSpectra(proteinMatchKey);
-                numberOfSpectra.put(proteinMatchKey, result);
-                smallObjectsCache.remove(proteinMatchKey);
-                smallObjectsCache.add(proteinMatchKey);
+                identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey, result);
             }
 
             return result;
@@ -741,7 +540,7 @@ public class IdentificationFeaturesGenerator {
      * all found in a protein match
      */
     public int getMaxNSpectra() {
-        return maxSpectrumCount;
+        return identificationFeaturesCache.getMaxSpectrumCount();
     }
 
     /**
@@ -752,31 +551,13 @@ public class IdentificationFeaturesGenerator {
      */
     public int getNValidatedSpectra(String proteinMatchKey) {
         try {
-            Integer result = numberOfValidatedSpectra.get(proteinMatchKey);
-            
+            Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
+
             if (result == null) {
-                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                    ArrayList<String> toRemove = new ArrayList<String>();
 
-                    for (String tempKey : smallObjectsCache) {
-                        if (numberOfValidatedSpectra.containsKey(tempKey)) {
-                            toRemove.add(tempKey);
-                            if (toRemove.size() == nRemove) {
-                                break;
-                            }
-                        }
-                    }
-
-                    for (String tempKey : toRemove) {
-                        removeFromSmallCache(tempKey);
-                    }
-                }
-                
                 result = estimateNValidatedSpectra(proteinMatchKey);
-                numberOfValidatedSpectra.put(proteinMatchKey, result);
-                smallObjectsCache.remove(proteinMatchKey);
-                smallObjectsCache.add(proteinMatchKey);
+
+                identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey, result);
             }
 
             return result;
@@ -793,10 +574,10 @@ public class IdentificationFeaturesGenerator {
      * @return the number of spectra where this protein was found
      */
     private int estimateNValidatedSpectra(String proteinMatchKey) {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
         int result = 0;
-        
+
         try {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
             PSParameter psParameter = new PSParameter();
@@ -815,6 +596,13 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+    }
+    
+    /**
+     * Clears the spectrum counting data in cache
+     */
+    public void clearSpectrumCounting() {
+        identificationFeaturesCache.removeObjects(IdentificationFeaturesCache.ObjectType.spectrum_counting);
     }
 
     /**
@@ -1221,7 +1009,7 @@ public class IdentificationFeaturesGenerator {
      * @return the list of validated protein keys
      */
     public ArrayList<String> getValidatedProteins() {
-        return validatedProteinList;
+        return identificationFeaturesCache.getValidatedProteinList();
     }
 
     /**
@@ -1232,7 +1020,7 @@ public class IdentificationFeaturesGenerator {
      */
     public ArrayList<String> getProcessedProteinKeys(ProgressDialogX progressDialog) {
         try {
-            if (proteinList == null) {
+            if (identificationFeaturesCache.getProteinList() == null) {
                 if (progressDialog != null) {
                     progressDialog.setIndeterminate(false);
                     progressDialog.setTitle("Loading Protein Information. Please Wait...");
@@ -1332,7 +1120,7 @@ public class IdentificationFeaturesGenerator {
                     peptideShakerGUI.getMetrics().setnValidatedProteins(nValidatedProteins);
                 }
 
-                proteinList = new ArrayList<String>();
+                ArrayList<String> proteinList = new ArrayList<String>();
 
                 ArrayList<Double> scoreList = new ArrayList<Double>(orderMap.keySet());
                 Collections.sort(scoreList);
@@ -1365,18 +1153,20 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
 
+                identificationFeaturesCache.setProteinList(proteinList);
+
                 if (progressDialog != null) {
                     progressDialog.setIndeterminate(true);
                 }
             }
 
-            if (hidingNeeded() || proteinListAfterHiding == null) {
-                proteinListAfterHiding = new ArrayList<String>();
-                validatedProteinList = new ArrayList<String>();
+            if (hidingNeeded() || identificationFeaturesCache.getProteinListAfterHiding() == null) {
+                ArrayList<String> proteinListAfterHiding = new ArrayList<String>();
+                ArrayList<String> validatedProteinList = new ArrayList<String>();
                 PSParameter psParameter = new PSParameter();
                 int nValidatedProteins = 0;
 
-                for (String proteinKey : proteinList) {
+                for (String proteinKey : identificationFeaturesCache.getProteinList()) {
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
                     if (!psParameter.isHidden()) {
                         proteinListAfterHiding.add(proteinKey);
@@ -1386,15 +1176,16 @@ public class IdentificationFeaturesGenerator {
                         }
                     }
                 }
-
+                identificationFeaturesCache.setProteinListAfterHiding(proteinListAfterHiding);
+                identificationFeaturesCache.setValidatedProteinList(validatedProteinList);
                 peptideShakerGUI.getMetrics().setnValidatedProteins(nValidatedProteins);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-            proteinListAfterHiding = new ArrayList<String>();
+            identificationFeaturesCache.setProteinListAfterHiding(new ArrayList<String>());
         }
 
-        return proteinListAfterHiding;
+        return identificationFeaturesCache.getProteinListAfterHiding();
     }
 
     /**
@@ -1404,10 +1195,10 @@ public class IdentificationFeaturesGenerator {
      * @return the ordered protein keys to display when no filtering is applied.
      */
     public ArrayList<String> getProteinKeys(ProgressDialogX progressDialogX) {
-        if (proteinList == null) {
+        if (identificationFeaturesCache.getProteinList() == null) {
             getProcessedProteinKeys(progressDialogX);
         }
-        return proteinList;
+        return identificationFeaturesCache.getProteinList();
     }
 
     /**
@@ -1419,11 +1210,9 @@ public class IdentificationFeaturesGenerator {
      * can be null. The progress will be displayed as secondary progress.
      */
     public void repopulateCache(int nProteins, WaitingHandler waitingHandler) {
-        
-         // @TODO: this information should rather be stored in the database instead of recreated!!
-        
+
         //long start = System.currentTimeMillis();
-        
+
         try {
             if (waitingHandler != null) {
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
@@ -1432,35 +1221,35 @@ public class IdentificationFeaturesGenerator {
             }
 
             for (int i = 0; i < nProteins; i++) {
-                
-                String proteinKey = proteinList.get(i);
+
+                String proteinKey = identificationFeaturesCache.getProteinList().get(i);
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                
+
                 if (proteinMatch == null) {
                     throw new IllegalArgumentException("Protein match " + proteinKey + " not found.");
                 }
-                
+
                 getSequenceCoverage(proteinKey);
                 getObservableCoverage(proteinKey);
-                
+
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressValue();
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
                 }
-                
+
                 getNValidatedPeptides(proteinKey);
                 getNValidatedSpectra(proteinKey);
                 getSpectrumCounting(proteinKey);
-                
+
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressValue();
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
                 }
-                
+
                 if (!peptideShakerGUI.getCache().memoryCheck()) {
                     break;
                 }
@@ -1468,18 +1257,9 @@ public class IdentificationFeaturesGenerator {
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        
+
         //long end = System.currentTimeMillis();  
         //System.out.println("loading proteins total: " + (end-start));
-    }
-
-    /**
-     * Sets the sorted protein key list.
-     *
-     * @param proteinList the new sorted protein key list
-     */
-    public void setProteinKeys(ArrayList<String> proteinList) {
-        this.proteinList = proteinList;
     }
 
     /**
@@ -1490,14 +1270,14 @@ public class IdentificationFeaturesGenerator {
      */
     public ArrayList<String> getSortedPeptideKeys(String proteinKey) {
         try {
-            if (!proteinKey.equals(currentProteinKey)) {
+            if (!proteinKey.equals(identificationFeaturesCache.getCurrentProteinKey()) || identificationFeaturesCache.getPeptideList() == null) {
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 HashMap<Double, HashMap<Integer, ArrayList<String>>> peptideMap = new HashMap<Double, HashMap<Integer, ArrayList<String>>>();
                 PSParameter probabilities = new PSParameter();
                 double peptideProbabilityScore;
                 PeptideMatch peptideMatch;
                 int spectrumCount;
-                maxSpectrumCount = 0;
+                int maxSpectrumCount = 0;
 
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities);
@@ -1518,12 +1298,13 @@ public class IdentificationFeaturesGenerator {
                         peptideMap.get(peptideProbabilityScore).get(spectrumCount).add(peptideKey);
                     }
                 }
+                identificationFeaturesCache.setMaxSpectrumCount(maxSpectrumCount);
 
                 ArrayList<Double> scores = new ArrayList<Double>(peptideMap.keySet());
                 Collections.sort(scores);
                 ArrayList<Integer> nSpectra;
                 ArrayList<String> keys;
-                peptideList = new ArrayList<String>();
+                ArrayList<String> peptideList = new ArrayList<String>();
                 for (double currentScore : scores) {
                     nSpectra = new ArrayList<Integer>(peptideMap.get(currentScore).keySet());
                     Collections.sort(nSpectra);
@@ -1533,12 +1314,13 @@ public class IdentificationFeaturesGenerator {
                         peptideList.addAll(keys);
                     }
                 }
+                identificationFeaturesCache.setPeptideList(peptideList);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-            peptideList = new ArrayList<String>();
+            identificationFeaturesCache.setPeptideList(new ArrayList<String>());
         }
-        return peptideList;
+        return identificationFeaturesCache.getPeptideList();
     }
 
     /**
@@ -1549,15 +1331,15 @@ public class IdentificationFeaturesGenerator {
      */
     public ArrayList<String> getSortedPsmKeys(String peptideKey) {
         try {
-            if (!peptideKey.equals(currentPeptideKey)) {
+            if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null) {
 
                 PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                 HashMap<Integer, HashMap<Double, ArrayList<String>>> orderingMap = new HashMap<Integer, HashMap<Double, ArrayList<String>>>();
                 boolean hasRT = true;
                 double rt = -1;
                 PSParameter psParameter = new PSParameter();
-                maxPsmMzValue = 0.0;
-                nValidatedPsms = 0;
+                double maxPsmMzValue = 0.0;
+                int nValidatedPsms = 0;
 
                 for (String spectrumKey : currentPeptideMatch.getSpectrumMatches()) {
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -1596,10 +1378,12 @@ public class IdentificationFeaturesGenerator {
                         orderingMap.get(charge).get(rt).add(spectrumKey);
                     }
                 }
+                identificationFeaturesCache.setnValidatedPsms(nValidatedPsms);
+                identificationFeaturesCache.setMaxPsmMzValue(maxPsmMzValue);
 
                 ArrayList<Integer> charges = new ArrayList<Integer>(orderingMap.keySet());
                 Collections.sort(charges);
-                psmList = new ArrayList<String>();
+                ArrayList<String> psmList = new ArrayList<String>();
 
                 for (int currentCharge : charges) {
                     ArrayList<Double> rts = new ArrayList<Double>(orderingMap.get(currentCharge).keySet());
@@ -1610,12 +1394,14 @@ public class IdentificationFeaturesGenerator {
                         psmList.addAll(tempResult);
                     }
                 }
+
+                identificationFeaturesCache.setPsmList(psmList);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-            psmList = new ArrayList<String>();
+            identificationFeaturesCache.setPsmList(new ArrayList<String>());
         }
-        return psmList;
+        return identificationFeaturesCache.getPsmList();
     }
 
     /**
@@ -1625,7 +1411,7 @@ public class IdentificationFeaturesGenerator {
      * @return the max m/z value encountered across the selected spectra
      */
     public double getMaxPsmMzValue() {
-        return maxPsmMzValue;
+        return identificationFeaturesCache.getMaxPsmMzValue();
     }
 
     /**
@@ -1635,7 +1421,7 @@ public class IdentificationFeaturesGenerator {
      * @return the number of validated psms for the last selected peptide
      */
     public int getNValidatedPsms() {
-        return nValidatedPsms;
+        return identificationFeaturesCache.getnValidatedPsms();
     }
 
     /**
@@ -1645,17 +1431,41 @@ public class IdentificationFeaturesGenerator {
      */
     private boolean hidingNeeded() {
 
-        if (filtered) {
+        if (identificationFeaturesCache.isFiltered()) {
             return true;
         }
 
         for (ProteinFilter proteinFilter : peptideShakerGUI.getFilterPreferences().getProteinHideFilters().values()) {
             if (proteinFilter.isActive()) {
-                filtered = true;
+                identificationFeaturesCache.setFiltered(true);
                 return true;
             }
         }
 
         return false;
+    }
+    
+    /**
+     * Sets the ordered protein list
+     * @param proteinList the ordered protein list
+     */
+    public void setProteinKeys(ArrayList<String> proteinList) {
+        identificationFeaturesCache.setProteinList(proteinList);
+    }
+
+    /**
+     * Returns the identification features cache
+     * @return the identification features cache
+     */
+    public IdentificationFeaturesCache getIdentificationFeaturesCache() {
+        return identificationFeaturesCache;
+    }
+
+    /**
+     * Sets the the identification features cache
+     * @param identificationFeaturesCache the new identification features cache
+     */
+    public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache) {
+        this.identificationFeaturesCache = identificationFeaturesCache;
     }
 }

@@ -16,6 +16,7 @@ import eu.isas.peptideshaker.gui.NewDialog;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -166,8 +167,10 @@ public class PeptideShakerCLI implements Callable {
         processingPreferences.setPsmFDR(iCLIInputBean.getPSMFDR());
         processingPreferences.setPeptideFDR(iCLIInputBean.getPeptideFDR());
         processingPreferences.setProteinFDR(iCLIInputBean.getProteinFDR());
-        processingPreferences.estimateAScore(iCLIInputBean.estimateAScore());
-        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, processingPreferences);
+        
+        PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
+        ptmScoringPreferences.setaScoreCalculation(iCLIInputBean.estimateAScore());
+        peptideShaker.importFiles(iWaitingHandler, idFilter, idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences);
 
         // Creates a dummy IdentificationFeaturesGenerator instance
         IdentificationFeaturesGenerator lIdentificationFeaturesGenerator = new IdentificationFeaturesGenerator(null);

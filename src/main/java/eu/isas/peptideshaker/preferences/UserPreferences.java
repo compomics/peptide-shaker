@@ -77,10 +77,12 @@ public class UserPreferences implements Serializable {
     private int memoryPreference = 4 * 1024;
     /**
      * The user preferred delta score threshold.
+     * @deprecated use PTM scoring preferences instead
      */
     private Double deltaScoreThreshold = 50.0;
     /**
      * The user preferred A-score threshold.
+     * @deprecated use PTM scoring preferences instead
      */
     private Double aScoreThreshold = 50.0;
     /**
@@ -278,6 +280,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the user preferred A-score Threshold.
      *
+     * @deprecated use PTM scoring preferences instead
      * @return the user preferred A-score Threshold
      */
     public Double getAScoreThreshold() {
@@ -290,6 +293,7 @@ public class UserPreferences implements Serializable {
     /**
      * Sets the user preferred A-score Threshold.
      *
+     * @deprecated use PTM scoring preferences instead
      * @param aScoreThreshold the user preferred A-score Threshold
      */
     public void setAScoreThreshold(Double aScoreThreshold) {
@@ -299,6 +303,7 @@ public class UserPreferences implements Serializable {
     /**
      * Returns the user preferred delta score Threshold.
      *
+     * @deprecated use PTM scoring preferences instead
      * @return the user preferred delta score Threshold
      */
     public Double getDeltaScoreThreshold() {
@@ -311,6 +316,7 @@ public class UserPreferences implements Serializable {
     /**
      * Sets the user preferred delta score Threshold.
      *
+     * @deprecated use PTM scoring preferences instead
      * @param deltaScoreThreshold the user preferred delta score Threshold
      */
     public void setDeltaScoreThreshold(Double deltaScoreThreshold) {
