@@ -4444,7 +4444,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
-                    peptideShakerGUI.getMetrics().setProteinKeys(peptideShakerGUI.getIdentificationFeaturesGenerator().getProteinKeys(progressDialog));
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {

@@ -3,6 +3,8 @@ package eu.isas.peptideshaker.myparameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.*;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 
 /**
@@ -48,6 +50,14 @@ public class PSSettings implements UrParameter {
      * The metrics saved when loading the files.
      */
     private Metrics metrics;
+    /**
+     * The identification features generator with features in cache
+     */
+    private IdentificationFeaturesCache identificationFeaturesCache;
+    /**
+     * The PTM scoring preferences
+     */
+    private PTMScoringPreferences ptmScoringPreferences;
 
     /**
      * Blank constructor.
@@ -73,7 +83,9 @@ public class PSSettings implements UrParameter {
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
             Metrics metrics,
-            ProcessingPreferences processingPreferences) {
+            ProcessingPreferences processingPreferences,
+            IdentificationFeaturesCache identificationFeaturesCache,
+            PTMScoringPreferences ptmScoringPreferences) {
         this.searchParameters = searchParameters;
         this.utilitiesAnnotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -82,6 +94,8 @@ public class PSSettings implements UrParameter {
         this.displayPreferences = displayPreferences;
         this.metrics = metrics;
         this.processingPreferences = processingPreferences;
+        this.identificationFeaturesCache = identificationFeaturesCache;
+        this.ptmScoringPreferences = ptmScoringPreferences;
     }
 
     /**
@@ -165,6 +179,31 @@ public class PSSettings implements UrParameter {
             metrics = new Metrics();
         }
         return metrics;
+    }
+    
+    /**
+     * Returns the identification features cache used by the identification features generator before saving the file.
+     * Null for versions older than 0.18.0
+     * @return the identification features cache
+     */
+    public IdentificationFeaturesCache getIdentificationFeaturesCache() {
+        return identificationFeaturesCache;
+    }
+    
+    /**
+     * Returns the PTM scoring preferences
+     * @return the PTM scoring preferences
+     */
+    public PTMScoringPreferences getPTMScoringPreferences() {
+        if (ptmScoringPreferences== null) {
+            // backward compatibility check
+            ptmScoringPreferences = new PTMScoringPreferences();
+            ptmScoringPreferences.setdScoreThreshold(50);
+            ptmScoringPreferences.setaScoreThreshold(50);
+            ptmScoringPreferences.setaScoreNeutralLosses(true);
+            ptmScoringPreferences.setaScoreCalculation(processingPreferences.isAScoreCalculated());
+        }
+        return ptmScoringPreferences;
     }
 
     @Override

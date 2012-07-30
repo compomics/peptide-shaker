@@ -20,6 +20,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.scoring.InputMap;
@@ -152,11 +153,12 @@ public class FileImporter {
      * @param annotationPreferences the annotation preferences to use for PTM
      * scoring
      * @param processingPreferences the processing preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences) {
+            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
 
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters, annotationPreferences, processingPreferences);
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences);
 
         if (boolCLI) {
             // CLI mode needs to call the SwingWorker's running method directly.
@@ -458,6 +460,10 @@ public class FileImporter {
          */
         private ProcessingPreferences processingPreferences;
         /**
+         * The PTM scoring preferences
+         */
+        private PTMScoringPreferences ptmScoringPreferences;
+        /**
          * The number of retained first hits
          */
         private long nRetained = 0;
@@ -500,7 +506,7 @@ public class FileImporter {
          *
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
 
             this.idFiles = new ArrayList<File>();
             HashMap<String, File> filesMap = new HashMap<String, File>();
@@ -522,6 +528,7 @@ public class FileImporter {
             this.searchParameters = searchParameters;
             this.annotationPreferences = annotationPreferences;
             this.processingPreferences = processingPreferences;
+            this.ptmScoringPreferences = ptmScoringPreferences;
 
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
@@ -632,7 +639,7 @@ public class FileImporter {
                 waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.setProteinCountMap(proteinCount);
-                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences);
+                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences, ptmScoringPreferences);
 
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occured while loading the identification files:", true, true);

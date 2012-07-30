@@ -52,6 +52,7 @@ import eu.isas.peptideshaker.ToolsWrapper.ToolType;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
+import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
 import eu.isas.peptideshaker.recalibration.FractionError;
@@ -251,6 +252,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
+    /**
+     * The PTM scoring preferences
+     */
+    private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
     /**
      * The filter preferences.
      */
@@ -2692,7 +2697,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
 
     private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
-        new ProcessingPreferencesDialog(this, false, processingPreferences);
+        new ProcessingPreferencesDialog(this, false, processingPreferences, ptmScoringPreferences);
     }//GEN-LAST:event_processingParametersMenuItemActionPerformed
 
     /**
@@ -3222,6 +3227,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
         processingPreferences = new ProcessingPreferences();
+        ptmScoringPreferences = new PTMScoringPreferences();
     }
 
     /**
@@ -3539,6 +3545,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
+     * Returns the PTM scoring preferences
+     * @return the PTM scoring preferences
+     */
+    public PTMScoringPreferences getPtmScoringPreferences() {
+        return ptmScoringPreferences;
+    }
+
+    /**
+     * Sets the PTM scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
+     */
+    public void setPtmScoringPreferences(PTMScoringPreferences ptmScoringPreferences) {
+        this.ptmScoringPreferences = ptmScoringPreferences;
+    }
+    
+    /**
      * Returns the displayed proteomicAnalysis.
      *
      * @return the displayed proteomicAnalysis
@@ -3808,8 +3830,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Clear the data from the previous experiment.
-     * 
-     * @param clearDatabaseFolder decides if the database folder is to be cleared or not
+     *
+     * @param clearDatabaseFolder decides if the database folder is to be
+     * cleared or not
      */
     public void clearData(boolean clearDatabaseFolder) {
 
@@ -3864,7 +3887,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void clearDatabaseFolder() {
 
         boolean databaseClosed = true;
-        
+
         // close the database connection
         if (identification != null) {
 
@@ -3900,6 +3923,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void clearPreferences() {
         annotationPreferences = new AnnotationPreferences();
         spectrumCountingPreferences = new SpectrumCountingPreferences();
+        ptmScoringPreferences = new PTMScoringPreferences();
         filterPreferences = new FilterPreferences();
         displayPreferences = new DisplayPreferences();
         searchParameters = new SearchParameters();
@@ -4200,7 +4224,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
         try {
             PeptideShaker miniShaker = new PeptideShaker(experiment, sample, replicateNumber);
-            miniShaker.scorePTMs(identification.getProteinMatch(selectedProteinKey), searchParameters, annotationPreferences, false, processingPreferences.isAScoreCalculated());
+            miniShaker.scorePTMs(identification.getProteinMatch(selectedProteinKey), searchParameters, annotationPreferences, false, ptmScoringPreferences);
         } catch (Exception e) {
             catchException(e);
         }
@@ -4453,7 +4477,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         progressDialog.setTitle("Closing. Please Wait...");
         progressDialog.setIndeterminate(true);
         progressDialog.setUnstoppable(true);
-        
+
         final PeptideShakerGUI finalRef = this;
 
         new Thread(new Runnable() {
@@ -4486,12 +4510,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         sequenceFactory.closeFile();
                         saveUserPreferences();
                     }
-                    
+
                     // close the progress dialog
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
                     }
-                    
+
                     // hide the gui
                     finalRef.setVisible(false);
 
@@ -5124,15 +5148,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     experimentSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
                     setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
                     setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
+                    setPtmScoringPreferences(experimentSettings.getPTMScoringPreferences());
                     setProjectDetails(experimentSettings.getProjectDetails());
                     setSearchParameters(experimentSettings.getSearchParameters());
                     setProcessingPreferences(experimentSettings.getProcessingPreferences());
                     setFilterPreferences(experimentSettings.getFilterPreferences());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
                     setMetrics(experimentSettings.getMetrics());
+                        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(peptideShakerGUI);
+                    if (experimentSettings.getIdentificationFeaturesCache() != null) {
+                        identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
+                    }
 
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
-                    identificationFeaturesGenerator = new IdentificationFeaturesGenerator(peptideShakerGUI);
 
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -5459,7 +5487,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (!progressDialog.isRunCanceled()) {
-                        identificationFeaturesGenerator.setProteinKeys(getMetrics().getProteinKeys());
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identificationFeaturesGenerator.repopulateCache(50, progressDialog);
                         progressDialog.setIndeterminate(true);
@@ -5912,7 +5939,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Resetes the feature generator.
+     * Resets the feature generator.
      */
     public void resetFeatureGenerator() {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(this);
@@ -5989,11 +6016,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void saveProjectProcess(boolean emptyCache) throws FileNotFoundException, IOException, SQLException, ArchiveException {
 
         // set the experiment parameters
-        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences));
+        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences));
 
         objectsCache.saveCache(progressDialog, emptyCache);
         identification.close();
-
+        //@TODO: make sure the GUI does not update, the data is not accessible untill the connection is established again
+        
         // transfer all files in the match directory
         if (!progressDialog.isRunCanceled()) {
             progressDialog.setIndeterminate(true);
@@ -6089,7 +6117,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            
+
             if (fileChooser.getSelectedFile().isDirectory()) {
                 lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
             } else {

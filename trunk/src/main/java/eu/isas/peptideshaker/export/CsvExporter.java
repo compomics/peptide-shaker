@@ -549,14 +549,59 @@ public class CsvExporter {
 
         for (String mod : modifications) {
 
-            if (first) {
-                first = false;
-            } else {
-                line += ", ";
+            if (spectrumMatch.getUrParam(ptmScores) != null) {
+
+                if (first) {
+                    first = false;
+                } else {
+                    line += ", ";
+                }
+
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                line += mod + " (";
+
+                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
+                    if (location != null) {
+                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                        Collections.sort(locations);
+                        first = true;
+                        String commaSeparated = "";
+                        for (int aa : locations) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                commaSeparated += ", ";
+                            }
+                            commaSeparated += aa;
+                        }
+                        line += commaSeparated + ": ";
+                        double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
+                        line += dScore + "";
+                    } else {
+                        line += "Not Scored";
+                    }
+                } else {
+                    line += "Not Scored";
+                }
+
+                line += ")";
             }
+        }
+        line += SEPARATOR;
+
+        first = true;
+
+        for (String mod : modifications) {
+
 
             if (spectrumMatch.getUrParam(ptmScores) != null) {
 
+                if (first) {
+                    first = false;
+                } else {
+                    line += ", ";
+                }
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 line += mod + " (";
 
@@ -564,7 +609,8 @@ public class CsvExporter {
 
                     String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
                     if (location != null) {
-                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                        Collections.sort(locations);
                         first = true;
                         String commaSeparated = "";
                         for (int aa : locations) {
@@ -595,57 +641,13 @@ public class CsvExporter {
 
         for (String mod : modifications) {
 
-            if (first) {
-                first = false;
-            } else {
-                line += ", ";
-            }
-
             if (spectrumMatch.getUrParam(ptmScores) != null) {
 
-                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                line += mod + " (";
-
-                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
-                    if (location != null) {
-                                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
-                        first = true;
-                        String commaSeparated = "";
-                        for (int aa : locations) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                commaSeparated += ", ";
-                            }
-                            commaSeparated += aa;
-                        }
-                        line += commaSeparated + ": ";
-                        double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                        line += dScore + "";
-                    } else {
-                        line += "Not Scored";
-                    }
+                if (first) {
+                    first = false;
                 } else {
-                    line += "Not Scored";
+                    line += ", ";
                 }
-
-                line += ")";
-            }
-        }
-        line += SEPARATOR;
-
-        first = true;
-
-        for (String mod : modifications) {
-
-            if (first) {
-                first = false;
-            } else {
-                line += ", ";
-            }
-
-            if (spectrumMatch.getUrParam(ptmScores) != null) {
 
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                 line += mod + " (";

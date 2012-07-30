@@ -17,6 +17,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProcessingPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -96,6 +97,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The processing preferences
      */
     private ProcessingPreferences processingPreferences = new ProcessingPreferences();
+    /**
+     * The ptm scoring preferences
+     */
+    private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
 
     /**
      * Creates a new open dialog.
@@ -1020,13 +1025,15 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void editPreferencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPreferencesButtonActionPerformed
-        new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences);
+        new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences, ptmScoringPreferences);
         if (processingPreferences.getProteinFDR() != 1
                 || processingPreferences.getPeptideFDR() != 1
                 || processingPreferences.getPsmFDR() != 1) {
             preferencesTxt.setText("User Defined");
-        } else if (processingPreferences.isAScoreCalculated()) {
+        } else if (ptmScoringPreferences.aScoreCalculation()) {
             preferencesTxt.setText("A-Score calculation");
+        } else {
+            preferencesTxt.setText("Default");
         }
     }//GEN-LAST:event_editPreferencesButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1206,7 +1213,7 @@ public class NewDialog extends javax.swing.JDialog {
         peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
                 spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(),
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
-                processingPreferences);
+                processingPreferences, ptmScoringPreferences);
     }
 
     /**

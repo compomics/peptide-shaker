@@ -2759,7 +2759,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
-                    peptideShakerGUI.getMetrics().setProteinKeys(peptideShakerGUI.getIdentificationFeaturesGenerator().getProteinKeys(progressDialog));
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {

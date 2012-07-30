@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 /**
  * A wrapper class used to start Relims, SearchGUI or Eeporter from within
  * PeptideShaker.
+ * //@TODO: this should be moved in utilities
  *
  * @author Harald Barsnes
  */

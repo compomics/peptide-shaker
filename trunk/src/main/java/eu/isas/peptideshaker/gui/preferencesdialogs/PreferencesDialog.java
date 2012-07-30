@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner.NumberEditor;
@@ -25,6 +26,10 @@ public class PreferencesDialog extends javax.swing.JDialog {
      * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
+    /**
+     * The PTM scoring preferences.
+     */
+    private PTMScoringPreferences ptmScoringPreferences;
 
     /**
      * Creates a new PreferencesDialog.
@@ -38,16 +43,18 @@ public class PreferencesDialog extends javax.swing.JDialog {
         
         this.peptideShakerGUI = peptideShakerGUI;
         this.spectrumCountingPreferences = peptideShakerGUI.getSpectrumCountingPreferences();
+        this.ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
         
         // centrally align the spinner  
         ((NumberEditor) nAASpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
 
         // set the values
         nAASpinner.setValue(peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
-        aScoreThresholdTxt.setText(peptideShakerGUI.getUserPreferences().getAScoreThreshold() + "");
-        deltaThresholdTxt.setText(peptideShakerGUI.getUserPreferences().getDeltaScoreThreshold() + "");
         methodCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        aScoreCalculationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        neutralLossesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         insertSpectrumCountingPreferences();
+        insertPTMScoringPreferences();
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -67,6 +74,24 @@ public class PreferencesDialog extends javax.swing.JDialog {
         } else {
             validatedCheck.setSelected(false);
         }
+    }
+    
+    /**
+     * Updates the GUI based on the PTM scoring preferences
+     */
+    private void insertPTMScoringPreferences() {
+        if (ptmScoringPreferences.aScoreCalculation()) {
+            aScoreCalculationCmb.setSelectedIndex(0);
+        } else {
+            aScoreCalculationCmb.setSelectedIndex(1);
+        }
+        if (ptmScoringPreferences.isaScoreNeutralLosses()) {
+            neutralLossesCmb.setSelectedIndex(0);
+        } else {
+            neutralLossesCmb.setSelectedIndex(1);
+        }
+        aScoreThresholdTxt.setText(ptmScoringPreferences.getaScoreThreshold() + "");
+        deltaThresholdTxt.setText(ptmScoringPreferences.getdScoreThreshold() + "");
     }
 
     /**
@@ -114,6 +139,10 @@ public class PreferencesDialog extends javax.swing.JDialog {
         aScoreLabel = new javax.swing.JLabel();
         deltaThresholdTxt = new javax.swing.JTextField();
         aScoreThresholdTxt = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        neutralLossesCmb = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        aScoreCalculationCmb = new javax.swing.JComboBox();
         helpJButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -203,6 +232,14 @@ public class PreferencesDialog extends javax.swing.JDialog {
         aScoreThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         aScoreThresholdTxt.setText("50");
 
+        jLabel2.setText("Neutral losses accounted:");
+
+        neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
+
+        jLabel3.setText("A-score calculation:");
+
+        aScoreCalculationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
+
         javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
         preferencesPanel.setLayout(preferencesPanelLayout);
         preferencesPanelLayout.setHorizontalGroup(
@@ -211,13 +248,21 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(aScoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(aScoreThresholdTxt))
-                    .addGroup(preferencesPanelLayout.createSequentialGroup()
                         .addComponent(deltaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(deltaThresholdTxt)))
+                        .addComponent(deltaThresholdTxt))
+                    .addGroup(preferencesPanelLayout.createSequentialGroup()
+                        .addComponent(aScoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(neutralLossesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                            .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(preferencesPanelLayout.createSequentialGroup()
+                        .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         preferencesPanelLayout.setVerticalGroup(
@@ -228,10 +273,18 @@ public class PreferencesDialog extends javax.swing.JDialog {
                     .addComponent(deltaLabel)
                     .addComponent(deltaThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(aScoreLabel)
                     .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(neutralLossesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
@@ -295,7 +348,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(preferencesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(22, 22, 22)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
@@ -330,15 +383,27 @@ public class PreferencesDialog extends javax.swing.JDialog {
             // ptm thresholds
             boolean ptmScoreThresholdChanged = false;
             
-            // a sore threshold
-            if (peptideShakerGUI.getUserPreferences().getDeltaScoreThreshold() != new Double(deltaThresholdTxt.getText())) {
-                peptideShakerGUI.getUserPreferences().setDeltaScoreThreshold(new Double(deltaThresholdTxt.getText()));
+            // d sore threshold
+            if (peptideShakerGUI.getPtmScoringPreferences().getdScoreThreshold() != new Double(deltaThresholdTxt.getText())) {
+                peptideShakerGUI.getPtmScoringPreferences().setdScoreThreshold(new Double(deltaThresholdTxt.getText()));
                 ptmScoreThresholdChanged = true;
             }
             
             // delta score threshold
-            if (peptideShakerGUI.getUserPreferences().getAScoreThreshold() != new Double(aScoreThresholdTxt.getText())) {
-                peptideShakerGUI.getUserPreferences().setAScoreThreshold(new Double(aScoreThresholdTxt.getText()));
+            if (peptideShakerGUI.getPtmScoringPreferences().getaScoreThreshold() != new Double(aScoreThresholdTxt.getText())) {
+                peptideShakerGUI.getPtmScoringPreferences().setaScoreThreshold(new Double(aScoreThresholdTxt.getText()));
+                ptmScoreThresholdChanged = true;
+            }
+            
+            if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 0
+                    || !peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 1) {
+                peptideShakerGUI.getPtmScoringPreferences().setaScoreCalculation(aScoreCalculationCmb.getSelectedIndex() == 0);
+                ptmScoreThresholdChanged = true;
+            }
+            
+            if (peptideShakerGUI.getPtmScoringPreferences().isaScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 0
+                    || !peptideShakerGUI.getPtmScoringPreferences().isaScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
+                peptideShakerGUI.getPtmScoringPreferences().setaScoreCalculation(neutralLossesCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
             
@@ -383,7 +448,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
             // update the spectrum counting method
             if (spectrumCountingMethodChanged) {
                 peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
-                peptideShakerGUI.resetFeatureGenerator();
+                peptideShakerGUI.getIdentificationFeaturesGenerator().clearSpectrumCounting();
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
@@ -433,6 +498,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox aScoreCalculationCmb;
     private javax.swing.JLabel aScoreLabel;
     private javax.swing.JTextField aScoreThresholdTxt;
     private javax.swing.JPanel backgroundPanel;
@@ -441,8 +507,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField deltaThresholdTxt;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JComboBox methodCmb;
     private javax.swing.JSpinner nAASpinner;
+    private javax.swing.JComboBox neutralLossesCmb;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel optionsPanel;
     private javax.swing.JPanel optionsPanel1;
