@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.preferences;
 
+import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import java.io.File;
