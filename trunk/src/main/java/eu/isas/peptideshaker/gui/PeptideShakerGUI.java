@@ -37,7 +37,7 @@ import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
-import eu.isas.peptideshaker.preferences.ModificationProfile;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -5437,6 +5437,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache);
                             progressDialog.setTitle("Saving. Please Wait...");
                             saveProjectProcess(true);
+                            identificationFeaturesGenerator.setProteinKeys(metrics.getProteinKeys());
                         }
 
                         updateAnnotationPreferencesFromSearchSettings();
@@ -5488,7 +5489,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identificationFeaturesGenerator.repopulateCache(50, progressDialog);
+                        //identificationFeaturesGenerator.repopulateCache(50, progressDialog); //should not be needed anymore
                         progressDialog.setIndeterminate(true);
                     }
 
@@ -5726,7 +5727,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // iterate the modifications list and add the non-terminal modifications
         for (int i = 0; i < modificationList.size(); i++) {
             String utilitiesName = modificationList.get(i);
-            String peptideShakerName = searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName);
+            String peptideShakerName = searchParameters.getModificationProfile().getFamilyName(utilitiesName);
             String shortName = searchParameters.getModificationProfile().getShortName(peptideShakerName);
 
             if (ptms.get(peptideShakerName) != null) {
@@ -6049,10 +6050,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
             boolean changes = false;
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-            for (String psPtm : modificationProfile.getPeptideShakerNames()) {
+            for (String psPtm : modificationProfile.getFamilyNames()) {
                 if (ptmToPrideMap.getCVTerm(psPtm) == null) {
                     for (String utilitiesPtm : modificationProfile.getUtilitiesNames()) {
-                        if (modificationProfile.getPeptideShakerName(utilitiesPtm).equals(psPtm)) {
+                        if (modificationProfile.getFamilyName(utilitiesPtm).equals(psPtm)) {
                             CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(utilitiesPtm);
                             if (defaultCVTerm != null) {
                                 ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);

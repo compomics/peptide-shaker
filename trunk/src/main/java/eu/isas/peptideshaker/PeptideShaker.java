@@ -2028,13 +2028,13 @@ public class PeptideShaker {
         ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
         ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
 
-        for (String peptideShakerName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
+        for (String peptideShakerName : searchParameters.getModificationProfile().getFamilyNames()) {
             residues = new ArrayList<String>();
             utilitiesNames = new ArrayList<String>();
             int modType = -1;
             double mass = -1;
             for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                if (peptideShakerName.equals(searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName))) {
+                if (peptideShakerName.equals(searchParameters.getModificationProfile().getFamilyName(utilitiesName))) {
                     neutralLosses = new ArrayList<NeutralLoss>();
                     reporterIons = new ArrayList<ReporterIon>();
                     PTM sePtm = ptmFactory.getPTM(utilitiesName);

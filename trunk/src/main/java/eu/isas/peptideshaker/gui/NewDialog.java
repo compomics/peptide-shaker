@@ -1249,7 +1249,7 @@ public class NewDialog extends javax.swing.JDialog {
                 } else {
                     if (!searchParameters.getModificationProfile().getUtilitiesNames().contains(name)) {
                         searchParameters.getModificationProfile().setPeptideShakerName(name, name);
-                        if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                        if (!searchParameters.getModificationProfile().getFamilyNames().contains(name)) {
                             int index = name.length() - 1;
                             if (name.lastIndexOf(" ") > 0) {
                                 index = name.indexOf(" ");

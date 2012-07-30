@@ -351,14 +351,14 @@ public class FileImporter {
         // If someone has a better idea, would be great.
         PTM psPTM;
         ArrayList<PTM> possiblePTMs;
-        if (searchParameters.getModificationProfile().getPeptideShakerNames().contains(sePTM.toLowerCase())) {
+        if (searchParameters.getModificationProfile().getFamilyNames().contains(sePTM.toLowerCase())) {
             return ptmFactory.getPTM(sePTM).getName();
         } else {
 
             possiblePTMs = new ArrayList<PTM>();
             String[] parsedName = sePTM.split("@");
             double seMass = new Double(parsedName[0]);
-            for (String ptmName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
+            for (String ptmName : searchParameters.getModificationProfile().getFamilyNames()) {
                 psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
                     possiblePTMs.add(psPTM);
