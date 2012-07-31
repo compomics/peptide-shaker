@@ -948,11 +948,13 @@ public class PeptideShaker {
         int max = inspectedSpectra.size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
-
+        PSParameter psParameter = new PSParameter();
         for (String spectrumKey : inspectedSpectra) {
             waitingHandler.increaseSecondaryProgressValue();
             spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-            scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences);
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+            scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, confidenceThreshold);
         }
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(true);
@@ -1142,8 +1144,7 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param scoringPreferences the PTM scoring preferences
      * @throws Exception exception thrown whenever an error occurred while
      * deserializing a match
      */
@@ -1190,8 +1191,10 @@ public class PeptideShaker {
 
             for (String spectrumKey : bestKeys) {
 
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                scorePTMs(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences);
+                scorePTMs(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences, confidenceThreshold);
 
                 for (String modification : variableModifications) {
 
@@ -1236,12 +1239,13 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param scoringPreferences the PTM scoring preferences
+     * @param confidenceThreshold the confidence validation threshold for this
+     * PSM
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
+    public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, double confidenceThreshold) throws Exception {
 
         attachDeltaScore(spectrumMatch);
         if (scoringPreferences.aScoreCalculation()) {
@@ -1264,7 +1268,7 @@ public class PeptideShaker {
                     if (ptmScoring.getAScore(bestAKey) <= scoringPreferences.getaScoreThreshold()) {
                         if (bestAKey.equals(bestDKey)) {
                             confidence = PtmScoring.DOUBTFUL;
-                            if (ptmScoring.getDeltaScore(bestDKey) > scoringPreferences.getdScoreThreshold()) {
+                            if (ptmScoring.getDeltaScore(bestDKey) > 100.0 - confidenceThreshold) {
                                 confidence = PtmScoring.CONFIDENT;
                             }
                         }
@@ -1275,7 +1279,7 @@ public class PeptideShaker {
                     }
                 } else {
                     retainedKey = bestDKey;
-                    if (ptmScoring.getDeltaScore(bestDKey) > scoringPreferences.getdScoreThreshold()) {
+                    if (ptmScoring.getDeltaScore(bestDKey) > 100.0 - confidenceThreshold) {
                         confidence = PtmScoring.CONFIDENT;
                     } else {
                         confidence = PtmScoring.DOUBTFUL;

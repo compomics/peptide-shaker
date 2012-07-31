@@ -10,7 +10,12 @@ import java.io.Serializable;
 public class ProcessingPreferences implements Serializable {
 
     /**
+     * Serial number for backward compatibility
+     */
+    static final long serialVersionUID = -5883143685674607162L;
+    /**
      * Boolean indicating whether the A-score should be estimated.
+     *
      * @deprecated use the PTM scoring preferences instead
      */
     private boolean aScore = false;
