@@ -12,32 +12,34 @@ import java.io.Serializable;
  * @author Marc
  */
 public class PTMScoringPreferences implements Serializable {
-    
+
     /**
-     * The D-score threshold
+     * Serial number for backward compatibility
      */
-    private double dScoreThreshold = 70;
+    static final long serialVersionUID = -6656074270981104708L;
     /**
      * The A-score threshold
      */
-    private double aScoreThreshold = 20;
+    private double aScoreThreshold = 10;
     /**
      * Boolean indicating whether the A-score should be calculated
      */
     private boolean aScoreCalculation = false;
     /**
-     * Boolean indicating whether neutral losses shall be accounted in the calculation of the A-score
+     * Boolean indicating whether neutral losses shall be accounted in the
+     * calculation of the A-score
      */
     private boolean aScoreNeutralLosses = false;
+
     /**
      * Constructor
      */
     public PTMScoringPreferences() {
-        
     }
 
     /**
      * Returns a boolean indicating whether the A-score should be calculated
+     *
      * @return a boolean indicating whether the A-score should be calculated
      */
     public boolean aScoreCalculation() {
@@ -46,23 +48,31 @@ public class PTMScoringPreferences implements Serializable {
 
     /**
      * Sets whether the A-score should be calculated
-     * @param aScoreCalculation a boolean indicating whether the A-score should be calculated
+     *
+     * @param aScoreCalculation a boolean indicating whether the A-score should
+     * be calculated
      */
     public void setaScoreCalculation(boolean aScoreCalculation) {
         this.aScoreCalculation = aScoreCalculation;
     }
 
     /**
-     * Indicates whether the A-score calculation should take neutral losses into account
-     * @return a boolean indicating whether the A-score calculation should take neutral losses into account
+     * Indicates whether the A-score calculation should take neutral losses into
+     * account
+     *
+     * @return a boolean indicating whether the A-score calculation should take
+     * neutral losses into account
      */
     public boolean isaScoreNeutralLosses() {
         return aScoreNeutralLosses;
     }
 
     /**
-     * Sets whether the A-score calculation should take neutral losses into account
-     * @param aScoreNeutralLosses a boolean indicating whether the A-score calculation should take neutral losses into account
+     * Sets whether the A-score calculation should take neutral losses into
+     * account
+     *
+     * @param aScoreNeutralLosses a boolean indicating whether the A-score
+     * calculation should take neutral losses into account
      */
     public void setaScoreNeutralLosses(boolean aScoreNeutralLosses) {
         this.aScoreNeutralLosses = aScoreNeutralLosses;
@@ -70,6 +80,7 @@ public class PTMScoringPreferences implements Serializable {
 
     /**
      * Returns the A-score threshold
+     *
      * @return the A-score threshold
      */
     public double getaScoreThreshold() {
@@ -78,25 +89,10 @@ public class PTMScoringPreferences implements Serializable {
 
     /**
      * Sets the A-score threshold
+     *
      * @param aScoreThreshold the A-score threshold
      */
     public void setaScoreThreshold(double aScoreThreshold) {
         this.aScoreThreshold = aScoreThreshold;
-    }
-
-    /**
-     * Returns the D-score threshold
-     * @return the D-score threshold
-     */
-    public double getdScoreThreshold() {
-        return dScoreThreshold;
-    }
-
-    /**
-     * Sets the D-score threshold
-     * @param dScoreThreshold the D-score threshold
-     */
-    public void setdScoreThreshold(double dScoreThreshold) {
-        this.dScoreThreshold = dScoreThreshold;
     }
 }

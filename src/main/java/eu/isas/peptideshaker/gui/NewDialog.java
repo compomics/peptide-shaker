@@ -1415,6 +1415,7 @@ public class NewDialog extends javax.swing.JDialog {
             importFilterTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.setProcessingPreferences(processingPreferences);
+            peptideShakerGUI.setPtmScoringPreferences(ptmScoringPreferences);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
 
             if (!searchParameters.getEnzyme().enzymeCleaves()) {

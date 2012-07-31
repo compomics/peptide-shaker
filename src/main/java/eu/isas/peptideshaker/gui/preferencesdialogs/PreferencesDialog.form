@@ -72,7 +72,7 @@
                   <Component id="optionsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="preferencesPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -80,7 +80,7 @@
                       </Group>
                       <Component id="helpJButton" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -217,11 +217,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="deltaLabel" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="deltaThresholdTxt" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
                               <Component id="aScoreLabel" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -246,11 +241,6 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="deltaLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="deltaThresholdTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="aScoreCalculationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -271,21 +261,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="deltaLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Delta Score Threshold:"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="aScoreLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="A-Score Threshold:"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="deltaThresholdTxt">
-              <Properties>
-                <Property name="editable" type="boolean" value="false"/>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="50"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="aScoreThresholdTxt">

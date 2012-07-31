@@ -24,10 +24,12 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -310,7 +312,7 @@ public class PRIDEExport {
                 searchEngineReport += SearchEngine.getName(seList.get(i));
             }
 
-            searchEngineReport += " post-processed by PeptideShaker";
+            searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerGUI.getVersion();
 
             for (String proteinKey : identification.getProteinIdentification()) {
 
@@ -389,6 +391,114 @@ public class PRIDEExport {
                             }
                         }
 
+                        // PTM scores
+                        ArrayList<String> modifications = new ArrayList<String>();
+
+                        for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
+                                if (!modifications.contains(modificationMatch.getTheoreticPtm())) {
+                                    modifications.add(modificationMatch.getTheoreticPtm());
+                                }
+                            }
+                        }
+
+                        boolean first = true;
+                        String dScore = "";
+                        Collections.sort(modifications);
+                        PSPtmScores ptmScores = new PSPtmScores();
+
+                        first = true;
+
+                        for (String mod : modifications) {
+
+                            if (spectrumMatch.getUrParam(ptmScores) != null) {
+
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    dScore += ", ";
+                                }
+
+                                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                dScore += mod + " (";
+
+                                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                    String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
+                                    if (location != null) {
+                                        ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                        Collections.sort(locations);
+                                        first = true;
+                                        String commaSeparated = "";
+                                        for (int aa : locations) {
+                                            if (first) {
+                                                first = false;
+                                            } else {
+                                                commaSeparated += ", ";
+                                            }
+                                            commaSeparated += aa;
+                                        }
+                                        dScore += commaSeparated + ": ";
+                                        dScore += ptmScores.getPtmScoring(mod).getDeltaScore(location);
+                                    } else {
+                                        dScore += "Not Scored";
+                                    }
+                                } else {
+                                    dScore += "Not Scored";
+                                }
+
+                                dScore += ")";
+                            }
+                        }
+
+                        String aScore = "";
+
+                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
+                            first = true;
+
+                            for (String mod : modifications) {
+
+
+                                if (spectrumMatch.getUrParam(ptmScores) != null) {
+
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        aScore += ", ";
+                                    }
+                                    ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                    aScore += mod + " (";
+
+                                    if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+
+                                        String location = ptmScores.getPtmScoring(mod).getBestAScoreLocations();
+                                        if (location != null) {
+                                            ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                            Collections.sort(locations);
+                                            first = true;
+                                            String commaSeparated = "";
+                                            for (int aa : locations) {
+
+                                                if (first) {
+                                                    first = false;
+                                                } else {
+                                                    commaSeparated += ", ";
+                                                }
+                                                commaSeparated += aa;
+                                            }
+                                            aScore += commaSeparated + ": ";
+                                            aScore += ptmScores.getPtmScoring(mod).getAScore(location);
+                                        } else {
+                                            aScore += "Not Scored";
+                                        }
+                                    } else {
+                                        aScore += "Not Scored";
+                                    }
+
+                                    aScore += ")";
+                                }
+                            }
+                        }
+
                         // additional peptide id parameters
                         br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                         tabCounter++;
@@ -420,6 +530,14 @@ public class PRIDEExport {
                         }
                         if (mascotScore != null) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"Mascot score\" value=\"" + mascotScore + "\" />" + System.getProperty("line.separator"));
+                        }
+                        
+                        // PTM scoring
+                        if (!dScore.equals("")) {
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
+                        }
+                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
+                            br.write(getCurrentTabSpace() + "<userParam name=\"PTM A-score\" value=\"" + aScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
                         br.write(getCurrentTabSpace() + "</additional>" + System.getProperty("line.separator"));

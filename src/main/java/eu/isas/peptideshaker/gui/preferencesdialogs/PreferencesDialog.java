@@ -91,7 +91,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
             neutralLossesCmb.setSelectedIndex(1);
         }
         aScoreThresholdTxt.setText(ptmScoringPreferences.getaScoreThreshold() + "");
-        deltaThresholdTxt.setText(ptmScoringPreferences.getdScoreThreshold() + "");
     }
 
     /**
@@ -104,13 +103,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
             new Double(aScoreThresholdTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for A-score threshold.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            new Double(deltaThresholdTxt.getText());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for Delta-score threshold.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -135,9 +127,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         surroundingAminoAcidsLabel = new javax.swing.JLabel();
         nAASpinner = new javax.swing.JSpinner();
         preferencesPanel = new javax.swing.JPanel();
-        deltaLabel = new javax.swing.JLabel();
         aScoreLabel = new javax.swing.JLabel();
-        deltaThresholdTxt = new javax.swing.JTextField();
         aScoreThresholdTxt = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         neutralLossesCmb = new javax.swing.JComboBox();
@@ -220,13 +210,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
         preferencesPanel.setOpaque(false);
 
-        deltaLabel.setText("Delta Score Threshold:");
-
         aScoreLabel.setText("A-Score Threshold:");
-
-        deltaThresholdTxt.setEditable(false);
-        deltaThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        deltaThresholdTxt.setText("50");
 
         aScoreThresholdTxt.setEditable(false);
         aScoreThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -248,10 +232,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
-                        .addComponent(deltaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(deltaThresholdTxt))
-                    .addGroup(preferencesPanelLayout.createSequentialGroup()
                         .addComponent(aScoreLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -269,10 +249,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
             preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(deltaLabel)
-                    .addComponent(deltaThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -348,7 +324,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(preferencesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
@@ -383,11 +359,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
             // ptm thresholds
             boolean ptmScoreThresholdChanged = false;
             
-            // d sore threshold
-            if (peptideShakerGUI.getPtmScoringPreferences().getdScoreThreshold() != new Double(deltaThresholdTxt.getText())) {
-                peptideShakerGUI.getPtmScoringPreferences().setdScoreThreshold(new Double(deltaThresholdTxt.getText()));
-                ptmScoreThresholdChanged = true;
-            }
             
             // delta score threshold
             if (peptideShakerGUI.getPtmScoringPreferences().getaScoreThreshold() != new Double(aScoreThresholdTxt.getText())) {
@@ -503,8 +474,6 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField aScoreThresholdTxt;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel deltaLabel;
-    private javax.swing.JTextField deltaThresholdTxt;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
