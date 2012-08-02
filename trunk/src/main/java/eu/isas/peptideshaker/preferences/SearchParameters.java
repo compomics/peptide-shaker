@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.preferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,7 +41,13 @@ public class SearchParameters implements Serializable {
      * The expected modifications. Modified peptides will be grouped and
      * displayed according to this classification.
      */
-    private ModificationProfile modificationProfile = new ModificationProfile();
+    private ModificationProfile utilitiesModificationProfile = new ModificationProfile();
+    /**
+     * The expected modifications. Modified peptides will be grouped and
+     * displayed according to this classification.
+     * @deprecated just here for backward compatibility
+     */
+    private eu.isas.peptideshaker.preferences.ModificationProfile modificationProfile;
     /**
      * The enzyme used for digestion.
      */
@@ -137,7 +144,17 @@ public class SearchParameters implements Serializable {
      * @return the modification profile of the project
      */
     public ModificationProfile getModificationProfile() {
-        return modificationProfile;
+        // Compatibility check
+        if (utilitiesModificationProfile == null) {
+            utilitiesModificationProfile = new ModificationProfile();
+            for (String utilitesName : modificationProfile.getUtilitiesNames()) {
+                String psName = modificationProfile.getFamilyName(utilitesName);
+                utilitiesModificationProfile.setPeptideShakerName(utilitesName, psName);
+                utilitiesModificationProfile.setShortName(psName, modificationProfile.getShortName(psName));
+                utilitiesModificationProfile.setColor(psName, modificationProfile.getColor(psName));
+            }
+        }
+        return utilitiesModificationProfile;
     }
 
     /**
@@ -146,7 +163,7 @@ public class SearchParameters implements Serializable {
      * @param modificationProfile The modification profile
      */
     public void setModificationProfile(ModificationProfile modificationProfile) {
-        this.modificationProfile = modificationProfile;
+        this.utilitiesModificationProfile = modificationProfile;
     }
 
     /**
