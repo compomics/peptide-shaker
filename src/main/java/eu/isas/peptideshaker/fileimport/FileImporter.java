@@ -845,21 +845,21 @@ public class FileImporter {
                 metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
             }
 
-            waitingHandler.appendReport("Reducing memory consumption.", true, true);
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
 
             // Free at least 1GB for the next parser if not anymore available
             // (not elegant so most likely not optimal)
             if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
                 System.gc();
                 if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
+                    waitingHandler.appendReport("Reducing memory consumption.", true, true);
+                    waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                     double share = 1073741824 / Runtime.getRuntime().totalMemory();
                     peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                     System.gc();
+                    waitingHandler.setSecondaryProgressDialogIndeterminate(true);
                 }
             }
 
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
             waitingHandler.increaseProgressValue();
         }
 
