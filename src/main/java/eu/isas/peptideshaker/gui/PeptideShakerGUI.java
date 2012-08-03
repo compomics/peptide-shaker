@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.*;
+import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -341,6 +342,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
     /**
+     * The exception handler
+     */
+    private ExceptionHandler exceptionHandler = new ExceptionHandler(this);
+    /**
      * The label with for the numbers in the jsparklines columns.
      */
     private int labelWidth = 50;
@@ -358,10 +363,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The spectrum annotator.
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
-    /**
-     * List of caught exceptions.
-     */
-    private ArrayList<String> exceptionCaught = new ArrayList<String>();
     /**
      * The actually identified modifications.
      */
@@ -503,6 +504,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         loadEnzymes();
         resetPtmFactory();
         setDefaultPreferences();
+        
+        exceptionHandler = new ExceptionHandler(this);
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -3858,8 +3861,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         sequenceFactory = SequenceFactory.getInstance(1000);
 
         searchParameters.clearSpectrumFilesList();
+        exceptionHandler = new ExceptionHandler(this);
 
-        exceptionCaught = new ArrayList<String>();
         identifiedModifications = null;
 
         if (clearDatabaseFolder) {
@@ -3929,6 +3932,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         searchParameters = new SearchParameters();
         processingPreferences = new ProcessingPreferences();
         idFilter = new IdFilter();
+        exceptionHandler = new ExceptionHandler(this);
 
         // reset enzymes, ptms and preferences
         loadEnzymes();
@@ -4381,57 +4385,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Returns the exception type.
-     *
-     * @param e the exception to get the type fro
-     * @return the exception type as a string
-     */
-    private String getExceptionType(Exception e) {
-        if (e.getLocalizedMessage() == null) {
-            return "null pointer";
-        } else if (e.getLocalizedMessage().startsWith("Protein not found")) {
-            return "Protein not found";
-        } else if (e.getLocalizedMessage().startsWith("Error while loading")
-                || e.getLocalizedMessage().startsWith("Error while writing")) {
-            return "Serialization";
-        } else {
-            return e.getLocalizedMessage();
-        }
-    }
-
-    /**
      * Method called whenever an exception is caught.
      *
      * @param e the exception caught
      */
     public void catchException(Exception e) {
-        if (!exceptionCaught.contains(getExceptionType(e))) {
-            e.printStackTrace();
-            exceptionCaught.add(getExceptionType(e));
-            if (getExceptionType(e).equals("Protein not found")) {
-                JOptionPane.showMessageDialog(this,
-                        e.getLocalizedMessage() + "\nPlease refer to the troubleshooting section in http://peptide-shaker.googlecode.com.\nThis message will appear only once.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            } else if (getExceptionType(e).equals("Serialization")) {
-                JOptionPane.showMessageDialog(this,
-                        e.getLocalizedMessage() + "\nPlease refer to the troubleshooting section in http://peptide-shaker.googlecode.com.\nThis message will appear only once.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            } else {
-
-                String error = "";
-
-                if (e.getLocalizedMessage() != null) {
-                    error = ": " + e.getLocalizedMessage();
-                }
-
-                JOptionPane.showMessageDialog(this,
-                        "An error occured" + error + ".\n"
-                        + "Please contact the developers.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        exceptionHandler.catchException(e);
     }
 
     /**
@@ -5028,6 +4987,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void importPeptideShakerFile(File aPsFile) {
 
         currentPSFile = aPsFile;
+        exceptionHandler = new ExceptionHandler(this);
 
         final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
 

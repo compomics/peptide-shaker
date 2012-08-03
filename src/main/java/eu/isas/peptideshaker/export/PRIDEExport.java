@@ -502,6 +502,8 @@ public class PRIDEExport {
                         // additional peptide id parameters
                         br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                         tabCounter++;
+                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
+                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + Spectrum.getSpectrumTitle(spectrumKey) + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
