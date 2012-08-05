@@ -513,7 +513,7 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException {
+    public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         attachProteinProbabilities(waitingHandler);
     }
 
@@ -1613,7 +1613,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void attachProteinProbabilities(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException {
+    private void attachProteinProbabilities(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
@@ -1673,7 +1673,7 @@ public class PeptideShaker {
      * @throws IOException
      * @throws IllegalArgumentException
      */
-    private void cleanProteinGroups(WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException {
+    private void cleanProteinGroups(WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
 
@@ -1963,7 +1963,7 @@ public class PeptideShaker {
      * @param proteinAccession the accession of the inspected protein
      * @return description words longer than 3 characters
      */
-    private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException {
+    private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException, InterruptedException {
         String description = sequenceFactory.getHeader(proteinAccession).getDescription();
 
         if (description == null) {

@@ -290,7 +290,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
-            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException {
+            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter pSParameter = new PSParameter();
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);

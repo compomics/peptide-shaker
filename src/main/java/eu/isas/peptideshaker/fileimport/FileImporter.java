@@ -271,6 +271,10 @@ public class FileImporter {
             waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
+        } catch (InterruptedException e) {
+            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
+            e.printStackTrace();
+            waitingHandler.setRunCanceled();
         } catch (IllegalArgumentException e) {
             waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
@@ -319,6 +323,11 @@ public class FileImporter {
                             }
                         }
                     } catch (IOException e) {
+                        waitingHandler.appendReport("An error occured while accessing the FASTA file."
+                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
+                    } catch (InterruptedException e) {
                         waitingHandler.appendReport("An error occured while accessing the FASTA file."
                                 + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
                         e.printStackTrace();
