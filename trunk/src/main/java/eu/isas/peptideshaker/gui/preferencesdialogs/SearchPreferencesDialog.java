@@ -1889,6 +1889,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         cvTerm = ptmToPrideMap.getCVTerm(psName);
                     }
                     if (cvTerm == null) {
+                        cvTerm = ptmToPrideMap.getCVTerm(modificationList.get(row));
+                        if (cvTerm != null) {
+                            ptmToPrideMap.putCVTerm(psName, cvTerm);
+                        }
+                    }
+                    if (cvTerm == null) {
                         cvTerm = PtmToPrideMap.getDefaultCVTerm(psName);
                         if (cvTerm != null) {
                             ptmToPrideMap.putCVTerm(psName, cvTerm);

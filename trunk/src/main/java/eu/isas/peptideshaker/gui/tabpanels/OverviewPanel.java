@@ -2929,7 +2929,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 JOptionPane.showMessageDialog(peptideShakerGUI, "Protein sequence copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
