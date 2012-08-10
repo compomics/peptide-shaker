@@ -416,13 +416,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // set the look and feel
         boolean numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
 
-        if (!numbusLookAndFeelSet) {
-            JOptionPane.showMessageDialog(null,
-                    "Failed to set the default look and feel. Using backup look and feel.\n"
-                    + "PeptideShaker will work but not look as good as it should...", "Look and Feel",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-
         // need to add some padding to the text in the titled borders on Java 1.7 
         if (!System.getProperty("java.version").startsWith("1.6")) {
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
