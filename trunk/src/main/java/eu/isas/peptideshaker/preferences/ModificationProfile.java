@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.preferences;
 
 import java.awt.Color;
@@ -20,25 +16,25 @@ import java.util.Set;
 public class ModificationProfile implements Serializable {
 
     /**
-     * Serial version number for serialization compatibility
+     * Serial version number for serialization compatibility.
      */
     static final long serialVersionUID = 342611308111304721L;
     /**
-     * Mapping of the utilities modification names to the PeptideShaker names
+     * Mapping of the utilities modification names to the PeptideShaker names.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
      */
     private HashMap<String, String> modificationNames = new HashMap<String, String>();
     /**
-     * Mapping of the PeptideShaker names to the short names
+     * Mapping of the PeptideShaker names to the short names.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
      */
     private HashMap<String, String> shortNames = new HashMap<String, String>();
     /**
-     * Mapping of the PeptideShaker names to the color used
+     * Mapping of the PeptideShaker names to the color used.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -46,7 +42,7 @@ public class ModificationProfile implements Serializable {
     private HashMap<String, Color> colors = new HashMap<String, Color>();
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -56,7 +52,7 @@ public class ModificationProfile implements Serializable {
 
     /**
      * Returns the set of the utilities modification names included in this
-     * profile
+     * profile.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -68,7 +64,7 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * Returns the modification family names included in this profile
+     * Returns the modification family names included in this profile.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -80,7 +76,7 @@ public class ModificationProfile implements Serializable {
 
     /**
      * Returns the modification family name corresponding to the given utilities
-     * name
+     * name.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -92,7 +88,7 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * Returns the short name of the given modification
+     * Returns the short name of the given modification.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -104,7 +100,7 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * Returns the color used to code the given modification
+     * Returns the color used to code the given modification.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -116,7 +112,7 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * Sets a new family name for the given modification
+     * Sets a new family name for the given modification.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -140,7 +136,7 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * sets a new short name for the given modification
+     * Sets a new short name for the given modification.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.
@@ -152,7 +148,7 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * Sets a new color for the modification
+     * Sets a new color for the modification.
      *
      * @deprecated Class kept for backward compatibility. Please use the
      * utilities version instead.

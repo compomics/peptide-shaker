@@ -416,6 +416,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // set the look and feel
         boolean numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
 
+        if (!numbusLookAndFeelSet) {
+            JOptionPane.showMessageDialog(null,
+                    "Failed to set the default look and feel. Using backup look and feel.\n"
+                    + "PeptideShaker will work but not look as good as it should...", "Look and Feel",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+
         // need to add some padding to the text in the titled borders on Java 1.7 
         if (!System.getProperty("java.version").startsWith("1.6")) {
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
@@ -503,7 +510,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         setDefaultPreferences();
 
         exceptionHandler = new ExceptionHandler(this);
-        
+
         startNewsFeed();
 
         setLocationRelativeTo(null);
@@ -537,11 +544,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Add the experiment title to the frame title.
-     *
-     * @param experimentTitle the title to add
      */
     public void updateFrameTitle() {
-
         if (experiment != null) {
             this.setTitle("PeptideShaker " + getVersion() + " - " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")");
         } else {
@@ -651,7 +655,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         ionTableButtonGroup = new javax.swing.ButtonGroup();
         deNovoChargeButtonGroup = new javax.swing.ButtonGroup();
         gradientPanel = new javax.swing.JPanel();
-        jSplitPane1 = new javax.swing.JSplitPane();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
@@ -662,9 +665,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         goJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
         qcJPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        newsFeedTxt = new javax.swing.JTextArea();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -1087,9 +1087,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         gradientPanel.setBackground(new java.awt.Color(255, 255, 255));
         gradientPanel.setPreferredSize(new java.awt.Dimension(1260, 800));
 
-        jSplitPane1.setDividerSize(2);
-        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-
         allTabsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
         allTabsJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -1133,39 +1130,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("QC Plots", null, qcJPanel, "Quality Control metrics and plots");
 
-        jSplitPane1.setLeftComponent(allTabsJTabbedPane);
-
-        newsFeedTxt.setColumns(20);
-        newsFeedTxt.setEditable(false);
-        newsFeedTxt.setRows(5);
-        jScrollPane1.setViewportView(newsFeedTxt);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1258, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-        );
-
-        jSplitPane1.setRightComponent(jPanel1);
-
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
         gradientPanelLayout.setHorizontalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1260, Short.MAX_VALUE)
+            .addGap(0, 1278, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(allTabsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1278, Short.MAX_VALUE))
         );
         gradientPanelLayout.setVerticalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 919, Short.MAX_VALUE)
+            .addGap(0, 862, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(gradientPanelLayout.createSequentialGroup()
+                    .addComponent(allTabsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
+                    .addGap(0, 0, 0)))
         );
 
         menuBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -1585,11 +1564,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1278, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
+            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
         );
 
         pack();
@@ -2955,8 +2934,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -2976,7 +2953,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenuItem javaOptionsJMenuItem;
     private javax.swing.JMenuItem logReportMenu;
     private javax.swing.JMenu lossMenu;
@@ -2984,7 +2960,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
-    private javax.swing.JTextArea newsFeedTxt;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu openRecentJMenu;
     private javax.swing.JMenu otherMenu;
@@ -6013,7 +5988,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         objectsCache.saveCache(progressDialog, emptyCache);
         identification.close();
-        //@TODO: make sure the GUI does not update, the data is not accessible until the connection is established again
+        // @TODO: make sure the GUI does not update, the data is not accessible until the connection is established again
 
         // transfer all files in the match directory
         if (!progressDialog.isRunCanceled()) {
@@ -6567,17 +6542,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Displays a news feed at the bottom of the GUI
+     * Displays a news feed at the bottom of the GUI.
      */
     public void startNewsFeed() {
-
 
         new Thread("NewsFeedThread") {
 
             @Override
             public synchronized void run() {
 
-                //@TODO: add other streams
+                // @TODO: add other streams
                 ArrayList<String> tips = getTips();
 
                 String htmlStart = "<html><head></head>"
@@ -6598,13 +6572,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     currentTipIndex = newTipIndex;
-                    
+
                     news += tips.get(currentTipIndex);
 
-                    newsFeedTxt.setText(htmlStart + news + htmlEnd);
+                    //newsFeedTxt.setText(htmlStart + news + htmlEnd);
                     try {
-                    wait(30000);
-                    }catch (Exception e) {
+                        wait(30000);
+                    } catch (Exception e) {
                         newsfeed = false;
                         e.printStackTrace();
                     }

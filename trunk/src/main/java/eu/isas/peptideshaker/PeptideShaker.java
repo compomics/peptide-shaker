@@ -965,11 +965,11 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param ptmScoringPreferences the prm scoring preferences
      * @throws Exception
      */
-    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         SpectrumMatch spectrumMatch;
 
@@ -995,8 +995,7 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param ptmScoringPreferences the prm scoring preferences
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
@@ -1026,8 +1025,7 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param ptmScoringPreferences the prm scoring preferences
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
@@ -1099,8 +1097,7 @@ public class PeptideShaker {
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
      * @param scorePeptides if true peptide scores will be recalculated
-     * @param estimateAscore a boolean indicating whether the A-score should be
-     * estimated
+     * @param ptmScoringPreferences the prm scoring preferences
      * @throws Exception exception thrown whenever an error occurred while
      * deserilalizing a match
      */

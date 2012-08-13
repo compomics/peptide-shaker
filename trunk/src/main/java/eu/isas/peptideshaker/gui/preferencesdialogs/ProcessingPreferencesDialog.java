@@ -29,6 +29,7 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
      * @param editable a boolean indicating whether the processing parameters
      * are editable
      * @param processingPreferences the processing preferences
+     * @param ptmScoringPreferences  
      */
     public ProcessingPreferencesDialog(java.awt.Frame parent, boolean editable, 
             ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
@@ -132,9 +133,9 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         neutralLossesCmb = new javax.swing.JComboBox();
         aScoreThreshold = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        aScoreLabel = new javax.swing.JLabel();
         ascoreCmb = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
+        neutralLossesLabel = new javax.swing.JLabel();
         estimateAScoreLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -221,7 +222,7 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM scoring"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
         jPanel1.setOpaque(false);
 
         neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
@@ -229,11 +230,11 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         aScoreThreshold.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         aScoreThreshold.setText("20");
 
-        jLabel2.setText("A-score threshold:");
+        aScoreLabel.setText("A-score Threshold:");
 
         ascoreCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
-        jLabel1.setText("Account neutral losses:");
+        neutralLossesLabel.setText("Account Neutral Losses:");
 
         estimateAScoreLabel.setText("Estimate A-score:");
 
@@ -246,16 +247,16 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
+                            .addComponent(neutralLossesLabel)
+                            .addComponent(aScoreLabel))
                         .addGap(240, 240, 240))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(estimateAScoreLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ascoreCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ascoreCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 185, Short.MAX_VALUE)
                             .addComponent(neutralLossesCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 185, Short.MAX_VALUE)
-                            .addComponent(aScoreThreshold))
+                            .addComponent(aScoreThreshold, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))
                         .addGap(25, 25, 25))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -267,11 +268,11 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(ascoreCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(neutralLossesLabel)
                     .addComponent(neutralLossesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(9, 9, 9)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(aScoreLabel)
                     .addComponent(aScoreThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -335,14 +336,14 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel aScoreLabel;
     private javax.swing.JTextField aScoreThreshold;
     private javax.swing.JComboBox ascoreCmb;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JLabel estimateAScoreLabel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JComboBox neutralLossesCmb;
+    private javax.swing.JLabel neutralLossesLabel;
     private javax.swing.JButton okButton;
     private javax.swing.JLabel peptideFdrLabel;
     private javax.swing.JTextField peptideFdrTxt;

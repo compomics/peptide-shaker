@@ -40,11 +40,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
     public PreferencesDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         initComponents();
-        
+
         this.peptideShakerGUI = peptideShakerGUI;
         this.spectrumCountingPreferences = peptideShakerGUI.getSpectrumCountingPreferences();
         this.ptmScoringPreferences = peptideShakerGUI.getPtmScoringPreferences();
-        
+
         // centrally align the spinner  
         ((NumberEditor) nAASpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
 
@@ -75,7 +75,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
             validatedCheck.setSelected(false);
         }
     }
-    
+
     /**
      * Updates the GUI based on the PTM scoring preferences
      */
@@ -129,9 +129,9 @@ public class PreferencesDialog extends javax.swing.JDialog {
         preferencesPanel = new javax.swing.JPanel();
         aScoreLabel = new javax.swing.JLabel();
         aScoreThresholdTxt = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        neutralLossesLabel = new javax.swing.JLabel();
         neutralLossesCmb = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        aScoreCalculationLabel = new javax.swing.JLabel();
         aScoreCalculationCmb = new javax.swing.JComboBox();
         helpJButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
@@ -216,11 +216,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
         aScoreThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         aScoreThresholdTxt.setText("50");
 
-        jLabel2.setText("Neutral losses accounted:");
+        neutralLossesLabel.setText("Neutral Losses Accounted:");
 
         neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
-        jLabel3.setText("A-score calculation:");
+        aScoreCalculationLabel.setText("A-score Calculation:");
 
         aScoreCalculationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
@@ -240,8 +240,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
                             .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
                         .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(neutralLossesLabel)
+                            .addComponent(aScoreCalculationLabel))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -250,7 +250,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(aScoreCalculationLabel)
                     .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(9, 9, 9)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -258,7 +258,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
                     .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(neutralLossesLabel)
                     .addComponent(neutralLossesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -358,30 +358,30 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
             // ptm thresholds
             boolean ptmScoreThresholdChanged = false;
-            
-            
+
+
             // delta score threshold
             if (peptideShakerGUI.getPtmScoringPreferences().getaScoreThreshold() != new Double(aScoreThresholdTxt.getText())) {
                 peptideShakerGUI.getPtmScoringPreferences().setaScoreThreshold(new Double(aScoreThresholdTxt.getText()));
                 ptmScoreThresholdChanged = true;
             }
-            
+
             if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 0
                     || !peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && aScoreCalculationCmb.getSelectedIndex() != 1) {
                 peptideShakerGUI.getPtmScoringPreferences().setaScoreCalculation(aScoreCalculationCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
-            
+
             if (peptideShakerGUI.getPtmScoringPreferences().isaScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 0
                     || !peptideShakerGUI.getPtmScoringPreferences().isaScoreNeutralLosses() && neutralLossesCmb.getSelectedIndex() != 1) {
                 peptideShakerGUI.getPtmScoringPreferences().setaScoreCalculation(neutralLossesCmb.getSelectedIndex() == 0);
                 ptmScoreThresholdChanged = true;
             }
-            
-            
+
+
             // spectrum counting
             boolean spectrumCountingMethodChanged = false;
-            
+
             if (methodCmb.getSelectedIndex() == 0 && spectrumCountingPreferences.getSelectedMethod() != SpectrumCountingPreferences.SpectralCountingMethod.NSAF) {
                 spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.SpectralCountingMethod.NSAF);
                 spectrumCountingMethodChanged = true;
@@ -389,13 +389,13 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.SpectralCountingMethod.EMPAI);
                 spectrumCountingMethodChanged = true;
             }
-            
+
             if (spectrumCountingPreferences.isValidatedHits() != validatedCheck.isSelected()) {
                 spectrumCountingPreferences.setValidatedHits(validatedCheck.isSelected());
                 spectrumCountingMethodChanged = true;
             }
 
-            
+
             // surrounding amino acids
             boolean numberOfSurroundingAminoAcidsChanged = false;
 
@@ -404,18 +404,18 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getDisplayPreferences().setnAASurroundingPeptides(selection);
                 numberOfSurroundingAminoAcidsChanged = true;
             }
-            
-            
+
+
             // update the ptm score threshold
             if (ptmScoreThresholdChanged) {
                 //@TODO: update interface where needed?
             }
-            
+
             // update the number of surrounding amino acids
             if (numberOfSurroundingAminoAcidsChanged) {
                 peptideShakerGUI.updateSurroundingAminoAcids();
             }
-            
+
             // update the spectrum counting method
             if (spectrumCountingMethodChanged) {
                 peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
@@ -425,7 +425,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
                 peptideShakerGUI.updateTabbedPanes();
             }
-            
+
             peptideShakerGUI.setDataSaved(false);
             dispose();
         }
@@ -470,17 +470,17 @@ public class PreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_helpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox aScoreCalculationCmb;
+    private javax.swing.JLabel aScoreCalculationLabel;
     private javax.swing.JLabel aScoreLabel;
     private javax.swing.JTextField aScoreThresholdTxt;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JComboBox methodCmb;
     private javax.swing.JSpinner nAASpinner;
     private javax.swing.JComboBox neutralLossesCmb;
+    private javax.swing.JLabel neutralLossesLabel;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel optionsPanel;
     private javax.swing.JPanel optionsPanel1;

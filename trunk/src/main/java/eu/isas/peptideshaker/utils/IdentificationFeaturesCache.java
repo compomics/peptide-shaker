@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.utils;
 
 import java.io.Serializable;
@@ -10,14 +6,14 @@ import java.util.HashMap;
 
 /**
  * This class caches the identification features calculated by the
- * IdentificationFeaturesGenerator for later reuse
+ * IdentificationFeaturesGenerator for later reuse.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class IdentificationFeaturesCache implements Serializable {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
     static final long serialVersionUID = -7291018247377919040L;
 
@@ -27,11 +23,11 @@ public class IdentificationFeaturesCache implements Serializable {
     public enum ObjectType {
 
         /**
-         * the coverable amino acids stored as big object
+         * The coverable amino acids stored as big object.
          */
         coverable_AA,
         /**
-         * the sequence coverage of a given protein stored as small object
+         * The sequence coverage of a given protein stored as small object.
          */
         sequence_coverage,
         /**
@@ -40,19 +36,19 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         expected_coverage,
         /**
-         * the spectrum counting index of a given protein stored as small object
+         * The spectrum counting index of a given protein stored as small
+         * object.
          */
         spectrum_counting,
         /**
-         * the number of spectra of a given protein stored as small object
+         * The number of spectra of a given protein stored as small object.
          */
         number_of_spectra,
         /**
-         * the number of validated spectra of a given protein stored as small
-         * object
+         * The number of validated spectra of a given protein stored as small
+         * object.
          */
-        number_of_validated_spectra,
-    }
+        number_of_validated_spectra,}
     /**
      * The number of values kept in memory for small objects.
      */
@@ -74,11 +70,11 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private ArrayList<String> bigObjectsInCache = new ArrayList<String>();
     /**
-     * Mapping of the stored big objects
+     * Mapping of the stored big objects.
      */
     private HashMap<ObjectType, HashMap<String, Object>> bigObjectsCache = new HashMap<ObjectType, HashMap<String, Object>>();
     /**
-     * Mapping of the stored small objects
+     * Mapping of the stored small objects.
      */
     private HashMap<ObjectType, HashMap<String, Object>> smallObjectsCache = new HashMap<ObjectType, HashMap<String, Object>>();
     /**
@@ -129,13 +125,15 @@ public class IdentificationFeaturesCache implements Serializable {
     private String currentPeptideKey = "";
 
     /**
-     * Clears all objects of the given type
+     * Clears all objects of the given type.
+     *
      * @param type the object type
      */
     public void removeObjects(ObjectType type) {
 
         String typeKey = getTypeAsString(type);
         ArrayList<String> toRemove = new ArrayList<String>();
+
         switch (type) {
             case coverable_AA:
                 bigObjectsCache.remove(type);
@@ -147,6 +145,7 @@ public class IdentificationFeaturesCache implements Serializable {
                 for (String key : toRemove) {
                     bigObjectsInCache.remove(key);
                 }
+                break;
             case sequence_coverage:
             case expected_coverage:
             case spectrum_counting:
@@ -161,11 +160,12 @@ public class IdentificationFeaturesCache implements Serializable {
                 for (String key : toRemove) {
                     bigObjectsInCache.remove(key);
                 }
+                break;
         }
     }
 
     /**
-     * Adds an object in the cache
+     * Adds an object in the cache.
      *
      * @param type the type of the object
      * @param objectKey the object key
@@ -193,6 +193,7 @@ public class IdentificationFeaturesCache implements Serializable {
                         break;
                     }
                 }
+                break;
             case sequence_coverage:
             case expected_coverage:
             case spectrum_counting:
@@ -217,6 +218,7 @@ public class IdentificationFeaturesCache implements Serializable {
                         break;
                     }
                 }
+                break;
         }
     }
 
@@ -270,7 +272,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the current peptide key
+     * Returns the current peptide key.
      *
      * @return the current peptide key
      */
@@ -279,7 +281,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the current peptide key
+     * Sets the current peptide key.
      *
      * @param currentPeptideKey the current peptide key
      */
@@ -288,7 +290,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the current protein key
+     * Returns the current protein key.
      *
      * @return the current protein key
      */
@@ -297,7 +299,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the current protein key
+     * Sets the current protein key.
      *
      * @param currentProteinKey the current protein key
      */
@@ -306,7 +308,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Indicates whether the protein list is filtered
+     * Indicates whether the protein list is filtered.
      *
      * @return a boolean indicating whether the protein list is filtered
      */
@@ -315,7 +317,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets whether the protein list is filtered
+     * Sets whether the protein list is filtered.
      *
      * @param filtered a boolean indicating whether the protein list is filtered
      */
@@ -324,7 +326,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the max m/z value in the selected PSMs
+     * Returns the max m/z value in the selected PSMs.
      *
      * @return the max m/z value in the selected PSMs
      */
@@ -333,7 +335,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the max m/z value in the selected PSMs
+     * Sets the max m/z value in the selected PSMs.
      *
      * @param maxPsmMzValue the max m/z value in the selected PSMs
      */
@@ -343,7 +345,7 @@ public class IdentificationFeaturesCache implements Serializable {
 
     /**
      * Returns the maximal amount of PSMs for the peptides in the current
-     * peptide list
+     * peptide list.
      *
      * @return the maximal amount of PSMs for the peptides in the current
      * peptide list
@@ -354,7 +356,7 @@ public class IdentificationFeaturesCache implements Serializable {
 
     /**
      * Sets the maximal amount of PSMs for the peptides in the current peptide
-     * list
+     * list.
      *
      * @param maxSpectrumCount the maximal amount of PSMs for the peptides in
      * the current peptide list
@@ -364,7 +366,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the number of validated PSMs for the currently selected peptide
+     * Returns the number of validated PSMs for the currently selected peptide.
      *
      * @return the number of validated PSMs
      */
@@ -373,7 +375,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the number of validated PSMs for the currently selected peptide
+     * Sets the number of validated PSMs for the currently selected peptide.
      *
      * @param nValidatedPsms the number of validated PSMs
      */
@@ -382,7 +384,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the current peptide list
+     * Returns the current peptide list.
      *
      * @return the current peptide list
      */
@@ -391,7 +393,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the current peptide list
+     * Sets the current peptide list.
      *
      * @param peptideList the current peptide list
      */
@@ -400,7 +402,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the protein list
+     * Returns the protein list.
      *
      * @return the protein list
      */
@@ -409,7 +411,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the protein list
+     * Sets the protein list.
      *
      * @param proteinList the protein list
      */
@@ -418,7 +420,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the protein list after all hiding filters have been used
+     * Returns the protein list after all hiding filters have been used.
      *
      * @return the protein list after all hiding filters have been used
      */
@@ -427,7 +429,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the protein list after all hiding filters have been used
+     * Sets the protein list after all hiding filters have been used.
      *
      * @param proteinListAfterHiding the protein list after all hiding filters
      * have been used
@@ -437,7 +439,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the PSM list
+     * Returns the PSM list.
      *
      * @return the PSM list
      */
@@ -446,7 +448,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the PSM list
+     * Sets the PSM list.
      *
      * @param psmList the PSM list
      */
@@ -455,7 +457,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns a list of validated proteins
+     * Returns a list of validated proteins.
      *
      * @return a list of validated proteins
      */
@@ -464,7 +466,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Sets the list of validated proteins
+     * Sets the list of validated proteins.
      *
      * @param validatedProteinList a list of validated proteins
      */
@@ -474,7 +476,7 @@ public class IdentificationFeaturesCache implements Serializable {
 
     /**
      * Convenience method returning a string as key for the object of the given
-     * type identified by the given key
+     * type identified by the given key.
      *
      * @param type the type of object
      * @param objectKey the key of the object
@@ -485,7 +487,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Returns the object type as string
+     * Returns the object type as string.
      *
      * @param type the type of object
      * @return the corresponding key
@@ -511,7 +513,7 @@ public class IdentificationFeaturesCache implements Serializable {
 
     /**
      * Convenience method returning the type of object base on the objects cache
-     * key
+     * key.
      *
      * @param cacheKey the object cache key
      * @return the type of object
@@ -536,7 +538,7 @@ public class IdentificationFeaturesCache implements Serializable {
     }
 
     /**
-     * Convenience method returning the object key based on the cache key
+     * Convenience method returning the object key based on the cache key.
      *
      * @param cacheKey the cache key
      * @return the object key
