@@ -207,7 +207,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="PTM scoring"/>
+                <TitledBorder title="PTM Scoring"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -221,8 +221,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="neutralLossesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="aScoreLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="240" max="-2" attributes="0"/>
                           </Group>
@@ -230,9 +230,9 @@
                               <Component id="estimateAScoreLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="10" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="ascoreCmb" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="ascoreCmb" alignment="1" pref="185" max="32767" attributes="0"/>
                                   <Component id="neutralLossesCmb" alignment="1" pref="185" max="32767" attributes="0"/>
-                                  <Component id="aScoreThreshold" max="32767" attributes="0"/>
+                                  <Component id="aScoreThreshold" pref="185" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
@@ -250,12 +250,12 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="neutralLossesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="neutralLossesCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="aScoreLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="aScoreThreshold" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -280,9 +280,9 @@
                 <Property name="text" type="java.lang.String" value="20"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="aScoreLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="A-score threshold:"/>
+                <Property name="text" type="java.lang.String" value="A-score Threshold:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="ascoreCmb">
@@ -295,9 +295,9 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="neutralLossesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Account neutral losses:"/>
+                <Property name="text" type="java.lang.String" value="Account Neutral Losses:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="estimateAScoreLabel">

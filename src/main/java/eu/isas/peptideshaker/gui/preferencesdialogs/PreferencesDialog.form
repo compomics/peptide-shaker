@@ -227,8 +227,8 @@
                           </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="neutralLossesLabel" min="-2" max="-2" attributes="0"/>
+                                  <Component id="aScoreCalculationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
@@ -242,7 +242,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="aScoreCalculationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="aScoreCalculationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
@@ -252,7 +252,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="neutralLossesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="neutralLossesCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -273,9 +273,9 @@
                 <Property name="text" type="java.lang.String" value="50"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="neutralLossesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Neutral losses accounted:"/>
+                <Property name="text" type="java.lang.String" value="Neutral Losses Accounted:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="neutralLossesCmb">
@@ -288,9 +288,9 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
+            <Component class="javax.swing.JLabel" name="aScoreCalculationLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="A-score calculation:"/>
+                <Property name="text" type="java.lang.String" value="A-score Calculation:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="aScoreCalculationCmb">

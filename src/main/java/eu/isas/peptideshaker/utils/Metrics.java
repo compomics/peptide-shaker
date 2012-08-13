@@ -8,7 +8,7 @@ import java.util.HashMap;
  * This class contains metrics from the dataset for later use.
  *
  * @TODO for the next release without backward compatibility we could rename it
- * into something more descriptive like DatasetMetrics
+ * into something more descriptive like DatasetMetrics.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -34,23 +34,23 @@ public class Metrics implements Serializable {
      */
     private ArrayList<Integer> foundCharges = new ArrayList<Integer>();
     /**
-     * The maximal amount of peptides in the proteins of the dataset
+     * The maximal amount of peptides in the proteins of the dataset.
      */
     private Integer maxNPeptides = null;
     /**
-     * The maximal amount of spectra in the proteins of the dataset
+     * The maximal amount of spectra in the proteins of the dataset.
      */
     private Integer maxNSpectra = null;
     /**
-     * The maximal spectrum counting in the proteins of the dataset
+     * The maximal spectrum counting in the proteins of the dataset.
      */
     private Double maxSpectrumCounting = null;
     /**
-     * The weight of the fattest protein in the dataset
+     * The weight of the fattest protein in the dataset.
      */
     private Double maxMW = null;
     /**
-     * The ordered list of protein keys as estimated during the import process
+     * The ordered list of protein keys as estimated during the import process.
      */
     private ArrayList<String> proteinKeys;
     /**
@@ -58,11 +58,11 @@ public class Metrics implements Serializable {
      */
     private Integer maxProteinKeyLength = null;
     /**
-     * Amount of validated proteins
+     * Amount of validated proteins.
      */
     private int nValidatedProteins = -1;
     /**
-     * List of modifications found in the dataset
+     * List of modifications found in the dataset.
      */
     private ArrayList<String> foundModifications = null;
     /**
@@ -113,7 +113,7 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Clears the found charges
+     * Clears the found charges.
      */
     public void clearFoundCharges() {
         foundCharges.clear();

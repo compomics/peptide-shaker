@@ -1,44 +1,40 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.preferences;
 
 import java.io.Serializable;
 
 /**
- * This class contains the PTM scoring preferences
+ * This class contains the PTM scoring preferences.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PTMScoringPreferences implements Serializable {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
     static final long serialVersionUID = -6656074270981104708L;
     /**
-     * The A-score threshold
+     * The A-score threshold.
      */
     private double aScoreThreshold = 10;
     /**
-     * Boolean indicating whether the A-score should be calculated
+     * Boolean indicating whether the A-score should be calculated.
      */
     private boolean aScoreCalculation = false;
     /**
      * Boolean indicating whether neutral losses shall be accounted in the
-     * calculation of the A-score
+     * calculation of the A-score.
      */
     private boolean aScoreNeutralLosses = false;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PTMScoringPreferences() {
     }
 
     /**
-     * Returns a boolean indicating whether the A-score should be calculated
+     * Returns a boolean indicating whether the A-score should be calculated.
      *
      * @return a boolean indicating whether the A-score should be calculated
      */
@@ -47,7 +43,7 @@ public class PTMScoringPreferences implements Serializable {
     }
 
     /**
-     * Sets whether the A-score should be calculated
+     * Sets whether the A-score should be calculated.
      *
      * @param aScoreCalculation a boolean indicating whether the A-score should
      * be calculated
@@ -58,7 +54,7 @@ public class PTMScoringPreferences implements Serializable {
 
     /**
      * Indicates whether the A-score calculation should take neutral losses into
-     * account
+     * account.
      *
      * @return a boolean indicating whether the A-score calculation should take
      * neutral losses into account
@@ -69,7 +65,7 @@ public class PTMScoringPreferences implements Serializable {
 
     /**
      * Sets whether the A-score calculation should take neutral losses into
-     * account
+     * account.
      *
      * @param aScoreNeutralLosses a boolean indicating whether the A-score
      * calculation should take neutral losses into account
@@ -79,7 +75,7 @@ public class PTMScoringPreferences implements Serializable {
     }
 
     /**
-     * Returns the A-score threshold
+     * Returns the A-score threshold.
      *
      * @return the A-score threshold
      */
@@ -88,7 +84,7 @@ public class PTMScoringPreferences implements Serializable {
     }
 
     /**
-     * Sets the A-score threshold
+     * Sets the A-score threshold.
      *
      * @param aScoreThreshold the A-score threshold
      */
