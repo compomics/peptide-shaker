@@ -82,7 +82,7 @@ public class FileImporter {
     /**
      * The spectrum factory.
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(50);
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
     /**
      * The sequence factory.
      */
@@ -208,7 +208,7 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
 
             if (needPeptideMap) {
-                if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
+                if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) { // @TODO: should this be overrideable by the user??
                     waitingHandler.appendReport("Creating peptide to protein map.", true, true);
 
                     Enzyme enzyme = searchParameters.getEnzyme();

@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 /**
  * This class will generate the output as requested by the user.
@@ -648,7 +647,7 @@ public class OutputGenerator {
                                                 }
                                             }
 
-                                            if (!shared || !uniqueOnly) {
+                                            if (!shared || !uniqueOnly) { // @TODO: so unique only means that the peptide maps to only one protein? i.e. not a shared peptide?
 
                                                 if (indexes) {
                                                     writer.write(++peptideCounter + SEPARATOR);
