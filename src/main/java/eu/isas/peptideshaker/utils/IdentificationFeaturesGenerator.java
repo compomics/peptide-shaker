@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
-import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -26,7 +25,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -275,7 +273,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the spectrum counting index based on the project settings
+     * Returns the spectrum counting index based on the project settings.
      *
      * @param identification the identification
      * @param sequenceFactory the sequence factory
@@ -288,6 +286,7 @@ public class IdentificationFeaturesGenerator {
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
             SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
@@ -554,9 +553,7 @@ public class IdentificationFeaturesGenerator {
             Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
 
             if (result == null) {
-
                 result = estimateNValidatedSpectra(proteinMatchKey);
-
                 identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey, result);
             }
 
@@ -597,7 +594,7 @@ public class IdentificationFeaturesGenerator {
 
         return result;
     }
-    
+
     /**
      * Clears the spectrum counting data in cache
      */
@@ -643,6 +640,7 @@ public class IdentificationFeaturesGenerator {
             boolean firstSite, firstPtm = true;
             ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
             Collections.sort(ptms);
+
             for (String ptm : ptms) {
                 if (firstPtm) {
                     firstPtm = false;
@@ -1444,9 +1442,10 @@ public class IdentificationFeaturesGenerator {
 
         return false;
     }
-    
+
     /**
-     * Sets the ordered protein list
+     * Sets the ordered protein list.
+     *
      * @param proteinList the ordered protein list
      */
     public void setProteinKeys(ArrayList<String> proteinList) {
@@ -1454,7 +1453,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the identification features cache
+     * Returns the identification features cache.
+     *
      * @return the identification features cache
      */
     public IdentificationFeaturesCache getIdentificationFeaturesCache() {
@@ -1462,7 +1462,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Sets the the identification features cache
+     * Sets the the identification features cache.
+     *
      * @param identificationFeaturesCache the new identification features cache
      */
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache) {

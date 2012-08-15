@@ -511,7 +511,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         exceptionHandler = new ExceptionHandler(this);
 
-        startNewsFeed();
+        //startNewsFeed(); // @TODO: reimplement
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -3865,7 +3865,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         spectrumFactory.clearFactory();
         spectrumFactory = SpectrumFactory.getInstance(100);
         sequenceFactory.clearFactory();
-        sequenceFactory = SequenceFactory.getInstance(1000);
+        sequenceFactory = SequenceFactory.getInstance(100000);
 
         searchParameters.clearSpectrumFilesList();
         exceptionHandler = new ExceptionHandler(this);
@@ -4989,9 +4989,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Imports informations from a peptide shaker file.
+     * Imports informations from a PeptideShaker file.
      *
-     * @param aPsFile the peptide shaker file
+     * @param aPsFile the PeptideShaker file to import
      */
     public void importPeptideShakerFile(File aPsFile) {
 
@@ -5039,18 +5039,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
 
                     // empty the existing files in the matches folder
-                    for (File file : matchFolder.listFiles()) {
-                        if (file.isDirectory()) {
-                            boolean deleted = Util.deleteDir(file);
+                    if (matchFolder.exists()) {
+                        for (File file : matchFolder.listFiles()) {
+                            if (file.isDirectory()) {
+                                boolean deleted = Util.deleteDir(file);
 
-                            if (!deleted) {
-                                System.out.println("Failed to delete folder: " + file.getPath());
-                            }
-                        } else {
-                            boolean deleted = file.delete();
+                                if (!deleted) {
+                                    System.out.println("Failed to delete folder: " + file.getPath());
+                                }
+                            } else {
+                                boolean deleted = file.delete();
 
-                            if (!deleted) {
-                                System.out.println("Failed to delete file: " + file.getPath());
+                                if (!deleted) {
+                                    System.out.println("Failed to delete file: " + file.getPath());
+                                }
                             }
                         }
                     }
@@ -5458,7 +5460,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        //identificationFeaturesGenerator.repopulateCache(50, progressDialog); //should not be needed anymore
+                        //identificationFeaturesGenerator.repopulateCache(50, progressDialog); // @TODO: a smarter/faster version of this could be implemented?
                         progressDialog.setIndeterminate(true);
                     }
 
@@ -5993,7 +5995,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         objectsCache.saveCache(progressDialog, emptyCache);
         identification.close();
         
-        // @TODO: make sure the GUI does not update, the data is not accessible until the connection is established again
+        // @TODO: make sure the GUI does not update, the data is not accessible until the connection is established again 
 
         // transfer all files in the match directory
         if (!progressDialog.isRunCanceled()) {
