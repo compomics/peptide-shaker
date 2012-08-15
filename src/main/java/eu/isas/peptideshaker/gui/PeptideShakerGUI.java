@@ -3916,11 +3916,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
             File[] tempFiles = matchFolder.listFiles();
 
-            for (File currentFile : tempFiles) {
-                Util.deleteDir(currentFile);
+            if (tempFiles != null) {
+                for (File currentFile : tempFiles) {
+                    Util.deleteDir(currentFile);
+                }               
             }
 
-            if (matchFolder.listFiles().length > 0) {
+            if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
                 JOptionPane.showMessageDialog(null, "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
                         "Database Cleanup Failed", JOptionPane.WARNING_MESSAGE);
             }
@@ -5984,10 +5986,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void saveProjectProcess(boolean emptyCache) throws FileNotFoundException, IOException, SQLException, ArchiveException {
 
         // set the experiment parameters
-        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences));
+        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, 
+                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, 
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences));
 
         objectsCache.saveCache(progressDialog, emptyCache);
         identification.close();
+        
         // @TODO: make sure the GUI does not update, the data is not accessible until the connection is established again
 
         // transfer all files in the match directory
