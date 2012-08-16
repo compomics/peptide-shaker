@@ -45,14 +45,25 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         number_of_spectra,
         /**
-         * The number of validated spectra of a given protein stored as small
+         * The number of validated spectra of a given peptide or protein stored
+         * as small object.
+         */
+        number_of_validated_spectra,
+        /**
+         * The number of validated peptides of a given protein stored as small
          * object.
          */
-        number_of_validated_spectra,}
+        number_of_validated_peptides,
+        /**
+         * The max mx value for all the psms for a given peptide stored as small
+         * object..
+         */
+        max_psm_mz_for_peptides
+    }
     /**
      * The number of values kept in memory for small objects.
      */
-    private final int smallObjectsCacheSize = 10000;
+    private final int smallObjectsCacheSize = 10000; // @TODO: should perhaps be made bigger now that number_of_validated_peptides and max_psm_mz_for_peptides have been added??
     /**
      * The number of values kept in memory for big objects.
      */
@@ -103,10 +114,6 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private boolean filtered = false;
     /**
-     * The max m/z value across the selected spectra.
-     */
-    private double maxPsmMzValue;
-    /**
      * The maximum number of psms across all peptides of the last selected
      * protein.
      */
@@ -151,6 +158,8 @@ public class IdentificationFeaturesCache implements Serializable {
             case spectrum_counting:
             case number_of_spectra:
             case number_of_validated_spectra:
+            case number_of_validated_peptides:
+            case max_psm_mz_for_peptides:
                 smallObjectsCache.remove(type);
                 for (String key : smallObjectsInCache) {
                     if (key.contains(typeKey)) {
@@ -199,6 +208,8 @@ public class IdentificationFeaturesCache implements Serializable {
             case spectrum_counting:
             case number_of_spectra:
             case number_of_validated_spectra:
+            case number_of_validated_peptides:
+            case max_psm_mz_for_peptides:
                 if (!smallObjectsCache.containsKey(type)) {
                     smallObjectsCache.put(type, new HashMap<String, Object>());
                 }
@@ -252,6 +263,8 @@ public class IdentificationFeaturesCache implements Serializable {
             case spectrum_counting:
             case number_of_spectra:
             case number_of_validated_spectra:
+            case number_of_validated_peptides:
+            case max_psm_mz_for_peptides:
                 if (smallObjectsCache.containsKey(type)) {
                     result = smallObjectsCache.get(type).get(objectKey);
                 }
@@ -323,24 +336,6 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     public void setFiltered(boolean filtered) {
         this.filtered = filtered;
-    }
-
-    /**
-     * Returns the max m/z value in the selected PSMs.
-     *
-     * @return the max m/z value in the selected PSMs
-     */
-    public double getMaxPsmMzValue() {
-        return maxPsmMzValue;
-    }
-
-    /**
-     * Sets the max m/z value in the selected PSMs.
-     *
-     * @param maxPsmMzValue the max m/z value in the selected PSMs
-     */
-    public void setMaxPsmMzValue(double maxPsmMzValue) {
-        this.maxPsmMzValue = maxPsmMzValue;
     }
 
     /**
@@ -506,6 +501,10 @@ public class IdentificationFeaturesCache implements Serializable {
                 return "#spectra";
             case number_of_validated_spectra:
                 return "#validated_spectra";
+            case number_of_validated_peptides:
+                return "#validated_peptides";
+            case max_psm_mz_for_peptides:
+                return "max_psm_mz_for_peptides";
             default:
                 return "default";
         }
@@ -532,6 +531,10 @@ public class IdentificationFeaturesCache implements Serializable {
             return ObjectType.number_of_spectra;
         } else if (objectTypeAsString.equals("#validated_spectra")) {
             return ObjectType.number_of_validated_spectra;
+        } else if (objectTypeAsString.equals("#validated_peptides")) {
+            return ObjectType.number_of_validated_peptides;
+        } else if (objectTypeAsString.equals("max_psm_mz_for_peptides")) {
+            return ObjectType.max_psm_mz_for_peptides;
         } else {
             return null;
         }

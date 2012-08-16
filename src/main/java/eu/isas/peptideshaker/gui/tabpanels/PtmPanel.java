@@ -3760,6 +3760,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
             for (Double score : scores) {
                 relatedPeptides.addAll(scoreToKeyMap.get(score));
+                progressDialog.increaseProgressValue();
             }
 
             ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();

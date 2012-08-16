@@ -2118,7 +2118,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 updatedPeptideSelection(proteinIndex);
 
                 // update the sequence coverage map
-                updateSequenceCoverageMap(proteinIndex);
+                //updateSequenceCoverageMap(proteinIndex); // @TODO: will be called when a psm is selected anyway??
 
                 // remember the selection
                 newItemSelection();
@@ -3819,14 +3819,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 double maxCoverageValue = 0;
 
-                PSParameter pSParameter = new PSParameter();
+                PSParameter psParameter = new PSParameter();
 
                 // iterate the peptide table and store the coverage for each validated peptide
                 for (String peptideKey : peptideKeys) {
 
-                    pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, pSParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter); // @TODO: could be replaced by batch selection?
 
-                    if (pSParameter.isValidated()) {
+                    if (psParameter.isValidated()) {
                         String peptideSequence = Peptide.getSequence(peptideKey);
                         tempSequence = currentProteinSequence;
 
@@ -4101,7 +4101,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         } else {
 
                             double lowerMzZoomRange = 0;
-                            double upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue();
+                            double upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue(peptideShakerGUI.getSelectedPeptideKey());
 
                             if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !resetMzRange) {
                                 lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();

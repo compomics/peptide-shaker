@@ -2626,12 +2626,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideTableMap = new HashMap<Integer, String>();
 
                 PSParameter probabilities = new PSParameter();
-                PSParameter secondaryPSParameter = new PSParameter();
                 PeptideMatch currentMatch;
 
                 int index = 0;
-                int validatedPeptideCounter = 0;
-                int validatedSpectraCounter;
+                
+                int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinMatchKey);
 
                 ArrayList<String> peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinMatchKey);
 
@@ -2649,16 +2648,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             }
                         }
 
-
-                        validatedSpectraCounter = 0;
-                        for (String spectrumKey : currentMatch.getSpectrumMatches()) {
-                            secondaryPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
-                            if (secondaryPSParameter.isValidated()) {
-                                validatedSpectraCounter++;
-                            }
-                        }
-
-
                         // find and add the peptide start and end indexes
                         int peptideStart = 0;
                         String peptideSequence = currentMatch.getTheoreticPeptide().getSequence();
@@ -2672,6 +2661,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             e.printStackTrace();
                         }
                         int proteinInferenceType = probabilities.getGroupClass();
+                        
+                        // @TODO: should be replaced by a table model!!!
 
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                     index + 1,
@@ -2683,10 +2674,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                                     probabilities.isValidated()
                                 });
 
-                        if (probabilities.isValidated()) {
-                            validatedPeptideCounter++;
-                        }
-
                         peptideTableMap.put(index + 1, currentMatch.getKey());
                         index++;
                     }
@@ -2694,7 +2681,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                 ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
 
-                ((TitledBorder) peptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (" + validatedPeptideCounter + "/"
+                ((TitledBorder) peptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (" + nValidatedPeptides + "/"
                         + peptideTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 peptidesPanel.repaint();
 
@@ -3458,7 +3445,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         String proteinKey = PeptideShakerGUI.NO_SELECTION;
         String peptideKey = PeptideShakerGUI.NO_SELECTION;
-        String psmKey = PeptideShakerGUI.NO_SELECTION;
+        String psmKey = peptideShakerGUI.getSelectedPsmKey();
 
         if (proteinTable.getSelectedRow() != -1) {
             proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
@@ -3467,8 +3454,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         }
 
-        if (!peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPsmKeys(peptideKey).isEmpty()) {
-            psmKey = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPsmKeys(peptideKey).get(0);
+        if (!proteinKey.equalsIgnoreCase(peptideShakerGUI.getSelectedProteinKey()) ||
+                !peptideKey.equalsIgnoreCase(peptideShakerGUI.getSelectedPeptideKey())) {
+            psmKey = PeptideShakerGUI.NO_SELECTION;
         }
 
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
