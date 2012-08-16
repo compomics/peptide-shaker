@@ -2009,8 +2009,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
-                        updateSpectrum(row, false);
                         newItemSelection();
+                        updateSpectrum(row, false);
                     }
                 });
             }
@@ -2073,9 +2073,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
+            newItemSelection();
             updateSpectrum(row, false);
 
-            newItemSelection();
 
             if (column == psmTable.getColumn("  ").getModelIndex()) {
                 String key = psmKeys.get(psmIndex);
@@ -2189,11 +2189,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    int row = psmTable.getSelectedRow();
-                    updateSpectrum(row, true);
-
+                    
                     // remember the selection
                     newItemSelection();
+                    
+                    int row = psmTable.getSelectedRow();
+                    updateSpectrum(row, true);
 
                     String peptideKey = peptideKeys.get(peptideIndex);
                     if (column == peptideTable.getColumn("  ").getModelIndex()) {
@@ -4103,6 +4104,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             double lowerMzZoomRange = 0;
                             double upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue(peptideShakerGUI.getSelectedPeptideKey());
 
+                            if (peptideShakerGUI.getSelectedPeptideKey() != null) {
+                                upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue(peptideShakerGUI.getSelectedPeptideKey());
+                            }
+                            
                             if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !resetMzRange) {
                                 lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();
                                 upperMzZoomRange = spectrumPanel.getXAxisZoomRangeUpperValue();
