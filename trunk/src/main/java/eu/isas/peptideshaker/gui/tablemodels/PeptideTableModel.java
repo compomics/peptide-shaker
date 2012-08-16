@@ -160,17 +160,11 @@ public class PeptideTableModel extends DefaultTableModel {
                     Collections.sort(indexes);
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort of the first index if multiple indexes
                 case 5:
-                    int nValidated = 0;
                     peptideKey = peptideKeys.get(row);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                        pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
-                        if (pSParameter.isValidated()) {
-                            nValidated++;
-                        }
-                    }
+                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
-                    return new XYDataPoint(nValidated, nSpectra - nValidated, false);
+                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);   
                 case 6:
                     peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());

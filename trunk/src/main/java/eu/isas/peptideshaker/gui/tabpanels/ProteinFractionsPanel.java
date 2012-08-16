@@ -410,6 +410,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * Update the selection.
      */
     public void updatePeptideTable() {
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         try {
             int row = proteinTable.getSelectedRow();
@@ -453,6 +455,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             peptideKeys = new ArrayList<String>();
             ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
         }
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**

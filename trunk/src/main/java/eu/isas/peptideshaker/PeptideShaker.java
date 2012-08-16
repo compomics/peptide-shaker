@@ -413,6 +413,8 @@ public class PeptideShaker {
      */
     public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR) {
 
+        waitingHandler.setWaitingText("Validating Identifications. Please Wait...");
+        
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
         currentResults.setInputType(1);
@@ -1000,6 +1002,9 @@ public class PeptideShaker {
      * deserializing a match
      */
     public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+        
+        waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
+        
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getPeptideIdentification().size();
@@ -1047,6 +1052,9 @@ public class PeptideShaker {
      * deserializing a match
      */
     private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+        
+        waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
+        
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getProteinIdentification().size();

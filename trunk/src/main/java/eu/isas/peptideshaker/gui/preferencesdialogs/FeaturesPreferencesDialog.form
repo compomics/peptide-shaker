@@ -417,12 +417,16 @@
                                       <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="peptideNSpectra" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="peptideUniqueOnly" linkSize="2" min="-2" max="-2" attributes="0"/>
                                           <Component id="precursorCharges" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="peptideSurroundingAA" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="peptideValidated" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="peptideHidden" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="peptideStarred" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="peptideUniqueOnly" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="uniqueOnlyHelpLabel" min="-2" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
                                       <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
                                   </Group>
@@ -461,7 +465,10 @@
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="precursorCharges" linkSize="16" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideUniqueOnly" linkSize="16" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="peptideUniqueOnly" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="uniqueOnlyHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideSurroundingAA" linkSize="16" min="-2" pref="16" max="-2" attributes="0"/>
                                   </Group>
@@ -603,6 +610,7 @@
                     <Component class="javax.swing.JCheckBox" name="peptideUniqueOnly">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Unique Only"/>
+                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt; Exclude shared peptides, i.e., peptides&lt;br&gt; mapping to more than one protein.  &lt;/html&gt;"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -639,6 +647,15 @@
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideDeselectAllLabelMouseEntered"/>
                         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideDeselectAllLabelMouseExited"/>
                       </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="uniqueOnlyHelpLabel">
+                      <Properties>
+                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="0" red="0" type="rgb"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="(?)"/>
+                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Exclude shared peptides, i.e., peptides&lt;br&gt;&#xa;mapping to more than one protein. &#xa;&lt;/html&gt;"/>
+                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>

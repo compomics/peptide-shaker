@@ -4144,9 +4144,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
         int width = comp.getPreferredSize().width;
 
-
         // get maximum width of column data
-        if (metrics == null || metrics.getMaxProteinKeyLength() > table.getColumnName(colIndex).length()) {
+        if (metrics == null || metrics.getMaxProteinKeyLength() > (table.getColumnName(colIndex).length() + margin)) {
             return null;
         }
 
@@ -5762,7 +5761,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             @Override
             public void run() {
                 try {
-
                     saveProjectProcess(closeWhenDone);
 
                     if (!progressDialog.isRunCanceled()) {
@@ -5987,6 +5985,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void saveProjectProcess(boolean emptyCache) throws FileNotFoundException, IOException, SQLException, ArchiveException {
 
+        // select the default protein, peptide and psm. this will speed up the reopening of the project
+        // as the data will then be saved in the id features cache
+        resetSelectedItems();
+        overviewPanel.updateSelection();
+        
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, 
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, 
@@ -5994,8 +5997,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         objectsCache.saveCache(progressDialog, emptyCache);
         identification.close();
-        
-        // @TODO: make sure the GUI does not update, the data is not accessible until the connection is established again 
 
         // transfer all files in the match directory
         if (!progressDialog.isRunCanceled()) {
