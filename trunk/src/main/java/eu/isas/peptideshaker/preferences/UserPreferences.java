@@ -229,7 +229,7 @@ public class UserPreferences implements Serializable {
 
     /**
      * Adds a recent project to the list and limits the list of recent projects
-     * to a size of 10.
+     * to a size of 20.
      *
      * @param recentProject the path of the recent project to add
      */
@@ -238,14 +238,14 @@ public class UserPreferences implements Serializable {
             recentProjects.remove(recentProject);
         }
         recentProjects.add(0, recentProject);
-        while (recentProjects.size() > 10) {
+        while (recentProjects.size() > 20) {
             recentProjects.remove(recentProjects.size() - 1);
         }
     }
 
     /**
      * Adds a recent project to the list and limits the list of recent projects
-     * to a size of 10.
+     * to a size of 20.
      *
      * @param recentProject the recent project to add
      */
