@@ -2068,7 +2068,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         int row = psmTable.getSelectedRow();
         int column = psmTable.getSelectedColumn();
-        int psmIndex = psmTable.convertRowIndexToModel(row);
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -2078,7 +2077,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
 
             if (column == psmTable.getColumn("  ").getModelIndex()) {
-                String key = psmKeys.get(psmIndex);
+                String key = psmKeys.get(psmTable.convertRowIndexToModel(row));
                 if ((Boolean) psmTable.getValueAt(row, column)) {
                     peptideShakerGUI.getStarHider().starPsm(key);
                 } else {
@@ -2105,8 +2104,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         int row = proteinTable.getSelectedRow();
-        int proteinIndex = proteinTable.convertRowIndexToModel(row);
         int column = proteinTable.getSelectedColumn();
+        
+        int proteinIndex = -1;
+        
+        if (row != -1) {
+            proteinIndex = proteinTable.convertRowIndexToModel(row);
+        }
 
         if (evt == null || (evt.getButton() == MouseEvent.BUTTON1 && (proteinIndex != -1 && column != -1))) {
 
@@ -2179,10 +2183,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         int row = peptideTable.getSelectedRow();
         final int column = peptideTable.getSelectedColumn();
-        final int peptideIndex = peptideTable.convertRowIndexToModel(row);
 
         if (row != -1) {
 
+            final int peptideIndex = peptideTable.convertRowIndexToModel(row);
             updatePsmSelection(row);
 
             // invoke later to give time for components to update
@@ -2238,7 +2242,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void peptideTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseMoved
         int row = peptideTable.rowAtPoint(evt.getPoint());
         int column = peptideTable.columnAtPoint(evt.getPoint());
-        int peptideIndex = peptideTable.convertRowIndexToModel(row);
 
         if (row != -1 && column != -1 && peptideTable.getValueAt(row, column) != null) {
             if (column == peptideTable.getColumn("PI").getModelIndex()) {
@@ -2253,7 +2256,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (sequence.indexOf("<span") != -1) {
                     try {
-                        String peptideKey = peptideKeys.get(peptideIndex);
+                        String peptideKey = peptideKeys.get(peptideTable.convertRowIndexToModel(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
                         String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
@@ -2372,7 +2375,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         int row = psmTable.rowAtPoint(evt.getPoint());
         int column = psmTable.columnAtPoint(evt.getPoint());
-        int psmIndex = psmTable.convertRowIndexToModel(row);
 
         if (row != -1 && column != -1 && psmTable.getValueAt(row, column) != null) {
             if (column == psmTable.getColumn("Sequence").getModelIndex()) {
@@ -2386,7 +2388,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         String peptideKey = peptideKeys.get(peptideIndex);
                         PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
 
-                        String spectrumKey = psmKeys.get(psmIndex);
+                        String spectrumKey = psmKeys.get(psmTable.convertRowIndexToModel(row));
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
 
