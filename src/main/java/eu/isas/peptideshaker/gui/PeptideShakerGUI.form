@@ -459,26 +459,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startSearchGuiMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Reshake..."/>
-                <Property name="toolTipText" type="java.lang.String" value="Re-analyze public PRIDE projects"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reshakeMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="quantifyMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Reporter Ions..."/>
-                <Property name="toolTipText" type="java.lang.String" value="Quantify based on reporter ions."/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="quantifyMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator18">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="openJMenuItem">
@@ -500,6 +480,26 @@
                 <Property name="text" type="java.lang.String" value="Open Recent Project"/>
               </Properties>
             </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reshake..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Re-analyze public PRIDE projects"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reshakeMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="quantifyMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporter Ions..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Quantify based on reporter ions."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="quantifyMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="projectPropertiesMenuItem">

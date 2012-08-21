@@ -254,7 +254,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.7.5</version>
+            <version>3.7.6</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -311,7 +311,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
-            <version>0.5.38</version>
+            <version>0.5.40</version>
         </dependency>
 
         <dependency>

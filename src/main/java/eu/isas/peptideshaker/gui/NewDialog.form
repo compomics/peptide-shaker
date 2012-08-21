@@ -177,7 +177,6 @@
             <Component class="javax.swing.JTextField" name="projectNameIdTxt">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="new project"/>
               </Properties>
               <Events>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="projectNameIdTxtKeyReleased"/>
@@ -211,7 +210,6 @@
             <Component class="javax.swing.JTextField" name="sampleNameIdtxt">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="new sample"/>
               </Properties>
               <Events>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sampleNameIdtxtKeyReleased"/>

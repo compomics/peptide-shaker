@@ -669,12 +669,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
         startSearchGuiMenuItem = new javax.swing.JMenuItem();
-        jSeparator8 = new javax.swing.JPopupMenu.Separator();
-        reshakeMenuItem = new javax.swing.JMenuItem();
-        quantifyMenuItem = new javax.swing.JMenuItem();
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
+        jSeparator8 = new javax.swing.JPopupMenu.Separator();
+        reshakeMenuItem = new javax.swing.JMenuItem();
+        quantifyMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         projectPropertiesMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -1171,6 +1171,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         fileJMenu.add(startSearchGuiMenuItem);
+        fileJMenu.add(jSeparator18);
+
+        openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openJMenuItem.setMnemonic('O');
+        openJMenuItem.setText("Open Project...");
+        openJMenuItem.setToolTipText("Open an existing PeptideShaker project");
+        openJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openJMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(openJMenuItem);
+
+        openRecentJMenu.setMnemonic('R');
+        openRecentJMenu.setText("Open Recent Project");
+        fileJMenu.add(openRecentJMenu);
         fileJMenu.add(jSeparator8);
 
         reshakeMenuItem.setText("Reshake...");
@@ -1190,22 +1206,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         fileJMenu.add(quantifyMenuItem);
-        fileJMenu.add(jSeparator18);
-
-        openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        openJMenuItem.setMnemonic('O');
-        openJMenuItem.setText("Open Project...");
-        openJMenuItem.setToolTipText("Open an existing PeptideShaker project");
-        openJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openJMenuItemActionPerformed(evt);
-            }
-        });
-        fileJMenu.add(openJMenuItem);
-
-        openRecentJMenu.setMnemonic('R');
-        openRecentJMenu.setText("Open Recent Project");
-        fileJMenu.add(openRecentJMenu);
         fileJMenu.add(jSeparator2);
 
         projectPropertiesMenuItem.setMnemonic('P');
@@ -1957,7 +1957,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             // update the basic protein annotation
             if (selectedIndex == ANNOTATION_TAB_INDEX) {
                 try {
-                    annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
+                    if (identification.getProteinMatch(selectedProteinKey) != null) {
+                        annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
+                    }
                 } catch (Exception e) {
                     catchException(e);
                 }
@@ -1980,7 +1982,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
-                        // set the preferred size of the accession column
                         updateSpectrumAnnotations();
                     }
                 });
@@ -4190,27 +4191,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         // add margin
         width += 2 * margin;
-
-        return width;
-    }
-
-    /**
-     * Returns the preferred width of a given cell in a table.
-     *
-     * @param table the table
-     * @param colIndex the colum index
-     * @param rowIndex the row index
-     * @return the prefereed width of the cell
-     */
-    public int getPreferredWidthOfCell(JTable table, int rowIndex, int colIndex) {
-
-        int width = 0;
-
-        // get width of column data
-        TableCellRenderer renderer = table.getCellRenderer(rowIndex, colIndex);
-        Component comp = renderer.getTableCellRendererComponent(
-                table, table.getValueAt(rowIndex, colIndex), false, false, rowIndex, colIndex);
-        width = Math.max(width, comp.getPreferredSize().width);
 
         return width;
     }
