@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
@@ -1431,7 +1432,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
-            if (peptideShakerGUI.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
+            if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
                 proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

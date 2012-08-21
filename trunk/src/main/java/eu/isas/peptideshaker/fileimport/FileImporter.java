@@ -357,22 +357,24 @@ public class FileImporter {
      * @return the best PTM candidate
      */
     private String getPTM(String sePTM, int modificationSite, String sequence, SearchParameters searchParameters) {
-        // If someone has a better idea, would be great.
-        PTM psPTM;
-        ArrayList<PTM> possiblePTMs;
+
+        // @TODO: If someone has a better idea, would be great.
+
         if (searchParameters.getModificationProfile().getFamilyNames().contains(sePTM.toLowerCase())) {
             return ptmFactory.getPTM(sePTM).getName();
         } else {
 
-            possiblePTMs = new ArrayList<PTM>();
+            ArrayList<PTM> possiblePTMs = new ArrayList<PTM>();
             String[] parsedName = sePTM.split("@");
-            double seMass = new Double(parsedName[0]);
+            double seMass = new Double(parsedName[0]); // @TODO: a NumberFormatException can occur here?
+
             for (String ptmName : searchParameters.getModificationProfile().getFamilyNames()) {
-                psPTM = ptmFactory.getPTM(ptmName);
+                PTM psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
                     possiblePTMs.add(psPTM);
                 }
             }
+
             if (possiblePTMs.size() == 1) {
                 // Single match for this mass, we are lucky
                 return possiblePTMs.get(0).getName();
@@ -829,7 +831,7 @@ public class FileImporter {
                                     unknown = true;
                                 }
                             }
-                            seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters));
+                            seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters)); // @TODO: this might cause problems..? 
                         }
                     }
 

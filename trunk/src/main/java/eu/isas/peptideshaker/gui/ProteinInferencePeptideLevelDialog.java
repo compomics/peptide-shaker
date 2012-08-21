@@ -4,6 +4,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.event.MouseEvent;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 
@@ -490,7 +490,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 }
             }
         } else if (column == otherProteinJTable.getColumn("Description").getModelIndex() && otherProteinJTable.getValueAt(row, column) != null) {
-            if (peptideShakerGUI.getPreferredWidthOfCell(otherProteinJTable, row, column) > otherProteinJTable.getColumn("Description").getWidth()) {
+            if (GuiUtilities.getPreferredWidthOfCell(otherProteinJTable, row, column) > otherProteinJTable.getColumn("Description").getWidth()) {
                 otherProteinJTable.setToolTipText("" + otherProteinJTable.getValueAt(row, column));
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -618,7 +618,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } else if (column == retainedProteinJTable.getColumn("Description").getModelIndex() && retainedProteinJTable.getValueAt(row, column) != null) {
-            if (peptideShakerGUI.getPreferredWidthOfCell(retainedProteinJTable, row, column) > retainedProteinJTable.getColumn("Description").getWidth()) {
+            if (GuiUtilities.getPreferredWidthOfCell(retainedProteinJTable, row, column) > retainedProteinJTable.getColumn("Description").getWidth()) {
                 retainedProteinJTable.setToolTipText("" + retainedProteinJTable.getValueAt(row, column));
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

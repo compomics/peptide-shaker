@@ -15,6 +15,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -2041,7 +2042,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
-            if (peptideShakerGUI.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
+            if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
                 proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -4104,7 +4105,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         } else {
 
                             double lowerMzZoomRange = 0;
-                            double upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue(peptideShakerGUI.getSelectedPeptideKey());
+                            Double upperMzZoomRange = null;
 
                             if (peptideShakerGUI.getSelectedPeptideKey() != null) {
                                 upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue(peptideShakerGUI.getSelectedPeptideKey());
@@ -5062,10 +5063,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            ProteinMatch proteinMatch;
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 try {
-                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
+                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
                     if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
                         proteinKey = possibleKey;
                         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);

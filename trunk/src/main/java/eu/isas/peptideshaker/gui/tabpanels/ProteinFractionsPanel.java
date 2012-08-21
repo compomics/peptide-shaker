@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
@@ -1606,7 +1607,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
-            if (peptideShakerGUI.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
+            if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
                 proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

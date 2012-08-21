@@ -414,7 +414,7 @@ public class PeptideShaker {
     public void fdrValidation(WaitingHandler waitingHandler, double aPSMFDR, double aPeptideFDR, double aProteinFDR) {
 
         waitingHandler.setWaitingText("Validating Identifications. Please Wait...");
-        
+
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
         currentResults.setInputType(1);
@@ -809,33 +809,33 @@ public class PeptideShaker {
             if (multiSE) { //try to find the best modification site
                 HashMap<PeptideAssumption, ArrayList<Double>> assumptions = new HashMap<PeptideAssumption, ArrayList<Double>>();
                 for (int searchEngine1 : spectrumMatch.getAdvocates()) {
-                                found = false;
-                                eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
-                                Collections.sort(eValues2);
-                                for (double eValue : eValues2) {
-                    for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine1).get(eValue)) {
-                        if (assumption.getPeptide().isSameAs(bestAssumption.getPeptide())) {
-                            found = true;
-                            boolean found2 = false;
-                            for (PeptideAssumption assumption1 : assumptions.keySet()) {
-                                if (assumption1.getPeptide().sameModificationsAs(assumption.getPeptide())) {
-                                    found2 = true;
-                            psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                    assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
-                                    break;
+                    found = false;
+                    eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
+                    Collections.sort(eValues2);
+                    for (double eValue : eValues2) {
+                        for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine1).get(eValue)) {
+                            if (assumption.getPeptide().isSameAs(bestAssumption.getPeptide())) {
+                                found = true;
+                                boolean found2 = false;
+                                for (PeptideAssumption assumption1 : assumptions.keySet()) {
+                                    if (assumption1.getPeptide().sameModificationsAs(assumption.getPeptide())) {
+                                        found2 = true;
+                                        psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                                        assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
+                                        break;
+                                    }
                                 }
-                            }
-                            if (!found2) {
-                                assumptions.put(assumption, new ArrayList<Double>());
-                            psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                assumptions.get(assumption).add(psParameter.getSearchEngineProbability());
+                                if (!found2) {
+                                    assumptions.put(assumption, new ArrayList<Double>());
+                                    psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                                    assumptions.get(assumption).add(psParameter.getSearchEngineProbability());
+                                }
                             }
                         }
+                        if (found) {
+                            break;
+                        }
                     }
-                    if (found) {
-                        break;
-                    }
-                                }
                 }
                 Double sep, bestSeP = null;
                 int nSe = -1;
@@ -970,7 +970,7 @@ public class PeptideShaker {
      * @param ptmScoringPreferences the prm scoring preferences
      * @throws Exception
      */
-    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters, 
+    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         SpectrumMatch spectrumMatch;
@@ -982,8 +982,8 @@ public class PeptideShaker {
         for (String spectrumKey : inspectedSpectra) {
             waitingHandler.increaseSecondaryProgressValue();
             spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+            double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
             scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, confidenceThreshold);
         }
 
@@ -1002,9 +1002,9 @@ public class PeptideShaker {
      * deserializing a match
      */
     public void scorePeptidePtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
-        
+
         waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
-        
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getPeptideIdentification().size();
@@ -1052,9 +1052,9 @@ public class PeptideShaker {
      * deserializing a match
      */
     private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter, PTMScoringPreferences ptmScoringPreferences) throws Exception {
-        
+
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
-        
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int max = identification.getProteinIdentification().size();
@@ -2060,36 +2060,43 @@ public class PeptideShaker {
      * profile to use
      */
     public static void setPeptideShakerPTMs(SearchParameters searchParameters) {
+
         ArrayList<String> residues, utilitiesNames;
         PTMFactory ptmFactory = PTMFactory.getInstance();
         ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
         ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
 
         for (String peptideShakerName : searchParameters.getModificationProfile().getFamilyNames()) {
+
             residues = new ArrayList<String>();
             utilitiesNames = new ArrayList<String>();
             int modType = -1;
             double mass = -1;
+
             for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
                 if (peptideShakerName.equals(searchParameters.getModificationProfile().getFamilyName(utilitiesName))) {
+
                     neutralLosses = new ArrayList<NeutralLoss>();
                     reporterIons = new ArrayList<ReporterIon>();
                     PTM sePtm = ptmFactory.getPTM(utilitiesName);
+
                     for (String aa : sePtm.getResidues()) {
                         if (!residues.contains(aa)) {
                             residues.add(aa);
                         }
                     }
+
                     if (modType == -1) {
                         modType = sePtm.getType();
                     } else if (sePtm.getType() != modType) {
                         modType = PTM.MODAA; // case difficult to handle so use the default AA option
                     }
+
                     mass = sePtm.getMass();
                     utilitiesNames.add(utilitiesName);
-                    boolean found;
+
                     for (NeutralLoss neutralLoss : sePtm.getNeutralLosses()) {
-                        found = false;
+                        boolean found = false;
                         for (NeutralLoss alreadyImplemented : neutralLosses) {
                             if (neutralLoss.isSameAs(alreadyImplemented)) {
                                 found = true;
@@ -2100,8 +2107,9 @@ public class PeptideShaker {
                             neutralLosses.add(neutralLoss);
                         }
                     }
+
                     for (ReporterIon reporterIon : sePtm.getReporterIons()) {
-                        found = false;
+                        boolean found = false;
                         for (ReporterIon alreadyImplemented : reporterIons) {
                             if (reporterIon.isSameAs(alreadyImplemented)) {
                                 found = true;
@@ -2114,6 +2122,7 @@ public class PeptideShaker {
                     }
                 }
             }
+
             for (String utilitiesName : utilitiesNames) {
                 PTM newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, residues);
                 newPTM.setNeutralLosses(neutralLosses);

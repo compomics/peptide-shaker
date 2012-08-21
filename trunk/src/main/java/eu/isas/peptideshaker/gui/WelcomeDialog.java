@@ -337,7 +337,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "Supported formats: Peptide Shaker (.cps)";
+                return "Supported formats: PeptideShaker (.cps)";
             }
         };
 

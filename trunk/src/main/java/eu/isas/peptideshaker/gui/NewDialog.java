@@ -242,7 +242,6 @@ public class NewDialog extends javax.swing.JDialog {
         });
 
         projectNameIdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        projectNameIdTxt.setText("new project");
         projectNameIdTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 projectNameIdTxtKeyReleased(evt);
@@ -260,7 +259,6 @@ public class NewDialog extends javax.swing.JDialog {
         projectReferenceLabel.setText("Project Reference*");
 
         sampleNameIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleNameIdtxt.setText("new sample");
         sampleNameIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 sampleNameIdtxtKeyReleased(evt);
@@ -1036,6 +1034,7 @@ public class NewDialog extends javax.swing.JDialog {
             preferencesTxt.setText("Default");
         }
     }//GEN-LAST:event_editPreferencesButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
