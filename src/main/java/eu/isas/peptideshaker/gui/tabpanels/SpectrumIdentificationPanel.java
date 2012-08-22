@@ -2451,6 +2451,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSParameter probabilities = new PSParameter();
                     SpectrumMatch spectrumMatch;
 
+
+                    ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+                    String[] filesArray = new String[fileNames.size()];
+                    int cpt = 0;
+
+                    for (String tempName : fileNames) {
+                        filesArray[cpt] = Util.getFileName(tempName);
+                        cpt++;
+                    }
+
+
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMaxProgressValue(identification.getSpectrumIdentification().size());
                     progressDialog.setValue(0);
@@ -2482,69 +2493,76 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead?
 
 
-                    for (String spectrumKey : identification.getSpectrumIdentification()) {
-
-                        if (progressDialog.isRunCanceled()) {
-                            break;
-                        }
-
-                        spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        mascot = false;
-                        omssa = false;
-                        xTandem = false;
-                        probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
-
-                        if (probabilities.isValidated()) {
-                            if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
-                                if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                                    mascot = true;
+                    for (String fileName : filesArray) {
+                        progressDialog.setTitle("Loading spectrum information for " + fileName + ". Please Wait...");
+                        identification.loadSpectrumMatchParameters(fileName, probabilities);
+                        identification.loadSpectrumMatches(fileName);
+                        progressDialog.setTitle("Loading Data. Please Wait...");
+                        for (String spectrumKey : identification.getSpectrumIdentification()) {
+                            if (Spectrum.getSpectrumFile(spectrumKey).equals(fileName)) { //It hurts me to read such uggly stuffs. We need a map in the identification instead but have no time right now.
+                                if (progressDialog.isRunCanceled()) {
+                                    break;
                                 }
-                            }
-                            if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
-                                if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                                    omssa = true;
+
+                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                                mascot = false;
+                                omssa = false;
+                                xTandem = false;
+                                probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
+
+                                if (probabilities.isValidated()) {
+                                    if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
+                                        if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                            mascot = true;
+                                        }
+                                    }
+                                    if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
+                                        if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                            omssa = true;
+                                        }
+                                    }
+                                    if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
+                                        if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                            xTandem = true;
+                                        }
+                                    }
                                 }
-                            }
-                            if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
-                                if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                                    xTandem = true;
+
+                                if (mascot && omssa && xTandem) {
+                                    omx++;
                                 }
+                                if (mascot && omssa) {
+                                    mo++;
+                                }
+                                if (omssa && xTandem) {
+                                    ox++;
+                                }
+                                if (mascot && xTandem) {
+                                    mx++;
+                                }
+                                if (mascot) {
+                                    m++;
+                                }
+                                if (omssa) {
+                                    o++;
+                                }
+                                if (xTandem) {
+                                    x++;
+                                }
+
+                                if (!mascot) {
+                                    no_m++;
+                                }
+                                if (!xTandem) {
+                                    no_x++;
+                                }
+                                if (!omssa) {
+                                    no_o++;
+                                }
+
+                                progressDialog.increaseProgressValue();
                             }
                         }
-
-                        if (mascot && omssa && xTandem) {
-                            omx++;
-                        }
-                        if (mascot && omssa) {
-                            mo++;
-                        }
-                        if (omssa && xTandem) {
-                            ox++;
-                        }
-                        if (mascot && xTandem) {
-                            mx++;
-                        }
-                        if (mascot) {
-                            m++;
-                        }
-                        if (omssa) {
-                            o++;
-                        }
-                        if (xTandem) {
-                            x++;
-                        }
-
-                        if (!mascot) {
-                            no_m++;
-                        }
-                        if (!xTandem) {
-                            no_x++;
-                        }
-                        if (!omssa) {
-                            no_o++;
-                        }
-
-                        progressDialog.increaseProgressValue();
                     }
 
                     if (!progressDialog.isRunCanceled()) {
@@ -2612,15 +2630,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         searchEngineTable.repaint();
 
                         progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
-
-                        ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
-                        String[] filesArray = new String[fileNames.size()];
-                        int cpt = 0;
-
-                        for (String tempName : fileNames) {
-                            filesArray[cpt] = Util.getFileName(tempName);
-                            cpt++;
-                        }
 
                         fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 

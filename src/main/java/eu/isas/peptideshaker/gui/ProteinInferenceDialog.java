@@ -575,7 +575,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
     /**
      * Sets the main match if the main match column is selected, or opens the
-     * protein web link if the accession number column is selcted.
+     * protein web link if the accession number column is selected.
      *
      * @param evt
      */
