@@ -365,12 +365,6 @@
             <version>3.3.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.xeustechnologies</groupId>
-            <artifactId>jtar</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-
         <!-- use for adding desktop shortcuts -->
         <dependency>
             <groupId>net.jimmc</groupId>
