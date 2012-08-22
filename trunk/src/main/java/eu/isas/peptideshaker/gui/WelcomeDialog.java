@@ -324,32 +324,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
         this.setVisible(false);
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Open PeptideShaker Project");
 
-        FileFilter filter = new FileFilter() {
+        openDialog.setSearchParamatersFiles(new ArrayList<File>());
+        File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
 
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("cps")
-                        || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Supported formats: PeptideShaker (.cps)";
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showDialog(this.getParent(), "Open");
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            openDialog.setSearchParamatersFiles(new ArrayList<File>());
-            File newFile = fileChooser.getSelectedFile();
-            peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
-
+        if (newFile != null) {
             if (!newFile.getName().toLowerCase().endsWith("cps")) {
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);

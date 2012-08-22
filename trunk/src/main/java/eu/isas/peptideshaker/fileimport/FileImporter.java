@@ -865,6 +865,7 @@ public class FileImporter {
                     waitingHandler.appendReport("Reducing memory consumption.", true, true);
                     waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                     double share = 1073741824 / Runtime.getRuntime().totalMemory();
+                    share = Math.min(share, 1);
                     peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                     System.gc();
                     waitingHandler.setSecondaryProgressDialogIndeterminate(true);

@@ -89,6 +89,7 @@ import javax.swing.table.TableColumn;
 import net.jimmc.jshortcut.JShellLink;
 import org.apache.commons.compress.archivers.*;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -6105,6 +6106,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 outcome = JOptionPane.showConfirmDialog(this,
                         "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            } else if (openDialog && !newFile.exists()) {
+                JOptionPane.showMessageDialog(this, "The file\'" + newFile.getAbsolutePath() + "\' " + "does not exist!",
+                        "File Not Found.", JOptionPane.ERROR_MESSAGE);
+                return null;
             }
 
             if (outcome != JOptionPane.YES_OPTION) {
@@ -6475,7 +6480,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void tarFolder() throws FileNotFoundException, ArchiveException, IOException {
         FileOutputStream fos = new FileOutputStream(currentPSFile);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
-        ArchiveOutputStream tarOutput = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.TAR, bos);
+        TarArchiveOutputStream tarOutput = (TarArchiveOutputStream) new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.TAR, bos);
+        tarOutput.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
         File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
         addFolderContent(tarOutput, matchFolder);
         tarOutput.close();
@@ -6502,6 +6508,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
                 byte data[] = new byte[BUFFER];
                 TarArchiveEntry entry = new TarArchiveEntry(file);
+
                 tarOutput.putArchiveEntry(entry);
                 int count;
                 while ((count = origin.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
