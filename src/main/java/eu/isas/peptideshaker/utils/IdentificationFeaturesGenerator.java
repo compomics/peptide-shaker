@@ -81,6 +81,18 @@ public class IdentificationFeaturesGenerator {
         }
         return result;
     }
+    
+    /**
+     * Updates the array of booleans indicating whether the amino acids of given
+     * peptides can generate peptides. Used when the main key for a protein has 
+     * been altered.
+     * 
+     * @param proteinMatchKey the key of the protein of interest
+     */
+    public void updateCoverableAA(String proteinMatchKey) {
+        boolean[] result = estimateCoverableAA(proteinMatchKey);
+        identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey, result);
+    }
 
     /**
      * Returns the modifications found in the currently loaded dataset
@@ -163,6 +175,20 @@ public class IdentificationFeaturesGenerator {
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return Double.NaN;
+        }
+    }
+    
+    /**
+     * Updates the sequence coverage of the protein of interest.
+     *
+     * @param proteinMatchKey the key of the protein of interest
+     */
+    public void updateSequenceCoverage(String proteinMatchKey) {
+        try {
+            Double result = estimateSequenceCoverage(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
     }
 
@@ -406,6 +432,22 @@ public class IdentificationFeaturesGenerator {
             return Double.NaN;
         }
     }
+    
+    /**
+     * Updates the best protein coverage possible according to the given
+     * cleavage settings. Used when the main key for a protein has 
+     * been altered.
+     *
+     * @param proteinMatchKey the key of the protein match of interest
+     */
+    public void updateObservableCoverage(String proteinMatchKey) {
+        try {
+            Double result = estimateObservableCoverage(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey, result);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
+    }
 
     /**
      * Returns the best protein coverage possible according to the given
@@ -555,10 +597,12 @@ public class IdentificationFeaturesGenerator {
         try {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
 
-            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                MSnSpectrum tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                if (tempSpectrum.getPeakList() != null && maxPsmMzValue < tempSpectrum.getMaxMz()) {
-                    maxPsmMzValue = tempSpectrum.getMaxMz();
+            if (peptideMatch != null) {
+                for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                    MSnSpectrum tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+                    if (tempSpectrum.getPeakList() != null && maxPsmMzValue < tempSpectrum.getMaxMz()) {
+                        maxPsmMzValue = tempSpectrum.getMaxMz();
+                    }
                 }
             }
         } catch (Exception e) {

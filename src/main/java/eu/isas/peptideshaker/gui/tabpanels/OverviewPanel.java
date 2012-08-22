@@ -2106,9 +2106,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         int row = proteinTable.getSelectedRow();
         int column = proteinTable.getSelectedColumn();
-        
+
         int proteinIndex = -1;
-        
+
         if (row != -1) {
             proteinIndex = proteinTable.convertRowIndexToModel(row);
         }
@@ -2194,10 +2194,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    
+
                     // remember the selection
                     newItemSelection();
-                    
+
                     int row = psmTable.getSelectedRow();
                     updateSpectrum(row, true);
 
@@ -3794,6 +3794,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         try {
             currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
             String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+
             ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage ("
                     + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100, 2)
                     + "% of exp " + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100, 2) + "%"
@@ -4110,7 +4111,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             if (peptideShakerGUI.getSelectedPeptideKey() != null) {
                                 upperMzZoomRange = peptideShakerGUI.getIdentificationFeaturesGenerator().getMaxPsmMzValue(peptideShakerGUI.getSelectedPeptideKey());
                             }
-                            
+
                             if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !resetMzRange) {
                                 lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();
                                 upperMzZoomRange = spectrumPanel.getXAxisZoomRangeUpperValue();

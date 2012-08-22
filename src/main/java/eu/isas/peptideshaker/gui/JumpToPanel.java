@@ -315,6 +315,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                         if (!input.equals("")) {
 
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                            inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                             if (jumpType == JumpType.proteinAndPeptides) {
                                 PSParameter psParameter = new PSParameter();
@@ -435,6 +436,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                             }
 
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                            inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                         } else {
                             indexLabel.setText("");
@@ -535,6 +537,7 @@ public class JumpToPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         }
     }//GEN-LAST:event_nextButtonMouseEntered
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel findJLabel;
     private javax.swing.JLabel indexLabel;
