@@ -71,9 +71,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private Identification identification;
     /**
-     * the selected main match.
+     * The selected main match.
      */
-    private int mainMatch;
+    private String previousMainMatch;
 
     /**
      * Creates new form ProteinInferenceDialog.
@@ -89,6 +89,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         
         try {
             this.inspectedMatch = identification.getProteinMatch(inspectedMatch);
+            previousMainMatch = this.inspectedMatch.getMainMatch();
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             this.dispose();
@@ -546,8 +547,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
-        String selectedMatch = accessions.get(mainMatch);
         PSParameter psParameter = new PSParameter();
+
         try {
             psParameter = (PSParameter) identification.getProteinMatchParameter(inspectedMatch.getKey(), psParameter);
         } catch (Exception e) {
@@ -555,13 +556,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             this.dispose();
             return;
         }
-        if (!inspectedMatch.getMainMatch().equals(selectedMatch)
+        if (!inspectedMatch.getMainMatch().equals(previousMainMatch)
                 || groupClassJComboBox.getSelectedIndex() != psParameter.getGroupClass()) {
             try {
-                if (!inspectedMatch.getMainMatch().equals(selectedMatch)) {
-                    inspectedMatch.setMainMatch(selectedMatch);
-                    peptideShakerGUI.getIdentification().updateProteinMatch(inspectedMatch);
-                }
                 psParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
                 identification.updateProteinMatchParameter(inspectedMatch.getKey(), psParameter);
                 peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
@@ -590,6 +587,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 try {
                     inspectedMatch.setMainMatch(accessions.get(row));
                     identification.updateProteinMatch(inspectedMatch);
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().updateCoverableAA(inspectedMatch.getKey());
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().updateSequenceCoverage(inspectedMatch.getKey());
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().updateObservableCoverage(inspectedMatch.getKey());
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }

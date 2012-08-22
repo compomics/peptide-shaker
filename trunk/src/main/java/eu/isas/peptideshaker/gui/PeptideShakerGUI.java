@@ -4221,6 +4221,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         } catch (Exception e) {
             catchException(e);
         }
+
         overviewPanel.updateProteinTable();
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }

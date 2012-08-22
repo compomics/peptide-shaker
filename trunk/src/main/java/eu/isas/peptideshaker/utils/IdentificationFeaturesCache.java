@@ -186,8 +186,13 @@ public class IdentificationFeaturesCache implements Serializable {
                 if (!bigObjectsCache.containsKey(type)) {
                     bigObjectsCache.put(type, new HashMap<String, Object>());
                 }
-                bigObjectsCache.get(type).put(objectKey, object);
-                bigObjectsInCache.add(getCacheKey(type, objectKey));
+
+                Object oldValue = bigObjectsCache.get(type).put(objectKey, object);
+
+                if (oldValue == null) {
+                    bigObjectsInCache.add(getCacheKey(type, objectKey)); // don't add if the object was already in the cache
+                }
+
                 while (bigObjectsInCache.size() >= bigObjectsCacheSize) {
                     ObjectType oldType = getType(bigObjectsInCache.get(0));
                     String oldKey = getObjectKey(bigObjectsInCache.get(0));
@@ -213,8 +218,13 @@ public class IdentificationFeaturesCache implements Serializable {
                 if (!smallObjectsCache.containsKey(type)) {
                     smallObjectsCache.put(type, new HashMap<String, Object>());
                 }
-                smallObjectsCache.get(type).put(objectKey, object);
-                smallObjectsInCache.add(getCacheKey(type, objectKey));
+
+                oldValue = smallObjectsCache.get(type).put(objectKey, object);
+
+                if (oldValue == null) {
+                    smallObjectsInCache.add(getCacheKey(type, objectKey));
+                }
+
                 while (smallObjectsInCache.size() >= smallObjectsCacheSize) {
                     ObjectType oldType = getType(smallObjectsInCache.get(0));
                     String oldKey = getObjectKey(smallObjectsInCache.get(0));

@@ -3186,17 +3186,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * @param proteinInferenceType the protein inference group type
      */
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
-
         if (proteinTable.getRowCount() > 0) {
-            proteinTable.setValueAt(peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
-            proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
-            String description = "";
-            try {
-                description = sequenceFactory.getHeader(mainMatch).getDescription();
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
-            proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
+            DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+            dm.fireTableDataChanged();
+            updateSelection();
         }
     }
 
