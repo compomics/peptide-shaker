@@ -53,6 +53,7 @@ import eu.isas.peptideshaker.ToolsWrapper.ToolType;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
@@ -5442,6 +5443,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         //identificationFeaturesGenerator.repopulateCache(50, progressDialog); // @TODO: a smarter/faster version of this could be implemented?
                         progressDialog.setIndeterminate(true);
                     }
+                    
+                    if (!progressDialog.isRunCanceled()) {
+                        progressDialog.setTitle("Loading Proteins. Please Wait...");
+                        identification.loadProteinMatches();
+                        progressDialog.setTitle("Loading Protein PSParameters. Please Wait...");
+                        identification.loadProteinMatchParameters(new PSParameter());
+                        progressDialog.setTitle("Loading Peptide PSParameters. Please Wait...");
+                        identification.loadPeptideMatchParameters(new PSParameter());
+                    }
+                    
 
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
