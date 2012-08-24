@@ -377,7 +377,7 @@
                       <Component id="expectedModsLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="expectedModsScrollPane" pref="119" max="32767" attributes="1"/>
+                          <Component id="expectedModsScrollPane" pref="124" max="32767" attributes="1"/>
                           <Group type="102" attributes="0">
                               <Component id="loadProfileBtn" linkSize="6" min="-2" max="-2" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -399,7 +399,7 @@
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="availableModsScrollPane" pref="119" max="32767" attributes="1"/>
+                          <Component id="availableModsScrollPane" pref="124" max="32767" attributes="1"/>
                           <Component id="loadAvailableModsButton" linkSize="6" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>

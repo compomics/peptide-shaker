@@ -95,9 +95,9 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the modifications found in the currently loaded dataset
+     * Returns the variable modifications found in the currently loaded dataset.
      *
-     * @return the modifications found in the currently loaded dataset
+     * @return the variable modifications found in the currently loaded dataset
      */
     public ArrayList<String> getFoundModifications() {
         if (peptideShakerGUI.getMetrics() == null) {

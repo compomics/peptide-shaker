@@ -167,6 +167,7 @@ public class PeptideShaker {
      * scoring
      * @param projectDetails The project details
      * @param processingPreferences the initial processing preferences
+     * @param ptmScoringPreferences  
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
@@ -225,6 +226,7 @@ public class PeptideShaker {
      * @param annotationPreferences
      * @param idFilter
      * @param processingPreferences
+     * @param ptmScoringPreferences 
      * @throws IllegalArgumentException
      * @throws IOException
      * @throws Exception
@@ -514,6 +516,7 @@ public class PeptideShaker {
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
+     * @throws InterruptedException  
      */
     public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         attachProteinProbabilities(waitingHandler);
@@ -1487,7 +1490,6 @@ public class PeptideShaker {
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
 
         for (String peptideKey : identification.getPeptideIdentification()) {
-
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
                 if (!foundModifications.contains(modification)) {
                     foundModifications.add(modification);

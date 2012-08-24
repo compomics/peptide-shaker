@@ -3922,7 +3922,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             if (tempFiles != null) {
                 for (File currentFile : tempFiles) {
                     Util.deleteDir(currentFile);
-                }               
+                }
             }
 
             if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
@@ -5441,20 +5441,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (!progressDialog.isRunCanceled()) {
-                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        //identificationFeaturesGenerator.repopulateCache(50, progressDialog); // @TODO: a smarter/faster version of this could be implemented?
                         progressDialog.setIndeterminate(true);
-                    }
-                    
-                    if (!progressDialog.isRunCanceled()) {
                         progressDialog.setTitle("Loading Proteins. Please Wait...");
                         identification.loadProteinMatches();
-                        progressDialog.setTitle("Loading Protein PSParameters. Please Wait...");
+                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identification.loadProteinMatchParameters(new PSParameter());
-                        progressDialog.setTitle("Loading Peptide PSParameters. Please Wait...");
+                        progressDialog.setTitle("Loading Peptide Details. Please Wait...");
                         identification.loadPeptideMatchParameters(new PSParameter());
                     }
-                    
+
 
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -5982,10 +5977,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // as the data will then be saved in the id features cache
         resetSelectedItems();
         overviewPanel.updateSelection();
-        
+
         // set the experiment parameters
-        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, 
-                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, 
+        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
+                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences));
 
         objectsCache.saveCache(progressDialog, emptyCache);

@@ -597,7 +597,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 .addComponent(expectedModsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                     .addGroup(modProfilePanelLayout.createSequentialGroup()
                         .addComponent(loadProfileBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -614,7 +614,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     .addComponent(availableModsLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                    .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                     .addComponent(loadAvailableModsButton))
                 .addContainerGap())
         );
@@ -1301,7 +1301,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * @param evt
      */
     private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
-        if (evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1) {
+        if ((evt.getClickCount() == 1 && evt.getButton() == MouseEvent.BUTTON3 && expectedModificationsTable.rowAtPoint(evt.getPoint()) != -1)) {
 
             boolean rowAlreadySelected = false;
 
@@ -1318,6 +1318,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             }
 
             expectedPtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            
+        } else if (evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
+            editExpectedPtmJMenuItemActionPerformed(null);
         }
     }//GEN-LAST:event_expectedModificationsTableMouseClicked
 
@@ -1364,6 +1367,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             }
 
             availablePtmPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            
+        } else if (evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1) {
+            editAvailablePtmJMenuItemActionPerformed(null);
         }
     }//GEN-LAST:event_availableModificationsTableMouseClicked
 
@@ -1374,11 +1380,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void editAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAvailablePtmJMenuItemActionPerformed
         int row = availableModificationsTable.getSelectedRow();
-        int ptmIndex = availableModificationsTable.convertRowIndexToModel(row);
-        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
-                && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getFamilyName(modificationList.get(ptmIndex)));
-
-        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM((String) availableModificationsTable.getValueAt(row, 1)), userMod);
+        
+        if (row != -1) {
+            String modName = (String) availableModificationsTable.getValueAt(row, availableModificationsTable.getColumn("Name").getModelIndex());
+            boolean userMod = (Boolean) availableModificationsTable.getValueAt(row, availableModificationsTable.getColumn("U.M.").getModelIndex());
+            new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modName), userMod);
+        }  
     }//GEN-LAST:event_editAvailablePtmJMenuItemActionPerformed
 
     /**
@@ -1797,10 +1804,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         ptmFactory.isUserDefined(allModificationsAsArray[i]),
                         psiModMapping
                     });
-        }
-
-        if (availableModificationsTable.getRowCount() > 0) {
-            availableModificationsTable.setRowSelectionInterval(0, 0);
         }
 
         addModifications.setEnabled(availableModificationsTable.getRowCount() > 0);

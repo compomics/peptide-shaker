@@ -1091,6 +1091,24 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         int returnVal = fileChooser.showSaveDialog(this);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            
+            File tempDir = fileChooser.getSelectedFile();
+
+            if (!tempDir.exists()) {
+                int value = JOptionPane.showConfirmDialog(this, "The folder \'" + tempDir.getAbsolutePath() + "\' does not exist.\n"
+                        + "Do you want to create it?", "Create Folder?", JOptionPane.YES_NO_OPTION);
+                if (value == JOptionPane.NO_OPTION) {
+                    return;
+                } else { // yes option selected
+                    boolean success = tempDir.mkdir();
+
+                    if (!success) {
+                        JOptionPane.showMessageDialog(this, "Failed to create the folder. Please create it manually and then select it.",
+                                "File Error", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                }
+            }
 
             peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 

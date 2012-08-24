@@ -304,18 +304,18 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the list of modifications found in the dataset.
+     * Returns the list of variable modifications found in the dataset.
      *
-     * @return the list of modifications found in the dataset
+     * @return the list of variable modifications found in the dataset
      */
     public ArrayList<String> getFoundModifications() {
         return foundModifications;
     }
 
     /**
-     * Sets the list of modifications found in the dataset.
+     * Sets the list of variable modifications found in the dataset.
      *
-     * @param foundModifications the list of modifications found in the dataset
+     * @param foundModifications the list of variable modifications found in the dataset
      */
     public void setFoundModifications(ArrayList<String> foundModifications) {
         this.foundModifications = foundModifications;
