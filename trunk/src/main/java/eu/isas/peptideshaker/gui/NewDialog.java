@@ -234,7 +234,6 @@ public class NewDialog extends javax.swing.JDialog {
 
         replicateNumberIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         replicateNumberIdtxt.setText("0");
-        replicateNumberIdtxt.setToolTipText("Replicate Number");
         replicateNumberIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 replicateNumberIdtxtKeyReleased(evt);
@@ -250,7 +249,6 @@ public class NewDialog extends javax.swing.JDialog {
 
         replicateLabel.setForeground(new java.awt.Color(255, 0, 0));
         replicateLabel.setText("Replicate*");
-        replicateLabel.setToolTipText("Replicate Number");
 
         sampleNameLabel.setForeground(new java.awt.Color(255, 0, 0));
         sampleNameLabel.setText("Sample Name*");
@@ -1103,43 +1101,67 @@ public class NewDialog extends javax.swing.JDialog {
         // highlight the fields that have not been filled
         if (projectNameIdTxt.getText().length() > 0) {
             projectReferenceLabel.setForeground(Color.BLACK);
+            projectReferenceLabel.setToolTipText(null);
+            projectNameIdTxt.setToolTipText(null);
         } else {
             projectReferenceLabel.setForeground(Color.RED);
+            projectReferenceLabel.setToolTipText("Please provide a project reference.");
+            projectNameIdTxt.setToolTipText("Please provide a project reference.");
             allValid = false;
         }
 
         if (sampleNameIdtxt.getText().length() > 0) {
             sampleNameLabel.setForeground(Color.BLACK);
+            sampleNameLabel.setToolTipText(null);
+            sampleNameIdtxt.setToolTipText(null);
         } else {
             sampleNameLabel.setForeground(Color.RED);
+            sampleNameLabel.setToolTipText("Please provide a project sample name.");
+            sampleNameIdtxt.setToolTipText("Please provide a project sample name.");
             allValid = false;
         }
 
         if (replicateNumberIdtxt.getText().length() > 0) {
             replicateLabel.setForeground(Color.BLACK);
+            replicateLabel.setToolTipText(null);
+            replicateNumberIdtxt.setToolTipText(null);
         } else {
             replicateLabel.setForeground(Color.RED);
+            replicateLabel.setToolTipText("Please provide a replicate number.");
+            replicateNumberIdtxt.setToolTipText("Please provide a replicate number.");
             allValid = false;
         }
 
         if (idFiles.size() > 0) {
             idFilesLabel.setForeground(Color.BLACK);
+            idFilesLabel.setToolTipText(null);
+            idFilesTxt.setToolTipText(null);
         } else {
             idFilesLabel.setForeground(Color.RED);
+            idFilesLabel.setToolTipText("Please select at least one identification file.");
+            idFilesTxt.setToolTipText("Please select at least one identification file.");
             allValid = false;
         }
 
         if (spectrumFiles.size() > 0) {
             spectrumFilesLabel.setForeground(Color.BLACK);
+            idFilesLabel.setToolTipText(null);
+            spectrumFilesTxt.setToolTipText(null);
         } else {
             spectrumFilesLabel.setForeground(Color.RED);
+            idFilesLabel.setToolTipText("Please select at least one identification file.");
+            spectrumFilesTxt.setToolTipText("Please select the spectrum file(s) for the identfication files.");
             allValid = false;
         }
 
         if (fastaFileTxt.getText().length() > 0) {
             databaseLabel.setForeground(Color.BLACK);
+            databaseLabel.setToolTipText(null);
+            fastaFileTxt.setToolTipText(null);
         } else {
             databaseLabel.setForeground(Color.RED);
+            databaseLabel.setToolTipText("Please select the database file used.");
+            fastaFileTxt.setToolTipText("Please select the database file used.");
             allValid = false;
         }
 
