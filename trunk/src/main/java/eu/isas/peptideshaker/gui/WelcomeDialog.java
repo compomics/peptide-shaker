@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.software.ToolFactory;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import eu.isas.peptideshaker.ToolsWrapper.ToolType;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import java.io.File;
 import java.util.ArrayList;
@@ -445,7 +445,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
-        peptideShakerGUI.startTool(ToolType.SEARCHGUI);
+        try {
+        ToolFactory.startSearchGUI(peptideShakerGUI);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
     }//GEN-LAST:event_searchJButtonActionPerformed
 
     /**
@@ -454,7 +458,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
-        peptideShakerGUI.startTool(ToolType.REPORTER);
+        try {
+        ToolFactory.startReporter(peptideShakerGUI);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
     }//GEN-LAST:event_quantifyJButtonActionPerformed
 
     /**
@@ -492,7 +500,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        peptideShakerGUI.startTool(ToolType.RELIMS);
+        try {
+        ToolFactory.startRelims(peptideShakerGUI);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**

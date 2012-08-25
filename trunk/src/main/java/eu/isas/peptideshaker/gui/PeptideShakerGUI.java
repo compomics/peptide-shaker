@@ -1,5 +1,9 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.software.ToolFactory;
+import com.compomics.software.dialogs.RelimsSetupDialog;
+import com.compomics.software.dialogs.SearchGuiSetupDialog;
+import com.compomics.software.dialogs.ReporterSetupDialog;
 import com.compomics.util.gui.dialogs.SampleSelection;
 import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
@@ -48,8 +52,6 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
-import eu.isas.peptideshaker.ToolsWrapper;
-import eu.isas.peptideshaker.ToolsWrapper.ToolType;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
@@ -79,6 +81,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.*;
@@ -416,7 +420,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public static void main(String[] args) {
 
         // set the look and feel
-        boolean numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
+        boolean numbusLookAndFeelSet = false;
+        try {
+            numbusLookAndFeelSet = UtilitiesGUIDefaults.setLookAndFeel();
+        } catch (Exception e) {
+        }
 
         if (!numbusLookAndFeelSet) {
             JOptionPane.showMessageDialog(null,
@@ -2686,7 +2694,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void searchGuiPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGuiPreferencesJMenuItemActionPerformed
-        new SearchGuiSetupDialog(this, true);
+        try {
+            new SearchGuiSetupDialog(this, true);
+            loadUserPreferences();
+        } catch (Exception ex) {
+            catchException(ex);
+        }
     }//GEN-LAST:event_searchGuiPreferencesJMenuItemActionPerformed
 
     /**
@@ -2695,7 +2708,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void startSearchGuiMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSearchGuiMenuItemActionPerformed
-        startTool(ToolType.SEARCHGUI);
+        try {
+            ToolFactory.startSearchGUI(this);
+        } catch (Exception e) {
+            catchException(e);
+        }
     }//GEN-LAST:event_startSearchGuiMenuItemActionPerformed
 
     /**
@@ -2740,7 +2757,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void relimsPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relimsPreferencesJMenuItemActionPerformed
-        new RelimsSetupDialog(this, true);
+        try {
+            new RelimsSetupDialog(this, true);
+            loadUserPreferences();
+        } catch (Exception ex) {
+            catchException(ex);
+        }
     }//GEN-LAST:event_relimsPreferencesJMenuItemActionPerformed
 
     /**
@@ -2749,7 +2771,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
-        startTool(ToolType.RELIMS);
+        try {
+            ToolFactory.startRelims(this);
+        } catch (Exception e) {
+            catchException(e);
+        }
     }//GEN-LAST:event_reshakeMenuItemActionPerformed
 
     /**
@@ -2758,7 +2784,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void quantifyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyMenuItemActionPerformed
-        startTool(ToolType.REPORTER);
+        try {
+            ToolFactory.startReporter(this);
+        } catch (Exception e) {
+            catchException(e);
+        }
     }//GEN-LAST:event_quantifyMenuItemActionPerformed
 
     /**
@@ -2767,7 +2797,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void reporterPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reporterPreferencesJMenuItemActionPerformed
-        new ReporterSetupDialog(this, true);
+        try {
+            new ReporterSetupDialog(this, true);
+            loadUserPreferences();
+        } catch (Exception ex) {
+            catchException(ex);
+        }
     }//GEN-LAST:event_reporterPreferencesJMenuItemActionPerformed
 
     /**
@@ -6402,66 +6437,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 System.out.println("An error occurred when trying to create a desktop shortcut...");
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * Open SearchGUI, Reporter or Relims.
-     *
-     * @param aTooltype the tool type to start
-     */
-    public void startTool(ToolType aTooltype) {
-
-        final ToolType tooltype = aTooltype;
-        String path;
-
-        if (tooltype == ToolType.SEARCHGUI) {
-            path = utilitiesUserPreferences.getSearchGuiPath();
-        } else if (tooltype == ToolType.RELIMS) {
-            path = utilitiesUserPreferences.getRelimsPath();
-        } else { // tooltype == ToolType.REPORTER
-            path = utilitiesUserPreferences.getReporterPath();
-        }
-
-
-        final PeptideShakerGUI finalRef = this;
-
-        if (path == null || path.equalsIgnoreCase(".")) {
-
-            if (tooltype == ToolType.SEARCHGUI) {
-                new SearchGuiSetupDialog(this, true);
-                path = utilitiesUserPreferences.getSearchGuiPath();
-            } else if (tooltype == ToolType.RELIMS) {
-                new RelimsSetupDialog(this, true);
-                path = utilitiesUserPreferences.getRelimsPath();
-            } else { // tooltype == ToolType.REPORTER
-                new ReporterSetupDialog(this, true);
-                path = utilitiesUserPreferences.getReporterPath();
-            }
-
-            if (path != null && !path.equalsIgnoreCase(".")) {
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        try {
-                            new ToolsWrapper(finalRef, tooltype);
-                        } catch (IndexOutOfBoundsException e) {
-                            // ignore
-                        }
-                    }
-                }, "Start Tool").start();
-            }
-        } else {
-            new Thread(new Runnable() {
-
-                public void run() {
-                    try {
-                        new ToolsWrapper(finalRef, tooltype);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "Start Tool").start();
         }
     }
 
