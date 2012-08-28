@@ -58,11 +58,11 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="searchJButton" min="-2" pref="250" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="quantifyJButton" min="-2" pref="250" max="-2" attributes="1"/>
+                                          <Component id="reshakeJButton" max="32767" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="newJButton" min="-2" pref="250" max="-2" attributes="0"/>
@@ -70,7 +70,7 @@
                                           <Component id="openJButton" min="-2" pref="250" max="-2" attributes="1"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="reshakeJButton" min="-2" pref="250" max="-2" attributes="0"/>
+                                          <Component id="quantifyJButton" max="32767" attributes="1"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="gettingStartedJButton1" min="-2" pref="250" max="-2" attributes="1"/>
                                       </Group>
@@ -103,12 +103,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="searchJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
-                      <Component id="quantifyJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="reshakeJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="reshakeJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                       <Component id="gettingStartedJButton1" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="quantifyJButton" alignment="3" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="recentProjectsLabel" min="-2" max="-2" attributes="0"/>
