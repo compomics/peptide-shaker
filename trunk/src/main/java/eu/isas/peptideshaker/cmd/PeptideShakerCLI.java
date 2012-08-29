@@ -218,6 +218,8 @@ public class PeptideShakerCLI implements Callable {
         aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.description);
         aOptions.addOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id, true, PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.description);
         aOptions.addOption(PeptideShakerCLIParams.ASCORE.id, false, PeptideShakerCLIParams.ASCORE.description);
+        aOptions.addOption(PeptideShakerCLIParams.EXPERIMENT.id, true, PeptideShakerCLIParams.EXPERIMENT.description);
+        aOptions.addOption(PeptideShakerCLIParams.SAMPLE.id, true, PeptideShakerCLIParams.SAMPLE.description);
     }
 
     /**
@@ -263,6 +265,7 @@ public class PeptideShakerCLI implements Callable {
      */
     private void loadEnzymes() {
         try {
+
             File lEnzymeFile = new File(this.getClass().getResource(ENZYME_FILE).toURI());
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
