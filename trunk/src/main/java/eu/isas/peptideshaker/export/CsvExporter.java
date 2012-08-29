@@ -161,7 +161,7 @@ public class CsvExporter {
                     progressDialog.setValue(++progress);
                 }
 
-                if (progressDialog.isRunCanceled()) {
+                if (progressDialog!= null  && progressDialog.isRunCanceled()) {
                     break;
                 }
             }
@@ -190,7 +190,7 @@ public class CsvExporter {
                     progressDialog.setValue(++progress);
                 }
 
-                if (progressDialog.isRunCanceled()) {
+                if (progressDialog != null && progressDialog.isRunCanceled()) {
                     break;
                 }
             }
@@ -222,7 +222,7 @@ public class CsvExporter {
                     progressDialog.setValue(++progress);
                 }
 
-                if (progressDialog.isRunCanceled()) {
+                if (progressDialog != null && progressDialog.isRunCanceled()) {
                     break;
                 }
             }
@@ -244,7 +244,9 @@ public class CsvExporter {
 
 //            for (String spectrumKey : identification.getSpectrumIdentification()) {
 //                assumptionWriter.write(getAssumptionLines(spectrumKey));
-//                progressDialog.setValue(++progress);
+//                if(progressDialog != null){
+//                  progressDialog.setValue(++progress);
+//                    }
 //            }
 //            
 //            assumptionWriter.close();
