@@ -1256,7 +1256,7 @@ public class IdentificationFeaturesGenerator {
                                 }
 
                                 if (currentProtein != null) {
-                                    double mw = currentProtein.computeMolecularWeight() / 1000;
+                                    double mw = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                                     if (mw > maxMW) {
                                         maxMW = mw;
                                     }
