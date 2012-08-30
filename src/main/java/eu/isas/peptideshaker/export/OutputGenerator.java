@@ -374,7 +374,7 @@ public class OutputGenerator {
                                                 }
                                             }
                                             if (mw) {
-                                                Double proteinMW = sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight() / 1000;
+                                                Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                                                 writer.write(proteinMW + SEPARATOR);
                                             }
                                             if (score) {

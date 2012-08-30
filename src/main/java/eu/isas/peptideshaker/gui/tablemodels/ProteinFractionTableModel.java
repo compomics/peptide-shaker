@@ -176,9 +176,10 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 
             } else if (column == fileNames.size() + 3) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
-                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                String mainMatch = proteinMatch.getMainMatch();
+                Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                 if (currentProtein != null) {
-                    return currentProtein.computeMolecularWeight() / 1000; // @TODO: this should not be recalculated every time!!
+                    return sequenceFactory.computeMolecularWeight(mainMatch);
                 } else {
                     return null;
                 }

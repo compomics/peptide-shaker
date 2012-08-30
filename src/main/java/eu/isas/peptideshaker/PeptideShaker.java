@@ -346,8 +346,7 @@ public class PeptideShaker {
                 || suspiciousPeptides.size() > 0
                 || suspiciousProteins) {
 
-            // @TODO: display this in a separate dialog??
-            if (detailedReport) {
+            if (detailedReport) { // @TODO: display this in a separate dialog??
 
                 report += "The following identification classes retieved non robust statistical estimations, "
                         + "we advice to control the quality of the corresponding matches: \n";
@@ -1663,7 +1662,7 @@ public class PeptideShaker {
         for (String proteinKey : identification.getProteinIdentification()) {
 
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            Double proteinMW = sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight() / 1000;
+            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
@@ -1792,7 +1791,7 @@ public class PeptideShaker {
                 }
 
                 if (currentProtein != null) {
-                    double mw = currentProtein.computeMolecularWeight() / 1000;
+                    double mw = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                     if (mw > maxMW) {
                         maxMW = mw;
                     }

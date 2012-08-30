@@ -181,9 +181,10 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 9:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey);
-                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                    String mainMatch = proteinMatch.getMainMatch();
+                    Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                     if (currentProtein != null) {
-                        return currentProtein.computeMolecularWeight() / 1000;
+                        return sequenceFactory.computeMolecularWeight(mainMatch);
                     } else {
                         return null;
                     }

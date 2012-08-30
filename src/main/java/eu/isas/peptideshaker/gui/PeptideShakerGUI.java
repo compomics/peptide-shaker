@@ -5476,11 +5476,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setIndeterminate(true);
                         progressDialog.setTitle("Loading Proteins. Please Wait...");
-                        identification.loadProteinMatches();
+                        identification.loadProteinMatches(progressDialog);
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(new PSParameter());
+                        identification.loadProteinMatchParameters(new PSParameter(), progressDialog);
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
-                        identification.loadPeptideMatchParameters(new PSParameter());
+                        identification.loadPeptideMatchParameters(new PSParameter(), progressDialog);
                     }
 
 

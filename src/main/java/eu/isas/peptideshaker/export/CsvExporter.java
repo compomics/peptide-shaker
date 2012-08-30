@@ -317,7 +317,7 @@ public class CsvExporter {
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
 
         try {
-            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight() + SEPARATOR;
+            line += sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch()) + SEPARATOR;
             line += identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + SEPARATOR;
             line += identificationFeaturesGenerator.getSequenceCoverage(proteinKey) * 100 + SEPARATOR;
             line += identificationFeaturesGenerator.getObservableCoverage(proteinKey) + SEPARATOR;

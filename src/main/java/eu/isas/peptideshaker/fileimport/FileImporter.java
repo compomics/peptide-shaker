@@ -303,6 +303,9 @@ public class FileImporter {
      * @return a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingHandler waitingHandler) {
+        
+        // @TODO: the use of contains(...) below is very slow!! using something like suffix trees should be a lot faster
+        
         ArrayList<String> result = foundSharedPeptides.get(peptideSequence);
 
         if (result == null) {
@@ -791,9 +794,9 @@ public class FileImporter {
                         }
 
                         Peptide peptide = assumption.getPeptide();
-                        String sequence = peptide.getSequence();
+                        String peptideSequence = peptide.getSequence();
                         if (searchEngine == Advocate.XTANDEM) {
-                            ArrayList<String> proteins = getProteins(sequence, waitingHandler);
+                            ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
                             if (!proteins.isEmpty()) {
                                 peptide.setParentProteins(proteins);
                             }
