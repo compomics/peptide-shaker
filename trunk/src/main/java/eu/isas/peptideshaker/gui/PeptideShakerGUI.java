@@ -2881,6 +2881,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             helpJMenu.setEnabled(true);
             scoresJCheckBoxMenuItem.setEnabled(true);
             sparklinesJCheckBoxMenuItem.setEnabled(true);
+            
+            // disable the fractions tab if only one mgf file
+            allTabsJTabbedPane.setEnabledAt(2, searchParameters.getSpectrumFiles().size() > 1);
 
         } catch (Exception e) {
 
@@ -5481,6 +5484,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         identification.loadProteinMatchParameters(new PSParameter(), progressDialog);
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
                         identification.loadPeptideMatchParameters(new PSParameter(), progressDialog);
+
+                        // @TODO: load more? peptide matches? spectrum matches? spectrum parameters?
                     }
 
 

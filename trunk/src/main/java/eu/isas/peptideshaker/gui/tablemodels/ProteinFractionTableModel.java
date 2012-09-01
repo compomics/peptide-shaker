@@ -160,20 +160,11 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 String proteinKey = proteinKeys.get(row);
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 
-                if (peptideShakerGUI.getProteinFractionsPanel().isProteinConfidenceSelected()) {
-                    if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
-                        return psParameter.getFractionConfidence(fraction);
-                    } else {
-                        return 0.0;
-                    }
-                } else if (peptideShakerGUI.getProteinFractionsPanel().isProteinPeptideCountSelected()) {
-                    return psParameter.getFractionValidatedPeptides(fraction);
-                } else if (peptideShakerGUI.getProteinFractionsPanel().isProteinSpectumCountSelected()) {
-                    return psParameter.getFractionValidatedSpectra(fraction);
-                } else { // intensity selected
-                    return psParameter.getPrecursorIntensityAveragePerFraction(fraction); // note this returns the average intensity, could be changed to total or median?
-                }
-                
+                if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
+                    return psParameter.getFractionConfidence(fraction);
+                } else {
+                    return 0.0;
+                }  
             } else if (column == fileNames.size() + 3) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 String mainMatch = proteinMatch.getMainMatch();

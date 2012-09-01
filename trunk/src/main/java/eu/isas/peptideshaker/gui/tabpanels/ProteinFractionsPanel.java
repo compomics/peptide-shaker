@@ -6,9 +6,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.GuiUtilities;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
@@ -17,8 +15,6 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanelParent;
 import eu.isas.peptideshaker.gui.protein_sequence.ResidueAnnotation;
-import eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel;
-import eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.*;
@@ -27,12 +23,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -41,15 +36,15 @@ import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.extra.ChartPanelTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
-import no.uib.jsparklines.renderers.util.GradientColorCoding;
+import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.*;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 
@@ -95,20 +90,20 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
      * True if the fraction order has been okey'ed by the user.
      */
     private boolean fractionOrderSet = false;
+    /**
+     * The default line width for the line plots.
+     */
+    private final int LINE_WIDTH = 4;
 
     /**
      * Indexes for the three main data tables.
      */
     private enum TableIndex {
 
-        PROTEIN_TABLE, PEPTIDE_TABLE
+        PROTEIN_TABLE
     };
 
     /**
@@ -121,6 +116,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         this.peptideShakerGUI = peptideShakerGUI;
         setupGui();
         setTableProperties();
+        formComponentResized(null);
     }
 
     /**
@@ -133,14 +129,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // set main table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
-        peptideTable.getTableHeader().setReorderingAllowed(false);
 
         proteinTable.setAutoCreateRowSorter(true);
-        peptideTable.setAutoCreateRowSorter(true);
 
         // make sure that the scroll panes are see-through
         proteinTableScrollPane.getViewport().setOpaque(false);
-        peptideTableScrollPane.getViewport().setOpaque(false);
         coverageTableScrollPane.getViewport().setOpaque(false);
 
         // set up the table header tooltips
@@ -150,19 +143,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         JPanel proteinCorner = new JPanel();
         proteinCorner.setBackground(proteinTable.getTableHeader().getBackground());
         proteinTableScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, proteinCorner);
-        JPanel peptideCorner = new JPanel();
-        peptideCorner.setBackground(peptideTable.getTableHeader().getBackground());
-        peptideTableScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, peptideCorner);
-
-        addHeatMapGradientColors();
-
-        chartTypeComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        dataTypeComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-
-        gradientColorPanel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-        gradientColorMinValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-        gradientColorMaxValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-        gradientSeparator.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
     }
 
     /**
@@ -211,7 +191,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     private void setTableProperties() {
         setProteinTableProperties();
-        setPeptideTableProperties();
         setCoverageTableProperties();
     }
 
@@ -224,28 +203,76 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
 
-        proteinTable.getColumn("Confidence").setMaxWidth(90);
-        proteinTable.getColumn("Confidence").setMinWidth(90);
+        try {
+            proteinTable.getColumn("Confidence").setMaxWidth(90);
+            proteinTable.getColumn("Confidence").setMinWidth(90);
+        } catch (IllegalArgumentException w) {
+            proteinTable.getColumn("Score").setMaxWidth(90);
+            proteinTable.getColumn("Score").setMinWidth(90);
+        }
 
         // the validated column
+        proteinTable.getColumn("").setMaxWidth(30);
+        proteinTable.getColumn("").setMinWidth(30);
+
+        // the selected columns
         proteinTable.getColumn("  ").setMaxWidth(30);
         proteinTable.getColumn("  ").setMinWidth(30);
 
-        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        // the protein inference column
+        proteinTable.getColumn("PI").setMaxWidth(37);
+        proteinTable.getColumn("PI").setMinWidth(37);
 
+        // set up the protein inference color map
+        HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
+        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
+        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW); // ISOFORMS
+        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE); // ISOFORMS_UNRELATED
+        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
+
+        // set up the protein inference tooltip map
+        HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
+        proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
+        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Unrelated Isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
+
+        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
+        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("MW").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
-        proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        try {
+            proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
+                    true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        } catch (IllegalArgumentException e) {
+            proteinTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
+                    true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        }
 
-        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0,
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), true));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
+        proteinTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
+                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
+                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
+                "Starred", null, null));
 
-        updateProteinTableSparklines();
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
@@ -257,76 +284,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             proteinTable.getColumn("Accession").setMinWidth(15);
             proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
-
-        // make sure that the user is made aware that the tool is doing something during the sorting of the protein table
-        proteinTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
-            @Override
-            public void sorterChanged(RowSorterEvent e) {
-                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                }
-            }
-        });
-    }
-
-    /**
-     * Set up the properties of the peptide table.
-     */
-    private void setPeptideTableProperties() {
-
-        // the index column
-        peptideTable.getColumn(" ").setMaxWidth(50);
-        peptideTable.getColumn(" ").setMinWidth(50);
-
-        peptideTable.getColumn("Confidence").setMaxWidth(90);
-        peptideTable.getColumn("Confidence").setMinWidth(90);
-
-        // the validated column
-        peptideTable.getColumn("").setMaxWidth(30);
-        peptideTable.getColumn("").setMinWidth(30);
-
-        peptideTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
-                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-
-        peptideTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
-                "Validated", "Not Validated"));
-
-        updatePeptideTableSparklines();
-
-        // make sure that the user is made aware that the tool is doing something during the sorting of the peptide table
-        peptideTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
-            @Override
-            public void sorterChanged(RowSorterEvent e) {
-                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                }
-            }
-        });
     }
 
     /**
@@ -378,25 +335,32 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
 
                 // update the table model
-                if (proteinTable.getModel() instanceof ProteinFractionTableModel
-                        && ((ProteinFractionTableModel) proteinTable.getModel()).isModelInitiated()) {
-                    ((ProteinFractionTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);
+                if (proteinTable.getModel() instanceof ProteinTableModel) {
+                    ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);
                 } else {
-                    ProteinFractionTableModel proteinTableModel = new ProteinFractionTableModel(peptideShakerGUI);
+                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
                     proteinTable.setModel(proteinTableModel);
                 }
 
                 DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
                 dm.fireTableStructureChanged();
-                updateSelection();
-                proteinTable.requestFocus();
 
                 setProteinTableProperties();
                 showSparkLines(peptideShakerGUI.showSparklines());
+
+                updateSelection();
+                proteinTable.requestFocus();
+
                 ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
                 setUpTableHeaderToolTips();
 
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, true);
+
+                // update the border titles
+                ((TitledBorder) proteinPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins ("
+                        + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")"
+                        + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                proteinPanel.repaint();
 
                 // enable the contextual export options
                 exportProteinsJButton.setEnabled(true);
@@ -405,59 +369,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 progressDialog.setRunFinished();
             }
         });
-    }
-
-    /**
-     * Update the selection.
-     */
-    public void updatePeptideTable() {
-        
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-        try {
-            int row = proteinTable.getSelectedRow();
-            int proteinIndex = proteinTable.convertRowIndexToModel(row);
-            String proteinKey = proteinKeys.get(proteinIndex);
-            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-            peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
-
-            // update the table model
-            if (peptideTable.getModel() instanceof PeptideFractionTableModel
-                    && ((PeptideFractionTableModel) peptideTable.getModel()).isModelInitiated()) {
-                ((PeptideFractionTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, peptideKeys);
-            } else {
-                PeptideFractionTableModel peptideTableModel = new PeptideFractionTableModel(peptideShakerGUI, peptideKeys);
-                peptideTable.setModel(peptideTableModel);
-            }
-
-            ((DefaultTableModel) peptideTable.getModel()).fireTableStructureChanged();
-            setPeptideTableProperties();
-            setCoverageTableProperties();
-            showSparkLines(peptideShakerGUI.showSparklines());
-
-            // update the border titles
-            ((TitledBorder) proteinPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins ("
-                    + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")"
-                    + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-            proteinPanel.repaint();
-
-            int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-            ((TitledBorder) peptidePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptides (" + nValidatedPeptides + "/"
-                    + proteinMatch.getPeptideCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-            peptidePanel.repaint();
-
-            // select the first row in the table
-            if (peptideTable.getRowCount() > 0) {
-                peptideTable.setRowSelectionInterval(0, 0);
-                updatePlots();
-            }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            peptideKeys = new ArrayList<String>();
-            ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
-        }
-        
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -478,229 +389,174 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             PSParameter psParameter = new PSParameter();
             DefaultCategoryDataset peptidePlotDataset = new DefaultCategoryDataset();
-
-            int row = proteinTable.getSelectedRow();
-            int proteinIndex = proteinTable.convertRowIndexToModel(row);
-            String proteinKey = proteinKeys.get(proteinIndex);
-            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-            String currentProteinSequence = "";
-
-            try {
-                currentProteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            int[][] coverage = new int[fileNames.size()][currentProteinSequence.length() + 1];
-
-
-            // get the chart data
-            for (int i = 0; i < fileNames.size(); i++) {
-
-                String fraction = fileNames.get(i);
-                int validatedPeptideCounter = 0;
-                int notValidatedPeptideCounter = 0;
-
-                for (int j = 0; j < peptideKeys.size(); j++) {
-
-                    String peptideKey = peptideKeys.get(j);
-                    
-                    try {
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
-
-                        if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
-                            if (psParameter.isValidated()) {
-                                validatedPeptideCounter++;
-
-                                String peptideSequence = Peptide.getSequence(peptideKey);
-                                String tempSequence = currentProteinSequence;
-
-                                boolean includePeptide = false;
-
-                                if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
-                                    includePeptide = true;
-                                } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                                    if (peptideSequence.endsWith("R") || peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
-                                        includePeptide = true;
-                                    }
-                                } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                                    if (!peptideSequence.endsWith("R") && !peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
-                                        includePeptide = true;
-                                    }
-                                }
-
-                                if (includePeptide) {
-
-                                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                                        int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                                        int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                                        for (int k = peptideTempStart; k < peptideTempEnd; k++) {
-                                            coverage[i][k]++;
-                                        }
-                                        tempSequence = currentProteinSequence.substring(0, peptideTempStart);
-                                    }
-                                }
-                            } else {
-                                notValidatedPeptideCounter++;
-                            }
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }
-
-            psParameter = new PSParameter();
-            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-
-            for (int i = 0; i < fileNames.size(); i++) {
-                String fraction = fileNames.get(i);
-                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-                peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), "Validated Peptides", "" + (i + 1));
-            }
-
-
-            // update the coverage table
-            DefaultTableModel coverageTableModel = (DefaultTableModel) coverageTable.getModel();
-            coverageTableModel.getDataVector().removeAllElements();
-
-            for (int i = 0; i < fileNames.size(); i++) {
-
-                // create the coverage plot
-                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
-
-                for (int j = 0; j < currentProteinSequence.length(); j++) {
-
-                    boolean covered = coverage[i][j] > 0;
-
-                    int sequenceCounter = 1;
-
-                    if (covered) {
-                        while (j + 1 < coverage[0].length && coverage[i][j + 1] > 0) {
-                            sequenceCounter++;
-                            j++;
-                        }
-                    } else {
-                        while (j + 1 < coverage[0].length && coverage[i][j + 1] == 0) {
-                            sequenceCounter++;
-                            j++;
-                        }
-                    }
-
-
-                    ArrayList<Double> data = new ArrayList<Double>();
-                    data.add(new Double(sequenceCounter));
-
-                    JSparklinesDataSeries sparklineDataseries;
-
-                    if (covered) {
-                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
-                    } else {
-                        sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
-                    }
-
-
-                    sparkLineDataSeriesCoverage.add(sparklineDataseries);
-                }
-
-                ChartPanel coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage),
-                        new HashMap<Integer, ArrayList<ResidueAnnotation>>(), true, true);
-
-                ((DefaultTableModel) coverageTable.getModel()).addRow(new Object[]{(i + 1), fileNames.get(i), coverageChart});
-            }
-
-            // create the peptide chart
-            JFreeChart chart = ChartFactory.createBarChart(null, "Fraction", "#Peptides", peptidePlotDataset, PlotOrientation.VERTICAL, false, true, true);
-            ChartPanel chartPanel = new ChartPanel(chart);
-
-            // set up the renderer
-            StackedBarRenderer renderer = new StackedBarRenderer();
-            renderer.setShadowVisible(false);
-            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-            renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-            renderer.setSeriesPaint(1, Color.RED);
-            chart.getCategoryPlot().setRenderer(renderer);
-
-            // set background color
-            chart.getPlot().setBackgroundPaint(Color.WHITE);
-            chart.setBackgroundPaint(Color.WHITE);
-            chartPanel.setBackground(Color.WHITE);
-
-            // hide the outline
-            chart.getPlot().setOutlineVisible(false);
-
-            // clear the peptide plot
-            peptidePlotPanel.removeAll();
-
-            // add the new plot
-            peptidePlotPanel.add(chartPanel);
-
-
-
-            // spectrum and intensity plots
             DefaultCategoryDataset spectrumPlotDataset = new DefaultCategoryDataset();
             DefaultCategoryDataset intensityPlotDataset = new DefaultCategoryDataset();
 
-            // get the psms per fraction
-            for (int i = 0; i < fileNames.size(); i++) {
-                String fraction = fileNames.get(i);
-                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-                spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), "Validated Spectra", "" + (i + 1));
-                intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), "Average Intensity", "" + (i + 1));
+            int[] selectedRows = proteinTable.getSelectedRows();
+
+            // disable the coverage tab if more than one protein is selected
+            peptidesTabbedPane.setEnabledAt(1, selectedRows.length == 1);
+
+            if (selectedRows.length > 1) {
+                peptidesTabbedPane.setSelectedIndex(4);
             }
 
-            // create the spectrum chart
-            chart = ChartFactory.createBarChart(null, "Fraction", "#Spectra", spectrumPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-            chartPanel = new ChartPanel(chart);
+            for (int row = 0; row < selectedRows.length; row++) {
 
-            // set up the renderer
-            renderer = new StackedBarRenderer();
-            renderer.setShadowVisible(false);
-            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-            renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-            renderer.setSeriesPaint(1, Color.RED);
-            chart.getCategoryPlot().setRenderer(renderer);
+                int currentRow = selectedRows[row];
 
-            // set background color
-            chart.getPlot().setBackgroundPaint(Color.WHITE);
-            chart.setBackgroundPaint(Color.WHITE);
-            chartPanel.setBackground(Color.WHITE);
+                int proteinIndex = proteinTable.convertRowIndexToModel(currentRow);
+                String proteinKey = proteinKeys.get(proteinIndex);
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
 
-            // hide the outline
-            chart.getPlot().setOutlineVisible(false);
+                String currentProteinSequence = "";
 
-            // clear the peptide plot
-            spectraPlotPanel.removeAll();
+                try {
+                    currentProteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            // add the new plot
-            spectraPlotPanel.add(chartPanel);
+                int[][] coverage = new int[fileNames.size()][currentProteinSequence.length() + 1];
+
+                // get the chart data
+                for (int i = 0; i < fileNames.size(); i++) {
+
+                    String fraction = fileNames.get(i);
+                    int validatedPeptideCounter = 0;
+                    int notValidatedPeptideCounter = 0;
+
+                    for (int j = 0; j < peptideKeys.size(); j++) {
+
+                        String peptideKey = peptideKeys.get(j);
+
+                        try {
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+
+                            if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
+                                if (psParameter.isValidated()) {
+                                    validatedPeptideCounter++;
+
+                                    String peptideSequence = Peptide.getSequence(peptideKey);
+                                    String tempSequence = currentProteinSequence;
+
+                                    boolean includePeptide = false;
+
+                                    if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
+                                        includePeptide = true;
+                                    } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
+                                        if (peptideSequence.endsWith("R") || peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
+                                            includePeptide = true;
+                                        }
+                                    } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
+                                        if (!peptideSequence.endsWith("R") && !peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
+                                            includePeptide = true;
+                                        }
+                                    }
+
+                                    if (includePeptide && selectedRows.length == 1) {
+
+                                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                                            for (int k = peptideTempStart; k < peptideTempEnd; k++) {
+                                                coverage[i][k]++;
+                                            }
+                                            tempSequence = currentProteinSequence.substring(0, peptideTempStart);
+                                        }
+                                    }
+                                } else {
+                                    notValidatedPeptideCounter++;
+                                }
+                            }
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                    }
+                }
+
+                psParameter = new PSParameter();
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+
+                for (int i = 0; i < fileNames.size(); i++) {
+                    String fraction = fileNames.get(i);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+
+                    if (selectedRows.length == 1) {
+                        peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), "Validated Peptides", "" + (i + 1));
+                    } else {
+                        peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), proteinMatch.getMainMatch(), "" + (i + 1));
+                    }
+                }
 
 
-            // create the intensity chart
-            chart = ChartFactory.createBarChart(null, "Fraction", "Average Intensity", intensityPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-            chartPanel = new ChartPanel(chart);
+                // update the coverage table
+                if (selectedRows.length == 1) {
 
-            // set up the renderer
-            renderer = new StackedBarRenderer();
-            renderer.setShadowVisible(false);
-            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-            renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-            renderer.setSeriesPaint(1, Color.RED);
-            chart.getCategoryPlot().setRenderer(renderer);
+                    DefaultTableModel coverageTableModel = (DefaultTableModel) coverageTable.getModel();
+                    coverageTableModel.getDataVector().removeAllElements();
 
-            // set background color
-            chart.getPlot().setBackgroundPaint(Color.WHITE);
-            chart.setBackgroundPaint(Color.WHITE);
-            chartPanel.setBackground(Color.WHITE);
+                    for (int i = 0; i < fileNames.size(); i++) {
 
-            // hide the outline
-            chart.getPlot().setOutlineVisible(false);
+                        // create the coverage plot
+                        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
 
-            // clear the peptide plot
-            intensityPlotPanel.removeAll();
+                        for (int j = 0; j < currentProteinSequence.length(); j++) {
 
-            // add the new plot
-            intensityPlotPanel.add(chartPanel);
+                            boolean covered = coverage[i][j] > 0;
+
+                            int sequenceCounter = 1;
+
+                            if (covered) {
+                                while (j + 1 < coverage[0].length && coverage[i][j + 1] > 0) {
+                                    sequenceCounter++;
+                                    j++;
+                                }
+                            } else {
+                                while (j + 1 < coverage[0].length && coverage[i][j + 1] == 0) {
+                                    sequenceCounter++;
+                                    j++;
+                                }
+                            }
+
+
+                            ArrayList<Double> data = new ArrayList<Double>();
+                            data.add(new Double(sequenceCounter));
+
+                            JSparklinesDataSeries sparklineDataseries;
+
+                            if (covered) {
+                                sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
+                            } else {
+                                sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+                            }
+
+
+                            sparkLineDataSeriesCoverage.add(sparklineDataseries);
+                        }
+
+                        ChartPanel coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage),
+                                new HashMap<Integer, ArrayList<ResidueAnnotation>>(), true, true);
+
+                        ((DefaultTableModel) coverageTable.getModel()).addRow(new Object[]{(i + 1), fileNames.get(i), coverageChart});
+                    }
+                }
+
+                // get the psms per fraction
+                for (int i = 0; i < fileNames.size(); i++) {
+                    String fraction = fileNames.get(i);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
+
+                    if (selectedRows.length == 1) {
+                        spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), "Validated Spectra", "" + (i + 1));
+                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), "Average Intensity", "" + (i + 1));
+                    } else {
+                        spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getMainMatch(), "" + (i + 1));
+                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), proteinMatch.getMainMatch(), "" + (i + 1));
+                    }
+                }
+            }
 
 
             // molecular mass plot
@@ -729,6 +585,109 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     // do nothing, no data to show
                 }
             }
+
+            // create the peptide chart
+            JFreeChart chart = ChartFactory.createBarChart(null, "Fraction", "#Peptides", peptidePlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            ChartPanel chartPanel = new ChartPanel(chart);
+
+            AbstractCategoryItemRenderer renderer;
+
+            // set up the renderer
+            if (selectedRows.length == 1) {
+                renderer = new BarRenderer();
+                ((BarRenderer) renderer).setShadowVisible(false);
+                renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            } else {
+                renderer = new LineAndShapeRenderer(true, false);
+                for (int i = 0; i < selectedRows.length; i++) {
+                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                }
+            }
+
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            chart.getCategoryPlot().setRenderer(renderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            peptidePlotPanel.removeAll();
+
+            // add the new plot
+            peptidePlotPanel.add(chartPanel);
+
+
+            // create the spectrum chart
+            chart = ChartFactory.createBarChart(null, "Fraction", "#Spectra", spectrumPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            chartPanel = new ChartPanel(chart);
+
+            // set up the renderer
+            if (selectedRows.length == 1) {
+                renderer = new BarRenderer();
+                ((BarRenderer) renderer).setShadowVisible(false);
+                renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            } else {
+                renderer = new LineAndShapeRenderer(true, false);
+                for (int i = 0; i < selectedRows.length; i++) {
+                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                }
+            }
+
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            chart.getCategoryPlot().setRenderer(renderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            spectraPlotPanel.removeAll();
+
+            // add the new plot
+            spectraPlotPanel.add(chartPanel);
+
+
+            // create the intensity chart
+            chart = ChartFactory.createBarChart(null, "Fraction", "Average Intensity", intensityPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            chartPanel = new ChartPanel(chart);
+
+            // set up the renderer
+            if (selectedRows.length == 1) {
+                renderer = new BarRenderer();
+                ((BarRenderer) renderer).setShadowVisible(false);
+                renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            } else {
+                renderer = new LineAndShapeRenderer(true, false);
+                for (int i = 0; i < selectedRows.length; i++) {
+                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                }
+            }
+
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            chart.getCategoryPlot().setRenderer(renderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            intensityPlotPanel.removeAll();
+
+            // add the new plot
+            intensityPlotPanel.add(chartPanel);
 
 
             // create the mw chart
@@ -759,6 +718,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
+
+        peptidePanel.revalidate();
+        peptidePanel.repaint();
     }
 
     /**
@@ -819,28 +781,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         } else if (proteinTable.getSelectedRow() != proteinRow) {
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
-            updatePeptideTable();
+            proteinTableKeyReleased(null);
         }
-
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-
-                int peptideRow = 0;
-                String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
-                if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-                    peptideRow = getPeptideRow(peptideKey);
-                }
-
-                if (peptideTable.getSelectedRow() != peptideRow && peptideRow != -1) {
-                    peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
-                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
-                    //peptideTableMouseReleased(null);
-                }
-            }
-        });
     }
 
     /**
@@ -859,34 +801,15 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     }
 
     /**
-     * Returns the row of a desired peptide.
-     *
-     * @param peptideKey the key of the peptide
-     * @return the row of the desired peptide
-     */
-    private int getPeptideRow(String peptideKey) {
-        int modelIndex = peptideKeys.indexOf(peptideKey);
-        if (modelIndex >= 0) {
-            return peptideTable.convertRowIndexToView(modelIndex);
-        } else {
-            return -1;
-        }
-    }
-
-    /**
      * Clear all the data.
      */
     public void clearData() {
 
         proteinKeys.clear();
-        peptideKeys.clear();
 
-        DefaultTableModel peptideTableModel = (DefaultTableModel) peptideTable.getModel();
-        peptideTableModel.getDataVector().removeAllElements();
         ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
         proteinTableModel.reset();
 
-        peptideTableModel.fireTableDataChanged();
         proteinTableModel.fireTableDataChanged();
 
         ((TitledBorder) proteinPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
@@ -915,12 +838,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         peptidesLayeredPane = new javax.swing.JLayeredPane();
         peptidePanel = new javax.swing.JPanel();
         peptidesTabbedPane = new javax.swing.JTabbedPane();
-        intensityPlotOuterPanel = new javax.swing.JPanel();
-        intensityPlotPanel = new javax.swing.JPanel();
-        spectraPlotOuterPanel = new javax.swing.JPanel();
-        spectraPlotPanel = new javax.swing.JPanel();
-        peptidePlotOuterPanel = new javax.swing.JPanel();
-        peptidePlotPanel = new javax.swing.JPanel();
+        mwPanel = new javax.swing.JPanel();
+        mwPlotPanel = new javax.swing.JPanel();
         coverageTablePanel = new javax.swing.JPanel();
         coverageTableScrollPane = new javax.swing.JScrollPane();
         coverageTable =         new JTable() {
@@ -938,23 +857,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 };
             }
         };
-        mwPanel = new javax.swing.JPanel();
-        mwPlotPanel = new javax.swing.JPanel();
-        peptideTablePanel = new javax.swing.JPanel();
-        peptideTableScrollPane = new javax.swing.JScrollPane();
-        peptideTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) peptideTableToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
+        intensityPlotOuterPanel = new javax.swing.JPanel();
+        intensityPlotPanel = new javax.swing.JPanel();
+        spectraPlotOuterPanel = new javax.swing.JPanel();
+        spectraPlotPanel = new javax.swing.JPanel();
+        peptidePlotOuterPanel = new javax.swing.JPanel();
+        peptidePlotPanel = new javax.swing.JPanel();
         peptidesHelpJButton = new javax.swing.JButton();
         exportPeptidesJButton = new javax.swing.JButton();
         sequenceCoverageOptionsJButton = new javax.swing.JButton();
@@ -975,13 +883,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 };
             }
         };
-        jSeparator1 = new javax.swing.JSeparator();
-        gradientColorMinValueJLabel = new javax.swing.JLabel();
-        gradientColorPanel = new javax.swing.JPanel();
-        gradientColorMaxValueJLabel = new javax.swing.JLabel();
-        gradientSeparator = new javax.swing.JSeparator();
-        chartTypeComboBox = new javax.swing.JComboBox();
-        dataTypeComboBox = new javax.swing.JComboBox();
         proteinsHelpJButton = new javax.swing.JButton();
         exportProteinsJButton = new javax.swing.JButton();
         contextMenuProteinsBackgroundPanel = new javax.swing.JPanel();
@@ -1024,7 +925,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         disclamierPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Disclaimer"));
         disclamierPanel.setOpaque(false);
 
-        disclaimerLabel.setText("<html>\nThe values above are estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole analysis.<br>\n<i>These are <u><b>not</b></u> equal the confidence in the peptide/protein identifications when processing the fractions independently!</i><br><br>\nIndependant fractions (like different donors, measurements) or replicates should be processed separately.<br>\nTo ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the <i>Validation</i> tab.\n</html>");
+        disclaimerLabel.setText("<html>\nThe values above are based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole<br>\nanalysis. <i>These are <u><b>not</b></u> equal to the confidence in the peptide/protein identifications when processing the fractions independently!</i><br><br>\nIndependant fractions (like different donors, measurements) or replicates <u><b>should be processed separately</b></u>.<br>\nTo ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the <i>Validation</i> tab.\n</html>");
 
         javax.swing.GroupLayout disclamierPanelLayout = new javax.swing.GroupLayout(disclamierPanel);
         disclamierPanel.setLayout(disclamierPanelLayout);
@@ -1033,7 +934,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             .addGroup(disclamierPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(disclaimerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(268, Short.MAX_VALUE))
+                .addContainerGap(266, Short.MAX_VALUE))
         );
         disclamierPanelLayout.setVerticalGroup(
             disclamierPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1055,6 +956,75 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         peptidesTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        mwPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        mwPlotPanel.setOpaque(false);
+        mwPlotPanel.setLayout(new javax.swing.BoxLayout(mwPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout mwPanelLayout = new javax.swing.GroupLayout(mwPanel);
+        mwPanel.setLayout(mwPanelLayout);
+        mwPanelLayout.setHorizontalGroup(
+            mwPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mwPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE)
+        );
+        mwPanelLayout.setVerticalGroup(
+            mwPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mwPanelLayout.createSequentialGroup()
+                .addComponent(mwPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        peptidesTabbedPane.addTab("Molecular Weight", mwPanel);
+
+        coverageTablePanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        coverageTableScrollPane.setOpaque(false);
+
+        coverageTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "Fraction", "Coverage"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        coverageTable.setOpaque(false);
+        coverageTableScrollPane.setViewportView(coverageTable);
+
+        javax.swing.GroupLayout coverageTablePanelLayout = new javax.swing.GroupLayout(coverageTablePanel);
+        coverageTablePanel.setLayout(coverageTablePanelLayout);
+        coverageTablePanelLayout.setHorizontalGroup(
+            coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 903, Short.MAX_VALUE)
+            .addGroup(coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(coverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE))
+        );
+        coverageTablePanelLayout.setVerticalGroup(
+            coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 203, Short.MAX_VALUE)
+            .addGroup(coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coverageTablePanelLayout.createSequentialGroup()
+                    .addComponent(coverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        peptidesTabbedPane.addTab("Coverage", coverageTablePanel);
 
         intensityPlotOuterPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1116,121 +1086,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         peptidesTabbedPane.addTab("Peptide Plot", peptidePlotOuterPanel);
 
-        coverageTablePanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        coverageTableScrollPane.setOpaque(false);
-
-        coverageTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "Fraction", "Coverage"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        coverageTable.setOpaque(false);
-        coverageTableScrollPane.setViewportView(coverageTable);
-
-        javax.swing.GroupLayout coverageTablePanelLayout = new javax.swing.GroupLayout(coverageTablePanel);
-        coverageTablePanel.setLayout(coverageTablePanelLayout);
-        coverageTablePanelLayout.setHorizontalGroup(
-            coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 903, Short.MAX_VALUE)
-            .addGroup(coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(coverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE))
-        );
-        coverageTablePanelLayout.setVerticalGroup(
-            coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 203, Short.MAX_VALUE)
-            .addGroup(coverageTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, coverageTablePanelLayout.createSequentialGroup()
-                    .addComponent(coverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-
-        peptidesTabbedPane.addTab("Coverage", coverageTablePanel);
-
-        mwPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        mwPlotPanel.setOpaque(false);
-        mwPlotPanel.setLayout(new javax.swing.BoxLayout(mwPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        javax.swing.GroupLayout mwPanelLayout = new javax.swing.GroupLayout(mwPanel);
-        mwPanel.setLayout(mwPanelLayout);
-        mwPanelLayout.setHorizontalGroup(
-            mwPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mwPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE)
-        );
-        mwPanelLayout.setVerticalGroup(
-            mwPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mwPanelLayout.createSequentialGroup()
-                .addComponent(mwPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        peptidesTabbedPane.addTab("Molecular Weight", mwPanel);
-
-        peptideTablePanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        peptideTableScrollPane.setOpaque(false);
-
-        peptideTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel());
-        peptideTable.setOpaque(false);
-        peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                peptideTableMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                peptideTableMouseReleased(evt);
-            }
-        });
-        peptideTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                peptideTableMouseMoved(evt);
-            }
-        });
-        peptideTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                peptideTableKeyReleased(evt);
-            }
-        });
-        peptideTableScrollPane.setViewportView(peptideTable);
-
-        javax.swing.GroupLayout peptideTablePanelLayout = new javax.swing.GroupLayout(peptideTablePanel);
-        peptideTablePanel.setLayout(peptideTablePanelLayout);
-        peptideTablePanelLayout.setHorizontalGroup(
-            peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 903, Short.MAX_VALUE)
-            .addGroup(peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(peptideTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE))
-        );
-        peptideTablePanelLayout.setVerticalGroup(
-            peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 203, Short.MAX_VALUE)
-            .addGroup(peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptideTablePanelLayout.createSequentialGroup()
-                    .addComponent(peptideTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-
-        peptidesTabbedPane.addTab("Peptide Table", peptideTablePanel);
-
-        peptidesTabbedPane.setSelectedIndex(5);
+        peptidesTabbedPane.setSelectedIndex(4);
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
         peptidePanel.setLayout(peptidePanelLayout);
@@ -1341,7 +1197,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         proteinTableScrollPane.setOpaque(false);
 
-        proteinTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel());
+        proteinTable.setModel(new eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel());
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
@@ -1363,77 +1219,21 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         });
         proteinTableScrollPane.setViewportView(proteinTable);
 
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        gradientColorMinValueJLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        gradientColorMinValueJLabel.setText("0%");
-
-        gradientColorPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-        gradientColorPanel.setToolTipText("Heat Map Color Coding");
-        gradientColorPanel.setLayout(new java.awt.BorderLayout());
-
-        gradientColorMaxValueJLabel.setText("100%");
-
-        gradientSeparator.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        chartTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Bar Chart", "Heat Map" }));
-        chartTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chartTypeComboBoxActionPerformed(evt);
-            }
-        });
-
-        dataTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Confidence", "#Peptides", "#Spectra", "Intensity" }));
-        dataTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dataTypeComboBoxActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout proteinPanelLayout = new javax.swing.GroupLayout(proteinPanel);
         proteinPanel.setLayout(proteinPanelLayout);
         proteinPanelLayout.setHorizontalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
-                    .addGroup(proteinPanelLayout.createSequentialGroup()
-                        .addComponent(gradientColorMinValueJLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(gradientColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(gradientColorMaxValueJLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(gradientSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chartTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dataTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 908, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        proteinPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {gradientColorMaxValueJLabel, gradientColorMinValueJLabel});
-
-        proteinPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chartTypeComboBox, dataTypeComboBox, gradientColorPanel});
-
         proteinPanelLayout.setVerticalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(gradientColorMinValueJLabel)
-                    .addComponent(gradientColorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(gradientColorMaxValueJLabel)
-                    .addComponent(gradientSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chartTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dataTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4))
+                .addComponent(proteinTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         proteinPanel.setBounds(0, 0, 940, 200);
@@ -1531,7 +1331,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * @param evt
      */
     private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
-        updatePeptideTable();
 
         int row = proteinTable.getSelectedRow();
         int proteinIndex = proteinTable.convertRowIndexToModel(row);
@@ -1540,6 +1339,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         if (proteinIndex != -1) {
             // remember the selection
             newItemSelection();
+            updatePlots();
         }
 
         if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && proteinIndex != -1) {
@@ -1565,7 +1365,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * @param evt
      */
     private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
-        updatePeptideTable();
 
         int row = proteinTable.getSelectedRow();
         int proteinIndex = proteinTable.convertRowIndexToModel(row);
@@ -1573,6 +1372,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         if (proteinIndex != -1) {
             // remember the selection
             newItemSelection();
+            updatePlots();
         }
     }//GEN-LAST:event_proteinTableKeyReleased
 
@@ -1617,32 +1417,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     }//GEN-LAST:event_proteinTableMouseMoved
 
     /**
-     * Remember the selection.
-     *
-     * @param evt
-     */
-    private void peptideTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseReleased
-        // remember the selection
-        newItemSelection();
-    }//GEN-LAST:event_peptideTableMouseReleased
-
-    /**
-     * Remember the selection.
-     *
-     * @param evt
-     */
-    private void peptideTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideTableKeyReleased
-        // remember the selection
-        newItemSelection();
-    }//GEN-LAST:event_peptideTableKeyReleased
-
-    /**
      * Update the layered panes.
      *
      * @param evt
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        proteinPeptideSplitPane.setDividerLocation(0.5);
+        proteinPeptideSplitPane.setDividerLocation(proteinPeptideSplitPane.getHeight() / 100 * 30);
 
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
@@ -1815,49 +1595,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * @param evt
      */
     private void exportPeptidesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonActionPerformed
-        if (peptidesTabbedPane.getSelectedIndex() == 0) {
-            new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) peptidePlotPanel.getComponent(0));
-        } else {
-            copyTableContentToClipboardOrFile(TableIndex.PEPTIDE_TABLE);
-        }
+        new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) peptidePlotPanel.getComponent(0));
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
-
-    /**
-     * Update the data type in the protein table.
-     *
-     * @param evt
-     */
-    private void chartTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chartTypeComboBoxActionPerformed
-        if (peptideShakerGUI.getIdentification() != null) {
-            updateProteinTableSparklines();
-            updatePeptideTableSparklines();
-            proteinTable.revalidate();
-            proteinTable.repaint();
-            peptideTable.revalidate();
-            peptideTable.repaint();
-        }
-
-        gradientColorPanel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-        gradientColorMinValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-        gradientColorMaxValueJLabel.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-        gradientSeparator.setVisible(chartTypeComboBox.getSelectedIndex() == 1);
-    }//GEN-LAST:event_chartTypeComboBoxActionPerformed
-
-    /**
-     * Update the data type in the protein table.
-     *
-     * @param evt
-     */
-    private void dataTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataTypeComboBoxActionPerformed
-        if (peptideShakerGUI.getIdentification() != null) {
-            updateProteinTableSparklines();
-            updatePeptideTableSparklines();
-            proteinTable.revalidate();
-            proteinTable.repaint();
-            peptideTable.revalidate();
-            peptideTable.repaint();
-        }
-    }//GEN-LAST:event_dataTypeComboBoxActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -1914,58 +1653,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed
         coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(null);
     }//GEN-LAST:event_coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed
-
-    /**
-     * Shows a tooltip with modification details is over the sequence column.
-     *
-     * @param evt
-     */
-    private void peptideTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseMoved
-        int row = peptideTable.rowAtPoint(evt.getPoint());
-        int column = peptideTable.columnAtPoint(evt.getPoint());
-        int peptideIndex = peptideTable.convertRowIndexToModel(row);
-
-        if (row != -1 && column != -1 && peptideTable.getValueAt(row, column) != null) {
-            if (column == peptideTable.getColumn("Sequence").getModelIndex()) {
-
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                // check if we ought to show a tooltip with mod details
-                String sequence = (String) peptideTable.getValueAt(row, column);
-
-                if (sequence.indexOf("<span") != -1) {
-                    try {
-                        String peptideKey = peptideKeys.get(peptideIndex);
-                        Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
-                        peptideTable.setToolTipText(tooltip);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        e.printStackTrace();
-                    }
-                } else {
-                    peptideTable.setToolTipText(null);
-                }
-            } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                peptideTable.setToolTipText(null);
-            }
-        } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            peptideTable.setToolTipText(null);
-        }
-    }//GEN-LAST:event_peptideTableMouseMoved
-
-    /**
-     * Changes the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void peptideTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideTableMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox chartTypeComboBox;
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuProteinsBackgroundPanel;
     private javax.swing.ButtonGroup coveragePeptideTypesButtonGroup;
@@ -1975,26 +1663,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private javax.swing.JTable coverageTable;
     private javax.swing.JPanel coverageTablePanel;
     private javax.swing.JScrollPane coverageTableScrollPane;
-    private javax.swing.JComboBox dataTypeComboBox;
     private javax.swing.JLabel disclaimerLabel;
     private javax.swing.JPanel disclamierPanel;
     private javax.swing.JButton exportPeptidesJButton;
     private javax.swing.JButton exportProteinsJButton;
-    private javax.swing.JLabel gradientColorMaxValueJLabel;
-    private javax.swing.JLabel gradientColorMinValueJLabel;
-    private javax.swing.JPanel gradientColorPanel;
-    private javax.swing.JSeparator gradientSeparator;
     private javax.swing.JPanel intensityPlotOuterPanel;
     private javax.swing.JPanel intensityPlotPanel;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel mwPanel;
     private javax.swing.JPanel mwPlotPanel;
     private javax.swing.JPanel peptidePanel;
     private javax.swing.JPanel peptidePlotOuterPanel;
     private javax.swing.JPanel peptidePlotPanel;
-    private javax.swing.JTable peptideTable;
-    private javax.swing.JPanel peptideTablePanel;
-    private javax.swing.JScrollPane peptideTableScrollPane;
     private javax.swing.JButton peptidesHelpJButton;
     private javax.swing.JLayeredPane peptidesLayeredPane;
     private javax.swing.JTabbedPane peptidesTabbedPane;
@@ -2009,42 +1688,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private javax.swing.JPanel spectraPlotOuterPanel;
     private javax.swing.JPanel spectraPlotPanel;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Returns true if protein confidence is selected as the data type.
-     *
-     * @return true if protein confidence is selected as the data type
-     */
-    public boolean isProteinConfidenceSelected() {
-        return dataTypeComboBox.getSelectedIndex() == 0;
-    }
-
-    /**
-     * Returns true if peptide count is selected as the data type.
-     *
-     * @return true if peptide count is selected as the data type
-     */
-    public boolean isProteinPeptideCountSelected() {
-        return dataTypeComboBox.getSelectedIndex() == 1;
-    }
-
-    /**
-     * Returns true if spectrum count is selected as the data type.
-     *
-     * @return true if spectrum count is selected as the data type
-     */
-    public boolean isProteinSpectumCountSelected() {
-        return dataTypeComboBox.getSelectedIndex() == 2;
-    }
-
-    /**
-     * Returns true if intensity is selected as the data type.
-     *
-     * @return true if intensityis selected as the data type
-     */
-    public boolean isIntensitySelected() {
-        return dataTypeComboBox.getSelectedIndex() == 3;
-    }
 
     /**
      * Displays or hide sparklines in the tables.
@@ -2063,16 +1706,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // ignore
         }
 
-        updatePeptideTableSparklines();
-
-        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-
-
         proteinTable.revalidate();
         proteinTable.repaint();
-
-        peptideTable.revalidate();
-        peptideTable.repaint();
     }
 
     /**
@@ -2087,9 +1722,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (proteinTable.getSelectedRow() != -1) {
             proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
-        }
-        if (peptideTable.getSelectedRow() != -1) {
-            peptideKey = peptideKeys.get(peptideTable.convertRowIndexToModel(peptideTable.getSelectedRow()));
         }
 
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
@@ -2152,13 +1784,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                     try {
                         BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
-
-                        if (tableIndex == TableIndex.PROTEIN_TABLE) {
-                            Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
-                        } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
-                            Util.tableToFile(peptideTable, "\t", progressDialog, true, writer);
-                        }
-
+                        Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
                         writer.close();
 
                         boolean processCancelled = progressDialog.isRunCanceled();
@@ -2196,101 +1822,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     private void updateProteinTableSparklines() {
 
-        double maxValue = 100;
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
 
-        // @TODO: the try-catches below should be removed when better backwards compatability is in place!!
-
-        if (isProteinPeptideCountSelected()) {
-            try {
-                maxValue = peptideShakerGUI.getMetrics().getMaxValidatedPeptidesPerFraction();
-            } catch (NullPointerException e) {
-                maxValue = peptideShakerGUI.getMetrics().getMaxNPeptides();
-            }
-        } else if (isProteinSpectumCountSelected()) {
-            try {
-                maxValue = peptideShakerGUI.getMetrics().getMaxValidatedSpectraPerFraction();
-            } catch (NullPointerException e) {
-                maxValue = peptideShakerGUI.getMetrics().getMaxNSpectra();
-            }
-        } else if (isIntensitySelected()) {
-            try {
-                maxValue = peptideShakerGUI.getMetrics().getMaxProteinAveragePrecursorIntensity();
-            } catch (NullPointerException e) {
-                maxValue = spectrumFactory.getMaxIntensity();
-            }
+        try {
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+        } catch (IllegalArgumentException e) {
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
         }
-
-        for (int i = 3; i < proteinTable.getColumnCount() - 3; i++) {
-
-            proteinTable.getColumn(proteinTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
-
-            if (peptideShakerGUI.showSparklines()) {
-                if (chartTypeComboBox.getSelectedIndex() == 0) { // bar chart
-                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showNumberAndChart(
-                            true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-                } else { // heat map
-                    ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(GradientColorCoding.ColorGradient.GreenWhiteBlue);
-                }
-            } else {
-                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn(proteinTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
-            }
-        }
-    }
-
-    /**
-     * Updates the peptide table sparklines.
-     */
-    private void updatePeptideTableSparklines() {
-
-        double maxValue = 100;
-
-        for (int i = 2; i < peptideTable.getColumnCount() - 2; i++) {
-
-            peptideTable.getColumn(peptideTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, maxValue, peptideShakerGUI.getSparklineColor()));
-
-            if (peptideShakerGUI.showSparklines()) {
-                if (chartTypeComboBox.getSelectedIndex() == 0) { // bar chart
-                    ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumberAndChart(
-                            true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-                } else { // heat map
-                    ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(GradientColorCoding.ColorGradient.GreenWhiteBlue);
-                }
-            } else {
-                ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn(peptideTable.getColumnName(i)).getCellRenderer()).showNumbers(true);
-            }
-        }
-    }
-
-    /**
-     * Show the heat map gradient color coding..
-     */
-    private void addHeatMapGradientColors() {
-
-        final Color startColor = Color.WHITE;
-        final Color endColor = Color.BLUE;
-
-        JPanel gradientJPanel = new JPanel() {
-
-            @Override
-            protected void paintComponent(Graphics grphcs) {
-                Graphics2D g2d = (Graphics2D) grphcs;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-
-                GradientPaint gp = new GradientPaint(
-                        0, getHeight() / 2,
-                        startColor,
-                        getWidth(), getHeight() / 2,
-                        endColor);
-
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-
-                super.paintComponent(grphcs);
-            }
-        };
-
-        gradientJPanel.setOpaque(false);
-        gradientColorPanel.add(gradientJPanel);
     }
 }
