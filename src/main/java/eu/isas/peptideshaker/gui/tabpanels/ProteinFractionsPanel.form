@@ -109,7 +109,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="disclaimerLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="268" max="32767" attributes="0"/>
+                  <EmptySpace pref="266" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -126,7 +126,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="disclaimerLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;The values above are estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole analysis.&lt;br&gt;&#xa;&lt;i&gt;These are &lt;u&gt;&lt;b&gt;not&lt;/b&gt;&lt;/u&gt; equal the confidence in the peptide/protein identifications when processing the fractions independently!&lt;/i&gt;&lt;br&gt;&lt;br&gt;&#xa;Independant fractions (like different donors, measurements) or replicates should be processed separately.&lt;br&gt;&#xa;To ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the &lt;i&gt;Validation&lt;/i&gt; tab.&#xa;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;The values above are based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole&lt;br&gt;&#xa;analysis. &lt;i&gt;These are &lt;u&gt;&lt;b&gt;not&lt;/b&gt;&lt;/u&gt; equal to the confidence in the peptide/protein identifications when processing the fractions independently!&lt;/i&gt;&lt;br&gt;&lt;br&gt;&#xa;Independant fractions (like different donors, measurements) or replicates &lt;u&gt;&lt;b&gt;should be processed separately&lt;/b&gt;&lt;/u&gt;.&lt;br&gt;&#xa;To ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the &lt;i&gt;Validation&lt;/i&gt; tab.&#xa;&lt;/html&gt;"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -197,12 +197,119 @@
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="selectedIndex" type="int" value="5"/>
+                    <Property name="selectedIndex" type="int" value="4"/>
                     <Property name="tabPlacement" type="int" value="3"/>
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
+                    <Container class="javax.swing.JPanel" name="mwPanel">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Molecular Weight">
+                            <Property name="tabTitle" type="java.lang.String" value="Molecular Weight"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="mwPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="mwPlotPanel" pref="192" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Container class="javax.swing.JPanel" name="mwPlotPanel">
+                          <Properties>
+                            <Property name="opaque" type="boolean" value="false"/>
+                          </Properties>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="coverageTablePanel">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                      </Properties>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Coverage">
+                            <Property name="tabTitle" type="java.lang.String" value="Coverage"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <EmptySpace min="0" pref="903" max="32767" attributes="0"/>
+                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                  <Component id="coverageTableScrollPane" alignment="0" pref="903" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <EmptySpace min="0" pref="203" max="32767" attributes="0"/>
+                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="coverageTableScrollPane" pref="192" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Container class="javax.swing.JScrollPane" name="coverageTableScrollPane">
+                          <Properties>
+                            <Property name="opaque" type="boolean" value="false"/>
+                          </Properties>
+                          <AuxValues>
+                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                          </AuxValues>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                          <SubComponents>
+                            <Component class="javax.swing.JTable" name="coverageTable">
+                              <Properties>
+                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                  <Table columnCount="3" rowCount="0">
+                                    <Column editable="false" title=" " type="java.lang.Integer"/>
+                                    <Column editable="false" title="Fraction" type="java.lang.String"/>
+                                    <Column editable="false" title="Coverage" type="java.lang.Object"/>
+                                  </Table>
+                                </Property>
+                                <Property name="opaque" type="boolean" value="false"/>
+                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                </Property>
+                              </Properties>
+                              <AuxValues>
+                                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="        new JTable() {&#xa;&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        String tip = (String) coverageTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
+                              </AuxValues>
+                            </Component>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
                     <Container class="javax.swing.JPanel" name="intensityPlotOuterPanel">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -317,183 +424,6 @@
                           </Properties>
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                        </Container>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="coverageTablePanel">
-                      <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                        </Property>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Coverage">
-                            <Property name="tabTitle" type="java.lang.String" value="Coverage"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="903" max="32767" attributes="0"/>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Component id="coverageTableScrollPane" alignment="0" pref="903" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="203" max="32767" attributes="0"/>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="coverageTableScrollPane" pref="192" max="32767" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="coverageTableScrollPane">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                          </AuxValues>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                          <SubComponents>
-                            <Component class="javax.swing.JTable" name="coverageTable">
-                              <Properties>
-                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                  <Table columnCount="3" rowCount="0">
-                                    <Column editable="false" title=" " type="java.lang.Integer"/>
-                                    <Column editable="false" title="Fraction" type="java.lang.String"/>
-                                    <Column editable="false" title="Coverage" type="java.lang.Object"/>
-                                  </Table>
-                                </Property>
-                                <Property name="opaque" type="boolean" value="false"/>
-                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                </Property>
-                              </Properties>
-                              <AuxValues>
-                                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="        new JTable() {&#xa;&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        String tip = (String) coverageTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
-                              </AuxValues>
-                            </Component>
-                          </SubComponents>
-                        </Container>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="mwPanel">
-                      <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                        </Property>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Molecular Weight">
-                            <Property name="tabTitle" type="java.lang.String" value="Molecular Weight"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="mwPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="mwPlotPanel" pref="192" max="32767" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Container class="javax.swing.JPanel" name="mwPlotPanel">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                        </Container>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="peptideTablePanel">
-                      <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                        </Property>
-                      </Properties>
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Peptide Table">
-                            <Property name="tabTitle" type="java.lang.String" value="Peptide Table"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="903" max="32767" attributes="0"/>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Component id="peptideTableScrollPane" alignment="0" pref="903" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="203" max="32767" attributes="0"/>
-                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="peptideTableScrollPane" pref="192" max="32767" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="peptideTableScrollPane">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                          </AuxValues>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                          <SubComponents>
-                            <Component class="javax.swing.JTable" name="peptideTable">
-                              <Properties>
-                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                                  <Connection code="new eu.isas.peptideshaker.gui.tablemodels.PeptideFractionTableModel()" type="code"/>
-                                </Property>
-                                <Property name="opaque" type="boolean" value="false"/>
-                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                </Property>
-                              </Properties>
-                              <Events>
-                                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseExited"/>
-                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseReleased"/>
-                                <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseMoved"/>
-                                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideTableKeyReleased"/>
-                              </Events>
-                              <AuxValues>
-                                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) peptideTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
-                              </AuxValues>
-                            </Component>
-                          </SubComponents>
                         </Container>
                       </SubComponents>
                     </Container>
@@ -639,24 +569,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="proteinTableScrollPane" pref="908" max="32767" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <Component id="gradientColorMinValueJLabel" linkSize="3" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="gradientColorPanel" linkSize="4" min="-2" pref="96" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="gradientColorMaxValueJLabel" linkSize="3" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="gradientSeparator" min="-2" pref="12" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="chartTypeComboBox" linkSize="4" min="-2" pref="160" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="jSeparator1" min="-2" pref="12" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="dataTypeComboBox" linkSize="4" min="-2" pref="147" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="proteinTableScrollPane" pref="908" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -665,18 +578,8 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinTableScrollPane" pref="122" max="32767" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="gradientColorMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="gradientColorPanel" alignment="2" min="-2" pref="17" max="-2" attributes="0"/>
-                              <Component id="gradientColorMaxValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="gradientSeparator" alignment="2" min="-2" pref="21" max="-2" attributes="0"/>
-                              <Component id="jSeparator1" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
-                              <Component id="chartTypeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="dataTypeComboBox" alignment="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                          <Component id="proteinTableScrollPane" pref="151" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -695,7 +598,7 @@
                     <Component class="javax.swing.JTable" name="proteinTable">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="new eu.isas.peptideshaker.gui.tablemodels.ProteinFractionTableModel()" type="code"/>
+                          <Connection code="new eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel()" type="code"/>
                         </Property>
                         <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                           <JTableSelectionModel selectionMode="2"/>
@@ -716,69 +619,6 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JSeparator" name="jSeparator1">
-                  <Properties>
-                    <Property name="orientation" type="int" value="1"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="gradientColorMinValueJLabel">
-                  <Properties>
-                    <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="0%"/>
-                  </Properties>
-                </Component>
-                <Container class="javax.swing.JPanel" name="gradientColorPanel">
-                  <Properties>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
-                        <LineBorder>
-                          <Color PropertyName="color" blue="99" green="99" red="99" type="rgb"/>
-                        </LineBorder>
-                      </Border>
-                    </Property>
-                    <Property name="toolTipText" type="java.lang.String" value="Heat Map Color Coding"/>
-                  </Properties>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
-                </Container>
-                <Component class="javax.swing.JLabel" name="gradientColorMaxValueJLabel">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="100%"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JSeparator" name="gradientSeparator">
-                  <Properties>
-                    <Property name="orientation" type="int" value="1"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JComboBox" name="chartTypeComboBox">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="2">
-                        <StringItem index="0" value="Bar Chart"/>
-                        <StringItem index="1" value="Heat Map"/>
-                      </StringArray>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chartTypeComboBoxActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JComboBox" name="dataTypeComboBox">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="4">
-                        <StringItem index="0" value="Confidence"/>
-                        <StringItem index="1" value="#Peptides"/>
-                        <StringItem index="2" value="#Spectra"/>
-                        <StringItem index="3" value="Intensity"/>
-                      </StringArray>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dataTypeComboBoxActionPerformed"/>
-                  </Events>
-                </Component>
               </SubComponents>
             </Container>
             <Component class="javax.swing.JButton" name="proteinsHelpJButton">

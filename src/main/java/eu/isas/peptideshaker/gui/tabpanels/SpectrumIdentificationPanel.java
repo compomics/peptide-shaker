@@ -2494,10 +2494,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
 
                     for (String fileName : filesArray) {
-                        progressDialog.setTitle("Loading spectrum information for " + fileName + ". Please Wait...");
-                        identification.loadSpectrumMatchParameters(fileName, probabilities);
-                        identification.loadSpectrumMatches(fileName);
+                        progressDialog.setTitle("Loading Spectrum Information for " + fileName + ". Please Wait...");
+                        identification.loadSpectrumMatchParameters(fileName, probabilities, progressDialog);
+                        identification.loadSpectrumMatches(fileName, progressDialog);
                         progressDialog.setTitle("Loading Data. Please Wait...");
+
                         for (String spectrumKey : identification.getSpectrumIdentification()) {
                             if (Spectrum.getSpectrumFile(spectrumKey).equals(fileName)) { //It hurts me to read such uggly stuffs. We need a map in the identification instead but have no time right now.
                                 if (progressDialog.isRunCanceled()) {
