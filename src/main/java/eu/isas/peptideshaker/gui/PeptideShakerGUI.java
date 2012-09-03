@@ -20,6 +20,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
@@ -5425,6 +5426,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache);
                             progressDialog.setTitle("Saving. Please Wait...");
+                            // replace old protein names (before 0.18.0) by new ones
+                            ArrayList<String> oldKeys = new ArrayList<String>(metrics.getProteinKeys());
+                            ArrayList<String> newKeys = new ArrayList<String>();
+                            for (String proteinKey : oldKeys) {
+                                newKeys.add(proteinKey.replaceAll(" ", ProteinMatch.PROTEIN_KEY_SPLITTER));
+                            }
+                            metrics.setProteinKeys(newKeys);
+                            // save new project
                             saveProjectProcess(true);
                             identificationFeaturesGenerator.setProteinKeys(metrics.getProteinKeys());
                         }
