@@ -1,12 +1,8 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.software.CompomicsWrapper;
-import com.compomics.util.gui.UtilitiesGUIDefaults;
-import com.compomics.util.preferences.UtilitiesUserPreferences;
-import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
-import javax.swing.JOptionPane;
 
 /**
  * A wrapper class used to start the jar file with parameters. The parameters
@@ -35,7 +31,6 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
         String mainClass = "eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
         launchTool("PeptideShaker", jarFile, splash, mainClass);
-
     }
 
     /**

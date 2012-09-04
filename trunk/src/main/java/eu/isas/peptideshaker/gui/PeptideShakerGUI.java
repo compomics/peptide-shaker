@@ -2707,11 +2707,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void startSearchGuiMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSearchGuiMenuItemActionPerformed
-        try {
-            ToolFactory.startSearchGUI(this);
-        } catch (Exception e) {
-            catchException(e);
-        }
+
+        final PeptideShakerGUI finalRef = this;
+
+        new Thread(new Runnable() {
+            public void run() { 
+                try {
+                    ToolFactory.startSearchGUI(finalRef);
+                } catch (Exception e) {
+                    catchException(e);
+                }
+            }
+        }, "StartSearchGUI").start();
     }//GEN-LAST:event_startSearchGuiMenuItemActionPerformed
 
     /**
@@ -2770,11 +2777,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
-        try {
-            ToolFactory.startRelims(this);
-        } catch (Exception e) {
-            catchException(e);
-        }
+
+        final PeptideShakerGUI finalRef = this;
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    ToolFactory.startRelims(finalRef);
+                } catch (Exception e) {
+                    catchException(e);
+                }
+            }
+        }, "StartRelims").start();
     }//GEN-LAST:event_reshakeMenuItemActionPerformed
 
     /**
@@ -2783,11 +2797,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void quantifyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyMenuItemActionPerformed
-        try {
-            ToolFactory.startReporter(this);
-        } catch (Exception e) {
-            catchException(e);
-        }
+
+        final PeptideShakerGUI finalRef = this;
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    ToolFactory.startReporter(finalRef);
+                } catch (Exception e) {
+                    catchException(e);
+                }
+            }
+        }, "StartReporter").start();
     }//GEN-LAST:event_quantifyMenuItemActionPerformed
 
     /**
