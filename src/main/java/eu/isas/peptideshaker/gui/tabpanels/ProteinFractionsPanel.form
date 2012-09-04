@@ -72,10 +72,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="disclamierPanel" max="32767" attributes="0"/>
-                  <Component id="proteinPeptideSplitPane" max="32767" attributes="0"/>
-              </Group>
+              <Component id="proteinPeptideSplitPane" pref="944" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -84,53 +81,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="proteinPeptideSplitPane" min="-2" pref="481" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-              <Component id="disclamierPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="proteinPeptideSplitPane" pref="607" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="disclamierPanel">
-      <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Disclaimer"/>
-          </Border>
-        </Property>
-        <Property name="opaque" type="boolean" value="false"/>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="disclaimerLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="266" max="32767" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="disclaimerLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="disclaimerLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;The values above are based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole&lt;br&gt;&#xa;analysis. &lt;i&gt;These are &lt;u&gt;&lt;b&gt;not&lt;/b&gt;&lt;/u&gt; equal to the confidence in the peptide/protein identifications when processing the fractions independently!&lt;/i&gt;&lt;br&gt;&lt;br&gt;&#xa;Independant fractions (like different donors, measurements) or replicates &lt;u&gt;&lt;b&gt;should be processed separately&lt;/b&gt;&lt;/u&gt;.&lt;br&gt;&#xa;To ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the &lt;i&gt;Validation&lt;/i&gt; tab.&#xa;&lt;/html&gt;"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JSplitPane" name="proteinPeptideSplitPane">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -145,7 +102,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JLayeredPane" name="peptidesLayeredPane">
+        <Container class="javax.swing.JLayeredPane" name="plotsLayeredPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
               <JSplitPaneConstraints position="right"/>
@@ -154,20 +111,20 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="peptidePanel">
+            <Container class="javax.swing.JPanel" name="plotsPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder title="Peptides"/>
+                    <TitledBorder title="Plots"/>
                   </Border>
                 </Property>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                  <JLayeredPaneConstraints x="0" y="0" width="940" height="280" layer="0" position="-1"/>
+                  <JLayeredPaneConstraints x="0" y="0" width="940" height="350" layer="0" position="-1"/>
                 </Constraint>
               </Constraints>
 
@@ -176,7 +133,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="peptidesTabbedPane" max="32767" attributes="0"/>
+                          <Component id="plotsTabbedPane" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -185,19 +142,18 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="peptidesTabbedPane" max="32767" attributes="0"/>
+                          <Component id="plotsTabbedPane" pref="301" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JTabbedPane" name="peptidesTabbedPane">
+                <Container class="javax.swing.JTabbedPane" name="plotsTabbedPane">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="selectedIndex" type="int" value="4"/>
                     <Property name="tabPlacement" type="int" value="3"/>
                   </Properties>
 
@@ -226,7 +182,7 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="mwPlotPanel" pref="192" max="32767" attributes="0"/>
+                                  <Component id="mwPlotPanel" pref="262" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -267,10 +223,10 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="203" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="273" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="coverageTableScrollPane" pref="192" max="32767" attributes="0"/>
+                                      <Component id="coverageTableScrollPane" pref="262" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -318,8 +274,8 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Intensity Plot">
-                            <Property name="tabTitle" type="java.lang.String" value="Intensity Plot"/>
+                          <JTabbedPaneConstraints tabName="Intensities">
+                            <Property name="tabTitle" type="java.lang.String" value="Intensities"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -333,7 +289,7 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="intensityPlotPanel" pref="192" max="32767" attributes="0"/>
+                                  <Component id="intensityPlotPanel" pref="262" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -357,8 +313,8 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Spectrum Plot">
-                            <Property name="tabTitle" type="java.lang.String" value="Spectrum Plot"/>
+                          <JTabbedPaneConstraints tabName="Spectra">
+                            <Property name="tabTitle" type="java.lang.String" value="Spectra"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -372,7 +328,7 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="spectraPlotPanel" pref="192" max="32767" attributes="0"/>
+                                  <Component id="spectraPlotPanel" pref="262" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -396,8 +352,8 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Peptide Plot">
-                            <Property name="tabTitle" type="java.lang.String" value="Peptide Plot"/>
+                          <JTabbedPaneConstraints tabName="Peptides">
+                            <Property name="tabTitle" type="java.lang.String" value="Peptides"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -411,7 +367,7 @@
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="peptidePlotPanel" pref="192" max="32767" attributes="0"/>
+                                  <Component id="peptidePlotPanel" pref="262" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>

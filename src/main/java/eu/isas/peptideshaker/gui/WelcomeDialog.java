@@ -443,11 +443,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
-        try {
-        ToolFactory.startSearchGUI(peptideShakerGUI);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
+        new Thread(new Runnable() {
+            public void run() { 
+                try {
+                    ToolFactory.startSearchGUI(peptideShakerGUI);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+            }
+        }, "StartSearchGUI").start();
     }//GEN-LAST:event_searchJButtonActionPerformed
 
     /**
@@ -456,11 +460,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
-        try {
-        ToolFactory.startReporter(peptideShakerGUI);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    ToolFactory.startReporter(peptideShakerGUI);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+            }
+        }, "StartReporter").start();
     }//GEN-LAST:event_quantifyJButtonActionPerformed
 
     /**
@@ -494,15 +502,19 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
     /**
      * Open Relims.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        try {
-        ToolFactory.startRelims(peptideShakerGUI);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    ToolFactory.startRelims(peptideShakerGUI);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+            }
+        }, "StartRelims").start();
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
@@ -513,7 +525,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void gettingStartedJButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedJButton1ActionPerformed
         new GettingStartedDialog(peptideShakerGUI, true);
     }//GEN-LAST:event_gettingStartedJButton1ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton compomicsButton;
