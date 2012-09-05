@@ -484,6 +484,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="reshakeMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="69"/>
                 <Property name="text" type="java.lang.String" value="Reshake..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Re-analyze public PRIDE projects"/>
               </Properties>
@@ -493,6 +494,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="quantifyMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="73"/>
                 <Property name="text" type="java.lang.String" value="Reporter Ions..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Quantify based on reporter ions."/>
               </Properties>
@@ -596,6 +598,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="fractionDetailsJMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" value="Fraction Details"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -657,6 +660,7 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="toolsMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="84"/>
                 <Property name="text" type="java.lang.String" value="Tools"/>
               </Properties>
               <SubComponents>
@@ -873,6 +877,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="gettingStartedMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="71"/>
                 <Property name="text" type="java.lang.String" value="Getting Started..."/>
               </Properties>
               <Events>

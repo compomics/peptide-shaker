@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
@@ -19,9 +20,6 @@ import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -579,9 +577,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 try {
                     if (peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().containsKey(Util.getFileName(spectrumFiles.get(i)))) {
-                        mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(Util.getFileName(spectrumFiles.get(i))), "Observed MW", "" + (i + 1));
+                        mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(Util.getFileName(spectrumFiles.get(i))), "Observed MW (kDa)", "" + (i + 1));
                     } else {
-                        mwPlotDataset.add(new ArrayList<Double>(), "Observed MW", "" + (i + 1));
+                        mwPlotDataset.add(new ArrayList<Double>(), "Observed MW (kDa)", "" + (i + 1));
                     }
                 } catch (ClassCastException e) {
                     // do nothing, no data to show
@@ -693,7 +691,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
 
             // create the mw chart
-            chart = ChartFactory.createBoxAndWhiskerChart(null, "Fraction", "Expected MW", mwPlotDataset, false);
+            chart = ChartFactory.createBoxAndWhiskerChart(null, "Fraction", "Expected Molecular Weight (kDa)", mwPlotDataset, false);
             chartPanel = new ChartPanel(chart);
 
             // set up the renderer
@@ -934,6 +932,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         plotsTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         plotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+        plotsTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                plotsTabbedPaneStateChanged(evt);
+            }
+        });
 
         mwPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1077,7 +1080,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             plotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(plotsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(plotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                .addComponent(plotsTabbedPane)
                 .addContainerGap())
         );
 
@@ -1539,7 +1542,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      */
     private void peptidesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FractionsTab.html"), "#Peptides");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FractionsTab.html"), "#Plots");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonActionPerformed
 
@@ -1567,7 +1570,24 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * @param evt
      */
     private void exportPeptidesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) peptidePlotPanel.getComponent(0));
+ 
+        ChartPanel chartPanel = null;
+
+        if (plotsTabbedPane.getSelectedIndex() == 0) {
+            chartPanel = (ChartPanel) mwPlotPanel.getComponent(0);
+        } else if (plotsTabbedPane.getSelectedIndex() == 1) {
+            // not supported
+        } else if (plotsTabbedPane.getSelectedIndex() == 2) {
+            chartPanel = (ChartPanel) intensityPlotPanel.getComponent(0);
+        } else if (plotsTabbedPane.getSelectedIndex() == 3) {
+            chartPanel = (ChartPanel) spectraPlotPanel.getComponent(0);
+        } else if (plotsTabbedPane.getSelectedIndex() == 4) {
+            chartPanel = (ChartPanel) peptidePlotPanel.getComponent(0);
+        }
+
+        if (chartPanel != null) {
+            new ExportGraphicsDialog(peptideShakerGUI, true, chartPanel);
+        }
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
 
     /**
@@ -1625,6 +1645,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed
         coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(null);
     }//GEN-LAST:event_coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed
+
+    /**
+     * Disable the export option for the coverage tab.
+     * 
+     * @param evt 
+     */
+    private void plotsTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_plotsTabbedPaneStateChanged
+        exportPeptidesJButton.setEnabled(plotsTabbedPane.getSelectedIndex() != 1); 
+    }//GEN-LAST:event_plotsTabbedPaneStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuProteinsBackgroundPanel;
@@ -1716,7 +1746,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     }
 
     /**
-     * Export the table contents to the clipboard.
+     * Export the table contents to the file.
      *
      * @param index
      */
@@ -1724,52 +1754,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         final TableIndex tableIndex = index;
 
-        // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+        if (tableIndex == TableIndex.PROTEIN_TABLE) {
 
-        if (selectedFile != null) {
+            OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setIndeterminate(true);
-
-            new Thread(new Runnable() {
-
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore error
-                    }
-                    progressDialog.setTitle("Exporting to File. Please Wait...");
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExportThread") {
-
-                @Override
-                public void run() {
-
-                    try {
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
-                        Util.tableToFile(proteinTable, "\t", progressDialog, true, writer);
-                        writer.close();
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getAbsolutePath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (IOException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(null, "An error occured when exporting the table content.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
+            if (tableIndex == TableIndex.PROTEIN_TABLE) {
+                ArrayList<String> selectedProteins = getDisplayedProteins();
+                outputGenerator.getProteinsOutput(
+                        null, selectedProteins, true, false, true, true, true,
+                        true, true, true, true, false, true,
+                        true, true, true, true, true, false, true, false);
+            }
         }
     }
 

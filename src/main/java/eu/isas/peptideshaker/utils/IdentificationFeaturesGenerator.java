@@ -1345,9 +1345,6 @@ public class IdentificationFeaturesGenerator {
 
                 for (String proteinKey : identificationFeaturesCache.getProteinList()) {
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-                    if (psParameter == null) {
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-                    }
                     if (!psParameter.isHidden()) {
                         proteinListAfterHiding.add(proteinKey);
                         if (psParameter.isValidated()) {

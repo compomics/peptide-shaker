@@ -142,7 +142,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="plotsTabbedPane" pref="301" max="32767" attributes="0"/>
+                          <Component id="plotsTabbedPane" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -156,6 +156,9 @@
                     </Property>
                     <Property name="tabPlacement" type="int" value="3"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="plotsTabbedPaneStateChanged"/>
+                  </Events>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>

@@ -57,13 +57,12 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="helpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="422" max="32767" attributes="0"/>
                           <Component id="exitButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="featuresPanel" min="-2" max="-2" attributes="2"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="featuresPanel" max="32767" attributes="2"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -163,7 +162,7 @@
                                           <Component id="ptmSummary" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="molecularWeight" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="64" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="proteinSelectAllLabel" min="-2" max="-2" attributes="0"/>
@@ -172,7 +171,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinDeselectAllLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="proteinExportAll" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinExport" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -227,7 +226,7 @@
                                   <Component id="proteinSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="slashLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinExport" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -300,13 +299,13 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="proteinExportAll">
+                    <Component class="javax.swing.JButton" name="proteinExport">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Export"/>
                         <Property name="toolTipText" type="java.lang.String" value="Export selected protein details"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportAllActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="proteinSequenceCoverage">
@@ -428,7 +427,7 @@
                                               <Component id="uniqueOnlyHelpLabel" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="64" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="peptideSelectAllLabel" min="-2" max="-2" attributes="0"/>
@@ -437,7 +436,7 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideDeselectAllLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="peptideExportAll" min="-2" max="-2" attributes="0"/>
+                                      <Component id="peptideExport" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -495,7 +494,7 @@
                                   <Component id="peptideSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="slashLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideExport" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -540,13 +539,13 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="peptideExportAll">
+                    <Component class="javax.swing.JButton" name="peptideExport">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Export"/>
                         <Property name="toolTipText" type="java.lang.String" value="Export selected peptide details"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportAllActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="peptideSequence">
@@ -692,7 +691,7 @@
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="psmDeselectAllLabel" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="32767" attributes="0"/>
-                                              <Component id="psmExportAll" min="-2" max="-2" attributes="0"/>
+                                              <Component id="psmExport" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
@@ -716,7 +715,7 @@
                                                   <Component id="psmScore" linkSize="3" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                                   <Component id="psmValidated" min="-2" pref="150" max="-2" attributes="0"/>
                                               </Group>
-                                              <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="64" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -764,7 +763,7 @@
                                   <Component id="psmSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="slashLabel3" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="psmDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="psmExport" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -839,13 +838,13 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="psmExportAll">
+                    <Component class="javax.swing.JButton" name="psmExport">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Export"/>
                         <Property name="toolTipText" type="java.lang.String" value="Export selected PSM details"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportAllActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="psmValidated">
@@ -948,7 +947,7 @@
                                                   <Component id="assumptionValidated" min="-2" pref="150" max="-2" attributes="0"/>
                                                   <Component id="assumptionPrecursor" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                               </Group>
-                                              <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="64" max="32767" attributes="0"/>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="searchEnginesSelectAllLabel" min="-2" max="-2" attributes="0"/>
@@ -957,7 +956,7 @@
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="searchEnginesDeselectAllLabel" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="32767" attributes="0"/>
-                                              <Component id="assumptionExportAll" min="-2" max="-2" attributes="0"/>
+                                              <Component id="assumptionExport" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -996,7 +995,7 @@
                                   <Component id="searchEnginesSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="slashLabel4" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="searchEnginesDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="assumptionExportAll" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="assumptionExport" alignment="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -1065,13 +1064,13 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="assumptionExportAll">
+                    <Component class="javax.swing.JButton" name="assumptionExport">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Export"/>
                         <Property name="toolTipText" type="java.lang.String" value="Export selected search engine details"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionExportAllActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionExportActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="assumptionValidated">
@@ -1117,6 +1116,141 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Container class="javax.swing.JPanel" name="fractionsPanel">
+                  <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="e6" green="e6" red="e6" type="rgb"/>
+                    </Property>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="Fractions">
+                        <Property name="tabTitle" type="java.lang.String" value="Fractions"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel1" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="fractionsSelectAllLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="slashLabel5" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="fractionsDeselectAllLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="260" max="32767" attributes="0"/>
+                                      <Component id="fractionsExport" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="spectraPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="peptidesPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="precursorIntensitiesPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="peptidesPerFraction" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="spectraPerFraction" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="precursorIntensitiesPerFraction" min="-2" pref="23" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                              <Component id="jLabel1" min="-2" pref="58" max="-2" attributes="0"/>
+                              <EmptySpace pref="51" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="2" attributes="0">
+                                  <Component id="fractionsSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="slashLabel5" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fractionsDeselectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="fractionsExport" alignment="2" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JCheckBox" name="peptidesPerFraction">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="#Peptides"/>
+                        <Property name="toolTipText" type="java.lang.String" value="#Peptides per fraction"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="precursorIntensitiesPerFraction">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Precursor Intensities"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Average precursor intensity per fraction"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="spectraPerFraction">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="#Spectra"/>
+                        <Property name="toolTipText" type="java.lang.String" value="#Spectra per fraction"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="fractionsExport">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Export"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Export selected protein details"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fractionsExportActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="fractionsSelectAllLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Select All&lt;a&gt;&lt;/html&gt;"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fractionsSelectAllLabelMouseClicked"/>
+                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fractionsSelectAllLabelMouseEntered"/>
+                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fractionsSelectAllLabelMouseExited"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="fractionsDeselectAllLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Deselect All&lt;a&gt;&lt;/html&gt;"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fractionsDeselectAllLabelMouseClicked"/>
+                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fractionsDeselectAllLabelMouseEntered"/>
+                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fractionsDeselectAllLabelMouseExited"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="slashLabel5">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="/"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;i&gt;&#xa;Note: While these values provide an idea of how the data distributes&lt;br&gt;&#xa;across the fractions, further analysis is however required to be able&lt;br&gt;&#xa;to claim that this is indeed the case.&#xa;&lt;/i&gt;&#xa;&lt;/html&gt;"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
                 <Container class="javax.swing.JPanel" name="projectPanel">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -1139,7 +1273,7 @@
                               <Component id="exportAll" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="18" max="32767" attributes="0"/>
+                              <EmptySpace pref="74" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

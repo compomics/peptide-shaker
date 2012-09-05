@@ -274,7 +274,7 @@ public class OutputGenerator {
                                 break;
                             }
 
-                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter); // @TODO: replace by batch selection!!
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
@@ -284,7 +284,7 @@ public class OutputGenerator {
                                                 writer.write(++proteinCounter + SEPARATOR);
                                             }
 
-                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey); // @TODO: replace by batch selection!!
                                             if (mainAccession) {
                                                 writer.write(proteinMatch.getMainMatch() + SEPARATOR);
                                             }
@@ -314,6 +314,9 @@ public class OutputGenerator {
                                                     }
                                                 }
                                             }
+                                            
+                                             // @TODO: all of the above selects should be replaced by batch selection!!
+                                            
                                             if (sequenceCoverage) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
@@ -607,8 +610,8 @@ public class OutputGenerator {
                             }
 
                             boolean shared = false;
-                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
+                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey); // @TODO: replace by batch selection!!
+                            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter); // @TODO: replace by batch selection!!
 
                             if (!peptideMatch.isDecoy() || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.isValidated()) || !onlyValidated) {
@@ -710,7 +713,8 @@ public class OutputGenerator {
 
                                                 if (location || surroundings) {
                                                     if (!shared) {
-                                                        surroundingAAs = currentProtein.getSurroundingAA(peptide.getSequence(), peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
+                                                        surroundingAAs = currentProtein.getSurroundingAA(peptide.getSequence(), 
+                                                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
                                                     }
                                                 }
 
@@ -1028,8 +1032,8 @@ public class OutputGenerator {
                                 break;
                             }
 
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey); // @TODO: replace by batch selection!!
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter); // @TODO: replace by batch selection!!
                             PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
                             if (!bestAssumption.isDecoy() || !onlyValidated) {
@@ -1320,8 +1324,8 @@ public class OutputGenerator {
 
         for (String psmKey : psmKeys) {
             try {
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey); // @TODO: replace by batch selection!!
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter); // @TODO: replace by batch selection!!
                 PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
                 if (!bestAssumption.isDecoy() && psParameter.isValidated()) { // note that the validation is for the psm and not for the peptide
@@ -1570,8 +1574,8 @@ public class OutputGenerator {
                                 break;
                             }
 
-                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey); // @TODO: replace by batch selection!!
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter); // @TODO: replace by batch selection!!
 
                             if (!onlyValidated || psParameter.isValidated()) {
                                 for (int se : spectrumMatch.getAdvocates()) {
@@ -1643,7 +1647,8 @@ public class OutputGenerator {
                                                 writer.write(peptideAssumption.getIdentificationCharge().value + SEPARATOR);
                                                 writer.write(prec.getRt() + SEPARATOR);
                                                 writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
-                                                writer.write(Math.abs(peptideAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR);
+                                                writer.write(Math.abs(peptideAssumption.getDeltaMass(prec.getMz(), 
+                                                        peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR);
                                             }
                                             if (scores) {
                                                 if (se == Advocate.MASCOT) {

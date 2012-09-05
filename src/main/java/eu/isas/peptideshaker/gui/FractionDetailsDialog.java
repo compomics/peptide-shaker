@@ -284,7 +284,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                     .addGroup(fractionsPanelLayout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(fractionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE))
+                    .addComponent(fractionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -308,7 +308,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         disclamierPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Disclaimer"));
         disclamierPanel.setOpaque(false);
 
-        disclaimerLabel.setText("<html>\nThe fraction data is based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole<br>\nanalysis. <i>These are <u><b>not</b></u> equal to the confidence in the peptide/protein identifications when processing the fractions independently!</i><br><br>\nIndependant fractions (like different donors, measurements) or replicates <u><b>should be processed separately</b></u>.<br>\nTo ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the <i>Validation</i> tab.\n</html>");
+        disclaimerLabel.setText("<html>\nThe fraction data is based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole<br>\nanalysis. <i>These are <u><b>not</b></u> equal to the confidence in the peptide/protein identifications when processing the fractions independently!</i><br><br>\nIndependant fractions (like different donors, measurements) or replicates <u><b>should be processed separately</b></u>.<br>\n</html>");
 
         javax.swing.GroupLayout disclamierPanelLayout = new javax.swing.GroupLayout(disclamierPanel);
         disclamierPanel.setLayout(disclamierPanelLayout);
@@ -355,12 +355,12 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addComponent(fractionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(disclamierPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton)
                     .addComponent(jLabel1))
-                .addContainerGap())
+                .addGap(4, 4, 4))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
