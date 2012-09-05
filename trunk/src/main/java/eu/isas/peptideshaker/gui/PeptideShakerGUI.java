@@ -1198,6 +1198,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         fileJMenu.add(openRecentJMenu);
         fileJMenu.add(jSeparator8);
 
+        reshakeMenuItem.setMnemonic('E');
         reshakeMenuItem.setText("Reshake...");
         reshakeMenuItem.setToolTipText("Re-analyze public PRIDE projects");
         reshakeMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1207,6 +1208,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         });
         fileJMenu.add(reshakeMenuItem);
 
+        quantifyMenuItem.setMnemonic('I');
         quantifyMenuItem.setText("Reporter Ions...");
         quantifyMenuItem.setToolTipText("Quantify based on reporter ions.");
         quantifyMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1301,6 +1303,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         });
         editMenu.add(annotationPreferencesMenu);
 
+        fractionDetailsJMenuItem.setMnemonic('R');
         fractionDetailsJMenuItem.setText("Fraction Details");
         fractionDetailsJMenuItem.setEnabled(false);
         fractionDetailsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1355,6 +1358,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         editMenu.add(starHideJMenuItem);
         editMenu.add(jSeparator15);
 
+        toolsMenu.setMnemonic('T');
         toolsMenu.setText("Tools");
 
         searchGuiPreferencesJMenuItem.setText("SearchGUI");
@@ -1537,6 +1541,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         });
         helpMenu.add(helpJMenuItem);
 
+        gettingStartedMenuItem.setMnemonic('G');
         gettingStartedMenuItem.setText("Getting Started...");
         gettingStartedMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

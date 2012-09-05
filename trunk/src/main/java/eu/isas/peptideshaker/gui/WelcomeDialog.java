@@ -199,7 +199,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         reshakeJButton.setFont(reshakeJButton.getFont().deriveFont(reshakeJButton.getFont().getStyle() | java.awt.Font.BOLD, reshakeJButton.getFont().getSize()+3));
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
         reshakeJButton.setText("Reshake");
-        reshakeJButton.setToolTipText("Reanalyze a PRIDE or ms-lims experiment.");
+        reshakeJButton.setToolTipText("<html>\nReanalyze a PRIDE experiment.<br>\n(Coming soon...)\n</html>");
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         reshakeJButton.setIconTextGap(23);

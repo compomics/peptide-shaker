@@ -293,7 +293,7 @@
               <Image iconType="3" name="/icons/relims_logo.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Reshake"/>
-            <Property name="toolTipText" type="java.lang.String" value="Reanalyze a PRIDE or ms-lims experiment."/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze a PRIDE experiment.&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="23"/>

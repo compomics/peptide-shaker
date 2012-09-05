@@ -9,35 +9,45 @@
         <H2>Fractions</H2>
 
         <ul>
-            <li><a href='#Introduction'>Introduction</a></li>
-            <li><a href='#Peptides'>Peptides and Spectra</a></li>
+            <li><a href='#Introduction'>Introduction and Disclaimer</a></li>
+            <li><a href='#Plots'>Plots</a></li>
         </ul>
 
         <a name="#Introduction"></a>
-        <h3>Introduction</h3>
+        <h3>Introduction and Disclaimer</h3>
         <p align="justify">
-            The <i>Fractions</i> tab shows you can overview of which fractions the proteins and peptides were detected in.
+            The <i>Fractions</i> tab shows you can overview of which fractions the proteins were detected in.
             <br><br>
-            The values above are estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole analysis.
+            The values are estimations based on the confidence of a peptide/protein if found in a fraction alone in the context of the whole analysis.
             <br><br>
             <i>These are <u><b>not</b></u> equal the confidence in the peptide/protein identifications when processing the fractions independently!</i>
             <br><br>
-            Independant fractions (like different donors, measurements) or replicates should be processed separately.
-            <br><br>
-            To ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the <i>Validation</i> tab.
+            Independant fractions (like different donors, measurements) or replicates should be <u><b>processed separately</b></u>.
         </p>
         <br>
         <a href="#top">Go to top of page</a>
         <br><br><br>
 
-        <a name="#Peptides"></a>
-        <h3>Peptides and Spectra</h3>
+        <a name="#Plots"></a>
+        <h3>Plots</h3>
+        There are five plot options:
+        <ul>
+            <li>Peptides: the estimated number of peptides identified in each fraction.</li>
+            <li>Spectra: the estimated number of spectra identified in each fraction.</li>
+            <li>Intensities: the estimated average precursor intensity for each fraction.</li>
+            <li>Coverage: the estimated protein coverage for each fraction.</li>
+            <li>Molecular Weight: the estimated molecular weight for each fraction.</li>
+        </ul>
+        
         <p align="justify">
-            The information about the peptides can be displayed in two ways, either as a table showing the confidence of having detected the 
-            given peptides in each fractions, or as a plot showing the number of validated and non-validated peptides in each fraction.
+            Selecting more than one protein in the table will display the values for all the selected proteins.
             <br><br>
-            A plot of the number of validated spectra per fraction for the selected protein is also available.
+            Note the use of the term 'estimated' above. This is not accidental. While the values can provide an idea of 
+            how the data ditributes across the fractions, further analysis will be required to be able to claim that 
+            this is indeed the case. However, an analysis that provides sound statistical ground for such claims is in development 
+            and will hopefully be available in the near future.
         </p>
+            
         <br>
         <a href="#top">Go to top of page</a>
         <br><br><br>

@@ -68,13 +68,13 @@
                   <Component id="fractionsPanel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="disclamierPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="okButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -111,7 +111,7 @@
                               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="fractionJScrollPane" pref="363" max="32767" attributes="0"/>
+                          <Component id="fractionJScrollPane" pref="389" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -323,7 +323,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="disclaimerLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;The fraction data is based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole&lt;br&gt;&#xa;analysis. &lt;i&gt;These are &lt;u&gt;&lt;b&gt;not&lt;/b&gt;&lt;/u&gt; equal to the confidence in the peptide/protein identifications when processing the fractions independently!&lt;/i&gt;&lt;br&gt;&lt;br&gt;&#xa;Independant fractions (like different donors, measurements) or replicates &lt;u&gt;&lt;b&gt;should be processed separately&lt;/b&gt;&lt;/u&gt;.&lt;br&gt;&#xa;To ensure comparable fractions, verify that the PSM PEP against score plots are similar for all the fractions in the &lt;i&gt;Validation&lt;/i&gt; tab.&#xa;&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;The fraction data is based on estimations of the confidence of a peptide/protein if found in a fraction alone in the context of the whole&lt;br&gt;&#xa;analysis. &lt;i&gt;These are &lt;u&gt;&lt;b&gt;not&lt;/b&gt;&lt;/u&gt; equal to the confidence in the peptide/protein identifications when processing the fractions independently!&lt;/i&gt;&lt;br&gt;&lt;br&gt;&#xa;Independant fractions (like different donors, measurements) or replicates &lt;u&gt;&lt;b&gt;should be processed separately&lt;/b&gt;&lt;/u&gt;.&lt;br&gt;&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>
