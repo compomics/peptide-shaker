@@ -24,7 +24,7 @@
  * FEATURE IMPROVEMENT: Better support for spectrum titles with "\\" in them.
  * FEATURE IMPROVEMENT: Changed the table export in the ptm tab so that it retrieves the same information as the overview table.
  * FEATURE IMPROVEMENT: Improved and extended the PRIDE Export, which now also includes PTM scores, spectrum file names and titles.
- * FEATURE IMPROVEMENT: A warning will now be displayed of the user tries to start the tool from within a zip file.
+ * FEATURE IMPROVEMENT: A warning will now be displayed if the user tries to start the tool from within a zip file.
  * FEATURE IMPROVEMENT: GUI updates to make the tool look better on Java 7.
  * FEATURE IMPROVEMENT: Added the maximal coverage in the protein export.
 
