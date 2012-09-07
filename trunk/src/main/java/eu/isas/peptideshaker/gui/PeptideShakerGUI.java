@@ -5450,7 +5450,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                         if (outcome == JOptionPane.YES_OPTION) {
-                            progressDialog.setTitle("Converting project. Please Wait...");
+                            progressDialog.setTitle("Converting Project. Please Wait...");
                             String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
                             identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache);
                             progressDialog.setTitle("Saving. Please Wait...");
