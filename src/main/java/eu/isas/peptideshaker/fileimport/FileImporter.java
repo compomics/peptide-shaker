@@ -284,7 +284,10 @@ public class FileImporter {
                     + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-        } catch (NullPointerException e) {
+        } catch (NullPointerException e) { 
+
+            // @TODO: this might not the only null pointer that can oocur?
+
             waitingHandler.appendReport("The enzyme to use was not found.\n"
                     + "Please verify the Search Parameters given while creating the project.\n"
                     + "If the enzyme does not appear, verify that it is implemented in peptideshaker_enzymes.xml located in the conf folder of the PeptideShaker folder.\n\n"

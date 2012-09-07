@@ -43,6 +43,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         initComponents();
         this.outputGenerator = new OutputGenerator(peptideShakerGUI);
         this.pack();
+        tabbedPane.setEnabledAt(4, peptideShakerGUI.getSearchParameters().getSpectrumFiles().size() > 1);
         this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -1618,7 +1619,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void fractionsExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionsExportActionPerformed
-        // @TODO: implement me!!
+        
+        // @TODO: this export can be extended with more options
+        
+        outputGenerator.getFractionsOutput(this, null, false, true, true, true, true, true, 
+                peptidesPerFraction.isSelected(), spectraPerFraction.isSelected(), precursorIntensitiesPerFraction.isSelected(), 
+                true, false, true, false);
     }//GEN-LAST:event_fractionsExportActionPerformed
 
     /**

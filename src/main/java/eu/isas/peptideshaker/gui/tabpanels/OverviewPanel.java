@@ -738,7 +738,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageJPopupMenu.add(coverageShowAllPeptidesJRadioButtonMenuItem);
 
         coveragePeptideTypesButtonGroup.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
-        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Enzymatic Peptides");
+        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Tryptic Peptides");
         coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
@@ -747,7 +747,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageJPopupMenu.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
 
         coveragePeptideTypesButtonGroup.add(coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem);
-        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Truncated Peptides");
+        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Non Tryptic Peptides");
         coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
