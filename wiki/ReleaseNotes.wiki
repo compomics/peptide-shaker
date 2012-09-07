@@ -3,6 +3,56 @@
 
 ----
 
+*Changes in PeptideShaker 0.18.0 (September 7. 2012):*
+ * NEW FEATURE: A brand new database based backend.
+ * NEW FEATURE: New improved and simplified Fractions tab.
+ * NEW FEATURE: Automatic de novo sequencing can now be done using one or two charges for the fragment ions.
+ * NEW FEATURE: Spaces are now allowed in protein accession numbers.
+ * NEW FEATURE: The report created when loading a project in the waiting dialog is now automatically saved as part of the project details.
+ * NEW FEATURE: Automated the delta thresholding.
+ * NEW FEATURE: Added support for Mascot Server 2.4.
+ * NEW FEATURE: Added a contextual options icon to the coverage tables, making is possible for the users to decide which peptides to show.
+ * NEW FEATURE: The FragmentIonTable now supports multiple PSMs in the traditional theoretical m/z values setup as well.
+
+ * FEATURE IMPROVEMENT: Replaced uses of "\n" with System.getProperty("line.separator"), making the export less system dependent.
+ * FEATURE IMPROVEMENT: Minor GUI improvement to the Search Parameters dialog.
+ * FEATURE IMPROVEMENT: Minor GUI improvement to the New Project dialog.
+ * FEATURE IMPROVEMENT: Minor GUI fixes in the BugReport dialog.
+ * FEATURE IMPROVEMENT: Added MW to the protein export options.
+ * FEATURE IMPROVEMENT: Increased the length of the recent files displayed to 20.
+ * FEATURE IMPROVEMENT: Updated human ENSEMBL to version 68.
+ * FEATURE IMPROVEMENT: Better support for spectrum titles with "\\" in them.
+ * FEATURE IMPROVEMENT: Changed the table export in the ptm tab so that it retrieves the same information as the overview table.
+ * FEATURE IMPROVEMENT: Improved and extended the PRIDE Export, which now also includes PTM scores, spectrum file names and titles.
+ * FEATURE IMPROVEMENT: A warning will now be displayed of the user tries to start the tool from within a zip file.
+ * FEATURE IMPROVEMENT: GUI updates to make the tool look better on Java 7.
+ * FEATURE IMPROVEMENT: Added the maximal coverage in the protein export.
+
+ * BUG FIX: Fixed a bug that occurred if the user typed in the name of a file to load and the file was not found.
+ * BUG FIX: Fixed a bug in the SearchPreferencesDialog where the the precursor accuracy was set incorrectly when loading a SearchGUI properties file.
+ * BUG FIX: Fixed a bug in the BugReport dialog where it was impossible to export/save the log.
+ * BUG FIX: Fixed a bug where the width of the accession columns were not set correctly.
+ * BUG FIX: Fixed a couple of calls to convertRowIndexToModel that could be called on an incorrect row.
+ * BUG FIX: Fixed a bug in the last selected folder feature that defaulted to the user home folder if the file did not have the correct file name (e.g., .txt).
+ * BUG FIX: Fixed an issue in the ProgressDialog that resulted in threading issues and deadlock on Java 7.
+ * BUG FIX: Fixed a bug in the spectrum annotation where the precursor charge interfered with the fragment ion charge.
+ * BUG FIX: Fixed a null pointer that could occur if trying to close an empty/canceled project.
+ * BUG FIX: Fixed a bug where the final y-ion was not annotated in the spectrum panel.
+ * BUG FIX: Fixed the "Modification not found" error that occurred if opening two projects in a row without closing the tool.
+ * BUG FIX: Fixed a bug where the list of spectrum files were not reset when opening a second project.
+ * BUG FIX: Fixed a bug in the 3D tab where an error could occur if the user moved too fast in the pdb chains table.
+ * BUG FIX: Fixed a bug in the ProteinInferenceDialog that could result in a null pointer as the wrong map was used.
+ * BUG FIX: Made it possible to edit the user defined PTMs.
+ * BUG FIX: Fixed various issues related to the canceling of progress dialogs.
+ * BUG FIX: Fixed a bug in the FindDialog that resulted in protein filters that only filtered on protein confidence were considered as empty filters.
+ * BUG FIX: Fixed a bug in the PRIDE export where it was impossible to select "Other" as the species and select your own CV term instead.
+
+ * LIBRARY UPDATE: Updated uniprotapi to version 2012.06.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.40.
+ * LIBRARY UPDATE: Updated utilities to version 3.8.6.
+
+----
+
 *Changes in PeptideShaker 0.17.3 (June 7. 2012):*
  * NEW FEATURE: Added automatic de novo sequencing.
 
@@ -14,6 +64,8 @@
  * BUG FIX: Fixed a bug where the row selection in the Overview tab was not reset correctly after closing the SearchParameters dialog.
  * BUG FIX: Fixed some bugs with the contextual export options for the spectrum panel in the PTM tab.
  * BUG FIX: Fixed a bug in the GO tab that could result in issues if switching between rows in the GO table too fast.
+
+Download Count: 288
 
 ----
 
