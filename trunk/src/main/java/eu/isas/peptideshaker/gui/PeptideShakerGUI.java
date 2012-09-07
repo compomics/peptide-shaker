@@ -1200,7 +1200,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         reshakeMenuItem.setMnemonic('E');
         reshakeMenuItem.setText("Reshake...");
-        reshakeMenuItem.setToolTipText("Re-analyze public PRIDE projects");
+        reshakeMenuItem.setToolTipText("<html>\nReanalyze PRIDE experiments.<br>\n(Coming soon...)\n</html>");
+        reshakeMenuItem.setEnabled(false);
         reshakeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reshakeMenuItemActionPerformed(evt);
@@ -1210,7 +1211,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         quantifyMenuItem.setMnemonic('I');
         quantifyMenuItem.setText("Reporter Ions...");
-        quantifyMenuItem.setToolTipText("Quantify based on reporter ions.");
+        quantifyMenuItem.setToolTipText("<html>\nQuantify your proteins using reporter ions.<br>\n(Coming soon...)\n</html>");
+        quantifyMenuItem.setEnabled(false);
         quantifyMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 quantifyMenuItemActionPerformed(evt);

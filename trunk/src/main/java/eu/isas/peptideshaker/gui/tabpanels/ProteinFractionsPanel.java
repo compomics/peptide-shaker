@@ -490,6 +490,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     }
                 }
 
+                double longestFileName = "Fraction".length();
 
                 // update the coverage table
                 if (selectedRows.length == 1) {
@@ -520,7 +521,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                 }
                             }
 
-
                             ArrayList<Double> data = new ArrayList<Double>();
                             data.add(new Double(sequenceCounter));
 
@@ -540,7 +540,22 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                 new HashMap<Integer, ArrayList<ResidueAnnotation>>(), true, true);
 
                         ((DefaultTableModel) coverageTable.getModel()).addRow(new Object[]{(i + 1), fileNames.get(i), coverageChart});
+                        
+                        if (fileNames.get(i).length() > longestFileName) {
+                            longestFileName = fileNames.get(i).length();
+                        }
                     }
+                }
+                
+                // set the preferred size of the fraction name column in the coverage table
+                Integer width = peptideShakerGUI.getPreferredColumnWidth(coverageTable, coverageTable.getColumn("Fraction").getModelIndex(), 6);
+
+                if (width != null) {
+                    coverageTable.getColumn("Fraction").setMinWidth(width);
+                    coverageTable.getColumn("Fraction").setMaxWidth(width);
+                } else {
+                    coverageTable.getColumn("Fraction").setMinWidth(15);
+                    coverageTable.getColumn("Fraction").setMaxWidth(Integer.MAX_VALUE);
                 }
 
                 // get the psms per fraction
@@ -896,7 +911,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         sequenceCoverageJPopupMenu.add(coverageShowAllPeptidesJRadioButtonMenuItem);
 
         coveragePeptideTypesButtonGroup.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
-        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Enzymatic Peptides");
+        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Tryptic Peptides");
         coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
@@ -905,7 +920,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         sequenceCoverageJPopupMenu.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
 
         coveragePeptideTypesButtonGroup.add(coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem);
-        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Truncated Peptides");
+        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Non Tryptic Peptides");
         coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
@@ -1686,6 +1687,284 @@ public class OutputGenerator {
                             }
 
                             progressDialog.setValue(++progress);
+                        }
+
+                        writer.close();
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+    
+    /**
+     * Sends the desired fraction output (based on the elements needed as
+     * provided in arguments) to a user chosen file.
+     *
+     * @param aParentDialog the parent dialog, can be null.
+     * @param aProteinKeys The list of protein keys to output. If null, the
+     * identification list will be used
+     * @param aIndexes 
+     * @param aOnlyValidated 
+     * @param aMainAccession boolean indicating whether the accessions shall be
+     * output
+     * @param aOtherAccessions boolean indicating whether the the additional
+     * protein accesion numbers should be included or not
+     * @param aPiDetails boolean indicating whether protein inference details
+     * shall be output
+     * @param aDescription boolean indicating whether protein description of the
+     * main match shall be output
+     * @param aNPeptidesPerFraction boolean indicating whether the number of validated 
+     * @param aNSpectraPerFraction 
+     * @param aPrecursorIntensities 
+     * @param aIncludeHeader boolean indicating whether the header shall be
+     * output
+     * @param aOnlyStarred boolean indicating whether only starred proteins
+     * shall be output
+     * @param aShowStar boolean indicating wheter the starred proteins will be
+     * indicated in a separate column
+     * @param aIncludeHidden boolean indicating whether hidden hits shall be
+     * output
+     */
+    public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, 
+            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, 
+            boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
+
+        // create final versions of all variables use inside the export thread
+        final ArrayList<String> proteinKeys;
+        final boolean indexes = aIndexes;
+        final boolean onlyValidated = aOnlyValidated;
+        final boolean mainAccession = aMainAccession;
+        final boolean otherAccessions = aOtherAccessions;
+        final boolean piDetails = aPiDetails;
+        final boolean description = aDescription;
+        final boolean nPeptidesPerFraction = aNPeptidesPerFraction;
+        final boolean nSpectraPerFraction = aNSpectraPerFraction;
+        final boolean precursorIntensities = aPrecursorIntensities;
+        final boolean includeHeader = aIncludeHeader;
+        final boolean onlyStarred = aOnlyStarred;
+        final boolean showStar = aShowStar;
+        final boolean includeHidden = aIncludeHidden;
+
+        final JDialog parentDialog = aParentDialog;
+
+        // get the file to send the output to
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+
+        if (selectedFile != null) {
+
+            final String filePath = selectedFile.getPath();
+
+            try {
+                writer = new BufferedWriter(new FileWriter(selectedFile));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return;
+            }
+
+            if (aProteinKeys == null) {
+                proteinKeys = identification.getProteinIdentification();
+            } else {
+                proteinKeys = aProteinKeys;
+            }
+
+            if (parentDialog != null) {
+                progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+            } else {
+                progressDialog = new ProgressDialogX(peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+            }
+
+            progressDialog.setTitle("Copying to File. Please Wait...");
+            progressDialog.setIndeterminate(true);
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+
+                    try {
+                        ArrayList<String> fractionFileNames = new ArrayList<String>();
+
+                        for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
+                            String fileName = Util.getFileName(filePath);
+                            fractionFileNames.add(fileName);
+                        }
+
+                        if (includeHeader) {
+
+                            if (indexes) {
+                                writer.write(SEPARATOR);
+                            }
+                            if (mainAccession) {
+                                writer.write("Accession" + SEPARATOR);
+                            }
+                            if (otherAccessions) {
+                                writer.write("Other Protein(s)" + SEPARATOR);
+                            }
+                            if (piDetails) {
+                                writer.write("Protein Inference Class" + SEPARATOR);
+                            }
+                            if (description) {
+                                writer.write("Description" + SEPARATOR);
+                            }
+                            if (nPeptidesPerFraction) {
+                                for (String fraction : fractionFileNames) {
+                                    writer.write("#Peptides " + fraction + SEPARATOR);
+                                }
+                            }
+                            if (nSpectraPerFraction) {
+                                for (String fraction : fractionFileNames) {
+                                    writer.write("#Spectra " + fraction + SEPARATOR);
+                                }
+                            }
+                            if (precursorIntensities) {
+                                for (String fraction : fractionFileNames) {
+                                    writer.write("Average precursor intensity " + fraction + SEPARATOR);
+                                }
+                            }
+                            if (includeHidden) {
+                                writer.write("Hidden" + SEPARATOR);
+                            }
+                            if (!onlyStarred && showStar) {
+                                writer.write("Starred" + SEPARATOR);
+                            }
+                            writer.write(System.getProperty("line.separator"));
+                        }
+
+                        PSParameter proteinPSParameter = new PSParameter();
+                        int proteinCounter = 0;
+
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMaxProgressValue(proteinKeys.size());
+
+                        for (String proteinKey : proteinKeys) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter); // @TODO: replace by batch selection!!
+
+                            if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
+                                if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
+                                    if ((!includeHidden && !proteinPSParameter.isHidden()) || includeHidden) {
+                                        if ((onlyStarred && proteinPSParameter.isStarred()) || !onlyStarred) {
+                                            if (indexes) {
+                                                writer.write(++proteinCounter + SEPARATOR);
+                                            }
+
+                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey); // @TODO: replace by batch selection!!
+                                            if (mainAccession) {
+                                                writer.write(proteinMatch.getMainMatch() + SEPARATOR);
+                                            }
+                                            if (otherAccessions) {
+                                                boolean first = true;
+                                                for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
+                                                    if (!otherProtein.equals(proteinMatch.getMainMatch())) {
+                                                        if (first) {
+                                                            first = false;
+                                                        } else {
+                                                            writer.write(", ");
+                                                        }
+                                                        writer.write(otherProtein);
+                                                    }
+                                                }
+                                                writer.write(SEPARATOR);
+                                            }
+                                            if (piDetails) {
+                                                writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
+                                            }
+                                            if (description) {
+                                                try {
+                                                    writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                }
+                                            }
+                                            
+                                             // @TODO: all of the above selects should be replaced by batch selection!!
+                                            
+                                          
+
+                                            if (nPeptidesPerFraction) {
+                                                for (String fraction : fractionFileNames) {
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                            && proteinPSParameter.getFractionValidatedPeptides(fraction) != null) {
+                                                        writer.write(proteinPSParameter.getFractionValidatedPeptides(fraction) + SEPARATOR);
+                                                    } else {
+                                                        writer.write("0.0" + SEPARATOR);
+                                                    } 
+                                                }
+                                            }
+                                            if (nSpectraPerFraction) {
+                                               for (String fraction : fractionFileNames) {
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                            && proteinPSParameter.getFractionValidatedSpectra(fraction) != null) {
+                                                        writer.write(proteinPSParameter.getFractionValidatedSpectra(fraction) + SEPARATOR);
+                                                    } else {
+                                                        writer.write("0.0" + SEPARATOR);
+                                                    } 
+                                                }
+                                            }
+                                            if (precursorIntensities) {
+                                                for (String fraction : fractionFileNames) {
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                            && proteinPSParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
+                                                        writer.write(proteinPSParameter.getPrecursorIntensityAveragePerFraction(fraction) + SEPARATOR);
+                                                    } else {
+                                                        writer.write("0.0" + SEPARATOR);
+                                                    } 
+                                                }
+                                            }
+                                            if (!onlyValidated) {
+                                                if (proteinPSParameter.isValidated()) {
+                                                    writer.write(1 + SEPARATOR);
+                                                } else {
+                                                    writer.write(0 + SEPARATOR);
+                                                }
+                                            }
+                                            if (includeHidden) {
+                                                writer.write(proteinPSParameter.isHidden() + SEPARATOR);
+                                            }
+                                            if (!onlyStarred && showStar) {
+                                                writer.write(proteinPSParameter.isStarred() + "");
+                                            }
+                                            writer.write(System.getProperty("line.separator"));
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            progressDialog.increaseProgressValue();
                         }
 
                         writer.close();
