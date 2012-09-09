@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
-import com.compomics.util.experiment.io.identifications.idfilereaders.MascotIdfileReader;
+import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.protein.Header.DatabaseType;

@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.18.0</version.number>
+        <version.number>0.18.1</version.number>
     </properties>
 
 
@@ -63,13 +63,22 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-
+        
+        <!-- Extensions -->
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
 
         <!-- Plugins -->
         <plugins>
             <!-- Compiler plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
@@ -82,6 +91,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -204,13 +214,6 @@
 
     <!-- Repositores -->
     <repositories>
-        <!-- UGent Genesis Maven 1 repository -->
-        <repository>
-            <id>genesis-maven-repository</id>
-            <name>Genesis maven1 repository</name>
-            <url>http://genesis.UGent.be/maven</url>
-            <layout>legacy</layout>
-        </repository>
 
         <!-- UGent Genesis Maven 2 repository -->
         <repository>
@@ -254,15 +257,11 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.8.6</version>
+            <version>3.8.7</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
                     <groupId>commons-math</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>lmjunit</artifactId>
-                    <groupId>lennart</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>servlet-api</artifactId>
@@ -278,7 +277,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        
+        <dependency>
+            <groupId>de.proteinms.omxparser</groupId>
+            <artifactId>omssa-parser</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>de.proteinms.xtandemparser</groupId>
+            <artifactId>xtandem-parser</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.compomics</groupId>
+            <artifactId>mascotdatfile</artifactId>
+            <version>3.4</version>
+        </dependency>
+        
         <!-- The junit JAR file -->
         <dependency>
             <groupId>junit</groupId>
@@ -317,7 +334,7 @@
         <dependency>
             <groupId>uk.ac.ebi.jmzml</groupId>
             <artifactId>jmzml</artifactId>
-            <version>1.6.5</version>
+            <version>1.6.8</version>
             <exclusions>
                 <exclusion>
                     <artifactId>xxindex</artifactId>
@@ -337,6 +354,7 @@
             <groupId>niklaas</groupId>
             <artifactId>jmol</artifactId>
             <version>12.0.43</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>
