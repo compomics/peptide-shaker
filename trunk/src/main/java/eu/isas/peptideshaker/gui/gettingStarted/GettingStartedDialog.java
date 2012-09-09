@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui.gettingStarted;
 
-import de.proteinms.omxparser.tools.BareBonesBrowserLaunch;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Graphics;
 import java.util.ArrayList;
