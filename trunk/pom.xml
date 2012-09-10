@@ -5,16 +5,9 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>${version.number}</version>
+    <version>0.18.1</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
-
-
-    <!-- Set the version number for the whole project -->
-    <properties>
-        <version.number>0.18.1</version.number>
-    </properties>
-
 
     <!-- Licence -->
     <licenses>
