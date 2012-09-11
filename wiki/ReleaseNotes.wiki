@@ -3,6 +3,15 @@
 
 ----
 
+*Changes in PeptideShaker 0.18.1 (September 11. 2012):*
+ * FEATURE IMPROVEMENT: Better support for spectrum titles in OMSSA files with special characters in them, e.g., \ or ".
+ * FEATURE IMPROVEMENT: The code now supports Maven 3.
+ * LIBRARY UPDATE: Added the OMSSA, X!Tandem and Mascot parsers as dependencies.
+ * LIBRARY UPDATE: Updated utilities to version 3.8.8.
+ * LIBRARY UPDATE: Updated jmzml to version 1.6.8.
+
+----
+
 *Changes in PeptideShaker 0.18.0 (September 7. 2012):*
  * NEW FEATURE: A brand new database based backend.
  * NEW FEATURE: New improved and simplified Fractions tab.
@@ -50,6 +59,8 @@
  * LIBRARY UPDATE: Updated uniprotapi to version 2012.06.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.40.
  * LIBRARY UPDATE: Updated utilities to version 3.8.6.
+
+Download Count: 12
 
 ----
 
