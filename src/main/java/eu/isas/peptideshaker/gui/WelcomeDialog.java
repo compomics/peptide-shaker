@@ -170,7 +170,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
         quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
         quantifyJButton.setText("Reporter Ions");
         quantifyJButton.setToolTipText("<html>\nQuantify your proteins using reporter ions<br>\n(Coming soon...)\n</html>");
-        quantifyJButton.setEnabled(false);
         quantifyJButton.setFocusPainted(false);
         quantifyJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         quantifyJButton.setIconTextGap(11);
@@ -201,7 +200,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
         reshakeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png"))); // NOI18N
         reshakeJButton.setText("Reshake");
         reshakeJButton.setToolTipText("<html>\nReanalyze a PRIDE experiment<br>\n(Coming soon...)\n</html>");
-        reshakeJButton.setEnabled(false);
         reshakeJButton.setFocusPainted(false);
         reshakeJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         reshakeJButton.setIconTextGap(23);
@@ -462,15 +460,19 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void quantifyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quantifyJButtonActionPerformed
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    ToolFactory.startReporter(peptideShakerGUI);
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
-            }
-        }, "StartReporter").start();
+
+        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE,
+                new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png")));
+
+//        new Thread(new Runnable() {
+//            public void run() {
+//                try {
+//                    ToolFactory.startReporter(peptideShakerGUI);
+//                } catch (Exception e) {
+//                    peptideShakerGUI.catchException(e);
+//                }
+//            }
+//        }, "StartReporter").start();
     }//GEN-LAST:event_quantifyJButtonActionPerformed
 
     /**
@@ -508,15 +510,19 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    ToolFactory.startRelims(peptideShakerGUI);
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
-            }
-        }, "StartRelims").start();
+
+        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE, 
+                new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png")));
+
+//        new Thread(new Runnable() {
+//            public void run() {
+//                try {
+//                    ToolFactory.startRelims(peptideShakerGUI);
+//                } catch (Exception e) {
+//                    peptideShakerGUI.catchException(e);
+//                }
+//            }
+//        }, "StartRelims").start();
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
