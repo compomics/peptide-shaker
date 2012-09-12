@@ -255,7 +255,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Reporter Ions"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Quantify your proteins using reporter ions&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="11"/>
@@ -296,7 +295,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Reshake"/>
             <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Reanalyze a PRIDE experiment&lt;br&gt;&#xa;(Coming soon...)&#xa;&lt;/html&gt;"/>
-            <Property name="enabled" type="boolean" value="false"/>
             <Property name="focusPainted" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
             <Property name="iconTextGap" type="int" value="23"/>
