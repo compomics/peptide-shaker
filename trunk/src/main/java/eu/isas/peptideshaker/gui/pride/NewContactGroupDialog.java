@@ -36,8 +36,8 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
+        setUpGUI();
         validateInput();
-        contactsScrollPane.getViewport().setOpaque(false);
         setLocationRelativeTo(prideExportDialog);
         contactsJTableMouseReleased(null);
         setVisible(true);

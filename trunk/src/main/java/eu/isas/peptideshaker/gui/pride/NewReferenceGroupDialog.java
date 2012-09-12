@@ -36,8 +36,8 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
+        setUpGUI();
         validateInput();
-        referencesScrollPane.getViewport().setOpaque(false);
         setLocationRelativeTo(prideExportDialog);
         referencesJTableMouseReleased(null);
         setVisible(true);
