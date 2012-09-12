@@ -19,7 +19,7 @@ import no.uib.olsdialog.OLSInputable;
 
 /**
  * A dialog for annotating protcols.
- * 
+ *
  * @author Harald Barsnes
  */
 public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputable {
@@ -49,7 +49,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
         initComponents();
         setTitle("New Protocol");
-        
+
         setUpTable();
 
 
@@ -62,7 +62,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      *
      * @param prideExportDialog
      * @param modal
-     * @param protcol  
+     * @param protcol
      */
     public NewProtocolDialog(PrideExportDialog prideExportDialog, boolean modal, Protocol protcol) {
         super(prideExportDialog, modal);
@@ -70,26 +70,26 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
         initComponents();
         setTitle("Edit Protocol");
-        
+
         protocolNameJTextField.setText(protcol.getName());
-        
-        for (int i=0; i<protcol.getCvTerms().size(); i++) {
-            ((DefaultTableModel) protocolCvTermsJTable.getModel()).addRow(new Object[] {
-                (i+1),
-                protcol.getCvTerms().get(i).getOntology(),
-                protcol.getCvTerms().get(i).getAccession(),
-                protcol.getCvTerms().get(i).getName(),
-                protcol.getCvTerms().get(i).getValue()
-            });
+
+        for (int i = 0; i < protcol.getCvTerms().size(); i++) {
+            ((DefaultTableModel) protocolCvTermsJTable.getModel()).addRow(new Object[]{
+                        (i + 1),
+                        protcol.getCvTerms().get(i).getOntology(),
+                        protcol.getCvTerms().get(i).getAccession(),
+                        protcol.getCvTerms().get(i).getName(),
+                        protcol.getCvTerms().get(i).getValue()
+                    });
         }
-        
+
         setUpTable();
         validateInput();
 
         setLocationRelativeTo(prideExportDialog);
         setVisible(true);
     }
-    
+
     /**
      * Set up the table properties.
      */
@@ -99,7 +99,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         protocolCvTermsJTable.getTableHeader().setReorderingAllowed(false);
         protocolCvTermsJTable.getColumn(" ").setMaxWidth(40);
         protocolCvTermsJTable.getColumn(" ").setMinWidth(40);
-        
+
         columnToolTips = new Vector();
         columnToolTips.add(null);
         columnToolTips.add(null);
@@ -124,6 +124,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         moveDownJMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JSeparator();
         deleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
+        backgroundPanel = new javax.swing.JPanel();
         protocolPanel = new javax.swing.JPanel();
         protocolCvScrollPane = new javax.swing.JScrollPane();
         protocolCvTermsJTable = new JTable() {
@@ -143,6 +144,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         nameLabel = new javax.swing.JLabel();
         protocolNameJTextField = new javax.swing.JTextField();
         protcolStepsLabel = new javax.swing.JLabel();
+        deleteButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
 
         editJMenuItem.setMnemonic('E');
@@ -185,7 +187,10 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Protocol");
 
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
         protocolPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protocol Details"));
+        protocolPanel.setOpaque(false);
 
         protocolCvTermsJTable.setFont(protocolCvTermsJTable.getFont());
         protocolCvTermsJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -246,6 +251,24 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         protcolStepsLabel.setForeground(new java.awt.Color(255, 0, 0));
         protcolStepsLabel.setText("Protocol Steps*");
 
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Error_3.png"))); // NOI18N
+        deleteButton.setToolTipText("Delete Protocol");
+        deleteButton.setBorderPainted(false);
+        deleteButton.setContentAreaFilled(false);
+        deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseExited(evt);
+            }
+        });
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout protocolPanelLayout = new javax.swing.GroupLayout(protocolPanel);
         protocolPanel.setLayout(protocolPanelLayout);
         protocolPanelLayout.setHorizontalGroup(
@@ -253,26 +276,29 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
             .addGroup(protocolPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(protocolPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(protocolCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
-                    .addGroup(protocolPanelLayout.createSequentialGroup()
-                        .addComponent(nameLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(protocolNameJTextField))
+                    .addComponent(protocolCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, protocolPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(sampleDetailsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(protocolPanelLayout.createSequentialGroup()
                         .addComponent(protcolStepsLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(protocolPanelLayout.createSequentialGroup()
+                        .addComponent(nameLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(protocolNameJTextField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         protocolPanelLayout.setVerticalGroup(
             protocolPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(protocolPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(protocolPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(protocolPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(nameLabel)
-                    .addComponent(protocolNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(protocolNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(protcolStepsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -290,27 +316,38 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(protocolPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(protocolPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(okButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -318,8 +355,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Open the popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void protocolCvTermsJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_protocolCvTermsJTableMouseClicked
         if (evt.getButton() == 3) {
@@ -348,8 +385,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Delete the selected row.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void protocolCvTermsJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_protocolCvTermsJTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
@@ -359,8 +396,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Open the OLS Dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void sampleDetailsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleDetailsJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -370,8 +407,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Edit the selected row using the OLS Dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editJMenuItemActionPerformed
         int selectedRow = protocolCvTermsJTable.getSelectedRow();
@@ -387,8 +424,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Move the current row up.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void moveUpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpJMenuItemActionPerformed
         int selectedRow = protocolCvTermsJTable.getSelectedRow();
@@ -410,8 +447,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Move the current row down.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void moveDownJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownJMenuItemActionPerformed
         int selectedRow = protocolCvTermsJTable.getSelectedRow();
@@ -433,8 +470,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Delete the selected row.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void deleteSelectedRowJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSelectedRowJMenuItemActionPerformed
 
@@ -450,35 +487,65 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     /**
      * Add the protocol to the export dialog and close.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        
+
         ArrayList<CvTerm> cvTerms = new ArrayList<CvTerm>();
-        
-        for (int i=0; i<protocolCvTermsJTable.getRowCount(); i++) {
+
+        for (int i = 0; i < protocolCvTermsJTable.getRowCount(); i++) {
             cvTerms.add(new CvTerm(
-                    (String) protocolCvTermsJTable.getValueAt(i, 1), 
-                    (String) protocolCvTermsJTable.getValueAt(i, 2), 
-                    (String) protocolCvTermsJTable.getValueAt(i, 3), 
+                    (String) protocolCvTermsJTable.getValueAt(i, 1),
+                    (String) protocolCvTermsJTable.getValueAt(i, 2),
+                    (String) protocolCvTermsJTable.getValueAt(i, 3),
                     (String) protocolCvTermsJTable.getValueAt(i, 4)));
         }
-        
+
         prideExportDialog.setProtocol(new Protocol(protocolNameJTextField.getText(), cvTerms));
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
      * Close without saving.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void protocolNameJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_protocolNameJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_protocolNameJTextFieldKeyReleased
 
+    /**
+     * Changes the cursor into a hand cursor.
+     *
+     * @param evt
+     */
+    private void deleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_deleteButtonMouseEntered
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void deleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_deleteButtonMouseExited
+
+    /**
+     * Try to delete the given protocol.
+     * 
+     * @param evt 
+     */
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        dispose();
+        prideExportDialog.deleteProtocol(new Protocol(protocolNameJTextField.getText(), new ArrayList<CvTerm>()));
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JButton deleteButton;
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
     private javax.swing.JMenuItem editJMenuItem;
     private javax.swing.JSeparator jSeparator3;
@@ -509,31 +576,31 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * Enables the OK button if a valid protocol set is selected.
      */
     private void validateInput() {
-        
+
         String input = protocolNameJTextField.getText();
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in protocol name.",
-                    "Forbidden Character", JOptionPane.ERROR_MESSAGE);
+                        "Forbidden Character", JOptionPane.ERROR_MESSAGE);
                 protocolNameJTextField.setText(lastNameInput);
                 return;
             }
         }
         lastNameInput = input;
-        
+
         if (protocolCvTermsJTable.getRowCount() > 0 && protocolNameJTextField.getText().length() > 0) {
             okButton.setEnabled(true);
         } else {
             okButton.setEnabled(false);
         }
-        
+
         // highlight the fields that have not been filled
         if (protocolNameJTextField.getText().length() > 0) {
             nameLabel.setForeground(Color.BLACK);
         } else {
             nameLabel.setForeground(Color.RED);
         }
-        
+
         if (protocolCvTermsJTable.getRowCount() > 0) {
             protcolStepsLabel.setForeground(Color.BLACK);
         } else {

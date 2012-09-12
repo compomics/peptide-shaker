@@ -11,6 +11,7 @@ import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
+import com.compomics.util.pride.prideobjects.*;
 import eu.isas.peptideshaker.export.PRIDEExport;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -18,19 +19,15 @@ import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 
 /**
- * A simple dialog where the user can select
+ * A dialog where the user can export the project to PRIDE XML.
  *
  * @author Harald Barsnes
  */
@@ -63,6 +60,9 @@ public class PrideExportDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
 
+        // reset the pride object factory
+        resetPrideObjectFactory();
+
         // update the ptm
         updatePtmMap();
 
@@ -74,18 +74,9 @@ public class PrideExportDialog extends javax.swing.JDialog {
         // insert project data
         insertProjectData();
 
-        // insert references
-//        for (Reference reference : Reference.getDefaultReferences()) {
-//            ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
-//                        referencesJTable.getRowCount() + 1,
-//                        reference.getReference(),
-//                        reference.getPmid(),
-//                        reference.getDoi()
-//                    });
-//        }
-
         // insert available contacts, instruments, protocols and samples
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getContacts().keySet()), "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getReferenceGroups().keySet()), "--- Select a Reference Group ---", "   Create a New Reference Group...", referenceGroupsJComboBox);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getContactGroups().keySet()), "--- Select a Contact Group ---", "   Create a New Contact Group...", contactGroupsJComboBox);
         insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()), "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
         insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()), "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
         insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()), "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
@@ -107,13 +98,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
         referenceTableColumnToolTips.add("PubMed ID");
         referenceTableColumnToolTips.add("Digital Object Identifier");
 
-        referencesJScrollPane.getViewport().setOpaque(false);
-        referencesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        referencesJTable.getTableHeader().setReorderingAllowed(false);
-        referencesJTable.getColumn(" ").setMaxWidth(30);
-        referencesJTable.getColumn(" ").setMinWidth(30);
-
-        contactsJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        referenceGroupsJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        contactGroupsJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         sampleJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         protocolJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         instrumentJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -123,16 +109,12 @@ public class PrideExportDialog extends javax.swing.JDialog {
      * Update the ptm map.
      */
     private void updatePtmMap() {
-        try {
-            prideObjectsFactory = PrideObjectsFactory.getInstance();
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            return;
-        }
+
         peptideShakerGUI.loadPrideToPtmMap();
         ArrayList<String> missingMods = checkModifications();
+        
         if (!missingMods.isEmpty()) {
-            String report = "Pride CV term missing for the following modifications:\n";
+            String report = "PRIDE CV term missing for the following modifications:\n";
             boolean first = true;
             for (String mod : missingMods) {
                 if (first) {
@@ -209,13 +191,6 @@ public class PrideExportDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        referencesPopupJMenu = new javax.swing.JPopupMenu();
-        refEditJMenuItem = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JSeparator();
-        refMoveUpJMenuItem = new javax.swing.JMenuItem();
-        refMoveDownJMenuItem = new javax.swing.JMenuItem();
-        jSeparator6 = new javax.swing.JSeparator();
-        refDeleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
         backgroundJPanel = new javax.swing.JPanel();
         experimentPropertiesPanel = new javax.swing.JPanel();
         experimentPropertiesLabel = new javax.swing.JLabel();
@@ -228,10 +203,9 @@ public class PrideExportDialog extends javax.swing.JDialog {
         descriptionJScrollPane = new javax.swing.JScrollPane();
         descriptionJTextArea = new javax.swing.JTextArea();
         referencesLabel = new javax.swing.JLabel();
-        addReferencesJButton = new javax.swing.JButton();
         contactLabel = new javax.swing.JLabel();
-        contactsJComboBox = new javax.swing.JComboBox();
-        editContactJButton = new javax.swing.JButton();
+        contactGroupsJComboBox = new javax.swing.JComboBox();
+        editContactsJButton = new javax.swing.JButton();
         sampleLabel = new javax.swing.JLabel();
         sampleJComboBox = new javax.swing.JComboBox();
         editSampleJButton = new javax.swing.JButton();
@@ -241,20 +215,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
         instrumentLabel = new javax.swing.JLabel();
         instrumentJComboBox = new javax.swing.JComboBox();
         editInstrumentJButton = new javax.swing.JButton();
-        referencesJScrollPane = new javax.swing.JScrollPane();
-        referencesJTable = new JTable() {
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        String tip = (String) referenceTableColumnToolTips.get(realIndex);
-                        return tip;
-                    }
-                };
-            }
-        };
+        referenceGroupsJComboBox = new javax.swing.JComboBox();
+        editReferencesJButton = new javax.swing.JButton();
         convertJButton = new javax.swing.JButton();
         openDialogHelpJButton = new javax.swing.JButton();
         helpLabel = new javax.swing.JLabel();
@@ -262,44 +224,6 @@ public class PrideExportDialog extends javax.swing.JDialog {
         outpitFolderLabel = new javax.swing.JLabel();
         outputFolderJTextField = new javax.swing.JTextField();
         browseOutputFolderJButton = new javax.swing.JButton();
-
-        refEditJMenuItem.setMnemonic('E');
-        refEditJMenuItem.setText("Edit");
-        refEditJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refEditJMenuItemActionPerformed(evt);
-            }
-        });
-        referencesPopupJMenu.add(refEditJMenuItem);
-        referencesPopupJMenu.add(jSeparator5);
-
-        refMoveUpJMenuItem.setMnemonic('U');
-        refMoveUpJMenuItem.setText("Move Up");
-        refMoveUpJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refMoveUpJMenuItemActionPerformed(evt);
-            }
-        });
-        referencesPopupJMenu.add(refMoveUpJMenuItem);
-
-        refMoveDownJMenuItem.setMnemonic('D');
-        refMoveDownJMenuItem.setText("Move Down");
-        refMoveDownJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refMoveDownJMenuItemActionPerformed(evt);
-            }
-        });
-        referencesPopupJMenu.add(refMoveDownJMenuItem);
-        referencesPopupJMenu.add(jSeparator6);
-
-        refDeleteSelectedRowJMenuItem.setMnemonic('L');
-        refDeleteSelectedRowJMenuItem.setText("Delete");
-        refDeleteSelectedRowJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refDeleteSelectedRowJMenuItemActionPerformed(evt);
-            }
-        });
-        referencesPopupJMenu.add(refDeleteSelectedRowJMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PeptideShaker - PRIDE Export");
@@ -365,33 +289,25 @@ public class PrideExportDialog extends javax.swing.JDialog {
         referencesLabel.setText("References");
         referencesLabel.setToolTipText("<html>\nReferences to publications (if any).<br>\nRight click in the table to edit.\n</html>");
 
-        addReferencesJButton.setText("Add");
-        addReferencesJButton.setToolTipText("Add a new reference.");
-        addReferencesJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addReferencesJButtonActionPerformed(evt);
-            }
-        });
-
         contactLabel.setForeground(new java.awt.Color(255, 0, 0));
-        contactLabel.setText("Contact*");
+        contactLabel.setText("Contact(s)*");
         contactLabel.setToolTipText("The contact person for the PRIDE dataset");
 
-        contactsJComboBox.setMaximumRowCount(20);
-        contactsJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
-        contactsJComboBox.setToolTipText("The contact person for the PRIDE dataset");
-        contactsJComboBox.addActionListener(new java.awt.event.ActionListener() {
+        contactGroupsJComboBox.setMaximumRowCount(20);
+        contactGroupsJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
+        contactGroupsJComboBox.setToolTipText("The contact person for the PRIDE dataset");
+        contactGroupsJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                contactsJComboBoxActionPerformed(evt);
+                contactGroupsJComboBoxActionPerformed(evt);
             }
         });
 
-        editContactJButton.setText("Edit");
-        editContactJButton.setToolTipText("Edit the selected contact");
-        editContactJButton.setEnabled(false);
-        editContactJButton.addActionListener(new java.awt.event.ActionListener() {
+        editContactsJButton.setText("Edit");
+        editContactsJButton.setToolTipText("Edit the selected contact");
+        editContactsJButton.setEnabled(false);
+        editContactsJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editContactJButtonActionPerformed(evt);
+                editContactsJButtonActionPerformed(evt);
             }
         });
 
@@ -461,43 +377,23 @@ public class PrideExportDialog extends javax.swing.JDialog {
             }
         });
 
-        referencesJScrollPane.setToolTipText("<html>\nReferences to publications (if any).<br>\nRight click in the table to edit.\n</html>");
-
-        referencesJTable.setFont(referencesJTable.getFont());
-        referencesJTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "Reference", "PMID", "DOI"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        referenceGroupsJComboBox.setMaximumRowCount(20);
+        referenceGroupsJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
+        referenceGroupsJComboBox.setToolTipText("Ther references for the PRIDE dataset");
+        referenceGroupsJComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                referenceGroupsJComboBoxActionPerformed(evt);
             }
         });
-        referencesJTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                referencesJTableMouseClicked(evt);
+
+        editReferencesJButton.setText("Edit");
+        editReferencesJButton.setToolTipText("Edit the selected contact");
+        editReferencesJButton.setEnabled(false);
+        editReferencesJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editReferencesJButtonActionPerformed(evt);
             }
         });
-        referencesJTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                referencesJTableKeyReleased(evt);
-            }
-        });
-        referencesJScrollPane.setViewportView(referencesJTable);
 
         javax.swing.GroupLayout experimentPropertiesPanelLayout = new javax.swing.GroupLayout(experimentPropertiesPanel);
         experimentPropertiesPanel.setLayout(experimentPropertiesPanelLayout);
@@ -517,15 +413,15 @@ public class PrideExportDialog extends javax.swing.JDialog {
                             .addComponent(descriptionJScrollPane)
                             .addComponent(projectJTextField)
                             .addGroup(experimentPropertiesPanelLayout.createSequentialGroup()
-                                .addComponent(titleJTextField)
+                                .addComponent(titleJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
                                 .addComponent(experimentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(labelJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentPropertiesPanelLayout.createSequentialGroup()
-                                .addComponent(referencesJScrollPane)
+                                .addComponent(referenceGroupsJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(addReferencesJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(editReferencesJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentPropertiesPanelLayout.createSequentialGroup()
                         .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(instrumentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -537,10 +433,10 @@ public class PrideExportDialog extends javax.swing.JDialog {
                             .addComponent(instrumentJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(protocolJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(sampleJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(contactsJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(contactGroupsJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(editContactJButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(editContactsJButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(editSampleJButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(editProtocolJButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(editInstrumentJButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -562,17 +458,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(descriptionLabel)
-                    .addComponent(descriptionJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(descriptionJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(referencesLabel)
-                    .addComponent(referencesJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addReferencesJButton))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(referenceGroupsJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editReferencesJButton)
+                    .addComponent(referencesLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(contactLabel)
-                    .addComponent(contactsJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editContactJButton))
+                    .addComponent(contactGroupsJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editContactsJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sampleLabel)
@@ -588,16 +484,18 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     .addComponent(instrumentLabel)
                     .addComponent(instrumentJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editInstrumentJButton))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        experimentPropertiesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {contactsJComboBox, editContactJButton});
+        experimentPropertiesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {contactGroupsJComboBox, editContactsJButton});
 
         experimentPropertiesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {editSampleJButton, sampleJComboBox});
 
         experimentPropertiesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {editProtocolJButton, protocolJComboBox});
 
         experimentPropertiesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {editInstrumentJButton, instrumentJComboBox});
+
+        experimentPropertiesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {editReferencesJButton, referenceGroupsJComboBox});
 
         convertJButton.setBackground(new java.awt.Color(0, 153, 0));
         convertJButton.setFont(convertJButton.getFont().deriveFont(convertJButton.getFont().getStyle() | java.awt.Font.BOLD));
@@ -777,24 +675,24 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_browseOutputFolderJButtonActionPerformed
 
     /**
-     * Enable/disable the edit contacts button and open the new contact dialog
-     * if the user selected to add a new contact.
+     * Enable/disable the edit contacts button and open the new contact group
+     * dialog if the user selected to add a new contact.
      *
      * @param evt
      */
-    private void contactsJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contactsJComboBoxActionPerformed
-        if (contactsJComboBox.getSelectedIndex() == 0) {
-            editContactJButton.setEnabled(false);
-        } else if (contactsJComboBox.getSelectedIndex() == contactsJComboBox.getItemCount() - 1) {
-            editContactJButton.setEnabled(false);
-            contactsJComboBox.setSelectedIndex(0);
-            new NewContactDialog(this, true);
+    private void contactGroupsJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contactGroupsJComboBoxActionPerformed
+        if (contactGroupsJComboBox.getSelectedIndex() == 0) {
+            editContactsJButton.setEnabled(false);
+        } else if (contactGroupsJComboBox.getSelectedIndex() == contactGroupsJComboBox.getItemCount() - 1) {
+            editContactsJButton.setEnabled(false);
+            contactGroupsJComboBox.setSelectedIndex(0);
+            new NewContactGroupDialog(this, true);
         } else {
-            editContactJButton.setEnabled(true);
+            editContactsJButton.setEnabled(true);
         }
 
         validateInput();
-    }//GEN-LAST:event_contactsJComboBoxActionPerformed
+    }//GEN-LAST:event_contactGroupsJComboBoxActionPerformed
 
     /**
      * Enable/disable the edit sample button and open the new sample dialog if
@@ -885,175 +783,23 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_descriptionJTextAreaKeyReleased
 
     /**
-     * Open a new NewReferenceDialog.
+     * Opens a NewContactGroupDialog where the selected contact group can be
+     * edited.
      *
      * @param evt
      */
-    private void addReferencesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReferencesJButtonActionPerformed
-        new NewReferenceDialog(this, true);
-    }//GEN-LAST:event_addReferencesJButtonActionPerformed
-
-    /**
-     * Opens a NewReferenceDialog or a popup menu when right clicking.
-     *
-     * @param evt
-     */
-    private void referencesJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_referencesJTableMouseClicked
-
-        if (evt.getButton() == 1 && evt.getClickCount() == 2) {
-
-            new NewReferenceDialog(this, true, new Reference(
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 1),
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 2),
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 3)),
-                    referencesJTable.getSelectedRow());
-
-        } else if (evt.getButton() == 3) {
-
-            int row = referencesJTable.rowAtPoint(evt.getPoint());
-            int column = referencesJTable.columnAtPoint(evt.getPoint());
-            int[] selectedRows = referencesJTable.getSelectedRows();
-
-            boolean changeRow = true;
-
-            for (int i = 0; i < selectedRows.length && changeRow; i++) {
-                if (row == selectedRows[i]) {
-                    changeRow = false;
-                }
-            }
-
-            if (changeRow) {
-                referencesJTable.changeSelection(row, column, false, false);
-            }
-
-            // makes sure that only valid "moving options" are enabled
-            this.refMoveUpJMenuItem.setEnabled(true);
-            this.refMoveDownJMenuItem.setEnabled(true);
-
-            if (row == referencesJTable.getRowCount() - 1) {
-                this.refMoveDownJMenuItem.setEnabled(false);
-            }
-
-            if (row == 0) {
-                this.refMoveUpJMenuItem.setEnabled(false);
-            }
-
-            referencesPopupJMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-        }
-    }//GEN-LAST:event_referencesJTableMouseClicked
-
-    /**
-     * Deletes the selected reference.
-     *
-     * @param evt
-     */
-    private void referencesJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_referencesJTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-            refDeleteSelectedRowJMenuItemActionPerformed(null);
-        }
-    }//GEN-LAST:event_referencesJTableKeyReleased
-
-    /**
-     * Opens a NewReferenceDialog.
-     *
-     * @param evt
-     */
-    private void refEditJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refEditJMenuItemActionPerformed
-        new NewReferenceDialog(this, true, new Reference(
-                (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 1),
-                (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 2),
-                (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 3)),
-                referencesJTable.getSelectedRow());
-    }//GEN-LAST:event_refEditJMenuItemActionPerformed
-
-    /**
-     * Moves the selected reference up in the list.
-     *
-     * @param evt
-     */
-    private void refMoveUpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refMoveUpJMenuItemActionPerformed
-        int selectedRow = referencesJTable.getSelectedRow();
-        int selectedColumn = referencesJTable.getSelectedColumn();
-
-        Object[] tempRow = new Object[]{
-            referencesJTable.getValueAt(selectedRow - 1, 0),
-            referencesJTable.getValueAt(selectedRow - 1, 1),
-            referencesJTable.getValueAt(selectedRow - 1, 2),
-            referencesJTable.getValueAt(selectedRow - 1, 3)
-        };
-
-        ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRow - 1);
-        ((DefaultTableModel) referencesJTable.getModel()).insertRow(selectedRow, tempRow);
-
-        referencesJTable.changeSelection(selectedRow - 1, selectedColumn, false, false);
-
-        fixReferenceIndices();
-    }//GEN-LAST:event_refMoveUpJMenuItemActionPerformed
-
-    /**
-     * Moves the selected reference down in the list.
-     *
-     * @param evt
-     */
-    private void refMoveDownJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refMoveDownJMenuItemActionPerformed
-        int selectedRow = referencesJTable.getSelectedRow();
-        int selectedColumn = referencesJTable.getSelectedColumn();
-
-        Object[] tempRow = new Object[]{
-            referencesJTable.getValueAt(selectedRow + 1, 0),
-            referencesJTable.getValueAt(selectedRow + 1, 1),
-            referencesJTable.getValueAt(selectedRow + 1, 2),
-            referencesJTable.getValueAt(selectedRow + 1, 3)
-        };
-
-        ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRow + 1);
-        ((DefaultTableModel) referencesJTable.getModel()).insertRow(selectedRow, tempRow);
-
-        referencesJTable.changeSelection(selectedRow + 1, selectedColumn, false, false);
-
-        fixReferenceIndices();
-    }//GEN-LAST:event_refMoveDownJMenuItemActionPerformed
-
-    /**
-     * Deletes the selected reference.
-     *
-     * @param evt
-     */
-    private void refDeleteSelectedRowJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refDeleteSelectedRowJMenuItemActionPerformed
-        if (referencesJTable.getSelectedRow() != -1) {
-
-            int selectedRow = referencesJTable.getSelectedRow();
-            int selectedColumn = referencesJTable.getSelectedColumn();
-
-            int[] selectedRows = referencesJTable.getSelectedRows();
-
-            for (int i = selectedRows.length - 1; i >= 0; i--) {
-                ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRows[i]);
-            }
-
-            referencesJTable.changeSelection(selectedRow, selectedColumn, false, false);
-            referencesJTable.editingCanceled(null);
-
-            fixReferenceIndices();
-        }
-    }//GEN-LAST:event_refDeleteSelectedRowJMenuItemActionPerformed
-
-    /**
-     * Opens a NewContactDialog where the selected contact can be edited.
-     *
-     * @param evt
-     */
-    private void editContactJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editContactJButtonActionPerformed
+    private void editContactsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editContactsJButtonActionPerformed
 
         // get the selected contact details
-        String selectedContact = (String) contactsJComboBox.getSelectedItem();
-        Contact tempContact = prideObjectsFactory.getContacts().get(selectedContact);
-        if (tempContact == null) {
-            tempContact = new Contact("New contact", "", "");
+        String selectedContactGroup = (String) contactGroupsJComboBox.getSelectedItem();
+        ContactGroup tempContactGroup = prideObjectsFactory.getContactGroups().get(selectedContactGroup);
+
+        if (tempContactGroup == null) {
+            tempContactGroup = new ContactGroup(new ArrayList<Contact>(), "");
         }
 
-        new NewContactDialog(this, true, tempContact);
-    }//GEN-LAST:event_editContactJButtonActionPerformed
+        new NewContactGroupDialog(this, true, tempContactGroup);
+    }//GEN-LAST:event_editContactsJButtonActionPerformed
 
     /**
      * Edit the selected sample.
@@ -1111,6 +857,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
      */
     private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
 
+        // @TODO: the details should be stored with the project!!
+
         // check if the xml file already exists
         String[] splittedName = titleJTextField.getText().split(" ");
         String fileName = "";
@@ -1131,9 +879,9 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         final String prideFileName = fileName;
         final PrideExportDialog prideExportDialog = this; // needed due to threading issues
-        
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
@@ -1156,18 +904,12 @@ public class PrideExportDialog extends javax.swing.JDialog {
             public void run() {
 
                 // get the references, if any
-                ArrayList<Reference> references = new ArrayList<Reference>();
-
-                for (int row = 0; row < ((DefaultTableModel) referencesJTable.getModel()).getRowCount(); row++) {
-                    references.add(new Reference(
-                            (String) referencesJTable.getValueAt(row, 1),
-                            (String) referencesJTable.getValueAt(row, 2),
-                            (String) referencesJTable.getValueAt(row, 3)));
-                }
+                String selectedReferenceGroup = (String) referenceGroupsJComboBox.getSelectedItem();
+                ReferenceGroup referenceGroup = prideObjectsFactory.getReferenceGroups().get(selectedReferenceGroup);
 
                 // get the selected contact details
-                String selectedContact = (String) contactsJComboBox.getSelectedItem();
-                Contact contact = prideObjectsFactory.getContacts().get(selectedContact);
+                String selectedContactGroup = (String) contactGroupsJComboBox.getSelectedItem();
+                ContactGroup contactGroup = prideObjectsFactory.getContactGroups().get(selectedContactGroup);
 
                 // get the selected sample details
                 String selectedSample = (String) sampleJComboBox.getSelectedItem();
@@ -1186,7 +928,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
                 try {
                     PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, prideExportDialog, titleJTextField.getText(),
                             labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
-                            references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()), prideFileName);
+                            referenceGroup, contactGroup, sample, protocol, instrument, new File(outputFolderJTextField.getText()), prideFileName);
                     prideExport.createPrideXmlFile(progressDialog);
                     conversionCompleted = true;
                 } catch (Exception e) {
@@ -1231,26 +973,64 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(prideExportDialog, ep, "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 }
-                
+
                 if (processCancelled) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE XML conversion cancelled by the user.", "PRIDE XML Conversion Cancelled", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }.start();
     }//GEN-LAST:event_convertJButtonActionPerformed
+
+    /**
+     * Enable/disable the edit references button and open the new reference
+     * group dialog if the user selected to add a new reference.
+     *
+     * @param evt
+     */
+    private void referenceGroupsJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_referenceGroupsJComboBoxActionPerformed
+        if (referenceGroupsJComboBox.getSelectedIndex() == 0) {
+            editReferencesJButton.setEnabled(false);
+        } else if (referenceGroupsJComboBox.getSelectedIndex() == referenceGroupsJComboBox.getItemCount() - 1) {
+            editReferencesJButton.setEnabled(false);
+            referenceGroupsJComboBox.setSelectedIndex(0);
+            new NewReferenceGroupDialog(this, true);
+        } else {
+            editReferencesJButton.setEnabled(true);
+        }
+
+        validateInput();
+    }//GEN-LAST:event_referenceGroupsJComboBoxActionPerformed
+
+    /**
+     * Opens a NewReferenceGroupDialog where the selected reference group can be
+     * edited.
+     *
+     * @param evt
+     */
+    private void editReferencesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReferencesJButtonActionPerformed
+        // get the selected reference details
+        String selectedReferenceGroup = (String) referenceGroupsJComboBox.getSelectedItem();
+        ReferenceGroup tempReferenceGroup = prideObjectsFactory.getReferenceGroups().get(selectedReferenceGroup);
+
+        if (tempReferenceGroup == null) {
+            tempReferenceGroup = new ReferenceGroup(new ArrayList<Reference>(), "");
+        }
+
+        new NewReferenceGroupDialog(this, true, tempReferenceGroup);
+    }//GEN-LAST:event_editReferencesJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addReferencesJButton;
     private javax.swing.JPanel backgroundJPanel;
     private javax.swing.JButton browseOutputFolderJButton;
+    private javax.swing.JComboBox contactGroupsJComboBox;
     private javax.swing.JLabel contactLabel;
-    private javax.swing.JComboBox contactsJComboBox;
     private javax.swing.JButton convertJButton;
     private javax.swing.JScrollPane descriptionJScrollPane;
     private javax.swing.JTextArea descriptionJTextArea;
     private javax.swing.JLabel descriptionLabel;
-    private javax.swing.JButton editContactJButton;
+    private javax.swing.JButton editContactsJButton;
     private javax.swing.JButton editInstrumentJButton;
     private javax.swing.JButton editProtocolJButton;
+    private javax.swing.JButton editReferencesJButton;
     private javax.swing.JButton editSampleJButton;
     private javax.swing.JLabel experimentLabel;
     private javax.swing.JLabel experimentPropertiesLabel;
@@ -1259,8 +1039,6 @@ public class PrideExportDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox instrumentJComboBox;
     private javax.swing.JLabel instrumentLabel;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JSeparator jSeparator6;
     private javax.swing.JTextField labelJTextField;
     private javax.swing.JButton openDialogHelpJButton;
     private javax.swing.JLabel outpitFolderLabel;
@@ -1269,14 +1047,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
     private javax.swing.JLabel projectLabel;
     private javax.swing.JComboBox protocolJComboBox;
     private javax.swing.JLabel protocolLabel;
-    private javax.swing.JMenuItem refDeleteSelectedRowJMenuItem;
-    private javax.swing.JMenuItem refEditJMenuItem;
-    private javax.swing.JMenuItem refMoveDownJMenuItem;
-    private javax.swing.JMenuItem refMoveUpJMenuItem;
-    private javax.swing.JScrollPane referencesJScrollPane;
-    private javax.swing.JTable referencesJTable;
+    private javax.swing.JComboBox referenceGroupsJComboBox;
     private javax.swing.JLabel referencesLabel;
-    private javax.swing.JPopupMenu referencesPopupJMenu;
     private javax.swing.JComboBox sampleJComboBox;
     private javax.swing.JLabel sampleLabel;
     private javax.swing.JTextField titleJTextField;
@@ -1297,7 +1069,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
             inputValid = false;
         }
 
-        if ((contactsJComboBox.getSelectedIndex() == 0 || contactsJComboBox.getSelectedIndex() == contactsJComboBox.getItemCount() - 1)
+        if ((contactGroupsJComboBox.getSelectedIndex() == 0 || contactGroupsJComboBox.getSelectedIndex() == contactGroupsJComboBox.getItemCount() - 1)
                 || (sampleJComboBox.getSelectedIndex() == 0 || sampleJComboBox.getSelectedIndex() == sampleJComboBox.getItemCount() - 1)
                 || (protocolJComboBox.getSelectedIndex() == 0 || protocolJComboBox.getSelectedIndex() == protocolJComboBox.getItemCount() - 1)
                 || (instrumentJComboBox.getSelectedIndex() == 0 || instrumentJComboBox.getSelectedIndex() == instrumentJComboBox.getItemCount() - 1)) {
@@ -1341,7 +1113,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
             outpitFolderLabel.setForeground(Color.RED);
         }
 
-        if (contactsJComboBox.getSelectedIndex() != 0) {
+        if (contactGroupsJComboBox.getSelectedIndex() != 0) {
             contactLabel.setForeground(Color.BLACK);
         } else {
             contactLabel.setForeground(Color.RED);
@@ -1367,45 +1139,30 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Fixes the indices in the reference table so that they are in accending
-     * order starting from one.
-     */
-    private void fixReferenceIndices() {
-        for (int row = 0; row < ((DefaultTableModel) referencesJTable.getModel()).getRowCount(); row++) {
-            ((DefaultTableModel) referencesJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
-        }
-    }
-
-    /**
-     * Updates the reference at the given row.
+     * Sets the selected reference group.
      *
-     * @param reference
-     * @param rowIndex
+     * @param referenceGroup the reference group
      */
-    public void updateReference(Reference reference, int rowIndex) {
-        referencesJTable.setValueAt(reference.getReference(), rowIndex, 1);
-        referencesJTable.setValueAt(reference.getPmid(), rowIndex, 1);
-        referencesJTable.setValueAt(reference.getDoi(), rowIndex, 1);
-    }
-
-    /**
-     * Adds a new reference.
-     *
-     * @param reference
-     */
-    public void addReference(Reference reference) {
+    public void setReferences(ReferenceGroup referenceGroup) {
 
         try {
-            prideObjectsFactory.addReference(reference);
+            prideObjectsFactory.addReferenceGroup(referenceGroup);
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
-                    referencesJTable.getRowCount() + 1,
-                    reference.getReference(),
-                    reference.getPmid(),
-                    reference.getDoi()
-                });
+
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getReferenceGroups().keySet()), "--- Select a Reference Group ---", "   Create a New Reference Group...", referenceGroupsJComboBox);
+
+        int selectedReferenceIndex = 0;
+
+        for (int i = 0; i < referenceGroupsJComboBox.getItemCount(); i++) {
+            if (((String) referenceGroupsJComboBox.getItemAt(i)).equalsIgnoreCase(referenceGroup.getName())) {
+                selectedReferenceIndex = i;
+            }
+        }
+
+        referenceGroupsJComboBox.setSelectedIndex(selectedReferenceIndex);
+        referenceGroupsJComboBoxActionPerformed(null);
     }
 
     /**
@@ -1491,30 +1248,30 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Sets the selected contact.
+     * Sets the selected contact group.
      *
-     * @param contact
+     * @param contactGroup the contact group
      */
-    public void setContact(Contact contact) {
+    public void setContacts(ContactGroup contactGroup) {
+
         try {
-            prideObjectsFactory.addContact(contact);
+            prideObjectsFactory.addContactGroup(contactGroup);
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getContacts().keySet()), "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
+
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getContactGroups().keySet()), "--- Select a Contact Group ---", "   Create a New Contact Group...", contactGroupsJComboBox);
 
         int selectedContactIndex = 0;
 
-        for (int i = 0; i < contactsJComboBox.getItemCount(); i++) {
-            if (((String) contactsJComboBox.getItemAt(i)).equalsIgnoreCase(contact.getName())) {
+        for (int i = 0; i < contactGroupsJComboBox.getItemCount(); i++) {
+            if (((String) contactGroupsJComboBox.getItemAt(i)).equalsIgnoreCase(contactGroup.getName())) {
                 selectedContactIndex = i;
             }
         }
 
-        contactsJComboBox.setSelectedIndex(selectedContactIndex);
-
-
-        contactsJComboBoxActionPerformed(null);
+        contactGroupsJComboBox.setSelectedIndex(selectedContactIndex);
+        contactGroupsJComboBoxActionPerformed(null);
     }
 
     /**
@@ -1538,14 +1295,80 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         return ontology;
     }
-    
+
     /**
      * Returns true if the user has canceled the progress.
-     * 
-     * 
+     *
+     *
      * @return true if the user has canceled the progress
      */
     public boolean progressCancelled() {
         return progressDialog.isRunCanceled();
+    }
+
+    /**
+     * Resets the PRIDE object factory.
+     */
+    private void resetPrideObjectFactory() {
+        try {
+            prideObjectsFactory = PrideObjectsFactory.getInstance();
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
+    }
+
+    /**
+     * Try to delete the given contact group.
+     *
+     * @param contactGroup the contact group to delete
+     */
+    public void deleteContactGroup(ContactGroup contactGroup) {
+        prideObjectsFactory.deleteContactGroup(contactGroup);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getContactGroups().keySet()), "--- Select a Contact Group ---", "   Create a New Contact Group...", contactGroupsJComboBox);
+        contactGroupsJComboBoxActionPerformed(null);
+    }
+
+    /**
+     * Try to delete the given instrument.
+     *
+     * @param instrument the instrument to delete
+     */
+    public void deleteInstrument(Instrument instrument) {
+        prideObjectsFactory.deleteInstrument(instrument);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()), "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
+        instrumentJComboBoxActionPerformed(null);
+    }
+
+    /**
+     * Try to delete the given sample.
+     *
+     * @param sample the sample to delete
+     */
+    public void deleteSample(Sample sample) {
+        prideObjectsFactory.deleteSample(sample);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()), "--- Select a Sample ---", "   Create a New Sample...", sampleJComboBox);
+        sampleJComboBoxActionPerformed(null);
+    }
+
+    /**
+     * Try to delete the given protocol.
+     *
+     * @param protocol the protocol to delete
+     */
+    public void deleteProtocol(Protocol protocol) {
+        prideObjectsFactory.deleteProtocol(protocol);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()), "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
+        protocolJComboBoxActionPerformed(null);
+    }
+
+    /**
+     * Try to delete the given reference group.
+     *
+     * @param referenceGroup the reference group to delete
+     */
+    public void deleteReferenceGroup(ReferenceGroup referenceGroup) {
+        prideObjectsFactory.deleteReferenceGroup(referenceGroup);
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getReferenceGroups().keySet()), "--- Select a Reference Group ---", "   Create a New Reference Group...", referenceGroupsJComboBox);
+        referenceGroupsJComboBoxActionPerformed(null);
     }
 }

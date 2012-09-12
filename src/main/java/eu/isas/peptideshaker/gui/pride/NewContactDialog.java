@@ -13,38 +13,44 @@ import javax.swing.JOptionPane;
 public class NewContactDialog extends javax.swing.JDialog {
 
     /**
-     * A reference to the PRIDE export dialog.
+     * A reference to the NewContactGroupDialog.
      */
-    private PrideExportDialog prideExportDialog;
+    private NewContactGroupDialog newContactGroupDialog;
     /**
      * The last valid input for contact name
      */
     private String lastNameInput = "";
+    /**
+     * The index of the modified row, if any.
+     */
+    private int modifiedRow = -1;
 
     /**
      * Creates a new NewContactDialog.
      * 
-     * @param prideExportDialog
+     * @param newContactGroupDialog
      * @param modal 
      */
-    public NewContactDialog(PrideExportDialog prideExportDialog, boolean modal) {
-        super(prideExportDialog, modal);
-        this.prideExportDialog = prideExportDialog;
+    public NewContactDialog(NewContactGroupDialog newContactGroupDialog, boolean modal) {
+        super(newContactGroupDialog, modal);
+        this.newContactGroupDialog = newContactGroupDialog;
         initComponents();
-        setLocationRelativeTo(prideExportDialog);
+        setLocationRelativeTo(newContactGroupDialog);
         setVisible(true);
     }
     
     /**
      * Creates a new NewContactDialog.
      * 
-     * @param prideExportDialog
+     * @param newContactGroupDialog
      * @param modal
-     * @param contact 
+     * @param contact
+     * @param row  
      */
-    public NewContactDialog(PrideExportDialog prideExportDialog, boolean modal, Contact contact) {
-        super(prideExportDialog, modal);
-        this.prideExportDialog = prideExportDialog;
+    public NewContactDialog(NewContactGroupDialog newContactGroupDialog, boolean modal, Contact contact, int modifiedRow) {
+        super(newContactGroupDialog, modal);
+        this.newContactGroupDialog = newContactGroupDialog;
+        this.modifiedRow = modifiedRow;
         initComponents();
         
         nameJTextField.setText(contact.getName());
@@ -54,7 +60,7 @@ public class NewContactDialog extends javax.swing.JDialog {
         
         setTitle("Edit Contact");
         
-        setLocationRelativeTo(prideExportDialog);
+        setLocationRelativeTo(newContactGroupDialog);
         setVisible(true);
     }
 
@@ -67,7 +73,8 @@ public class NewContactDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        contactPanel = new javax.swing.JPanel();
         institutionLabel = new javax.swing.JLabel();
         nameLabel = new javax.swing.JLabel();
         eMailLabel = new javax.swing.JLabel();
@@ -80,7 +87,10 @@ public class NewContactDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Contact");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Contact"));
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        contactPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Contact"));
+        contactPanel.setOpaque(false);
 
         institutionLabel.setForeground(new java.awt.Color(255, 0, 0));
         institutionLabel.setText("Institution*");
@@ -119,36 +129,36 @@ public class NewContactDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout contactPanelLayout = new javax.swing.GroupLayout(contactPanel);
+        contactPanel.setLayout(contactPanelLayout);
+        contactPanelLayout.setHorizontalGroup(
+            contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contactPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(eMailLabel)
                     .addComponent(nameLabel)
                     .addComponent(institutionLabel))
                 .addGap(16, 16, 16)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                     .addComponent(eMailJTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(nameJTextField))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        contactPanelLayout.setVerticalGroup(
+            contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contactPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nameLabel)
                     .addComponent(nameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(eMailLabel)
                     .addComponent(eMailJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(institutionLabel)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -162,27 +172,38 @@ public class NewContactDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(contactPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okJButton)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(contactPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(okJButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -215,16 +236,24 @@ public class NewContactDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
-        prideExportDialog.setContact(new Contact(nameJTextField.getText(), eMailJTextField.getText(), institutionJTextArea.getText()));
+        Contact tempContact = new Contact(nameJTextField.getText(), eMailJTextField.getText(), institutionJTextArea.getText());
+        
+        if (modifiedRow != -1) {
+            newContactGroupDialog.editContact(tempContact, modifiedRow);
+        } else {
+            newContactGroupDialog.insertContact(tempContact);
+        }
+
         dispose();
     }//GEN-LAST:event_okJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JPanel contactPanel;
     private javax.swing.JTextField eMailJTextField;
     private javax.swing.JLabel eMailLabel;
     private javax.swing.JTextArea institutionJTextArea;
     private javax.swing.JLabel institutionLabel;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField nameJTextField;
     private javax.swing.JLabel nameLabel;

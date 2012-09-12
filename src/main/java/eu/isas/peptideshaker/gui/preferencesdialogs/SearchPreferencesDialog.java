@@ -1130,9 +1130,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             if (column == expectedModificationsTable.getColumn("  ").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex() && expectedModificationsTable.getValueAt(row, column) != null) {
-
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
