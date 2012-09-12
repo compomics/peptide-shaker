@@ -65,13 +65,13 @@ public class PRIDEExport {
      */
     private String experimentProject;
     /**
-     * The references to include in the PRIDE xml file as utilities pride object
+     * The references to include in the PRIDE xml file.
      */
-    private ArrayList<Reference> references;
+    private ReferenceGroup referenceGroup;
     /**
      * The contact utilities PRIDE object.
      */
-    private Contact contact;
+    private ContactGroup contactGroup;
     /**
      * THe sample utilities PRIDE object.
      */
@@ -140,8 +140,8 @@ public class PRIDEExport {
      * @param experimentLabel Label of the experiment
      * @param experimentDescription Description of the experiment
      * @param experimentProject project of the experiment
-     * @param references References for the experiment
-     * @param contact Contact for the experiment
+     * @param referenceGroup References for the experiment
+     * @param contactGroup Contacts for the experiment
      * @param sample Samples in this experiment
      * @param protocol Protocol used in this experiment
      * @param instrument Instruments used in this experiment
@@ -155,7 +155,7 @@ public class PRIDEExport {
      * occurred while deserializing a pride object
      */
     public PRIDEExport(PeptideShakerGUI peptideShakerGUI, PrideExportDialog prideExportDialog, String experimentTitle, String experimentLabel, String experimentDescription, String experimentProject,
-            ArrayList<Reference> references, Contact contact, Sample sample, Protocol protocol, Instrument instrument,
+            ReferenceGroup referenceGroup, ContactGroup contactGroup, Sample sample, Protocol protocol, Instrument instrument,
             File outputFolder, String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
         this.peptideShakerGUI = peptideShakerGUI;
         this.prideExportDialog = prideExportDialog;
@@ -163,8 +163,8 @@ public class PRIDEExport {
         this.experimentLabel = experimentLabel;
         this.experimentDescription = experimentDescription;
         this.experimentProject = experimentProject;
-        this.references = references;
-        this.contact = contact;
+        this.referenceGroup = referenceGroup;
+        this.contactGroup = contactGroup;
         this.sample = sample;
         this.protocol = protocol;
         this.instrument = instrument;
@@ -192,7 +192,7 @@ public class PRIDEExport {
         writeTitle();
 
         // the references, if any
-        if (references.size() > 0) {
+        if (referenceGroup.getReferences().size() > 0) {
             writeReferences();
         }
 
@@ -407,8 +407,6 @@ public class PRIDEExport {
                         Collections.sort(modifications);
                         PSPtmScores ptmScores = new PSPtmScores();
 
-                        first = true;
-
                         for (String mod : modifications) {
 
                             if (spectrumMatch.getUrParam(ptmScores) != null) {
@@ -498,14 +496,14 @@ public class PRIDEExport {
                                 }
                             }
                         }
-                        
+
                         ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins();
                         String peptideProteins = "";
                         for (String accession : peptideParentProteins) {
-                                if (!peptideProteins.equals("")) {
-                                    peptideProteins += ", ";
-                                }
-                                peptideProteins += accession;
+                            if (!peptideProteins.equals("")) {
+                                peptideProteins += ", ";
+                            }
+                            peptideProteins += accession;
                         }
 
                         // additional peptide id parameters
@@ -543,7 +541,7 @@ public class PRIDEExport {
                         if (mascotScore != null) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"Mascot score\" value=\"" + mascotScore + "\" />" + System.getProperty("line.separator"));
                         }
-                        
+
                         // PTM scoring
                         if (!dScore.equals("")) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
@@ -930,7 +928,7 @@ public class PRIDEExport {
         writeSample();
 
         // write the contact details
-        writeContact();
+        writeContacts();
 
         tabCounter--;
         br.write(getCurrentTabSpace() + "</admin>" + System.getProperty("line.separator"));
@@ -1038,22 +1036,23 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes the contact description.
+     * Writes the contact descriptions.
      *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      */
-    private void writeContact() throws IOException {
+    private void writeContacts() throws IOException {
+        for (int i = 0; i < contactGroup.getContacts().size(); i++) {
+            br.write(getCurrentTabSpace() + "<contact>" + System.getProperty("line.separator"));
+            tabCounter++;
 
-        br.write(getCurrentTabSpace() + "<contact>" + System.getProperty("line.separator"));
-        tabCounter++;
+            br.write(getCurrentTabSpace() + "<name>" + contactGroup.getContacts().get(i).getName() + "</name>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<institution>" + contactGroup.getContacts().get(i).getInstitution() + "</institution>" + System.getProperty("line.separator"));
+            br.write(getCurrentTabSpace() + "<contactInfo>" + contactGroup.getContacts().get(i).getEMail() + "</contactInfo>" + System.getProperty("line.separator"));
 
-        br.write(getCurrentTabSpace() + "<name>" + contact.getName() + "</name>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<institution>" + contact.getInstitution() + "</institution>" + System.getProperty("line.separator"));
-        br.write(getCurrentTabSpace() + "<contactInfo>" + contact.getEMail() + "</contactInfo>" + System.getProperty("line.separator"));
-
-        tabCounter--;
-        br.write(getCurrentTabSpace() + "</contact>" + System.getProperty("line.separator"));
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</contact>" + System.getProperty("line.separator"));
+        }
     }
 
     /**
@@ -1169,9 +1168,9 @@ public class PRIDEExport {
      * reading/writing a file
      */
     private void writeReferences() throws IOException {
-        for (int i = 0; i < references.size(); i++) {
+        for (int i = 0; i < referenceGroup.getReferences().size(); i++) {
 
-            Reference tempReference = references.get(i);
+            Reference tempReference = referenceGroup.getReferences().get(i);
 
             br.write(getCurrentTabSpace() + "<Reference>" + System.getProperty("line.separator"));
             tabCounter++;
@@ -1183,11 +1182,13 @@ public class PRIDEExport {
                 tabCounter++;
 
                 if (tempReference.getPmid() != null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000029\" name=\"PubMed\" value=\"" + tempReference.getPmid() + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000029\" name=\"PubMed\" value=\"" 
+                            + tempReference.getPmid() + "\" />" + System.getProperty("line.separator"));
                 }
 
                 if (tempReference.getDoi() != null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000042\" name=\"DOI\" value=\"" + tempReference.getDoi() + "\" />" + System.getProperty("line.separator"));
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000042\" name=\"DOI\" value=\"" 
+                            + tempReference.getDoi() + "\" />" + System.getProperty("line.separator"));
                 }
 
                 tabCounter--;
@@ -1300,31 +1301,31 @@ public class PRIDEExport {
     }
 
     /**
-     * @return the references
+     * @return the reference group
      */
-    public ArrayList<Reference> getReferences() {
-        return references;
+    public ReferenceGroup getReferenceGroup() {
+        return referenceGroup;
     }
 
     /**
-     * @param references the references to set
+     * @param referenceGroup the references group to set
      */
-    public void setReferences(ArrayList<Reference> references) {
-        this.references = references;
+    public void setReferenceGroup(ReferenceGroup referenceGroup) {
+        this.referenceGroup = referenceGroup;
     }
 
     /**
-     * @return the contact
+     * @return the contact group
      */
-    public Contact getContact() {
-        return contact;
+    public ContactGroup getContactGroup() {
+        return contactGroup;
     }
 
     /**
-     * @param contact the contact to set
+     * @param contactGroup the contact group to set
      */
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setContactGroup(ContactGroup contactGroup) {
+        this.contactGroup = contactGroup;
     }
 
     /**

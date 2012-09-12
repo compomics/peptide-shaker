@@ -11,9 +11,9 @@ import java.awt.Color;
 public class NewReferenceDialog extends javax.swing.JDialog {
 
     /**
-     * Reference to the main gui.
+     * Reference to the reference group gui.
      */
-    private PrideExportDialog prideExportDialog;
+    private NewReferenceGroupDialog referenceGroupDialog;
     /**
      * The row index of the references being edited.
      */
@@ -26,29 +26,29 @@ public class NewReferenceDialog extends javax.swing.JDialog {
     /**
      * Creates a new NewReferenceDialog dialog.
      *
-     * @param prideExportDialog
+     * @param referenceGroupDialog
      * @param modal
      */
-    public NewReferenceDialog(PrideExportDialog prideExportDialog, boolean modal) {
-        super(prideExportDialog, modal);
-        this.prideExportDialog = prideExportDialog;
+    public NewReferenceDialog(NewReferenceGroupDialog referenceGroupDialog, boolean modal) {
+        super(referenceGroupDialog, modal);
+        this.referenceGroupDialog = referenceGroupDialog;
         initComponents();
         setTitle("New Reference");
-        setLocationRelativeTo(prideExportDialog);
+        setLocationRelativeTo(referenceGroupDialog);
         setVisible(true);
     }
 
     /**
      * Creates a new NewReferenceDialog dialog.
      *
-     * @param prideExportDialog
+     * @param referenceGroupDialog
      * @param modal
      * @param reference
      * @param rowIndex  
      */
-    public NewReferenceDialog(PrideExportDialog prideExportDialog, boolean modal, Reference reference, int rowIndex) {
-        super(prideExportDialog, modal);
-        this.prideExportDialog = prideExportDialog;
+    public NewReferenceDialog(NewReferenceGroupDialog referenceGroupDialog, boolean modal, Reference reference, int rowIndex) {
+        super(referenceGroupDialog, modal);
+        this.referenceGroupDialog = referenceGroupDialog;
         this.rowIndex = rowIndex;
         initComponents();
 
@@ -58,7 +58,7 @@ public class NewReferenceDialog extends javax.swing.JDialog {
         doiJTextField.setText(reference.getDoi());
         validateInput();
 
-        setLocationRelativeTo(prideExportDialog);
+        setLocationRelativeTo(referenceGroupDialog);
         setVisible(true);
     }
 
@@ -233,21 +233,21 @@ public class NewReferenceDialog extends javax.swing.JDialog {
         
         String tempPmid = null;
         String tempDoi = null;
-        
+
         if (pmidIDJTextField.getText().length() > 0) {
             tempPmid = pmidIDJTextField.getText();
         }
-        
+
         if (doiJTextField.getText().length() > 0) {
             tempDoi = doiJTextField.getText();
         }
-        
+
         if (rowIndex != -1) {
-            prideExportDialog.updateReference(new Reference(referenceJTextArea.getText(), tempPmid, tempDoi), rowIndex);
+            referenceGroupDialog.editReference(new Reference(referenceJTextArea.getText(), tempPmid, tempDoi), rowIndex);
         } else {
-            prideExportDialog.addReference(new Reference(referenceJTextArea.getText(), tempPmid, tempDoi));
+            referenceGroupDialog.insertReference(new Reference(referenceJTextArea.getText(), tempPmid, tempDoi));
         }
-        
+
         dispose();  
     }//GEN-LAST:event_okJButtonActionPerformed
 
