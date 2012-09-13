@@ -192,7 +192,7 @@ public class PRIDEExport {
         writeTitle();
 
         // the references, if any
-        if (referenceGroup.getReferences().size() > 0) {
+        if (referenceGroup != null && referenceGroup.getReferences().size() > 0) {
             writeReferences();
         }
 

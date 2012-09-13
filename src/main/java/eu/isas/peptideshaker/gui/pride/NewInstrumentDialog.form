@@ -78,7 +78,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="backgroundPanel" alignment="0" min="-2" max="32767" attributes="0"/>
+          <Component id="backgroundPanel" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -93,11 +93,11 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="instrumentPanel" max="32767" attributes="2"/>
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="okJButton" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -108,7 +108,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="instrumentPanel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -135,7 +135,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="analyzerCvScrollPane" pref="561" max="32767" attributes="1"/>
+                          <Component id="analyzerCvScrollPane" pref="598" max="32767" attributes="1"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="sourceLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -148,7 +148,7 @@
                                   <Group type="102" attributes="0">
                                       <Component id="instrumentDetectorJTextField" max="32767" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="instrumentDetectorJButton" min="-2" pref="36" max="-2" attributes="0"/>
+                                      <Component id="instrumentDetectorJButton" linkSize="3" min="-2" pref="36" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="1" attributes="0">
@@ -156,16 +156,16 @@
                                           <Component id="instrumentSourceJTextField" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="instrumentSourceJButton" min="-2" pref="36" max="-2" attributes="0"/>
-                                          <Component id="deleteButton" pref="0" max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="instrumentSourceJButton" linkSize="3" min="-2" pref="36" max="-2" attributes="0"/>
+                                          <Component id="deleteButton" linkSize="3" min="-2" pref="27" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="addAnalyzerJButton" min="-2" pref="170" max="-2" attributes="1"/>
+                              <Component id="addAnalyzerJButton" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -178,28 +178,28 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="nameLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="nameJTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="deleteButton" alignment="2" min="-2" pref="16" max="-2" attributes="0"/>
+                          <Component id="nameJTextField" linkSize="1" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="deleteButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="sourceLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="instrumentSourceJTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="instrumentSourceJButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentSourceJTextField" linkSize="1" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentSourceJButton" linkSize="1" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="detectorLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="instrumentDetectorJTextField" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="instrumentDetectorJButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentDetectorJTextField" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentDetectorJButton" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Component id="analyzerLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="analyzerCvScrollPane" pref="155" max="32767" attributes="0"/>
+                      <Component id="analyzerCvScrollPane" pref="142" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="addAnalyzerJButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                      <Component id="addAnalyzerJButton" min="-2" pref="31" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -346,8 +346,6 @@
                   <Image iconType="3" name="/icons/Error_3.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Delete Instrument"/>
-                <Property name="borderPainted" type="boolean" value="false"/>
-                <Property name="contentAreaFilled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deleteButtonMouseEntered"/>
