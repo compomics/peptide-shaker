@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.util.Util;
@@ -20,7 +19,7 @@ import no.uib.olsdialog.OLSInputable;
 
 /**
  * A dialog for annotating instruments.
- * 
+ *
  * @author Harald Barsnes
  */
 public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInputable {
@@ -37,30 +36,30 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
      * The last valid input for contact name
      */
     private String lastNameInput = "";
-    
+
     /**
      * Create a new NewInstrumentDialog.
-     * 
+     *
      * @param prideExportDialog
-     * @param modal 
+     * @param modal
      */
     public NewInstrumentDialog(PrideExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
-        
+
         setUpTable();
-        
+
         setLocationRelativeTo(prideExportDialog);
         setVisible(true);
     }
-    
+
     /**
      * Creates a new NewInstrumentDialog.
      *
      * @param prideExportDialog
      * @param modal
-     * @param instrument  
+     * @param instrument
      */
     public NewInstrumentDialog(PrideExportDialog prideExportDialog, boolean modal, Instrument instrument) {
         super(prideExportDialog, modal);
@@ -68,29 +67,29 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
         initComponents();
         setTitle("Edit Instrument");
-        
+
         nameJTextField.setText(instrument.getName());
-        
-        for (int i=0; i<instrument.getCvTerms().size(); i++) {
-            ((DefaultTableModel) analyzerCvTermsJTable.getModel()).addRow(new Object[] {
-                (i+1),
-                instrument.getCvTerms().get(i).getOntology(),
-                instrument.getCvTerms().get(i).getAccession(),
-                instrument.getCvTerms().get(i).getName(),
-                instrument.getCvTerms().get(i).getValue()
-            });
+
+        for (int i = 0; i < instrument.getCvTerms().size(); i++) {
+            ((DefaultTableModel) analyzerCvTermsJTable.getModel()).addRow(new Object[]{
+                        (i + 1),
+                        instrument.getCvTerms().get(i).getOntology(),
+                        instrument.getCvTerms().get(i).getAccession(),
+                        instrument.getCvTerms().get(i).getName(),
+                        instrument.getCvTerms().get(i).getValue()
+                    });
         }
-        
+
         instrumentSourceJTextField.setText(instrument.getSource().getName() + " [" + instrument.getSource().getAccession() + "]");
         instrumentDetectorJTextField.setText(instrument.getDetector().getName() + " [" + instrument.getDetector().getAccession() + "]");
-        
+
         setUpTable();
         validateInput();
 
         setLocationRelativeTo(prideExportDialog);
         setVisible(true);
     }
-    
+
     /**
      * Set up the table properties.
      */
@@ -100,7 +99,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         analyzerCvTermsJTable.getTableHeader().setReorderingAllowed(false);
         analyzerCvTermsJTable.getColumn(" ").setMaxWidth(40);
         analyzerCvTermsJTable.getColumn(" ").setMinWidth(40);
-        
+
         columnToolTips = new Vector();
         columnToolTips.add(null);
         columnToolTips.add(null);
@@ -294,8 +293,6 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
         deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Error_3.png"))); // NOI18N
         deleteButton.setToolTipText("Delete Instrument");
-        deleteButton.setBorderPainted(false);
-        deleteButton.setContentAreaFilled(false);
         deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 deleteButtonMouseEntered(evt);
@@ -317,7 +314,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             .addGroup(instrumentPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                    .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                     .addGroup(instrumentPanelLayout.createSequentialGroup()
                         .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(sourceLabel)
@@ -335,14 +332,17 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
                                     .addComponent(nameJTextField, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(instrumentSourceJTextField))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(instrumentSourceJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))))
+                                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, instrumentPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(addAnalyzerJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(addAnalyzerJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+
+        instrumentPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteButton, instrumentDetectorJButton, instrumentSourceJButton});
+
         instrumentPanelLayout.setVerticalGroup(
             instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(instrumentPanelLayout.createSequentialGroup()
@@ -350,8 +350,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
                 .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(nameLabel)
                     .addComponent(nameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.LEADING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(sourceLabel)
                     .addComponent(instrumentSourceJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -364,11 +364,15 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
                 .addGap(18, 18, 18)
                 .addComponent(analyzerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addAnalyzerJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6))
+                .addComponent(addAnalyzerJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
+
+        instrumentPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {instrumentSourceJButton, instrumentSourceJTextField, nameJTextField});
+
+        instrumentPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {instrumentDetectorJButton, instrumentDetectorJTextField});
 
         okJButton.setText("OK");
         okJButton.setEnabled(false);
@@ -382,7 +386,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backgroundPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(instrumentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -409,7 +413,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -417,8 +421,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Open the OLS Dialog to edit the detector.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void instrumentDetectorJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instrumentDetectorJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -430,7 +434,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
             searchTerm = instrumentDetectorJTextField.getText();
 
-            ontology = searchTerm.substring(searchTerm.lastIndexOf("[") + 1, searchTerm.lastIndexOf("]") - 1);
+            ontology = searchTerm.substring(searchTerm.lastIndexOf("[") + 1, searchTerm.lastIndexOf("]"));
             ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
 
             searchTerm = instrumentDetectorJTextField.getText().substring(
@@ -451,8 +455,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Open the OLS Dialog to edit the source.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void instrumentSourceJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instrumentSourceJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -464,7 +468,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
             searchTerm = instrumentSourceJTextField.getText();
 
-            ontology = searchTerm.substring(searchTerm.lastIndexOf("[") + 1, searchTerm.lastIndexOf("]") - 1);
+            ontology = searchTerm.substring(searchTerm.lastIndexOf("[") + 1, searchTerm.lastIndexOf("]"));
             ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
 
             searchTerm = instrumentSourceJTextField.getText().substring(0, instrumentSourceJTextField.getText().lastIndexOf("[") - 1);
@@ -484,8 +488,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Open the table popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void analyzerCvTermsJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_analyzerCvTermsJTableMouseClicked
         if (evt.getButton() == 3) {
@@ -514,8 +518,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Delete the selected row.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void analyzerCvTermsJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_analyzerCvTermsJTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
@@ -525,8 +529,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Open the OLS Dialog to add an analyzer CV term.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void addAnalyzerJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAnalyzerJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -536,8 +540,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Edit the selected analyzer term.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editJMenuItemActionPerformed
         int selectedRow = analyzerCvTermsJTable.getSelectedRow();
@@ -553,8 +557,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Move the selected row up.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void moveUpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpJMenuItemActionPerformed
         int selectedRow = analyzerCvTermsJTable.getSelectedRow();
@@ -576,8 +580,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * More the selected row down.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void moveDownJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownJMenuItemActionPerformed
         int selectedRow = analyzerCvTermsJTable.getSelectedRow();
@@ -599,8 +603,8 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Delete the selected row.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void deleteSelectedRowJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSelectedRowJMenuItemActionPerformed
 
@@ -616,42 +620,42 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Save the instrument and close the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
-        
+
         ArrayList<CvTerm> cvTerms = new ArrayList<CvTerm>();
-        
-        for (int i=0; i<analyzerCvTermsJTable.getRowCount(); i++) {
+
+        for (int i = 0; i < analyzerCvTermsJTable.getRowCount(); i++) {
             cvTerms.add(new CvTerm(
-                    (String) analyzerCvTermsJTable.getValueAt(i, 1), 
-                    (String) analyzerCvTermsJTable.getValueAt(i, 2), 
-                    (String) analyzerCvTermsJTable.getValueAt(i, 3), 
+                    (String) analyzerCvTermsJTable.getValueAt(i, 1),
+                    (String) analyzerCvTermsJTable.getValueAt(i, 2),
+                    (String) analyzerCvTermsJTable.getValueAt(i, 3),
                     (String) analyzerCvTermsJTable.getValueAt(i, 4)));
         }
-        
+
         String tempSource = instrumentSourceJTextField.getText();
         String termSource = tempSource.substring(0, tempSource.lastIndexOf("[") - 1);
-        String accessionSource = tempSource.substring(tempSource.lastIndexOf("[") + 1, tempSource.lastIndexOf("]") - 1);
+        String accessionSource = tempSource.substring(tempSource.lastIndexOf("[") + 1, tempSource.lastIndexOf("]"));
         String ontologySource = PrideExportDialog.getOntologyFromCvTerm(accessionSource);
-        
+
         String tempDetector = instrumentDetectorJTextField.getText();
         String termDetector = tempDetector.substring(0, tempDetector.lastIndexOf("[") - 1);
-        String accessionDetector = tempDetector.substring(tempDetector.lastIndexOf("[") + 1, tempDetector.lastIndexOf("]") - 1);
+        String accessionDetector = tempDetector.substring(tempDetector.lastIndexOf("[") + 1, tempDetector.lastIndexOf("]"));
         String ontologyDetector = PrideExportDialog.getOntologyFromCvTerm(accessionDetector);
-        
-        prideExportDialog.setInstrument(new Instrument(nameJTextField.getText(), 
-                new CvTerm(ontologySource, accessionSource, termSource, null), 
-                new CvTerm(ontologyDetector, accessionDetector, termDetector, null), 
+
+        prideExportDialog.setInstrument(new Instrument(nameJTextField.getText(),
+                new CvTerm(ontologySource, accessionSource, termSource, null),
+                new CvTerm(ontologyDetector, accessionDetector, termDetector, null),
                 cvTerms));
         dispose();
     }//GEN-LAST:event_okJButtonActionPerformed
 
     /**
      * Close the dialog without saving.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void nameJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameJTextFieldKeyReleased
         validateInput();
@@ -677,14 +681,13 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Try to delete the given instrument.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         dispose();
         prideExportDialog.deleteInstrument(new Instrument(nameJTextField.getText(), null, null, new ArrayList<CvTerm>()));
     }//GEN-LAST:event_deleteButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addAnalyzerJButton;
     private javax.swing.JScrollPane analyzerCvScrollPane;
@@ -713,24 +716,24 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     @Override
     public void insertOLSResult(String field, String selectedValue, String accession, String ontologyShort, String ontologyLong, int modifiedRow, String mappedTerm, Map<String, String> metadata) {
-        
+
         if (field.equalsIgnoreCase("instrumentSource")) {
             setInstrumentSource(selectedValue, accession, ontologyShort);
         } else if (field.equalsIgnoreCase("instrumentDetector")) {
             setInstrumentDetector(selectedValue, accession, ontologyShort);
         } else {
             addAnalyzerDetails(selectedValue, accession, ontologyShort, modifiedRow);
-        }     
+        }
     }
 
     @Override
     public Window getWindow() {
         return (Window) this;
     }
-    
+
     /**
      * Insert a new instrument source.
-     * 
+     *
      * @param name
      * @param accession
      * @param ontology
@@ -743,7 +746,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
     /**
      * Insert a new instrument detector.
-     * 
+     *
      * @param name
      * @param accession
      * @param ontology
@@ -753,7 +756,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         instrumentDetectorJTextField.setCaretPosition(0);
         validateInput();
     }
-    
+
     /**
      * Fixes the indices so that they are in accending order starting from one.
      */
@@ -762,24 +765,24 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             ((DefaultTableModel) analyzerCvTermsJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
         }
     }
-    
+
     /**
      * Enables the OK button if a valid protocol set is selected.
      */
     private void validateInput() {
-        
+
         String input = nameJTextField.getText();
         for (String forbiddenCharacter : Util.forbiddenCharacters) {
             if (input.contains(forbiddenCharacter)) {
                 JOptionPane.showMessageDialog(null, "'" + forbiddenCharacter + "' is not allowed in instrument name.",
-                    "Forbidden Character", JOptionPane.ERROR_MESSAGE);
+                        "Forbidden Character", JOptionPane.ERROR_MESSAGE);
                 nameJTextField.setText(lastNameInput);
                 return;
             }
         }
         lastNameInput = input;
-        
-        if (analyzerCvTermsJTable.getRowCount() > 0 
+
+        if (analyzerCvTermsJTable.getRowCount() > 0
                 && nameJTextField.getText().length() > 0
                 && instrumentSourceJTextField.getText().length() > 0
                 && instrumentDetectorJTextField.getText().length() > 0) {
@@ -787,33 +790,33 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         } else {
             okJButton.setEnabled(false);
         }
-        
+
         // highlight the fields that have not been filled
         if (nameJTextField.getText().length() > 0) {
             nameLabel.setForeground(Color.BLACK);
         } else {
             nameLabel.setForeground(Color.RED);
         }
-        
+
         if (instrumentSourceJTextField.getText().length() > 0) {
             sourceLabel.setForeground(Color.BLACK);
         } else {
             sourceLabel.setForeground(Color.RED);
         }
-        
+
         if (instrumentDetectorJTextField.getText().length() > 0) {
             detectorLabel.setForeground(Color.BLACK);
         } else {
             detectorLabel.setForeground(Color.RED);
         }
-        
+
         if (analyzerCvTermsJTable.getRowCount() > 0) {
             analyzerLabel.setForeground(Color.BLACK);
         } else {
             analyzerLabel.setForeground(Color.RED);
         }
     }
-    
+
     /**
      * Add an analyzer cv term to the table.
      *
@@ -853,7 +856,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             analyzerCvTermsJTable.setValueAt(name, modifiedRow, 3);
             analyzerCvTermsJTable.setValueAt(null, modifiedRow, 4);
         }
-        
+
         validateInput();
     }
 }

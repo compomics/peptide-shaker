@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.Util;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
