@@ -3,10 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.18.3 (September 15. 2012):*
+ * FEATURE IMPROVEMENT: Improved the PRIDE export dialog.
+ * FEATURE IMPROVEMENT: It is now possible to add more than one contact in the PRIDE export.
+ * FEATURE IMPROVEMENT: The PRIDE settings are now stored in the PeptideShaker Project.
+ * FEATURE IMPROVEMENT: Re-enabled the improved (but slower) ptm location code.
+ * LIBRARY UPDATE: Updated ols-dialog to version 3.4.0, containing many GUI improvements.
+ * LIBRARY UPDATE: Updated utilities to version 3.8.12.
+
+----
+
 *Changes in PeptideShaker 0.18.2 (September 12. 2012):*
  * BUG FIX: Had to (temporarily) disabled the new improved PTM location code as could result in null pointers.
  * LIBRARY UPDATE: Updated mascotdatfile to version 3.4.2, such that the Mascot search results can be loaded again.
  * LIBRARY UPDATE: Updated utilities to version 3.8.9, fixing an issues with the EBI proxy settings. 
+
+Download Count: 35
 
 ----
 
