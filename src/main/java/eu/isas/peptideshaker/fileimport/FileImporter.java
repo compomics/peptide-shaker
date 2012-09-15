@@ -868,9 +868,9 @@ public class FileImporter {
             if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
                 System.gc();
                 if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
-                    waitingHandler.appendReport("Reducing memory consumption.", true, true);
+                    waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
                     waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                    double share = 1073741824 / Runtime.getRuntime().totalMemory();
+                    double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
                     share = Math.min(share, 1);
                     peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                     System.gc();
