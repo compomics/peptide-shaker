@@ -263,7 +263,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
             instrumentJComboBox.setSelectedItem(peptideShakerGUI.getProjectDetails().getPrideInstrument().getName());
         }
 
-        if (new File(peptideShakerGUI.getProjectDetails().getPrideOutputFolder()).exists()) {
+        if (peptideShakerGUI.getProjectDetails().getPrideOutputFolder() != null 
+                && new File(peptideShakerGUI.getProjectDetails().getPrideOutputFolder()).exists()) {
             outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getPrideOutputFolder());
         }
     }
