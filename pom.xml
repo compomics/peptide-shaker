@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.18.3</version>
+    <version>0.18.4-beta</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
 
@@ -304,7 +304,7 @@
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
         </dependency>
         
         <dependency>
