@@ -149,34 +149,23 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void setUpTableHeaderToolTips() {
         proteinTableToolTips = new ArrayList<String>();
         proteinTableToolTips.add(null);
+        proteinTableToolTips.add("Starred");
+        proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
-
-        ArrayList<String> fileNames = new ArrayList<String>();
-
-        for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-            String fileName = Util.getFileName(filePath);
-            fileNames.add(fileName);
-        }
-
-        for (int i = 0; i < fileNames.size(); i++) {
-            proteinTableToolTips.add(fileNames.get(i));
-        }
-
+        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
+        proteinTableToolTips.add("Number of Peptides (Validated / Total)");
+        proteinTableToolTips.add("Number of Spectra (Validated / Total)");
+        proteinTableToolTips.add("MS2 Quantification");
         proteinTableToolTips.add("Protein Molecular Weight (kDa)");
-        proteinTableToolTips.add("Protein Confidence");
-        proteinTableToolTips.add("Validated");
 
-        peptideTableToolTips = new ArrayList<String>();
-        peptideTableToolTips.add(null);
-        peptideTableToolTips.add("Peptide Sequence");
-
-        for (int i = 0; i < fileNames.size(); i++) {
-            peptideTableToolTips.add(fileNames.get(i));
+        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            proteinTableToolTips.add("Protein Score");
+        } else {
+            proteinTableToolTips.add("Protein Confidence");
         }
 
-        peptideTableToolTips.add("Peptide Confidence");
-        peptideTableToolTips.add("Validated");
+        proteinTableToolTips.add("Validated");
 
         coverageTableToolTips = new ArrayList<String>();
         coverageTableToolTips.add(null);
@@ -397,7 +386,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // disable the coverage tab if more than one protein is selected
             plotsTabbedPane.setEnabledAt(1, selectedRows.length == 1);
 
-            if (selectedRows.length > 1) {
+            if (selectedRows.length > 1 && plotsTabbedPane.getSelectedIndex() == 1) {
                 plotsTabbedPane.setSelectedIndex(4);
             }
 
@@ -486,7 +475,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     if (selectedRows.length == 1) {
                         peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), "Validated Peptides", "" + (i + 1));
                     } else {
-                        peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), proteinMatch.getMainMatch(), "" + (i + 1));
+                        peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), proteinMatch.getMainMatch() 
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
                     }
                 }
 
@@ -567,8 +557,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), "Validated Spectra", "" + (i + 1));
                         intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), "Average Intensity", "" + (i + 1));
                     } else {
-                        spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getMainMatch(), "" + (i + 1));
-                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), proteinMatch.getMainMatch(), "" + (i + 1));
+                        spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getMainMatch()
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
+                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), proteinMatch.getMainMatch()
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
                     }
                 }
             }
@@ -608,16 +600,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             AbstractCategoryItemRenderer renderer;
 
             // set up the renderer
-            if (selectedRows.length == 1) {
+            //if (selectedRows.length == 1) {
                 renderer = new BarRenderer();
                 ((BarRenderer) renderer).setShadowVisible(false);
                 renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-            } else {
-                renderer = new LineAndShapeRenderer(true, false);
-                for (int i = 0; i < selectedRows.length; i++) {
-                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                }
-            }
+//            } else {
+//                renderer = new LineAndShapeRenderer(true, false);
+//                for (int i = 0; i < selectedRows.length; i++) {
+//                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+//                }
+//            }
 
             renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
             chart.getCategoryPlot().setRenderer(renderer);
@@ -642,16 +634,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             chartPanel = new ChartPanel(chart);
 
             // set up the renderer
-            if (selectedRows.length == 1) {
+            //if (selectedRows.length == 1) {
                 renderer = new BarRenderer();
                 ((BarRenderer) renderer).setShadowVisible(false);
                 renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-            } else {
-                renderer = new LineAndShapeRenderer(true, false);
-                for (int i = 0; i < selectedRows.length; i++) {
-                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                }
-            }
+//            } else {
+//                renderer = new LineAndShapeRenderer(true, false);
+//                for (int i = 0; i < selectedRows.length; i++) {
+//                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+//                }
+//            }
 
             renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
             chart.getCategoryPlot().setRenderer(renderer);
@@ -676,16 +668,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             chartPanel = new ChartPanel(chart);
 
             // set up the renderer
-            if (selectedRows.length == 1) {
+//            if (selectedRows.length == 1) {
                 renderer = new BarRenderer();
                 ((BarRenderer) renderer).setShadowVisible(false);
                 renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
-            } else {
-                renderer = new LineAndShapeRenderer(true, false);
-                for (int i = 0; i < selectedRows.length; i++) {
-                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                }
-            }
+//            } else {
+//                renderer = new LineAndShapeRenderer(true, false);
+//                for (int i = 0; i < selectedRows.length; i++) {
+//                    ((LineAndShapeRenderer) renderer).setSeriesStroke(i, new BasicStroke(LINE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+//                }
+//            }
 
             renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
             chart.getCategoryPlot().setRenderer(renderer);

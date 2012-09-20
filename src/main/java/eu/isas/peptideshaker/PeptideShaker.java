@@ -577,7 +577,7 @@ public class PeptideShaker {
             // set the fraction details
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
-            HashMap<String, ArrayList<Double>> precursorIntensitesPerFraction = new HashMap<String, ArrayList<Double>>();
+            HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionPeptideLevel = new HashMap<String, ArrayList<Double>>();
 
             for (String fraction : psParameter.getFractions()) {
 
@@ -605,12 +605,12 @@ public class PeptideShaker {
                     }
                 }
 
-                precursorIntensitesPerFraction.put(fraction, precursorIntensities);
+                precursorIntensitesPerFractionPeptideLevel.put(fraction, precursorIntensities);
             }
 
             // set the number of validated spectra per fraction for each peptide
             psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
-            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFraction);
+            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
 
             identification.updatePeptideMatchParameter(peptideKey, psParameter);
             if (progressBar != null) {
@@ -642,8 +642,7 @@ public class PeptideShaker {
             // @TODO: could be a better more elegant way of doing this?
             HashMap<String, Integer> validatedPsmsPerFraction = new HashMap<String, Integer>();
             HashMap<String, Integer> validatedPeptidesPerFraction = new HashMap<String, Integer>();
-            HashMap<String, Double> precursorIntensityPerFraction = new HashMap<String, Double>();
-            HashMap<String, ArrayList<Double>> precursorIntensitesPerFraction = new HashMap<String, ArrayList<Double>>();
+            HashMap<String, ArrayList<Double>> precursorIntensitesPerFractionProteinLevel = new HashMap<String, ArrayList<Double>>();
 
             ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatches();
 
@@ -669,12 +668,12 @@ public class PeptideShaker {
                     }
 
                     if (psParameter2.getPrecursorIntensityPerFraction(fraction) != null) {
-                        if (precursorIntensityPerFraction.containsKey(fraction)) {
+                        if (precursorIntensitesPerFractionProteinLevel.containsKey(fraction)) {
                             for (int i = 0; i < psParameter2.getPrecursorIntensityPerFraction(fraction).size(); i++) {
-                                precursorIntensitesPerFraction.get(fraction).add(psParameter2.getPrecursorIntensityPerFraction(fraction).get(i));
+                                precursorIntensitesPerFractionProteinLevel.get(fraction).add(psParameter2.getPrecursorIntensityPerFraction(fraction).get(i));
                             }
                         } else {
-                            precursorIntensitesPerFraction.put(fraction, psParameter2.getPrecursorIntensityPerFraction(fraction));
+                            precursorIntensitesPerFractionProteinLevel.put(fraction, psParameter2.getPrecursorIntensityPerFraction(fraction));
                         }
                     }
 
@@ -697,7 +696,7 @@ public class PeptideShaker {
             // set the number of validated spectra per fraction for each peptide
             psParameter.setFractionValidatedSpectra(validatedPsmsPerFraction);
             psParameter.setFractionValidatedPeptides(validatedPeptidesPerFraction);
-            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFraction);
+            psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
 
             for (String fraction : psParameter.getFractions()) {
                 if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null

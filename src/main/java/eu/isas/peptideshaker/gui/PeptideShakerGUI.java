@@ -2250,7 +2250,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         if (spectrumAsMgf != null) {
 
-            File selectedFile = getUserSelectedFile(".mgf", "(Mascot Generic Format) *.mgf", "Save As...", true);
+            File selectedFile = getUserSelectedFile(".mgf", "(Mascot Generic Format) *.mgf", "Save As...", false);
 
             if (selectedFile != null) {
                 try {
