@@ -90,6 +90,10 @@ public class Metrics implements Serializable {
      * The maximum protein average precursor intensity.
      */
     private Double maxProteinAveragePrecursorIntensity = null;
+    /**
+     * The maximum protein summed precursor intensity.
+     */
+    private Double maxProteinSummedPrecursorIntensity = null;
 
     /**
      * Constructor.
@@ -445,5 +449,23 @@ public class Metrics implements Serializable {
      */
     public void setMaxProteinAveragePrecursorIntensity(Double maxProteinAveragePrecursorIntensity) {
         this.maxProteinAveragePrecursorIntensity = maxProteinAveragePrecursorIntensity;
+    }
+    
+    /**
+     * Returns the maximum summed protein precursor intensity.
+     * 
+     * @return the maxProteinSummedPrecursorIntensity
+     */
+    public Double getMaxProteinSummedPrecursorIntensity() {
+        return maxProteinSummedPrecursorIntensity;
+    }
+
+    /**
+     * Set the maximum summed protein precursor intensity.
+     * 
+     * @param maxProteinSummedPrecursorIntensity the maxProteinSummedPrecursorIntensity to set
+     */
+    public void setMaxProteinSummedPrecursorIntensity(Double maxProteinSummedPrecursorIntensity) {
+        this.maxProteinSummedPrecursorIntensity = maxProteinSummedPrecursorIntensity;
     }
 }
