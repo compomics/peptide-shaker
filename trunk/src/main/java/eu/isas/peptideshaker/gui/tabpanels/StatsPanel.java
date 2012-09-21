@@ -3532,7 +3532,7 @@ public class StatsPanel extends javax.swing.JPanel {
         new Thread(new Runnable() {
 
             public void run() {
-                try {pro
+                try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
                     // ignore
