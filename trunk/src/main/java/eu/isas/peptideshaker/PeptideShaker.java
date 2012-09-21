@@ -34,7 +34,6 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -167,7 +166,7 @@ public class PeptideShaker {
      * scoring
      * @param projectDetails The project details
      * @param processingPreferences the initial processing preferences
-     * @param ptmScoringPreferences  
+     * @param ptmScoringPreferences
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
@@ -226,7 +225,7 @@ public class PeptideShaker {
      * @param annotationPreferences
      * @param idFilter
      * @param processingPreferences
-     * @param ptmScoringPreferences 
+     * @param ptmScoringPreferences
      * @throws IllegalArgumentException
      * @throws IOException
      * @throws Exception
@@ -462,7 +461,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
 
         try {
-            validateIdentifications(waitingHandler.getSecondaryProgressBar());
+            validateIdentifications(waitingHandler);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while validating the results.", true, true);
             waitingHandler.setRunCanceled();
@@ -515,7 +514,7 @@ public class PeptideShaker {
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         attachProteinProbabilities(waitingHandler);
@@ -524,21 +523,21 @@ public class PeptideShaker {
     /**
      * This method will flag validated identifications.
      *
-     * @param progressBar the progress bar
+     * @param waitingHandler the progress bar
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
      */
-    public void validateIdentifications(JProgressBar progressBar) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void validateIdentifications(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
         PSParameter psParameter2 = new PSParameter();
 
-        if (progressBar != null) {
-            progressBar.setIndeterminate(false);
-            progressBar.setMaximum(identification.getProteinIdentification().size()
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
                     + identification.getSpectrumIdentification().size());
         }
@@ -555,8 +554,11 @@ public class PeptideShaker {
                 psParameter.setValidated(false);
             }
             identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-            if (progressBar != null) {
-                progressBar.setValue(progressBar.getValue() + 1);
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
             }
         }
 
@@ -603,6 +605,12 @@ public class PeptideShaker {
                                 precursorIntensities.add(SpectrumFactory.getInstance().getPrecursor(spectrumKeys.get(k)).getIntensity());
                             }
                         }
+
+                        if (waitingHandler != null) {
+                            if (waitingHandler.isRunCanceled()) {
+                                return;
+                            }
+                        }
                     }
                 }
 
@@ -614,8 +622,11 @@ public class PeptideShaker {
             psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionPeptideLevel);
 
             identification.updatePeptideMatchParameter(peptideKey, psParameter);
-            if (progressBar != null) {
-                progressBar.setValue(progressBar.getValue() + 1);
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
             }
         }
 
@@ -692,6 +703,12 @@ public class PeptideShaker {
                         }
                     }
                 }
+                
+                if (waitingHandler != null) {
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
             }
 
 
@@ -713,8 +730,8 @@ public class PeptideShaker {
 
             identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-            if (progressBar != null) {
-                progressBar.setValue(progressBar.getValue() + 1);
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
             }
         }
 
@@ -833,7 +850,7 @@ public class PeptideShaker {
 //                    }
 //                }
 //            }
-            
+
 
             // NEW code below
             // @TODO: _a lot_ slower than before!!!
