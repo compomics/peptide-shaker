@@ -1731,12 +1731,15 @@ public class StatsPanel extends javax.swing.JPanel {
                     public void run() {
 
                         currentTargetDecoyMap.estimateProbabilities(progressDialog);
-                        targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
-                        updateResults();
-                        updateDisplayedComponents();
-                        modifiedMaps.put(groupSelectionTable.getSelectedRow(), true);
-                        applyButton.setEnabled(true);
-                        pepWindowApplied = false;
+                        
+                        if (!progressDialog.isRunCanceled()) {
+                            targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
+                            updateResults();
+                            updateDisplayedComponents();
+                            modifiedMaps.put(groupSelectionTable.getSelectedRow(), true);
+                            applyButton.setEnabled(true);
+                            pepWindowApplied = false;
+                        }
 
                         progressDialog.setRunFinished();
                     }
@@ -1985,22 +1988,26 @@ public class StatsPanel extends javax.swing.JPanel {
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                        miniShaker.validateIdentifications(progressDialog.getProgressBar());
-                        
+                        miniShaker.validateIdentifications(progressDialog);
+
                         progressDialog.setIndeterminate(true);
 
-                        // update the other tabs
-                        peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
-                        peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
-                        dataValidated = true;
-                        validateButton.setEnabled(false);
-                        TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-                        currentResults.setUserInput(new Double(thresholdInput.getText()));
-                        currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
+                        if (!progressDialog.isRunCanceled()) {
+                            // update the other tabs
+                            peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+                            dataValidated = true;
+                            validateButton.setEnabled(false);
+                            TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+                            currentResults.setUserInput(new Double(thresholdInput.getText()));
+                            currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
+                        } else {
+                            // @TODO: ideally the validation settings ought to be reset as well..?
+                        }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }
