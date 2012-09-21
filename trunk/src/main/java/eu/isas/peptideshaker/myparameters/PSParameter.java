@@ -114,6 +114,10 @@ public class PSParameter implements UrParameter {
      * The average precursor intensity per fraction.
      */
     private HashMap<String, Double> precursorIntensityAveragePerFraction = new HashMap<String, Double>();
+    /**
+     * The summed precursor intensity per fraction.
+     */
+    private HashMap<String, Double> precursorIntensitySummedPerFraction = new HashMap<String, Double>();
 
     /**
      * Constructor.
@@ -603,6 +607,10 @@ public class PSParameter implements UrParameter {
                 sum += intensity;
             }
             
+            if (precursorIntensitySummedPerFraction != null) {
+                precursorIntensitySummedPerFraction.put(fraction, sum);
+            }
+            
             if (sum > 0) {
                 precursorIntensityAveragePerFraction.put(fraction, sum / precursorIntensityPerFraction.get(fraction).size());
             } else {
@@ -620,6 +628,20 @@ public class PSParameter implements UrParameter {
     public Double getPrecursorIntensityAveragePerFraction(String fraction) {
         if (precursorIntensityAveragePerFraction != null) {
             return precursorIntensityAveragePerFraction.get(fraction);
+        } else {
+            return null;
+        }  
+    }
+    
+    /**
+     * Get the summed precursor intensity in the given fraction.
+     * 
+     * @param fraction the fraction
+     * @return the summed precursor intensity in the given fraction
+     */
+    public Double getPrecursorIntensitySummedPerFraction(String fraction) {
+        if (precursorIntensitySummedPerFraction != null) {
+            return precursorIntensitySummedPerFraction.get(fraction);
         } else {
             return null;
         }  

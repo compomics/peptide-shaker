@@ -555,11 +555,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                     if (selectedRows.length == 1) {
                         spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), "Validated Spectra", "" + (i + 1));
-                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), "Average Intensity", "" + (i + 1));
+                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), "Summed Intensity", "" + (i + 1));
                     } else {
                         spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getMainMatch()
                                 + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
-                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensityAveragePerFraction(fraction), proteinMatch.getMainMatch()
+                        intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), proteinMatch.getMainMatch()
                                 + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
                     }
                 }
@@ -664,7 +664,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
 
             // create the intensity chart
-            chart = ChartFactory.createBarChart(null, "Fraction", "Average Intensity", intensityPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            chart = ChartFactory.createBarChart(null, "Fraction", "Summed Intensity", intensityPlotDataset, PlotOrientation.VERTICAL, false, true, true);
             chartPanel = new ChartPanel(chart);
 
             // set up the renderer

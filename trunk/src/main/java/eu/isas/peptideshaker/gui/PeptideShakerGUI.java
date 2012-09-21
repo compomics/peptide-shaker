@@ -190,14 +190,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private boolean dataSaved = true;
     /**
-     * Ignore or consider the non-applied threshold change.
-     */
-    private boolean ignoreThresholdUpdate = false;
-    /**
-     * Ignore or consider the non-applied PEP window change.
-     */
-    private boolean ignorePepWindowUpdate = false;
-    /**
      * The scaling value for the bubbles.
      */
     private double bubbleScale = 1;
@@ -1830,98 +1822,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             // check if we have re-loaded the data using the current threshold and PEP window settings
             if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
 
-                if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate
-                        && !statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
-
-                    allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                if (!statsPanel.thresholdUpdated() || !statsPanel.pepWindowApplied()) {
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
+                            this, "Discard the current validation settings?", "Discard Settings?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
+                    
                     if (value == JOptionPane.YES_OPTION) {
-                        ignorePepWindowUpdate = true;
-                        statsPanel.revalidateData();
-                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                        ignorePepWindowUpdate = false;
-                        return;
-                    } else if (value == JOptionPane.NO_OPTION) {
-
-                        // reset the test, i.e., don't ask twice without changes in between
-                        ignoreThresholdUpdate = true;
-
-                        value = JOptionPane.showConfirmDialog(
-                                this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
-                                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-                        if (value == JOptionPane.YES_OPTION) {
-                            statsPanel.applyPepWindow();
-                            allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                            return;
-                        } else if (value == JOptionPane.NO_OPTION) {
-                            // reset the test, i.e., don't ask twice without changes in between
-                            ignorePepWindowUpdate = true;
-                            allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                            return;
-                        } else {
-                            // cancel the move
-                            allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-                            return;
-                        }
+                        // do nothing
                     } else {
-                        // cancel the move
+                        updateNeeded.put(VALIDATION_TAB_INDEX, false);
                         allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-                        return;
-                    }
-                } else if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
-
-                    allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-
-                    int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
-                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-                    if (value == JOptionPane.YES_OPTION) {
-                        statsPanel.revalidateData();
-                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                        return;
-                    } else if (value == JOptionPane.NO_OPTION) {
-                        // reset the test, i.e., don't ask twice without changes in between
-                        ignoreThresholdUpdate = true;
-                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                        return;
-                    } else {
-                        // cancel the move
-                        allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-                        return;
-                    }
-                } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
-
-                    allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-
-                    int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
-                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-                    if (value == JOptionPane.YES_OPTION) {
-                        statsPanel.applyPepWindow();
-                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                        return;
-                    } else if (value == JOptionPane.NO_OPTION) {
-                        // reset the test, i.e., don't ask twice without changes in between
-                        ignorePepWindowUpdate = true;
-                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                        return;
-                    } else {
-                        // cancel the move
-                        allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-                        return;
                     }
                 }
-            } else {
-                ignoreThresholdUpdate = false;
-                ignorePepWindowUpdate = false;
-            }
+            }   
 
             if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                 if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {

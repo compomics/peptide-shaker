@@ -537,6 +537,7 @@ public class PeptideShaker {
         PSParameter psParameter2 = new PSParameter();
 
         if (progressBar != null) {
+            progressBar.setIndeterminate(false);
             progressBar.setMaximum(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
                     + identification.getSpectrumIdentification().size());
@@ -626,6 +627,7 @@ public class PeptideShaker {
         int maxValidatedSpectraFractionLevel = 0;
         int maxValidatedPeptidesFractionLevel = 0;
         double maxProteinAveragePrecursorIntensity = 0;
+        double maxProteinSummedPrecursorIntensity = 0;
 
         for (String proteinKey : identification.getProteinIdentification()) {
 
@@ -699,9 +701,13 @@ public class PeptideShaker {
             psParameter.setPrecursorIntensityPerFraction(precursorIntensitesPerFractionProteinLevel);
 
             for (String fraction : psParameter.getFractions()) {
-                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null
-                        && psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
-                    maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
+                if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) != null) {
+                    if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinAveragePrecursorIntensity) {
+                        maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensityAveragePerFraction(fraction);
+                    }
+                    if (psParameter.getPrecursorIntensityAveragePerFraction(fraction) > maxProteinSummedPrecursorIntensity) {
+                        maxProteinAveragePrecursorIntensity = psParameter.getPrecursorIntensitySummedPerFraction(fraction);
+                    }
                 }
             }
 
@@ -716,6 +722,7 @@ public class PeptideShaker {
         metrics.setMaxValidatedPeptidesPerFraction(maxValidatedPeptidesFractionLevel);
         metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
         metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
+        metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
     }
 
     /**
