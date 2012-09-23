@@ -6,58 +6,59 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class contains score about the PTM localization scoring
+ * This class contains score about the PTM localization scoring.
  *
  * @author Marc Vaudel
  */
 public class PtmScoring implements Serializable {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -3357368272501542941L;
     /**
-     * index indicating that the modification was not found
+     * Index indicating that the modification was not found.
      */
     public static final int NOT_FOUND = -1;
     /**
-     * index for a random location choice
+     * Index for a random location choice.
      */
     public static final int RANDOM = 0;
     /**
-     * index for a doubtful assignment
+     * Index for a doubtful assignment.
      */
     public static final int DOUBTFUL = 1;
     /**
-     * index for a confident assignment
+     * Index for a confident assignment.
      */
     public static final int CONFIDENT = 2;
     /**
-     * index for a very confident assignment
+     * Index for a very confident assignment.
      */
     public static final int VERY_CONFIDENT = 3;
     /**
-     * The delta scores indexed by the modification location possibility
+     * The delta scores indexed by the modification location possibility.
      */
     private HashMap<String, Double> deltaScores = new HashMap<String, Double>();
     /**
-     * The A scores indexed by the modification location possibility
+     * The A scores indexed by the modification location possibility.
      */
     private HashMap<String, Double> aScores = new HashMap<String, Double>();
     /**
-     * The name of the modification of interest
+     * The name of the modification of interest.
      */
     private String ptmName;
     /**
-     * The separator used to separate locations in the modification location key
+     * The separator used to separate locations in the modification location
+     * key.
      */
     public static final String separator = "|";
     /**
-     * The retained PTM site assignment
+     * The retained PTM site assignment.
      */
     private ArrayList<Integer> ptmLocation = new ArrayList<Integer>();
     /**
-     * For a peptide, other locations where this modification was found
+     * For a peptide, other locations where this modification was found.
      */
     private ArrayList<Integer> secondaryLocations = new ArrayList<Integer>();
     /**
@@ -65,14 +66,15 @@ public class PtmScoring implements Serializable {
      */
     private int siteConfidence = NOT_FOUND;
     /**
-     * boolean indicating whether a conflict was found during PTM site inference
+     * Boolean indicating whether a conflict was found during PTM site
+     * inference.
      */
     private boolean conflict = false;
 
     /**
      * Constructor.
      *
-     * @param ptmName the name of the PTM of interest
+     * @param ptmName the name of the PTM of interest.
      */
     public PtmScoring(String ptmName) {
         this.ptmName = ptmName;
@@ -356,7 +358,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * indicates whether the site inference is conflicting
+     * Indicates whether the site inference is conflicting.
+     *
      * @return a boolean indicating whether the site inference was conflicting
      */
     public boolean isConflict() {
@@ -364,15 +367,17 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * sets whether the site inference is conflicting
-     * @param conflict a boolean indicating whether the site inference was conflicting
+     * Sets whether the site inference is conflicting.
+     *
+     * @param conflict a boolean indicating whether the site inference was
+     * conflicting
      */
     public void setConflict(boolean conflict) {
         this.conflict = conflict;
     }
 
     /**
-     * Convenience method returning all confidence levels as string
+     * Convenience method returning all confidence levels as string.
      *
      * @return an array with all confidence levels as string
      */
@@ -387,7 +392,7 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Convenience method returning the given confidence level as a string
+     * Convenience method returning the given confidence level as a string.
      *
      * @param index the confidence level
      * @return the corresponding string

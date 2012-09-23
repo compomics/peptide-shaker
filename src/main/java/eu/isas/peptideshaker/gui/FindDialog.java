@@ -18,8 +18,6 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,6 +101,7 @@ public class FindDialog extends javax.swing.JDialog {
      * The last spectrum file loaded in cache
      */
     private String lastLoadedFile = null;
+
     /**
      * The supported filter types.
      */
@@ -1722,33 +1721,34 @@ public class FindDialog extends javax.swing.JDialog {
         }
         return result;
     }
-    
+
     /**
-     * Returns the spectrum key corresponding to the given row in the PSM table
+     * Returns the spectrum key corresponding to the given row in the PSM table.
+     *
      * @param row the row index
      * @return the corresponding spectrum key, null if not found
      */
     private String getSpectrumKey(int row) {
         int tempIndex = row;
-                String spectrumKey = null;
-                for (String spectrumFile : identification.getSpectrumFiles()) {
-                    ArrayList<String> fileKeys = identification.getSpectrumIdentification(spectrumFile);
-                    if (tempIndex >= fileKeys.size()) {
-                        tempIndex -= fileKeys.size();
-                    } else {
-                        spectrumKey = fileKeys.get(tempIndex);
-                        if (lastLoadedFile == null || !lastLoadedFile.equals(spectrumFile)) {
-                            try {
-                            identification.loadSpectrumMatches(spectrumFile, null);
-                            identification.loadSpectrumMatchParameters(spectrumKey, new PSParameter(), null);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                //ignore and resume
-                            }
-                        }
+        String spectrumKey = null;
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            ArrayList<String> fileKeys = identification.getSpectrumIdentification(spectrumFile);
+            if (tempIndex >= fileKeys.size()) {
+                tempIndex -= fileKeys.size();
+            } else {
+                spectrumKey = fileKeys.get(tempIndex);
+                if (lastLoadedFile == null || !lastLoadedFile.equals(spectrumFile)) {
+                    try {
+                        identification.loadSpectrumMatches(spectrumFile, null);
+                        identification.loadSpectrumMatchParameters(spectrumKey, new PSParameter(), null);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //ignore and resume
                     }
                 }
-                return spectrumKey;
+            }
+        }
+        return spectrumKey;
     }
 
     /**

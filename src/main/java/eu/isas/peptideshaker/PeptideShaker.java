@@ -57,7 +57,7 @@ public class PeptideShaker {
     /**
      * If set to true, detailed information is sent to the waiting dialog.
      */
-    private boolean detailedReport = false;
+    private boolean showDetailedReport = false;
     /**
      * The experiment conducted.
      */
@@ -83,7 +83,7 @@ public class PeptideShaker {
      */
     private ProteinMap proteinMap;
     /**
-     * The PSM PTM localization conflict map
+     * The PSM PTM localization conflict map.
      */
     private PsmPTMMap psmPTMMap;
     /**
@@ -116,15 +116,15 @@ public class PeptideShaker {
     private Metrics metrics = new Metrics();
     /**
      * Map indicating how often a protein was found in a search engine first hit
-     * whenever this protein was found more than one time
+     * whenever this protein was found more than one time.
      */
     private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
     /**
-     * A cache where the objects will be saved
+     * A cache where the objects will be saved.
      */
     private ObjectsCache objectsCache;
     /**
-     * List of warnings collected while working on the data
+     * List of warnings collected while working on the data.
      */
     private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
 
@@ -241,7 +241,8 @@ public class PeptideShaker {
      * @throws IOException
      * @throws Exception
      */
-    public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences)
+    public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
+            IdFilter idFilter, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences)
             throws IllegalArgumentException, IOException, Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -336,7 +337,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Saving protein probabilities.", true, true);
-        attachProteinProbabilities(waitingHandler);
+        attachProteinProbabilities(waitingHandler, processingPreferences);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -376,10 +377,9 @@ public class PeptideShaker {
                 || suspiciousPeptides.size() > 0
                 || suspiciousProteins) {
 
-            if (detailedReport) { // @TODO: display this in a separate dialog???
+            if (showDetailedReport) {
 
-                report += "The following identification classes retieved non robust statistical estimations, "
-                        + "we advice to control the quality of the corresponding matches: \n";
+                String detailedReport = "";
 
                 boolean firstLine = true;
 
@@ -387,13 +387,13 @@ public class PeptideShaker {
                     if (firstLine) {
                         firstLine = false;
                     } else {
-                        report += ", ";
+                        detailedReport += ", ";
                     }
-                    report += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
+                    detailedReport += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
                 }
 
                 if (suspiciousInput.size() > 0) {
-                    report += " identifications.\n";
+                    detailedReport += " identifications.\n";
                 }
 
                 firstLine = true;
@@ -402,12 +402,12 @@ public class PeptideShaker {
                     if (firstLine) {
                         firstLine = false;
                     } else {
-                        report += ", ";
+                        detailedReport += ", ";
                     }
-                    report += fraction;
+                    detailedReport += fraction;
                 }
 
-                report += " charged spectra.\n";
+                detailedReport += " charged spectra.\n";
 
                 firstLine = true;
 
@@ -415,15 +415,21 @@ public class PeptideShaker {
                     if (firstLine) {
                         firstLine = false;
                     } else {
-                        report += ", ";
+                        detailedReport += "\n";
                     }
-                    report += fraction;
+                    detailedReport += fraction;
                 }
 
-                report += " modified peptides.\n";
+                detailedReport += " modified peptides.\n";
 
                 if (suspiciousProteins) {
-                    report += "proteins. \n";
+                    detailedReport += "proteins. \n";
+                }
+
+                if (detailedReport.length() > 0) {
+                    detailedReport = "The following identification classes resulted in non robust statistical estimations."
+                            + "We advice to control the quality of the corresponding matches: \n\n" + detailedReport;
+                    report += "Warning: Non robust statistical identifications detected. See File > Project Properties.";
                 }
             }
         }
@@ -434,7 +440,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Computes the FLR calculation
+     * Computes the FLR calculation.
      *
      * @param waitingHandler waiting handler displaying progress to the user
      * @param psmFLR the PSM FLR
@@ -534,10 +540,11 @@ public class PeptideShaker {
      * Processes the identifications if a change occured in the psm map.
      *
      * @param waitingHandler the waiting handler
+     * @param processingPreferences
      * @throws Exception Exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void spectrumMapChanged(WaitingHandler waitingHandler) throws Exception {
+    public void spectrumMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws Exception {
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler);
@@ -547,7 +554,7 @@ public class PeptideShaker {
         attachPeptideProbabilities(waitingHandler);
         fillProteinMap(waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
-        attachProteinProbabilities(waitingHandler);
+        attachProteinProbabilities(waitingHandler, processingPreferences);
         cleanProteinGroups(waitingHandler);
     }
 
@@ -555,15 +562,16 @@ public class PeptideShaker {
      * Processes the identifications if a change occurred in the peptide map.
      *
      * @param waitingHandler the waiting handler
+     * @param processingPreferences
      * @throws Exception Exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void peptideMapChanged(WaitingHandler waitingHandler) throws Exception {
+    public void peptideMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws Exception {
         proteinMap = new ProteinMap();
         attachPeptideProbabilities(waitingHandler);
         fillProteinMap(waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
-        attachProteinProbabilities(waitingHandler);
+        attachProteinProbabilities(waitingHandler, processingPreferences);
         cleanProteinGroups(waitingHandler);
     }
 
@@ -571,13 +579,14 @@ public class PeptideShaker {
      * Processes the identifications if a change occured in the protein map.
      *
      * @param waitingHandler the waiting handler
+     * @param processingPreferences
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public void proteinMapChanged(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        attachProteinProbabilities(waitingHandler);
+    public void proteinMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+        attachProteinProbabilities(waitingHandler, processingPreferences);
     }
 
     /**
@@ -619,8 +628,8 @@ public class PeptideShaker {
                 if (waitingHandler != null) {
                     waitingHandler.increaseSecondaryProgressValue();
                     if (waitingHandler.isRunCanceled()) {
-                    return;
-                }
+                        return;
+                    }
                 }
             }
         }
@@ -767,7 +776,7 @@ public class PeptideShaker {
                         }
                     }
                 }
-                
+
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
                         return;
@@ -2081,8 +2090,9 @@ public class PeptideShaker {
      * Attaches the protein posterior error probability to the protein matches.
      *
      * @param waitingHandler the handler displaying feedback to the user
+     * @param processingPreferences
      */
-    private void attachProteinProbabilities(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private void attachProteinProbabilities(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Protein Probabilities. Please Wait...");
 
@@ -2097,8 +2107,8 @@ public class PeptideShaker {
         for (String proteinKey : identification.getProteinIdentification()) {
 
             //@TODO: this molecular weigth stuff shall not be done here!
-//            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-//            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
@@ -2107,16 +2117,16 @@ public class PeptideShaker {
             for (String fraction : psParameter.getFractions()) {
                 psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
 
-//                // set the fraction molecular weights
-//                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > 95) { // @TODO: this limit should not be hardcoded here!!!!!
-//                    if (fractionMW.containsKey(fraction)) {
-//                        fractionMW.get(fraction).add(proteinMW);
-//                    } else {
-//                        ArrayList<Double> mw = new ArrayList<Double>();
-//                        mw.add(proteinMW);
-//                        fractionMW.put(fraction, mw);
-//                    }
-//                }
+                // set the fraction molecular weights
+                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > processingPreferences.getProteinConfidenceMwPlots()) {
+                    if (fractionMW.containsKey(fraction)) {
+                        fractionMW.get(fraction).add(proteinMW);
+                    } else {
+                        ArrayList<Double> mw = new ArrayList<Double>();
+                        mw.add(proteinMW);
+                        fractionMW.put(fraction, mw);
+                    }
+                }
             }
 
             identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -2608,17 +2618,20 @@ public class PeptideShaker {
             }
         }
     }
-    
+
     /**
-     * Adds a warning to the feedback list. If a feedback with the same title is already loaded it will be ignored.
+     * Adds a warning to the feedback list. If a feedback with the same title is
+     * already loaded it will be ignored.
+     *
      * @param feedback the feedback
      */
     public void addWarning(FeedBack feedback) {
         warnings.put(feedback.getTitle(), feedback);
     }
-    
+
     /**
-     * returns the warnings
+     * Returns the warnings.
+     *
      * @return the warnings
      */
     public HashMap<String, FeedBack> getWarnings() {

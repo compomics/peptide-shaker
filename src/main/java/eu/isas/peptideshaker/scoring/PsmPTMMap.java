@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.scoring;
 
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -14,21 +10,24 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class is used for the estimation of the FLR
+ * This class is used for the estimation of the FLR.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PsmPTMMap implements Serializable {
 
+    /**
+     * Map of PSM maps.
+     */
     private HashMap<String, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<String, HashMap<Integer, TargetDecoyMap>>();
     /**
-     * Map used to group charges together in order to ensure statistical.
-     * relevance
+     * Map used to group charges together in order to ensure statistical
+     * relevance.
      */
     private HashMap<String, HashMap<Integer, Integer>> grouping = new HashMap<String, HashMap<Integer, Integer>>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public PsmPTMMap() {
     }
@@ -114,7 +113,7 @@ public class PsmPTMMap implements Serializable {
 
     /**
      * Returns a map of keys from maps presenting a suspicious input.
-     * modification -> charge
+     * modification -> charge.
      *
      * @return a list of keys from maps presenting a suspicious input
      */
@@ -247,6 +246,7 @@ public class PsmPTMMap implements Serializable {
      * Returns the desired target decoy map. Here a decoy indicates a PSM
      * localization conflict.
      *
+     * @param modification the name of the modification
      * @param key the key of the desired map
      * @return the corresponding target decoy map
      */
@@ -268,9 +268,10 @@ public class PsmPTMMap implements Serializable {
         }
         return result;
     }
-    
+
     /**
-     * Returns a list of all modifications loaded in the map
+     * Returns a list of all modifications loaded in the map.
+     *
      * @return a list of all modifications loaded in the map
      */
     public ArrayList<String> getModificationsScored() {

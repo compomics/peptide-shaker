@@ -274,7 +274,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.9.0</version>
+            <version>3.9.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -387,13 +387,6 @@
             <version>1.0</version>
         </dependency>
 
-        <!--- The UniProtJAPI -->
-        <dependency>
-            <groupId>uk.ac.ebi.uniprot.kraken</groupId>
-            <artifactId>uniprotjapi</artifactId>
-            <version>2012.08</version>
-        </dependency>
-
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>ols-dialog</artifactId>
@@ -414,6 +407,12 @@
             <artifactId>commons-cli</artifactId>
             <version>1.2</version>
         </dependency>
+        
+        <dependency>
+           <groupId>org.twitter4j</groupId>
+           <artifactId>twitter4j-core</artifactId>
+           <version>2.2.6</version>
+       </dependency>
 
     </dependencies>
 

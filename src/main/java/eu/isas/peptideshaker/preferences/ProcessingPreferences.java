@@ -10,9 +10,9 @@ import java.io.Serializable;
 public class ProcessingPreferences implements Serializable {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
-    static final long serialVersionUID = -5883143685674607162L;
+    static final long serialVersionUID = -5883143685674607162L; // @TODO: has to be updated?
     /**
      * Boolean indicating whether the A-score should be estimated.
      *
@@ -31,6 +31,12 @@ public class ProcessingPreferences implements Serializable {
      * The default PSM FDR.
      */
     private double psmFDR = 1.0;
+    /**
+     * The minimum confidence required for a protein to be included in a protein
+     * to be included in the average molecular weight analysis in the Fractions
+     * tab.
+     */
+    private Double proteinConfidenceMwPlots = 95.0;
 
     /**
      * Constructor with default settings.
@@ -110,5 +116,30 @@ public class ProcessingPreferences implements Serializable {
      */
     public void setPsmFDR(double psmFDR) {
         this.psmFDR = psmFDR;
+    }
+
+    /**
+     * Returns the minimum confidence required for a protein to be included in a protein 
+     * to be included in the average molecular weight analysis in the Fractions 
+     * tab.
+     *
+     * @return the minimum confidence
+     */
+    public Double getProteinConfidenceMwPlots() {
+        if (proteinConfidenceMwPlots == null) {
+            return 95.0;
+        }
+        return proteinConfidenceMwPlots;
+    }
+
+    /**
+     * Sets the minimum confidence required for a protein to be included in a
+     * protein to be included in the average molecular weight analysis in the
+     * Fractions tab..
+     *
+     * @param proteinConfidenceMwPlots minimum confidence
+     */
+    public void setProteinConfidenceMwPlots(Double proteinConfidenceMwPlots) {
+        this.proteinConfidenceMwPlots = proteinConfidenceMwPlots;
     }
 }

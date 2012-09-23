@@ -1,27 +1,12 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import java.awt.Toolkit;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import javax.swing.JOptionPane;
-import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
-import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
-import uk.ac.ebi.kraken.uuw.services.remoting.Query;
-import uk.ac.ebi.kraken.uuw.services.remoting.RemoteDataAccessException;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
-import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
 
 /**
  * This tab contains the basic protein annotation and links to other protein
@@ -57,13 +42,12 @@ public class AnnotationPanel extends javax.swing.JPanel {
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
     }
-    
+
     /**
      * Clears the old data.
      */
     private void clearOldData() {
-        proteinNameJTextField.setText("");
-        altProteinNameJTextField.setText("");
+        proteinDescriptionTextArea.setText("");
         geneNameJTextField.setText("");
         taxonomyJTextField.setText("");
     }
@@ -81,15 +65,14 @@ public class AnnotationPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         accessionNumberJTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        proteinNameJTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         geneNameJTextField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         taxonomyJTextField = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         databaseJTextField = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        altProteinNameJTextField = new javax.swing.JTextField();
+        proteinDescriptionScrollPane = new javax.swing.JScrollPane();
+        proteinDescriptionTextArea = new javax.swing.JTextArea();
         annotationLinksJPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         loadUniProtJButton = new javax.swing.JButton();
@@ -137,9 +120,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         accessionNumberJTextField.setEditable(false);
 
-        jLabel3.setText("Protein Name:");
-
-        proteinNameJTextField.setEditable(false);
+        jLabel3.setText("Description:");
 
         jLabel4.setText("Gene Name:");
 
@@ -153,10 +134,13 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         databaseJTextField.setEditable(false);
 
-        jLabel6.setText("Alt. Names:");
-        jLabel6.setToolTipText("Alternative Protein Names");
-
-        altProteinNameJTextField.setEditable(false);
+        proteinDescriptionTextArea.setColumns(20);
+        proteinDescriptionTextArea.setEditable(false);
+        proteinDescriptionTextArea.setLineWrap(true);
+        proteinDescriptionTextArea.setRows(2);
+        proteinDescriptionTextArea.setTabSize(4);
+        proteinDescriptionTextArea.setWrapStyleWord(true);
+        proteinDescriptionScrollPane.setViewportView(proteinDescriptionTextArea);
 
         javax.swing.GroupLayout annotationLinksJPanelLayout = new javax.swing.GroupLayout(annotationLinksJPanel);
         annotationLinksJPanel.setLayout(annotationLinksJPanelLayout);
@@ -165,24 +149,22 @@ public class AnnotationPanel extends javax.swing.JPanel {
             .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel8)
                     .addComponent(jLabel16))
                 .addGap(38, 38, 38)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(databaseJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                    .addComponent(altProteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE))
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(proteinDescriptionScrollPane)
+                    .addComponent(geneNameJTextField)
+                    .addComponent(taxonomyJTextField)
+                    .addComponent(databaseJTextField))
                 .addContainerGap())
         );
 
-        annotationLinksJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel3, jLabel6, jLabel8});
+        annotationLinksJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel3, jLabel8});
 
         annotationLinksJPanelLayout.setVerticalGroup(
             annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,15 +173,14 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(altProteinNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel3))
+                    .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(proteinDescriptionScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(geneNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
@@ -728,7 +709,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(warningJLabel)
                     .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1113,7 +1094,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_picrLinkJLabelMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
-    private javax.swing.JTextField altProteinNameJTextField;
     private javax.swing.JPanel annotationLinksJPanel;
     private javax.swing.JPanel annotationLinksJPanel1;
     private javax.swing.JPanel annotationLinksJPanel2;
@@ -1138,7 +1118,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1151,7 +1130,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JButton loadStringJButton;
     private javax.swing.JButton loadUniProtJButton;
     private javax.swing.JLabel picrLinkJLabel;
-    private javax.swing.JTextField proteinNameJTextField;
+    private javax.swing.JScrollPane proteinDescriptionScrollPane;
+    private javax.swing.JTextArea proteinDescriptionTextArea;
     private javax.swing.JTextField taxonomyJTextField;
     private javax.swing.JLabel warningJLabel;
     private javax.swing.JLabel webDasty3Label;
@@ -1178,134 +1158,23 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
             currentAccessionNumber = aAccessionNumber;
             accessionNumberJTextField.setText(currentAccessionNumber);
-            
-            clearOldData();
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-            progressDialog.setTitle("Loading Basic Protein Annotation. Please Wait...");
-            progressDialog.setIndeterminate(true);
-
-            new Thread(new Runnable() {
-
-                public void run() {
-                    progressDialog.setVisible(true);
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("BasicProteinDetailsThread") {
-
-                @Override
-                public void run() {
-
-                    try {
-                        Protein currentProtein = sequenceFactory.getProtein(currentAccessionNumber);
-                        DatabaseType databaseType = currentProtein.getDatabaseType();
-
-                        databaseJTextField.setText(databaseType.toString());
-
-                        if (databaseType == DatabaseType.UniProt) {
-
-                            UniProtQueryService queryService = UniProtJAPI.factory.getUniProtQueryService();
-                            ArrayList<String> accessionNumbers = new ArrayList<String>();
-                            accessionNumbers.add(currentAccessionNumber);
-
-                            Query proteinQuery = UniProtQueryBuilder.buildIDListQuery(accessionNumbers);
-                            EntryIterator<UniProtEntry> entries = queryService.getEntryIterator(proteinQuery);
-
-                            Iterator<UniProtEntry> iterator = entries.iterator();
-
-                            int counter = 0;
-
-                            if (iterator.hasNext() && !progressDialog.isRunCanceled()) {
-
-                                UniProtEntry uniProtEntry = iterator.next();
-
-                                if (uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL).size() > 0) {
-                                    proteinNameJTextField.setText(uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL).get(0).getValue());
-                                } else {
-                                    proteinNameJTextField.setText("(not available)");
-                                }
-
-                                List<Name> altNames = uniProtEntry.getProteinDescription().getAlternativeNames();
-
-                                String altNamesAsString = "";
-                                String altProteinNamesTooltip = "<html>";
-
-                                for (int i = 0; i < altNames.size(); i++) {
-                                    if (altNames.get(i).getFieldsByType(FieldType.FULL).size() > 0) {
-                                        altNamesAsString += altNames.get(i).getFieldsByType(FieldType.FULL).get(0).getValue().toString() + ", ";
-                                        altProteinNamesTooltip += altNames.get(i).getFieldsByType(FieldType.FULL).get(0).getValue().toString() + "<br>";
-                                    }
-                                }
-
-                                if (altNamesAsString.endsWith(", ")) {
-                                    altNamesAsString = altNamesAsString.substring(0, altNamesAsString.length() - 2);
-                                }
-
-                                if (altNamesAsString.length() > 0) {
-                                    altProteinNamesTooltip += "</html>";
-                                    altProteinNameJTextField.setToolTipText(altProteinNamesTooltip);
-                                    altProteinNameJTextField.setText(altNamesAsString);
-                                } else {
-                                    altProteinNameJTextField.setToolTipText(null);
-                                    altProteinNameJTextField.setText("(not available)");
-                                }
-
-                                geneNameJTextField.setText(uniProtEntry.getGenes().get(0).getGeneName().toString());
-
-                                if (uniProtEntry.getOrganism().hasCommonName()) {
-                                    taxonomyJTextField.setText(uniProtEntry.getOrganism().getCommonName().toString());
-                                } else {
-                                    taxonomyJTextField.setText(uniProtEntry.getOrganism().getScientificName().toString());
-                                }
-
-                                counter++;
-                            }
-
-                            if (iterator.hasNext()) {
-                                counter++;
-                            }
-
-                            if (!progressDialog.isRunCanceled()) {
-
-                                if (counter > 1) {
-                                    JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in more than 1 hit!", JOptionPane.WARNING_MESSAGE);
-                                } else if (counter == 0) {
-                                    JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in 0 hits!", JOptionPane.WARNING_MESSAGE);
-                                }
-                            }
-
-                            warningJLabel.setText("");
-                        } else {
-                            warningJLabel.setText("Warning: The annotation resources work best with UniProt accession numbers. Try using");
-                            proteinNameJTextField.setText("Unknown");
-                            altProteinNameJTextField.setText("Unknown");
-                            geneNameJTextField.setText("Unknown");
-                            taxonomyJTextField.setText("Unknown");
-                        }
-                    } catch (IOException e) {
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "Could not access the UniProt web site. Check your Internet connection.",
-                                "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    } catch (RemoteDataAccessException e) {
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "Could not access the UniProt web site. Check your Internet connection.",
-                                "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "Could not access the UniProt web site. Check your Internet connection.",
-                                "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    }
-                    
-                    progressDialog.setRunFinished();
-                }
-            }.start();
+            try {
+                proteinDescriptionTextArea.setText(sequenceFactory.getHeader(aAccessionNumber).getDescription());
+                geneNameJTextField.setText("unknown"); // @TODO: extract from the fasta header
+                taxonomyJTextField.setText("unknown"); // @TODO: extract from the fasta header 
+                databaseJTextField.setText("" + sequenceFactory.getProtein(aAccessionNumber).getDatabaseType());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(peptideShakerGUI, e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
+                        "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
     }
 }

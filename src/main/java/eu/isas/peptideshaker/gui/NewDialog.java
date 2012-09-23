@@ -12,7 +12,9 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProcessingPreferencesDialog;
@@ -21,6 +23,7 @@ import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import com.compomics.util.protein.Header.DatabaseType;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -49,6 +52,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
     /**
      * The experiment conducted.
      */
@@ -101,6 +108,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The ptm scoring preferences
      */
     private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
 
     /**
      * Creates a new open dialog.
@@ -241,7 +252,6 @@ public class NewDialog extends javax.swing.JDialog {
         });
 
         projectNameIdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        projectNameIdTxt.setText("debug");
         projectNameIdTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 projectNameIdTxtKeyReleased(evt);
@@ -258,7 +268,6 @@ public class NewDialog extends javax.swing.JDialog {
         projectReferenceLabel.setText("Project Reference*");
 
         sampleNameIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleNameIdtxt.setText("debug");
         sampleNameIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 sampleNameIdtxtKeyReleased(evt);
@@ -640,6 +649,7 @@ public class NewDialog extends javax.swing.JDialog {
             progressCounter += 6; // computing probabilities etc
             progressCounter += 1; // resolving protein inference
             progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
+            progressCounter += 3; // Scoring PTMs in PSMs. Estimating PTM FLR. Resolving peptide inference issues.
 
             // add one more just to not start at 0%
             progressCounter++;
@@ -736,6 +746,7 @@ public class NewDialog extends javax.swing.JDialog {
             fastaFile = fileChooser.getSelectedFile();
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
             fastaFileTxt.setText(fastaFile.getName());
+            checkFastaFile();
         }
 
         validateInput();
@@ -1036,7 +1047,6 @@ public class NewDialog extends javax.swing.JDialog {
             preferencesTxt.setText("Default");
         }
     }//GEN-LAST:event_editPreferencesButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -1179,26 +1189,26 @@ public class NewDialog extends javax.swing.JDialog {
      * @return true if the input is valid, false otherwise.
      */
     private boolean validateUserInput() {
-        
+
         for (String forbiddenChar : Util.forbiddenCharacters) {
             if (projectNameIdTxt.getText().contains(forbiddenChar)) {
                 JOptionPane.showMessageDialog(null, "The project name should not contain " + forbiddenChar + ".\n"
-                    + "Forbidden character in project name",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
+                        + "Forbidden character in project name",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
                 projectNameIdTxt.setForeground(Color.red);
-            return false;
+                return false;
             }
         }
         for (String forbiddenChar : Util.forbiddenCharacters) {
             if (sampleNameIdtxt.getText().contains(forbiddenChar)) {
                 JOptionPane.showMessageDialog(null, "The sample name should not contain " + forbiddenChar + ".\n"
-                    + "Forbidden character in sample name",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
+                        + "Forbidden character in sample name",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
                 sampleNameIdtxt.setForeground(Color.red);
-            return false;
+                return false;
             }
         }
-        
+
         try {
             getReplicateNumber();
         } catch (Exception e) {
@@ -1419,6 +1429,7 @@ public class NewDialog extends javax.swing.JDialog {
                     searchParameters.setFastaFile(file);
                     fastaFileTxt.setText(file.getName());
                     fastaFile = file;
+                    checkFastaFile();
                 } else {
 
                     // try to find it in the same folder as the SearchGUI.properties file
@@ -1426,6 +1437,7 @@ public class NewDialog extends javax.swing.JDialog {
                         searchParameters.setFastaFile(new File(searchGUIFile.getParentFile(), file.getName()));
                         fastaFileTxt.setText(new File(searchGUIFile.getParentFile(), file.getName()).getName());
                         fastaFile = new File(searchGUIFile.getParentFile(), file.getName());
+                        checkFastaFile();
                     } else {
                         JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                     }
@@ -1573,5 +1585,108 @@ public class NewDialog extends javax.swing.JDialog {
         projectDetails.setIdentificationFiles(idFiles);
 
         return projectDetails;
+    }
+
+    /**
+     * Checks the FASTA file: 1) if it's a UniProt database, and 2) that it's a
+     * target-decoy database. Shows warnings if one of these is false.
+     */
+    private void checkFastaFile() {
+
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Checking FASTA File. Please Wait...");
+
+        final NewDialog finalRef = this;
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("DisplayThread") {
+
+            @Override
+            public void run() {
+
+                try {
+                    sequenceFactory.loadFastaFile(fastaFile, progressDialog);
+                    progressDialog.setRunFinished();
+
+                    String firstAccession = sequenceFactory.getAccessions().get(0);
+                    if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
+                        showDataBaseHelpDialog();
+                    }
+
+                    if (!sequenceFactory.concatenatedTargetDecoy()) {
+                        JOptionPane.showMessageDialog(finalRef, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                                + "Some features will be limited if using other types of databases.\n\n"
+                                + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
+                                + "See the PeptideShaker home page for details.",
+                                "No Decoys Found",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (FileNotFoundException e) {
+                    JOptionPane.showMessageDialog(finalRef, "File " + fastaFile + " was not found. Please select a different FASTA file.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(finalRef, "An error occured while loading " + fastaFile + ".", "File Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    JOptionPane.showMessageDialog(finalRef, "An error occured while loading " + fastaFile + ".", "File Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(finalRef, e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
+                            "File Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    JOptionPane.showMessageDialog(finalRef, "Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
+                            + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * Show a simple dialog saying that UniProt databases is recommended and
+     * display a link to the Database Help web page.
+     */
+    private void showDataBaseHelpDialog() {
+
+        // create an empty label to put the message in
+        JLabel label = new JLabel();
+
+        // html content 
+        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                + "We strongly recommend the use of UniProt databases. Some<br>"
+                + "features will be limited if using other databases.<br><br>"
+                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."
+                + "</body></html>");
+
+        // handle link events 
+        ep.addHyperlinkListener(new HyperlinkListener() {
+
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                }
+            }
+        });
+
+        ep.setBorder(null);
+        ep.setEditable(false);
+
+        progressDialog.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
 }
