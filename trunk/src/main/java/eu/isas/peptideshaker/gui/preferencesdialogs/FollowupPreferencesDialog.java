@@ -726,6 +726,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                             || idSelectionCmb.getSelectedIndex() == 3
                                             || idSelectionCmb.getSelectedIndex() == 2 && psParameter.isValidated()) {
 
+                                        peptideShakerGUI.getIdentification().loadPeptideMatches(proteinMatch.getPeptideMatches(), progressDialog);
+                                        peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, progressDialog);
                                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
@@ -751,6 +753,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                                         retentionTimes.add(precursor.getRt());
                                                     }
 
+                peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                                                         if (progressDialog.isRunCanceled()) {

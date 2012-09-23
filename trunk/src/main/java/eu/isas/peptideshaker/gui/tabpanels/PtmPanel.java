@@ -5092,7 +5092,8 @@ public class PtmPanel extends javax.swing.JPanel {
                     }
 
                     // add the psm scores (a score and delta score)
-                    for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
+                    identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
+                    for (int i = 0; i < peptideMatch.getSpectrumMatches().size(); i++) {
 
                         String spectrumKey = peptideMatch.getSpectrumMatches().get(i);
                         PSPtmScores ptmScores = new PSPtmScores();

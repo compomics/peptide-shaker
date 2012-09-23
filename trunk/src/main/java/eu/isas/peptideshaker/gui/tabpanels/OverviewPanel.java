@@ -3722,6 +3722,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 PeptideMatch selectedPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                 AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
+                peptideShakerGUI.getIdentification().loadSpectrumMatches(selectedPeptideMatch.getSpectrumMatches(), progressDialog);
                 for (String spectrumKey : selectedPeptideMatch.getSpectrumMatches()) {
 
                     if (selectedPsmKeys.contains(spectrumKey)) {

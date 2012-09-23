@@ -330,6 +330,8 @@ public class PRIDEExport {
                 br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
                 br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
 
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideProbabilities, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                     if (prideExportDialog.progressCancelled()) {
@@ -339,6 +341,8 @@ public class PRIDEExport {
                     PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
                     peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
+                    identification.loadSpectrumMatches(currentMatch.getSpectrumMatches(), progressDialog);
+                    identification.loadSpectrumMatchParameters(currentMatch.getSpectrumMatches(), psmProbabilities, progressDialog);
                     for (String spectrumKey : currentMatch.getSpectrumMatches()) {
 
                         if (prideExportDialog.progressCancelled()) {

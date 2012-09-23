@@ -808,6 +808,7 @@ public class OutputGenerator {
                                                 }
                                                 if (nSpectra) {
                                                     int cpt = 0;
+                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
                                                         if (secondaryPSParameter.isValidated()) {
@@ -2062,6 +2063,12 @@ public class OutputGenerator {
         ArrayList<Integer> charges = new ArrayList<Integer>(5);
 
         // find all unique the charges
+        try {
+                identification.loadSpectrumMatches(spectrumKeys, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //ignore caching error
+        }
         for (int i = 0; i < spectrumKeys.size(); i++) {
             try {
                 int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestAssumption().getIdentificationCharge().value;

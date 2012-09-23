@@ -296,6 +296,8 @@ public class CsvExporter {
         int nValidatedPsms = 0;
         PSParameter psParameter = new PSParameter();
 
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -306,6 +308,7 @@ public class CsvExporter {
 
                 nValidatedPeptides++;
 
+                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -458,6 +461,7 @@ public class CsvExporter {
         PSParameter probabilities = new PSParameter();
         int nSpectraValidated = 0;
 
+                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), probabilities, null);
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
             if (probabilities.isValidated()) {

@@ -1557,6 +1557,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     double value = 0;
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+            peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                         if (psParameter.isValidated() && !psParameter.isHidden()) {
@@ -1761,6 +1762,7 @@ public class QCPanel extends javax.swing.JPanel {
                     double value = 0;
                     PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
 
+                    peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                         if (progressDialog.isRunCanceled()) {
