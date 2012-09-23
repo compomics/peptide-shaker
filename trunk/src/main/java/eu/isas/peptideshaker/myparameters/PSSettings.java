@@ -211,7 +211,7 @@ public class PSSettings implements UrParameter {
         if (ptmScoringPreferences == null) {
             // backward compatibility check
             ptmScoringPreferences = new PTMScoringPreferences();
-            ptmScoringPreferences.setaScoreThreshold(50);
+            ptmScoringPreferences.setFlrThreshold(1);
             ptmScoringPreferences.setaScoreNeutralLosses(true);
             ptmScoringPreferences.setaScoreCalculation(processingPreferences.isAScoreCalculated());
         }

@@ -221,7 +221,7 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="neutralLossesCmb" max="32767" attributes="0"/>
-                                  <Component id="aScoreThresholdTxt" pref="242" max="32767" attributes="0"/>
+                                  <Component id="flrThresholdTxt" pref="242" max="32767" attributes="0"/>
                                   <Component id="aScoreCalculationCmb" alignment="1" max="32767" attributes="0"/>
                               </Group>
                           </Group>
@@ -248,7 +248,7 @@
                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="aScoreLabel" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="aScoreThresholdTxt" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="flrThresholdTxt" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -263,10 +263,10 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="aScoreLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="A-Score Threshold:"/>
+                <Property name="text" type="java.lang.String" value="False Localization Rate:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="aScoreThresholdTxt">
+            <Component class="javax.swing.JTextField" name="flrThresholdTxt">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>

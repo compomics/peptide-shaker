@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker;
 
+import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -18,6 +19,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -69,17 +71,21 @@ public class PeptideShaker {
      */
     private int replicateNumber;
     /**
-     * The psm map.
+     * The psm target decoy map.
      */
     private PsmSpecificMap psmMap;
     /**
-     * The peptide map
+     * The peptide target decoy map
      */
     private PeptideSpecificMap peptideMap;
     /**
-     * The protein map.
+     * The protein target decoy map.
      */
     private ProteinMap proteinMap;
+    /**
+     * The PSM PTM localization conflict map
+     */
+    private PsmPTMMap psmPTMMap;
     /**
      * The id importer will import and process the identifications.
      */
@@ -117,6 +123,10 @@ public class PeptideShaker {
      * A cache where the objects will be saved
      */
     private ObjectsCache objectsCache;
+    /**
+     * List of warnings collected while working on the data
+     */
+    private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
 
     /**
      * Constructor without mass specification. Calculation will be done on new
@@ -133,6 +143,7 @@ public class PeptideShaker {
         psmMap = new PsmSpecificMap();
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
+        psmPTMMap = new PsmPTMMap();
     }
 
     /**
@@ -261,6 +272,26 @@ public class PeptideShaker {
         }
         waitingHandler.appendReport("Computing PSM probabilities.", true, true);
         psmMap.estimateProbabilities(waitingHandler);
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
+        waitingHandler.appendReport("Scoring PTMs in PSMs.", true, true);
+        scorePsmPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences);
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
+        waitingHandler.appendReport("Estimating PTM FLR.", true, true);
+        psmPTMMap.cure();
+        psmPTMMap.estimateProbabilities(waitingHandler);
+        computeFLR(waitingHandler, ptmScoringPreferences.getFlrThreshold());
+        waitingHandler.increaseProgressValue();
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
+        waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
+        ptmInference(waitingHandler, ptmScoringPreferences);
+        waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
@@ -403,6 +434,35 @@ public class PeptideShaker {
     }
 
     /**
+     * Computes the FLR calculation
+     *
+     * @param waitingHandler waiting handler displaying progress to the user
+     * @param psmFLR the PSM FLR
+     */
+    public void computeFLR(WaitingHandler waitingHandler, double psmFLR) {
+
+        waitingHandler.setWaitingText("Estimating FLR. Please Wait...");
+
+        for (String modification : psmPTMMap.getModificationsScored()) {
+
+            for (int mapKey : psmPTMMap.getKeys(modification).keySet()) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                waitingHandler.increaseSecondaryProgressValue();
+                TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(modification, mapKey);
+                TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
+                currentResults.setInputType(1);
+                currentResults.setUserInput(psmFLR);
+                currentResults.setClassicalEstimators(true);
+                currentResults.setClassicalValidation(true);
+                currentResults.setFdrLimit(psmFLR);
+                currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+            }
+        }
+    }
+
+    /**
      * Makes a preliminary validation of hits.
      *
      * @param waitingHandler the handler displaying feedback to the user
@@ -539,25 +599,25 @@ public class PeptideShaker {
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size()
                     + identification.getPeptideIdentification().size()
-                    + identification.getSpectrumIdentification().size());
+                    + identification.getSpectrumIdentificationSize());
         }
 
 
         // validate the spectra
-        for (String spectrumKey : identification.getSpectrumIdentification()) {
-            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-            double psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getScoreLimit();
-            boolean noValidated = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().noValidated();
-            if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
-                psParameter.setValidated(true);
-            } else {
-                psParameter.setValidated(false);
-            }
-            identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-            if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressValue();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatchParameters(spectrumFile, new PSParameter(), null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                double psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getScoreLimit();
+                boolean noValidated = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().noValidated();
+                if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
+                    psParameter.setValidated(true);
+                } else {
+                    psParameter.setValidated(false);
+                }
+                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+                if (progressBar != null) {
+                    progressBar.setValue(progressBar.getValue() + 1);
                 }
             }
         }
@@ -751,174 +811,152 @@ public class PeptideShaker {
     private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler) throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        int max = identification.getSpectrumIdentification().size();
+
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(max);
+        waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
 
         // map of the first hits for this spectrum: score -> max protein count -> max search engine votes
         HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>> peptideAssumptions;
         PSParameter psParameter, psParameter2;
         boolean multiSE = inputMap.isMultipleSearchEngines();
 
-        for (String spectrumKey : identification.getSpectrumIdentification()) {
-            psParameter = new PSParameter();
-            ArrayList<String> identifications = new ArrayList<String>();
-            peptideAssumptions = new HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>>();
-            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFile, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                psParameter = new PSParameter();
+                ArrayList<String> identifications = new ArrayList<String>();
+                peptideAssumptions = new HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>>();
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
-            for (int searchEngine1 : spectrumMatch.getAdvocates()) {
-                double bestEvalue = Collections.min(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
-                for (PeptideAssumption peptideAssumption1 : spectrumMatch.getAllAssumptions(searchEngine1).get(bestEvalue)) {
-                    String id = peptideAssumption1.getPeptide().getKey();
-                    double p;
+                for (int searchEngine1 : spectrumMatch.getAdvocates()) {
+                    double bestEvalue = Collections.min(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
+                    for (PeptideAssumption peptideAssumption1 : spectrumMatch.getAllAssumptions(searchEngine1).get(bestEvalue)) {
+                        String id = peptideAssumption1.getPeptide().getKey();
+                        double p;
 
-                    if (!identifications.contains(id)) {
-                        psParameter = (PSParameter) peptideAssumption1.getUrParam(psParameter);
-                        if (multiSE) {
-                            p = psParameter.getSearchEngineProbability();
-                        } else {
-                            p = peptideAssumption1.getEValue();
-                        }
-                        int nSE = 1;
-                        int proteinMax = 1;
-                        for (String protein : peptideAssumption1.getPeptide().getParentProteins()) {
-                            Integer tempCount = proteinCount.get(protein);
-                            if (tempCount != null && tempCount > proteinMax) {
-                                proteinMax = tempCount;
+                        if (!identifications.contains(id)) {
+                            psParameter = (PSParameter) peptideAssumption1.getUrParam(psParameter);
+                            if (multiSE) {
+                                p = psParameter.getSearchEngineProbability();
+                            } else {
+                                p = peptideAssumption1.getEValue();
                             }
-                        }
-                        for (int searchEngine2 : spectrumMatch.getAdvocates()) {
-                            if (searchEngine1 != searchEngine2) {
-                                boolean found = false;
-                                ArrayList<Double> eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine2).keySet());
-                                Collections.sort(eValues2);
-                                for (double eValue2 : eValues2) {
-                                    for (PeptideAssumption peptideAssumption2 : spectrumMatch.getAllAssumptions(searchEngine2).get(eValue2)) {
-                                        if (id.equals(peptideAssumption2.getPeptide().getKey())) {
-                                            psParameter2 = (PSParameter) peptideAssumption2.getUrParam(psParameter);
-                                            p = p * psParameter2.getSearchEngineProbability();
-                                            nSE++;
-                                            found = true;
+                            int nSE = 1;
+                            int proteinMax = 1;
+                            for (String protein : peptideAssumption1.getPeptide().getParentProteins()) {
+                                Integer tempCount = proteinCount.get(protein);
+                                if (tempCount != null && tempCount > proteinMax) {
+                                    proteinMax = tempCount;
+                                }
+                            }
+                            for (int searchEngine2 : spectrumMatch.getAdvocates()) {
+                                if (searchEngine1 != searchEngine2) {
+                                    boolean found = false;
+                                    ArrayList<Double> eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine2).keySet());
+                                    Collections.sort(eValues2);
+                                    for (double eValue2 : eValues2) {
+                                        for (PeptideAssumption peptideAssumption2 : spectrumMatch.getAllAssumptions(searchEngine2).get(eValue2)) {
+                                            if (id.equals(peptideAssumption2.getPeptide().getKey())) {
+                                                psParameter2 = (PSParameter) peptideAssumption2.getUrParam(psParameter);
+                                                p = p * psParameter2.getSearchEngineProbability();
+                                                nSE++;
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                        if (found) {
                                             break;
                                         }
                                     }
-                                    if (found) {
-                                        break;
-                                    }
                                 }
                             }
-                        }
-                        identifications.add(id);
-                        if (!peptideAssumptions.containsKey(p)) {
-                            peptideAssumptions.put(p, new HashMap<Integer, HashMap<Integer, PeptideAssumption>>());
-                        }
-                        if (!peptideAssumptions.get(p).containsKey(proteinMax)) {
-                            peptideAssumptions.get(p).put(proteinMax, new HashMap<Integer, PeptideAssumption>());
-                        }
-                        if (!peptideAssumptions.get(p).get(proteinMax).containsKey(nSE)) {
-                            peptideAssumptions.get(p).get(proteinMax).put(nSE, peptideAssumption1);
+                            identifications.add(id);
+                            if (!peptideAssumptions.containsKey(p)) {
+                                peptideAssumptions.put(p, new HashMap<Integer, HashMap<Integer, PeptideAssumption>>());
+                            }
+                            if (!peptideAssumptions.get(p).containsKey(proteinMax)) {
+                                peptideAssumptions.get(p).put(proteinMax, new HashMap<Integer, PeptideAssumption>());
+                            }
+                            if (!peptideAssumptions.get(p).get(proteinMax).containsKey(nSE)) {
+                                peptideAssumptions.get(p).get(proteinMax).put(nSE, peptideAssumption1);
+                            }
                         }
                     }
                 }
-            }
 
-            double p = Collections.min(peptideAssumptions.keySet());
-            int proteinMax = Collections.max(peptideAssumptions.get(p).keySet());
-            int nSE = Collections.max(peptideAssumptions.get(p).get(proteinMax).keySet());
-            PeptideAssumption bestAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE);
-
-
-            // OLD code below
-
-//            if (multiSE) { // get the lowest se pep first for the delta score
-//
-//                double seP, sePMax = 1;
-//
-//                for (int searchEngine1 : spectrumMatch.getAdvocates()) {
-//
-//                    double bestEvalue = Collections.min(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
-//                    for (PeptideAssumption peptideAssumption1 : spectrumMatch.getAllAssumptions(searchEngine1).get(bestEvalue)) {
-//                        String id = peptideAssumption1.getPeptide().getKey();
-//                        if (id.equals(bestAssumption.getPeptide().getKey())) {
-//                            psParameter = (PSParameter) peptideAssumption1.getUrParam(psParameter);
-//                            seP = psParameter.getSearchEngineProbability();
-//                            if (seP < sePMax) {
-//                                sePMax = seP;
-//                                bestAssumption = peptideAssumption1;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+                double p = Collections.min(peptideAssumptions.keySet());
+                int proteinMax = Collections.max(peptideAssumptions.get(p).keySet());
+                int nSE = Collections.max(peptideAssumptions.get(p).get(proteinMax).keySet());
+                PeptideAssumption bestAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE);
 
 
-            // NEW code below
-            // @TODO: _a lot_ slower than before!!!
+                if (multiSE) {
 
-            if (multiSE) { // try to find the best modification site
+                    // try to find the best modification localization
+                    HashMap<PeptideAssumption, ArrayList<Double>> assumptions = new HashMap<PeptideAssumption, ArrayList<Double>>();
+                    String bestAssumptionKey = bestAssumption.getPeptide().getKey();
 
-                HashMap<PeptideAssumption, ArrayList<Double>> assumptions = new HashMap<PeptideAssumption, ArrayList<Double>>();
+                    for (int searchEngine1 : spectrumMatch.getAdvocates()) {
 
-                for (int searchEngine1 : spectrumMatch.getAdvocates()) {
+                        boolean found = false;
+                        ArrayList<Double> eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
+                        Collections.sort(eValues2);
 
-                    boolean found = false;
-                    ArrayList<Double> eValues2 = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine1).keySet());
-                    Collections.sort(eValues2);
-
-                    for (double eValue : eValues2) {
-                        for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine1).get(eValue)) {
-                            if (assumption.getPeptide().isSameAs(bestAssumption.getPeptide())) {
-                                found = true;
-                                boolean found2 = false;
-                                for (PeptideAssumption assumption1 : assumptions.keySet()) {
-                                    if (assumption1.getPeptide().sameModificationsAs(assumption.getPeptide())) {
-                                        found2 = true;
+                        for (double eValue : eValues2) {
+                            for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(searchEngine1).get(eValue)) {
+                                if (assumption.getPeptide().getKey().equals(bestAssumptionKey)) {
+                                    found = true;
+                                    boolean found2 = false;
+                                    for (PeptideAssumption assumption1 : assumptions.keySet()) {
+                                        if (assumption1.getPeptide().sameModificationsAs(assumption.getPeptide())) {
+                                            found2 = true;
+                                            psParameter = (PSParameter) assumption.getUrParam(psParameter);
+                                            assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
+                                            break;
+                                        }
+                                    }
+                                    if (!found2) {
+                                        assumptions.put(assumption, new ArrayList<Double>());
                                         psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                        assumptions.get(assumption1).add(psParameter.getSearchEngineProbability());
-                                        break;
+                                        assumptions.get(assumption).add(psParameter.getSearchEngineProbability());
                                     }
                                 }
-                                if (!found2) {
-                                    assumptions.put(assumption, new ArrayList<Double>());
-                                    psParameter = (PSParameter) assumption.getUrParam(psParameter);
-                                    assumptions.get(assumption).add(psParameter.getSearchEngineProbability());
-                                }
+                            }
+                            if (found) {
+                                break;
                             }
                         }
-                        if (found) {
-                            break;
+                    }
+
+                    Double bestSeP = null;
+                    int nSe = -1;
+
+                    for (PeptideAssumption peptideAssumption : assumptions.keySet()) {
+                        Double sep = Collections.min(assumptions.get(peptideAssumption));
+                        if (bestSeP == null || bestSeP > sep) {
+                            bestSeP = sep;
+                            nSe = assumptions.get(peptideAssumption).size();
+                            bestAssumption = peptideAssumption;
+                        } else if (sep == bestSeP && assumptions.get(peptideAssumption).size() > nSe) {
+                            nSe = assumptions.get(peptideAssumption).size();
+                            bestAssumption = peptideAssumption;
                         }
                     }
                 }
 
-                Double bestSeP = null;
-                int nSe = -1;
+                spectrumMatch.setFirstHit(bestAssumption.getAdvocate(), bestAssumption);
+                spectrumMatch.setBestAssumption(bestAssumption);
+                psParameter = new PSParameter();
+                psParameter.setSpectrumProbabilityScore(p);
+                psmMap.addPoint(p, spectrumMatch);
+                psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
+                identification.addSpectrumMatchParameter(spectrumKey, psParameter);
+                identification.updateSpectrumMatch(spectrumMatch);
+                waitingHandler.increaseSecondaryProgressValue();
 
-                for (PeptideAssumption peptideAssumption : assumptions.keySet()) {
-                    Double sep = Collections.min(assumptions.get(peptideAssumption));
-                    if (bestSeP == null || bestSeP > sep) {
-                        bestSeP = sep;
-                        nSe = assumptions.get(peptideAssumption).size();
-                        bestAssumption = peptideAssumption;
-                    } else if (sep == bestSeP && assumptions.get(peptideAssumption).size() > nSe) {
-                        nSe = assumptions.get(peptideAssumption).size();
-                        bestAssumption = peptideAssumption;
-                    }
+                if (waitingHandler.isRunCanceled()) {
+                    return;
                 }
-            }
-
-            spectrumMatch.setFirstHit(bestAssumption.getAdvocate(), bestAssumption);
-            spectrumMatch.setBestAssumption(bestAssumption);
-            psParameter = new PSParameter();
-            psParameter.setSpectrumProbabilityScore(p);
-            psmMap.addPoint(p, spectrumMatch);
-            psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
-            identification.addSpectrumMatchParameter(spectrumKey, psParameter);
-            identification.updateSpectrumMatch(spectrumMatch);
-            waitingHandler.increaseSecondaryProgressValue();
-
-            if (waitingHandler.isRunCanceled()) {
-                return;
             }
         }
 
@@ -938,44 +976,46 @@ public class PeptideShaker {
     private void attachAssumptionsProbabilities(InputMap inputMap, WaitingHandler waitingHandler) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        int max = identification.getSpectrumIdentification().size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(max);
+        waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
 
-        for (String spectrumKey : identification.getSpectrumIdentification()) {
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFile, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
 
-            waitingHandler.increaseSecondaryProgressValue();
+                waitingHandler.increaseSecondaryProgressValue();
 
-            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
-            for (int searchEngine : spectrumMatch.getAdvocates()) {
+                for (int searchEngine : spectrumMatch.getAdvocates()) {
 
-                ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine).keySet());
-                Collections.sort(eValues);
-                double previousP = 0;
+                    ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine).keySet());
+                    Collections.sort(eValues);
+                    double previousP = 0;
 
-                for (double eValue : eValues) {
+                    for (double eValue : eValues) {
 
-                    for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(searchEngine).get(eValue)) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(searchEngine).get(eValue)) {
 
-                        PSParameter psParameter = new PSParameter();
-                        double newP = inputMap.getProbability(searchEngine, eValue);
+                            PSParameter psParameter = new PSParameter();
+                            double newP = inputMap.getProbability(searchEngine, eValue);
 
-                        if (newP > previousP) {
-                            psParameter.setSearchEngineProbability(newP);
-                            previousP = newP;
-                        } else {
-                            psParameter.setSearchEngineProbability(previousP);
+                            if (newP > previousP) {
+                                psParameter.setSearchEngineProbability(newP);
+                                previousP = newP;
+                            } else {
+                                psParameter.setSearchEngineProbability(previousP);
+                            }
+
+                            peptideAssumption.addUrParam(psParameter);
                         }
-
-                        peptideAssumption.addUrParam(psParameter);
                     }
                 }
-            }
 
-            identification.updateSpectrumMatch(spectrumMatch); // @TODO: note really sure why this is needed??
-            if (waitingHandler.isRunCanceled()) {
-                return;
+                identification.updateSpectrumMatch(spectrumMatch);
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
             }
         }
 
@@ -995,21 +1035,25 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentification().size());
+        waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
 
         PSParameter psParameter = new PSParameter();
 
-        for (String spectrumKey : identification.getSpectrumIdentification()) {
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFile, null);
+            identification.loadSpectrumMatchParameters(spectrumFile, psParameter, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
 
-            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-            psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPsmProbabilityScore()));
-            identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPsmProbabilityScore()));
+                identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
 
-            identification.buildPeptidesAndProteins(spectrumKey);
+                identification.buildPeptidesAndProteins(spectrumKey);
 
-            waitingHandler.increaseSecondaryProgressValue();
-            if (waitingHandler.isRunCanceled()) {
-                return;
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
             }
         }
 
@@ -1035,6 +1079,11 @@ public class PeptideShaker {
         int max = inspectedSpectra.size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
+
+        if (ptmScoringPreferences.aScoreCalculation()) {
+            psmPTMMap = new PsmPTMMap();
+        }
+
         PSParameter psParameter = new PSParameter();
         for (String spectrumKey : inspectedSpectra) {
             waitingHandler.increaseSecondaryProgressValue();
@@ -1048,7 +1097,335 @@ public class PeptideShaker {
     }
 
     /**
-     * Scores the PTMs of all validated peptides.
+     * Infers the PTM localization and its confidence for the best match of
+     * every spectrum
+     *
+     * @param waitingHandler waiting handler displaying progress to the user
+     * @throws SQLException exception thrown whenever a problem occurred while
+     * interacting with the database
+     * @throws IOException exception thrown whenever a problem occurred while
+     * writing/reading the database
+     * @throws ClassNotFoundException exception thrown whenever a problem
+     * occurred while deserializing an object from the database
+     */
+    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences) throws SQLException, IOException, ClassNotFoundException {
+
+        waitingHandler.setWaitingText("Solving peptide inference. Please Wait...");
+
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
+
+        HashMap<String, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<String, HashMap<String, ArrayList<String>>>();
+        HashMap<String, HashMap<String, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<String, ArrayList<String>>>();
+
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFile, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                boolean variableAA = false;
+                for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
+                    if (modificationMatch.isVariable()) {
+                        String modName = modificationMatch.getTheoreticPtm();
+                        PTM ptm = ptmFactory.getPTM(modName);
+                        if (ptm.getType() == PTM.MODAA) {
+                            variableAA = true;
+                            break;
+                        }
+                    }
+                }
+                if (variableAA) {
+                    ptmInference(spectrumMatch, ptmScoringPreferences);
+                    boolean confident = true;
+                    for (ModificationMatch modMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
+                        if (modMatch.isVariable()) {
+                            String modName = modMatch.getTheoreticPtm();
+                            PTM ptm = ptmFactory.getPTM(modName);
+                            if (ptm.getType() == PTM.MODAA) {
+                                if (!modMatch.isConfident()) {
+                                    if (!notConfidentPeptideInference.containsKey(spectrumFile)) {
+                                        notConfidentPeptideInference.put(spectrumFile, new HashMap<String, ArrayList<String>>());
+                                    }
+                                    if (!notConfidentPeptideInference.get(spectrumFile).containsKey(modMatch.getTheoreticPtm())) {
+                                        notConfidentPeptideInference.get(spectrumFile).put(modMatch.getTheoreticPtm(), new ArrayList<String>());
+                                    }
+                                    notConfidentPeptideInference.get(spectrumFile).get(modMatch.getTheoreticPtm()).add(spectrumKey);
+                                    confident = false;
+                                } else {
+                                    if (!confidentPeptideInference.containsKey(modName)) {
+                                        confidentPeptideInference.put(modName, new HashMap<String, ArrayList<String>>());
+                                    }
+                                    String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                                    if (!confidentPeptideInference.get(modName).containsKey(sequence)) {
+                                        confidentPeptideInference.get(modName).put(sequence, new ArrayList<String>());
+                                    }
+                                    confidentPeptideInference.get(modName).get(sequence).add(spectrumKey);
+                                }
+                            }
+                        }
+                    }
+                    identification.updateSpectrumMatch(spectrumMatch);
+                    if (confident) {
+                        waitingHandler.increaseSecondaryProgressValue();
+                    }
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                } else {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+            }
+        }
+        // try to infer the modification site based on any related peptide
+        for (String spectrumFile : notConfidentPeptideInference.keySet()) {
+            ArrayList<String> progress = new ArrayList<String>();
+            for (String modification : notConfidentPeptideInference.get(spectrumFile).keySet()) {
+                identification.loadSpectrumMatches(notConfidentPeptideInference.get(spectrumFile).get(modification), null);
+                for (String spectrumKey : notConfidentPeptideInference.get(spectrumFile).get(modification)) {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
+                    String sequence = peptide.getSequence();
+                    String notConfidentKey = peptide.getKey();
+                    int nMod = Peptide.getModificationCount(notConfidentKey, modification);
+                    ArrayList<Integer> tempLocalizations, oldLocalizations = Peptide.getNModificationLocalized(notConfidentKey, modification);
+                    ArrayList<Integer> newLocalizationCandidates = new ArrayList<Integer>();
+                    if (confidentPeptideInference.containsKey(modification)) {
+                        // See if we can explain this peptide by another already identified peptides with the same number of modifications (the two peptides will be merged)
+                        ArrayList<String> keys = confidentPeptideInference.get(modification).get(sequence);
+                        if (keys != null) {
+                            for (String tempKey : keys) {
+                                SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
+                                if (Peptide.getModificationCount(secondaryKey, modification) == nMod) {
+                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                    for (int localization : tempLocalizations) {
+                                        if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
+                                            newLocalizationCandidates.add(localization);
+                                        }
+                                    }
+                                }
+                            }
+                            if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
+                                // we cannot merge this peptide, see whether we can explain the remainging modifications using peptides with the same sequence but other modification profile
+                                for (String tempKey : keys) {
+                                    SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                    String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
+                                    tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                    for (int localization : tempLocalizations) {
+                                        if (!oldLocalizations.contains(localization) && !newLocalizationCandidates.contains(localization)) {
+                                            newLocalizationCandidates.add(localization);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
+                            // There are still unexplained sites, let's see if we find a related peptide which can help. That is uggly but the results should be cool.
+                            for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
+                                if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
+                                    for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
+                                        SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                        String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
+                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                        int tempIndex,
+                                                ref = 0;
+                                        String tempSequence = sequence;
+                                        while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
+                                            tempSequence = tempSequence.substring(tempIndex + 1);
+                                            ref += tempIndex + 1;
+                                            for (int localization : tempLocalizations) {
+                                                int shiftedLocalization = ref + localization;
+                                                if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                    newLocalizationCandidates.add(shiftedLocalization);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
+                                    for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
+                                        SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                        String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
+                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                        int tempIndex,
+                                                ref = 0;
+                                        String tempSequence = otherSequence;
+                                        while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
+                                            tempSequence = tempSequence.substring(tempIndex + 1);
+                                            ref += tempIndex + 1;
+                                            for (int localization : tempLocalizations) {
+                                                int shiftedLocalization = localization - ref;
+                                                if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                    newLocalizationCandidates.add(shiftedLocalization);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        // Map the most likely inferred sites
+                        if (!newLocalizationCandidates.isEmpty()) {
+                            HashMap<Integer, ModificationMatch> nonConfidentMatches = new HashMap<Integer, ModificationMatch>();
+                            for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                                if (modificationMatch.getTheoreticPtm().equals(modification) && !modificationMatch.isConfident()) {
+                                    nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
+                                }
+                            }
+                            HashMap<Integer, Integer> mapping = Util.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
+                            for (int oldLocalization : mapping.keySet()) {
+                                ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
+                                int newLocalization = mapping.get(oldLocalization);
+                                if (newLocalization != oldLocalization) {
+                                    System.out.println(spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+                                }
+                                modificationMatch.setInferred(true);
+                                modificationMatch.setModificationSite(newLocalization);
+                            }
+                        }
+                        identification.updateSpectrumMatch(spectrumMatch);
+                    }
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                    if (!progress.contains(spectrumKey)) {
+                        progress.add(spectrumKey);
+                        waitingHandler.increaseSecondaryProgressValue();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Infers the modification site of every PSM based on the PTM scores and the
+     * FLR settings. The FLR must have been calculated before.
+     *
+     * @param spectrumMatch the spectrum match inspected
+     */
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) {
+
+        Peptide psPeptide = spectrumMatch.getBestAssumption().getPeptide();
+
+        HashMap<String, ArrayList<ModificationMatch>> modMatches = new HashMap<String, ArrayList<ModificationMatch>>();
+        for (ModificationMatch modMatch : psPeptide.getModificationMatches()) {
+            if (modMatch.isVariable()) {
+                String modName = modMatch.getTheoreticPtm();
+                PTM ptm = ptmFactory.getPTM(modName);
+                if (ptm.getType() == PTM.MODAA) {
+                    if (!modMatches.containsKey(modName)) {
+                        modMatches.put(modName, new ArrayList<ModificationMatch>());
+                    }
+                    modMatches.get(modName).add(modMatch);
+                }
+            }
+        }
+        if (!modMatches.isEmpty()) {
+            PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+            if (ptmScores != null) {
+                for (String modName : modMatches.keySet()) {
+                    PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
+                    if (ptmScoring != null) {
+                        PTM ptm = ptmFactory.getPTM(modName);
+                        ArrayList<Integer> possiblePositions = Peptide.getPotentialModificationSites(psPeptide.getSequence(), ptm);
+                        if (possiblePositions.size() < modMatches.get(modName).size()) {
+                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size() + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence() + " in spectrum " + spectrumMatch.getKey() + ".");
+                        } else if (possiblePositions.size() == modMatches.get(modName).size()) {
+                            for (ModificationMatch modMatch : modMatches.get(modName)) {
+                                modMatch.setConfident(true);
+                            }
+                            String bestDKey = ptmScoring.getBestDeltaScoreLocations();
+                            int confidence = PtmScoring.VERY_CONFIDENT;
+                            ptmScoring.setPtmSite(bestDKey, confidence);
+                        } else {
+                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation()) {
+                                String bestAKey = ptmScoring.getBestAScoreLocations();
+                                int key = psmPTMMap.getCorrectedKey(modName, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
+                                TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(modName, key);
+                                double aScoreThreshold = -currentMap.getTargetDecoyResults().getScoreLimit();
+                                ArrayList<Integer> aLocations = PtmScoring.getLocations(bestAKey);
+                                if (aLocations.size() > 1) {
+                                    String bestDKey = ptmScoring.getBestDeltaScoreLocations();
+                                    int confidence = PtmScoring.RANDOM;
+                                    ptmScoring.setPtmSite(bestDKey, confidence);
+                                    for (ModificationMatch modMatch : modMatches.get(modName)) {
+                                        modMatch.setConfident(false);
+                                    }
+                                } else if (ptmScoring.getAScore(bestAKey) >= aScoreThreshold) {
+                                    for (ModificationMatch modMatch : modMatches.get(modName)) {
+                                        modMatch.setConfident(true);
+                                        modMatch.setModificationSite(aLocations.get(0));
+                                    }
+                                    ptmScoring.setPtmSite(bestAKey, PtmScoring.VERY_CONFIDENT);
+                                } else {
+                                    for (ModificationMatch modMatch : modMatches.get(modName)) {
+                                        modMatch.setConfident(false);
+                                        modMatch.setModificationSite(aLocations.get(0));
+                                    }
+                                    ptmScoring.setPtmSite(bestAKey, PtmScoring.DOUBTFUL);
+                                }
+                            } else {
+                                for (ModificationMatch modMatch : modMatches.get(modName)) {
+                                    modMatch.setConfident(false);
+                                }
+                                String bestDKey = ptmScoring.getBestDeltaScoreLocations();
+                                if (ptmScoring.getDeltaScore(bestDKey) > 95) { //@TODO this should ne be hard coded
+                                    ptmScoring.setPtmSite(bestDKey, PtmScoring.CONFIDENT);
+                                } else {
+                                    ptmScoring.setPtmSite(bestDKey, PtmScoring.DOUBTFUL);
+                                }
+                            }
+                        }
+                    } else {
+                        throw new IllegalArgumentException("PTM scoring null for modification " + modName + "in spectrum " + spectrumMatch.getKey() + ".");
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("PTM scores null for spectrum " + spectrumMatch.getKey() + ".");
+            }
+        }
+    }
+
+    /**
+     * Scores the PTMs of all PSMs.
+     *
+     * @param waitingHandler the handler displaying feedback to the user
+     * @param searchParameters the search preferences containing the m/z
+     * tolerances
+     * @param annotationPreferences the spectrum annotation preferences
+     * @param ptmScoringPreferences the prm scoring preferences
+     * @throws Exception exception thrown whenever a problem occurred while
+     * deserializing a match
+     */
+    public void scorePsmPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+
+        waitingHandler.setWaitingText("Scoring Peptide PTMs. Please Wait...");
+
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
+
+        for (String spectrumFile : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFile, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, replicateNumber);
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+            }
+
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        }
+    }
+
+    /**
+     * Scores the PTMs of all peptides.
      *
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search preferences containing the m/z
@@ -1279,12 +1656,12 @@ public class PeptideShaker {
                 }
             }
 
+            identification.loadSpectrumMatches(bestKeys, null);
+            identification.loadSpectrumMatchParameters(bestKeys, psParameter, null);
             for (String spectrumKey : bestKeys) {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                scorePTMs(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences, confidenceThreshold);
 
                 for (String modification : variableModifications) {
 
@@ -1349,34 +1726,11 @@ public class PeptideShaker {
 
                 PtmScoring ptmScoring = ptmScores.getPtmScoring(modification);
                 String bestAKey = ptmScoring.getBestAScoreLocations();
-                String bestDKey = ptmScoring.getBestDeltaScoreLocations();
-                String retainedKey;
-                int confidence = PtmScoring.RANDOM;
 
                 if (bestAKey != null) {
-                    retainedKey = bestAKey;
-                    if (ptmScoring.getAScore(bestAKey) <= scoringPreferences.getaScoreThreshold()) {
-                        if (bestAKey.equals(bestDKey)) {
-                            confidence = PtmScoring.DOUBTFUL;
-                            if (ptmScoring.getDeltaScore(bestDKey) > 100.0 - confidenceThreshold) {
-                                confidence = PtmScoring.CONFIDENT;
-                            }
-                        }
-                    } else if (bestAKey.equals(bestDKey)) {
-                        confidence = PtmScoring.VERY_CONFIDENT;
-                    } else {
-                        confidence = PtmScoring.CONFIDENT;
-                    }
-                } else {
-                    retainedKey = bestDKey;
-                    if (ptmScoring.getDeltaScore(bestDKey) > 100.0 - confidenceThreshold) {
-                        confidence = PtmScoring.CONFIDENT;
-                    } else {
-                        confidence = PtmScoring.DOUBTFUL;
-                    }
-                }
-                if (retainedKey != null) {
-                    ptmScoring.setPtmSite(retainedKey, confidence);
+
+                    psmPTMMap.addPoint(modification, -ptmScoring.getAScore(bestAKey), spectrumMatch);
+
                 }
             }
         }
@@ -1458,7 +1812,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Attach the a-score.
+     * Attaches the a-score.
      *
      * @param spectrumMatch
      * @param searchParameters
@@ -1477,6 +1831,7 @@ public class PeptideShaker {
 
         HashMap<String, PTM> modifications = new HashMap<String, PTM>();
         HashMap<String, Integer> nMod = new HashMap<String, Integer>();
+        HashMap<String, ModificationMatch> modificationMatches = new HashMap<String, ModificationMatch>();
 
         for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
             if (modificationMatch.isVariable()) {
@@ -1489,6 +1844,7 @@ public class PeptideShaker {
                     } else {
                         nMod.put(modificationName, nMod.get(modificationName) + 1);
                     }
+                    modificationMatches.put(modificationName, modificationMatch);
                 }
             }
         }
@@ -1516,6 +1872,17 @@ public class PeptideShaker {
                     }
 
                     ptmScores.addPtmScoring(mod, ptmScoring);
+
+                    if (aScores.size() == 1) {
+                        // here nMod = 1, no method available to date for nMod > 1
+                        int location = (new ArrayList<ArrayList<Integer>>(aScores.keySet())).get(0).get(0);
+                        if (location != modificationMatches.get(mod).getModificationSite()) {
+                            ptmScores.getPtmScoring(mod).setConflict(true);
+                        }
+                    } else {
+                        ptmScores.getPtmScoring(mod).setConflict(true);
+                    }
+
                 }
             }
 
@@ -1619,6 +1986,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
 
+        identification.loadPeptideMatchParameters(psParameter, null);
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPeptideProbabilityScore()));
@@ -1652,6 +2020,8 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
+        identification.loadPeptideMatchParameters(psParameter, null);
+        identification.loadProteinMatches(null);
         for (String proteinKey : identification.getProteinIdentification()) {
 
             waitingHandler.increaseSecondaryProgressValue();
@@ -1716,8 +2086,9 @@ public class PeptideShaker {
 
         for (String proteinKey : identification.getProteinIdentification()) {
 
-            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+            //@TODO: this molecular weigth stuff shall not be done here!
+//            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+//            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
 
             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
             double proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
@@ -1726,16 +2097,16 @@ public class PeptideShaker {
             for (String fraction : psParameter.getFractions()) {
                 psParameter.setFractionPEP(fraction, proteinMap.getProbability(psParameter.getFractionScore(fraction)));
 
-                // set the fraction molecular weights
-                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > 95) { // @TODO: this limit should not be hardcoded here!!!!!
-                    if (fractionMW.containsKey(fraction)) {
-                        fractionMW.get(fraction).add(proteinMW);
-                    } else {
-                        ArrayList<Double> mw = new ArrayList<Double>();
-                        mw.add(proteinMW);
-                        fractionMW.put(fraction, mw);
-                    }
-                }
+//                // set the fraction molecular weights
+//                if (!proteinMatch.isDecoy() && psParameter.getFractionConfidence(fraction) > 95) { // @TODO: this limit should not be hardcoded here!!!!!
+//                    if (fractionMW.containsKey(fraction)) {
+//                        fractionMW.get(fraction).add(proteinMW);
+//                    } else {
+//                        ArrayList<Double> mw = new ArrayList<Double>();
+//                        mw.add(proteinMW);
+//                        fractionMW.put(fraction, mw);
+//                    }
+//                }
             }
 
             identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -1776,6 +2147,7 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
+        identification.loadProteinMatchParameters(psParameter, null);
         for (String proteinSharedKey : identification.getProteinIdentification()) {
 
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
@@ -1830,6 +2202,7 @@ public class PeptideShaker {
         double maxMW = 0;
         Protein currentProtein = null;
 
+        identification.loadProteinMatches(null);
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
@@ -1884,13 +2257,20 @@ public class PeptideShaker {
                 boolean similarityFound = false;
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                for (String accession : accessions) {
+                    if (newDescriptionBetter(mainKey, accession)) {
+                        mainKey = accession;
+                    }
+                }
                 for (int i = 0; i < accessions.size() - 1; i++) {
                     ArrayList<String> primaryDescription = parseDescription(accessions.get(i));
                     for (int j = i + 1; j < accessions.size(); j++) {
                         ArrayList<String> secondaryDescription = parseDescription(accessions.get(j));
                         if (getSimilarity(primaryDescription, secondaryDescription)) {
                             similarityFound = true;
-                            mainKey = accessions.get(i);
+                            if (newDescriptionBetter(mainKey, accessions.get(j))) {
+                                mainKey = accessions.get(i);
+                            }
                             break;
                         }
                     }
@@ -2069,6 +2449,30 @@ public class PeptideShaker {
     }
 
     /**
+     * Checks whether a protein (newAccession) is better defined than an other
+     * one (oldAccession)
+     *
+     * @param oldAccession the accession of the old protein
+     * @param newAccession the accession of the new protein
+     * @return a boolean indicating whether the new accession is better
+     * described
+     */
+    private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException {
+        String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
+        String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
+        String[] keyWords = {"Uncharacterized", "putative", "like"};
+        for (String keyWord : keyWords) {
+            if (newDescription.toLowerCase().contains(keyWord)) {
+                return false;
+            }
+            if (oldDescription.toLowerCase().contains(keyWord)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Simplistic method comparing protein descriptions. Returns true if both
      * descriptions are of same length and present more than half similar words.
      *
@@ -2186,5 +2590,21 @@ public class PeptideShaker {
                 ptmFactory.replacePTM(utilitiesName, newPTM);
             }
         }
+    }
+    
+    /**
+     * Adds a warning to the feedback list. If a feedback with the same title is already loaded it will be ignored.
+     * @param feedback the feedback
+     */
+    public void addWarning(FeedBack feedback) {
+        warnings.put(feedback.getTitle(), feedback);
+    }
+    
+    /**
+     * returns the warnings
+     * @return the warnings
+     */
+    public HashMap<String, FeedBack> getWarnings() {
+        return warnings;
     }
 }

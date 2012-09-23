@@ -4,6 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -1417,10 +1418,10 @@ public class QCPanel extends javax.swing.JPanel {
         if ((psmPrecursorMassErrorJRadioButton.isSelected() && currentPsmPlotType != PlotType.PSM_Precursor_Mass_Error)
                 || (psmPrecursorChargeJRadioButton.isSelected() && currentPsmPlotType != PlotType.PSM_Precursor_Charge)) {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
@@ -1440,7 +1441,7 @@ public class QCPanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
 
-                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
 
                     progressDialog.setTitle("Getting PSM Dataset. Please Wait...");
                     getPsmDataset();
@@ -1451,15 +1452,12 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
-                        // @TODO: here we ought to use the max precursor error!!
-
-                        bins.add(0.0);
-                        bins.add(0.25);
-                        bins.add(0.5);
-                        bins.add(1.0);
-                        bins.add(2.0);
-                        bins.add(5.0);
-                        bins.add(10.0);
+                        double prec = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy();
+                        double nBins = 20;
+                        for (int i = 0; i <= nBins; i++) {
+                            double bin = i * prec / nBins;
+                            bins.add(bin);
+                        }
 
                         getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
                         getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
@@ -1897,12 +1895,13 @@ public class QCPanel extends javax.swing.JPanel {
     private void getPsmDataset() {
 
         progressDialog.setIndeterminate(false);
-        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
         progressDialog.setValue(0);
 
         try {
             PSParameter psParameter = new PSParameter();
             maxValue = Double.MIN_VALUE;
+            Identification identification = peptideShakerGUI.getIdentification();
 
             if (psmPrecursorMassErrorJRadioButton.isSelected()) {
 
@@ -1914,41 +1913,46 @@ public class QCPanel extends javax.swing.JPanel {
                 SpectrumMatch spectrumMatch;
                 Precursor precursor;
 
-                for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
 
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
+                for (String spectrumFile : identification.getSpectrumFiles()) {
+                    identification.loadSpectrumMatches(spectrumFile, progressDialog);
+                    identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
+                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
 
-                    spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                    if (!psParameter.isHidden()) {
-
-                        precursor = peptideShakerGUI.getPrecursor(spectrumKey);
-                        double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
-                                precursor.getMz(),
-                                peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
-                        if (value > maxValue) {
-                            maxValue = value;
+                        if (progressDialog.isRunCanceled()) {
+                            break;
                         }
 
-                        if (!spectrumMatch.getBestAssumption().isDecoy()) {
-                            if (psParameter.isValidated()) {
-                                validatedValues.add(value);
-                            } else {
-                                nonValidatedValues.add(value);
+                        spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                        if (!psParameter.isHidden()) {
+
+                            precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                            double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
+                                    precursor.getMz(),
+                                    peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                            if (value > maxValue) {
+                                maxValue = value;
                             }
-                        } else {
-                            if (psParameter.isValidated()) {
-                                validatedDecoyValues.add(value);
+
+                            if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                                if (psParameter.isValidated()) {
+                                    validatedValues.add(value);
+                                } else {
+                                    nonValidatedValues.add(value);
+                                }
                             } else {
-                                nonValidatedDecoyValues.add(value);
+                                if (psParameter.isValidated()) {
+                                    validatedDecoyValues.add(value);
+                                } else {
+                                    nonValidatedDecoyValues.add(value);
+                                }
                             }
                         }
-                    }
 
-                    progressDialog.increaseProgressValue();
+                        progressDialog.increaseProgressValue();
+                    }
                 }
             } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
@@ -1958,38 +1962,41 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
-                for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                    if (!psParameter.isHidden()) {
-
-                        double value = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
-                        if (value > maxValue) {
-                            maxValue = value;
+                for (String spectrumFile : identification.getSpectrumFiles()) {
+                    identification.loadSpectrumMatches(spectrumFile, progressDialog);
+                    identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
+                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                        if (progressDialog.isRunCanceled()) {
+                            break;
                         }
 
-                        if (!spectrumMatch.getBestAssumption().isDecoy()) {
-                            if (psParameter.isValidated()) {
-                                validatedValues.add(value);
-                            } else {
-                                nonValidatedValues.add(value);
+                        SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
+
+                        if (!psParameter.isHidden()) {
+
+                            double value = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                            if (value > maxValue) {
+                                maxValue = value;
                             }
-                        } else {
-                            if (psParameter.isValidated()) {
-                                validatedDecoyValues.add(value);
+
+                            if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                                if (psParameter.isValidated()) {
+                                    validatedValues.add(value);
+                                } else {
+                                    nonValidatedValues.add(value);
+                                }
                             } else {
-                                nonValidatedDecoyValues.add(value);
+                                if (psParameter.isValidated()) {
+                                    validatedDecoyValues.add(value);
+                                } else {
+                                    nonValidatedDecoyValues.add(value);
+                                }
                             }
                         }
-                    }
 
-                    progressDialog.increaseProgressValue();
+                        progressDialog.increaseProgressValue();
+                    }
                 }
             }
         } catch (Exception e) {

@@ -5350,7 +5350,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     if (identification.isDB()) {
+                        try {
                         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
+                        }catch (Exception e) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured while reading:\n" + currentPSFile + ".\n\n"
+                            + "It looks like another instance of PeptideShaker is still connected to the file. Please close all other instances of PeptideShaker and retry.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     } else {
 
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -5426,6 +5434,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         searchParameters.updateVersion();
                         updateAnnotationPreferencesFromSearchSettings();
                     }
+                    
+                    if (identification.getSpectrumIdentificationMap() == null) {
+                        // 0.18 version, needs update of the spectrum mapping
+                        identification.updateSpectrumMapping();
+                    }
 
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setIndeterminate(true);
@@ -5435,8 +5448,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         identification.loadProteinMatchParameters(new PSParameter(), progressDialog);
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
                         identification.loadPeptideMatchParameters(new PSParameter(), progressDialog);
-
-                        // @TODO: load more? peptide matches? spectrum matches? spectrum parameters?
                     }
 
 

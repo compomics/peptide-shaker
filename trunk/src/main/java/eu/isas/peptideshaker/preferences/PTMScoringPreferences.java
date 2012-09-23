@@ -14,18 +14,18 @@ public class PTMScoringPreferences implements Serializable {
      */
     static final long serialVersionUID = -6656074270981104708L;
     /**
-     * The A-score threshold.
-     */
-    private double aScoreThreshold = 10;
-    /**
      * Boolean indicating whether the A-score should be calculated.
      */
-    private boolean aScoreCalculation = false;
+    private boolean aScoreCalculation = true;
     /**
      * Boolean indicating whether neutral losses shall be accounted in the
      * calculation of the A-score.
      */
     private boolean aScoreNeutralLosses = false;
+    /**
+     * the FLR threshold in percent
+     */
+    private double flr = 1.0;
 
     /**
      * Constructor.
@@ -75,20 +75,20 @@ public class PTMScoringPreferences implements Serializable {
     }
 
     /**
-     * Returns the A-score threshold.
+     * Returns the FLR threshold.
      *
-     * @return the A-score threshold
+     * @return the FLR threshold
      */
-    public double getaScoreThreshold() {
-        return aScoreThreshold;
+    public double getFlrThreshold() {
+        return flr;
     }
 
     /**
-     * Sets the A-score threshold.
+     * Sets the FLR threshold.
      *
-     * @param aScoreThreshold the A-score threshold
+     * @param flr the FLR threshold
      */
-    public void setaScoreThreshold(double aScoreThreshold) {
-        this.aScoreThreshold = aScoreThreshold;
+    public void setFlrThreshold(double flr) {
+        this.flr = flr;
     }
 }

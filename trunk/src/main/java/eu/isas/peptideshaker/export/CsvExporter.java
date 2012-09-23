@@ -148,7 +148,7 @@ public class CsvExporter {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setMaxProgressValue(identification.getProteinIdentification().size()
                         + identification.getPeptideIdentification().size()
-                        + 2 * identification.getSpectrumIdentification().size());
+                        + 2 * identification.getSpectrumIdentificationSize());
             }
 
             int progress = 0;
@@ -214,7 +214,10 @@ public class CsvExporter {
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             spectrumWriter.write(content);
 
-            for (String spectrumKey : identification.getSpectrumIdentification()) {
+            for (String spectrumFile : identification.getSpectrumFiles()) {
+                identification.loadSpectrumMatches(spectrumFile, progressDialog);
+                identification.loadSpectrumMatchParameters(lMessage, new PSParameter(), progressDialog);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
 
                 spectrumWriter.write(getSpectrumLine(spectrumKey));
 
@@ -225,6 +228,7 @@ public class CsvExporter {
                 if (progressDialog != null && progressDialog.isRunCanceled()) {
                     break;
                 }
+            }
             }
 
             spectrumWriter.close();

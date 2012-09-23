@@ -19,6 +19,7 @@ import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
+import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
@@ -284,7 +285,7 @@ public class FileImporter {
                     + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-        } catch (NullPointerException e) { 
+        } catch (NullPointerException e) {
 
             // @TODO: this might not the only null pointer that can oocur?
 
@@ -306,9 +307,9 @@ public class FileImporter {
      * @return a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingHandler waitingHandler) {
-        
+
         // @TODO: the use of contains(...) below is very slow!! using something like suffix trees should be a lot faster
-        
+
         ArrayList<String> result = foundSharedPeptides.get(peptideSequence);
 
         if (result == null) {
@@ -360,9 +361,12 @@ public class FileImporter {
      * @param modificationSite The modified site according to the search engine
      * @param sequence The sequence of the peptide
      * @param searchParameters The search parameters used
-     * @return the best PTM candidate
+     * @return the best PTM 
+     * @throws IOException exception thrown whenever an error occurred while reading a protein sequence
+     * @throws IllegalArgumentException exception thrown whenever an error occurred while reading a protein sequence
+     * @throws InterruptedException exception thrown whenever an error occurred while reading a protein sequence
      */
-    private String getPTM(String sePTM, int modificationSite, String sequence, SearchParameters searchParameters) {
+    private String getPTM(String sePTM, int modificationSite, Peptide peptide, SearchParameters searchParameters) throws IOException, IllegalArgumentException, InterruptedException {
 
         // @TODO: If someone has a better idea, would be great.
 
@@ -372,12 +376,23 @@ public class FileImporter {
 
             ArrayList<PTM> possiblePTMs = new ArrayList<PTM>();
             String[] parsedName = sePTM.split("@");
-            double seMass = new Double(parsedName[0]); // @TODO: a NumberFormatException can occur here?
+            double seMass = 0;
+            try {
+                seMass = new Double(parsedName[0]);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification.");
+            }
+
+            if (Math.abs(42.0106 - seMass) < 0.01) {
+                int debug = 1;
+            }
 
             for (String ptmName : searchParameters.getModificationProfile().getFamilyNames()) {
                 PTM psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
-                    possiblePTMs.add(psPTM);
+                    if (peptide.isModifiable(psPTM)) {
+                        possiblePTMs.add(psPTM);
+                    }
                 }
             }
 
@@ -385,7 +400,33 @@ public class FileImporter {
                 // Single match for this mass, we are lucky
                 return possiblePTMs.get(0).getName();
             } else if (possiblePTMs.size() > 1) {
+                ArrayList<PTM> modAA = new ArrayList<PTM>();
+                for (PTM possPtm : possiblePTMs) {
+                    if (possPtm.getType() == PTM.MODAA) {
+                        modAA.add(possPtm);
+                    }
+                }
+                if (modAA.size() > 1) {
+                    // Modification conflict, the rest of the code should handle it but the peptide inference will be impaired
+                    String report = "Could not distinguish ";
+                    for (int cpt = 0 ; cpt < modAA.size() ; cpt++) {
+                        if (cpt == modAA.size()-1) {
+                            report += " and ";
+                        } else if (cpt > 0) {
+                            report += ", ";
+                        }
+                        report += modAA.get(cpt).getName();
+                    }
+                    peptideShaker.addWarning(FeedBack.getWarning("Conflicting modifications", report));
+                }
+                if (modAA.size() == 1) {
+                // OK typical case of a modification which can be at an amino acid or terminals, return the amino acid version for our peptide inference methods to handle the case
+                    return modAA.get(0).getName();
+                }
+                // See if it can be a modification sitting at different places on the sequence
+                
                 // More matches, let's see if we can infer something from the position
+                String sequence = peptide.getSequence();
                 if (modificationSite == 1) {
                     // See if it can be an N-term modification
                     for (PTM possPtm : possiblePTMs) {
@@ -428,13 +469,14 @@ public class FileImporter {
                                     }
                                 }
                             } else {
-                                int xtandemImportError = modificationSite;
+                                peptideShaker.addWarning(FeedBack.getWarning("Wrong PTM localization", "PTM " + sePTM + " could not be mapped on the peptide sequence " + sequence + "."));
                             }
                         }
                     }
                 }
             }
-            return ptmFactory.getPTM(seMass, parsedName[1], sequence).getName();
+            peptideShaker.addWarning(FeedBack.getWarning("Unknown modification", "Some modifications could not be mapped to expected modifications and were ignored."));
+            return PTMFactory.unknownPTM.getName();
         }
     }
 
@@ -828,7 +870,6 @@ public class FileImporter {
                     // use search engine independant PTMs
                     for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                         Peptide peptide = assumptions.getPeptide();
-                        String sequence = peptide.getSequence();
                         for (ModificationMatch seMod : peptide.getModificationMatches()) {
                             if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
@@ -837,7 +878,7 @@ public class FileImporter {
                                     unknown = true;
                                 }
                             }
-                            seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters)); // @TODO: this might cause problems..? 
+                            seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide, searchParameters));
                         }
                     }
 
