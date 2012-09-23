@@ -1,7 +1,5 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.util.Util;
-import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
@@ -15,7 +13,6 @@ import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -30,8 +27,6 @@ import org.xml.sax.SAXException;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -190,20 +185,6 @@ public class FileImporter {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
             sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
-
-            String firstAccession = sequenceFactory.getAccessions().get(0);
-            if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
-                showDataBaseHelpDialog();
-            }
-
-            if (!sequenceFactory.concatenatedTargetDecoy()) {
-                waitingHandler.displayMessage("PeptideShaker validation requires the use of a taget-decoy database.\n"
-                        + "Some features will be limited if using other types of databases.\n\n"
-                        + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
-                        + "See the PeptideShaker home page for details.",
-                        "No Decoys Found",
-                        JOptionPane.INFORMATION_MESSAGE);
-            }
 
             waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
@@ -565,7 +546,8 @@ public class FileImporter {
          *
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, 
+                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
 
             this.idFiles = new ArrayList<File>();
             HashMap<String, File> filesMap = new HashMap<String, File>();
@@ -947,39 +929,6 @@ public class FileImporter {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Show a simple dialog saying that UniProt databases is recommended and
-     * display a link to the Database Help web page.
-     */
-    private void showDataBaseHelpDialog() {
-
-        // create an empty label to put the message in
-        JLabel label = new JLabel();
-
-        // html content 
-        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                + "We strongly recommend the use of UniProt databases. Some<br>"
-                + "features will be limited if using other databases.<br><br>"
-                + "See <a href=\"http://code.google.com/p/searchgui/wiki/DatabaseHelp\">Database Help</a> for details."
-                + "</body></html>");
-
-        // handle link events 
-        ep.addHyperlinkListener(new HyperlinkListener() {
-
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
-                }
-            }
-        });
-
-        ep.setBorder(null);
-        ep.setEditable(false);
-
-        waitingHandler.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

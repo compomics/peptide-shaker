@@ -82,9 +82,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
@@ -97,6 +99,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+import twitter4j.*;
 
 /**
  * The main PeptideShaker frame.
@@ -512,7 +515,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         exceptionHandler = new ExceptionHandler(this);
 
-        //startNewsFeed(); // @TODO: reimplement
+        startNewsFeed();
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -655,7 +658,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         splitterMenu7 = new javax.swing.JMenu();
         ionTableButtonGroup = new javax.swing.ButtonGroup();
         deNovoChargeButtonGroup = new javax.swing.ButtonGroup();
-        gradientPanel = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        backgroundLayeredPane = new javax.swing.JLayeredPane();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
@@ -666,6 +670,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         goJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
         qcJPanel = new javax.swing.JPanel();
+        newsButton = new javax.swing.JButton();
+        helpButton = new javax.swing.JButton();
+        noteButton = new javax.swing.JButton();
+        messageBackgroundPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -1085,8 +1093,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
 
-        gradientPanel.setBackground(new java.awt.Color(255, 255, 255));
-        gradientPanel.setPreferredSize(new java.awt.Dimension(1260, 800));
+        backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        backgroundPanel.setPreferredSize(new java.awt.Dimension(1260, 800));
 
         allTabsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
         allTabsJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -1131,21 +1139,94 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("QC Plots", null, qcJPanel, "Quality Control metrics and plots");
 
-        javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
-        gradientPanel.setLayout(gradientPanelLayout);
-        gradientPanelLayout.setHorizontalGroup(
-            gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1278, Short.MAX_VALUE)
-            .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(allTabsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1278, Short.MAX_VALUE))
+        allTabsJTabbedPane.setBounds(0, 0, 1280, 860);
+        backgroundLayeredPane.add(allTabsJTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        newsButton.setBackground(new java.awt.Color(204, 204, 204));
+        newsButton.setFont(newsButton.getFont().deriveFont(newsButton.getFont().getStyle() | java.awt.Font.BOLD));
+        newsButton.setForeground(new java.awt.Color(255, 255, 255));
+        newsButton.setText("News");
+        newsButton.setBorder(null);
+        newsButton.setContentAreaFilled(false);
+        newsButton.setOpaque(true);
+        newsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                newsButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                newsButtonMouseExited(evt);
+            }
+        });
+        newsButton.setBounds(1210, 825, 60, 20);
+        backgroundLayeredPane.add(newsButton, javax.swing.JLayeredPane.MODAL_LAYER);
+
+        helpButton.setBackground(new java.awt.Color(204, 204, 204));
+        helpButton.setFont(helpButton.getFont().deriveFont(helpButton.getFont().getStyle() | java.awt.Font.BOLD));
+        helpButton.setForeground(new java.awt.Color(255, 255, 255));
+        helpButton.setText("Help");
+        helpButton.setBorder(null);
+        helpButton.setContentAreaFilled(false);
+        helpButton.setOpaque(true);
+        helpButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpButtonMouseExited(evt);
+            }
+        });
+        helpButton.setBounds(1210, 800, 60, 20);
+        backgroundLayeredPane.add(helpButton, javax.swing.JLayeredPane.MODAL_LAYER);
+
+        noteButton.setBackground(new java.awt.Color(204, 204, 204));
+        noteButton.setFont(noteButton.getFont().deriveFont(noteButton.getFont().getStyle() | java.awt.Font.BOLD));
+        noteButton.setForeground(new java.awt.Color(255, 255, 255));
+        noteButton.setText("Note");
+        noteButton.setBorder(null);
+        noteButton.setBorderPainted(false);
+        noteButton.setContentAreaFilled(false);
+        noteButton.setOpaque(true);
+        noteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                noteButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                noteButtonMouseExited(evt);
+            }
+        });
+        noteButton.setBounds(1210, 775, 60, 20);
+        backgroundLayeredPane.add(noteButton, javax.swing.JLayeredPane.MODAL_LAYER);
+
+        messageBackgroundPanel.setBackground(new java.awt.Color(255, 102, 0));
+        messageBackgroundPanel.setOpaque(false);
+
+        javax.swing.GroupLayout messageBackgroundPanelLayout = new javax.swing.GroupLayout(messageBackgroundPanel);
+        messageBackgroundPanel.setLayout(messageBackgroundPanelLayout);
+        messageBackgroundPanelLayout.setHorizontalGroup(
+            messageBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 75, Short.MAX_VALUE)
         );
-        gradientPanelLayout.setVerticalGroup(
-            gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        messageBackgroundPanelLayout.setVerticalGroup(
+            messageBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 85, Short.MAX_VALUE)
+        );
+
+        messageBackgroundPanel.setBounds(1200, 760, 75, 85);
+        backgroundLayeredPane.add(messageBackgroundPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1278, Short.MAX_VALUE)
+            .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(backgroundLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1278, Short.MAX_VALUE))
+        );
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 862, Short.MAX_VALUE)
-            .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(gradientPanelLayout.createSequentialGroup()
-                    .addComponent(allTabsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
-                    .addGap(0, 0, 0)))
+            .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(backgroundLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE))
         );
 
         menuBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -1572,11 +1653,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1278, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1278, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
         );
 
         pack();
@@ -1663,6 +1744,36 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+
+        // resize the background panel
+        backgroundLayeredPane.getComponent(3).setBounds(0, 0, backgroundLayeredPane.getWidth(), backgroundLayeredPane.getHeight());
+        backgroundLayeredPane.revalidate();
+        backgroundLayeredPane.repaint();
+
+        // move the icons
+        backgroundLayeredPane.getComponent(0).setBounds(
+                backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(0).getWidth() - 20,
+                backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(0).getHeight() - 15,
+                backgroundLayeredPane.getComponent(0).getWidth(),
+                backgroundLayeredPane.getComponent(0).getHeight());
+
+        backgroundLayeredPane.getComponent(1).setBounds(
+                backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(1).getWidth() - 20,
+                backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(1).getHeight() - 37,
+                backgroundLayeredPane.getComponent(1).getWidth(),
+                backgroundLayeredPane.getComponent(1).getHeight());
+
+        backgroundLayeredPane.getComponent(2).setBounds(
+                backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(2).getWidth() - 20,
+                backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(2).getHeight() - 59,
+                backgroundLayeredPane.getComponent(2).getWidth(),
+                backgroundLayeredPane.getComponent(2).getHeight());
+        
+        backgroundLayeredPane.getComponent(4).setBounds(
+                backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(4).getWidth() - 10,
+                backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(4).getHeight() - 10,
+                backgroundLayeredPane.getComponent(4).getWidth(),
+                backgroundLayeredPane.getComponent(4).getHeight());
 
         if (overviewPanel != null) {
             overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
@@ -1827,7 +1938,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     int value = JOptionPane.showConfirmDialog(
                             this, "Discard the current validation settings?", "Discard Settings?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    
+
                     if (value == JOptionPane.YES_OPTION) {
                         // do nothing
                     } else {
@@ -1835,7 +1946,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
                     }
                 }
-            }   
+            }
 
             if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                 if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
@@ -2632,7 +2743,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final PeptideShakerGUI finalRef = this;
 
         new Thread(new Runnable() {
-            public void run() { 
+
+            public void run() {
                 try {
                     ToolFactory.startSearchGUI(finalRef);
                 } catch (Exception e) {
@@ -2702,6 +2814,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final PeptideShakerGUI finalRef = this;
 
         new Thread(new Runnable() {
+
             public void run() {
                 try {
                     ToolFactory.startRelims(finalRef);
@@ -2722,6 +2835,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final PeptideShakerGUI finalRef = this;
 
         new Thread(new Runnable() {
+
             public void run() {
                 try {
                     ToolFactory.startReporter(finalRef);
@@ -2759,6 +2873,30 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void deNovoChargeTwoJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
         updateAnnotationPreferences();
     }//GEN-LAST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
+
+    private void helpButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_helpButtonMouseEntered
+
+    private void helpButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpButtonMouseExited
+
+    private void noteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_noteButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_noteButtonMouseEntered
+
+    private void noteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_noteButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_noteButtonMouseExited
+
+    private void newsButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newsButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_newsButtonMouseEntered
+
+    private void newsButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newsButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_newsButtonMouseExited
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -2824,7 +2962,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             helpJMenu.setEnabled(true);
             scoresJCheckBoxMenuItem.setEnabled(true);
             sparklinesJCheckBoxMenuItem.setEnabled(true);
-            
+
             // disable the fractions tab if only one mgf file
             allTabsJTabbedPane.setEnabledAt(2, searchParameters.getSpectrumFiles().size() > 1);
 
@@ -2876,6 +3014,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JPanel annotationsJPanel;
     private javax.swing.JCheckBoxMenuItem automaticAnnotationCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem bIonCheckBoxMenuItem;
+    private javax.swing.JLayeredPane backgroundLayeredPane;
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBoxMenuItem barsCheckBoxMenuItem;
     private javax.swing.JMenuItem bubblePlotJMenuItem;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
@@ -2905,7 +3045,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem fractionDetailsJMenuItem;
     private javax.swing.JMenuItem gettingStartedMenuItem;
     private javax.swing.JPanel goJPanel;
-    private javax.swing.JPanel gradientPanel;
+    private javax.swing.JButton helpButton;
     private javax.swing.JMenu helpJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
@@ -2940,8 +3080,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenu lossSplitter;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JPanel messageBackgroundPanel;
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
+    private javax.swing.JButton newsButton;
+    private javax.swing.JButton noteButton;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu openRecentJMenu;
     private javax.swing.JMenu otherMenu;
@@ -6502,10 +6645,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 String htmlEnd = "</p></body></html>";
 
                 int currentTipIndex = 0;
+
                 while (newsfeed) {
                     String news = "";
                     news += "<b>Tip of the day:</b>\n";
-
 
                     int newTipIndex = (int) (Math.random() * tips.size());
 
@@ -6514,12 +6657,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     currentTipIndex = newTipIndex;
-
                     news += tips.get(currentTipIndex);
 
                     //newsFeedTxt.setText(htmlStart + news + htmlEnd);
+                    //helpButton.setToolTipText(htmlStart + news + htmlEnd);
+
+                    // get the compomics twitter feed
+                    List<Tweet> tweets = getTwitterFeeds();
+
+                    //newsButton.setToolTipText(tweets.get(0).getFromUser() + ":" + tweets.get(0).getText());
+
                     try {
-                        wait(30000);
+                        wait(600000);
                     } catch (Exception e) {
                         newsfeed = false;
                         e.printStackTrace();
@@ -6528,5 +6677,29 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
             }
         }.start();
+    }
+
+    private List<Tweet> getTwitterFeeds() {
+
+        List<Tweet> tweets = new ArrayList<Tweet>();
+
+        Twitter twitter = new TwitterFactory().getInstance();
+
+        try {
+            Query query = new Query("from:compomics");
+            QueryResult result = twitter.search(query);
+
+            return result.getTweets();
+
+//            for (Tweet tweet : result.getTweets()) {
+//                System.out.println(tweet.getFromUser() + ":" + tweet.getText());
+//            }
+        } catch (TwitterException te) {
+            te.printStackTrace();
+            System.out.println("Failed to search tweets: " + te.getMessage());
+            System.exit(-1);
+        }
+
+        return tweets;
     }
 }

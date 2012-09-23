@@ -3557,7 +3557,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.spectrumMapChanged(progressDialog);
+                    miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                             "Identification Conflict", JOptionPane.WARNING_MESSAGE);
@@ -3608,7 +3608,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(progressDialog);
+                    miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                             "Identification Conflict", JOptionPane.WARNING_MESSAGE);
@@ -3659,7 +3659,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                     PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
-                    miniShaker.proteinMapChanged(progressDialog);
+                    miniShaker.proteinMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences());
                     modifiedMaps.put(0, false);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
