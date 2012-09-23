@@ -616,8 +616,11 @@ public class PeptideShaker {
                     psParameter.setValidated(false);
                 }
                 identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
-                if (progressBar != null) {
-                    progressBar.setValue(progressBar.getValue() + 1);
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
                 }
             }
         }
