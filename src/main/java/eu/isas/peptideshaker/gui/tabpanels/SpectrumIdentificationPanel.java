@@ -2452,7 +2452,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     SpectrumMatch spectrumMatch;
 
 
-                    ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+                    ArrayList<String> fileNames = identification.getSpectrumFiles();
                     String[] filesArray = new String[fileNames.size()];
                     int cpt = 0;
 
@@ -2463,7 +2463,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
 
                     progressDialog.setIndeterminate(false);
-                    progressDialog.setMaxProgressValue(identification.getSpectrumIdentification().size());
+                    progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
                     progressDialog.setValue(0);
 
 
@@ -2490,7 +2490,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // @TODO: hide the unused search engine columns in the Search Engine Performance table
                     // @TODO: hide the columns in the table for the search engines that are not used...
                     // @TODO: calculate the 'All' column values based on only the used search engines and not all three like now...
-                    // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead?
+                    // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead? And make it search engine independent for when I add other search engines :)
 
 
                     for (String fileName : filesArray) {
@@ -2499,70 +2499,68 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         identification.loadSpectrumMatches(fileName, progressDialog);
                         progressDialog.setTitle("Loading Data. Please Wait...");
 
-                        for (String spectrumKey : identification.getSpectrumIdentification()) {
-                            if (Spectrum.getSpectrumFile(spectrumKey).equals(fileName)) { //It hurts me to read such uggly stuffs. We need a map in the identification instead but have no time right now.
-                                if (progressDialog.isRunCanceled()) {
-                                    break;
-                                }
-
-                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                mascot = false;
-                                omssa = false;
-                                xTandem = false;
-                                probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
-
-                                if (probabilities.isValidated()) {
-                                    if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
-                                        if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                                            mascot = true;
-                                        }
-                                    }
-                                    if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
-                                        if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                                            omssa = true;
-                                        }
-                                    }
-                                    if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
-                                        if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                                            xTandem = true;
-                                        }
-                                    }
-                                }
-
-                                if (mascot && omssa && xTandem) {
-                                    omx++;
-                                }
-                                if (mascot && omssa) {
-                                    mo++;
-                                }
-                                if (omssa && xTandem) {
-                                    ox++;
-                                }
-                                if (mascot && xTandem) {
-                                    mx++;
-                                }
-                                if (mascot) {
-                                    m++;
-                                }
-                                if (omssa) {
-                                    o++;
-                                }
-                                if (xTandem) {
-                                    x++;
-                                }
-
-                                if (!mascot) {
-                                    no_m++;
-                                }
-                                if (!xTandem) {
-                                    no_x++;
-                                }
-                                if (!omssa) {
-                                    no_o++;
-                                }
-
-                                progressDialog.increaseProgressValue();
+                        for (String spectrumKey : identification.getSpectrumIdentification(fileName)) {
+                            if (progressDialog.isRunCanceled()) {
+                                break;
                             }
+
+                            spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            mascot = false;
+                            omssa = false;
+                            xTandem = false;
+                            probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
+
+                            if (probabilities.isValidated()) {
+                                if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
+                                    if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                        mascot = true;
+                                    }
+                                }
+                                if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
+                                    if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                        omssa = true;
+                                    }
+                                }
+                                if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
+                                    if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                        xTandem = true;
+                                    }
+                                }
+                            }
+
+                            if (mascot && omssa && xTandem) {
+                                omx++;
+                            }
+                            if (mascot && omssa) {
+                                mo++;
+                            }
+                            if (omssa && xTandem) {
+                                ox++;
+                            }
+                            if (mascot && xTandem) {
+                                mx++;
+                            }
+                            if (mascot) {
+                                m++;
+                            }
+                            if (omssa) {
+                                o++;
+                            }
+                            if (xTandem) {
+                                x++;
+                            }
+
+                            if (!mascot) {
+                                no_m++;
+                            }
+                            if (!xTandem) {
+                                no_x++;
+                            }
+                            if (!omssa) {
+                                no_o++;
+                            }
+
+                            progressDialog.increaseProgressValue();
                         }
                     }
 
@@ -2820,27 +2818,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 fileSelected = (String) fileNamesCmb.getSelectedItem();
                 double maxMz = spectrumFactory.getMaxMz(fileSelected);
-                int identifiedCounter = 0;
-
-                progressDialog.setIndeterminate(false);
-                progressDialog.setMaxProgressValue(identification.getSpectrumIdentification().size());
-                progressDialog.setValue(0);
-
-                for (String spectrumKey : identification.getSpectrumIdentification()) {
-
-                    if (progressDialog.isRunCanceled()) {
-                        break;
-                    }
-
-                    if (Spectrum.getSpectrumFile(spectrumKey).equals(fileSelected)) {
-                        identifiedCounter++;
-                    }
-                    progressDialog.increaseProgressValue();
+                try {
+                    progressDialog.setTitle("Loading Spectrum Information for " + fileSelected + ". Please Wait...");
+                    identification.loadSpectrumMatchParameters(fileSelected, new PSParameter(), progressDialog);
+                    identification.loadSpectrumMatches(fileSelected, progressDialog);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
-
+                progressDialog.setIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
                     ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Selection ("
-                            + (identifiedCounter) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                            + (identification.getSpectrumIdentification(fileSelected).size()) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                     spectrumSelectionPanel.repaint();
 
                     ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);

@@ -90,7 +90,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         } else {
             neutralLossesCmb.setSelectedIndex(1);
         }
-        aScoreThresholdTxt.setText(ptmScoringPreferences.getaScoreThreshold() + "");
+        flrThresholdTxt.setText(ptmScoringPreferences.getFlrThreshold() + "");
     }
 
     /**
@@ -100,7 +100,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
      */
     public boolean validateInput() {
         try {
-            new Double(aScoreThresholdTxt.getText());
+            new Double(flrThresholdTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for A-score threshold.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -128,7 +128,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
         nAASpinner = new javax.swing.JSpinner();
         preferencesPanel = new javax.swing.JPanel();
         aScoreLabel = new javax.swing.JLabel();
-        aScoreThresholdTxt = new javax.swing.JTextField();
+        flrThresholdTxt = new javax.swing.JTextField();
         neutralLossesLabel = new javax.swing.JLabel();
         neutralLossesCmb = new javax.swing.JComboBox();
         aScoreCalculationLabel = new javax.swing.JLabel();
@@ -210,11 +210,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
         preferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
         preferencesPanel.setOpaque(false);
 
-        aScoreLabel.setText("A-Score Threshold:");
+        aScoreLabel.setText("False Localization Rate:");
 
-        aScoreThresholdTxt.setEditable(false);
-        aScoreThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        aScoreThresholdTxt.setText("50");
+        flrThresholdTxt.setEditable(false);
+        flrThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        flrThresholdTxt.setText("50");
 
         neutralLossesLabel.setText("Neutral Losses Accounted:");
 
@@ -236,7 +236,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(neutralLossesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                            .addComponent(flrThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                             .addComponent(aScoreCalculationCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(preferencesPanelLayout.createSequentialGroup()
                         .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -255,7 +255,7 @@ public class PreferencesDialog extends javax.swing.JDialog {
                 .addGap(9, 9, 9)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(aScoreLabel)
-                    .addComponent(aScoreThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(flrThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(neutralLossesLabel)
@@ -361,8 +361,8 @@ public class PreferencesDialog extends javax.swing.JDialog {
 
 
             // delta score threshold
-            if (peptideShakerGUI.getPtmScoringPreferences().getaScoreThreshold() != new Double(aScoreThresholdTxt.getText())) {
-                peptideShakerGUI.getPtmScoringPreferences().setaScoreThreshold(new Double(aScoreThresholdTxt.getText()));
+            if (peptideShakerGUI.getPtmScoringPreferences().getFlrThreshold() != new Double(flrThresholdTxt.getText())) {
+                peptideShakerGUI.getPtmScoringPreferences().setFlrThreshold(new Double(flrThresholdTxt.getText()));
                 ptmScoreThresholdChanged = true;
             }
 
@@ -472,9 +472,9 @@ public class PreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox aScoreCalculationCmb;
     private javax.swing.JLabel aScoreCalculationLabel;
     private javax.swing.JLabel aScoreLabel;
-    private javax.swing.JTextField aScoreThresholdTxt;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JTextField flrThresholdTxt;
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JComboBox methodCmb;

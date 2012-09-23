@@ -220,21 +220,25 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="neutralLossesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="aScoreLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="240" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
                               <Component id="estimateAScoreLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="10" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="ascoreCmb" alignment="1" pref="185" max="32767" attributes="0"/>
                                   <Component id="neutralLossesCmb" alignment="1" pref="185" max="32767" attributes="0"/>
-                                  <Component id="aScoreThreshold" pref="185" max="32767" attributes="0"/>
+                                  <Component id="flrTxt" pref="185" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="neutralLossesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="aScoreLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="222" max="-2" attributes="0"/>
+                                      <Component id="percentLabel1" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -256,7 +260,8 @@
                       <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="aScoreLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="aScoreThreshold" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="flrTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="percentLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -274,15 +279,18 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="aScoreThreshold">
+            <Component class="javax.swing.JTextField" name="flrTxt">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="20"/>
+                <Property name="text" type="java.lang.String" value="1"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="flrTxtActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="aScoreLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="A-score Threshold:"/>
+                <Property name="text" type="java.lang.String" value="False Localization Rate:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="ascoreCmb">
@@ -303,6 +311,11 @@
             <Component class="javax.swing.JLabel" name="estimateAScoreLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Estimate A-score:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="percentLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="%"/>
               </Properties>
             </Component>
           </SubComponents>

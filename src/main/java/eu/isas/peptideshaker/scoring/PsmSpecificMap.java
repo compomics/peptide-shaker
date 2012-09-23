@@ -47,11 +47,11 @@ public class PsmSpecificMap implements Serializable {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
-        for (int charge : psmsMaps.keySet()) {
+        for (Integer charge : psmsMaps.keySet()) {
 
             waitingHandler.increaseSecondaryProgressValue();
 
-            if (!grouping.keySet().contains(charge)) {
+            if (!grouping.containsKey(charge)) {
                 psmsMaps.get(charge).estimateProbabilities(waitingHandler);
             }
         }
@@ -62,24 +62,30 @@ public class PsmSpecificMap implements Serializable {
     /**
      * Returns the probability of the given spectrum match at the given score.
      *
-     * @param specificKey the spectrum match of interest
+     * @param specificKey the charge of the match of interest
      * @param score the corresponding score
      * @return the probability of the given spectrum match at the given score
      */
     public double getProbability(int specificKey, double score) {
-        specificKey = getCorrectedKey(specificKey);
-        return psmsMaps.get(specificKey).getProbability(score);
+        int key = getCorrectedKey(specificKey);
+        return psmsMaps.get(key).getProbability(score);
     }
 
     /**
      * Returns the probability of the given spectrum match at the given score.
      *
-     * @param specificKey the spectrum match of interest
+     * @param specificKey the charge of the match
      * @param score the corresponding score
      * @return the probability of the given spectrum match at the given score
      */
     public double getProbability(String specificKey, double score) {
-        return getProbability(new Integer(specificKey), score);
+        Integer keeyAsInteger;
+        try {
+            keeyAsInteger = new Integer(specificKey);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
+        }
+        return getProbability(keeyAsInteger, score);
     }
 
     /**
@@ -188,7 +194,13 @@ public class PsmSpecificMap implements Serializable {
      * @return the corresponding key
      */
     public Integer getCorrectedKey(String specificKey) {
-        return getCorrectedKey(new Integer(specificKey));
+        Integer keeyAsInteger;
+        try {
+            keeyAsInteger = new Integer(specificKey);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
+        }
+        return getCorrectedKey(keeyAsInteger);
     }
 
     /**
@@ -217,9 +229,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the overall number of points in the map.
+     * Returns the overall number of points across all maps.
      *
-     * @return the overall number of points in the map
+     * @return the overall number of points across all maps.
      */
     public int getMapsSize() {
         int result = 0;

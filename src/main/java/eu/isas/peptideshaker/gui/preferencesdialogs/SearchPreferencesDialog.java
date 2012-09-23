@@ -838,10 +838,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
             if (!searchParameters.getModificationProfile().getFamilyNames().contains(name)) {
                 ArrayList<String> conflicts = new ArrayList<String>();
-                PTM oldPTM;
+                PTM oldPTM, newPTM;
                 for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
                     oldPTM = ptmFactory.getPTM(oldModification);
-                    if (Math.abs(oldPTM.getMass() - ptmFactory.getPTM(name).getMass()) < 0.01) {
+                    newPTM = ptmFactory.getPTM(name);
+                    if (newPTM.getType() == oldPTM.getType() && 
+                    Math.abs(oldPTM.getMass() - newPTM.getMass()) < 0.01) {
                         conflicts.add(oldModification);
                     }
                 }

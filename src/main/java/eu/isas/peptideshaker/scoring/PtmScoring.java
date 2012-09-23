@@ -64,6 +64,10 @@ public class PtmScoring implements Serializable {
      * The confidence of the ptm site assignment
      */
     private int siteConfidence = NOT_FOUND;
+    /**
+     * boolean indicating whether a conflict was found during PTM site inference
+     */
+    private boolean conflict = false;
 
     /**
      * Constructor.
@@ -349,6 +353,22 @@ public class PtmScoring implements Serializable {
      */
     public int getPtmSiteConfidence() {
         return siteConfidence;
+    }
+
+    /**
+     * indicates whether the site inference is conflicting
+     * @return a boolean indicating whether the site inference was conflicting
+     */
+    public boolean isConflict() {
+        return conflict;
+    }
+
+    /**
+     * sets whether the site inference is conflicting
+     * @param conflict a boolean indicating whether the site inference was conflicting
+     */
+    public void setConflict(boolean conflict) {
+        this.conflict = conflict;
     }
 
     /**

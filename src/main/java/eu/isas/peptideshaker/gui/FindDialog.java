@@ -18,6 +18,8 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +99,10 @@ public class FindDialog extends javax.swing.JDialog {
      * The current filter type.
      */
     private FilterType currentFilterType = FilterType.STAR;
-
+    /**
+     * The last spectrum file loaded in cache
+     */
+    private String lastLoadedFile = null;
     /**
      * The supported filter types.
      */
@@ -1525,7 +1530,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         @Override
         public int getRowCount() {
-            return identification.getSpectrumIdentification().size();
+            return identification.getSpectrumIdentificationSize();
         }
 
         @Override
@@ -1564,7 +1569,10 @@ public class FindDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
             try {
-                String spectrumKey = identification.getSpectrumIdentification().get(row);
+                String spectrumKey = getSpectrumKey(row);
+                if (spectrumKey == null) {
+                    return "";
+                }
                 PSParameter psParameter;
                 SpectrumMatch spectrumMatch;
                 Precursor precursor;
@@ -1712,6 +1720,34 @@ public class FindDialog extends javax.swing.JDialog {
             }
         }
         return result;
+    }
+    
+    /**
+     * Returns the spectrum key corresponding to the given row in the PSM table
+     * @param row the row index
+     * @return the corresponding spectrum key, null if not found
+     */
+    private String getSpectrumKey(int row) {
+        int tempIndex = row;
+                String spectrumKey = null;
+                for (String spectrumFile : identification.getSpectrumFiles()) {
+                    ArrayList<String> fileKeys = identification.getSpectrumIdentification(spectrumFile);
+                    if (tempIndex >= fileKeys.size()) {
+                        tempIndex -= fileKeys.size();
+                    } else {
+                        spectrumKey = fileKeys.get(tempIndex);
+                        if (lastLoadedFile == null || !lastLoadedFile.equals(spectrumFile)) {
+                            try {
+                            identification.loadSpectrumMatches(spectrumFile, null);
+                            identification.loadSpectrumMatchParameters(spectrumKey, new PSParameter(), null);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                //ignore and resume
+                            }
+                        }
+                    }
+                }
+                return spectrumKey;
     }
 
     /**
@@ -3115,7 +3151,7 @@ public class FindDialog extends javax.swing.JDialog {
         int row = psmTable.getSelectedRow();
 
         if (row != -1) {
-            String spectrumKey = identification.getSpectrumIdentification().get(row);
+            String spectrumKey = getSpectrumKey(row);
             peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, spectrumKey);
             peptideShakerGUI.updateSelectionInCurrentTab();
         }

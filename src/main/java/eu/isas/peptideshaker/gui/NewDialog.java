@@ -241,6 +241,7 @@ public class NewDialog extends javax.swing.JDialog {
         });
 
         projectNameIdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        projectNameIdTxt.setText("debug");
         projectNameIdTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 projectNameIdTxtKeyReleased(evt);
@@ -257,6 +258,7 @@ public class NewDialog extends javax.swing.JDialog {
         projectReferenceLabel.setText("Project Reference*");
 
         sampleNameIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        sampleNameIdtxt.setText("debug");
         sampleNameIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 sampleNameIdtxtKeyReleased(evt);
@@ -1024,10 +1026,12 @@ public class NewDialog extends javax.swing.JDialog {
         new ProcessingPreferencesDialog(peptideShakerGUI, true, processingPreferences, ptmScoringPreferences);
         if (processingPreferences.getProteinFDR() != 1
                 || processingPreferences.getPeptideFDR() != 1
-                || processingPreferences.getPsmFDR() != 1) {
+                || processingPreferences.getPsmFDR() != 1
+                || ptmScoringPreferences.getFlrThreshold() != 1
+                || ptmScoringPreferences.isaScoreNeutralLosses()) {
             preferencesTxt.setText("User Defined");
-        } else if (ptmScoringPreferences.aScoreCalculation()) {
-            preferencesTxt.setText("A-Score calculation");
+        } else if (!ptmScoringPreferences.aScoreCalculation()) {
+            preferencesTxt.setText("Reduced PTM specificity");
         } else {
             preferencesTxt.setText("Default");
         }
