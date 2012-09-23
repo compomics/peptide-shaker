@@ -94,6 +94,8 @@ public class StarHider {
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                         boolean peptideSurvived = false;
 
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                             if (progressDialog.isRunCanceled()) {
@@ -103,6 +105,7 @@ public class StarHider {
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             boolean psmSurvived = false;
 
+                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                                 if (progressDialog.isRunCanceled()) {

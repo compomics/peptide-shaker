@@ -722,6 +722,7 @@ public class PeptideShaker {
 
             ArrayList<String> peptideKeys = identification.getProteinMatch(proteinKey).getPeptideMatches();
 
+            identification.loadPeptideMatchParameters(peptideKeys, psParameter, null);
             for (int j = 0; j < peptideKeys.size(); j++) {
 
                 String currentPeptideKey = peptideKeys.get(j);
@@ -1554,6 +1555,8 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PeptideMatch peptideMath;
         String peptideSequence, proteinSequence = null;
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             if (psParameter.isValidated() && Peptide.isModified(peptideKey)) {
@@ -1640,6 +1643,8 @@ public class PeptideShaker {
             double bestConfidence = 0;
             ArrayList<String> bestKeys = new ArrayList<String>();
 
+                    identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
+                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.isValidated()) {
@@ -1925,6 +1930,7 @@ public class PeptideShaker {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
             // get the fraction scores
+                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
@@ -2041,6 +2047,7 @@ public class PeptideShaker {
             }
 
             // get the fraction scores
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -2228,6 +2235,7 @@ public class PeptideShaker {
                     }
                 }
 
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     nSpectra -= peptideMatch.getSpectrumCount();
@@ -2300,6 +2308,7 @@ public class PeptideShaker {
                     nLeft++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setGroupClass(PSParameter.UNRELATED);
@@ -2312,6 +2321,7 @@ public class PeptideShaker {
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
@@ -2325,6 +2335,8 @@ public class PeptideShaker {
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
                     String mainMatch = proteinMatch.getMainMatch();
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -2349,6 +2361,8 @@ public class PeptideShaker {
                 }
             } else {
                 String mainMatch = proteinMatch.getMainMatch();
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);

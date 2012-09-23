@@ -210,6 +210,8 @@ public class IdentificationFeaturesGenerator {
             PSParameter pSParameter = new PSParameter();
 
             // iterate the peptide table and store the coverage for each peptide
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                 if (pSParameter.isValidated()) {
@@ -326,6 +328,7 @@ public class IdentificationFeaturesGenerator {
             double result = 0;
             int peptideOccurrence = 0;
 
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -356,13 +359,12 @@ public class IdentificationFeaturesGenerator {
                 }
 
                 double ratio = 1.0 / peptideOccurrence;
-                int cpt = 0; // @TODO: this value is not really used?? 
 
+                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), pSParameter, null);
                 for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumMatchKey, pSParameter);
                     if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.isValidated()) {
                         result += ratio;
-                        cpt++;
                     }
                 }
             }
@@ -389,6 +391,7 @@ public class IdentificationFeaturesGenerator {
 
                 result = 0;
 
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                     if (pSParameter.isValidated()) {
@@ -526,6 +529,7 @@ public class IdentificationFeaturesGenerator {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
             PSParameter pSParameter = new PSParameter();
 
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), pSParameter, null);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, pSParameter);
                 if (pSParameter.isValidated()) {
@@ -649,6 +653,7 @@ public class IdentificationFeaturesGenerator {
         try {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
             PeptideMatch peptideMatch;
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 peptideMatch = identification.getPeptideMatch(peptideKey);
                 result += peptideMatch.getSpectrumCount();
@@ -708,8 +713,10 @@ public class IdentificationFeaturesGenerator {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
             PSParameter psParameter = new PSParameter();
 
+            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                 for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                     if (psParameter.isValidated()) {
@@ -761,6 +768,7 @@ public class IdentificationFeaturesGenerator {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideMatchKey);
             PSParameter psParameter = new PSParameter();
 
+                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, new PSParameter());
                 if (psParameter.isValidated()) {
@@ -1454,6 +1462,8 @@ public class IdentificationFeaturesGenerator {
                 PSParameter probabilities = new PSParameter();
                 int maxSpectrumCount = 0;
 
+            peptideShakerGUI.getIdentification().loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+            peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), probabilities, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities); // @TODO: replace by batch selection?
@@ -1519,6 +1529,8 @@ public class IdentificationFeaturesGenerator {
                 PSParameter psParameter = new PSParameter();
                 int nValidatedPsms = 0;
 
+                peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(currentPeptideMatch.getSpectrumMatches(), psParameter, null);
+                peptideShakerGUI.getIdentification().loadSpectrumMatches(currentPeptideMatch.getSpectrumMatches(), null);
                 for (String spectrumKey : currentPeptideMatch.getSpectrumMatches()) {
 
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter); // @TODO: could be replaced by batch selection?

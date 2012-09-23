@@ -94,6 +94,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     }
                 }
             }
+                    peptideShakerGUI.getIdentification().loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psms.add(peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey));
             }
