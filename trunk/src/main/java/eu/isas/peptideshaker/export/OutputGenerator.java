@@ -316,8 +316,6 @@ public class OutputGenerator {
                                                 }
                                             }
 
-                                            // @TODO: all of the above selects should be replaced by batch selection!!
-
                                             if (sequenceCoverage) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
@@ -808,7 +806,7 @@ public class OutputGenerator {
                                                 }
                                                 if (nSpectra) {
                                                     int cpt = 0;
-                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
+                                                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), secondaryPSParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         secondaryPSParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, secondaryPSParameter);
                                                         if (secondaryPSParameter.isValidated()) {
@@ -1040,14 +1038,23 @@ public class OutputGenerator {
                                 spectrumKeys.get(spectrumFile).add(spectrumKey);
                             }
                         }
+                        
+                        int fileCounter = 0;
+                        
                         for (String spectrumFile : spectrumKeys.keySet()) {
+
                             if (psmKeys == null) {
+                                progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
                                 identification.loadSpectrumMatches(spectrumFile, progressDialog);
+                                progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                                 identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
                             } else {
+                                progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
                                 identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog);
+                                progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                                 identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
                             }
+                            
                             for (String psmKey : spectrumKeys.get(spectrumFile)) {
 
                                 if (progressDialog.isRunCanceled()) {
