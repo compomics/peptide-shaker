@@ -1345,7 +1345,9 @@ public class PeptideShaker {
                         PTM ptm = ptmFactory.getPTM(modName);
                         ArrayList<Integer> possiblePositions = Peptide.getPotentialModificationSites(psPeptide.getSequence(), ptm);
                         if (possiblePositions.size() < modMatches.get(modName).size()) {
-                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size() + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence() + " in spectrum " + spectrumMatch.getKey() + ".");
+                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size() 
+                                    + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence() 
+                                    + " in spectrum " + spectrumMatch.getKey() + ".");
                         } else if (possiblePositions.size() == modMatches.get(modName).size()) {
                             for (ModificationMatch modMatch : modMatches.get(modName)) {
                                 modMatch.setConfident(true);
@@ -1899,7 +1901,6 @@ public class PeptideShaker {
                     } else {
                         ptmScores.getPtmScoring(mod).setConflict(true);
                     }
-
                 }
             }
 
