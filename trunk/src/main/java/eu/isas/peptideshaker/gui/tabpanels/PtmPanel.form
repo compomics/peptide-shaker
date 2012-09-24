@@ -812,7 +812,7 @@
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="ff" red="ff" type="rgb"/>
                             </Property>
-                            <Property name="selectedIndex" type="int" value="3"/>
+                            <Property name="selectedIndex" type="int" value="2"/>
                             <Property name="tabPlacement" type="int" value="3"/>
                           </Properties>
                           <Events>
@@ -826,78 +826,6 @@
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                           <SubComponents>
-                            <Container class="javax.swing.JPanel" name="ptmTableJPanel">
-                              <Properties>
-                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                </Property>
-                              </Properties>
-                              <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                  <JTabbedPaneConstraints tabName="PTM Table">
-                                    <Property name="tabTitle" type="java.lang.String" value="PTM Table"/>
-                                  </JTabbedPaneConstraints>
-                                </Constraint>
-                              </Constraints>
-
-                              <Layout>
-                                <DimensionLayout dim="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="ptmTableJScrollPane" alignment="0" pref="475" max="32767" attributes="0"/>
-                                              <Component id="ptmTableJToolBar" alignment="0" pref="475" max="32767" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                                <DimensionLayout dim="1">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="ptmTableJScrollPane" pref="346" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="ptmTableJToolBar" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                              </Layout>
-                              <SubComponents>
-                                <Container class="javax.swing.JScrollPane" name="ptmTableJScrollPane">
-                                  <Properties>
-                                    <Property name="opaque" type="boolean" value="false"/>
-                                  </Properties>
-                                  <Events>
-                                    <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="ptmTableJScrollPaneMouseWheelMoved"/>
-                                  </Events>
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                                </Container>
-                                <Container class="javax.swing.JToolBar" name="ptmTableJToolBar">
-                                  <Properties>
-                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                    </Property>
-                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                      <Border info="null"/>
-                                    </Property>
-                                    <Property name="floatable" type="boolean" value="false"/>
-                                    <Property name="rollover" type="boolean" value="true"/>
-                                    <Property name="borderPainted" type="boolean" value="false"/>
-                                  </Properties>
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                  <SubComponents>
-                                    <Container class="javax.swing.JPanel" name="ptmTableAnnotationMenuPanel">
-
-                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                    </Container>
-                                  </SubComponents>
-                                </Container>
-                              </SubComponents>
-                            </Container>
                             <Container class="javax.swing.JPanel" name="psmAScoresJPanel">
                               <Properties>
                                 <Property name="opaque" type="boolean" value="false"/>
@@ -1423,7 +1351,7 @@
                                 </Property>
                                 <Property name="opaque" type="boolean" value="false"/>
                                 <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                                  <JTableSelectionModel selectionMode="2"/>
+                                  <JTableSelectionModel selectionMode="0"/>
                                 </Property>
                                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
@@ -1616,7 +1544,7 @@
                                 </Property>
                                 <Property name="opaque" type="boolean" value="false"/>
                                 <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                                  <JTableSelectionModel selectionMode="2"/>
+                                  <JTableSelectionModel selectionMode="0"/>
                                 </Property>
                                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
