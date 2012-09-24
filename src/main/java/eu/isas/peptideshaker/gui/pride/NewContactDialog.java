@@ -45,7 +45,7 @@ public class NewContactDialog extends javax.swing.JDialog {
      * @param newContactGroupDialog
      * @param modal
      * @param contact
-     * @param row  
+     * @param modifiedRow
      */
     public NewContactDialog(NewContactGroupDialog newContactGroupDialog, boolean modal, Contact contact, int modifiedRow) {
         super(newContactGroupDialog, modal);
