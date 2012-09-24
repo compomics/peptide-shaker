@@ -156,7 +156,6 @@ public class PtmPanel extends javax.swing.JPanel {
     public PtmPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-        formComponentResized(null);
 
         // add Delta and A score gradient color panels
         addGradientScoreColors();
@@ -182,6 +181,9 @@ public class PtmPanel extends javax.swing.JPanel {
 
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        
+        updateSeparators();
+        formComponentResized(null);
     }
 
     /**
@@ -1997,7 +1999,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setIndeterminate(false);
         progressDialog.setTitle("Getting Peptides. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2011,7 +2013,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         }, "ProgressDialog").start();
 
-        final Thread displayThread = new Thread("DisplayThread") {
+        new Thread("DisplayThread") {
 
             public void run() {
 
@@ -2079,19 +2081,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 progressDialog.setRunFinished();
             }
-        };
-
-        Thread appThread = new Thread() {
-
-            public void run() {
-                try {
-                    SwingUtilities.invokeAndWait(displayThread);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        appThread.start();
+        }.start();
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
@@ -2313,7 +2303,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setIndeterminate(false);
         progressDialog.setTitle("Getting Modifications. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2327,7 +2317,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         }).start();
 
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -2363,7 +2353,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 progressDialog.setRunFinished();
             }
-        });
+        }).start();
     }//GEN-LAST:event_ptmJTableMouseReleased
 
     /**
@@ -2393,7 +2383,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             }).start();
 
-            final Thread displayThread = new Thread("DisplayThread") {
+            new Thread("DisplayThread") {
 
                 @Override
                 public void run() {
@@ -2401,19 +2391,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     updatePeptideTable(progressDialog);
                     progressDialog.setRunFinished();
                 }
-            };
-
-            Thread appThread = new Thread() {
-
-                public void run() {
-                    try {
-                        SwingUtilities.invokeAndWait(displayThread);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            appThread.start();
+            }.start();
         }
     }//GEN-LAST:event_ptmJTableKeyReleased
 
@@ -3581,9 +3559,15 @@ public class PtmPanel extends javax.swing.JPanel {
             try {
                 HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
                 PSParameter probabilities = new PSParameter();
+                
+                progressDialog.setIndeterminate(false);
+                progressDialog.setValue(0);
+                progressDialog.setMaxProgressValue(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size());
 
                 for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
+                    progressDialog.increaseProgressValue();
+                    
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
@@ -4990,12 +4974,26 @@ public class PtmPanel extends javax.swing.JPanel {
      * the GUI.
      */
     public void updateSeparators() {
-        // set the sliders split pane divider location
-        if (peptideShakerGUI.getUserPreferences().showSliders()) {
-            slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
-        } else {
-            slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
-        }
+        
+        formComponentResized(null);
+        
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                // set the sliders split pane divider location
+                if (peptideShakerGUI.getUserPreferences().showSliders()) {
+                    slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
+                } else {
+                    slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
+                }
+                ptmAndPeptideSelectionPanel.revalidate();
+                ptmAndPeptideSelectionPanel.repaint();
+                formComponentResized(null);
+            }
+        });
+        
+        formComponentResized(null);
     }
 
     /**
