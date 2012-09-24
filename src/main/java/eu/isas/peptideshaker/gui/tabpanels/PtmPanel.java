@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -26,7 +25,6 @@ import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
-import eu.isas.peptideshaker.gui.PtmTable;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -170,18 +168,14 @@ public class PtmPanel extends javax.swing.JPanel {
         psmsRelatedTableJScrollPane.getViewport().setOpaque(false);
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
-        ptmTableJScrollPane.getViewport().setOpaque(false);
         psmAScoresScrollPane.getViewport().setOpaque(false);
         psmDeltaScrollPane.getViewport().setOpaque(false);
-
-        // @TODO: remove when the ptm table is implemented
-        //spectrumTabbedPane.setEnabledAt(0, false);
 
         setTableProperties();
 
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        
+
         updateSeparators();
         formComponentResized(null);
     }
@@ -265,9 +259,6 @@ public class PtmPanel extends javax.swing.JPanel {
         JPanel psmRelatedMatchesCorner = new JPanel();
         psmRelatedMatchesCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
         psmsRelatedTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, psmRelatedMatchesCorner);
-        JPanel ptmTableCorner = new JPanel();
-        ptmTableCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
-        ptmTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ptmTableCorner);
         JPanel aScoreTableCorner = new JPanel();
         aScoreTableCorner.setBackground(relatedPsmsTable.getTableHeader().getBackground());
         psmAScoresScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, aScoreTableCorner);
@@ -606,10 +597,6 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumAndFragmentIonPanel = new javax.swing.JPanel();
         slidersSplitPane = new javax.swing.JSplitPane();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
-        ptmTableJPanel = new javax.swing.JPanel();
-        ptmTableJScrollPane = new javax.swing.JScrollPane();
-        ptmTableJToolBar = new javax.swing.JToolBar();
-        ptmTableAnnotationMenuPanel = new javax.swing.JPanel();
         psmAScoresJPanel = new javax.swing.JPanel();
         psmAScoresScrollPane = new javax.swing.JScrollPane();
         psmAScoresTable = new javax.swing.JTable();
@@ -1138,46 +1125,6 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
 
-        ptmTableJPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        ptmTableJScrollPane.setOpaque(false);
-        ptmTableJScrollPane.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                ptmTableJScrollPaneMouseWheelMoved(evt);
-            }
-        });
-
-        ptmTableJToolBar.setBackground(new java.awt.Color(255, 255, 255));
-        ptmTableJToolBar.setBorder(null);
-        ptmTableJToolBar.setFloatable(false);
-        ptmTableJToolBar.setRollover(true);
-        ptmTableJToolBar.setBorderPainted(false);
-
-        ptmTableAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(ptmTableAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
-        ptmTableJToolBar.add(ptmTableAnnotationMenuPanel);
-
-        javax.swing.GroupLayout ptmTableJPanelLayout = new javax.swing.GroupLayout(ptmTableJPanel);
-        ptmTableJPanel.setLayout(ptmTableJPanelLayout);
-        ptmTableJPanelLayout.setHorizontalGroup(
-            ptmTableJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmTableJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(ptmTableJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ptmTableJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-                    .addComponent(ptmTableJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        ptmTableJPanelLayout.setVerticalGroup(
-            ptmTableJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmTableJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ptmTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ptmTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        spectrumTabbedPane.addTab("PTM Table", ptmTableJPanel);
-
         psmAScoresJPanel.setOpaque(false);
 
         psmAScoresScrollPane.setOpaque(false);
@@ -1330,7 +1277,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
-        spectrumTabbedPane.setSelectedIndex(3);
+        spectrumTabbedPane.setSelectedIndex(2);
 
         slidersSplitPane.setLeftComponent(spectrumTabbedPane);
 
@@ -1502,7 +1449,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         selectedPsmsTable.setModel(new SelectedPsmsTable());
         selectedPsmsTable.setOpaque(false);
-        selectedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        selectedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         selectedPsmsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 selectedPsmsTableMouseReleased(evt);
@@ -1628,7 +1575,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPsmsTable.setModel(new RelatedPsmsTable());
         relatedPsmsTable.setOpaque(false);
-        relatedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        relatedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         relatedPsmsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 relatedPsmsTableMouseReleased(evt);
@@ -2894,12 +2841,10 @@ public class PtmPanel extends javax.swing.JPanel {
         int spectrumTabIndex = spectrumTabbedPane.getSelectedIndex();
 
         if (spectrumTabIndex == 0) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Table");
-        } else if (spectrumTabIndex == 1) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#AScore");
-        } else if (spectrumTabIndex == 2) {
+        } else if (spectrumTabIndex == 1) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#DeltsScore");
-        } else if (spectrumTabIndex == 3) {
+        } else if (spectrumTabIndex == 2) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
         }
 
@@ -2937,19 +2882,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         int index = spectrumTabbedPane.getSelectedIndex();
 
-        if (index == 0) { // ptm table
-            // @TODO: implement me!
-//            menuItem = new JMenuItem("Table to Clipboard");
-//            menuItem.addActionListener(new java.awt.event.ActionListener() {
-//
-//                public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                    copyTableContentToClipboard(TableIndex.PTM_TABLE);
-//                }
-//            });
-//
-//            popupMenu.add(new JSeparator());
-//            popupMenu.add(menuItem);
-        } else if (index == 1) { // a-scores table
+        if (index == 0) { // a-scores table
 
             menuItem = new JMenuItem("Table to Clipboard");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2962,7 +2895,7 @@ public class PtmPanel extends javax.swing.JPanel {
             popupMenu.add(new JSeparator());
             popupMenu.add(menuItem);
 
-        } else if (index == 2) { // delta scores table
+        } else if (index == 1) { // delta scores table
 
             menuItem = new JMenuItem("Table to Clipboard");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3053,7 +2986,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         if (peptideShakerGUI.getAnnotationMenuBar() != null) {
             int index = spectrumTabbedPane.getSelectedIndex();
-            if (index == 3) {
+            if (index == 2) {
                 spectrumAnnotationMenuPanel.removeAll();
                 spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
                 peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
@@ -3061,14 +2994,6 @@ public class PtmPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_spectrumTabbedPaneStateChanged
 
-    /**
-     * Updates the slider value when the user scrolls.
-     *
-     * @param evt
-     */
-    private void ptmTableJScrollPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_ptmTableJScrollPaneMouseWheelMoved
-        spectrumAndFragmentIonJPanelMouseWheelMoved(evt);
-    }//GEN-LAST:event_ptmTableJScrollPaneMouseWheelMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel aScoreGradientPanel;
     private javax.swing.JLabel aScoreMaxValueJLabel;
@@ -3119,10 +3044,6 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JPanel ptmLayeredPanel;
     private javax.swing.JPanel ptmPanel;
     private javax.swing.JButton ptmSelectionHelpJButton;
-    private javax.swing.JPanel ptmTableAnnotationMenuPanel;
-    private javax.swing.JPanel ptmTableJPanel;
-    private javax.swing.JScrollPane ptmTableJScrollPane;
-    private javax.swing.JToolBar ptmTableJToolBar;
     private javax.swing.JPanel relatedPeptidesJPanel;
     private javax.swing.JSplitPane relatedPeptidesJSplitPane;
     private javax.swing.JPanel relatedPeptidesPanel;
@@ -3919,45 +3840,16 @@ public class PtmPanel extends javax.swing.JPanel {
 
             if (!getSelectedPeptide().equals("")) {
                 if (relatedSelected && relatedPsmsTable.getSelectedRow() != -1) {
-                    if (getSelectedPsm().size() == 1) {
-                        spectrumTabbedPane.setEnabledAt(3, true);
-                        updateSpectrum(getSelectedPsm().get(0));
-                    } else {
-                        spectrumTabbedPane.setEnabledAt(3, false);
-                        spectrumTabbedPane.setSelectedIndex(0);
-                    }
+                    updateSpectrum(getSelectedPsm().get(0));
                 } else if (selectedPsmsTable.getSelectedRow() != -1 && selectedPsmsTable.getSelectedRow() != -1) {
-                    if (getSelectedPsm().size() == 1) {
-                        updateSpectrum(getSelectedPsm().get(0));
-                        spectrumTabbedPane.setEnabledAt(3, true);
-                    } else {
-                        spectrumTabbedPane.setEnabledAt(3, false);
-                        spectrumTabbedPane.setSelectedIndex(0);
-                    }
+                    updateSpectrum(getSelectedPsm().get(0));
                 }
 
-                updatePtmTable();
                 //@TODO: update psm modification profile
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Updates the ptm table.
-     */
-    public void updatePtmTable() {
-        try {
-            Peptide selectedPeptide = identification.getPeptideMatch(getSelectedPeptide()).getTheoreticPeptide();
-            PTM ptm = ptmFactory.getPTM(getSelectedModification());
-            PtmTable ptmTable = new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm(), true);
-            ptmTable.setRowHeight((int) (ptmTable.getRowHeight() * 1.5));
-            ptmTableJScrollPane.setViewportView(ptmTable);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            return;
         }
     }
 

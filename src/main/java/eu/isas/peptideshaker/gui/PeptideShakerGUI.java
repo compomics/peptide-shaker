@@ -673,7 +673,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         newsButton = new javax.swing.JButton();
         helpButton = new javax.swing.JButton();
         noteButton = new javax.swing.JButton();
-        messageBackgroundPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -1196,23 +1195,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         });
         noteButton.setBounds(1210, 775, 60, 20);
         backgroundLayeredPane.add(noteButton, javax.swing.JLayeredPane.MODAL_LAYER);
-
-        messageBackgroundPanel.setBackground(new java.awt.Color(255, 102, 0));
-        messageBackgroundPanel.setOpaque(false);
-
-        javax.swing.GroupLayout messageBackgroundPanelLayout = new javax.swing.GroupLayout(messageBackgroundPanel);
-        messageBackgroundPanel.setLayout(messageBackgroundPanelLayout);
-        messageBackgroundPanelLayout.setHorizontalGroup(
-            messageBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 75, Short.MAX_VALUE)
-        );
-        messageBackgroundPanelLayout.setVerticalGroup(
-            messageBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 85, Short.MAX_VALUE)
-        );
-
-        messageBackgroundPanel.setBounds(1200, 760, 75, 85);
-        backgroundLayeredPane.add(messageBackgroundPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1768,12 +1750,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(2).getHeight() - 59,
                 backgroundLayeredPane.getComponent(2).getWidth(),
                 backgroundLayeredPane.getComponent(2).getHeight());
-        
-        backgroundLayeredPane.getComponent(4).setBounds(
-                backgroundLayeredPane.getWidth() - backgroundLayeredPane.getComponent(4).getWidth() - 10,
-                backgroundLayeredPane.getHeight() - backgroundLayeredPane.getComponent(4).getHeight() - 10,
-                backgroundLayeredPane.getComponent(4).getWidth(),
-                backgroundLayeredPane.getComponent(4).getHeight());
 
         if (overviewPanel != null) {
             overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
@@ -3080,7 +3056,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenu lossSplitter;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JPanel messageBackgroundPanel;
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JButton newsButton;
