@@ -682,14 +682,6 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reporterPreferencesJMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="relimsPreferencesJMenuItem">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Relims"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="relimsPreferencesJMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
               </SubComponents>
             </Menu>
           </SubComponents>

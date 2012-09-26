@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.software.ToolFactory;
-import com.compomics.software.dialogs.RelimsSetupDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.software.dialogs.ReporterSetupDialog;
 import com.compomics.util.gui.dialogs.SampleSelection;
@@ -86,7 +85,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
@@ -707,7 +705,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         toolsMenu = new javax.swing.JMenu();
         searchGuiPreferencesJMenuItem = new javax.swing.JMenuItem();
         reporterPreferencesJMenuItem = new javax.swing.JMenuItem();
-        relimsPreferencesJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
@@ -1433,14 +1430,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         toolsMenu.add(reporterPreferencesJMenuItem);
-
-        relimsPreferencesJMenuItem.setText("Relims");
-        relimsPreferencesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                relimsPreferencesJMenuItemActionPerformed(evt);
-            }
-        });
-        toolsMenu.add(relimsPreferencesJMenuItem);
 
         editMenu.add(toolsMenu);
 
@@ -2771,38 +2760,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_fractionDetailsJMenuItemActionPerformed
 
     /**
-     * Open the RelimsSetupDialog were the user can setup the Relims link.
-     *
-     * @param evt
-     */
-    private void relimsPreferencesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relimsPreferencesJMenuItemActionPerformed
-        try {
-            new RelimsSetupDialog(this, true);
-            loadUserPreferences();
-        } catch (Exception ex) {
-            catchException(ex);
-        }
-    }//GEN-LAST:event_relimsPreferencesJMenuItemActionPerformed
-
-    /**
-     * Start Relims.
+     * Start the Reshake dialog.
      *
      * @param evt
      */
     private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
-
-        final PeptideShakerGUI finalRef = this;
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                try {
-                    ToolFactory.startRelims(finalRef);
-                } catch (Exception e) {
-                    catchException(e);
-                }
-            }
-        }, "StartRelims").start();
+        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE, 
+                new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png")));
     }//GEN-LAST:event_reshakeMenuItemActionPerformed
 
     /**
@@ -2827,7 +2791,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_quantifyMenuItemActionPerformed
 
     /**
-     * Open the ReporterSetupDialog were the user can setup the Relims link.
+     * Open the ReporterSetupDialog were the user can setup the Reporter link.
      *
      * @param evt
      */
@@ -3080,7 +3044,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
     private javax.swing.JMenuItem quantifyMenuItem;
-    private javax.swing.JMenuItem relimsPreferencesJMenuItem;
     private javax.swing.JCheckBoxMenuItem reporterIonsCheckMenu;
     private javax.swing.JMenuItem reporterPreferencesJMenuItem;
     private javax.swing.JMenuItem reshakeMenuItem;

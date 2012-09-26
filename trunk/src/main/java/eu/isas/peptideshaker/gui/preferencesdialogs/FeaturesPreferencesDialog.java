@@ -908,19 +908,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         peptidesPerFraction.setSelected(true);
         peptidesPerFraction.setText("#Peptides");
-        peptidesPerFraction.setToolTipText("#Peptides per fraction");
+        peptidesPerFraction.setToolTipText("#Peptides per protein per fraction");
         peptidesPerFraction.setIconTextGap(10);
         peptidesPerFraction.setOpaque(false);
 
         precursorIntensitiesPerFraction.setSelected(true);
         precursorIntensitiesPerFraction.setText("Precursor Intensities");
-        precursorIntensitiesPerFraction.setToolTipText("Average precursor intensity per fraction");
+        precursorIntensitiesPerFraction.setToolTipText("Summed precursor intensity per protein per fraction");
         precursorIntensitiesPerFraction.setIconTextGap(10);
         precursorIntensitiesPerFraction.setOpaque(false);
 
         spectraPerFraction.setSelected(true);
         spectraPerFraction.setText("#Spectra");
-        spectraPerFraction.setToolTipText("#Spectra per fraction");
+        spectraPerFraction.setToolTipText("#Spectra per protein per fraction");
         spectraPerFraction.setIconTextGap(10);
         spectraPerFraction.setOpaque(false);
 
@@ -1096,7 +1096,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 422, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(exitButton))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
