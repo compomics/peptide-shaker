@@ -1823,9 +1823,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private boolean freePSName(String utilitiesName, String peptideShakerName) {
         for (String ptmName : searchParameters.getModificationProfile().getUtilitiesNames()) {
-            if (searchParameters.getModificationProfile().getFamilyName(ptmName).equals(peptideShakerName)
-                    && ptmFactory.getPTM(ptmName).getMass() != ptmFactory.getPTM(utilitiesName).getMass()) {
-                return false;
+            if (searchParameters.getModificationProfile().getFamilyName(ptmName).equals(peptideShakerName)) {
+                PTM ptm1= ptmFactory.getPTM(ptmName);
+                PTM ptm2 = ptmFactory.getPTM(utilitiesName);
+                if (ptm1.getType() != ptm2.getType()
+                        || ptm1.getMass() != ptm2.getMass()) {
+                    return false;
+                }
             }
         }
         return true;
@@ -1935,7 +1939,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         }
                         searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString().trim());
                     } else {
-                        JOptionPane.showMessageDialog(null, newName + " is already used for a modification with a different mass. Please select another name.",
+                        JOptionPane.showMessageDialog(null, newName + " is already used for a different modification. Please select another name.",
                                 "Input Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else if (column == 4) {
