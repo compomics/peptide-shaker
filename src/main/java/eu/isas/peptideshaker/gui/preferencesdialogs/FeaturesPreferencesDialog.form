@@ -1187,7 +1187,7 @@
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="#Peptides"/>
-                        <Property name="toolTipText" type="java.lang.String" value="#Peptides per fraction"/>
+                        <Property name="toolTipText" type="java.lang.String" value="#Peptides per protein per fraction"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -1196,7 +1196,7 @@
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="Precursor Intensities"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Average precursor intensity per fraction"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Summed precursor intensity per protein per fraction"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -1205,7 +1205,7 @@
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="#Spectra"/>
-                        <Property name="toolTipText" type="java.lang.String" value="#Spectra per fraction"/>
+                        <Property name="toolTipText" type="java.lang.String" value="#Spectra per protein per fraction"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>

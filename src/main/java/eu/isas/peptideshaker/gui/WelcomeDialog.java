@@ -505,24 +505,13 @@ public class WelcomeDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_recentProjectsLabelMouseClicked
 
     /**
-     * Open Relims.
+     * Open the Reshake dialog.
      *
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-
         JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE, 
                 new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png")));
-
-//        new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    ToolFactory.startRelims(peptideShakerGUI);
-//                } catch (Exception e) {
-//                    peptideShakerGUI.catchException(e);
-//                }
-//            }
-//        }, "StartRelims").start();
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
