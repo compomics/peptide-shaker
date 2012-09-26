@@ -1117,11 +1117,13 @@ public class PeptideShaker {
      * @throws SQLException exception thrown whenever a problem occurred while
      * interacting with the database
      * @throws IOException exception thrown whenever a problem occurred while
-     * writing/reading the database
+     * writing/reading the database or the fasta file
      * @throws ClassNotFoundException exception thrown whenever a problem
      * occurred while deserializing an object from the database
+     * @throws IllegalArgumentException exception thrown whenever an error occurred while reading a protein sequence
+     * @throws InterruptedException exception thrown whenever an error occurred while reading a protein sequence
      */
-    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences) throws SQLException, IOException, ClassNotFoundException {
+    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Solving peptide inference. Please Wait...");
 
@@ -1318,8 +1320,12 @@ public class PeptideShaker {
      * FLR settings. The FLR must have been calculated before.
      *
      * @param spectrumMatch the spectrum match inspected
+     * @param ptmScoringPreferences the PTM scoring preferences as set by the user
+     * @throws IOException exception thrown whenever an error occurred while reading a protein sequence
+     * @throws IllegalArgumentException exception thrown whenever an error occurred while reading a protein sequence
+     * @throws InterruptedException exception thrown whenever an error occurred while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) {
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) throws IOException, IllegalArgumentException, InterruptedException {
 
         Peptide psPeptide = spectrumMatch.getBestAssumption().getPeptide();
 
@@ -1343,7 +1349,7 @@ public class PeptideShaker {
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                     if (ptmScoring != null) {
                         PTM ptm = ptmFactory.getPTM(modName);
-                        ArrayList<Integer> possiblePositions = Peptide.getPotentialModificationSites(psPeptide.getSequence(), ptm);
+                        ArrayList<Integer> possiblePositions = psPeptide.getPotentialModificationSites(ptm);
                         if (possiblePositions.size() < modMatches.get(modName).size()) {
                             throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size() 
                                     + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence() 
@@ -2556,10 +2562,10 @@ public class PeptideShaker {
 
         for (String peptideShakerName : searchParameters.getModificationProfile().getFamilyNames()) {
 
-            residues = new ArrayList<String>();
             utilitiesNames = new ArrayList<String>();
             int modType = -1;
             double mass = -1;
+            AminoAcidPattern mergedPattern = new AminoAcidPattern();
 
             for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
                 if (peptideShakerName.equals(searchParameters.getModificationProfile().getFamilyName(utilitiesName))) {
@@ -2568,17 +2574,13 @@ public class PeptideShaker {
                     reporterIons = new ArrayList<ReporterIon>();
                     PTM sePtm = ptmFactory.getPTM(utilitiesName);
 
-                    for (String aa : sePtm.getResidues()) {
-                        if (!residues.contains(aa)) {
-                            residues.add(aa);
-                        }
-                    }
-
                     if (modType == -1) {
                         modType = sePtm.getType();
                     } else if (sePtm.getType() != modType) {
-                        modType = PTM.MODAA; // case difficult to handle so use the default AA option
+                        modType = PTM.MODAA; // case difficult to handle (shall not happen actualy) so use the default AA option
                     }
+                    
+                    mergedPattern.merge(sePtm.getPattern());
 
                     mass = sePtm.getMass();
                     utilitiesNames.add(utilitiesName);
@@ -2612,7 +2614,7 @@ public class PeptideShaker {
             }
 
             for (String utilitiesName : utilitiesNames) {
-                PTM newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, residues);
+                PTM newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, mergedPattern);
                 newPTM.setNeutralLosses(neutralLosses);
                 newPTM.setReporterIons(reporterIons);
                 ptmFactory.replacePTM(utilitiesName, newPTM);

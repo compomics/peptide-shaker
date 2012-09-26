@@ -364,10 +364,6 @@ public class FileImporter {
                 throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification.");
             }
 
-            if (Math.abs(42.0106 - seMass) < 0.01) {
-                int debug = 1;
-            }
-
             for (String ptmName : searchParameters.getModificationProfile().getFamilyNames()) {
                 PTM psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
@@ -417,10 +413,8 @@ public class FileImporter {
                         } else if (possPtm.getType() == PTM.MODAA
                                 || possPtm.getType() == PTM.MODNAA
                                 || possPtm.getType() == PTM.MODNPAA) {
-                            for (String aa : possPtm.getResidues()) {
-                                if (sequence.startsWith(aa)) {
+                            if (possPtm.getPattern().isStarting(sequence)) {
                                     return possPtm.getName();
-                                }
                             }
                         }
                     }
@@ -433,10 +427,8 @@ public class FileImporter {
                         } else if (possPtm.getType() == PTM.MODAA
                                 || possPtm.getType() == PTM.MODCAA
                                 || possPtm.getType() == PTM.MODCPAA) {
-                            for (String aa : possPtm.getResidues()) {
-                                if (sequence.endsWith(aa)) {
+                            if (possPtm.getPattern().isEnding(sequence)) {
                                     return possPtm.getName();
-                                }
                             }
                         }
                     }
@@ -444,10 +436,8 @@ public class FileImporter {
                     for (PTM possPtm : possiblePTMs) {
                         if (possPtm.getType() == PTM.MODAA) {
                             if (modificationSite > 0 && modificationSite <= sequence.length()) {
-                                for (String aa : possPtm.getResidues()) {
-                                    if (aa.equals(sequence.charAt(modificationSite - 1) + "")) {
-                                        return possPtm.getName();
-                                    }
+                                if (peptide.getPotentialModificationSites(possPtm).contains(modificationSite-1)) {
+                                    return possPtm.getName();
                                 }
                             } else {
                                 peptideShaker.addWarning(FeedBack.getWarning("Wrong PTM localization", "PTM " + sePTM + " could not be mapped on the peptide sequence " + sequence + "."));

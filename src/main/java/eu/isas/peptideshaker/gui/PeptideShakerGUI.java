@@ -2280,7 +2280,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
         if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
             adaptCheckBoxMenuItem.setSelected(true);
-            annotationPreferences.resetAutomaticAnnotation();
+            try {
+                annotationPreferences.resetAutomaticAnnotation();
+            } catch (Exception e) {
+                catchException(e);
+            }
 
             for (int availableCharge : chargeMenus.keySet()) {
                 chargeMenus.get(availableCharge).setSelected(annotationPreferences.getValidatedCharges().contains(availableCharge));
@@ -5469,12 +5473,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     if (identification.isDB()) {
                         try {
-                        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
-                        }catch (Exception e) {
+                            identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
+                        } catch (Exception e) {
                             JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading:\n" + currentPSFile + ".\n\n"
-                            + "It looks like another instance of PeptideShaker is still connected to the file. Please close all other instances of PeptideShaker and retry.",
-                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                    "An error occured while reading:\n" + currentPSFile + ".\n\n"
+                                    + "It looks like another instance of PeptideShaker is still connected to the file. Please close all other instances of PeptideShaker and retry.",
+                                    "File Input Error", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
                     } else {
@@ -5552,7 +5556,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         searchParameters.updateVersion();
                         updateAnnotationPreferencesFromSearchSettings();
                     }
-                    
+
                     if (identification.getSpectrumIdentificationMap() == null) {
                         // 0.18 version, needs update of the spectrum mapping
                         identification.updateSpectrumMapping();
@@ -5805,22 +5809,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             String utilitiesName = modificationList.get(i);
             String peptideShakerName = searchParameters.getModificationProfile().getFamilyName(utilitiesName);
             String shortName = searchParameters.getModificationProfile().getShortName(peptideShakerName);
+            PTM ptm = ptms.get(peptideShakerName);
+            AminoAcidPattern ptmPattern = ptm.getPattern();
 
-            if (ptms.get(peptideShakerName) != null) {
+            if (ptm != null) {
 
-                double mass = ptms.get(peptideShakerName).getMass();
-                String name = ptms.get(peptideShakerName).getName();
+                double mass = ptm.getMass();
 
-                if (ptms.get(peptideShakerName).getType() == PTM.MODAA) {
-
-                    ArrayList<String> residues = ptms.get(name).getResidues();
-
-                    for (int j = 0; j < residues.size(); j++) {
-                        if (!knownMassDeltas.containsValue((String) residues.get(j) + "<" + shortName + ">")) {
-                            if (AminoAcid.getAminoAcid(residues.get(j).charAt(0)) != null) {
-                                knownMassDeltas.put(mass + AminoAcid.getAminoAcid(residues.get(j).charAt(0)).monoisotopicMass,
-                                        (String) residues.get(j) + "<" + shortName + ">");
-                            }
+                if (ptm.getType() == PTM.MODAA) {
+                    for (AminoAcid aa : ptmPattern.getAminoAcidsAtTarget()) {
+                        if (!knownMassDeltas.containsValue((String) aa.singleLetterCode + "<" + shortName + ">")) {
+                            knownMassDeltas.put(mass + aa.monoisotopicMass,
+                                    (String) aa.singleLetterCode + "<" + shortName + ">");
                         }
                     }
                 }
