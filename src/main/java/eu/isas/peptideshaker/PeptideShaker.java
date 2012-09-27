@@ -1114,6 +1114,7 @@ public class PeptideShaker {
      * every spectrum
      *
      * @param waitingHandler waiting handler displaying progress to the user
+     * @param ptmScoringPreferences the ptm scoring preferences
      * @throws SQLException exception thrown whenever a problem occurred while
      * interacting with the database
      * @throws IOException exception thrown whenever a problem occurred while
@@ -1246,8 +1247,7 @@ public class PeptideShaker {
                                         SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
                                         String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
                                         tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
-                                        int tempIndex,
-                                                ref = 0;
+                                        int tempIndex, ref = 0;
                                         String tempSequence = sequence;
                                         while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
                                             tempSequence = tempSequence.substring(tempIndex + 1);
@@ -1265,8 +1265,7 @@ public class PeptideShaker {
                                         SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
                                         String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
                                         tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
-                                        int tempIndex,
-                                                ref = 0;
+                                        int tempIndex, ref = 0;
                                         String tempSequence = otherSequence;
                                         while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
                                             tempSequence = tempSequence.substring(tempIndex + 1);
@@ -1439,10 +1438,10 @@ public class PeptideShaker {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-            }
-
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            }   
         }
+
+        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
     }
 
     /**
@@ -1683,6 +1682,7 @@ public class PeptideShaker {
 
             identification.loadSpectrumMatches(bestKeys, null);
             identification.loadSpectrumMatchParameters(bestKeys, psParameter, null);
+            
             for (String spectrumKey : bestKeys) {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -1753,9 +1753,7 @@ public class PeptideShaker {
                 String bestAKey = ptmScoring.getBestAScoreLocations();
 
                 if (bestAKey != null) {
-
                     psmPTMMap.addPoint(modification, -ptmScoring.getAScore(bestAKey), spectrumMatch);
-
                 }
             }
         }
