@@ -37,22 +37,6 @@ import java.util.concurrent.Callable;
 public class PeptideShakerCLI implements Callable {
 
     /**
-     * The xml file containing the enzymes.
-     */
-    private static final String ENZYME_FILE = "/resources/conf/peptideshaker_enzymes.xml";
-    /**
-     * Modification file.
-     */
-    private static final String MODIFICATIONS_FILE = "/resources/conf/peptideshaker_mods.xml";
-    /**
-     * User modification file.
-     */
-    private static final String USER_MODIFICATIONS_FILE = "/resources/conf/peptideshaker_usermods.xml";
-    /**
-     * User preferences file.
-     */
-    private static final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
-    /**
      * The Progress messaging handler reports the status throughout all
      * PeptideShaker processes.
      */
@@ -248,7 +232,7 @@ public class PeptideShakerCLI implements Callable {
      * @return a File handle from to the mods.xml file in the classpath
      */
     private File getModificationFile() throws URISyntaxException {
-        return new File(this.getClass().getResource(MODIFICATIONS_FILE).toURI());
+        return new File(PeptideShaker.MODIFICATIONS_FILE);
     }
 
     /**
@@ -257,7 +241,7 @@ public class PeptideShakerCLI implements Callable {
      * @return a File handle from to the mods.xml file in the classpath
      */
     private File getUserModificationFile() throws URISyntaxException {
-        return new File(this.getClass().getResource(USER_MODIFICATIONS_FILE).toURI());
+        return new File(PeptideShaker.USER_MODIFICATIONS_FILE);
     }
 
     /**
@@ -266,7 +250,7 @@ public class PeptideShakerCLI implements Callable {
     private void loadEnzymes() {
         try {
 
-            File lEnzymeFile = new File(this.getClass().getResource(ENZYME_FILE).toURI());
+            File lEnzymeFile = new File(PeptideShaker.ENZYME_FILE);
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");

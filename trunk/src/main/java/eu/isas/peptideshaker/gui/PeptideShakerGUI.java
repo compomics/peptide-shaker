@@ -25,6 +25,7 @@ import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.io.TarUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -52,6 +53,7 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
+import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
@@ -202,22 +204,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The last folder opened by the user. Defaults to user.home.
      */
     private String lastSelectedFolder = "user.home";
-    /**
-     * The xml file containing the enzymes.
-     */
-    private static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
-    /**
-     * Modification file.
-     */
-    private final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
-    /**
-     * User modification file.
-     */
-    private final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
-    /**
-     * User preferences file.
-     */
-    private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
     /**
      * File containing the modification profile. By default default.psm in the
      * conf folder.
@@ -2847,7 +2833,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void loadEnzymes() {
         try {
-            enzymeFactory.importEnzymes(new File(ENZYME_FILE));
+            enzymeFactory.importEnzymes(new File(PeptideShaker.ENZYME_FILE));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -3205,7 +3191,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
         }
         try {
-            File file = new File(USER_PREFERENCES_FILE);
+            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
             if (!file.exists()) {
                 userPreferences = new UserPreferences();
                 saveUserPreferences();
@@ -3237,7 +3223,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public void saveUserPreferences() {
         try {
-            File file = new File(USER_PREFERENCES_FILE);
+            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdir();
             }
@@ -3704,18 +3690,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         ptmFactory = PTMFactory.getInstance();
 
         try {
-            ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
+            ptmFactory.importModifications(new File(PeptideShaker.MODIFICATIONS_FILE), false);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + MODIFICATIONS_FILE + ".",
+            JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + PeptideShaker.MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
         }
 
         try {
-            ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
+            ptmFactory.importModifications(new File(PeptideShaker.USER_MODIFICATIONS_FILE), true);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + USER_MODIFICATIONS_FILE + ".",
+            JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + PeptideShaker.USER_MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -6059,27 +6045,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         resetSelectedItems();
         overviewPanel.updateSelection();
 
-        // set the experiment parameters
-        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
-                projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences));
-
-        objectsCache.saveCache(progressDialog, emptyCache);
-        identification.close();
-
-        // transfer all files in the match directory
-        if (!progressDialog.isRunCanceled()) {
-            progressDialog.setIndeterminate(true);
-            File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
-            ExperimentIO.save(experimentFile, experiment);
-        }
-
-        identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
-
-        // tar everything in the current cps file file
-        if (!progressDialog.isRunCanceled()) {
-            tarFolder();
-        }
+        CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache);
     }
 
     /**
@@ -6482,57 +6448,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             } catch (Exception e) {
                 System.out.println("An error occurred when trying to create a desktop shortcut...");
                 e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Tar the PS folder.
-     *
-     * @throws FileNotFoundException
-     * @throws ArchiveException
-     * @throws IOException
-     */
-    public void tarFolder() throws FileNotFoundException, ArchiveException, IOException {
-        FileOutputStream fos = new FileOutputStream(currentPSFile);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        TarArchiveOutputStream tarOutput = (TarArchiveOutputStream) new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.TAR, bos);
-        tarOutput.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
-        File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
-        addFolderContent(tarOutput, matchFolder);
-        tarOutput.close();
-        bos.close();
-        fos.close();
-    }
-
-    /**
-     * Add content to the tar file.
-     *
-     * @param tarOutput
-     * @param folder
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public void addFolderContent(ArchiveOutputStream tarOutput, File folder) throws FileNotFoundException, IOException {
-
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                addFolderContent(tarOutput, file);
-            } else {
-                final int BUFFER = 2048;
-                FileInputStream fi = new FileInputStream(file);
-                BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
-                byte data[] = new byte[BUFFER];
-                TarArchiveEntry entry = new TarArchiveEntry(file);
-
-                tarOutput.putArchiveEntry(entry);
-                int count;
-                while ((count = origin.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
-                    tarOutput.write(data, 0, count);
-                }
-                tarOutput.closeArchiveEntry();
-                origin.close();
-                fi.close();
             }
         }
     }

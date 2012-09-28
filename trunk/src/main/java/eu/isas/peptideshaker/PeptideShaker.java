@@ -99,6 +99,22 @@ public class PeptideShaker {
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
+     * The xml file containing the enzymes.
+     */
+    public static final String ENZYME_FILE = "resources/conf/peptideshaker_enzymes.xml";
+    /**
+     * Modification file.
+     */
+    public static final String MODIFICATIONS_FILE = "resources/conf/peptideshaker_mods.xml";
+    /**
+     * User modification file.
+     */
+    public static final String USER_MODIFICATIONS_FILE = "resources/conf/peptideshaker_usermods.xml";
+    /**
+     * User preferences file.
+     */
+    public static final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
+    /**
      * The location of the folder used for serialization of matches.
      */
     public final static String SERIALIZATION_DIRECTORY = "resources/matches";
