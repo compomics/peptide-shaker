@@ -68,7 +68,7 @@ public class PeptideShakerCLIInputBean {
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.ASCORE.id)) {
-            iProteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id));
+            iProteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.ASCORE.id));
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.EXPERIMENT.id)) {
