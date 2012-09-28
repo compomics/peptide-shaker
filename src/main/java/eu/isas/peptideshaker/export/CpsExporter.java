@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.db.ObjectsCache;
@@ -28,17 +24,18 @@ import java.sql.SQLException;
 import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
- * This class will export an identification project as cps file
+ * This class will export an identification project as cps file.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class CpsExporter {
-    
+
     /**
-     * Saves the given data in a cps file
+     * Saves the given data in a cps file.
+     *
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
-     * @param experiment the experiment to save
+     * @param experiment the experiment to save 
      * @param identification the identification to save
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
@@ -51,17 +48,18 @@ public class CpsExporter {
      * @param identificationFeaturesCache the identification features cache
      * @param ptmScoringPreferences the ptm scoring preferences
      * @param objectsCache the object cache
-     * @param emptyCache a boolean indicating whether the object cache should be emptied
+     * @param emptyCache a boolean indicating whether the object cache should be
+     * emptied
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
-     * @throws ArchiveException 
+     * @throws ArchiveException
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences, DisplayPreferences displayPreferences,
-            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            ObjectsCache objectsCache, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-        
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences, 
+            DisplayPreferences displayPreferences, Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, 
+            PTMScoringPreferences ptmScoringPreferences, ObjectsCache objectsCache, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
@@ -85,6 +83,4 @@ public class CpsExporter {
             TarUtils.tarFolder(matchesFolder, destinationFile, waitingHandler);
         }
     }
-
-    
 }

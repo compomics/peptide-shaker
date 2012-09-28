@@ -2504,15 +2504,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     // @TODO: calculate the 'All' column values based on only the used search engines and not all three like now...
                     // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead? And make it search engine independent for when I add other search engines :)
 
+                    int fileCounter = 1;
 
                     for (String fileName : filesArray) {
-                        
+
                         totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
 
-                        progressDialog.setTitle("Loading Spectrum Information for " + fileName + ". Please Wait...");
+                        progressDialog.setTitle("Loading Spectrum Information. Please Wait... (" + fileCounter + "/" + filesArray.length + ")");
                         identification.loadSpectrumMatchParameters(fileName, probabilities, progressDialog);
+                        progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + fileCounter + "/" + filesArray.length + ")");
                         identification.loadSpectrumMatches(fileName, progressDialog);
-                        progressDialog.setTitle("Loading Data. Please Wait...");
+                        progressDialog.setTitle("Loading Data. Please Wait... (" + fileCounter++ + "/" + filesArray.length + ") ");
 
                         for (String spectrumKey : identification.getSpectrumIdentification(fileName)) {
                             if (progressDialog.isRunCanceled()) {
