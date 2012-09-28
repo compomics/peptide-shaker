@@ -342,18 +342,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         searchEngineTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("OMSSA").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("X!Tandem").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("Mascot").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        searchEngineTable.getColumn("All").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("<html>&#8745; OMSSA</html>").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("<html>&#8745; X!Tandem</html>").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("<html>&#8745; Mascot</html>").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("<html>&#8745; All</html>").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("Unassigned").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("ID Rate").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; OMSSA</html>").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; X!Tandem</html>").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; Mascot</html>").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; All</html>").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("ID Rate").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         // set up the psm color map
         HashMap<Integer, java.awt.Color> searchEngineSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
@@ -390,6 +392,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTableToolTips.add("Overlapping Peptide-Spectrum Matches with Mascot");
         searchEngineTableToolTips.add("Overlapping Peptide-Spectrum Matches All Search Engines");
         searchEngineTableToolTips.add("Unassigned Spectra");
+        searchEngineTableToolTips.add("Identificaiton Rate (%)");
 
         spectrumTableToolTips = new ArrayList<String>();
         spectrumTableToolTips.add(null);
@@ -442,11 +445,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; OMSSA</html>").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; X!Tandem</html>").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; Mascot</html>").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; All</html>").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("ID Rate").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
@@ -636,14 +640,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Search Engine", "Validated PSMs", "Unique PSMs", "OMSSA", "X!Tandem", "Mascot", "All", "Unassigned"
+                " ", "Search Engine", "Validated PSMs", "Unique PSMs", "<html>&#8745; OMSSA</html>", "<html>&#8745; X!Tandem</html>", "<html>&#8745; Mascot</html>", "<html>&#8745; All</html>", "Unassigned", "ID Rate"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1327,7 +1331,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         slidersPanelLayout.setHorizontalGroup(
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, slidersPanelLayout.createSequentialGroup()
-                .addContainerGap(547, Short.MAX_VALUE)
+                .addContainerGap(17, Short.MAX_VALUE)
                 .addGroup(slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(accuracySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1365,7 +1369,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -2300,7 +2304,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private void exportSearchEnginePerformanceJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2446,7 +2450,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
                     ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
 
-                    int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0, no_m = 0, no_x = 0, no_o = 0;
+                    Integer m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
+                    int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
                     boolean mascot, omssa, xTandem;
                     PSParameter probabilities = new PSParameter();
                     SpectrumMatch spectrumMatch;
@@ -2484,8 +2489,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             xtandemUsed = true;
                         } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.MASCOT) {
                             mascotUsed = true;
-                        }
+                        } 
                     }
+
+                    boolean multipleSearchEngines = false;
+
+                    if (omssaUsed && xtandemUsed || omssaUsed && mascotUsed || xtandemUsed && mascotUsed) {
+                        multipleSearchEngines = true;
+                    }
+
 
                     // @TODO: hide the unused search engine columns in the Search Engine Performance table
                     // @TODO: hide the columns in the table for the search engines that are not used...
@@ -2494,6 +2506,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
 
                     for (String fileName : filesArray) {
+                        
+                        totalNumberOfSpectra += spectrumFactory.getNSpectra(fileName);
+
                         progressDialog.setTitle("Loading Spectrum Information for " + fileName + ". Please Wait...");
                         identification.loadSpectrumMatchParameters(fileName, probabilities, progressDialog);
                         identification.loadSpectrumMatches(fileName, progressDialog);
@@ -2511,6 +2526,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
                             if (probabilities.isValidated()) {
+                                
+                                totalPeptideShakerIds++;
+                                
                                 if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
                                     if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
                                         mascot = true;
@@ -2550,16 +2568,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 x++;
                             }
 
-                            if (!mascot) {
-                                no_m++;
-                            }
-                            if (!xTandem) {
-                                no_x++;
-                            }
-                            if (!omssa) {
-                                no_o++;
-                            }
-
                             progressDialog.increaseProgressValue();
                         }
                     }
@@ -2572,9 +2580,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         int nMascot = m;
                         int nOMSSA = o;
                         int nXTandem = x;
+                        
+                        int no_m = totalNumberOfSpectra - nMascot;
+                        int no_x = totalNumberOfSpectra - nXTandem;
+                        int no_o = totalNumberOfSpectra - nOMSSA;
 
                         double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
                         biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
+                        
+                        int uniqueOmssa = nOMSSA - ox - mo + omx;
+                        int uniqueXTandem = nXTandem - ox - mx + omx;
+                        int uniqueMascot = nMascot - mo - mx + omx;
+                        
+                        // hide comparison values if empty
+                        if (ox == 0) {
+                            ox = null;
+                        }
+                        if (mo == 0) {
+                            mo = null;
+                        }
+                        if (omx == 0) {
+                            omx = null;
+                        }
+                        if (mx == 0) {
+                            mx = null;
+                        }
 
                         if (omssaUsed && xtandemUsed && mascotUsed) {
                             updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
@@ -2597,30 +2627,52 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         if (omssaUsed) {
                             ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                         ++searchEngineRowCounter, "OMSSA",
-                                        nOMSSA, nOMSSA - ox - mo + omx, nOMSSA, ox, mo, omx, no_o
+                                        nOMSSA, uniqueOmssa, nOMSSA, ox, mo, omx, no_o, (((double) nOMSSA) / (nOMSSA + no_o)) * 100
+                                    });
+                        } else {
+                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "OMSSA",
+                                        null, null, null, null, null, null, null, null
                                     });
                         }
 
                         if (xtandemUsed) {
                             ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                         ++searchEngineRowCounter, "X!Tandem",
-                                        nXTandem, nXTandem - ox - mx + omx, ox, nXTandem, mx, omx, no_x
+                                        nXTandem, uniqueXTandem, ox, nXTandem, mx, omx, no_x, (((double) nXTandem) / (nXTandem + no_x)) * 100
+                                    });
+                        } else {
+                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "X!Tandem",
+                                        null, null, null, null, null, null, null, null
                                     });
                         }
 
                         if (mascotUsed) {
                             ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                         ++searchEngineRowCounter, "Mascot",
-                                        nMascot, nMascot - mo - mx + omx, mo, mx, nMascot, omx, no_m
+                                        nMascot, uniqueMascot, mo, mx, nMascot, omx, no_m, (((double) nMascot) / (nMascot + no_m)) * 100
+                                    });
+                        } else {
+                            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "Mascot",
+                                        null, null, null, null, null, null, null, null
                                     });
                         }
+                        
+                        // add the peptide shaker results
+                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                        ++searchEngineRowCounter, "PeptideShaker",
+                                        totalPeptideShakerIds, null, null, null, null, null, 
+                                        totalNumberOfSpectra - totalPeptideShakerIds, (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100
+                                    });
 
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
-                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; OMSSA</html>").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; X!Tandem</html>").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; Mascot</html>").getCellRenderer()).setMaxValue(biggestValue);
+                        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("<html>&#8745; All</html>").getCellRenderer()).setMaxValue(biggestValue);
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
 
                         showSparkLines(peptideShakerGUI.showSparklines());
