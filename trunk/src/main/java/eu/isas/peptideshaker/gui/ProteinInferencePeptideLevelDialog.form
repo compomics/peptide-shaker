@@ -127,10 +127,12 @@
                 <Component class="javax.swing.JTable" name="otherProteinJTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="3" rowCount="0">
+                      <Table columnCount="5" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Accession" type="java.lang.String"/>
                         <Column editable="false" title="Description" type="java.lang.String"/>
+                        <Column editable="false" title="Gene" type="java.lang.String"/>
+                        <Column editable="false" title="PE" type="java.lang.String"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -162,6 +164,9 @@
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="otherProteinJTableMouseReleased"/>
                     <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="otherProteinJTableMouseMoved"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        return (String) otherProteinsTableToolTips.get(realIndex);&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -290,10 +295,12 @@
                 <Component class="javax.swing.JTable" name="retainedProteinJTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="3" rowCount="0">
+                      <Table columnCount="5" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Accession" type="java.lang.String"/>
                         <Column editable="false" title="Description" type="java.lang.String"/>
+                        <Column editable="false" title="Gene" type="java.lang.String"/>
+                        <Column editable="false" title="PE" type="java.lang.String"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -324,6 +331,9 @@
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="retainedProteinJTableMouseReleased"/>
                     <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="retainedProteinJTableMouseMoved"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        return (String) retainedProteinsTableToolTips.get(realIndex);&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>

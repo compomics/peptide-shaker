@@ -94,7 +94,7 @@
                   <Component id="warningJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="picrLinkJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="64" max="32767" attributes="0"/>
+              <EmptySpace pref="54" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -124,7 +124,7 @@
                   </Group>
                   <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="accessionNumberJTextField" alignment="1" pref="458" max="32767" attributes="2"/>
+                      <Component id="accessionNumberJTextField" alignment="1" pref="462" max="32767" attributes="2"/>
                       <Component id="proteinDescriptionScrollPane" alignment="0" max="32767" attributes="0"/>
                       <Component id="geneNameJTextField" alignment="0" max="32767" attributes="2"/>
                       <Component id="taxonomyJTextField" max="32767" attributes="2"/>
@@ -175,7 +175,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Accession Number:"/>
+            <Property name="text" type="java.lang.String" value="Accession Number"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="accessionNumberJTextField">
@@ -185,12 +185,12 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Description:"/>
+            <Property name="text" type="java.lang.String" value="Description"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Gene Name:"/>
+            <Property name="text" type="java.lang.String" value="Gene Name"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="geneNameJTextField">
@@ -200,7 +200,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Taxonomy:"/>
+            <Property name="text" type="java.lang.String" value="Taxonomy"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="taxonomyJTextField">
@@ -210,7 +210,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel16">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Database:"/>
+            <Property name="text" type="java.lang.String" value="Database"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="databaseJTextField">

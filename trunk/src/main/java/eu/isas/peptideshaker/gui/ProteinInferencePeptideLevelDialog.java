@@ -11,8 +11,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 
 /**
@@ -32,9 +34,17 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The key of the peptide match of interest
+     * The key of the peptide match of interest.
      */
     private String peptideMatch;
+    /**
+     * The retained proteins table column header tooltips.
+     */
+    private ArrayList<String> retainedProteinsTableToolTips;
+    /**
+     * The other proteins table column header tooltips.
+     */
+    private ArrayList<String> otherProteinsTableToolTips;
 
     /**
      * Create a new ProteinInferencePeptideLevelDialog.
@@ -67,13 +77,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         // set up the table properties
         otherProteinJTable.getTableHeader().setReorderingAllowed(false);
-        otherProteinJTable.getColumn(" ").setMinWidth(50);
-        otherProteinJTable.getColumn(" ").setMaxWidth(50);
         otherProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         retainedProteinJTable.getTableHeader().setReorderingAllowed(false);
-        retainedProteinJTable.getColumn(" ").setMinWidth(50);
-        retainedProteinJTable.getColumn(" ").setMaxWidth(50);
         retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         // insert the values
@@ -87,6 +93,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         PeptideMatch tempPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
         ArrayList<String> possibleProteins = tempPeptideMatch.getTheoreticPeptide().getParentProteins();
         List<String> retainedProteins;
+
         if (proteinMatchKey != null) {
             retainedProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
         } else {
@@ -102,31 +109,56 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 }
             }
         }
+
         int possibleCpt = 0, retainedCpt = 0;
+
         for (String protein : possibleProteins) {
 
-            String description;
+            String description, geneName, proteinEvidenceLevel;
+
             try {
                 description = sequenceFactory.getHeader(protein).getDescription();
+                geneName = sequenceFactory.getHeader(protein).getGeneName();
+                proteinEvidenceLevel = sequenceFactory.getHeader(protein).getProteinEvidence();
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
-                description = "FASTA File Error";
+                description = "Error";
+                geneName = "Error";
+                proteinEvidenceLevel = "Error";
             }
 
             if (retainedProteins.contains(protein)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                             (++retainedCpt),
                             peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(protein),
-                            description
+                            description,
+                            geneName,
+                            proteinEvidenceLevel
                         });
             } else {
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                             (++possibleCpt),
                             peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(protein),
-                            description
+                            description,
+                            geneName,
+                            proteinEvidenceLevel
                         });
             }
         }
+
+        retainedProteinJTable.getColumn(" ").setMinWidth(50);
+        retainedProteinJTable.getColumn(" ").setMaxWidth(50);
+        retainedProteinJTable.getColumn("Gene").setMinWidth(90);
+        retainedProteinJTable.getColumn("Gene").setMaxWidth(90);
+        retainedProteinJTable.getColumn("PE").setMinWidth(90);
+        retainedProteinJTable.getColumn("PE").setMaxWidth(90);
+
+        otherProteinJTable.getColumn(" ").setMinWidth(50);
+        otherProteinJTable.getColumn(" ").setMaxWidth(50);
+        otherProteinJTable.getColumn("Gene").setMinWidth(90);
+        otherProteinJTable.getColumn("Gene").setMaxWidth(90);
+        otherProteinJTable.getColumn("PE").setMinWidth(90);
+        otherProteinJTable.getColumn("PE").setMaxWidth(90);
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6);
@@ -147,6 +179,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
 
+        // set up the table header tooltips
+        retainedProteinsTableToolTips = new ArrayList<String>();
+        retainedProteinsTableToolTips.add(null);
+        retainedProteinsTableToolTips.add("Protein Accession");
+        retainedProteinsTableToolTips.add("Protein Description");
+        retainedProteinsTableToolTips.add("Gene Name");
+        retainedProteinsTableToolTips.add("Protein Evidence Level");
+
+        otherProteinsTableToolTips = new ArrayList<String>();
+        otherProteinsTableToolTips.add(null);
+        otherProteinsTableToolTips.add("Protein Accession");
+        otherProteinsTableToolTips.add("Protein Description");
+        otherProteinsTableToolTips.add("Gene Name");
+        otherProteinsTableToolTips.add("Protein Evidence Level");
+
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -163,7 +210,18 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         backgroundPanel = new javax.swing.JPanel();
         proteinsPanel = new javax.swing.JPanel();
         proteinsJScrollPane = new javax.swing.JScrollPane();
-        otherProteinJTable = new javax.swing.JTable();
+        otherProteinJTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        return (String) otherProteinsTableToolTips.get(realIndex);
+                    }
+                };
+            }
+        };
         peptidesPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         protInferenceTypeCmb = new javax.swing.JComboBox();
@@ -172,7 +230,18 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         otherProteinsJScrollPane = new javax.swing.JScrollPane();
-        retainedProteinJTable = new javax.swing.JTable();
+        retainedProteinJTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        return (String) retainedProteinsTableToolTips.get(realIndex);
+                    }
+                };
+            }
+        };
         okButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
@@ -191,14 +260,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Accession", "Description"
+                " ", "Accession", "Description", "Gene", "PE"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -296,14 +365,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Accession", "Description"
+                " ", "Accession", "Description", "Gene", "PE"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -549,15 +618,15 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         PSParameter psParameter = new PSParameter();
         try {
-        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
-        if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
-            psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
-            peptideShakerGUI.getIdentification().updatePeptideMatchParameter(peptideMatch, psParameter);
-            peptideShakerGUI.setDataSaved(false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
-            peptideShakerGUI.updateTabbedPanes();
-        }
+            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
+            if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
+                psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
+                peptideShakerGUI.getIdentification().updatePeptideMatchParameter(peptideMatch, psParameter);
+                peptideShakerGUI.setDataSaved(false);
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+                peptideShakerGUI.updateTabbedPanes();
+            }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             this.dispose();

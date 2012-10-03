@@ -116,21 +116,21 @@ public class AnnotationPanel extends javax.swing.JPanel {
         annotationLinksJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Protein Annotation"));
         annotationLinksJPanel.setOpaque(false);
 
-        jLabel1.setText("Accession Number:");
+        jLabel1.setText("Accession Number");
 
         accessionNumberJTextField.setEditable(false);
 
-        jLabel3.setText("Description:");
+        jLabel3.setText("Description");
 
-        jLabel4.setText("Gene Name:");
+        jLabel4.setText("Gene Name");
 
         geneNameJTextField.setEditable(false);
 
-        jLabel8.setText("Taxonomy:");
+        jLabel8.setText("Taxonomy");
 
         taxonomyJTextField.setEditable(false);
 
-        jLabel16.setText("Database:");
+        jLabel16.setText("Database");
 
         databaseJTextField.setEditable(false);
 
@@ -156,7 +156,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     .addComponent(jLabel16))
                 .addGap(38, 38, 38)
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                     .addComponent(proteinDescriptionScrollPane)
                     .addComponent(geneNameJTextField)
                     .addComponent(taxonomyJTextField)
@@ -709,7 +709,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(warningJLabel)
                     .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1161,8 +1161,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
             try {
                 proteinDescriptionTextArea.setText(sequenceFactory.getHeader(aAccessionNumber).getDescription());
-                geneNameJTextField.setText("unknown"); // @TODO: extract from the fasta header
-                taxonomyJTextField.setText("unknown"); // @TODO: extract from the fasta header 
+                geneNameJTextField.setText(sequenceFactory.getHeader(aAccessionNumber).getGeneName());
+                taxonomyJTextField.setText(sequenceFactory.getHeader(aAccessionNumber).getTaxonomy());
                 databaseJTextField.setText("" + sequenceFactory.getProtein(aAccessionNumber).getDatabaseType());
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
