@@ -153,6 +153,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         proteinMatchTable.getColumn("  ").setMinWidth(30);
         proteinMatchTable.getColumn("  ").setMaxWidth(30);
+        proteinMatchTable.getColumn("Gene").setMinWidth(90);
+        proteinMatchTable.getColumn("Gene").setMaxWidth(90);
+        proteinMatchTable.getColumn("PE").setMinWidth(90);
+        proteinMatchTable.getColumn("PE").setMaxWidth(90);
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2);
@@ -222,6 +226,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         candidateProteinsTableToolTips.add("Currently Selected Protein Match");
         candidateProteinsTableToolTips.add("Protein Accession");
         candidateProteinsTableToolTips.add("Protein Description");
+        candidateProteinsTableToolTips.add("Gene Name");
+        candidateProteinsTableToolTips.add("Protein Evidence Level");
 
         uniqueHitsTableToolTips = new ArrayList<String>();
         uniqueHitsTableToolTips.add(null);
@@ -303,7 +309,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Protein Level");
-        setResizable(false);
+        setMinimumSize(new java.awt.Dimension(700, 500));
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -347,8 +353,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             relatedHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(relatedHitsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedHitsJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(relatedHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         uniqueHitsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unique Hits"));
@@ -384,8 +390,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             uniqueHitsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(uniqueHitsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(uniqueHitsJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addComponent(uniqueHitsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                .addGap(14, 14, 14))
         );
 
         proteinMatchJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Candidate Proteins"));
@@ -513,11 +519,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(groupDetalsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(proteinMatchJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(uniqueHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(8, 8, 8)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpJButton)
@@ -833,7 +839,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return 6;
         }
 
         @Override
@@ -848,6 +854,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     return "Accession";
                 case 3:
                     return "Description";
+                case 4:
+                    return "Gene";
+                case 5:
+                    return "PE";
                 default:
                     return " ";
             }
@@ -870,6 +880,20 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
                     }
+                case 4:
+                    try {
+                        return sequenceFactory.getHeader(accessions.get(row)).getGeneName();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return "Database Error";
+                    }
+                case 5:
+                    try {
+                        return sequenceFactory.getHeader(accessions.get(row)).getProteinEvidence();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return "Database Error";
+                    }
                 default:
                     return " ";
             }
@@ -877,7 +901,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public Class getColumnClass(int columnIndex) {
-            return getValueAt(0, columnIndex).getClass();
+            if (columnIndex < 4) {
+                return getValueAt(0, columnIndex).getClass();
+            } else {
+                return String.class; // we need this as the gene name and protein evidence can be null
+            }
         }
 
         @Override
