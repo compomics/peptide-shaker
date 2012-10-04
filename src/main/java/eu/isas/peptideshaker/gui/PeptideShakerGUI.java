@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.software.dialogs.ReporterSetupDialog;
@@ -25,7 +26,6 @@ import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.general.ExceptionHandler;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import com.compomics.util.io.TarUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -74,9 +74,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -93,8 +90,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import net.jimmc.jshortcut.JShellLink;
 import org.apache.commons.compress.archivers.*;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -425,7 +420,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public PeptideShakerGUI() {
 
         // check for new version
-        checkForNewVersion(getVersion());
+        CompomicsWrapper.checkForNewVersion(getVersion(), "PeptideShaker", "peptide-shaker");
 
         // set up the ErrorLog
         setUpLogFile();
@@ -1239,7 +1234,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         reshakeMenuItem.setMnemonic('E');
         reshakeMenuItem.setText("Reshake...");
         reshakeMenuItem.setToolTipText("<html>\nReanalyze PRIDE experiments.<br>\n(Coming soon...)\n</html>");
-        reshakeMenuItem.setEnabled(false);
         reshakeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reshakeMenuItemActionPerformed(evt);
@@ -2751,8 +2745,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
-        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE, 
-                new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png")));
+        new PrideReshakeGui(this, true);
     }//GEN-LAST:event_reshakeMenuItemActionPerformed
 
     /**
@@ -3064,74 +3057,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Check if a newer version of reporter is available.
-     *
-     * @param currentVersion the version number of the currently running
-     * reporter
-     */
-    private static void checkForNewVersion(String currentVersion) {
-
-        try {
-            boolean deprecatedOrDeleted = false;
-            URL downloadPage = new URL(
-                    "http://code.google.com/p/peptide-shaker/downloads/detail?name=PeptideShaker-"
-                    + currentVersion + ".zip");
-
-            if ((java.net.HttpURLConnection) downloadPage.openConnection() != null) {
-
-                int respons = ((java.net.HttpURLConnection) downloadPage.openConnection()).getResponseCode();
-
-                // 404 means that the file no longer exists, which means that
-                // the running version is no longer available for download,
-                // which again means that a never version is available.
-                if (respons == 404) {
-                    deprecatedOrDeleted = true;
-                } else {
-
-                    // also need to check if the available running version has been
-                    // deprecated (but not deleted)
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(downloadPage.openStream()));
-
-                    String inputLine;
-
-                    while ((inputLine = in.readLine()) != null && !deprecatedOrDeleted) {
-                        if (inputLine.lastIndexOf("Deprecated") != -1
-                                && inputLine.lastIndexOf("Deprecated Downloads") == -1
-                                && inputLine.lastIndexOf("Deprecated downloads") == -1) {
-                            deprecatedOrDeleted = true;
-                        }
-                    }
-
-                    in.close();
-                }
-
-                // informs the user about an updated version of the tool, unless the user
-                // is running a beta version
-                if (deprecatedOrDeleted && currentVersion.lastIndexOf("beta") == -1) {
-                    int option = JOptionPane.showConfirmDialog(null,
-                            "A newer version of PeptideShaker is available.\n"
-                            + "Do you want to upgrade?",
-                            "Upgrade Available",
-                            JOptionPane.YES_NO_CANCEL_OPTION);
-                    if (option == JOptionPane.YES_OPTION) {
-                        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com/");
-                        System.exit(0);
-                    } else if (option == JOptionPane.CANCEL_OPTION) {
-                        System.exit(0);
-                    }
-                }
-            }
-        } catch (UnknownHostException e) {
-            // ignore exception
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Set up the log file.
      */
     private void setUpLogFile() {
@@ -3250,22 +3175,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @return the path to the jar file
      */
     public String getJarFilePath() {
-        String path = this.getClass().getResource("PeptideShakerGUI.class").getPath();
-
-        if (path.lastIndexOf("/PeptideShaker-") != -1) {
-            path = path.substring(5, path.lastIndexOf("/PeptideShaker-"));
-            path = path.replace("%20", " ");
-            path = path.replace("%5b", "[");
-            path = path.replace("%5d", "]");
-
-            if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
-                path = path.replace("/", "\\");
-            }
-        } else {
-            path = ".";
-        }
-
-        return path;
+        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerGUI.class").getPath(), "PeptideShaker");
     }
 
     /**

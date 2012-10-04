@@ -510,8 +510,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Developement...", JOptionPane.INFORMATION_MESSAGE, 
-                new javax.swing.ImageIcon(getClass().getResource("/icons/relims_logo.png")));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new PrideReshakeGui(peptideShakerGUI, true);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
