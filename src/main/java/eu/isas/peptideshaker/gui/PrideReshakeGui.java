@@ -72,7 +72,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     /**
      * The current URL contect length.
      */
-    private long currentUrlContentLength;
+    private int currentUrlContentLength;
     /**
      * True of a file is currently being downloaded.
      */
@@ -751,7 +751,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     currentMgfFile = new File(peptideShakerGUI.getJarFilePath(), "resources/conf/pride/temp/PRIDE_Exp_mzData_Ac_"
                             + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + ".mgf");
                     URLConnection conn = currentPrideProjectUrl.openConnection();
-                    currentUrlContentLength = conn.getContentLengthLong();
+                    currentUrlContentLength = conn.getContentLength();
                 } catch (MalformedURLException ex) {
                     ex.printStackTrace();
                     currentPrideProjectUrl = null;
@@ -768,7 +768,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             true);
                     progressDialog.setIndeterminate(false);
                     progressDialog.setValue(0);
-                    progressDialog.setMaxProgressValue(new Long(currentUrlContentLength).intValue());
+                    progressDialog.setMaxProgressValue(currentUrlContentLength);
                     progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
                     progressDialog.setUnstoppable(true); // @TODO: not sure if this process can be stopped at all...
                     isFileBeingDownloaded = true;
