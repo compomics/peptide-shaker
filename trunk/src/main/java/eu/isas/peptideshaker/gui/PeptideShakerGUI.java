@@ -6460,7 +6460,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         } catch (TwitterException te) {
             te.printStackTrace();
             System.out.println("Failed to search tweets: " + te.getMessage());
-            System.exit(-1);
         }
 
         return tweets;

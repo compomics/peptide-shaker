@@ -752,6 +752,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + ".mgf");
                     URLConnection conn = currentPrideProjectUrl.openConnection();
                     currentUrlContentLength = conn.getContentLength();
+                    // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
+
                 } catch (MalformedURLException ex) {
                     ex.printStackTrace();
                     currentPrideProjectUrl = null;
@@ -766,9 +768,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true);
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setValue(0);
-                    progressDialog.setMaxProgressValue(currentUrlContentLength);
+                    
+                    if (currentUrlContentLength != -1) {
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setValue(0);
+                        progressDialog.setMaxProgressValue(currentUrlContentLength);
+                    } else {
+                        progressDialog.setIndeterminate(true);
+                    }
+
                     progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
                     progressDialog.setUnstoppable(true); // @TODO: not sure if this process can be stopped at all...
                     isFileBeingDownloaded = true;
@@ -823,7 +831,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                 // update the progress dialog every 100 millisecond or so
                                 if ((now - start) > 100 && progressDialog != null) {
                                     long length = currentZippedMzDataFile.length();
-                                    progressDialog.setValue(new Long(length).intValue());
+
+                                    if (currentUrlContentLength != -1) {
+                                        progressDialog.setValue(new Long(length).intValue());
+                                    }
+
+                                    progressDialog.setTitle("Downloading PRIDE Project. Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
+
                                     start = System.currentTimeMillis();
                                 }
                             }
@@ -1135,7 +1149,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         titleTextArea.setText(null);
         projectTextArea.setText(null);
         speciesTextField.setText(null);
-        tissueTextField.setText(null);;
+        tissueTextField.setText(null);
         ptmsTextArea.setText(null);
         referencesTextArea.setText(null);
         pubMedEditorPane.setText(null);
