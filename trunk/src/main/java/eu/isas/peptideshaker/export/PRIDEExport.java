@@ -330,8 +330,8 @@ public class PRIDEExport {
                 br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
                 br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
 
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideProbabilities, null);
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideProbabilities, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                     if (prideExportDialog.progressCancelled()) {
@@ -568,10 +568,14 @@ public class PRIDEExport {
                 } else {
                     br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />" + System.getProperty("line.separator"));
                 }
-                if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
-                } else {
-                    br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                try {
+                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
+                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                    } else {
+                        br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                    }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
                 if (proteinProbabilities.isValidated()) {
                     br.write(getCurrentTabSpace() + "<userParam name=\"Protein Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
@@ -1186,12 +1190,12 @@ public class PRIDEExport {
                 tabCounter++;
 
                 if (tempReference.getPmid() != null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000029\" name=\"PubMed\" value=\"" 
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000029\" name=\"PubMed\" value=\""
                             + tempReference.getPmid() + "\" />" + System.getProperty("line.separator"));
                 }
 
                 if (tempReference.getDoi() != null) {
-                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000042\" name=\"DOI\" value=\"" 
+                    br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000042\" name=\"DOI\" value=\""
                             + tempReference.getDoi() + "\" />" + System.getProperty("line.separator"));
                 }
 

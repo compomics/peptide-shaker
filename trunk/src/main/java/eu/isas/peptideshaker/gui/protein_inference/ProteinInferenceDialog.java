@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui;
+package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
@@ -7,6 +7,8 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.gui.HelpDialog;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -872,7 +874,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return inspectedMatch.getMainMatch().equals(accessions.get(row));
                 case 2:
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(accessions.get(row));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(accessions.get(row));
                 case 3:
                     try {
                         return sequenceFactory.getHeader(accessions.get(row)).getDescription();
@@ -962,7 +964,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinScore();
                 case 3:
@@ -1032,7 +1034,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(associatedMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinScore();
                 case 3:

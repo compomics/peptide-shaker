@@ -12,7 +12,7 @@ public class ProcessingPreferences implements Serializable {
     /**
      * Serial number for backward compatibility.
      */
-    static final long serialVersionUID = -5883143685674607162L; // @TODO: has to be updated?
+    static final long serialVersionUID = -5883143685674607162L;
     /**
      * Boolean indicating whether the A-score should be estimated.
      *

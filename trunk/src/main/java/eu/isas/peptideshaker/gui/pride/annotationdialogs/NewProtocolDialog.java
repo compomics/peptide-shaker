@@ -1,8 +1,9 @@
-package eu.isas.peptideshaker.gui.pride;
+package eu.isas.peptideshaker.gui.pride.annotationdialogs;
 
 import com.compomics.util.Util;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.prideobjects.Protocol;
+import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.KeyEvent;

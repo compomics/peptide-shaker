@@ -10,7 +10,7 @@ import java.util.Set;
  * Names) used for the selected project.
  *
  * @deprecated Class kept for backward compatibility. Please use the utilities
- * version instead.
+ * version instead (com.compomics.util.preferences.ModificationProfile).
  * @author Marc Vaudel
  */
 public class ModificationProfile implements Serializable {

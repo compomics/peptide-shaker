@@ -220,10 +220,10 @@ public class FindDialog extends javax.swing.JDialog {
             }
         }
 
-        for (String file : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
+        for (String file : identification.getSpectrumFiles()) {
             ((DefaultTableModel) spectrumFilesTable.getModel()).addRow(new Object[]{
                         true,
-                        Util.getFileName(file)
+                        file
                     });
         }
 
@@ -1071,7 +1071,14 @@ public class FindDialog extends javax.swing.JDialog {
                         proteinMatch = identification.getProteinMatch(proteinKey);
                         return sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription().toLowerCase();
                     case 7:
-                        return 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                        Double coverage;
+                        try {
+                            coverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                            coverage = Double.NaN;
+                        }
+                        return coverage;
                     case 8:
                         proteinMatch = identification.getProteinMatch(proteinKey);
                         return proteinMatch.getPeptideCount();
@@ -1086,7 +1093,12 @@ public class FindDialog extends javax.swing.JDialog {
                         }
                         return cpt;
                     case 10:
+                        try {
                         return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                            return Double.NaN;
+                        }
                     case 11:
                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
                         return psParameter.getProteinScore();

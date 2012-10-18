@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui;
+package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -6,6 +6,8 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.gui.HelpDialog;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -87,7 +89,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true));
 
         // set the modification tooltip
-        String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide());
+        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide());
         sequenceLabel.setToolTipText(tooltip);
 
         PeptideMatch tempPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
@@ -130,7 +132,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             if (retainedProteins.contains(protein)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                             (++retainedCpt),
-                            peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(protein),
+                            peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
                             description,
                             geneName,
                             proteinEvidenceLevel
@@ -138,7 +140,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             } else {
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                             (++possibleCpt),
-                            peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(protein),
+                            peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
                             description,
                             geneName,
                             proteinEvidenceLevel

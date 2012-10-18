@@ -1,7 +1,8 @@
-package eu.isas.peptideshaker.gui;
+package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import java.awt.event.MouseEvent;

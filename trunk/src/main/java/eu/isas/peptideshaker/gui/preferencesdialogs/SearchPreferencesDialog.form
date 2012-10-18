@@ -335,35 +335,23 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="availableModsScrollPane" max="32767" attributes="2"/>
+                          <Component id="expectedModsScrollPane" max="32767" attributes="2"/>
                           <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="availableModsLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="addModifications" linkSize="16" min="-2" pref="99" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="removeModification" linkSize="16" min="-2" pref="119" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="expectedModsScrollPane" max="32767" attributes="2"/>
-                              </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <Component id="addModifications" linkSize="16" min="-2" pref="99" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="saveAsProfileBtn" pref="64" max="32767" attributes="0"/>
-                                  <Component id="loadProfileBtn" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="clearProfileBtn" alignment="0" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="removeModification" linkSize="16" min="-2" pref="119" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="expectedModsLabel" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="availableModsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="expectedModsLabel" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="availableModsScrollPane" max="32767" attributes="2"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="loadAvailableModsButton" min="-2" pref="64" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -376,16 +364,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="expectedModsLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="expectedModsScrollPane" pref="124" max="32767" attributes="1"/>
-                          <Group type="102" attributes="0">
-                              <Component id="loadProfileBtn" linkSize="6" min="-2" max="-2" attributes="1"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="saveAsProfileBtn" linkSize="6" min="-2" max="-2" attributes="1"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="clearProfileBtn" linkSize="6" min="-2" max="-2" attributes="1"/>
-                          </Group>
-                      </Group>
+                      <Component id="expectedModsScrollPane" pref="124" max="32767" attributes="1"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
@@ -398,10 +377,7 @@
                           <Component id="availableModsLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="availableModsScrollPane" pref="124" max="32767" attributes="1"/>
-                          <Component id="loadAvailableModsButton" linkSize="6" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="availableModsScrollPane" pref="124" max="32767" attributes="1"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -491,33 +467,6 @@
                 <Property name="text" type="java.lang.String" value="Available Modifications"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="clearProfileBtn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Clear"/>
-                <Property name="toolTipText" type="java.lang.String" value="Clear the list of expected modifications"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearProfileBtnActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="saveAsProfileBtn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save"/>
-                <Property name="toolTipText" type="java.lang.String" value="Save the modification profile to a psm file"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAsProfileBtnActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="loadProfileBtn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Load"/>
-                <Property name="toolTipText" type="java.lang.String" value="Load a modification profile from a psm file"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadProfileBtnActionPerformed"/>
-              </Events>
-            </Component>
             <Container class="javax.swing.JScrollPane" name="availableModsScrollPane">
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -575,14 +524,6 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="loadAvailableModsButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Load"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadAvailableModsButtonActionPerformed"/>
-              </Events>
-            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="searchGuiParamsPanel">

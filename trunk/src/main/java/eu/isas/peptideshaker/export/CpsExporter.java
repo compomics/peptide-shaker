@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.export;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -15,7 +16,6 @@ import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -31,8 +31,37 @@ import org.apache.commons.compress.archivers.ArchiveException;
 public class CpsExporter {
 
     /**
-     * Saves the given data in a cps file.
-     *
+     * Saves the given data in a cps file. Here the GUI preferences will be null objects.
+     * 
+     * @param destinationFile the destination cps file
+     * @param waitingHandler a waiting handler used to cancel the saving
+     * @param experiment the experiment to save
+     * @param identification the identification to save
+     * @param searchParameters the search parameters
+     * @param annotationPreferences the annotation preferences
+     * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param projectDetails the project details
+     * @param displayPreferences the display preferences
+     * @param metrics the dataset metrics
+     * @param processingPreferences the processing preferences
+     * @param identificationFeaturesCache the identification features cache
+     * @param ptmScoringPreferences the ptm scoring preferences
+     * @param objectsCache the object cache
+     * @param emptyCache a boolean indicating whether the object cache should be emptied
+     * @throws IOException
+     * @throws SQLException
+     * @throws FileNotFoundException
+     * @throws ArchiveException 
+     */
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
+            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
+            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
+            ObjectsCache objectsCache, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+        saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, objectsCache, emptyCache, null);
+    }
+    
+    /**
+     * Saves the given data in a cps file
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param experiment the experiment to save 
@@ -55,11 +84,11 @@ public class CpsExporter {
      * @throws FileNotFoundException
      * @throws ArchiveException
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
-            AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences, 
-            DisplayPreferences displayPreferences, Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, 
-            PTMScoringPreferences ptmScoringPreferences, ObjectsCache objectsCache, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
+            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
+            Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
+            ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+        
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
@@ -69,7 +98,7 @@ public class CpsExporter {
         identification.close();
 
         // transfer all files in the match directory
-        if (!waitingHandler.isRunCanceled()) {
+        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
             waitingHandler.getPrimaryProgressBar().setIndeterminate(true);
             waitingHandler.getPrimaryProgressBar().setStringPainted(false);
             File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
@@ -79,7 +108,7 @@ public class CpsExporter {
         identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, false, objectsCache);
 
         // tar everything in the current cps file file
-        if (!waitingHandler.isRunCanceled()) {
+        if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
             File matchesFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
             TarUtils.tarFolder(matchesFolder, destinationFile, waitingHandler);
         }

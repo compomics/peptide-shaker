@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.pride;
+package eu.isas.peptideshaker.gui.pride.annotationdialogs;
 
 import com.compomics.util.Util;
 import com.compomics.util.pride.prideobjects.Contact;
@@ -86,7 +86,6 @@ public class NewContactDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Contact");
-        setPreferredSize(new java.awt.Dimension(554, 300));
         setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));

@@ -1,8 +1,13 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.preferences.ModificationProfile;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class is a simple bean wrapping the CLI parameters provided in an
@@ -13,223 +18,367 @@ import java.io.File;
 public class PeptideShakerCLIInputBean {
 
     /**
-     * Accepted PSM FDR.
+     * The experiment name.
      */
-    private double iPSMFDR = 1.0;
+    private String iExperimentID = null;
     /**
-     * Accepted Peptide sequence FDR.
+     * The sample name.
      */
-    private double iPeptideFDR = 1.0;
+    private String iSampleID = null;
     /**
-     * Accepted Protein FDR.
+     * The replicate number.
      */
-    private double iProteinFDR = 1.0;
+    private int replicate = 0;
     /**
-     * Include estimation of AScore.
+     * The spectrum files
      */
-    private boolean boolAScore = false;
+    private ArrayList<File> spectrumFiles = null;
     /**
-     * SearchGUI input folder.
+     * The identification files
      */
-    private File iInput = null;
+    private ArrayList<File> idFiles = null;
     /**
-     * PeptideShaker output folder.
+     * PeptideShaker output file.
      */
-    private File iOutput = null;
+    private File output = null;
     /**
-     * Taskname which will be used to name the experiment.
+     * csv output directory.
      */
-    private String iExperimentID = "peptideshaker_cli_exp_default";
+    private File csvDirectory = null;
     /**
-     * Taskname which will be used to name the sample.
+     * PeptideShaker pride output file.
      */
-    private String iSampleID = "peptideshaker_cli_sample_default";
+    private File prideFile = null;
+    /**
+     * PSM FDR used for validation.
+     */
+    private double psmFDR = 1.0;
+    /**
+     * PSM FLR used for modification localization.
+     */
+    private double psmFLR = 1.0;
+    /**
+     * Peptide FDR used for validation.
+     */
+    private double peptideFDR = 1.0;
+    /**
+     * Protein FDR used for validation.
+     */
+    private double proteinFDR = 1.0;
+    /**
+     * The identification parameters used for the search
+     */
+    private SearchParameters identificationParameters = null;
 
     /**
      * Construct a PeptideShakerCLIInputBean from a Apache CLI instance.
      *
      * @param aLine the command line
      */
-    public PeptideShakerCLIInputBean(CommandLine aLine) {
+    public PeptideShakerCLIInputBean(CommandLine aLine) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-        iInput = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_INPUT.id));
-        iOutput = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
-
-        if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PSM.id)) {
-            iPSMFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PSM.id));
+        iExperimentID = aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id);
+        iSampleID = aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id);
+        
+        if (aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id)) {
+            replicate = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id));
+        }
+        
+        spectrumFiles = new ArrayList<File>();
+        String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
+        for (String file : splitInput(filesTxt)) {
+            File testFile = new File(file);
+            if (testFile.exists()) {
+                spectrumFiles.add(testFile);
+            } else {
+                throw new FileNotFoundException(file + " not found.");
+            }
+        }
+        
+        idFiles = new ArrayList<File>();
+        filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
+        for (String file : splitInput(filesTxt)) {
+            File testFile = new File(file);
+            if (testFile.exists()) {
+                idFiles.add(testFile);
+            } else {
+                throw new FileNotFoundException(file + " not found.");
+            }
+        }
+        
+        output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
+        
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id)) {
+            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id).trim();
+            File testFile = new File(filesTxt);
+            if (testFile.exists()) {
+                csvDirectory = testFile;
+                
+            } else {
+                throw new FileNotFoundException(filesTxt + " not found.");
+            }
+        }
+        
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
+            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
+            File testFile = new File(filesTxt);
+                prideFile = testFile;
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id)) {
-            iPeptideFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PEPTIDE.id));
+        if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
+            psmFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PSM_FDR.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id)) {
-            iProteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.FDR_LEVEL_PROTEIN.id));
+        if (aLine.hasOption(PeptideShakerCLIParams.PSM_FLR.id)) {
+            psmFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PSM_FLR.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.ASCORE.id)) {
-            iProteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.ASCORE.id));
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDE_FDR.id)) {
+            peptideFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDE_FDR.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.EXPERIMENT.id)) {
-            iExperimentID = aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id);
+        if (aLine.hasOption(PeptideShakerCLIParams.PROTEIN_FDR.id)) {
+            proteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PROTEIN_FDR.id));
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.SAMPLE.id)) {
-            iSampleID = aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id);
+        if (aLine.hasOption(PeptideShakerCLIParams.SEARCH_PARAMETERS.id)) {
+            
+            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_PARAMETERS.id);
+            File testFile = new File(filesTxt);
+            if (testFile.exists()) {
+                identificationParameters = SearchParameters.getIdentificationParameters(testFile);
+            } else {
+                throw new FileNotFoundException(filesTxt + " not found.");
+            }
         }
 
     }
 
     /**
-     * Empty constructor for API usage via other tools. Use the SETTERS!
+     * Empty constructor for API usage via other tools.
      */
     public PeptideShakerCLIInputBean() {
     }
 
     /**
-     * Returns the accepted identification PSM FDR.
-     * 
-     * @return the accepted identification PSM FD
+     * Returns the directory for csv output. Null if not set
+     * @return the directory for csv output
      */
-    public double getPSMFDR() {
-        return iPSMFDR;
+    public File getCsvDirectory() {
+        return csvDirectory;
     }
 
     /**
-     * Returns the accepted identification Peptide FDR.
-     * 
-     * @return the accepted identification Peptide FDR
+     * Sets the directory for csv output
+     * @param csvDirectory the directory for csv output
      */
-    public double getPeptideFDR() {
-        return iPeptideFDR;
+    public void setCsvDirectory(File csvDirectory) {
+        this.csvDirectory = csvDirectory;
     }
 
     /**
-     * Returns the accepted identification Protein FDR.
-     * 
-     * @return the accepted identification Protein FDR
+     * Returns the experiment name
+     * @return the experiment name
      */
-    public double getProteinFDR() {
-        return iProteinFDR;
-    }
-
-    /**
-     * Returns the SearchGUI result folder as the input folder for PeptideShaker.
-     *
-     * @return the SearchGUI result folder as the input folder for PeptideShaker
-     */
-    public File getInput() {
-        return iInput;
-    }
-
-    /**
-     * Returns the PeptideShaker output folder.
-     * 
-     * @return the PeptideShaker output folder
-     */
-    public File getOutput() {
-        return iOutput;
-    }
-
-    /**
-     * Set the accepted identification PSM FDR.
-     *
-     * @param aPSMFDR Accepted FDR at Peptide-Spectrum-Match level (e.g. '1.0'
-     * for 1% FDR)
-     */
-    public void setPSMFDR(double aPSMFDR) {
-        iPSMFDR = aPSMFDR;
-    }
-
-    /**
-     * Set the accepted identification Peptide FDR.
-     *
-     * @param aPeptideFDR Accepted FDR at Peptide Sequence level (e.g. '1.0' for
-     * 1% FDR)
-     */
-    public void setPeptideFDR(double aPeptideFDR) {
-        iPeptideFDR = aPeptideFDR;
-    }
-
-    /**
-     * Set the accepted identification Protein FDR.
-     *
-     * @param aProteinFDR Accepted FDR at Protein level (e.g. '1.0' for 1% FDR)
-     */
-    public void setProteinFDR(double aProteinFDR) {
-        iProteinFDR = aProteinFDR;
-    }
-
-    /**
-     * Set the SearchGUI result folder as the input folder for PeptideShaker.
-     * 
-     * @param aInput the SearchGUI result folder
-     */
-    public void setInput(File aInput) {
-        iInput = aInput;
-    }
-
-    /**
-     * Set the SearchGUI result folder as the input folder for PeptideShaker.
-     * 
-     * @param aOutput the SearchGUI result folder
-     */
-    public void setOutput(File aOutput) {
-        iOutput = aOutput;
-    }
-
-    /**
-     * Get the ID for the Experiment.
-     * 
-     * @return the ID for the Experiment
-     */
-    public String getExperimentID() {
+    public String getiExperimentID() {
         return iExperimentID;
     }
 
     /**
-     * Set the ID for the Experiment.
-     * 
-     * @param aExperimentID the ID for the Experiment
+     * Sets the experiment name
+     * @param iExperimentID the experiment name
      */
-    public void setExperimentID(String aExperimentID) {
-        iExperimentID = aExperimentID;
+    public void setiExperimentID(String iExperimentID) {
+        this.iExperimentID = iExperimentID;
     }
 
     /**
-     * Get the ID for the Sample.
-     * 
-     * @return the ID for the Sample
+     * Returns the cps output file
+     * @return the cps output file
      */
-    public String getSampleID() {
+    public File getOutput() {
+        return output;
+    }
+
+    /**
+     * Sets the cps output file
+     * @param output the cps output file
+     */
+    public void setOutput(File output) {
+        this.output = output;
+    }
+
+    /**
+     * Returns the PSM FDR in percent.
+     * @return the PSM FDR
+     */
+    public double getPsmFDR() {
+        return psmFDR;
+    }
+
+    /**
+     * Sets the PSM FDR in percent
+     * @param iPSMFDR the PSM FDR
+     */
+    public void setPsmFDR(double psmFDR) {
+        this.psmFDR = psmFDR;
+    }
+
+    /**
+     * Sets the PSM FLR in percent
+     * @return the PSM FLR 
+     */
+    public double getiPsmFLR() {
+        return psmFLR;
+    }
+
+    /**
+     * Sets the PSM FLR in percent
+     * @param iPSMFLR the PSM FLR
+     */
+    public void setPsmFLR(double psmFLR) {
+        this.psmFLR = psmFLR;
+    }
+
+    /**
+     * Returns the peptide FDR in percent
+     * @return the peptide FDR
+     */
+    public double getPeptideFDR() {
+        return peptideFDR;
+    }
+
+    /**
+     * Sets the peptide FDR in percent
+     * @param iPeptideFDR the peptide FDR
+     */
+    public void setPeptideFDR(double peptideFDR) {
+        this.peptideFDR = peptideFDR;
+    }
+
+    /**
+     * Returns the protein FDR in percent
+     * @return the protein FDR 
+     */
+    public double getProteinFDR() {
+        return proteinFDR;
+    }
+
+    /**
+     * Sets the protein FDR in percent
+     * @param iProteinFDR the protein FDR
+     */
+    public void setProteinFDR(double proteinFDR) {
+        this.proteinFDR = proteinFDR;
+    }
+
+    /**
+     * Returns the name of the sample
+     * @return the name of the sample
+     */
+    public String getiSampleID() {
         return iSampleID;
     }
 
     /**
-     * Set the ID for the Sample.
-     * 
-     * @param aSampleID the ID for the Sample
+     * Sets the name of the sample
+     * @param iSampleID the name of the sample
      */
-    public void setSampleID(String aSampleID) {
-        iSampleID = aSampleID;
+    public void setiSampleID(String iSampleID) {
+        this.iSampleID = iSampleID;
     }
 
     /**
-     * Returns whether the AScore should be estimated for phospho peptides.
-     * 
-     * @return whether the AScore should be estimated
+     * Returns the identification files
+     * @return the identification files
      */
-    public boolean estimateAScore() {
-        return boolAScore;
+    public ArrayList<File> getIdFiles() {
+        return idFiles;
     }
 
     /**
-     * Set if the AScore should be estimated for phospho peptides.
-     * 
-     * @param boolAScore if the AScore should be estimated
+     * Sets the identification files
+     * @param idFiles the identification files
      */
-    public void setEstimateAScore(boolean boolAScore) {
-        this.boolAScore = boolAScore;
+    public void setIdFiles(ArrayList<File> idFiles) {
+        this.idFiles = idFiles;
     }
+
+    /**
+     * Returns the pride file
+     * @return the pride file
+     */
+    public File getPrideFile() {
+        return prideFile;
+    }
+
+    /**
+     * Sets the pride file
+     * @param prideFile the pride file
+     */
+    public void setPrideFile(File prideFile) {
+        this.prideFile = prideFile;
+    }
+
+    /**
+     * Returns the replicate number
+     * @return the replicate number
+     */
+    public int getReplicate() {
+        return replicate;
+    }
+
+    /**
+     * Sets the replicate number
+     * @param replicate the replicate number
+     */
+    public void setReplicate(int replicate) {
+        this.replicate = replicate;
+    }
+
+    /**
+     * Returns the spectrum files
+     * @return the spectrum files
+     */
+    public ArrayList<File> getSpectrumFiles() {
+        return spectrumFiles;
+    }
+
+    /**
+     * Sets the spectrum files
+     * @param spectrumFiles the spectrum files
+     */
+    public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
+        this.spectrumFiles = spectrumFiles;
+    }
+
+    /**
+     * Returns the identification parameters
+     * @return the identification parameters
+     */
+    public SearchParameters getIdentificationParameters() {
+        return identificationParameters;
+    }
+
+    /**
+     * Sets the identification parameters
+     * @param identificationParameters the identification parameters
+     */
+    public void setIdentificationParameters(SearchParameters identificationParameters) {
+        this.identificationParameters = identificationParameters;
+    }
+    
+    /**
+     * Returns a list of file names for inputs of comma separated files
+     * @param cliInput the CLI input
+     * @return a list of file names
+     */
+    public static ArrayList<String> splitInput(String cliInput) {
+        ArrayList<String> results = new ArrayList<String>();
+        for (String file : cliInput.split(",")) {
+                results.add(file.trim());
+        }
+        return results;
+    }
+    
 }

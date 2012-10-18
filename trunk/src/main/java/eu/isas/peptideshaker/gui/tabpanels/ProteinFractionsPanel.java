@@ -319,7 +319,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             @Override
             public void run() {
 
-                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
+                try {
+                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
+                } catch (Exception e) {
+                    // Now I'd be surprised that you reach this stage
+                    peptideShakerGUI.catchException(e);
+                }
 
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinTableModel) {
@@ -342,11 +347,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 setUpTableHeaderToolTips();
 
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, true);
+                
+                String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins (";
+                try {
+                    title += peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/";
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+                title += proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
 
                 // update the border titles
-                ((TitledBorder) proteinPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Proteins ("
-                        + peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedProteins() + "/" + proteinTable.getRowCount() + ")"
-                        + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                ((TitledBorder) proteinPanel.getBorder()).setTitle(title);
                 proteinPanel.repaint();
 
                 plotsTabbedPane.setSelectedIndex(6);
@@ -371,8 +382,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             ArrayList<String> fileNames = new ArrayList<String>();
 
-            for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-                String fileName = Util.getFileName(filePath);
+            for (String fileName : peptideShakerGUI.getIdentification().getSpectrumFiles()) {
                 fileNames.add(fileName);
             }
 
@@ -399,7 +409,19 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 int proteinIndex = proteinTable.convertRowIndexToModel(currentRow);
                 String proteinKey = proteinKeys.get(proteinIndex);
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                try {
                 peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinKey);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    try {
+                        // Let's try without order
+                        peptideKeys = proteinMatch.getPeptideMatches();
+                    } catch (Exception e1) {
+                        peptideShakerGUI.catchException(e1);
+                        // ok you are really unlucky... Just hope the GUI holds...
+                        peptideKeys = new ArrayList<String>();
+                    }
+                }
 
                 String currentProteinSequence = "";
 
@@ -572,7 +594,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             DefaultBoxAndWhiskerCategoryDataset mwPlotDataset = new DefaultBoxAndWhiskerCategoryDataset();
 
             HashMap<String, Double> molecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
-            ArrayList<String> spectrumFiles = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+            ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getSpectrumFiles();
 
             for (int i = 0; i < spectrumFiles.size(); i++) {
 
@@ -585,8 +607,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 //mwPlotDataset.addValue(mw, "Expected MW", "" + (i + 1));
 
                 try {
-                    if (peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().containsKey(Util.getFileName(spectrumFiles.get(i)))) {
-                        mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(Util.getFileName(spectrumFiles.get(i))), "Observed MW (kDa)", "" + (i + 1));
+                    if (peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().containsKey(spectrumFiles.get(i))) {
+                        mwPlotDataset.add(peptideShakerGUI.getMetrics().getObservedFractionalMassesAll().get(spectrumFiles.get(i)), "Observed MW (kDa)", "" + (i + 1));
                     } else {
                         mwPlotDataset.add(new ArrayList<Double>(), "Observed MW (kDa)", "" + (i + 1));
                     }

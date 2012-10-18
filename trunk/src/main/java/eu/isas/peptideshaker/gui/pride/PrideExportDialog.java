@@ -1,5 +1,10 @@
 package eu.isas.peptideshaker.gui.pride;
 
+import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewProtocolDialog;
+import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewReferenceGroupDialog;
+import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewContactGroupDialog;
+import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewSampleDialog;
+import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewInstrumentDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.pride.prideobjects.Reference;
@@ -166,7 +171,14 @@ public class PrideExportDialog extends javax.swing.JDialog {
             }
             report += ".\nPlease add a CV term by clicking on the corresponding case in the PTM table.";
             JOptionPane.showMessageDialog(peptideShakerGUI, report, "PTM CV Term(s) Missing.", JOptionPane.WARNING_MESSAGE);
-            new SearchPreferencesDialog(peptideShakerGUI, true);
+            SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.loadPrideToPtmMap(), peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+            if (!searchPreferencesDialog.isCanceled()) {
+                try {
+                searchPreferencesDialog.updatePtmToPrideMap();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+            }
         }
     }
 

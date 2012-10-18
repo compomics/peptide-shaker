@@ -341,8 +341,9 @@ public class OutputGenerator {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
+                                                    peptideShakerGUI.catchException(e);
                                                     if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                        writer.write(Double.NaN + SEPARATOR);
                                                     }
                                                 }
                                             }
@@ -350,8 +351,9 @@ public class OutputGenerator {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
+                                                    peptideShakerGUI.catchException(e);
                                                     if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                        writer.write(Double.NaN + SEPARATOR);
                                                     }
                                                 }
                                             }
@@ -1882,8 +1884,7 @@ public class OutputGenerator {
                     try {
                         ArrayList<String> fractionFileNames = new ArrayList<String>();
 
-                        for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-                            String fileName = Util.getFileName(filePath);
+                        for (String fileName : peptideShakerGUI.getIdentification().getSpectrumFiles()) {
                             fractionFileNames.add(fileName);
                         }
 

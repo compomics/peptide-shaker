@@ -1,8 +1,9 @@
-package eu.isas.peptideshaker.gui.pride;
+package eu.isas.peptideshaker.gui.pride.annotationdialogs;
 
 import com.compomics.util.Util;
-import com.compomics.util.pride.prideobjects.Contact;
-import com.compomics.util.pride.prideobjects.ContactGroup;
+import com.compomics.util.pride.prideobjects.Reference;
+import com.compomics.util.pride.prideobjects.ReferenceGroup;
+import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -11,65 +12,65 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * A dialog for creating new contact groups and editing old ones.
+ * A dialog for creating new reference groups and editing old ones.
  *
  * @author Harald Barsnes
  */
-public class NewContactGroupDialog extends javax.swing.JDialog {
+public class NewReferenceGroupDialog extends javax.swing.JDialog {
 
     /**
      * A reference to the PRIDE export dialog.
      */
     private PrideExportDialog prideExportDialog;
     /**
-     * The last valid input for contact name
+     * The last valid input for reference name.
      */
     private String lastNameInput = "";
 
     /**
-     * Creates a new NewContactDialog.
+     * Creates a new NewReferenceGroupDialog.
      *
      * @param prideExportDialog
      * @param modal
      */
-    public NewContactGroupDialog(PrideExportDialog prideExportDialog, boolean modal) {
+    public NewReferenceGroupDialog(PrideExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
         setUpGUI();
         validateInput();
         setLocationRelativeTo(prideExportDialog);
-        contactsJTableMouseReleased(null);
+        referencesJTableMouseReleased(null);
         setVisible(true);
     }
 
     /**
-     * Creates a new NewContactDialog.
+     * Creates a new NewReferenceGroupDialog.
      *
      * @param prideExportDialog
      * @param modal
-     * @param contactGroup
+     * @param referenceGroup
      */
-    public NewContactGroupDialog(PrideExportDialog prideExportDialog, boolean modal, ContactGroup contactGroup) {
+    public NewReferenceGroupDialog(PrideExportDialog prideExportDialog, boolean modal, ReferenceGroup referenceGroup) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
         initComponents();
         setUpGUI();
 
-        groupNameTextField.setText(contactGroup.getName());
+        groupNameTextField.setText(referenceGroup.getName());
 
-        for (int i = 0; i < contactGroup.getContacts().size(); i++) {
-            ((DefaultTableModel) contactsJTable.getModel()).addRow(new Object[]{
-                        contactsJTable.getRowCount() + 1,
-                        contactGroup.getContacts().get(i).getName(),
-                        contactGroup.getContacts().get(i).getEMail(),
-                        contactGroup.getContacts().get(i).getInstitution()
+        for (int i = 0; i < referenceGroup.getReferences().size(); i++) {
+            ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
+                        referencesJTable.getRowCount() + 1,
+                        referenceGroup.getReferences().get(i).getReference(),
+                        referenceGroup.getReferences().get(i).getPmid(),
+                        referenceGroup.getReferences().get(i).getDoi()
                     });
         }
 
         validateInput();
-        contactsJTableMouseReleased(null);
-        setTitle("Edit Contacts");
+        referencesJTableMouseReleased(null);
+        setTitle("Edit References");
         setLocationRelativeTo(prideExportDialog);
         setVisible(true);
     }
@@ -78,17 +79,17 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
      * Set up the GUI.
      */
     private void setUpGUI() {
-        contactsScrollPane.getViewport().setOpaque(false);
-        contactsJTable.getTableHeader().setReorderingAllowed(false);
+        referencesScrollPane.getViewport().setOpaque(false);
+        referencesJTable.getTableHeader().setReorderingAllowed(false);
 
         // correct the color for the upper right corner
         JPanel proteinCorner = new JPanel();
-        proteinCorner.setBackground(contactsJTable.getTableHeader().getBackground());
-        contactsScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, proteinCorner);
+        proteinCorner.setBackground(referencesJTable.getTableHeader().getBackground());
+        referencesScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, proteinCorner);
         
         // the index column
-        contactsJTable.getColumn(" ").setMaxWidth(50);
-        contactsJTable.getColumn(" ").setMinWidth(50);
+        referencesJTable.getColumn(" ").setMaxWidth(50);
+        referencesJTable.getColumn(" ").setMinWidth(50);
     }
 
     /**
@@ -108,9 +109,9 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         jSeparator4 = new javax.swing.JSeparator();
         deleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
         backgroundPanel = new javax.swing.JPanel();
-        contactPanel = new javax.swing.JPanel();
-        contactsScrollPane = new javax.swing.JScrollPane();
-        contactsJTable = new javax.swing.JTable();
+        referencestPanel = new javax.swing.JPanel();
+        referencesScrollPane = new javax.swing.JScrollPane();
+        referencesJTable = new javax.swing.JTable();
         addButton = new javax.swing.JButton();
         groupNameLabel = new javax.swing.JLabel();
         groupNameTextField = new javax.swing.JTextField();
@@ -156,21 +157,21 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         popupJMenu.add(deleteSelectedRowJMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("New Contact Group");
+        setTitle("New Reference Group");
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        contactPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Contacts"));
-        contactPanel.setOpaque(false);
+        referencestPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("References"));
+        referencestPanel.setOpaque(false);
 
-        contactsScrollPane.setOpaque(false);
+        referencesScrollPane.setOpaque(false);
 
-        contactsJTable.setModel(new javax.swing.table.DefaultTableModel(
+        referencesJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                " ", "Name", "E-mail", "Institute"
+                " ", "Reference", "PMID", "DOI"
             }
         ) {
             Class[] types = new Class [] {
@@ -188,19 +189,19 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        contactsJTable.setOpaque(false);
-        contactsJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        contactsJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        referencesJTable.setOpaque(false);
+        referencesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        referencesJTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                contactsJTableMouseClicked(evt);
+                referencesJTableMouseClicked(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                contactsJTableMouseReleased(evt);
+                referencesJTableMouseReleased(evt);
             }
         });
-        contactsScrollPane.setViewportView(contactsJTable);
+        referencesScrollPane.setViewportView(referencesJTable);
 
-        addButton.setText("Add Contact");
+        addButton.setText("Add Reference");
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
@@ -216,7 +217,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         });
 
         deleteGroupButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Error_3.png"))); // NOI18N
-        deleteGroupButton.setToolTipText("Delete Contact Group");
+        deleteGroupButton.setToolTipText("Delete Reference Group");
         deleteGroupButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 deleteGroupButtonMouseEntered(evt);
@@ -231,18 +232,18 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout contactPanelLayout = new javax.swing.GroupLayout(contactPanel);
-        contactPanel.setLayout(contactPanelLayout);
-        contactPanelLayout.setHorizontalGroup(
-            contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contactPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout referencestPanelLayout = new javax.swing.GroupLayout(referencestPanel);
+        referencestPanel.setLayout(referencestPanelLayout);
+        referencestPanelLayout.setHorizontalGroup(
+            referencestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(referencestPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(contactsScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contactPanelLayout.createSequentialGroup()
+                .addGroup(referencestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(referencesScrollPane, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, referencestPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(addButton))
-                    .addGroup(contactPanelLayout.createSequentialGroup()
+                    .addGroup(referencestPanelLayout.createSequentialGroup()
                         .addComponent(groupNameLabel)
                         .addGap(18, 18, 18)
                         .addComponent(groupNameTextField)
@@ -250,22 +251,22 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
                         .addComponent(deleteGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        contactPanelLayout.setVerticalGroup(
-            contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contactPanelLayout.createSequentialGroup()
+        referencestPanelLayout.setVerticalGroup(
+            referencestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(referencestPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(contactPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(referencestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(groupNameLabel)
                     .addComponent(groupNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteGroupButton))
+                    .addComponent(deleteGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(contactsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                .addComponent(referencesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addButton)
                 .addContainerGap())
         );
 
-        contactPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {deleteGroupButton, groupNameTextField});
+        referencestPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {deleteGroupButton, groupNameTextField});
 
         okJButton.setText("OK");
         okJButton.setEnabled(false);
@@ -285,7 +286,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(contactPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(referencestPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(groupNameNoteLabel)
@@ -297,7 +298,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(contactPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(referencestPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okJButton)
@@ -320,22 +321,22 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Saves the contact and closes the dialog.
+     * Saves the reference and closes the dialog.
      *
      * @param evt
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
+        ArrayList<Reference> references = new ArrayList<Reference>();
 
-        for (int i = 0; i < contactsJTable.getRowCount(); i++) {
-            contacts.add(new Contact(
-                    (String) contactsJTable.getValueAt(i, 1),
-                    (String) contactsJTable.getValueAt(i, 2),
-                    (String) contactsJTable.getValueAt(i, 3)));
+        for (int i = 0; i < referencesJTable.getRowCount(); i++) {
+            references.add(new Reference(
+                    (String) referencesJTable.getValueAt(i, 1),
+                    (String) referencesJTable.getValueAt(i, 2),
+                    (String) referencesJTable.getValueAt(i, 3)));
         }
 
-        prideExportDialog.setContacts(new ContactGroup(contacts, groupNameTextField.getText()));
+        prideExportDialog.setReferences(new ReferenceGroup(references, groupNameTextField.getText()));
         dispose();
     }//GEN-LAST:event_okJButtonActionPerformed
 
@@ -344,18 +345,18 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void contactsJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_contactsJTableMouseReleased
-        int selectedRow = contactsJTable.getSelectedRow();
+    private void referencesJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_referencesJTableMouseReleased
+        int selectedRow = referencesJTable.getSelectedRow();
         deleteSelectedRowJMenuItem.setEnabled(selectedRow != -1);
-    }//GEN-LAST:event_contactsJTableMouseReleased
+    }//GEN-LAST:event_referencesJTableMouseReleased
 
     /**
-     * Open the New Contact dialog.
+     * Open the New Reference dialog.
      *
      * @param evt
      */
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        new NewContactDialog(this, true);
+        new NewReferenceDialog(this, true);
     }//GEN-LAST:event_addButtonActionPerformed
 
     /**
@@ -367,62 +368,62 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_groupNameTextFieldKeyReleased
 
     private void editJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editJMenuItemActionPerformed
-        int selectedRow = contactsJTable.getSelectedRow();
+        int selectedRow = referencesJTable.getSelectedRow();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new NewContactDialog(this, true, new Contact(
-                    (String) contactsJTable.getValueAt(selectedRow, 1),
-                    (String) contactsJTable.getValueAt(selectedRow, 2),
-                    (String) contactsJTable.getValueAt(selectedRow, 3)), 
+        new NewReferenceDialog(this, true, new Reference(
+                    (String) referencesJTable.getValueAt(selectedRow, 1),
+                    (String) referencesJTable.getValueAt(selectedRow, 2),
+                    (String) referencesJTable.getValueAt(selectedRow, 3)), 
                     selectedRow);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_editJMenuItemActionPerformed
 
     private void moveUpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpJMenuItemActionPerformed
-        int selectedRow = contactsJTable.getSelectedRow();
-        int selectedColumn = contactsJTable.getSelectedColumn();
+        int selectedRow = referencesJTable.getSelectedRow();
+        int selectedColumn = referencesJTable.getSelectedColumn();
 
         Object[] tempRow = new Object[]{
-            contactsJTable.getValueAt(selectedRow - 1, 0),
-            contactsJTable.getValueAt(selectedRow - 1, 1),
-            contactsJTable.getValueAt(selectedRow - 1, 2),
-            contactsJTable.getValueAt(selectedRow - 1, 3)
+            referencesJTable.getValueAt(selectedRow - 1, 0),
+            referencesJTable.getValueAt(selectedRow - 1, 1),
+            referencesJTable.getValueAt(selectedRow - 1, 2),
+            referencesJTable.getValueAt(selectedRow - 1, 3)
         };
 
-        ((DefaultTableModel) contactsJTable.getModel()).removeRow(selectedRow - 1);
-        ((DefaultTableModel) contactsJTable.getModel()).insertRow(selectedRow, tempRow);
+        ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRow - 1);
+        ((DefaultTableModel) referencesJTable.getModel()).insertRow(selectedRow, tempRow);
 
-        contactsJTable.changeSelection(selectedRow - 1, selectedColumn, false, false);
+        referencesJTable.changeSelection(selectedRow - 1, selectedColumn, false, false);
 
         updateTableIndexes();
     }//GEN-LAST:event_moveUpJMenuItemActionPerformed
 
     private void moveDownJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownJMenuItemActionPerformed
-        int selectedRow = contactsJTable.getSelectedRow();
-        int selectedColumn = contactsJTable.getSelectedColumn();
+        int selectedRow = referencesJTable.getSelectedRow();
+        int selectedColumn = referencesJTable.getSelectedColumn();
 
         Object[] tempRow = new Object[]{
-            contactsJTable.getValueAt(selectedRow + 1, 0),
-            contactsJTable.getValueAt(selectedRow + 1, 1),
-            contactsJTable.getValueAt(selectedRow + 1, 2),
-            contactsJTable.getValueAt(selectedRow + 1, 3)
+            referencesJTable.getValueAt(selectedRow + 1, 0),
+            referencesJTable.getValueAt(selectedRow + 1, 1),
+            referencesJTable.getValueAt(selectedRow + 1, 2),
+            referencesJTable.getValueAt(selectedRow + 1, 3)
         };
 
-        ((DefaultTableModel) contactsJTable.getModel()).removeRow(selectedRow + 1);
-        ((DefaultTableModel) contactsJTable.getModel()).insertRow(selectedRow, tempRow);
+        ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRow + 1);
+        ((DefaultTableModel) referencesJTable.getModel()).insertRow(selectedRow, tempRow);
 
-        contactsJTable.changeSelection(selectedRow + 1, selectedColumn, false, false);
+        referencesJTable.changeSelection(selectedRow + 1, selectedColumn, false, false);
 
         updateTableIndexes();
     }//GEN-LAST:event_moveDownJMenuItemActionPerformed
 
     private void deleteSelectedRowJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSelectedRowJMenuItemActionPerformed
 
-        int selectedRow = contactsJTable.getSelectedRow();
+        int selectedRow = referencesJTable.getSelectedRow();
 
         if (selectedRow != -1) {
 
-            ((DefaultTableModel) contactsJTable.getModel()).removeRow(selectedRow);
+            ((DefaultTableModel) referencesJTable.getModel()).removeRow(selectedRow);
             updateTableIndexes();
             validateInput();
         }
@@ -433,18 +434,18 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void contactsJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_contactsJTableMouseClicked
+    private void referencesJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_referencesJTableMouseClicked
         if (evt.getButton() == 3) {
 
-            int row = contactsJTable.rowAtPoint(evt.getPoint());
-            int column = contactsJTable.columnAtPoint(evt.getPoint());
+            int row = referencesJTable.rowAtPoint(evt.getPoint());
+            int column = referencesJTable.columnAtPoint(evt.getPoint());
 
-            contactsJTable.changeSelection(row, column, false, false);
+            referencesJTable.changeSelection(row, column, false, false);
 
             this.moveUpJMenuItem.setEnabled(true);
             this.moveDownJMenuItem.setEnabled(true);
 
-            if (row == contactsJTable.getRowCount() - 1) {
+            if (row == referencesJTable.getRowCount() - 1) {
                 this.moveDownJMenuItem.setEnabled(false);
             }
 
@@ -456,7 +457,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         } else if (evt.getButton() == 1 && evt.getClickCount() == 2) {
             editJMenuItemActionPerformed(null);
         }
-    }//GEN-LAST:event_contactsJTableMouseClicked
+    }//GEN-LAST:event_referencesJTableMouseClicked
 
     /**
      * Delete the given group and close the dialog.
@@ -465,7 +466,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
      */
     private void deleteGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteGroupButtonActionPerformed
         dispose();
-        prideExportDialog.deleteContactGroup(new ContactGroup(new ArrayList<Contact>(), groupNameTextField.getText()));
+        prideExportDialog.deleteReferenceGroup(new ReferenceGroup(new ArrayList<Reference>(), groupNameTextField.getText()));
     }//GEN-LAST:event_deleteGroupButtonActionPerformed
 
     /**
@@ -489,9 +490,6 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JPanel backgroundPanel;
-    private javax.swing.JPanel contactPanel;
-    private javax.swing.JTable contactsJTable;
-    private javax.swing.JScrollPane contactsScrollPane;
     private javax.swing.JButton deleteGroupButton;
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
     private javax.swing.JMenuItem editJMenuItem;
@@ -504,6 +502,9 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     private javax.swing.JMenuItem moveUpJMenuItem;
     private javax.swing.JButton okJButton;
     private javax.swing.JPopupMenu popupJMenu;
+    private javax.swing.JTable referencesJTable;
+    private javax.swing.JScrollPane referencesScrollPane;
+    private javax.swing.JPanel referencestPanel;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -524,7 +525,7 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
         lastNameInput = input;
 
         if (groupNameTextField.getText().length() > 0
-                && contactsJTable.getRowCount() > 0) {
+                && referencesJTable.getRowCount() > 0) {
             okJButton.setEnabled(true);
         } else {
             okJButton.setEnabled(false);
@@ -539,38 +540,38 @@ public class NewContactGroupDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Add a new conctact to the table.
+     * Add a new reference to the table.
      *
-     * @param contact
+     * @param reference
      */
-    public void insertContact(Contact contact) {
-        ((DefaultTableModel) contactsJTable.getModel()).addRow(new Object[]{
-                    contactsJTable.getRowCount() + 1,
-                    contact.getName(),
-                    contact.getEMail(),
-                    contact.getInstitution()
+    public void insertReference(Reference reference) {
+        ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
+                    referencesJTable.getRowCount() + 1,
+                    reference.getReference(),
+                    reference.getPmid(),
+                    reference.getDoi()
                 });
         validateInput();
     }
     
     /**
-     * Add a new conctact to the table.
+     * Add a new reference to the table.
      *
-     * @param contact
+     * @param reference
      * @param row the index of the row to edit 
      */
-    public void editContact(Contact contact, int row) {
-        contactsJTable.setValueAt(contact.getName(), row, 1);
-        contactsJTable.setValueAt(contact.getEMail(), row, 2);
-        contactsJTable.setValueAt(contact.getInstitution(), row, 3);
+    public void editReference(Reference reference, int row) {
+        referencesJTable.setValueAt(reference.getReference(), row, 1);
+        referencesJTable.setValueAt(reference.getPmid(), row, 2);
+        referencesJTable.setValueAt(reference.getDoi(), row, 3);
     }
     
     /**
      * Update the table indexes.
      */
     private void updateTableIndexes() {
-        for (int i=0;i<contactsJTable.getRowCount(); i++) {
-            contactsJTable.setValueAt(i+1, i, 0);
+        for (int i=0;i<referencesJTable.getRowCount(); i++) {
+            referencesJTable.setValueAt(i+1, i, 0);
         }
     }
 }
