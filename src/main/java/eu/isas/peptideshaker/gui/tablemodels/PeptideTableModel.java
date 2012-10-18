@@ -146,7 +146,7 @@ public class PeptideTableModel extends DefaultTableModel {
                     return pSParameter.getGroupClass();
                 case 3:
                     peptideKey = peptideKeys.get(row);
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
                 case 4:
                     peptideKey = peptideKeys.get(row);
                     ArrayList<Integer> indexes;
@@ -160,11 +160,16 @@ public class PeptideTableModel extends DefaultTableModel {
                     Collections.sort(indexes);
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort of the first index if multiple indexes
                 case 5:
+                    try {
                     peptideKey = peptideKeys.get(row);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);   
+                    }catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return Double.NaN;
+                    }
                 case 6:
                     peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());

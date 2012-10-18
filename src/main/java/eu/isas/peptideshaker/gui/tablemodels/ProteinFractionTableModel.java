@@ -87,8 +87,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         
         fileNames = new ArrayList<String>();
         
-        for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-            String fileName = Util.getFileName(filePath);
+        for (String fileName : identification.getSpectrumFiles()) {
             fileNames.add(fileName);
         }
     }
@@ -143,7 +142,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 return row + 1;
             } else if (column == 1) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
-                return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
+                return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
             } else if (column == 2) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 String description = "";

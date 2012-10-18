@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import com.compomics.software.ToolFactory;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
@@ -323,7 +324,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
         this.setVisible(false);
 
-        openDialog.setSearchParamatersFiles(new ArrayList<File>());
         File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
 
         if (newFile != null) {
@@ -331,14 +331,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
-                // get the properties files
-                for (File file : newFile.getParentFile().listFiles()) {
-                    if (file.getName().toLowerCase().endsWith(".properties")) {
-                        if (!openDialog.getSearchParametersFiles().contains(file)) {
-                            openDialog.getSearchParametersFiles().add(file);
-                        }
-                    }
-                }
 
                 this.setVisible(false);
                 peptideShakerGUI.importPeptideShakerFile(newFile);

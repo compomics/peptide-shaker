@@ -2,6 +2,8 @@ package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.experiment.biology.Enzyme;
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import java.awt.Color;
 import java.io.File;
@@ -12,6 +14,8 @@ import java.util.HashMap;
 /**
  * This class will compile the search options
  *
+ * @deprecated use
+ * com.compomics.util.experiment.identification.IdentificationParameters instead
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
@@ -19,11 +23,19 @@ public class SearchParameters implements Serializable {
 
     /**
      * Serial version UID for post-serialization compatibility.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     static final long serialVersionUID = 5456658018168469122L;
 
     /**
      * Precursor accuracy types.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     public enum PrecursorAccuracyType {
 
@@ -31,75 +43,140 @@ public class SearchParameters implements Serializable {
     };
     /**
      * The current precursor accuracy type.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private PrecursorAccuracyType currentPrecursorAccuracyType = PrecursorAccuracyType.PPM;
     /**
      * The ms2 ion tolerance.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private double fragmentIonMZTolerance = 0.5;
     /**
      * The expected modifications. Modified peptides will be grouped and
      * displayed according to this classification.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead instead
      */
     private ModificationProfile utilitiesModificationProfile = new ModificationProfile();
     /**
      * The expected modifications. Modified peptides will be grouped and
      * displayed according to this classification.
+     *
      * @deprecated just here for backward compatibility
      */
     private eu.isas.peptideshaker.preferences.ModificationProfile modificationProfile;
     /**
      * The enzyme used for digestion.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private Enzyme enzyme;
     /**
      * The allowed number of missed cleavages.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private int nMissedCleavages;
     /**
      * The sequence database file used for identification.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private File fastaFile;
     /**
      * The searchGUI file loaded.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private File parametersFile;
     /**
      * The list of spectrum files.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private ArrayList<String> spectrumFiles = new ArrayList<String>();
     /**
      * The list of fraction molecular weights. The key is the fraction file
      * path.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private HashMap<String, Double> fractionMolecularWeights = new HashMap<String, Double>();
     /**
      * The first kind of ions searched for (typically a, b or c).
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private Integer forwardIon;
     /**
      * The second kind of ions searched for (typically x, y or z).
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private Integer rewindIon;
     /**
      * Convenience array for ion type selection.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private String[] ions = {"a", "b", "c", "x", "y", "z"};
     /**
      * Convenience array for forward ion type selection.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private String[] forwardIons = {"a", "b", "c"};
     /**
      * Convenience array for rewind ion type selection.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private String[] rewindIons = {"x", "y", "z"};
     /**
      * The precursor tolerance.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     private double precursorTolerance;
 
     /**
      * Constructor
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     public SearchParameters() {
     }
@@ -107,6 +184,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns a list containing the path of all spectrum files.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return a list containing the path of all spectrum files
      */
     public ArrayList<String> getSpectrumFiles() {
@@ -116,6 +196,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets a new list of spectrum files.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param spectrumFiles the new list of spectrum files
      */
     public void setSpectrumFiles(ArrayList<String> spectrumFiles) {
@@ -125,6 +208,9 @@ public class SearchParameters implements Serializable {
     /**
      * Adds a spectrum file to the list.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param spectrumFile a spectrum file
      */
     public void addSpectrumFile(String spectrumFile) {
@@ -133,6 +219,10 @@ public class SearchParameters implements Serializable {
 
     /**
      * Clears the list of spectrum files.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     public void clearSpectrumFilesList() {
         spectrumFiles = new ArrayList<String>();
@@ -141,6 +231,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the modification profile of the project.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the modification profile of the project
      */
     public ModificationProfile getModificationProfile() {
@@ -149,7 +242,8 @@ public class SearchParameters implements Serializable {
             utilitiesModificationProfile = new ModificationProfile();
             for (String utilitesName : modificationProfile.getUtilitiesNames()) {
                 String psName = modificationProfile.getFamilyName(utilitesName);
-                utilitiesModificationProfile.setPeptideShakerName(utilitesName, psName);
+                PTM modification = PTMFactory.getInstance().getPTM(psName);
+                utilitiesModificationProfile.addVariableModification(modification);
                 utilitiesModificationProfile.setShortName(psName, modificationProfile.getShortName(psName));
                 utilitiesModificationProfile.setColor(psName, modificationProfile.getColor(psName));
             }
@@ -160,6 +254,9 @@ public class SearchParameters implements Serializable {
     /**
      * sets the modification profile of the project.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param modificationProfile The modification profile
      */
     public void setModificationProfile(ModificationProfile modificationProfile) {
@@ -169,6 +266,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the ms2 ion m/z tolerance.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the ms2 ion m/z tolerance
      */
     public double getFragmentIonAccuracy() {
@@ -178,6 +278,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the fragment ion m/z tolerance.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param fragmentIonMZTolerance
      */
     public void setFragmentIonAccuracy(double fragmentIonMZTolerance) {
@@ -187,6 +290,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the enzyme used for digestion.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the enzyme used for digestion
      */
     public Enzyme getEnzyme() {
@@ -196,6 +302,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the enzyme used for digestion.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param enzyme the enzyme used for digestion
      */
     public void setEnzyme(Enzyme enzyme) {
@@ -205,6 +314,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the parameters file loaded.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the parameters file loaded
      */
     public File getParametersFile() {
@@ -214,6 +326,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the parameter file loaded.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param parametersFile the parameter file loaded
      */
     public void setParametersFile(File parametersFile) {
@@ -223,6 +338,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the sequence database file used for identification.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the sequence database file used for identification
      */
     public File getFastaFile() {
@@ -232,6 +350,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the sequence database file used for identification.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param fastaFile the sequence database file used for identification
      */
     public void setFastaFile(File fastaFile) {
@@ -241,6 +362,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the allowed number of missed cleavages.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the allowed number of missed cleavages
      */
     public int getnMissedCleavages() {
@@ -250,6 +374,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the allowed number of missed cleavages.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param nMissedCleavages the allowed number of missed cleavages
      */
     public void setnMissedCleavages(int nMissedCleavages) {
@@ -259,6 +386,9 @@ public class SearchParameters implements Serializable {
     /**
      * Getter for the first kind of ion searched.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the first kind of ion searched
      */
     public Integer getIonSearched1() {
@@ -268,6 +398,9 @@ public class SearchParameters implements Serializable {
     /**
      * Setter for the first kind of ion searched.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param ionSearched1 the first kind of ion searched
      */
     public void setIonSearched1(String ionSearched1) {
@@ -289,6 +422,9 @@ public class SearchParameters implements Serializable {
     /**
      * Getter for the second kind of ion searched.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the second kind of ion searched
      */
     public Integer getIonSearched2() {
@@ -298,6 +434,9 @@ public class SearchParameters implements Serializable {
     /**
      * Setter for the second kind of ion searched.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param ionSearched2 the second kind of ion searched
      */
     public void setIonSearched2(String ionSearched2) {
@@ -319,6 +458,9 @@ public class SearchParameters implements Serializable {
     /**
      * Getter for the list of ion symbols used.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the list of ion symbols used
      */
     public String[] getIons() {
@@ -328,6 +470,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the list of forward ions.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the forwardIons
      */
     public String[] getForwardIons() {
@@ -343,6 +488,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the list of rewind ions.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the rewindIons
      */
     public String[] getRewindIons() {
@@ -358,6 +506,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the precursor tolerance.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the precursor tolerance
      */
     public double getPrecursorAccuracy() {
@@ -367,6 +518,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the precursor tolerance.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param precursorTolerance the precursor tolerance
      */
     public void setPrecursorAccuracy(double precursorTolerance) {
@@ -376,6 +530,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns the precursor accuracy type.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the precursor accuracy type
      */
     public PrecursorAccuracyType getPrecursorAccuracyType() {
@@ -385,6 +542,9 @@ public class SearchParameters implements Serializable {
     /**
      * Sets the precursor accuracy type.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param currentPrecursorAccuracyType the precursor accuracy type
      */
     public void setPrecursorAccuracyType(PrecursorAccuracyType currentPrecursorAccuracyType) {
@@ -394,6 +554,9 @@ public class SearchParameters implements Serializable {
     /**
      * Returns true if the current precursor accuracy type is ppm.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return true if the current precursor accuracy type is ppm
      */
     public boolean isPrecursorAccuracyTypePpm() {
@@ -402,6 +565,10 @@ public class SearchParameters implements Serializable {
 
     /**
      * Update for the version older than 0.15.1.
+     *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      */
     public void updateVersion() {
         if (forwardIon == null) {
@@ -416,6 +583,9 @@ public class SearchParameters implements Serializable {
      * Returns the user provided molecular weights of the fractions. The key is
      * the fraction file path.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @return the user provided molecular weights of the fractions
      */
     public HashMap<String, Double> getFractionMolecularWeights() {
@@ -426,6 +596,9 @@ public class SearchParameters implements Serializable {
      * Set the user provided molecular weights of the fractions. The key is the
      * fraction file path.
      *
+     * @deprecated use
+     * com.compomics.util.experiment.identification.IdentificationParameters
+     * instead
      * @param fractionMolecularWeights the fractionMolecularWeights to set
      */
     public void setFractionMolecularWeights(HashMap<String, Double> fractionMolecularWeights) {

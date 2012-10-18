@@ -22,10 +22,6 @@ public class ProjectDetails implements Serializable {
      */
     private ArrayList<File> identificationFiles;
     /**
-     * The database file loaded.
-     */
-    private File dbFile;
-    /**
      * When the project was created.
      */
     private Date creationDate;
@@ -87,24 +83,6 @@ public class ProjectDetails implements Serializable {
      * Constructor
      */
     public ProjectDetails() {
-    }
-
-    /**
-     * Getter for the database file.
-     *
-     * @return the database file
-     */
-    public File getDbFile() {
-        return dbFile;
-    }
-
-    /**
-     * Setter for the database file.
-     *
-     * @param dbFile the database file
-     */
-    public void setDbFile(File dbFile) {
-        this.dbFile = dbFile;
     }
 
     /**

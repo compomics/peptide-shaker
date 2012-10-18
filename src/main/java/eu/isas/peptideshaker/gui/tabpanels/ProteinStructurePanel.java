@@ -19,8 +19,8 @@ import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
-import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
+import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
+import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
@@ -1955,7 +1955,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
+                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2630,10 +2630,28 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 PeptideMatch currentMatch;
 
                 int index = 0;
-                
-                int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinMatchKey);
 
-                ArrayList<String> peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinMatchKey);
+                int nValidatedPeptides = -1;
+                try {
+                    nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinMatchKey);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+
+                ArrayList<String> peptideKeys;
+                try {
+                    peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinMatchKey);
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    try {
+                        // Let's try without order
+                        peptideKeys = proteinMatch.getPeptideMatches();
+                    } catch (Exception e1) {
+                        peptideShakerGUI.catchException(e1);
+                        // ok you are really unlucky... Just hope the GUI holds...
+                        peptideKeys = new ArrayList<String>();
+                    }
+                }
 
                 for (String peptideKey : peptideKeys) {
                     currentMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
@@ -2662,14 +2680,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             e.printStackTrace();
                         }
                         int proteinInferenceType = probabilities.getGroupClass();
-                        
+
                         // @TODO: should be replaced by a table model!!!
 
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                     index + 1,
                                     probabilities.isStarred(),
                                     proteinInferenceType,
-                                    peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, true),
+                                    peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideKey, true),
                                     peptideStart,
                                     false,
                                     probabilities.isValidated()
@@ -2746,7 +2764,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 try {
 
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
-                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog);
+                    try {
+                        proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
+                    } catch (Exception e) {
+                        // Now I'd be surprised that you reach this stage
+                        peptideShakerGUI.catchException(e);
+                    }
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {
@@ -3448,8 +3471,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         }
 
-        if (!proteinKey.equalsIgnoreCase(peptideShakerGUI.getSelectedProteinKey()) ||
-                !peptideKey.equalsIgnoreCase(peptideShakerGUI.getSelectedPeptideKey())) {
+        if (!proteinKey.equalsIgnoreCase(peptideShakerGUI.getSelectedProteinKey())
+                || !peptideKey.equalsIgnoreCase(peptideShakerGUI.getSelectedPeptideKey())) {
             psmKey = PeptideShakerGUI.NO_SELECTION;
         }
 

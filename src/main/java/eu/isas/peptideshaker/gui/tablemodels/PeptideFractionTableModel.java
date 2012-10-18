@@ -80,8 +80,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
 
         fileNames = new ArrayList<String>();
         
-        for (String filePath : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
-            String fileName = Util.getFileName(filePath);
+        for (String fileName : identification.getSpectrumFiles()) {
             fileNames.add(fileName);
         }
     }
@@ -132,7 +131,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
                 return row + 1;
             } else if (column == 1) {
                 String peptideKey = peptideKeys.get(row);
-                return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
+                return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
             } else if (column > 1 && column - 2 < fileNames.size()) {
                 String fraction = fileNames.get(column - 2);
                 PSParameter pSParameter = new PSParameter();

@@ -21,13 +21,13 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.*;
@@ -187,17 +187,16 @@ public class PeptideShaker {
      * @param idFiles The files to import
      * @param spectrumFiles The corresponding spectra (can be empty: spectra
      * will not be loaded)
-     * @param fastaFile The database file in the fasta format
-     * @param searchParameters The search parameters
+     * @param searchParameters the identification parameters used for the search
      * @param annotationPreferences The annotation preferences to use for PTM
      * scoring
      * @param projectDetails The project details
      * @param processingPreferences the initial processing preferences
-     * @param ptmScoringPreferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-            File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
-            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
+            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences) {
 
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n", true, true);
 
@@ -209,7 +208,7 @@ public class PeptideShaker {
         Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.setIsDB(true);
 
-        fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
+        fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics, searchParameters);
 
         if (FileImporter.isCLIMode()) {
             // Needed for command line mode of operation, which requires dynamically setting of the search modification files
@@ -221,7 +220,7 @@ public class PeptideShaker {
             }
         }
 
-        fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences);
+        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
     }
 
     /**
@@ -258,7 +257,7 @@ public class PeptideShaker {
      * @throws Exception
      */
     public void processIdentifications(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            IdFilter idFilter, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences)
+            IdFilter idFilter, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences)
             throws IllegalArgumentException, IOException, Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -377,7 +376,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Scoring PTMs in proteins.", true, true);
-        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, idFilter, ptmScoringPreferences);
+        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, idFilter, spectrumCountingPreferences);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -1505,7 +1504,7 @@ public class PeptideShaker {
      * deserializing a match
      */
     public void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
-        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, null, ptmScoringPreferences);
+        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, null, null);
     }
 
     /**
@@ -1518,10 +1517,11 @@ public class PeptideShaker {
      * @param idFilter the identification filter, needed only to get max values
      * @param estimateAscore a boolean indicating whether the A-score should be
      * estimated for the metrics, can be null when rescoring PTMs
+     * @param spectrumCountingPreferences the spectrum counting preferences. If not null, the maximum spectrum counting value will be stored in the Metrics.
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
-    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, IdFilter idFilter, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+    private void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences, IdFilter idFilter, SpectrumCountingPreferences spectrumCountingPreferences) throws Exception {
 
         waitingHandler.setWaitingText("Scoring Protein PTMs. Please Wait...");
 
@@ -1532,9 +1532,7 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
-        // The spectrum counting preferences are here the default preferences.
         int nValidatedProteins = 0;
-        SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
         PSParameter psParameter = new PSParameter();
         double tempSpectrumCounting, maxSpectrumCounting = 0;
         Enzyme enzyme = searchParameters.getEnzyme();
@@ -1549,9 +1547,11 @@ public class PeptideShaker {
                 if (psParameter.isValidated()) {
                     nValidatedProteins++;
                 }
-                tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, tempPreferences, enzyme, maxPepLength);
+                if (spectrumCountingPreferences != null) {
+                tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength);
                 if (tempSpectrumCounting > maxSpectrumCounting) {
                     maxSpectrumCounting = tempSpectrumCounting;
+                }
                 }
             }
             waitingHandler.increaseSecondaryProgressValue();
@@ -1853,10 +1853,10 @@ public class PeptideShaker {
     /**
      * Attaches the a-score.
      *
-     * @param spectrumMatch
-     * @param searchParameters
-     * @param annotationPreferences
-     * @throws Exception
+     * @param spectrumMatch the spectrum match studied, the A-score will be calculated for the best assumption
+     * @param searchParameters the identification parameters
+     * @param annotationPreferences the annotation preferences
+     * @throws Exception exception thrown whenever an error occurred while computing the A-score
      */
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
@@ -2561,80 +2561,6 @@ public class PeptideShaker {
         this.proteinCount = proteinCount;
     }
 
-    /**
-     * Replaces the needed PTMs by PeptideShaker PTMs in the factory.
-     *
-     * @param searchParameters the search parameters containing the modification
-     * profile to use
-     */
-    public static void setPeptideShakerPTMs(SearchParameters searchParameters) {
-
-        ArrayList<String> residues, utilitiesNames;
-        PTMFactory ptmFactory = PTMFactory.getInstance();
-        ArrayList<NeutralLoss> neutralLosses = new ArrayList<NeutralLoss>();
-        ArrayList<ReporterIon> reporterIons = new ArrayList<ReporterIon>();
-
-        for (String peptideShakerName : searchParameters.getModificationProfile().getFamilyNames()) {
-
-            utilitiesNames = new ArrayList<String>();
-            int modType = -1;
-            double mass = -1;
-            AminoAcidPattern mergedPattern = new AminoAcidPattern();
-
-            for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                if (peptideShakerName.equals(searchParameters.getModificationProfile().getFamilyName(utilitiesName))) {
-
-                    neutralLosses = new ArrayList<NeutralLoss>();
-                    reporterIons = new ArrayList<ReporterIon>();
-                    PTM sePtm = ptmFactory.getPTM(utilitiesName);
-
-                    if (modType == -1) {
-                        modType = sePtm.getType();
-                    } else if (sePtm.getType() != modType) {
-                        modType = PTM.MODAA; // case difficult to handle (shall not happen actualy) so use the default AA option
-                    }
-                    
-                    mergedPattern.merge(sePtm.getPattern());
-
-                    mass = sePtm.getMass();
-                    utilitiesNames.add(utilitiesName);
-
-                    for (NeutralLoss neutralLoss : sePtm.getNeutralLosses()) {
-                        boolean found = false;
-                        for (NeutralLoss alreadyImplemented : neutralLosses) {
-                            if (neutralLoss.isSameAs(alreadyImplemented)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            neutralLosses.add(neutralLoss);
-                        }
-                    }
-
-                    for (ReporterIon reporterIon : sePtm.getReporterIons()) {
-                        boolean found = false;
-                        for (ReporterIon alreadyImplemented : reporterIons) {
-                            if (reporterIon.isSameAs(alreadyImplemented)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            reporterIons.add(reporterIon);
-                        }
-                    }
-                }
-            }
-
-            for (String utilitiesName : utilitiesNames) {
-                PTM newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, mergedPattern);
-                newPTM.setNeutralLosses(neutralLosses);
-                newPTM.setReporterIons(reporterIons);
-                ptmFactory.replacePTM(utilitiesName, newPTM);
-            }
-        }
-    }
 
     /**
      * Adds a warning to the feedback list. If a feedback with the same title is
@@ -2653,5 +2579,32 @@ public class PeptideShaker {
      */
     public HashMap<String, FeedBack> getWarnings() {
         return warnings;
+    }
+    
+
+    /**
+     * Verifies that the modifications backed-up in the search parameters are
+     * loaded and returns an error message if one was already loaded, null otherwise.
+     *
+     * @param searchParameters the search parameters to load
+     */
+    public static String loadModifications(SearchParameters searchParameters) {
+        String error = null;
+        ArrayList<String> toCheck = PTMFactory.getInstance().loadBackedUpModifications(searchParameters, true);
+        if (!toCheck.isEmpty()) {
+            error = "The definition of the following PTM(s) seems to have change and was overwritten:\n";
+            for (int i = 0; i < toCheck.size(); i++) {
+                if (i > 0) {
+                    if (i < toCheck.size() - 1) {
+                        error += ", ";
+                    } else {
+                        error += " and ";
+                    }
+                    error += toCheck.get(i);
+                }
+            }
+            error += ".\nPlease verify the definition of the PTM(s) in the modifications editor.";
+        }
+        return error;
     }
 }

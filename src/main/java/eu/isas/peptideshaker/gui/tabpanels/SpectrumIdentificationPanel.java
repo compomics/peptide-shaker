@@ -52,6 +52,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 
 /**
  * The Spectrum ID panel.
@@ -3007,7 +3008,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getSpectrumMatchParameter(key, probabilities);
 
-                    IdentificationFeaturesGenerator featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+                    DisplayFeaturesGenerator featuresGenerator = peptideShakerGUI.getDisplayFeaturesGenerator();
                     // Fill peptide shaker table
                     String proteins = featuresGenerator.addDatabaseLinks(spectrumMatch.getBestAssumption().getPeptide().getParentProteins());
 

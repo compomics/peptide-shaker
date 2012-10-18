@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.experiment.identification.SearchParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 
 /**
@@ -22,7 +22,6 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
         initComponents();
 
         ProjectDetails projectDetails = parent.getProjectDetails();
-        SearchParameters searchParameters = parent.getSearchParameters();
 
         if (projectDetails != null) {
 
@@ -39,12 +38,12 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             }
 
             report += "<br><b>Spectrum Files:</b><br>";
-            for (String mgfFile : searchParameters.getSpectrumFiles()) {
+            for (String mgfFile : parent.getIdentification().getSpectrumFiles()) {
                 report += mgfFile + "<br>";
             }
 
             report += "<br><b>FASTA File:</b><br>";
-            report += projectDetails.getDbFile() + "<br>";
+            report += parent.getSearchParameters().getFastaFile().getAbsolutePath() + "<br>";
 
             report += "<br><br><b>Report:</b><br>";
             report += "<pre>" + projectDetails.getReport() + "</pre>";

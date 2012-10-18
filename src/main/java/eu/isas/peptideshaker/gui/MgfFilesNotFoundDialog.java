@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.fileimport;
+package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;

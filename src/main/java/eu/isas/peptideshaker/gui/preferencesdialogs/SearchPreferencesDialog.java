@@ -6,19 +6,17 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.gui.dialogs.PtmDialog;
-import com.compomics.util.gui.dialogs.PtmDialogParent;
-import eu.isas.peptideshaker.gui.HelpDialog;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import com.compomics.util.gui.ptm.PtmDialog;
+import com.compomics.util.gui.ptm.PtmDialogParent;
 import com.compomics.util.preferences.ModificationProfile;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
-import eu.isas.peptideshaker.gui.NewDialog;
+import eu.isas.peptideshaker.PeptideShaker;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -65,30 +63,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
-     * The PeptideShakerGUI.
-     */
-    private PeptideShakerGUI peptideShakerGUI;
-    /**
      * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * A map of all loaded PTMs.
-     */
-    private HashMap<String, PTM> ptms = new HashMap<String, PTM>();
-    /**
      * The selected ptms.
      */
     private ArrayList<String> modificationList = new ArrayList<String>();
-    /**
-     * File containing the modification profile. By default default.psm in the
-     * conf folder.
-     */
-    private File profileFile;
-    /**
-     * A simple progress dialog.
-     */
-    private static ProgressDialogX progressDialog;
     /**
      * boolean indicating whether import-related data can be edited.
      */
@@ -98,35 +79,41 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private PtmToPrideMap ptmToPrideMap;
     /**
-     * The new dialog. Can be null.
+     * @TODO: this ought to be a compomics setting
      */
-    private NewDialog newDialog;
+    private String selectedRowHtmlTagFontColor;
+    /**
+     * @TODO: this ought to be a compomics setting
+     */
+    private String notSelectedRowHtmlTagFontColor;
+    /**
+     * boolean indicating whether the user pushed on cancel
+     */
+    private boolean canceled = false;
 
     /**
-     * Create a new SearchPreferencesDialog.
-     *
-     * @param parent the PeptideShaker parent
-     * @param editable
+     * Creates a new search parameters dialog
+     * @param parent the parent frame
+     * @param editable a boolean indicating whether the search parameters can be edited
+     * @param searchParameters the search parameters. If null default versions will be used.
+     * @param selectedRowHtmlTagFontColor  @TODO: this ought to be a compomics setting
+     * @param notSelectedRowHtmlTagFontColor  @TODO: this ought to be a compomics setting
+     * @param ptmToPrideMap the PTM to pride map
      */
-    public SearchPreferencesDialog(PeptideShakerGUI parent, boolean editable) {
-        this(parent, null, editable);
-    }
-
-    /**
-     * Create a new SearchPreferencesDialog.
-     *
-     * @param parent the PeptideShaker parent
-     * @param newDialog the new dialog, can be null
-     * @param editable
-     */
-    public SearchPreferencesDialog(PeptideShakerGUI parent, NewDialog newDialog, boolean editable) {
+    public SearchPreferencesDialog(JFrame parent, boolean editable, SearchParameters searchParameters, PtmToPrideMap ptmToPrideMap, String selectedRowHtmlTagFontColor, String notSelectedRowHtmlTagFontColor) {
         super(parent, true);
 
         this.editable = editable;
-        this.peptideShakerGUI = parent;
-        this.newDialog = newDialog;
-        this.searchParameters = parent.getSearchParameters();
-        this.profileFile = parent.getModificationProfileFile();
+        
+        if (searchParameters == null) {
+            this.searchParameters = new SearchParameters();
+        } else {
+            this.searchParameters = searchParameters;
+        }
+        
+        this.ptmToPrideMap = ptmToPrideMap;
+        this.selectedRowHtmlTagFontColor = selectedRowHtmlTagFontColor;
+        this.notSelectedRowHtmlTagFontColor = notSelectedRowHtmlTagFontColor;
 
         initComponents();
         setUpGui();
@@ -139,15 +126,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void setUpGui() {
 
-        loadModifications();
-        ptmToPrideMap = peptideShakerGUI.loadPrideToPtmMap();
-
         // set the cell renderers
         expectedModificationsTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
-        expectedModificationsTable.getColumn("PSI-MOD").setCellRenderer(new HtmlLinksRenderer(
-                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        availableModificationsTable.getColumn("PSI-MOD").setCellRenderer(new HtmlLinksRenderer(
-                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        expectedModificationsTable.getColumn("PSI-MOD").setCellRenderer(new HtmlLinksRenderer(selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor));
+        availableModificationsTable.getColumn("PSI-MOD").setCellRenderer(new HtmlLinksRenderer(selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor));
         expectedModificationsTable.getColumn("U.M.").setCellRenderer(new NimbusCheckBoxRenderer());
         availableModificationsTable.getColumn("U.M.").setCellRenderer(new NimbusCheckBoxRenderer());
         expectedModificationsTable.getColumn("U.M.").setCellRenderer(new TrueFalseIconRenderer(
@@ -199,13 +181,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         expectedModsScrollPane.getViewport().setOpaque(false);
         availableModsScrollPane.getViewport().setOpaque(false);
 
-        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
+        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getVariableModifications());
         Collections.sort(modificationList);
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ion1Cmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ion2Cmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         precursorUnit.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        loadValues();
+        setScreenProps();
         updateModificationLists();
     }
 
@@ -259,9 +241,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         };
         expectedModsLabel = new javax.swing.JLabel();
         availableModsLabel = new javax.swing.JLabel();
-        clearProfileBtn = new javax.swing.JButton();
-        saveAsProfileBtn = new javax.swing.JButton();
-        loadProfileBtn = new javax.swing.JButton();
         availableModsScrollPane = new javax.swing.JScrollPane();
         availableModificationsTable =         new JTable() {
 
@@ -278,7 +257,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 };
             }
         };
-        loadAvailableModsButton = new javax.swing.JButton();
         searchGuiParamsPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         fileTxt = new javax.swing.JTextField();
@@ -485,30 +463,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         availableModsLabel.setFont(availableModsLabel.getFont().deriveFont((availableModsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
         availableModsLabel.setText("Available Modifications");
 
-        clearProfileBtn.setText("Clear");
-        clearProfileBtn.setToolTipText("Clear the list of expected modifications");
-        clearProfileBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearProfileBtnActionPerformed(evt);
-            }
-        });
-
-        saveAsProfileBtn.setText("Save");
-        saveAsProfileBtn.setToolTipText("Save the modification profile to a psm file");
-        saveAsProfileBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveAsProfileBtnActionPerformed(evt);
-            }
-        });
-
-        loadProfileBtn.setText("Load");
-        loadProfileBtn.setToolTipText("Load a modification profile from a psm file");
-        loadProfileBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadProfileBtnActionPerformed(evt);
-            }
-        });
-
         availableModificationsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -550,13 +504,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         });
         availableModsScrollPane.setViewportView(availableModificationsTable);
 
-        loadAvailableModsButton.setText("Load");
-        loadAvailableModsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadAvailableModsButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout modProfilePanelLayout = new javax.swing.GroupLayout(modProfilePanel);
         modProfilePanel.setLayout(modProfilePanelLayout);
         modProfilePanelLayout.setHorizontalGroup(
@@ -564,27 +511,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             .addGroup(modProfilePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(availableModsScrollPane)
+                    .addComponent(expectedModsScrollPane)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modProfilePanelLayout.createSequentialGroup()
-                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(modProfilePanelLayout.createSequentialGroup()
-                                .addComponent(availableModsLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(addModifications, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(removeModification, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(expectedModsScrollPane))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(addModifications, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(saveAsProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                            .addComponent(loadProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(clearProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(removeModification, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(modProfilePanelLayout.createSequentialGroup()
-                        .addComponent(expectedModsLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(modProfilePanelLayout.createSequentialGroup()
-                        .addComponent(availableModsScrollPane)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadAvailableModsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(availableModsLabel)
+                            .addComponent(expectedModsLabel))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -596,14 +534,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 .addContainerGap()
                 .addComponent(expectedModsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
-                    .addGroup(modProfilePanelLayout.createSequentialGroup()
-                        .addComponent(loadProfileBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(saveAsProfileBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearProfileBtn)))
+                .addComponent(expectedModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(modProfilePanelLayout.createSequentialGroup()
@@ -613,13 +544,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         .addGap(14, 14, 14))
                     .addComponent(availableModsLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
-                    .addComponent(loadAvailableModsButton))
+                .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        modProfilePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addModifications, clearProfileBtn, loadAvailableModsButton, loadProfileBtn, removeModification, saveAsProfileBtn});
+        modProfilePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addModifications, removeModification});
 
         searchGuiParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("SearchGUI Parameters File"));
         searchGuiParamsPanel.setOpaque(false);
@@ -745,12 +674,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
-            try {
-                PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
-                prideObjectsFactory.setPtmToPrideMap(ptmToPrideMap);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
             //@TODO: the displayed data ought to be updated here if any change was made
             searchParameters.setFragmentIonAccuracy(new Double(fragmentIonAccuracyTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
@@ -798,20 +721,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 JOptionPane.showMessageDialog(this, ep, "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);
             }
 
-            peptideShakerGUI.setSearchParameters(searchParameters);
-            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
-            peptideShakerGUI.setModificationProfileFile(profileFile);
-            peptideShakerGUI.setDataSaved(false); //@TODO: this should be set to false only if a change was made
-
-            if (newDialog != null) {
-                if (fileTxt.getText().length() > 0) {
-                    File paramsFile = searchParameters.getParametersFile();
-                    newDialog.updateSearchParamsField(paramsFile.getName().substring(0, paramsFile.getName().lastIndexOf(".")));
-                } else {
-                    newDialog.updateSearchParamsField("User Defined");
-                }
-            }
-
             this.dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -822,6 +731,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        canceled = true;
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
@@ -836,46 +746,57 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
-            if (!searchParameters.getModificationProfile().getFamilyNames().contains(name)) {
-                ArrayList<String> conflicts = new ArrayList<String>();
-                PTM oldPTM, newPTM;
-                for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                    oldPTM = ptmFactory.getPTM(oldModification);
-                    newPTM = ptmFactory.getPTM(name);
-                    if (newPTM.getType() == oldPTM.getType() && 
-                    Math.abs(oldPTM.getMass() - newPTM.getMass()) < 0.01) {
-                        conflicts.add(oldModification);
-                    }
-                }
-                int index = name.length();
-                if (name.lastIndexOf(" ") > 0) {
-                    index = name.indexOf(" ");
-                }
-                if (name.lastIndexOf("-") > 0) {
-                    index = Math.min(index, name.indexOf("-"));
-                }
-                searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                searchParameters.getModificationProfile().setColor(name, Color.lightGray);
-                if (!conflicts.isEmpty()) {
-                    String report = name + " might be difficult to distinguish from ";
-                    boolean first = true;
-                    int cpt = 0;
-                    for (String conflict : conflicts) {
-                        cpt++;
-                        if (first) {
-                            first = false;
-                        } else if (cpt == conflicts.size()) {
-                            report += " and ";
-                        } else {
-                            report += ", ";
+            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+            if (modificationProfile.getVariableModifications().contains(name)) {
+                   int choice = JOptionPane.showConfirmDialog(this,
+                                new String[]{"The list of expected variable modifications already contains a modification named " + name + ".", "Shall it be replaced?"},
+                                "Modification name conflict", JOptionPane.YES_NO_OPTION);
+                        if (choice == JOptionPane.NO_OPTION) {
+                            return;
                         }
-                        report += conflict;
-                    }
-                    report += ".\nIt is avised to group them into the same modification family.";
-                    JOptionPane.showMessageDialog(this, report, "Modification Conflict", JOptionPane.WARNING_MESSAGE);
-                }
             }
-            searchParameters.getModificationProfile().setPeptideShakerName(name, name);
+            PTM ptm = ptmFactory.getPTM(name);
+            ArrayList<String> conflicts = new ArrayList<String>();
+            for (String oldName : modificationProfile.getVariableModifications()) {
+                PTM oldPTM = ptmFactory.getPTM(name);
+                if (Math.abs(oldPTM.getMass() - ptm.getMass()) < searchParameters.getFragmentIonAccuracy()
+                        && oldPTM.getPattern().isSameAs(ptm.getPattern())) {
+                    conflicts.add(oldName);
+            }
+            }
+            if (conflicts.size() == 1) {
+                int choice = JOptionPane.showConfirmDialog(this,
+                                new String[]{name + " will be impossible to distinguish from " + conflicts.get(0) + ".", "Shall it be replaced?"},
+                                "Modification name conflict", JOptionPane.YES_NO_OPTION);
+                        if (choice == JOptionPane.NO_OPTION) {
+                            return;
+                        } else {
+                            modificationProfile.getVariableModifications().remove(conflicts.get(0));
+                        }
+            } else if (conflicts.size()>1) {
+                String report = name + " will be impossible to distinguish from ";
+                Collections.sort(conflicts);
+                for (int j = 0 ; j < conflicts.size() ; j++) {
+                    if (j== conflicts.size()-1) {
+                        report += " and ";
+                    } else if (j > 0) {
+                        report += ", ";
+                    }
+                    report += conflicts.get(j);
+                }
+                report += ".";
+                 int choice = JOptionPane.showConfirmDialog(this,
+                                new String[]{report, "Shall they be replaced?"},
+                                "Modification name conflict", JOptionPane.YES_NO_OPTION);
+                        if (choice == JOptionPane.NO_OPTION) {
+                            return;
+                        } else {
+                            for (String mod : conflicts) {
+                                modificationProfile.getVariableModifications().remove(mod);
+                            }
+                        }
+            }
+            modificationProfile.addVariableModification(ptm);
             modificationList.add(name);
         }
 
@@ -898,7 +819,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         for (String name : toRemove) {
             modificationList.remove(name);
-            searchParameters.getModificationProfile().remove(name);
+            searchParameters.getModificationProfile().removeVariableModification(name);
         }
 
         updateModificationLists();
@@ -910,18 +831,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * @param evt
      */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        JFileChooser fc = new JFileChooser();
 
         FileFilter filter = new FileFilter() {
 
             @Override
             public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("properties") || myFile.isDirectory();
+                return myFile.getName().toLowerCase().endsWith("parameters") || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "(SearchGUI properties file) *.properties";
+                return "(SearchGUI properties file) *.parameters";
             }
         };
 
@@ -930,163 +851,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            try {
-                Properties props = IdentificationParametersReader.loadProperties(file);
-                setScreenProps(props);
-                searchParameters.setParametersFile(file);
-                fileTxt.setText(file.getAbsolutePath());
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, file.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-            } catch (IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "An error occured while reading " + file.getName() + ".\n"
-                        + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-            }
+            loadSearchParameters(file);
+            
         }
     }//GEN-LAST:event_loadButtonActionPerformed
-
-    /**
-     * Clears the list of selected proteins.
-     *
-     * @param evt
-     */
-    private void clearProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearProfileBtnActionPerformed
-        searchParameters.setModificationProfile(new ModificationProfile());
-        modificationList.clear();
-        expectedModificationsTable.revalidate();
-        expectedModificationsTable.repaint();
-        expectedModsLabel.setText("Expected Variable Modifications");
-    }//GEN-LAST:event_clearProfileBtnActionPerformed
-
-    /**
-     * Loads a modification profile.
-     *
-     * @param evt
-     */
-    private void loadProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadProfileBtnActionPerformed
-        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-
-        FileFilter filter = new FileFilter() {
-
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("psm") || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "(Profile psm file) *.psm";
-            }
-        };
-
-        fc.setFileFilter(filter);
-
-        int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            loadModificationProfile(file);
-        }
-    }//GEN-LAST:event_loadProfileBtnActionPerformed
-
-    /**
-     * Save a modification profile.
-     *
-     * @param evt
-     */
-    private void saveAsProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsProfileBtnActionPerformed
-
-        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Save As...");
-        fileChooser.setMultiSelectionEnabled(false);
-
-        FileFilter filter = new FileFilter() {
-
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("psm") || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "(PeptideShaker Modifications) *.psm";
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-
-        int returnVal = fileChooser.showSaveDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            progressDialog = new ProgressDialogX(peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true); // note: not really possible to cancel this one...
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Saving. Please Wait...");
-
-            final PeptideShakerGUI tempRef = peptideShakerGUI; // needed due to threading issues
-
-            new Thread(new Runnable() {
-
-                public void run() {
-
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("SaveThread") {
-
-                @Override
-                public void run() {
-
-                    String selectedFile = fileChooser.getSelectedFile().getPath();
-
-                    if (!selectedFile.endsWith(".psm")) {
-                        selectedFile += ".psm";
-                    }
-
-                    File newFile = new File(selectedFile);
-                    int outcome = JOptionPane.YES_OPTION;
-
-                    if (newFile.exists()) {
-                        outcome = JOptionPane.showConfirmDialog(progressDialog,
-                                "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                    }
-
-                    if (outcome != JOptionPane.YES_OPTION) {
-                        progressDialog.setRunFinished();
-                        return;
-                    }
-
-                    try {
-
-                        FileOutputStream fos = new FileOutputStream(newFile);
-                        BufferedOutputStream bos = new BufferedOutputStream(fos);
-                        ObjectOutputStream oos = new ObjectOutputStream(bos);
-                        oos.writeObject(searchParameters.getModificationProfile());
-                        oos.close();
-                        bos.close();
-                        fos.close();
-                        profileFile = newFile;
-                        expectedModsLabel.setText("Expected Variable Modifications (" + newFile.getName().substring(0, newFile.getName().lastIndexOf(".")) + ")");
-                        progressDialog.setRunFinished();
-
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_saveAsProfileBtnActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -1113,7 +881,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void searchPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPreferencesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/SearchPreferencesDialog.html"));
+        //@TODO: use compomics error handler
+//        new HelpDialog(this, getClass().getResource("/helpFiles/SearchPreferencesDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_searchPreferencesHelpJButtonActionPerformed
 
@@ -1149,43 +918,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }//GEN-LAST:event_expectedModificationsTableMouseExited
 
     /**
-     * Load the available modifications from file.
-     *
-     * @param evt
-     */
-    private void loadAvailableModsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadAvailableModsButtonActionPerformed
-        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-
-        FileFilter filter = new FileFilter() {
-
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("usermods.xml") || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "(user modification file) *usermods.xml";
-            }
-        };
-
-        fc.setFileFilter(filter);
-
-        int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            try {
-                ptmFactory.importModifications(file, true);
-                loadModifications();
-                updateModificationLists();
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "An error occurred while importing " + file.getName() + ".", "User Modification File Error", JOptionPane.WARNING_MESSAGE);
-            }
-        }
-    }//GEN-LAST:event_loadAvailableModsButtonActionPerformed
-
-    /**
      * Opens a file chooser where the color for the ptm can be changed.
      *
      * @param evt
@@ -1193,14 +925,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void expectedModificationsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseReleased
         int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
         int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
+        
 
         if (row != -1) {
             int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
+        String modificationName = modificationList.get(ptmIndex);
             if (column == expectedModificationsTable.getColumn("  ").getModelIndex()) {
                 Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(ptmIndex, column));
 
                 if (newColor != null) {
-                    searchParameters.getModificationProfile().setColor(searchParameters.getModificationProfile().getFamilyName(modificationList.get(ptmIndex)), newColor);
+                    searchParameters.getModificationProfile().setColor(modificationName, newColor);
                     expectedModificationsTable.repaint();
                 }
             } else if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
@@ -1216,9 +950,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } else {
                         boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
-                                && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getFamilyName(modificationList.get(ptmIndex)));
+                                && ptmFactory.isUserDefined(modificationName);
 
-                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)), userMod);
+                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationName), userMod);
                     }
                 }
             }
@@ -1271,6 +1005,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         if (row != -1) {
             int ptmIndex = availableModificationsTable.convertRowIndexToModel(row);
+        String modificationName = modificationList.get(ptmIndex);
             if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
 
                 // open protein link in web browser
@@ -1285,10 +1020,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         BareBonesBrowserLaunch.openURL(link);
                         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } else {
-                        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
-                                && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getFamilyName(modificationList.get(ptmIndex)));
+                        boolean userMod = ptmFactory.isUserDefined(modificationName);
 
-                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationList.get(ptmIndex)), userMod);
+                        new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(modificationName), userMod);
                     }
                 }
             }
@@ -1334,12 +1068,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
 
         String name = modificationList.get(ptmIndex);
-        if (!ptmFactory.containsPTM(name)) {
-            name = searchParameters.getModificationProfile().getFamilyName(name);
-        }
 
-        boolean userMod = ptmFactory.isUserDefined(modificationList.get(ptmIndex))
-                && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getFamilyName(modificationList.get(ptmIndex)));
+        boolean userMod = ptmFactory.isUserDefined(name);
 
         new PtmDialog(this, this, ptmToPrideMap, ptmFactory.getPTM(name), userMod);
     }//GEN-LAST:event_editExpectedPtmJMenuItemActionPerformed
@@ -1405,6 +1135,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void addAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAvailablePtmJMenuItemActionPerformed
         addModificationsActionPerformed(null);
     }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
@@ -1414,7 +1145,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private javax.swing.JPopupMenu availablePtmPopupMenu;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton clearProfileBtn;
     private javax.swing.JMenuItem editAvailablePtmJMenuItem;
     private javax.swing.JMenuItem editExpectedPtmJMenuItem;
     private javax.swing.JPanel enzymeAndFragmentIonsPanel;
@@ -1434,9 +1164,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JButton loadAvailableModsButton;
     private javax.swing.JButton loadButton;
-    private javax.swing.JButton loadProfileBtn;
     private javax.swing.JTextField missedCleavagesTxt;
     private javax.swing.JPanel modProfilePanel;
     private javax.swing.JButton okButton;
@@ -1444,7 +1172,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private javax.swing.JComboBox precursorUnit;
     private javax.swing.JMenuItem removeExpectedPtmJMenuItem;
     private javax.swing.JButton removeModification;
-    private javax.swing.JButton saveAsProfileBtn;
     private javax.swing.JPanel searchGuiParamsPanel;
     private javax.swing.JButton searchPreferencesHelpJButton;
     // End of variables declaration//GEN-END:variables
@@ -1483,30 +1210,22 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }
 
     /**
-     * This method takes the specified properties instance and reads the values
-     * for (some of) the GUI components from it. Keys are defined as constants
-     * on this class. Method inspired from searchGUI.
+     * This method takes the SearchParameters instance and reads the values
+     * for the GUI components from it. 
+     * Method inspired from searchGUI, would be good to have a unified panel.
      *
-     * @param aProps Properties with the values for the GUI.
      */
-    public void setScreenProps(Properties aProps) {
+    public void setScreenProps() {
+        
+        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
-        ArrayList<String> variableMods = new ArrayList<String>();
-
-        String temp = aProps.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
-
-        if (temp != null && !temp.trim().equals("")) {
-            variableMods = IdentificationParametersReader.parseModificationLine(temp);
-        }
-
+        modificationList = new ArrayList<String>();
         ArrayList<String> missing = new ArrayList<String>();
-        for (String name : variableMods) {
+        for (String name : modificationProfile.getVariableModifications()) {
             if (!modificationList.contains(name)) {
                 if (!ptmFactory.containsPTM(name)) {
                     missing.add(name);
                 } else {
-                    searchParameters.getModificationProfile().setPeptideShakerName(name, name);
-                    if (!searchParameters.getModificationProfile().getFamilyNames().contains(name)) {
                         int index = name.length() - 1;
                         if (name.lastIndexOf(" ") > 0) {
                             index = name.indexOf(" ");
@@ -1515,16 +1234,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                             index = Math.min(index, name.indexOf("-"));
                         }
                         searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                        searchParameters.getModificationProfile().setColor(name, Color.lightGray);  // @TODO: color should not be hardcoded!
-                    }
+                        searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                     modificationList.add(name);
                 }
             }
         }
         if (!missing.isEmpty()) {
+            // Might happen with old parameters files
             if (missing.size() == 1) {
                 JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
-                        + missing.get(0) + ".\nPlease import it by opening a usermods.xml file.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                        + missing.get(0) + ".\nPlease import it in the modification panel.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             } else {
                 String output = "The following modifications are currently not recognized by PeptideShaker:\n";
                 boolean first = true;
@@ -1536,58 +1255,45 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     }
                     output += ptm;
                 }
-                output += ".\nPlease import it by opening a usermods.xml file.";
+                output += ".\nPlease import them in the modification panel.";
                 JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             }
         }
+        Collections.sort(modificationList);
         updateModificationLists();
 
-        temp = aProps.getProperty(IdentificationParametersReader.ENZYME);
-
-        if (temp != null && !temp.equals("")) {
-            enzymesCmb.setSelectedItem(temp.trim());
+        if (searchParameters.getEnzyme() != null) {
+            enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
         }
 
-        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
-
-        if (temp == null) {
-            temp = "";
+        if (searchParameters.getFragmentIonAccuracy() != null) {
+        fragmentIonAccuracyTxt.setText(searchParameters.getFragmentIonAccuracy() + "");
         }
 
-        fragmentIonAccuracyTxt.setText(temp.trim());
-        temp = aProps.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);
-
-        if (temp == null) {
-            temp = "";
-        }
-        missedCleavagesTxt.setText(temp.trim());
-
-        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_1);
-
-        if (temp != null && temp.length() > 0) {
-            ion1Cmb.setSelectedItem(temp);
+        if (searchParameters.getnMissedCleavages() != null) {
+        missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
         }
 
-        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_2);
-
-        if (temp != null && temp.length() > 0) {
-            ion2Cmb.setSelectedItem(temp);
+        if (searchParameters.getIonSearched1() != null) {
+            ion1Cmb.setSelectedItem(PeptideFragmentIon.getSubTypeAsString(searchParameters.getIonSearched1()));
         }
 
-        temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
-
-        if (temp != null) {
-            precursorUnit.setSelectedItem(temp);
+        if (searchParameters.getIonSearched1() != null) {
+            ion2Cmb.setSelectedItem(PeptideFragmentIon.getSubTypeAsString(searchParameters.getIonSearched2()));
+        }
+        
+        if (searchParameters.isPrecursorAccuracyTypePpm() != null) {
+            if (searchParameters.isPrecursorAccuracyTypePpm()) {
+            precursorUnit.setSelectedItem("ppm");
+            }else {
+            precursorUnit.setSelectedItem("Da");
+            }
         }
 
-
-        temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE);
-
-        if (temp == null) {
-            temp = "";
+        if (searchParameters.getPrecursorAccuracy() != null) {
+        precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         }
-
-        precursorAccuracy.setText(temp.trim());
+        
     }
 
     /**
@@ -1604,156 +1310,77 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             }
         });
     }
-
+    
     /**
-     * Loads the implemented enzymes.
-     *
-     * @return the list of enzyme names
+     * Loads the search parameters from a serialized object
+     * @param file the file where the search parameters were saved
      */
-    private String[] loadEnzymes() {
-
-        ArrayList<String> tempEnzymes = new ArrayList<String>();
-
-        for (int i = 0; i < enzymeFactory.getEnzymes().size(); i++) {
-            tempEnzymes.add(enzymeFactory.getEnzymes().get(i).getName());
-        }
-
-        Collections.sort(tempEnzymes);
-
-        String[] enzymes = new String[tempEnzymes.size()];
-
-        for (int i = 0; i < tempEnzymes.size(); i++) {
-            enzymes[i] = tempEnzymes.get(i);
-        }
-
-        return enzymes;
-    }
-
-    /**
-     * Loads values from the searchParameters.
-     */
-    private void loadValues() {
-
-        fragmentIonAccuracyTxt.setText(searchParameters.getFragmentIonAccuracy() + "");
-        enzymesCmb.setModel(new DefaultComboBoxModel(loadEnzymes()));
-        enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
-        missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
-
-        if (searchParameters.getPrecursorAccuracyType() == SearchParameters.PrecursorAccuracyType.PPM) {
-            precursorUnit.setSelectedItem("ppm");
-        } else { // Dalton
-            precursorUnit.setSelectedItem("Da");
-        }
-
-        precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
-        setIons();
-        if (searchParameters.getParametersFile() != null) {
-
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-
-                    fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());
-                }
-            });
-        }
-    }
-
-    /**
-     * Sets the selected ion types
-     */
-    private void setIons() {
-        if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
-            ion1Cmb.setSelectedItem("a");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
-            ion1Cmb.setSelectedItem("b");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
-            ion1Cmb.setSelectedItem("c");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.X_ION) {
-            ion1Cmb.setSelectedItem("x");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.Y_ION) {
-            ion1Cmb.setSelectedItem("y");
-        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.Z_ION) {
-            ion1Cmb.setSelectedItem("z");
-        }
-        if (searchParameters.getIonSearched2() == PeptideFragmentIon.A_ION) {
-            ion2Cmb.setSelectedItem("a");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.B_ION) {
-            ion2Cmb.setSelectedItem("b");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.C_ION) {
-            ion2Cmb.setSelectedItem("c");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
-            ion2Cmb.setSelectedItem("x");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
-            ion2Cmb.setSelectedItem("y");
-        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
-            ion2Cmb.setSelectedItem("z");
-        }
-    }
-
-    /**
-     * Loads the modification profile from the given file.
-     *
-     * @param aFile the given file
-     */
-    private void loadModificationProfile(File aFile) {
+    private void loadSearchParameters(File file) {
         try {
-            FileInputStream fis = new FileInputStream(aFile);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            ObjectInputStream in = new ObjectInputStream(bis);
-            ModificationProfile modificationProfile = (ModificationProfile) in.readObject();
-            fis.close();
-            bis.close();
-            in.close();
-
-            searchParameters.setModificationProfile(modificationProfile);
-
-            modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
-            Collections.sort(modificationList);
-            profileFile = aFile;
-            expectedModsLabel.setText("Expected Variable Modifications (" + aFile.getName().substring(0, aFile.getName().lastIndexOf(".")) + ")");
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-        }
-
+                searchParameters = SearchParameters.getIdentificationParameters(file);
+                PeptideShaker.loadModifications(searchParameters);
+                setScreenProps();
         expectedModificationsTable.revalidate();
         expectedModificationsTable.repaint();
+                
+            } catch (Exception e) {
+                try {
+                    // Old school format, overwrite old file
+                    Properties props = loadProperties(file);
+                    searchParameters = IdentificationParametersReader.getSearchParameters(props);
+                    setScreenProps();
+                    String fileName = file.getName();
+                    if (fileName.endsWith(".properties")) {
+                        String newName = fileName.substring(0, fileName.lastIndexOf(".")) + ".parameters";
+                        try {
+                            file.delete();
+                        } catch (Exception deleteException) {
+                            deleteException.printStackTrace();
+                        }
+                        file = new File(file.getParentFile(), newName);
+                    }
+                    SearchParameters.saveIdentificationParameters(searchParameters, file);
+                } catch (Exception saveException) {
+                    e.printStackTrace();
+                    saveException.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error occured while reading " + file + ". Please verify the search paramters.", "File error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
     }
 
     /**
-     * Loads the modifications from the modification file.
+     * This method loads the necessary parameters for populating (part of) the
+     * GUI from a properties file.
+     *
+     * @deprecated use SearchParameters instead
+     * @param aFile File with the relevant properties file.
+     * @return Properties with the loaded properties.
      */
-    private void loadModifications() {
-        for (String ptm : ptmFactory.getPTMs()) {
-            ptms.put(ptm, ptmFactory.getPTM(ptm));
+    private Properties loadProperties(File aFile) {
+        Properties screenProps = new Properties();
+        try {
+            FileInputStream fis = new FileInputStream(aFile);
+            if (fis != null) {
+                screenProps.load(fis);
+                fis.close();
+            } else {
+                throw new IllegalArgumentException("Could not read the file you specified ('" + aFile.getAbsolutePath() + "').");
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            JOptionPane.showMessageDialog(this, new String[]{"Unable to read file: " + aFile.getName(), ioe.getMessage()}, "Error Reading File", JOptionPane.WARNING_MESSAGE);
         }
+        return screenProps;
     }
 
     /**
-     * Updates the modification list (right).
+     * Updates the modification list (bottom).
      */
     private void updateModificationLists() {
 
-        ArrayList<String> allModificationsList = new ArrayList<String>(ptms.keySet());
         ArrayList<String> allModifications = new ArrayList<String>();
 
-        for (String name : allModificationsList) {
+        for (String name : ptmFactory.getPTMs()) {
             boolean found = false;
 
             for (String modification : modificationList) {
@@ -1813,29 +1440,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }
 
     /**
-     * Verifies that this family name is not used by another modification with a
-     * different mass
-     *
-     * @param utilitiesName the utilities name to convert
-     * @param peptideShakerName the destination family name
-     * @return true if the family name is not used for another modification with
-     * a different mass
-     */
-    private boolean freePSName(String utilitiesName, String peptideShakerName) {
-        for (String ptmName : searchParameters.getModificationProfile().getUtilitiesNames()) {
-            if (searchParameters.getModificationProfile().getFamilyName(ptmName).equals(peptideShakerName)) {
-                PTM ptm1= ptmFactory.getPTM(ptmName);
-                PTM ptm2 = ptmFactory.getPTM(utilitiesName);
-                if (ptm1.getType() != ptm2.getType()
-                        || ptm1.getMass() != ptm2.getMass()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Table model for the modification table.
      */
     private class ModificationTable extends DefaultTableModel {
@@ -1847,7 +1451,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         @Override
         public int getColumnCount() {
-            return 7;
+            return 6;
         }
 
         @Override
@@ -1858,12 +1462,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 case 2:
                     return "Name";
                 case 3:
-                    return "Family";
-                case 4:
                     return "Short";
-                case 5:
+                case 4:
                     return "U.M.";
-                case 6:
+                case 5:
                     return "PSI-MOD";
                 default:
                     return " ";
@@ -1872,51 +1474,32 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         @Override
         public Object getValueAt(int row, int column) {
+            String modificationName = modificationList.get(row);
             switch (column) {
                 case 0:
                     return row + 1;
                 case 1:
-                    return searchParameters.getModificationProfile().getColor(
-                            searchParameters.getModificationProfile().getFamilyName(modificationList.get(row)));
+                    return searchParameters.getModificationProfile().getColor(modificationName);
                 case 2:
                     return modificationList.get(row);
                 case 3:
-                    return searchParameters.getModificationProfile().getFamilyName(modificationList.get(row));
+                    return searchParameters.getModificationProfile().getShortName(modificationName);
                 case 4:
-                    return searchParameters.getModificationProfile().getShortName(
-                            searchParameters.getModificationProfile().getFamilyName(modificationList.get(row)));
+                    return ptmFactory.isUserDefined(modificationName);
                 case 5:
-                    return ptmFactory.isUserDefined(modificationList.get(row))
-                            && ptmFactory.isUserDefined(searchParameters.getModificationProfile().getFamilyName(modificationList.get(row)));
-                case 6:
-                    String psName = searchParameters.getModificationProfile().getFamilyName(modificationList.get(row));
-
                     CvTerm cvTerm = null;
                     if (ptmToPrideMap != null) {
-                        cvTerm = ptmToPrideMap.getCVTerm(psName);
+                        cvTerm = ptmToPrideMap.getCVTerm(modificationName);
                     }
                     if (cvTerm == null) {
-                        cvTerm = ptmToPrideMap.getCVTerm(modificationList.get(row));
+                        cvTerm = PtmToPrideMap.getDefaultCVTerm(modificationName);
                         if (cvTerm != null) {
-                            ptmToPrideMap.putCVTerm(psName, cvTerm);
-                        }
-                    }
-                    if (cvTerm == null) {
-                        cvTerm = PtmToPrideMap.getDefaultCVTerm(psName);
-                        if (cvTerm != null) {
-                            ptmToPrideMap.putCVTerm(psName, cvTerm);
-                        }
-                    }
-                    if (cvTerm == null) {
-                        cvTerm = PtmToPrideMap.getDefaultCVTerm(modificationList.get(row));
-                        if (cvTerm != null) {
-                            ptmToPrideMap.putCVTerm(psName, cvTerm);
+                            ptmToPrideMap.putCVTerm(modificationName, cvTerm);
                         }
                     }
                     if (cvTerm != null) {
                         return getOlsAccessionLink(cvTerm.getAccession());
                     }
-
                     return "";
                 default:
                     return "";
@@ -1926,24 +1509,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         @Override
         public void setValueAt(Object aValue, int row, int column) {
             try {
-                if (column == 3 && editable) {
-                    String newName = aValue.toString();
-                    String oldName = getValueAt(row, 2).toString();
-                    if (freePSName(oldName, newName)) {
-                        CvTerm cvTerm = ptmToPrideMap.getCVTerm(oldName);
-                        if (cvTerm == null) {
-                            cvTerm = PtmToPrideMap.getDefaultCVTerm(oldName);
-                        }
-                        if (cvTerm != null) {
-                            ptmToPrideMap.putCVTerm(newName, cvTerm);
-                        }
-                        searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString().trim());
-                    } else {
-                        JOptionPane.showMessageDialog(null, newName + " is already used for a different modification. Please select another name.",
-                                "Input Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else if (column == 4) {
-                    searchParameters.getModificationProfile().setShortName(searchParameters.getModificationProfile().getFamilyName(modificationList.get(row)), aValue.toString().trim());
+            String modificationName = modificationList.get(row);
+                if (column == 4) {
+                    searchParameters.getModificationProfile().setShortName(modificationName, aValue.toString().trim());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",
@@ -1965,7 +1533,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         @Override
         public boolean isCellEditable(int row, int column) {
 
-            if (column == 1 || column == 3 && editable || column == 4) {
+            if (column == 1 || column == 3) {
                 return true;
             } else {
                 return false;
@@ -1982,24 +1550,41 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     public String getOlsAccessionLink(String modAccession) {
         String accessionNumberWithLink = "<html><a href=\"http://www.ebi.ac.uk/ontology-lookup/?termId=" + modAccession + "\""
-                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + "\"><font color=\"" + notSelectedRowHtmlTagFontColor + "\">"
                 + modAccession + "</font></a></html>";
         return accessionNumberWithLink;
     }
 
     /**
-     * Returns the ptm to pride map
-     *
-     * @return the ptm to pride map
+     * updates the PTM to pride map
+     * @throws FileNotFoundException exception thrown whenever the map was not found in the user folder
+     * @throws IOException exception thrown whenever an error occurred while writing the map
+     * @throws ClassNotFoundException exception thrown whenever an error occurred while deserializing the map
      */
-    public PtmToPrideMap getPtmToPrideMap() {
-        return ptmToPrideMap;
+    public void updatePtmToPrideMap() throws FileNotFoundException, IOException, ClassNotFoundException {
+        PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
+                prideObjectsFactory.setPtmToPrideMap(ptmToPrideMap);
     }
 
     /**
-     * Update the modifications.
+     * Indicates whether the user pushed on cancel
+     * @return a boolean indicating whether the user pushed on cancel
      */
-    public void updateModifications() {
-        // @TODO: should something be done here..? this method is called when the user click the OK button in the PTM Dialog
+    public boolean isCanceled() {
+        return canceled;
     }
+    
+    /**
+     * Returns the search parameters as set by the user
+     * @return the search parameters as set by the user
+     */
+    public SearchParameters getSearchParameters() {
+        return searchParameters;
+    }
+    
+    @Override
+    public void updateModifications() {
+        repaintTable();
+    }
+    
 }

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.myparameters;
 
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.*;
@@ -67,7 +68,7 @@ public class PSSettings implements UrParameter {
     /**
      * Constructor for a PeptideShaker Settings class.
      *
-     * @param searchParameters The parameters linked to the search
+     * @param identificationParameters The parameters linked to the search
      * @param annotationPreferences The annotation preferences
      * @param spectrumCountingPreferences The spectrum counting preferences
      * @param projectDetails The project details

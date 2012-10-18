@@ -55,8 +55,8 @@ public class StarHider {
      */
     public void starHide() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
@@ -94,8 +94,8 @@ public class StarHider {
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                         boolean peptideSurvived = false;
 
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+                        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                             if (progressDialog.isRunCanceled()) {
@@ -105,7 +105,7 @@ public class StarHider {
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             boolean psmSurvived = false;
 
-                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+                            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                                 if (progressDialog.isRunCanceled()) {
@@ -153,9 +153,9 @@ public class StarHider {
                         identification.updateProteinMatchParameter(proteinKey, psParameter);
                         progressDialog.increaseProgressValue();
                     }
-                    
+
                     progressDialog.setRunFinished();
-                    
+
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -478,7 +478,7 @@ public class StarHider {
                 }
                 PsmFilter psmFilter;
                 if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                    psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
+                    psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getIdentification().getSpectrumFiles());
                     psmFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
                 } else {
@@ -550,7 +550,7 @@ public class StarHider {
                 }
                 PsmFilter psmFilter;
                 if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                    psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
+                    psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getIdentification().getSpectrumFiles());
                     psmFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
                 } else {
@@ -836,6 +836,7 @@ public class StarHider {
                 }
                 IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
                 if (proteinFilter.getProteinNSpectra() != null) {
+                    try {
                     if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
                         if (identificationFeaturesGenerator.getNSpectra(proteinKey) <= proteinFilter.getProteinNSpectra()) {
                             return false;
@@ -853,30 +854,38 @@ public class StarHider {
                             return false;
                         }
                     }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                 }
 
                 if (proteinFilter.getProteinCoverage() != null) {
-                    double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
-                    if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
-                        if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
-                            return false;
+                    try {
+                        double sequenceCoverage = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey);
+                        if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
+                            if (sequenceCoverage <= proteinFilter.getProteinCoverage()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BEFORE) {
+                            if (sequenceCoverage >= proteinFilter.getProteinCoverage()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
+                            if (sequenceCoverage != proteinFilter.getProteinCoverage()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.NOT_EQUAL) {
+                            if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
+                                return false;
+                            }
                         }
-                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BEFORE) {
-                        if (sequenceCoverage >= proteinFilter.getProteinCoverage()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
-                        if (sequenceCoverage != proteinFilter.getProteinCoverage()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.NOT_EQUAL) {
-                        if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
-                            return false;
-                        }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
 
                 if (proteinFilter.getSpectrumCounting() != null) {
+                    try {
                     double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
                     if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
                         if (spectrumCounting <= proteinFilter.getSpectrumCounting()) {
@@ -894,6 +903,9 @@ public class StarHider {
                         if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
                             return false;
                         }
+                    }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
             }

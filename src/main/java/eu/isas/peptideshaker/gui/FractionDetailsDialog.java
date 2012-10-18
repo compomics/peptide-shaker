@@ -56,7 +56,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      * Add the data to the table.
      */
     private void addData() {
-        ArrayList<String> spectrumFiles = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+        ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getSpectrumFiles();
         spectrumFileNameMap = new HashMap<String, String>();
         
         HashMap<String,Double> expectedMolecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
@@ -487,7 +487,6 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
             peptideShakerGUI.getProteinFractionsPanel().displayResults();
         }
 
-        peptideShakerGUI.getSearchParameters().setSpectrumFiles(spectrumFiles);
         peptideShakerGUI.getSearchParameters().setFractionMolecularWeights(molecularWeights);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed

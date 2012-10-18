@@ -1607,7 +1607,7 @@ public class QCPanel extends javax.swing.JPanel {
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
                     if (!psParameter.isHidden()) {
-
+try {
                         double value = peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                         if (value > 0) {
                             value = Math.log10(value);
@@ -1634,6 +1634,9 @@ public class QCPanel extends javax.swing.JPanel {
                                 nonValidatedDecoyValues.add(value);
                             }
                         }
+} catch (Exception e) {
+    peptideShakerGUI.catchException(e);
+}
                     }
 
                     progressDialog.increaseProgressValue();
@@ -1657,6 +1660,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!psParameter.isHidden()) {
 
+                        try {
                         double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
 
                         if (value > maxValue) {
@@ -1674,6 +1678,9 @@ public class QCPanel extends javax.swing.JPanel {
                             } else {
                                 nonValidatedDecoyValues.add(value);
                             }
+                        }
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
                         }
                     }
 

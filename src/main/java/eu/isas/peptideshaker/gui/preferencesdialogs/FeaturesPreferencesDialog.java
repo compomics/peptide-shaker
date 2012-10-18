@@ -43,7 +43,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         initComponents();
         this.outputGenerator = new OutputGenerator(peptideShakerGUI);
         this.pack();
-        tabbedPane.setEnabledAt(4, peptideShakerGUI.getSearchParameters().getSpectrumFiles().size() > 1);
+        tabbedPane.setEnabledAt(4, peptideShakerGUI.getIdentification().getSpectrumFiles().size() > 1);
         this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }

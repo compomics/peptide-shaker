@@ -63,7 +63,11 @@ public class ProteinTableModel extends DefaultTableModel {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         if (identification != null) {
-            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null);
+            try {
+                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences());
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
         }
     }
 
@@ -149,7 +153,7 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 3:
                     proteinKey = proteinKeys.get(row);
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
                 case 4:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey);
@@ -162,22 +166,48 @@ public class ProteinTableModel extends DefaultTableModel {
                     return description;
                 case 5:
                     proteinKey = proteinKeys.get(row);
-                    double sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                    double possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                    double sequenceCoverage;
+                    try {
+                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return Double.NaN;
+                    }
+                    double possibleCoverage = 100;
+                    try {
+                        possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 6:
-                    proteinKey = proteinKeys.get(row);
-                    int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                    proteinMatch = identification.getProteinMatch(proteinKey);
-                    return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
+                    try {
+                        proteinKey = proteinKeys.get(row);
+                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                        proteinMatch = identification.getProteinMatch(proteinKey);
+                        return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return Double.NaN;
+                    }
                 case 7:
-                    proteinKey = proteinKeys.get(row);
-                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
-                    int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+                    try {
+                        proteinKey = proteinKeys.get(row);
+                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                        int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return Double.NaN;
+                    }
                 case 8:
                     proteinKey = proteinKeys.get(row);
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                    try {
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return Double.NaN;
+                    }
                 case 9:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey);

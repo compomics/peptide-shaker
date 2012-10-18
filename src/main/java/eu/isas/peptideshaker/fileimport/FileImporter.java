@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
+import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
@@ -20,7 +21,7 @@ import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
-import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
 import org.xml.sax.SAXException;
@@ -104,6 +105,16 @@ public class FileImporter {
      * Metrics of the dataset picked-up while loading the data.
      */
     private Metrics metrics;
+    /**
+     * The search parameters
+     */
+    private SearchParameters searchParameters;
+    /**
+     * The mass tolerance to be used to match PTMs from search engines and
+     * expected PTMs. 0.01 by default, as far as I can remember it is the mass
+     * resolution in X!Tandem result files.
+     */
+    public static final double ptmMassTolerance = 0.01;
 
     /**
      * Constructor for the importer.
@@ -115,27 +126,13 @@ public class FileImporter {
      * @param idFilter The identification filter to use
      * @param metrics metrics of the dataset to be saved for the GUI
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics) {
+    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics, SearchParameters searchParameters) {
         this.peptideShaker = identificationShaker;
         this.waitingHandler = waitingHandler;
         this.proteomicAnalysis = proteomicAnalysis;
         this.idFilter = idFilter;
         this.metrics = metrics;
-    }
-
-    /**
-     * Constructor for an import without filtering.
-     *
-     * @param identificationShaker the parent identification shaker
-     * @param waitingHandler the handler displaying feedback to the user
-     * @param proteomicAnalysis the current proteomic analysis
-     * @param metrics metrics of the dataset to be saved for the GUI
-     */
-    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, Metrics metrics) {
-        this.peptideShaker = identificationShaker;
-        this.waitingHandler = waitingHandler;
-        this.proteomicAnalysis = proteomicAnalysis;
-        this.metrics = metrics;
+        this.searchParameters = searchParameters;
     }
 
     /**
@@ -144,17 +141,17 @@ public class FileImporter {
      * @param idFiles the identification files to import the Ids from
      * @param spectrumFiles the files where the corresponding spectra can be
      * imported
-     * @param fastaFile the FASTA file to use
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences to use for PTM
      * scoring
      * @param processingPreferences the processing preferences
      * @param ptmScoringPreferences the PTM scoring preferences
+     * @param spectrumCountingPreferences the spectrum counting preferences
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, SearchParameters searchParameters,
+            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences) {
 
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences);
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
         if (boolCLI) {
             // CLI mode needs to call the SwingWorker's running method directly.
@@ -336,122 +333,6 @@ public class FileImporter {
     }
 
     /**
-     * Returns a search-engine independent PTM.
-     *
-     * @param sePTM The search engine PTM
-     * @param modificationSite The modified site according to the search engine
-     * @param sequence The sequence of the peptide
-     * @param searchParameters The search parameters used
-     * @return the best PTM 
-     * @throws IOException exception thrown whenever an error occurred while reading a protein sequence
-     * @throws IllegalArgumentException exception thrown whenever an error occurred while reading a protein sequence
-     * @throws InterruptedException exception thrown whenever an error occurred while reading a protein sequence
-     */
-    private String getPTM(String sePTM, int modificationSite, Peptide peptide, SearchParameters searchParameters) throws IOException, IllegalArgumentException, InterruptedException {
-
-        // @TODO: If someone has a better idea, would be great.
-
-        if (searchParameters.getModificationProfile().getFamilyNames().contains(sePTM.toLowerCase())) {
-            return ptmFactory.getPTM(sePTM).getName();
-        } else {
-
-            ArrayList<PTM> possiblePTMs = new ArrayList<PTM>();
-            String[] parsedName = sePTM.split("@");
-            double seMass = 0;
-            try {
-                seMass = new Double(parsedName[0]);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification.");
-            }
-
-            for (String ptmName : searchParameters.getModificationProfile().getFamilyNames()) {
-                PTM psPTM = ptmFactory.getPTM(ptmName);
-                if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
-                    if (peptide.isModifiable(psPTM)) {
-                        possiblePTMs.add(psPTM);
-                    }
-                }
-            }
-
-            if (possiblePTMs.size() == 1) {
-                // Single match for this mass, we are lucky
-                return possiblePTMs.get(0).getName();
-            } else if (possiblePTMs.size() > 1) {
-                ArrayList<PTM> modAA = new ArrayList<PTM>();
-                for (PTM possPtm : possiblePTMs) {
-                    if (possPtm.getType() == PTM.MODAA) {
-                        modAA.add(possPtm);
-                    }
-                }
-                if (modAA.size() > 1) {
-                    // Modification conflict, the rest of the code should handle it but the peptide inference will be impaired
-                    String report = "Could not distinguish ";
-                    for (int cpt = 0 ; cpt < modAA.size() ; cpt++) {
-                        if (cpt == modAA.size()-1) {
-                            report += " and ";
-                        } else if (cpt > 0) {
-                            report += ", ";
-                        }
-                        report += modAA.get(cpt).getName();
-                    }
-                    peptideShaker.addWarning(FeedBack.getWarning("Conflicting modifications", report));
-                }
-                if (modAA.size() == 1) {
-                // OK typical case of a modification which can be at an amino acid or terminals, return the amino acid version for our peptide inference methods to handle the case
-                    return modAA.get(0).getName();
-                }
-                // See if it can be a modification sitting at different places on the sequence
-                
-                // More matches, let's see if we can infer something from the position
-                String sequence = peptide.getSequence();
-                if (modificationSite == 1) {
-                    // See if it can be an N-term modification
-                    for (PTM possPtm : possiblePTMs) {
-                        if (possPtm.getType() == PTM.MODN
-                                || possPtm.getType() == PTM.MODNP) {
-                            return possPtm.getName();
-                        } else if (possPtm.getType() == PTM.MODAA
-                                || possPtm.getType() == PTM.MODNAA
-                                || possPtm.getType() == PTM.MODNPAA) {
-                            if (possPtm.getPattern().isStarting(sequence)) {
-                                    return possPtm.getName();
-                            }
-                        }
-                    }
-                } else if (modificationSite == sequence.length()) {
-                    // See if it can be a C-term modification
-                    for (PTM possPtm : possiblePTMs) {
-                        if (possPtm.getType() == PTM.MODC
-                                || possPtm.getType() == PTM.MODCP) {
-                            return possPtm.getName();
-                        } else if (possPtm.getType() == PTM.MODAA
-                                || possPtm.getType() == PTM.MODCAA
-                                || possPtm.getType() == PTM.MODCPAA) {
-                            if (possPtm.getPattern().isEnding(sequence)) {
-                                    return possPtm.getName();
-                            }
-                        }
-                    }
-                } else {
-                    for (PTM possPtm : possiblePTMs) {
-                        if (possPtm.getType() == PTM.MODAA) {
-                            if (modificationSite > 0 && modificationSite <= sequence.length()) {
-                                if (peptide.getPotentialModificationSites(possPtm).contains(modificationSite-1)) {
-                                    return possPtm.getName();
-                                }
-                            } else {
-                                peptideShaker.addWarning(FeedBack.getWarning("Wrong PTM localization", "PTM " + sePTM + " could not be mapped on the peptide sequence " + sequence + "."));
-                            }
-                        }
-                    }
-                }
-            }
-            peptideShaker.addWarning(FeedBack.getWarning("Unknown modification", "Some modifications could not be mapped to expected modifications and were ignored."));
-            return PTMFactory.unknownPTM.getName();
-        }
-    }
-
-    /**
      * Worker which loads identification from a file and processes them while
      * giving feedback to the user.
      */
@@ -493,6 +374,10 @@ public class FileImporter {
          * The PTM scoring preferences
          */
         private PTMScoringPreferences ptmScoringPreferences;
+        /**
+         * The spectrum counting preferences
+         */
+        private SpectrumCountingPreferences spectrumCountingPreferences;
         /**
          * The number of retained first hits
          */
@@ -536,8 +421,8 @@ public class FileImporter {
          *
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, 
-                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, IdFilter idFilter,
+                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences) {
 
             this.idFiles = new ArrayList<File>();
             HashMap<String, File> filesMap = new HashMap<String, File>();
@@ -554,12 +439,13 @@ public class FileImporter {
             }
 
             this.spectrumFiles = new HashMap<String, File>();
-            this.fastaFile = fastaFile;
+            this.fastaFile = searchParameters.getFastaFile();
             this.idFilter = idFilter;
             this.searchParameters = searchParameters;
             this.annotationPreferences = annotationPreferences;
             this.processingPreferences = processingPreferences;
             this.ptmScoringPreferences = ptmScoringPreferences;
+            this.spectrumCountingPreferences = spectrumCountingPreferences;
 
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
@@ -612,7 +498,6 @@ public class FileImporter {
 
             try {
 
-                PeptideShaker.setPeptideShakerPTMs(searchParameters);
                 waitingHandler.appendReport("Reading identification files.", true, true);
 
                 for (File idFile : idFiles) {
@@ -670,7 +555,7 @@ public class FileImporter {
                 waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.setProteinCountMap(proteinCount);
-                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences, ptmScoringPreferences);
+                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
@@ -744,16 +629,17 @@ public class FileImporter {
 
                 PeptideAssumption firstHit = match.getFirstHit(searchEngine);
                 String spectrumKey = match.getKey();
+                String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
                 String fileName = Spectrum.getSpectrumFile(spectrumKey);
                 if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                     fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
-                    match.setKey(Spectrum.getSpectrumKey(fileName, Spectrum.getSpectrumTitle(spectrumKey)));
+                    match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
                     spectrumKey = match.getKey();
                 }
                 if (spectrumFactory.fileLoaded(fileName)
                         && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                     String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
-                    String spectrumTitle = match.getSpectrumNumber() + "";
+                    spectrumTitle = match.getSpectrumNumber() + "";
                     spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
                     match.setKey(spectrumKey);
                     if (spectrumFactory.fileLoaded(fileName)
@@ -839,18 +725,36 @@ public class FileImporter {
                 if (!goodFirstHit) {
                     matchIt.remove();
                 } else {
-                    // use search engine independant PTMs
+                    // change the search engine modifications into expected modifications
                     for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                         Peptide peptide = assumptions.getPeptide();
-                        for (ModificationMatch seMod : peptide.getModificationMatches()) {
-                            if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                            String expectedPTM, sePTM = modMatch.getTheoreticPtm();
+                            if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
-                                    waitingHandler.appendReport("An unknown modification was encountered and might impair further processing."
-                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
+                                    waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + "of file " + fileName + " and might impair further processing."
+                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.\nThe spectrum will be ignored.", true, true);
                                     unknown = true;
                                 }
                             }
-                            seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide, searchParameters));
+                            ArrayList<String> expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), sePTM);
+                            if (expectedNames.isEmpty()) {
+                                String[] parsedName = sePTM.split("@");
+                                double seMass = 0;
+                                try {
+                                    seMass = new Double(parsedName[0]);
+                                } catch (Exception e) {
+                                    throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification. Error encountered in spectrum " + spectrumTitle + "of file " + fileName + ".");
+                                }
+                                expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
+                            }
+
+                            if (!expectedNames.isEmpty()) {
+                                expectedPTM = expectedNames.get(0);
+                            } else {
+                                expectedPTM = PTMFactory.unknownPTM.getName();
+                            }
+                            modMatch.setTheoreticPtm(expectedPTM);
                         }
                     }
 
@@ -912,7 +816,6 @@ public class FileImporter {
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.increaseProgressValue();
-                searchParameters.addSpectrumFile(spectrumFile.getAbsolutePath());
                 waitingHandler.appendReport(targetFileName + " imported.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".", true, true);

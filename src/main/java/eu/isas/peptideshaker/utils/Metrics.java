@@ -7,8 +7,7 @@ import java.util.HashMap;
 /**
  * This class contains metrics from the dataset for later use.
  *
- * @TODO for the next release without backward compatibility we could rename it
- * into something more descriptive like DatasetMetrics.
+ * @TODO Merge with the IdentificationFeaturesCache.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -18,7 +17,7 @@ public class Metrics implements Serializable {
     /**
      * Serial number for versions compatibility.
      */
-    static final long serialVersionUID = 5905881057533649517L; // @TODO: have to be updated??
+    static final long serialVersionUID = 5905881057533649517L;
     /**
      * The maximal precursor error in Da in all PSMs (only the best hit per
      * spectrum).
