@@ -200,11 +200,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private String lastSelectedFolder = "user.home";
     /**
-     * File containing the modification profile. By default default.psm in the
-     * conf folder.
-     */
-    private File profileFile = new File("resources/conf/default.psm");
-    /**
      * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
@@ -494,7 +489,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         loadEnzymes();
         resetPtmFactory();
-        setDefaultPreferences();
 
         exceptionHandler = new ExceptionHandler(this);
 
@@ -3199,7 +3193,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void setDefaultPreferences() {
         searchParameters = new SearchParameters();
-        loadModificationProfile(profileFile);
         annotationPreferences.setAnnotationLevel(0.75);
         annotationPreferences.useAutomaticAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
@@ -3316,27 +3309,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             ptmPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             ptmPanel.updateGraphics(null);
         }
-    }
-
-    /**
-     * Returns the modification profile file.
-     *
-     * @return the modification profile file
-     */
-    public File getModificationProfileFile() {
-        return profileFile;
-    }
-
-    /**
-     * Sets the modification profile file.
-     *
-     * @param profileFile the modification profile file
-     */
-    public void setModificationProfileFile(File profileFile) {
-        this.profileFile = profileFile;
-
-        // update the color coding in the other tabs
-        updatePtmColorCoding();
     }
 
     /**
