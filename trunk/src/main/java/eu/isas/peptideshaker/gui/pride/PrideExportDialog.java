@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewSampleDialog;
 import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewInstrumentDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.pride.prideobjects.Reference;
 import com.compomics.util.pride.prideobjects.Contact;
 import com.compomics.util.pride.prideobjects.Sample;
@@ -15,10 +16,10 @@ import com.compomics.util.pride.prideobjects.Protocol;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.gui.renderers.ToolTipComboBoxRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.prideobjects.*;
 import eu.isas.peptideshaker.export.PRIDEExport;
-import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
@@ -304,7 +305,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
         }
 
         comboboxTooltips.add(null);
-        optionComboBox.setRenderer(new MyComboBoxRenderer(comboboxTooltips, SwingConstants.CENTER));
+        optionComboBox.setRenderer(new ToolTipComboBoxRenderer(comboboxTooltips, SwingConstants.CENTER));
         options.add(0, selectText);
         options.add(insertNewText);
         optionComboBox.setModel(new DefaultComboBoxModel(options.toArray()));
@@ -774,7 +775,10 @@ public class PrideExportDialog extends javax.swing.JDialog {
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PrideExportDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PrideExportDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 

@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -22,7 +23,6 @@ import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
-import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -2566,7 +2566,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void modificationProfileHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificationProfileHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides",
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_modificationProfileHelpJButtonActionPerformed
 
@@ -2631,7 +2634,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void relatedProfileHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedProfileHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#RelatedPeptides");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#RelatedPeptides",
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_relatedProfileHelpJButtonActionPerformed
 
@@ -2678,7 +2684,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void ptmSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmSelectionHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Selection");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Selection",
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_ptmSelectionHelpJButtonActionPerformed
 
@@ -2734,7 +2743,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void modifiedPsmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifiedPsmsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PSMs");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PSMs",
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_modifiedPsmsHelpJButtonActionPerformed
 
@@ -2790,7 +2802,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void relatedPsmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedPsmsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#RelatedPSMs");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#RelatedPSMs",
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_relatedPsmsHelpJButtonActionPerformed
 
@@ -2841,11 +2856,20 @@ public class PtmPanel extends javax.swing.JPanel {
         int spectrumTabIndex = spectrumTabbedPane.getSelectedIndex();
 
         if (spectrumTabIndex == 0) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#AScore");
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#AScore",
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         } else if (spectrumTabIndex == 1) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#DeltsScore");
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#DeltsScore",
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         } else if (spectrumTabIndex == 2) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum",
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

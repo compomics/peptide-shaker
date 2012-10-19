@@ -5,6 +5,8 @@ import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.software.dialogs.ReporterSetupDialog;
+import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.SampleSelection;
 import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
@@ -352,7 +354,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * The class used to provide graphical sexy features out of the identification.
+     * The class used to provide graphical sexy features out of the
+     * identification.
      */
     private DisplayFeaturesGenerator displayFeaturesGenerator = new DisplayFeaturesGenerator(this);
     /**
@@ -1664,7 +1667,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void helpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJMenuItemActionPerformed
-        new HelpDialog(this, getClass().getResource("/helpFiles/PeptideShaker.html"));
+        new HelpDialog(this, getClass().getResource("/helpFiles/PeptideShaker.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
     }//GEN-LAST:event_helpJMenuItemActionPerformed
 
     /**
@@ -1673,7 +1679,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void aboutJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutJMenuItemActionPerformed
-        new HelpDialog(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"));
+        new HelpDialog(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "About PeptideShaker");
     }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
     /**
@@ -1732,10 +1741,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void searchParametersMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersMenuActionPerformed
-        
-        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, searchParameters, loadPrideToPtmMap(), 
+
+        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, searchParameters, loadPrideToPtmMap(),
                 selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor);
-        
+
         if (!searchPreferencesDialog.isCanceled()) {
             try {
                 searchPreferencesDialog.updatePtmToPrideMap();
@@ -2198,16 +2207,31 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
 
             if (spectrumTabIndex == 0) {
-                new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"));
+                new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        "PeptideShaker - Help");
             } else if (spectrumTabIndex == 1) {
-                new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"));
+                new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        "PeptideShaker - Help");
             } else if (spectrumTabIndex == 2) {
-                new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+                new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        "PeptideShaker - Help");
             }
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+            new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    "PeptideShaker - Help");
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"));
+            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    "PeptideShaker - Help");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2628,7 +2652,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
-        new BugReport(this);
+        new BugReport(this, lastSelectedFolder, "PeptideShaker", "peptide-shaker", getVersion(), new File(getJarFilePath() + "/resources/PeptideShaker.log"));
     }//GEN-LAST:event_logReportMenuActionPerformed
 
     /**
@@ -5028,12 +5052,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     setMetrics(experimentSettings.getMetrics());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
                     if (experimentSettings.getFilterPreferences() != null) {
-                    setFilterPreferences(experimentSettings.getFilterPreferences());
+                        setFilterPreferences(experimentSettings.getFilterPreferences());
                     } else {
                         setFilterPreferences(new FilterPreferences());
                     }
                     if (experimentSettings.getDisplayPreferences() != null) {
-                    setDisplayPreferences(experimentSettings.getDisplayPreferences());
+                        setDisplayPreferences(experimentSettings.getDisplayPreferences());
                     } else {
                         setDisplayPreferences(new DisplayPreferences());
                     }
@@ -5943,21 +5967,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
             for (String psPtm : modificationProfile.getVariableModifications()) {
                 if (ptmToPrideMap.getCVTerm(psPtm) == null) {
-                            CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
-                            if (defaultCVTerm != null) {
-                                ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
-                                changes = true;
-                                break;
+                    CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
+                    if (defaultCVTerm != null) {
+                        ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
+                        changes = true;
+                        break;
                     }
                 }
             }
             for (String psPtm : modificationProfile.getFixedModifications()) {
                 if (ptmToPrideMap.getCVTerm(psPtm) == null) {
-                            CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
-                            if (defaultCVTerm != null) {
-                                ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
-                                changes = true;
-                                break;
+                    CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
+                    if (defaultCVTerm != null) {
+                        ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
+                        changes = true;
+                        break;
                     }
                 }
             }
@@ -5984,71 +6008,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public File getUserSelectedFile(String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
 
-        final String fileEnding = aFileEnding;
-        final String fileFormatDescription = aFileFormatDescription;
-        final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
+        File selectedFile = Util.getUserSelectedFile(this, aFileEnding, aFileFormatDescription, aDialogTitle, lastSelectedFolder, openDialog);
 
-        fileChooser.setDialogTitle(aDialogTitle);
-        fileChooser.setMultiSelectionEnabled(false);
-
-        FileFilter filter = new FileFilter() {
-
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith(fileEnding) || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return fileFormatDescription;
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-
-        int returnVal;
-
-        if (openDialog) {
-            returnVal = fileChooser.showOpenDialog(this);
-        } else {
-            returnVal = fileChooser.showSaveDialog(this);
-        }
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            if (fileChooser.getSelectedFile().isDirectory()) {
-                lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
+        if (selectedFile != null) {
+            if (selectedFile.isDirectory()) {
+                lastSelectedFolder = selectedFile.getAbsolutePath();
             } else {
-                lastSelectedFolder = fileChooser.getSelectedFile().getParentFile().getAbsolutePath();
-            }
-
-            String selectedFile = fileChooser.getSelectedFile().getPath();
-
-            if (!selectedFile.endsWith(fileEnding)) {
-                selectedFile += fileEnding;
-            }
-
-            File newFile = new File(selectedFile);
-            int outcome = JOptionPane.YES_OPTION;
-
-            if (!openDialog && newFile.exists()) {
-                outcome = JOptionPane.showConfirmDialog(this,
-                        "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            } else if (openDialog && !newFile.exists()) {
-                JOptionPane.showMessageDialog(this, "The file\'" + newFile.getAbsolutePath() + "\' " + "does not exist!",
-                        "File Not Found.", JOptionPane.ERROR_MESSAGE);
-                return null;
-            }
-
-            if (outcome != JOptionPane.YES_OPTION) {
-                return null;
-            } else {
-                return newFile;
+                lastSelectedFolder = selectedFile.getParentFile().getAbsolutePath();
             }
         }
 
-        return null;
+        return selectedFile;
     }
 
     /**
@@ -6418,7 +6388,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         }.start();
     }
-
 
     private List<Tweet> getTwitterFeeds() {
 

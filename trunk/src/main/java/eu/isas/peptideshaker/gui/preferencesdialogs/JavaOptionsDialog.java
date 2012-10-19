@@ -1,7 +1,8 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
-import eu.isas.peptideshaker.gui.HelpDialog;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 
 /**
@@ -237,7 +238,10 @@ public class JavaOptionsDialog extends javax.swing.JDialog {
      */
     private void javaOptionsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaOptionsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/JavaOptionsDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/JavaOptionsDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_javaOptionsHelpJButtonActionPerformed
 

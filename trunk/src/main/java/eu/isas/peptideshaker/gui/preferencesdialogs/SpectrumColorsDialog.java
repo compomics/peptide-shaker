@@ -2,11 +2,12 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Ion;
 import com.compomics.util.experiment.biology.NeutralLoss;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.spectrum.IonLabelColorTableModel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JColorChooser;
@@ -19,6 +20,8 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
  * @author Harald Barsnes
  */
 public class SpectrumColorsDialog extends javax.swing.JDialog {
+    
+    // @TODO: this class should be generalized and moved to utilities
 
     /**
      * The list of ion types.
@@ -517,7 +520,10 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      */
     private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumColorsDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumColorsDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

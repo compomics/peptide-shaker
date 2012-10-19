@@ -1,10 +1,11 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.NewDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
@@ -412,7 +413,10 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
      */
     private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FilterSettings.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FilterSettings.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

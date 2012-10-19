@@ -3,9 +3,10 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -616,7 +617,10 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      */
     private void annotationPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
 

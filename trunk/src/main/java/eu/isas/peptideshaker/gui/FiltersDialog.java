@@ -5,6 +5,7 @@ import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.FindDialog.FilterType;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 
 /**
  * Displays the filters used for star/hide items.
@@ -1740,7 +1742,10 @@ public class FiltersDialog extends javax.swing.JDialog {
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FilterSelection.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FilterSelection.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 

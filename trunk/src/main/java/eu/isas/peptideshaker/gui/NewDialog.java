@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.gui.filehandling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -715,7 +716,8 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+
+        JFileChooser fileChooser = new JFileChooser(searchParameters.getFastaFile());
         fileChooser.setDialogTitle("Select FASTA File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
@@ -963,7 +965,10 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 
@@ -1283,7 +1288,6 @@ public class NewDialog extends javax.swing.JDialog {
         try {
             searchParameters = SearchParameters.getIdentificationParameters(file);
             PeptideShaker.loadModifications(searchParameters);
-
         } catch (Exception e) {
             try {
                 // Old school format, overwrite old file

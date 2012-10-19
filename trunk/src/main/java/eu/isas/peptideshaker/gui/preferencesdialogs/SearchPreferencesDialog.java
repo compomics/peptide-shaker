@@ -8,7 +8,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.ptm.PtmDialog;
 import com.compomics.util.gui.ptm.PtmDialogParent;
@@ -18,6 +18,7 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShaker;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
@@ -884,7 +885,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void searchPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchPreferencesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-//        new HelpDialog(this, getClass().getResource("/helpFiles/SearchPreferencesDialog.html")); //@TODO: use compomics error handler
+        new HelpDialog(this, getClass().getResource("/helpFiles/SearchPreferencesDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_searchPreferencesHelpJButtonActionPerformed
 

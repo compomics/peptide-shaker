@@ -7,10 +7,12 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
@@ -683,7 +685,10 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PtmSiteInferenceDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PtmSiteInferenceDialog.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
