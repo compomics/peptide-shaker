@@ -7,8 +7,6 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
-import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -87,15 +85,15 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ArrayList<File> spectrumFiles = new ArrayList<File>();
     /**
-     * The peptide shaker class which will take care of the pre-processing..
+     * The peptide shaker class which will take care of the pre-processing.
      */
     private PeptideShaker peptideShaker;
     /**
-     * The processing preferences
+     * The processing preferences.
      */
     private ProcessingPreferences processingPreferences = new ProcessingPreferences();
     /**
-     * The ptm scoring preferences
+     * The ptm scoring preferences.
      */
     private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
     /**
@@ -103,7 +101,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ProgressDialogX progressDialog;
     /**
-     * The search parameters corresponding to the files selected
+     * The search parameters corresponding to the files selected.
      */
     private SearchParameters searchParameters = null;
 

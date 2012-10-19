@@ -63,23 +63,23 @@ public class IdentificationFeaturesGenerator {
      */
     private IdentificationFeaturesCache identificationFeaturesCache = new IdentificationFeaturesCache();
     /**
-     * the metrics picked-up wile loading the data
+     * The metrics picked-up wile loading the data.
      */
     private Metrics metrics;
     /**
-     * The identification of interest
+     * The identification of interest.
      */
     private Identification identification;
     /**
-     * The search parameters
+     * The search parameters.
      */
     private SearchParameters searchParameters;
     /**
-     * The identification filter
+     * The identification filter.
      */
     private IdFilter idFilter;
     /**
-     * The spectrum counting preferences
+     * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
 
@@ -1238,5 +1238,4 @@ public class IdentificationFeaturesGenerator {
     public void setIdentificationFeaturesCache(IdentificationFeaturesCache identificationFeaturesCache) {
         this.identificationFeaturesCache = identificationFeaturesCache;
     }
-  
 }

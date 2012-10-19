@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -1094,7 +1093,7 @@ public class FindDialog extends javax.swing.JDialog {
                         return cpt;
                     case 10:
                         try {
-                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                            return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                             return Double.NaN;

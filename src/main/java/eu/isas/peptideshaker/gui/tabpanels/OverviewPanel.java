@@ -161,7 +161,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private ChartPanel ptmChart;
     /**
-     * The last m/z maximum displayed
+     * The last m/z maximum displayed.
      */
     private double lastMzMaximum = 0;
 

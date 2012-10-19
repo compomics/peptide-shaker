@@ -68,7 +68,7 @@ public class PSSettings implements UrParameter {
     /**
      * Constructor for a PeptideShaker Settings class.
      *
-     * @param identificationParameters The parameters linked to the search
+     * @param searchParameters The parameters linked to the search
      * @param annotationPreferences The annotation preferences
      * @param spectrumCountingPreferences The spectrum counting preferences
      * @param projectDetails The project details

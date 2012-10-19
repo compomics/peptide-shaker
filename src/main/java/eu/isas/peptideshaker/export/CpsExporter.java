@@ -31,8 +31,9 @@ import org.apache.commons.compress.archivers.ArchiveException;
 public class CpsExporter {
 
     /**
-     * Saves the given data in a cps file. Here the GUI preferences will be null objects.
-     * 
+     * Saves the given data in a cps file. Here the GUI preferences will be null
+     * objects.
+     *
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
      * @param experiment the experiment to save
@@ -41,30 +42,32 @@ public class CpsExporter {
      * @param annotationPreferences the annotation preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
-     * @param displayPreferences the display preferences
      * @param metrics the dataset metrics
      * @param processingPreferences the processing preferences
      * @param identificationFeaturesCache the identification features cache
      * @param ptmScoringPreferences the ptm scoring preferences
      * @param objectsCache the object cache
-     * @param emptyCache a boolean indicating whether the object cache should be emptied
+     * @param emptyCache a boolean indicating whether the object cache should be
+     * emptied
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
-     * @throws ArchiveException 
+     * @throws ArchiveException
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
             ObjectsCache objectsCache, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-        saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, objectsCache, emptyCache, null);
+                saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
+                    null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, objectsCache, emptyCache, null);
     }
-    
+
     /**
      * Saves the given data in a cps file
+     *
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
-     * @param experiment the experiment to save 
+     * @param experiment the experiment to save
      * @param identification the identification to save
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
@@ -84,11 +87,11 @@ public class CpsExporter {
      * @throws FileNotFoundException
      * @throws ArchiveException
      */
-    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
-            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
+    public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
             ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences) throws IOException, SQLException, FileNotFoundException, ArchiveException {
-        
+
         // set the experiment parameters
         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,

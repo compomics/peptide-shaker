@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.preferences.ModificationProfile;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
  * Options instance.
  *
  * @author Kenny Helsens
+ * @author Marc Vaudel
  */
 public class PeptideShakerCLIInputBean {
 
@@ -30,11 +30,11 @@ public class PeptideShakerCLIInputBean {
      */
     private int replicate = 0;
     /**
-     * The spectrum files
+     * The spectrum files.
      */
     private ArrayList<File> spectrumFiles = null;
     /**
-     * The identification files
+     * The identification files.
      */
     private ArrayList<File> idFiles = null;
     /**
@@ -66,7 +66,7 @@ public class PeptideShakerCLIInputBean {
      */
     private double proteinFDR = 1.0;
     /**
-     * The identification parameters used for the search
+     * The identification parameters used for the search.
      */
     private SearchParameters identificationParameters = null;
 
@@ -74,16 +74,19 @@ public class PeptideShakerCLIInputBean {
      * Construct a PeptideShakerCLIInputBean from a Apache CLI instance.
      *
      * @param aLine the command line
+     * @throws FileNotFoundException
+     * @throws IOException 
+     * @throws ClassNotFoundException  
      */
     public PeptideShakerCLIInputBean(CommandLine aLine) throws FileNotFoundException, IOException, ClassNotFoundException {
 
         iExperimentID = aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id);
         iSampleID = aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id);
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id)) {
             replicate = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id));
         }
-        
+
         spectrumFiles = new ArrayList<File>();
         String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
         for (String file : splitInput(filesTxt)) {
@@ -94,7 +97,7 @@ public class PeptideShakerCLIInputBean {
                 throw new FileNotFoundException(file + " not found.");
             }
         }
-        
+
         idFiles = new ArrayList<File>();
         filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
         for (String file : splitInput(filesTxt)) {
@@ -105,24 +108,24 @@ public class PeptideShakerCLIInputBean {
                 throw new FileNotFoundException(file + " not found.");
             }
         }
-        
+
         output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id)) {
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id).trim();
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
                 csvDirectory = testFile;
-                
+
             } else {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
         }
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id)) {
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_PRIDE.id);
             File testFile = new File(filesTxt);
-                prideFile = testFile;
+            prideFile = testFile;
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.PSM_FDR.id)) {
@@ -142,7 +145,7 @@ public class PeptideShakerCLIInputBean {
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.SEARCH_PARAMETERS.id)) {
-            
+
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_PARAMETERS.id);
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
@@ -161,7 +164,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the directory for csv output. Null if not set
+     * Returns the directory for csv output. Null if not set.
+     *
      * @return the directory for csv output
      */
     public File getCsvDirectory() {
@@ -169,7 +173,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the directory for csv output
+     * Sets the directory for csv output.
+     *
      * @param csvDirectory the directory for csv output
      */
     public void setCsvDirectory(File csvDirectory) {
@@ -177,7 +182,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the experiment name
+     * Returns the experiment name.
+     *
      * @return the experiment name
      */
     public String getiExperimentID() {
@@ -185,7 +191,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the experiment name
+     * Sets the experiment name.
+     *
      * @param iExperimentID the experiment name
      */
     public void setiExperimentID(String iExperimentID) {
@@ -193,7 +200,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the cps output file
+     * Returns the cps output file.
+     *
      * @return the cps output file
      */
     public File getOutput() {
@@ -201,7 +209,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the cps output file
+     * Sets the cps output file.
+     *
      * @param output the cps output file
      */
     public void setOutput(File output) {
@@ -210,6 +219,7 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Returns the PSM FDR in percent.
+     *
      * @return the PSM FDR
      */
     public double getPsmFDR() {
@@ -217,31 +227,35 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the PSM FDR in percent
-     * @param iPSMFDR the PSM FDR
+     * Sets the PSM FDR in percent.
+     *
+     * @param psmFDR the PSM FDR
      */
     public void setPsmFDR(double psmFDR) {
         this.psmFDR = psmFDR;
     }
 
     /**
-     * Sets the PSM FLR in percent
-     * @return the PSM FLR 
+     * Sets the PSM FLR in percent.
+     *
+     * @return the PSM FLR
      */
     public double getiPsmFLR() {
         return psmFLR;
     }
 
     /**
-     * Sets the PSM FLR in percent
-     * @param iPSMFLR the PSM FLR
+     * Sets the PSM FLR in percent.
+     *
+     * @param psmFLR the PSM FLR
      */
     public void setPsmFLR(double psmFLR) {
         this.psmFLR = psmFLR;
     }
 
     /**
-     * Returns the peptide FDR in percent
+     * Returns the peptide FDR in percent.
+     *
      * @return the peptide FDR
      */
     public double getPeptideFDR() {
@@ -249,31 +263,35 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the peptide FDR in percent
-     * @param iPeptideFDR the peptide FDR
+     * Sets the peptide FDR in percent.
+     *
+     * @param peptideFDR the peptide FDR
      */
     public void setPeptideFDR(double peptideFDR) {
         this.peptideFDR = peptideFDR;
     }
 
     /**
-     * Returns the protein FDR in percent
-     * @return the protein FDR 
+     * Returns the protein FDR in percent.
+     *
+     * @return the protein FDR
      */
     public double getProteinFDR() {
         return proteinFDR;
     }
 
     /**
-     * Sets the protein FDR in percent
-     * @param iProteinFDR the protein FDR
+     * Sets the protein FDR in percent.
+     *
+     * @param proteinFDR the protein FDR
      */
     public void setProteinFDR(double proteinFDR) {
         this.proteinFDR = proteinFDR;
     }
 
     /**
-     * Returns the name of the sample
+     * Returns the name of the sample.
+     *
      * @return the name of the sample
      */
     public String getiSampleID() {
@@ -281,7 +299,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the name of the sample
+     * Sets the name of the sample.
+     *
      * @param iSampleID the name of the sample
      */
     public void setiSampleID(String iSampleID) {
@@ -289,7 +308,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the identification files
+     * Returns the identification files.
+     *
      * @return the identification files
      */
     public ArrayList<File> getIdFiles() {
@@ -297,7 +317,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the identification files
+     * Sets the identification files.
+     *
      * @param idFiles the identification files
      */
     public void setIdFiles(ArrayList<File> idFiles) {
@@ -305,7 +326,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the pride file
+     * Returns the pride file.
+     *
      * @return the pride file
      */
     public File getPrideFile() {
@@ -313,7 +335,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the pride file
+     * Sets the pride file.
+     *
      * @param prideFile the pride file
      */
     public void setPrideFile(File prideFile) {
@@ -321,7 +344,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the replicate number
+     * Returns the replicate number.
+     *
      * @return the replicate number
      */
     public int getReplicate() {
@@ -329,7 +353,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the replicate number
+     * Sets the replicate number.
+     *
      * @param replicate the replicate number
      */
     public void setReplicate(int replicate) {
@@ -337,7 +362,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the spectrum files
+     * Returns the spectrum files.
+     *
      * @return the spectrum files
      */
     public ArrayList<File> getSpectrumFiles() {
@@ -345,7 +371,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the spectrum files
+     * Sets the spectrum files.
+     *
      * @param spectrumFiles the spectrum files
      */
     public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
@@ -353,7 +380,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the identification parameters
+     * Returns the identification parameters.
+     *
      * @return the identification parameters
      */
     public SearchParameters getIdentificationParameters() {
@@ -361,24 +389,25 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Sets the identification parameters
+     * Sets the identification parameters.
+     *
      * @param identificationParameters the identification parameters
      */
     public void setIdentificationParameters(SearchParameters identificationParameters) {
         this.identificationParameters = identificationParameters;
     }
-    
+
     /**
-     * Returns a list of file names for inputs of comma separated files
+     * Returns a list of file names for inputs of comma separated files.
+     *
      * @param cliInput the CLI input
      * @return a list of file names
      */
     public static ArrayList<String> splitInput(String cliInput) {
         ArrayList<String> results = new ArrayList<String>();
         for (String file : cliInput.split(",")) {
-                results.add(file.trim());
+            results.add(file.trim());
         }
         return results;
     }
-    
 }

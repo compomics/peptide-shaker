@@ -1557,7 +1557,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     double value = 0;
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-            peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                    peptideShakerGUI.getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
                         if (psParameter.isValidated() && !psParameter.isHidden()) {
@@ -1607,36 +1607,36 @@ public class QCPanel extends javax.swing.JPanel {
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
                     if (!psParameter.isHidden()) {
-try {
-                        double value = peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                        if (value > 0) {
-                            value = Math.log10(value);
-                        }
-
-                        if (psParameter.isValidated()) {
+                        try {
+                            double value = peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                             if (value > 0) {
-                                if (value > maxValue) {
-                                    maxValue = value;
+                                value = Math.log10(value);
+                            }
+
+                            if (psParameter.isValidated()) {
+                                if (value > 0) {
+                                    if (value > maxValue) {
+                                        maxValue = value;
+                                    }
                                 }
                             }
-                        }
 
-                        if (!proteinMatch.isDecoy()) {
-                            if (psParameter.isValidated()) {
-                                validatedValues.add(value);
+                            if (!proteinMatch.isDecoy()) {
+                                if (psParameter.isValidated()) {
+                                    validatedValues.add(value);
+                                } else {
+                                    nonValidatedValues.add(value);
+                                }
                             } else {
-                                nonValidatedValues.add(value);
+                                if (psParameter.isValidated()) {
+                                    validatedDecoyValues.add(value);
+                                } else {
+                                    nonValidatedDecoyValues.add(value);
+                                }
                             }
-                        } else {
-                            if (psParameter.isValidated()) {
-                                validatedDecoyValues.add(value);
-                            } else {
-                                nonValidatedDecoyValues.add(value);
-                            }
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
                         }
-} catch (Exception e) {
-    peptideShakerGUI.catchException(e);
-}
                     }
 
                     progressDialog.increaseProgressValue();
@@ -1661,24 +1661,24 @@ try {
                     if (!psParameter.isHidden()) {
 
                         try {
-                        double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                            double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
 
-                        if (value > maxValue) {
-                            maxValue = value;
-                        }
-                        if (!proteinMatch.isDecoy()) {
-                            if (psParameter.isValidated()) {
-                                validatedValues.add(value);
-                            } else {
-                                nonValidatedValues.add(value);
+                            if (value > maxValue) {
+                                maxValue = value;
                             }
-                        } else {
-                            if (psParameter.isValidated()) {
-                                validatedDecoyValues.add(value);
+                            if (!proteinMatch.isDecoy()) {
+                                if (psParameter.isValidated()) {
+                                    validatedValues.add(value);
+                                } else {
+                                    nonValidatedValues.add(value);
+                                }
                             } else {
-                                nonValidatedDecoyValues.add(value);
+                                if (psParameter.isValidated()) {
+                                    validatedDecoyValues.add(value);
+                                } else {
+                                    nonValidatedDecoyValues.add(value);
+                                }
                             }
-                        }
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }

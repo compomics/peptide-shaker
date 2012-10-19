@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.fileimport;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
@@ -17,7 +16,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
-import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
@@ -106,7 +104,7 @@ public class FileImporter {
      */
     private Metrics metrics;
     /**
-     * The search parameters
+     * The search parameters.
      */
     private SearchParameters searchParameters;
     /**
@@ -339,19 +337,19 @@ public class FileImporter {
     private class IdProcessorFromFile extends SwingWorker {
 
         /**
-         * The identification file reader factory of compomics utilities
+         * The identification file reader factory of compomics utilities.
          */
         private IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
         /**
-         * The list of identification files
+         * The list of identification files.
          */
         private ArrayList<File> idFiles;
         /**
-         * The fasta file
+         * The fasta file.
          */
         private File fastaFile;
         /**
-         * A list of spectrum files (can be empty, no spectrum will be imported)
+         * A list of spectrum files (can be empty, no spectrum will be imported).
          */
         private HashMap<String, File> spectrumFiles;
         /**
@@ -359,65 +357,65 @@ public class FileImporter {
          */
         private IdFilter idFilter;
         /**
-         * The search parameters
+         * The search parameters.
          */
         private SearchParameters searchParameters;
         /**
-         * The annotation preferences to use for PTM scoring
+         * The annotation preferences to use for PTM scoring.
          */
         private AnnotationPreferences annotationPreferences;
         /**
-         * The processing preferences
+         * The processing preferences.
          */
         private ProcessingPreferences processingPreferences;
         /**
-         * The PTM scoring preferences
+         * The PTM scoring preferences.
          */
         private PTMScoringPreferences ptmScoringPreferences;
         /**
-         * The spectrum counting preferences
+         * The spectrum counting preferences.
          */
         private SpectrumCountingPreferences spectrumCountingPreferences;
         /**
-         * The number of retained first hits
+         * The number of retained first hits.
          */
         private long nRetained = 0;
         /**
-         * The number of spectra
+         * The number of spectra.
          */
         private long nSpectra = 0;
         /**
-         * The number of first hits
+         * The number of first hits.
          */
         private long nPSMs = 0;
         /**
-         * The number of secondary hits
+         * The number of secondary hits.
          */
         private long nSecondary = 0;
         /**
-         * List of the mgf files used
+         * List of the mgf files used.
          */
         private ArrayList<String> mgfUsed = new ArrayList<String>();
         /**
-         * Map of the missing mgf files indexed by identification file
+         * Map of the missing mgf files indexed by identification file.
          */
         private HashMap<File, String> missingMgfFiles = new HashMap<File, String>();
         /**
-         * The input map
+         * The input map.
          */
         private InputMap inputMap = new InputMap();
         /**
-         * List of one hit wonders
+         * List of one hit wonders.
          */
         private ArrayList<String> singleProteinList = new ArrayList<String>();
         /**
          * Map of proteins found several times with the number of times they
-         * appeared as first hit
+         * appeared as first hit.
          */
         private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
 
         /**
-         * Constructor of the worker
+         * Constructor of the worker.
          *
          * @param idFiles ArrayList containing the identification files
          */

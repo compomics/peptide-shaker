@@ -5,18 +5,14 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
-import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.gui.NewDialog;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -32,14 +28,13 @@ import org.apache.commons.cli.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.concurrent.Callable;
-import javax.swing.JOptionPane;
 
 /**
  * A Command line interface to run PeptideShaker on a SearchGUI output folder.
  *
  * @author Kenny Helsens
+ * @author Marc Vaudel
  */
 public class PeptideShakerCLI implements Callable {
 
@@ -154,16 +149,16 @@ public class PeptideShakerCLI implements Callable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         // CSV output required?
         if (cliInputBean.getCsvDirectory() != null) {
             CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, searchParameters.getEnzyme(), identificationFeaturesGenerator);
             exporter.exportResults(null, cliInputBean.getCsvDirectory());
         }
-        
+
         // Pride output required?
         //@TODO!
-        
+
         //Export entire project?
         //@TODO!
 
