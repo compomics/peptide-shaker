@@ -6,6 +6,7 @@ import org.apache.commons.cli.Options;
  * Enum class specifying the Command Line Parameters for PeptideShaker.
  *
  * @author Kenny Helsens
+ * @author Marc Vaudel
  */
 public enum PeptideShakerCLIParams {
 
@@ -31,14 +32,14 @@ public enum PeptideShakerCLIParams {
      */
     public String description;
     /**
-     * boolean indicating whether the parameter is mandatory
+     * Boolean indicating whether the parameter is mandatory.
      */
     public boolean mandatory;
 
     /**
      * Private constructor managing the various variables for the enum
      * instances.
-     * 
+     *
      * @param id the id
      * @param description the description
      * @param mandatory is the parameter mandatory
@@ -48,9 +49,11 @@ public enum PeptideShakerCLIParams {
         this.description = description;
         this.mandatory = mandatory;
     }
-    
+
     /**
-     * Creates the options for the command line interface based on the possible values
+     * Creates the options for the command line interface based on the possible
+     * values.
+     *
      * @param aOptions the options object where the options will be added
      */
     public static void createOptionsCLI(Options aOptions) {
@@ -68,5 +71,4 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(PROTEIN_FDR.id, true, PROTEIN_FDR.description);
         aOptions.addOption(SEARCH_PARAMETERS.id, true, SEARCH_PARAMETERS.description);
     }
-    
 }

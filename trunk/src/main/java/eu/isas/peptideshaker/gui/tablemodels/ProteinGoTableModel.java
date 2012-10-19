@@ -39,7 +39,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param proteins  
+     * @param proteins
      */
     public ProteinGoTableModel(PeptideShakerGUI peptideShakerGUI, HashSet<String> proteins) {
         setUpTableModel(peptideShakerGUI, proteins);
@@ -50,7 +50,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
      * table model. This keeps the sorting order of the table.
      *
      * @param peptideShakerGUI
-     * @param proteins  
+     * @param proteins
      */
     public void updateDataModel(PeptideShakerGUI peptideShakerGUI, HashSet<String> proteins) {
         setUpTableModel(peptideShakerGUI, proteins);
@@ -125,7 +125,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
 
         try {
             String proteinKey = proteins.get(row);
-            
+
             switch (column) {
                 case 0:
                     return row + 1;
@@ -143,32 +143,32 @@ public class ProteinGoTableModel extends DefaultTableModel {
                 case 3:
                     double sequenceCoverage;
                     try {
-                    sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                    }catch (Exception e) {
+                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                    } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;
                     }
                     double possibleCoverage = 100;
                     try {
-                    possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                        possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 4:
                     try {
-                    int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                    proteinMatch = identification.getProteinMatch(proteinKey);
-                    return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
-                    }catch (Exception e) {
+                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                        proteinMatch = identification.getProteinMatch(proteinKey);
+                        return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
+                    } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;
                     }
                 case 5:
                     try {
-                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
-                    int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                        int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;

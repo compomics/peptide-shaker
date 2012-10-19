@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.utils;
 
 import com.compomics.util.Util;
@@ -21,14 +17,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class creates the display features needed for the GUI
+ * This class creates the display features needed for the GUI.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class DisplayFeaturesGenerator {
-    
+
     /**
-     * The main GUI instance
+     * The main GUI instance.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
@@ -39,16 +35,16 @@ public class DisplayFeaturesGenerator {
      * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
-    
+
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
      * @param peptideShakerGUI the main instance of the GUI
      */
     public DisplayFeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
     }
-    
+
     /**
      * Transforms the protein accession number into an HTML link to the
      * corresponding database. Note that this is a complete HTML with HTML and a
@@ -183,7 +179,6 @@ public class DisplayFeaturesGenerator {
     public String getNcbiAccessionLink(String proteinAccession) {
         return "http://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
     }
-    
 
     /**
      * Returns a String with the HTML tooltip for the peptide indicating the

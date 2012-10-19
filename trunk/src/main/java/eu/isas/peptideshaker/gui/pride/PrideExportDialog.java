@@ -92,44 +92,44 @@ public class PrideExportDialog extends javax.swing.JDialog {
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
-    
+
     /**
      * Insert the reference options in the combo box.
      */
     private void insertReferenceOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getReferenceGroups().keySet()), 
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getReferenceGroups().keySet()),
                 "--- Select a Reference Group ---", "   Create a New Reference Group...", referenceGroupsJComboBox);
     }
-    
+
     /**
      * Insert the contact options in the combo box.
      */
     private void insertContactOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getContactGroups().keySet()), 
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getContactGroups().keySet()),
                 "--- Select a Contact Group ---", "   Create a New Contact Group...", contactGroupsJComboBox);
     }
-    
+
     /**
      * Insert the sample options in the combo box.
      */
     private void insertSampleOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()), 
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getSamples().keySet()),
                 "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
     }
-    
+
     /**
      * Insert the protcol options in the combo box.
      */
     private void insertProtocolOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()), 
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()),
                 "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
     }
-    
+
     /**
      * Insert the instrument options in the combo box.
      */
     private void insertInstrumentOptions() {
-        insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()), 
+        insertOptions(new ArrayList<String>(prideObjectsFactory.getInstruments().keySet()),
                 "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
     }
 
@@ -157,7 +157,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         peptideShakerGUI.loadPrideToPtmMap();
         ArrayList<String> missingMods = checkModifications();
-        
+
         if (!missingMods.isEmpty()) {
             String report = "PRIDE CV term missing for the following modifications:\n";
             boolean first = true;
@@ -174,7 +174,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
             SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.loadPrideToPtmMap(), peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
             if (!searchPreferencesDialog.isCanceled()) {
                 try {
-                searchPreferencesDialog.updatePtmToPrideMap();
+                    searchPreferencesDialog.updatePtmToPrideMap();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -202,7 +202,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
      * Insert the available project data.
      */
     private void insertProjectData() {
-        
+
         // use the pride experiment title if set, or the project experiment reference if not 
         if (peptideShakerGUI.getProjectDetails().getPrideExperimentTitle() != null) {
             titleJTextField.setText(peptideShakerGUI.getProjectDetails().getPrideExperimentTitle());
@@ -275,7 +275,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
             instrumentJComboBox.setSelectedItem(peptideShakerGUI.getProjectDetails().getPrideInstrument().getName());
         }
 
-        if (peptideShakerGUI.getProjectDetails().getPrideOutputFolder() != null 
+        if (peptideShakerGUI.getProjectDetails().getPrideOutputFolder() != null
                 && new File(peptideShakerGUI.getProjectDetails().getPrideOutputFolder()).exists()) {
             outputFolderJTextField.setText(peptideShakerGUI.getProjectDetails().getPrideOutputFolder());
         }
@@ -1048,7 +1048,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
                 // get the selected instrument details
                 String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
                 Instrument instrument = prideObjectsFactory.getInstruments().get(selectedInstrument);
-                
+
                 // save the inserted pride details with the project
                 peptideShakerGUI.getProjectDetails().setPrideExperimentTitle(titleJTextField.getText());
                 peptideShakerGUI.getProjectDetails().setPrideExperimentLabel(labelJTextField.getText());

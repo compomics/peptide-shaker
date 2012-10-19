@@ -49,8 +49,6 @@ import eu.isas.peptideshaker.preferences.UserPreferences;
 import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
-import com.compomics.util.protein.Header;
-import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
@@ -1734,10 +1732,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void searchParametersMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersMenuActionPerformed
-        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, searchParameters, loadPrideToPtmMap(), selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor);
+        
+        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, searchParameters, loadPrideToPtmMap(), 
+                selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor);
+        
         if (!searchPreferencesDialog.isCanceled()) {
             try {
-            searchPreferencesDialog.updatePtmToPrideMap();
+                searchPreferencesDialog.updatePtmToPrideMap();
             } catch (Exception e) {
                 catchException(e);
             }

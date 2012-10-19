@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -79,14 +78,14 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
-        
+
         if (identification != null) {
             proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
             //proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null); // show all proteins
         }
-        
+
         fileNames = new ArrayList<String>();
-        
+
         for (String fileName : identification.getSpectrumFiles()) {
             fileNames.add(fileName);
         }
@@ -98,7 +97,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     public void reset() {
         proteinKeys = null;
     }
-    
+
     @Override
     public int getRowCount() {
         if (proteinKeys != null) {
@@ -107,12 +106,12 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             return 0;
         }
     }
-    
+
     @Override
     public int getColumnCount() {
         return fileNames.size() + 6;
     }
-    
+
     @Override
     public String getColumnName(int column) {
         if (column == 0) {
@@ -133,10 +132,10 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             return "";
         }
     }
-    
+
     @Override
     public Object getValueAt(int row, int column) {
-        
+
         try {
             if (column == 0) {
                 return row + 1;
@@ -153,17 +152,17 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 }
                 return description;
             } else if (column > 2 && column - 3 < fileNames.size()) {
-                
+
                 String fraction = fileNames.get(column - 3);
                 PSParameter psParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                
+
                 if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
                     return psParameter.getFractionConfidence(fraction);
                 } else {
                     return 0.0;
-                }  
+                }
             } else if (column == fileNames.size() + 3) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 String mainMatch = proteinMatch.getMainMatch();
@@ -191,7 +190,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             return "";
         }
     }
-    
+
     @Override
     public Class getColumnClass(int columnIndex) {
         for (int i = 0; i < getRowCount(); i++) {
@@ -201,7 +200,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         }
         return String.class;
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;

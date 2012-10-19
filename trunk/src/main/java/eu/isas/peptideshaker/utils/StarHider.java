@@ -837,23 +837,23 @@ public class StarHider {
                 IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
                 if (proteinFilter.getProteinNSpectra() != null) {
                     try {
-                    if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
-                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) <= proteinFilter.getProteinNSpectra()) {
-                            return false;
+                        if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
+                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) <= proteinFilter.getProteinNSpectra()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
+                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) >= proteinFilter.getProteinNSpectra()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
+                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) != proteinFilter.getProteinNSpectra()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
+                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) == proteinFilter.getProteinNSpectra()) {
+                                return false;
+                            }
                         }
-                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
-                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) >= proteinFilter.getProteinNSpectra()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) != proteinFilter.getProteinNSpectra()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                        if (identificationFeaturesGenerator.getNSpectra(proteinKey) == proteinFilter.getProteinNSpectra()) {
-                            return false;
-                        }
-                    }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }
@@ -886,24 +886,24 @@ public class StarHider {
 
                 if (proteinFilter.getSpectrumCounting() != null) {
                     try {
-                    double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                    if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
-                        if (spectrumCounting <= proteinFilter.getSpectrumCounting()) {
-                            return false;
+                        double spectrumCounting = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
+                        if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
+                            if (spectrumCounting <= proteinFilter.getSpectrumCounting()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.BEFORE) {
+                            if (spectrumCounting >= proteinFilter.getSpectrumCounting()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.EQUAL) {
+                            if (spectrumCounting != proteinFilter.getSpectrumCounting()) {
+                                return false;
+                            }
+                        } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.NOT_EQUAL) {
+                            if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
+                                return false;
+                            }
                         }
-                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.BEFORE) {
-                        if (spectrumCounting >= proteinFilter.getSpectrumCounting()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.EQUAL) {
-                        if (spectrumCounting != proteinFilter.getSpectrumCounting()) {
-                            return false;
-                        }
-                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.NOT_EQUAL) {
-                        if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
-                            return false;
-                        }
-                    }
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }

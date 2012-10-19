@@ -161,12 +161,12 @@ public class PeptideTableModel extends DefaultTableModel {
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort of the first index if multiple indexes
                 case 5:
                     try {
-                    peptideKey = peptideKeys.get(row);
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
-                    int nSpectra = peptideMatch.getSpectrumMatches().size();
-                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);   
-                    }catch (Exception e) {
+                        peptideKey = peptideKeys.get(row);
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+                        int nSpectra = peptideMatch.getSpectrumMatches().size();
+                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+                    } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return Double.NaN;
                     }
