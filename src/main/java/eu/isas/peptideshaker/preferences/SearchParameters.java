@@ -244,7 +244,9 @@ public class SearchParameters implements Serializable {
                 String psName = modificationProfile.getFamilyName(utilitesName);
                 PTM modification = PTMFactory.getInstance().getPTM(psName);
                 utilitiesModificationProfile.addVariableModification(modification);
-                utilitiesModificationProfile.setShortName(psName, modificationProfile.getShortName(psName));
+                if (modificationProfile.getShortName(psName) != null) {
+                    modification.setShortName(modificationProfile.getShortName(psName));
+                }
                 utilitiesModificationProfile.setColor(psName, modificationProfile.getColor(psName));
             }
         }
