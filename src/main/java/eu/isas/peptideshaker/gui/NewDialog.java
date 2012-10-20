@@ -719,7 +719,14 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser(searchParameters.getFastaFile());
+        JFileChooser fileChooser;
+
+        if (searchParameters != null) {
+            fileChooser = new JFileChooser(searchParameters.getFastaFile()); 
+        } else {
+            fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder()); 
+        }
+
         fileChooser.setDialogTitle("Select FASTA File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
