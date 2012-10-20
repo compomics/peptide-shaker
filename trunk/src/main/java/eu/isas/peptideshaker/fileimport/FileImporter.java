@@ -706,8 +706,8 @@ public class FileImporter {
                             String expectedPTM, sePTM = modMatch.getTheoreticPtm();
                             if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
-                                    waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + "of file " + fileName + " and might impair further processing."
-                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.\n", true, true);
+                                    waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
+                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
                                     unknown = true;
                                 }
                             } else {
@@ -718,7 +718,8 @@ public class FileImporter {
                                     try {
                                         seMass = new Double(parsedName[0]);
                                     } catch (Exception e) {
-                                        throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification. Error encountered in spectrum " + spectrumTitle + "of file " + fileName + ".");
+                                        throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification.\n"
+                                                + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
                                     }
                                     expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
                                 }

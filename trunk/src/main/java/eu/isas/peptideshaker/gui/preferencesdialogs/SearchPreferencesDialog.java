@@ -93,7 +93,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     /**
      * Creates a new search parameters dialog.
      *
-     *
      * @param parent the parent frame
      * @param editable a boolean indicating whether the search parameters can be
      * edited
@@ -936,7 +935,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
         int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
 
-
         if (row != -1) {
             int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
             String modificationName = modificationList.get(ptmIndex);
@@ -1230,6 +1228,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         modificationList = new ArrayList<String>();
         ArrayList<String> missing = new ArrayList<String>();
+
         for (String name : modificationProfile.getAllNotFixedModifications()) {
             if (!modificationList.contains(name)) {
                 if (!ptmFactory.containsPTM(name)) {
@@ -1276,8 +1275,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         Collections.sort(modificationList);
         updateModificationLists();
 
+        enzymesCmb.setModel(new DefaultComboBoxModel(loadEnzymes()));
+        enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+
         if (searchParameters.getEnzyme() != null) {
             enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
+        } else {
+            enzymesCmb.setSelectedItem("Trypsin");
         }
 
         if (searchParameters.getFragmentIonAccuracy() != null) {
@@ -1288,13 +1292,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
         }
 
-        if (searchParameters.getIonSearched1() != null) {
-            ion1Cmb.setSelectedItem(PeptideFragmentIon.getSubTypeAsString(searchParameters.getIonSearched1()));
-        }
-
-        if (searchParameters.getIonSearched1() != null) {
-            ion2Cmb.setSelectedItem(PeptideFragmentIon.getSubTypeAsString(searchParameters.getIonSearched2()));
-        }
+        setIons();
 
         if (searchParameters.isPrecursorAccuracyTypePpm() != null) {
             if (searchParameters.isPrecursorAccuracyTypePpm()) {
@@ -1308,6 +1306,78 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         }
 
+        if (searchParameters.getParametersFile() != null) {
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+
+                    fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());
+                }
+            });
+        }
+    }
+
+    /**
+     * Loads the implemented enzymes.
+     *
+     * @return the list of enzyme names
+     */
+    private String[] loadEnzymes() {
+
+        ArrayList<String> tempEnzymes = new ArrayList<String>();
+
+        for (int i = 0; i < enzymeFactory.getEnzymes().size(); i++) {
+            tempEnzymes.add(enzymeFactory.getEnzymes().get(i).getName());
+        }
+
+        Collections.sort(tempEnzymes);
+
+        String[] enzymes = new String[tempEnzymes.size()];
+
+        for (int i = 0; i < tempEnzymes.size(); i++) {
+            enzymes[i] = tempEnzymes.get(i);
+        }
+
+        return enzymes;
+    }
+
+    /**
+     * Sets the selected ion types
+     */
+    private void setIons() {
+        if (searchParameters.getIonSearched1() != null) {
+            if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
+                ion1Cmb.setSelectedItem("a");
+            } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
+                ion1Cmb.setSelectedItem("b");
+            } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
+                ion1Cmb.setSelectedItem("c");
+            } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.X_ION) {
+                ion1Cmb.setSelectedItem("x");
+            } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.Y_ION) {
+                ion1Cmb.setSelectedItem("y");
+            } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.Z_ION) {
+                ion1Cmb.setSelectedItem("z");
+            }
+        }
+
+        if (searchParameters.getIonSearched2() != null) {
+            if (searchParameters.getIonSearched2() == PeptideFragmentIon.A_ION) {
+                ion2Cmb.setSelectedItem("a");
+            } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.B_ION) {
+                ion2Cmb.setSelectedItem("b");
+            } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.C_ION) {
+                ion2Cmb.setSelectedItem("c");
+            } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
+                ion2Cmb.setSelectedItem("x");
+            } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
+                ion2Cmb.setSelectedItem("y");
+            } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
+                ion2Cmb.setSelectedItem("z");
+            }
+        }
     }
 
     /**
@@ -1327,7 +1397,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
     /**
      * Loads the search parameters from a serialized object.
-     *
      *
      * @param file the file where the search parameters were saved
      */
@@ -1574,7 +1643,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }
 
     /**
-     * updates the PTM to pride map
+     * Updates the PTM to pride map.
      *
      * @throws FileNotFoundException exception thrown whenever the map was not
      * found in the user folder
@@ -1591,7 +1660,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     /**
      * Indicates whether the user pushed on cancel.
      *
-     *
      * @return a boolean indicating whether the user pushed on cancel
      */
     public boolean isCanceled() {
@@ -1600,7 +1668,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
     /**
      * Returns the search parameters as set by the user.
-     *
      *
      * @return the search parameters as set by the user
      */
