@@ -93,6 +93,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     /**
      * Creates a new search parameters dialog.
      *
+     *
      * @param parent the parent frame
      * @param editable a boolean indicating whether the search parameters can be
      * edited
@@ -185,7 +186,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         expectedModsScrollPane.getViewport().setOpaque(false);
         availableModsScrollPane.getViewport().setOpaque(false);
 
-        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getVariableModifications());
+        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getAllNotFixedModifications());
         Collections.sort(modificationList);
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ion1Cmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -751,7 +752,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-            if (modificationProfile.getVariableModifications().contains(name)) {
+            ArrayList<String> notFixedModifications = modificationProfile.getAllNotFixedModifications();
+            if (notFixedModifications.contains(name)) {
                 int choice = JOptionPane.showConfirmDialog(this,
                         new String[]{"The list of expected variable modifications already contains a modification named " + name + ".", "Shall it be replaced?"},
                         "Modification name conflict", JOptionPane.YES_NO_OPTION);
@@ -761,7 +763,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             }
             PTM ptm = ptmFactory.getPTM(name);
             ArrayList<String> conflicts = new ArrayList<String>();
-            for (String oldName : modificationProfile.getVariableModifications()) {
+            for (String oldName : notFixedModifications) {
                 PTM oldPTM = ptmFactory.getPTM(name);
                 if (Math.abs(oldPTM.getMass() - ptm.getMass()) < searchParameters.getFragmentIonAccuracy()
                         && oldPTM.getPattern().isSameAs(ptm.getPattern())) {
@@ -775,7 +777,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 if (choice == JOptionPane.NO_OPTION) {
                     return;
                 } else {
-                    modificationProfile.getVariableModifications().remove(conflicts.get(0));
+                    modificationProfile.removeVariableModification(conflicts.get(0));
+                    modificationProfile.removeRefinementModification(conflicts.get(0));
                 }
             } else if (conflicts.size() > 1) {
                 String report = name + " will be impossible to distinguish from ";
@@ -796,7 +799,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     return;
                 } else {
                     for (String mod : conflicts) {
-                        modificationProfile.getVariableModifications().remove(mod);
+                        modificationProfile.removeVariableModification(mod);
+                        modificationProfile.removeRefinementModification(mod);
                     }
                 }
             }
@@ -931,6 +935,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void expectedModificationsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseReleased
         int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
         int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
+
 
         if (row != -1) {
             int ptmIndex = expectedModificationsTable.convertRowIndexToModel(row);
@@ -1225,21 +1230,25 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         modificationList = new ArrayList<String>();
         ArrayList<String> missing = new ArrayList<String>();
-
-        for (String name : modificationProfile.getVariableModifications()) {
+        for (String name : modificationProfile.getAllNotFixedModifications()) {
             if (!modificationList.contains(name)) {
                 if (!ptmFactory.containsPTM(name)) {
                     missing.add(name);
                 } else {
-                    int index = name.length() - 1;
-                    if (name.lastIndexOf(" ") > 0) {
-                        index = name.indexOf(" ");
+                    PTM ptm = ptmFactory.getPTM(name);
+                    if (ptm.getShortName() == null) {
+                        int index = name.length() - 1;
+                        if (name.lastIndexOf(" ") > 0) {
+                            index = name.indexOf(" ");
+                        }
+                        if (name.lastIndexOf("-") > 0) {
+                            index = Math.min(index, name.indexOf("-"));
+                        }
+                        ptm.setShortName(name.substring(0, index));
                     }
-                    if (name.lastIndexOf("-") > 0) {
-                        index = Math.min(index, name.indexOf("-"));
+                    if (searchParameters.getModificationProfile().getColor(name) == null) {
+                        searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                     }
-                    searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                    searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                     modificationList.add(name);
                 }
             }
@@ -1298,6 +1307,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         if (searchParameters.getPrecursorAccuracy() != null) {
             precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         }
+
     }
 
     /**
@@ -1317,6 +1327,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
     /**
      * Loads the search parameters from a serialized object.
+     *
      *
      * @param file the file where the search parameters were saved
      */
@@ -1488,7 +1499,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 case 2:
                     return modificationList.get(row);
                 case 3:
-                    return searchParameters.getModificationProfile().getShortName(modificationName);
+                    PTM ptm = ptmFactory.getPTM(modificationName);
+                    return ptm.getShortName();
                 case 4:
                     return ptmFactory.isUserDefined(modificationName);
                 case 5:
@@ -1516,7 +1528,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             try {
                 String modificationName = modificationList.get(row);
                 if (column == 4) {
-                    searchParameters.getModificationProfile().setShortName(modificationName, aValue.toString().trim());
+                    PTM ptm = ptmFactory.getPTM(modificationName);
+                    ptm.setShortName(aValue.toString().trim());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",
@@ -1561,7 +1574,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }
 
     /**
-     * Updates the PTM to pride map.
+     * updates the PTM to pride map
      *
      * @throws FileNotFoundException exception thrown whenever the map was not
      * found in the user folder
@@ -1578,6 +1591,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     /**
      * Indicates whether the user pushed on cancel.
      *
+     *
      * @return a boolean indicating whether the user pushed on cancel
      */
     public boolean isCanceled() {
@@ -1586,6 +1600,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
     /**
      * Returns the search parameters as set by the user.
+     *
      *
      * @return the search parameters as set by the user
      */

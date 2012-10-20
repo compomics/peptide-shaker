@@ -5638,23 +5638,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
 
         // add the modifications
-        ArrayList<String> modificationList = new ArrayList<String>();
         ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-        modificationList.addAll(modificationProfile.getVariableModifications());
-        modificationList.addAll(modificationProfile.getFixedModifications());
+        ArrayList<String> modificationList = modificationProfile.getAllModifications();
         Collections.sort(modificationList);
 
-        // get the list of all ptms
-        HashMap<String, PTM> ptms = new HashMap<String, PTM>();
-
-        for (String ptm : ptmFactory.getPTMs()) {
-            ptms.put(ptm, ptmFactory.getPTM(ptm));
-        }
 
         // iterate the modifications list and add the non-terminal modifications
         for (String modification : modificationList) {
-            String shortName = searchParameters.getModificationProfile().getShortName(modification);
-            PTM ptm = ptms.get(modification);
+            PTM ptm = ptmFactory.getPTM(modification);
+            String shortName = ptm.getShortName();
             AminoAcidPattern ptmPattern = ptm.getPattern();
 
             if (ptm != null) {
@@ -5965,17 +5957,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
             boolean changes = false;
             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-            for (String psPtm : modificationProfile.getVariableModifications()) {
-                if (ptmToPrideMap.getCVTerm(psPtm) == null) {
-                    CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
-                    if (defaultCVTerm != null) {
-                        ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
-                        changes = true;
-                        break;
-                    }
-                }
-            }
-            for (String psPtm : modificationProfile.getFixedModifications()) {
+            for (String psPtm : modificationProfile.getAllModifications()) {
                 if (ptmToPrideMap.getCVTerm(psPtm) == null) {
                     CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
                     if (defaultCVTerm != null) {

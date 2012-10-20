@@ -210,16 +210,6 @@ public class PeptideShaker {
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics, searchParameters);
 
-        if (FileImporter.isCLIMode()) {
-            // Needed for command line mode of operation, which requires dynamically setting of the search modification files
-            try {
-                fileImporter.setModificationFile(projectDetails.getModificationFile().getCanonicalPath());
-                fileImporter.setUserModificationFile(projectDetails.getUserModificationFile().getCanonicalPath());
-            } catch (IOException e) {
-                waitingHandler.appendReport("Error while setting the Modification files for the search.", true, true);
-            }
-        }
-
         fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
     }
 

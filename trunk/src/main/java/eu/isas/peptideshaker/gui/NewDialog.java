@@ -8,6 +8,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -680,6 +681,7 @@ public class NewDialog extends javax.swing.JDialog {
                 peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
                 peptideShakerGUI.setCache(peptideShaker.getCache());
                 peptideShakerGUI.setUpInitialFilters();
+                peptideShakerGUI.resetFeatureGenerator();
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab
                 peptideShakerGUI.getProjectDetails().setReport(waitingDialog.getReport(null));
@@ -1316,11 +1318,12 @@ public class NewDialog extends javax.swing.JDialog {
 
         ArrayList<String> missing = new ArrayList<String>();
 
-        for (String name : modificationProfile.getVariableModifications()) {
+        for (String name : modificationProfile.getAllNotFixedModifications()) {
             if (!ptmFactory.containsPTM(name)) {
                 missing.add(name);
             } else {
-                if (modificationProfile.getShortName(name) == null) {
+                PTM ptm = ptmFactory.getPTM(name);
+                if (ptm.getShortName() == null) {
                     int index = name.length() - 1;
                     if (name.lastIndexOf(" ") > 0) {
                         index = name.indexOf(" ");
@@ -1328,7 +1331,7 @@ public class NewDialog extends javax.swing.JDialog {
                     if (name.lastIndexOf("-") > 0) {
                         index = Math.min(index, name.indexOf("-"));
                     }
-                    searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
+                    ptm.setShortName(name.substring(0, index));
                 }
                 if (modificationProfile.getColor(name) == null) {
                     searchParameters.getModificationProfile().setColor(name, Color.lightGray);

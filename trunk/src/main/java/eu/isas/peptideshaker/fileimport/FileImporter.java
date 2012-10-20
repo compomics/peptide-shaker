@@ -63,14 +63,6 @@ public class FileImporter {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The location of the modification file.
-     */
-    private String MODIFICATION_FILE = "resources/conf/peptideshaker_mods.xml";
-    /**
-     * The location of the user modification file.
-     */
-    private String USER_MODIFICATION_FILE = "resources/conf/peptideshaker_usermods.xml";
-    /**
      * The modification factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
@@ -448,22 +440,6 @@ public class FileImporter {
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
             }
-
-            try {
-                ptmFactory.importModifications(new File(MODIFICATION_FILE), false);
-            } catch (Exception e) {
-                waitingHandler.appendReport("Failed importing modifications from " + MODIFICATION_FILE, true, true);
-                waitingHandler.setRunCanceled();
-                e.printStackTrace();
-            }
-
-            try {
-                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE), true);
-            } catch (Exception e) {
-                waitingHandler.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE, true, true);
-                waitingHandler.setRunCanceled();
-                e.printStackTrace();
-            }
         }
 
         @Override
@@ -731,28 +707,29 @@ public class FileImporter {
                             if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
                                     waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + "of file " + fileName + " and might impair further processing."
-                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.\nThe spectrum will be ignored.", true, true);
+                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.\n", true, true);
                                     unknown = true;
                                 }
-                            }
-                            ArrayList<String> expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), sePTM);
-                            if (expectedNames.isEmpty()) {
-                                String[] parsedName = sePTM.split("@");
-                                double seMass = 0;
-                                try {
-                                    seMass = new Double(parsedName[0]);
-                                } catch (Exception e) {
-                                    throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification. Error encountered in spectrum " + spectrumTitle + "of file " + fileName + ".");
-                                }
-                                expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
-                            }
-
-                            if (!expectedNames.isEmpty()) {
-                                expectedPTM = expectedNames.get(0);
                             } else {
-                                expectedPTM = PTMFactory.unknownPTM.getName();
+                                ArrayList<String> expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
+                                if (expectedNames.isEmpty()) {
+                                    String[] parsedName = sePTM.split("@");
+                                    double seMass = 0;
+                                    try {
+                                        seMass = new Double(parsedName[0]);
+                                    } catch (Exception e) {
+                                        throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification. Error encountered in spectrum " + spectrumTitle + "of file " + fileName + ".");
+                                    }
+                                    expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
+                                }
+
+                                if (!expectedNames.isEmpty()) {
+                                    expectedPTM = expectedNames.get(0);
+                                } else {
+                                    expectedPTM = PTMFactory.unknownPTM.getName();
+                                }
+                                modMatch.setTheoreticPtm(expectedPTM);
                             }
-                            modMatch.setTheoreticPtm(expectedPTM);
                         }
                     }
 
@@ -839,23 +816,5 @@ public class FileImporter {
      */
     public static boolean isCLIMode() {
         return boolCLI;
-    }
-
-    /**
-     * Set the modifications File to be used.
-     *
-     * @param aMODIFICATION_FILE
-     */
-    public void setModificationFile(String aMODIFICATION_FILE) {
-        MODIFICATION_FILE = aMODIFICATION_FILE;
-    }
-
-    /**
-     * Set the user modifications File to be used.
-     *
-     * @param aUSER_MODIFICATION_FILE
-     */
-    public void setUserModificationFile(String aUSER_MODIFICATION_FILE) {
-        USER_MODIFICATION_FILE = aUSER_MODIFICATION_FILE;
     }
 }
