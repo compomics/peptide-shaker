@@ -490,6 +490,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         loadEnzymes();
         resetPtmFactory();
+        
+        //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
+        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
+        IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
 
         exceptionHandler = new ExceptionHandler(this);
 
@@ -3603,23 +3607,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void resetPtmFactory() {
 
         // reset ptm factory
-        ptmFactory.reloadFactory();
+        ptmFactory.clearFactory();
         ptmFactory = PTMFactory.getInstance();
 
         try {
             ptmFactory.importModifications(new File(PeptideShaker.MODIFICATIONS_FILE), false);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + PeptideShaker.MODIFICATIONS_FILE + ".",
-                    "Configuration import Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "An error (" + e.getMessage() + ")\n"
+                    + "occured when trying to load the modifications from " + PeptideShaker.MODIFICATIONS_FILE + ".",
+                    "Configuration Import Error", JOptionPane.ERROR_MESSAGE);
         }
 
         try {
             ptmFactory.importModifications(new File(PeptideShaker.USER_MODIFICATIONS_FILE), true);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + PeptideShaker.USER_MODIFICATIONS_FILE + ".",
-                    "Configuration import Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "An error (" + e.getMessage() + ")\n"
+                    + "occured when trying to load the modifications from " + PeptideShaker.USER_MODIFICATIONS_FILE + ".",
+                    "Configuration Import Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -4575,10 +4581,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         HashMap<String, NeutralLoss> neutralLosses = new HashMap<String, NeutralLoss>();
 
+        // add the general neutral losses
         for (NeutralLoss neutralLoss : IonFactory.getInstance().getDefaultNeutralLosses()) {
             neutralLosses.put(neutralLoss.name, neutralLoss);
         }
 
+        // add the sequence specific neutral losses
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
             for (NeutralLoss neutralLoss : ptm.getNeutralLosses()) {
@@ -5038,9 +5046,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     fi.close();
 
                     MsExperiment tempExperiment = ExperimentIO.loadExperiment(experimentFile);
-
                     Sample tempSample = null;
-
                     PSSettings experimentSettings = new PSSettings();
                     experimentSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
                     setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
@@ -5051,6 +5057,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     setProcessingPreferences(experimentSettings.getProcessingPreferences());
                     setMetrics(experimentSettings.getMetrics());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
+
                     if (experimentSettings.getFilterPreferences() != null) {
                         setFilterPreferences(experimentSettings.getFilterPreferences());
                     } else {
@@ -5061,6 +5068,56 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     } else {
                         setDisplayPreferences(new DisplayPreferences());
                     }
+
+                    if (progressDialog.isRunCanceled()) {
+                        progressDialog.setRunFinished();
+                        return;
+                    }
+
+                    ArrayList<Sample> samples = new ArrayList(tempExperiment.getSamples().values());
+
+                    if (samples.size() == 1) {
+                        tempSample = samples.get(0);
+                    } else {
+                        String[] sampleNames = new String[samples.size()];
+                        for (int cpt = 0; cpt < sampleNames.length; cpt++) {
+                            sampleNames[cpt] = samples.get(cpt).getReference();
+                        }
+                        SampleSelection sampleSelection = new SampleSelection(peptideShakerGUI, true, sampleNames, "sample");
+                        sampleSelection.setVisible(true);
+                        String choice = sampleSelection.getChoice();
+                        for (Sample sampleTemp : samples) {
+                            if (sampleTemp.getReference().equals(choice)) {
+                                tempSample = sampleTemp;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (progressDialog.isRunCanceled()) {
+                        progressDialog.setRunFinished();
+                        return;
+                    }
+
+                    ArrayList<Integer> replicates = new ArrayList(tempExperiment.getAnalysisSet(tempSample).getReplicateNumberList());
+
+                    int tempReplicate;
+
+                    if (replicates.size() == 1) {
+                        tempReplicate = replicates.get(0);
+                    } else {
+                        String[] replicateNames = new String[replicates.size()];
+                        for (int cpt = 0; cpt < replicateNames.length; cpt++) {
+                            replicateNames[cpt] = samples.get(cpt).getReference();
+                        }
+                        SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
+                        sampleSelection.setVisible(true);
+                        Integer choice = new Integer(sampleSelection.getChoice());
+                        tempReplicate = choice;
+                    }
+
+                    setProject(tempExperiment, tempSample, tempReplicate);
+
                     identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
                     if (experimentSettings.getIdentificationFeaturesCache() != null) {
                         identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
@@ -5267,50 +5324,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         return;
                     }
 
-                    ArrayList<Sample> samples = new ArrayList(tempExperiment.getSamples().values());
-
-                    if (samples.size() == 1) {
-                        tempSample = samples.get(0);
-                    } else {
-                        String[] sampleNames = new String[samples.size()];
-                        for (int cpt = 0; cpt < sampleNames.length; cpt++) {
-                            sampleNames[cpt] = samples.get(cpt).getReference();
-                        }
-                        SampleSelection sampleSelection = new SampleSelection(peptideShakerGUI, true, sampleNames, "sample");
-                        sampleSelection.setVisible(true);
-                        String choice = sampleSelection.getChoice();
-                        for (Sample sampleTemp : samples) {
-                            if (sampleTemp.getReference().equals(choice)) {
-                                tempSample = sampleTemp;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (progressDialog.isRunCanceled()) {
-                        progressDialog.setRunFinished();
-                        return;
-                    }
-
-                    ArrayList<Integer> replicates = new ArrayList(tempExperiment.getAnalysisSet(tempSample).getReplicateNumberList());
-
-                    int tempReplicate;
-
-                    if (replicates.size() == 1) {
-                        tempReplicate = replicates.get(0);
-                    } else {
-                        String[] replicateNames = new String[replicates.size()];
-                        for (int cpt = 0; cpt < replicateNames.length; cpt++) {
-                            replicateNames[cpt] = samples.get(cpt).getReference();
-                        }
-                        SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
-                        sampleSelection.setVisible(true);
-                        Integer choice = new Integer(sampleSelection.getChoice());
-                        tempReplicate = choice;
-                    }
-
-                    setProject(tempExperiment, tempSample, tempReplicate);
-
                     objectsCache = new ObjectsCache();
                     objectsCache.setAutomatedMemoryManagement(true);
 
@@ -5365,7 +5378,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     File mgfFile;
                     int cpt = 1;
                     progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setMaxProgressValue(spectrumFiles.size() + 1);
+                    progressDialog.increaseProgressValue();
 
                     for (String spectrumFile : spectrumFiles) {
 
@@ -5389,6 +5404,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             e.printStackTrace();
                             return;
                         }
+                        
+                        progressDialog.increaseProgressValue();
                     }
 
                     boolean compatibilityIssue = getSearchParameters().getIonSearched1() == null
