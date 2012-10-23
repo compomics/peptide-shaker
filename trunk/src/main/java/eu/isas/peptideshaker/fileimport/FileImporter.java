@@ -711,8 +711,10 @@ public class FileImporter {
                                     unknown = true;
                                 }
                             } else {
-                                ArrayList<String> expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
-                                if (expectedNames.isEmpty()) {
+                                ArrayList<String> expectedNames;
+                                if (ptmFactory.containsPTM(sePTM)) {
+                                expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
+                                } else {
                                     String[] parsedName = sePTM.split("@");
                                     double seMass = 0;
                                     try {
