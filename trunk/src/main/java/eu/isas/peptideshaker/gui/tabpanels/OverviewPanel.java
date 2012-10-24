@@ -3827,6 +3827,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.catchException(ePossibleCoverage);
                 }
                 title += "   ";
+                title += currentProteinSequence.length() + " AA)";
+                title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
             } catch (Exception eCoverage) {
                 peptideShakerGUI.catchException(eCoverage);
                 // Worst case, we did not even manage to get the coverage.

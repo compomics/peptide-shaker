@@ -1698,17 +1698,21 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbTableIndex - 1);
                 chains = lParam.getBlocks();
 
+                // @TODO: the code below does not pick up domain information, but rather shows multiple hits for chain. could perhaps be improved?
+
                 // add the chain information to the table
                 for (int j = 0; j < chains.length; j++) {
 
                     XYDataPoint temp = new XYDataPoint(chains[j].getStart_protein(), chains[j].getEnd_protein());
 
-                    ((DefaultTableModel) pdbChainsJTable.getModel()).addRow(new Object[]{
+                    if (chains[j].getStart_protein() != chains[j].getEnd_protein()) {
+                        ((DefaultTableModel) pdbChainsJTable.getModel()).addRow(new Object[]{
                                 (j + 1),
                                 chains[j].getBlock(),
                                 temp,
                                 (((double) chains[j].getEnd_protein() - chains[j].getStart_protein()) / proteinSequenceLength) * 100
                             });
+                    }
                 }
 
                 ((JSparklinesIntervalChartTableCellRenderer) pdbChainsJTable.getColumn("PDB-Protein").getCellRenderer()).setMaxValue(proteinSequenceLength);

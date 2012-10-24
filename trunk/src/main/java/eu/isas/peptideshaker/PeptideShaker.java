@@ -5,7 +5,6 @@ import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.*;
-import com.compomics.util.experiment.biology.ions.ReporterIon;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -21,7 +20,6 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -193,6 +191,7 @@ public class PeptideShaker {
      * @param projectDetails The project details
      * @param processingPreferences the initial processing preferences
      * @param ptmScoringPreferences the PTM scoring preferences
+     * @param spectrumCountingPreferences
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
@@ -242,6 +241,7 @@ public class PeptideShaker {
      * @param idFilter
      * @param processingPreferences
      * @param ptmScoringPreferences
+     * @param spectrumCountingPreferences
      * @throws IllegalArgumentException
      * @throws IOException
      * @throws Exception
@@ -1126,8 +1126,10 @@ public class PeptideShaker {
      * writing/reading the database or the fasta file
      * @throws ClassNotFoundException exception thrown whenever a problem
      * occurred while deserializing an object from the database
-     * @throws IllegalArgumentException exception thrown whenever an error occurred while reading a protein sequence
-     * @throws InterruptedException exception thrown whenever an error occurred while reading a protein sequence
+     * @throws IllegalArgumentException exception thrown whenever an error
+     * occurred while reading a protein sequence
+     * @throws InterruptedException exception thrown whenever an error occurred
+     * while reading a protein sequence
      */
     public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
@@ -1295,14 +1297,16 @@ public class PeptideShaker {
                                 }
                             }
                             HashMap<Integer, Integer> mapping = Util.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
-                            for (int oldLocalization : mapping.keySet()) {
+                            for (Integer oldLocalization : mapping.keySet()) {
                                 ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
-                                int newLocalization = mapping.get(oldLocalization);
+                                Integer newLocalization = mapping.get(oldLocalization); // @TODO: can this be null??
                                 if (newLocalization != oldLocalization) {
-                                    System.out.println(spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+                                    System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
                                 }
-                                modificationMatch.setInferred(true);
-                                modificationMatch.setModificationSite(newLocalization);
+                                if (modificationMatch != null && newLocalization != null) {
+                                    modificationMatch.setInferred(true);
+                                    modificationMatch.setModificationSite(newLocalization);
+                                }
                             }
                         }
                         identification.updateSpectrumMatch(spectrumMatch);
@@ -1324,10 +1328,14 @@ public class PeptideShaker {
      * FLR settings. The FLR must have been calculated before.
      *
      * @param spectrumMatch the spectrum match inspected
-     * @param ptmScoringPreferences the PTM scoring preferences as set by the user
-     * @throws IOException exception thrown whenever an error occurred while reading a protein sequence
-     * @throws IllegalArgumentException exception thrown whenever an error occurred while reading a protein sequence
-     * @throws InterruptedException exception thrown whenever an error occurred while reading a protein sequence
+     * @param ptmScoringPreferences the PTM scoring preferences as set by the
+     * user
+     * @throws IOException exception thrown whenever an error occurred while
+     * reading a protein sequence
+     * @throws IllegalArgumentException exception thrown whenever an error
+     * occurred while reading a protein sequence
+     * @throws InterruptedException exception thrown whenever an error occurred
+     * while reading a protein sequence
      */
     private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) throws IOException, IllegalArgumentException, InterruptedException {
 
@@ -1355,9 +1363,10 @@ public class PeptideShaker {
                         PTM ptm = ptmFactory.getPTM(modName);
                         ArrayList<Integer> possiblePositions = psPeptide.getPotentialModificationSites(ptm);
                         if (possiblePositions.size() < modMatches.get(modName).size()) {
-                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size() 
-                                    + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence() 
-                                    + " in spectrum " + spectrumMatch.getKey() + ".");
+                            // note: had to remove the message below as this can often happen for the user defined ptms with patterns
+//                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size()
+//                                    + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence()
+//                                    + " in spectrum " + spectrumMatch.getKey() + ".");
                         } else if (possiblePositions.size() == modMatches.get(modName).size()) {
                             for (ModificationMatch modMatch : modMatches.get(modName)) {
                                 modMatch.setConfident(true);
@@ -1397,7 +1406,7 @@ public class PeptideShaker {
                                     modMatch.setConfident(false);
                                 }
                                 String bestDKey = ptmScoring.getBestDeltaScoreLocations();
-                                if (ptmScoring.getDeltaScore(bestDKey) > 95) { //@TODO this should ne be hard coded
+                                if (ptmScoring.getDeltaScore(bestDKey) > 95) { // @TODO: this should not be hard coded
                                     ptmScoring.setPtmSite(bestDKey, PtmScoring.CONFIDENT);
                                 } else {
                                     ptmScoring.setPtmSite(bestDKey, PtmScoring.DOUBTFUL);
@@ -1443,7 +1452,7 @@ public class PeptideShaker {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-            }   
+            }
         }
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(true);
@@ -1507,7 +1516,9 @@ public class PeptideShaker {
      * @param idFilter the identification filter, needed only to get max values
      * @param estimateAscore a boolean indicating whether the A-score should be
      * estimated for the metrics, can be null when rescoring PTMs
-     * @param spectrumCountingPreferences the spectrum counting preferences. If not null, the maximum spectrum counting value will be stored in the Metrics.
+     * @param spectrumCountingPreferences the spectrum counting preferences. If
+     * not null, the maximum spectrum counting value will be stored in the
+     * Metrics.
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
@@ -1538,10 +1549,10 @@ public class PeptideShaker {
                     nValidatedProteins++;
                 }
                 if (spectrumCountingPreferences != null) {
-                tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength);
-                if (tempSpectrumCounting > maxSpectrumCounting) {
-                    maxSpectrumCounting = tempSpectrumCounting;
-                }
+                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength);
+                    if (tempSpectrumCounting > maxSpectrumCounting) {
+                        maxSpectrumCounting = tempSpectrumCounting;
+                    }
                 }
             }
             waitingHandler.increaseSecondaryProgressValue();
@@ -1569,21 +1580,21 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever an error occurred while
      * deserilalizing a match
      */
-    public void scorePTMs(ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean scorePeptides, PTMScoringPreferences ptmScoringPreferences) throws Exception {
+    public void scorePTMs(ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
+            boolean scorePeptides, PTMScoringPreferences ptmScoringPreferences) throws Exception {
 
         PSPtmScores proteinScores = new PSPtmScores();
-        PtmScoring ptmScoring;
         PSParameter psParameter = new PSParameter();
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        PeptideMatch peptideMath;
-        String peptideSequence, proteinSequence = null;
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+        String proteinSequence = null;
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
             if (psParameter.isValidated() && Peptide.isModified(peptideKey)) {
-                peptideMath = identification.getPeptideMatch(peptideKey);
-                peptideSequence = Peptide.getSequence(peptideKey);
+                PeptideMatch peptideMath = identification.getPeptideMatch(peptideKey);
+                String peptideSequence = Peptide.getSequence(peptideKey);
                 if (peptideMath.getUrParam(new PSPtmScores()) == null || scorePeptides) {
                     scorePTMs(peptideMath, searchParameters, annotationPreferences, ptmScoringPreferences);
                 }
@@ -1593,7 +1604,7 @@ public class PeptideShaker {
                         if (proteinSequence == null) {
                             proteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
                         }
-                        ptmScoring = peptideScores.getPtmScoring(modification);
+                        PtmScoring ptmScoring = peptideScores.getPtmScoring(modification);
                         for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getPtmLocation())) {
                             proteinScores.addMainModificationSite(modification, pos);
                         }
@@ -1644,16 +1655,16 @@ public class PeptideShaker {
      * deserializing a match
      */
     public void scorePTMs(PeptideMatch peptideMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        PSPtmScores psmScores, peptideScores = new PSPtmScores();
+        PSPtmScores peptideScores = new PSPtmScores();
         PSParameter psParameter = new PSParameter();
         ArrayList<String> variableModifications = new ArrayList<String>();
 
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                if (ptm.getType() == PTM.MODAA
-                        && !variableModifications.contains(modificationMatch.getTheoreticPtm())) {
+                if (ptm.getType() == PTM.MODAA && !variableModifications.contains(modificationMatch.getTheoreticPtm())) {
                     variableModifications.add(modificationMatch.getTheoreticPtm());
                 }
             }
@@ -1665,8 +1676,9 @@ public class PeptideShaker {
             double bestConfidence = 0;
             ArrayList<String> bestKeys = new ArrayList<String>();
 
-                    identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
-                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+            identification.loadSpectrumMatches(peptideMatch.getSpectrumMatches(), null);
+            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 if (psParameter.isValidated()) {
@@ -1688,7 +1700,7 @@ public class PeptideShaker {
 
             identification.loadSpectrumMatches(bestKeys, null);
             identification.loadSpectrumMatchParameters(bestKeys, psParameter, null);
-            
+
             for (String spectrumKey : bestKeys) {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
@@ -1700,7 +1712,7 @@ public class PeptideShaker {
                         peptideScores.addPtmScoring(modification, new PtmScoring(modification));
                     }
 
-                    psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                    PSPtmScores psmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
                     if (psmScores != null) {
                         PtmScoring spectrumScoring = psmScores.getPtmScoring(modification);
@@ -1743,12 +1755,15 @@ public class PeptideShaker {
      * @throws Exception exception thrown whenever an error occurred while
      * reading/writing the an identification match
      */
-    public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences, double confidenceThreshold) throws Exception {
+    public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences,
+            PTMScoringPreferences scoringPreferences, double confidenceThreshold) throws Exception {
 
         attachDeltaScore(spectrumMatch);
+
         if (scoringPreferences.aScoreCalculation()) {
             attachAScore(spectrumMatch, searchParameters, annotationPreferences, scoringPreferences);
         }
+
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
         if (ptmScores != null) {
@@ -1843,10 +1858,12 @@ public class PeptideShaker {
     /**
      * Attaches the a-score.
      *
-     * @param spectrumMatch the spectrum match studied, the A-score will be calculated for the best assumption
+     * @param spectrumMatch the spectrum match studied, the A-score will be
+     * calculated for the best assumption
      * @param searchParameters the identification parameters
      * @param annotationPreferences the annotation preferences
-     * @throws Exception exception thrown whenever an error occurred while computing the A-score
+     * @throws Exception exception thrown whenever an error occurred while
+     * computing the A-score
      */
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
@@ -1950,7 +1967,7 @@ public class PeptideShaker {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
             // get the fraction scores
-                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+            identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 probaScore = probaScore * psParameter.getPsmProbability();
@@ -2256,7 +2273,7 @@ public class PeptideShaker {
                     }
                 }
 
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     nSpectra -= peptideMatch.getSpectrumCount();
@@ -2329,7 +2346,7 @@ public class PeptideShaker {
                     nLeft++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setGroupClass(PSParameter.UNRELATED);
@@ -2342,7 +2359,7 @@ public class PeptideShaker {
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
@@ -2356,8 +2373,8 @@ public class PeptideShaker {
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
 
                     String mainMatch = proteinMatch.getMainMatch();
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                    identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+                    identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -2382,8 +2399,8 @@ public class PeptideShaker {
                 }
             } else {
                 String mainMatch = proteinMatch.getMainMatch();
-            identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+                identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -2551,7 +2568,6 @@ public class PeptideShaker {
         this.proteinCount = proteinCount;
     }
 
-
     /**
      * Adds a warning to the feedback list. If a feedback with the same title is
      * already loaded it will be ignored.
@@ -2570,13 +2586,14 @@ public class PeptideShaker {
     public HashMap<String, FeedBack> getWarnings() {
         return warnings;
     }
-    
 
     /**
      * Verifies that the modifications backed-up in the search parameters are
-     * loaded and returns an error message if one was already loaded, null otherwise.
+     * loaded and returns an error message if one was already loaded, null
+     * otherwise.
      *
      * @param searchParameters the search parameters to load
+     * @return an error message if one was already loaded, null otherwise
      */
     public static String loadModifications(SearchParameters searchParameters) {
         String error = null;

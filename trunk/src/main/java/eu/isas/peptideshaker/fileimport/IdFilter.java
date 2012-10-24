@@ -148,7 +148,7 @@ public class IdFilter implements Serializable {
         }
 
         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-        
+
         if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
             return false;
         }
