@@ -115,6 +115,7 @@ public class FileImporter {
      * @param proteomicAnalysis The current proteomic analysis
      * @param idFilter The identification filter to use
      * @param metrics metrics of the dataset to be saved for the GUI
+     * @param searchParameters the search parameters
      */
     public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics, SearchParameters searchParameters) {
         this.peptideShaker = identificationShaker;
@@ -341,7 +342,8 @@ public class FileImporter {
          */
         private File fastaFile;
         /**
-         * A list of spectrum files (can be empty, no spectrum will be imported).
+         * A list of spectrum files (can be empty, no spectrum will be
+         * imported).
          */
         private HashMap<String, File> spectrumFiles;
         /**
@@ -605,20 +607,31 @@ public class FileImporter {
                 String spectrumKey = match.getKey();
                 String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
                 String fileName = Spectrum.getSpectrumFile(spectrumKey);
+
+                // @TODO: verify that this is not needed
+//                if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+//                    try {
+//                        spectrumTitle = URLDecoder.decode(spectrumTitle, "utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        System.out.println("An exception was thrown when trying to decode an mgf title: " + spectrumTitle);
+//                        e.printStackTrace();
+//                    }
+//                }
+
                 if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
                     fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
                     match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
                     spectrumKey = match.getKey();
                 }
-                if (spectrumFactory.fileLoaded(fileName)
-                        && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+
+                if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                     String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
                     spectrumTitle = match.getSpectrumNumber() + "";
                     spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
                     match.setKey(spectrumKey);
                     if (spectrumFactory.fileLoaded(fileName)
                             && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-                        waitingHandler.appendReport("Spectrum " + oldTitle + " number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
+                        waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
                         waitingHandler.setRunCanceled();
                         return;
                     }
@@ -703,7 +716,7 @@ public class FileImporter {
                     for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                         Peptide peptide = assumptions.getPeptide();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            String expectedPTM, sePTM = modMatch.getTheoreticPtm();
+                            String sePTM = modMatch.getTheoreticPtm();
                             if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
                                     waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
@@ -713,19 +726,20 @@ public class FileImporter {
                             } else {
                                 ArrayList<String> expectedNames;
                                 if (ptmFactory.containsPTM(sePTM)) {
-                                expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
+                                    expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
                                 } else {
                                     String[] parsedName = sePTM.split("@");
                                     double seMass = 0;
                                     try {
                                         seMass = new Double(parsedName[0]);
                                     } catch (Exception e) {
-                                        throw new IllegalArgumentException("Impossible to parse " + sePTM + " as an X!Tandem modification.\n"
+                                        throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem modification.\n"
                                                 + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
                                     }
                                     expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
                                 }
 
+                                String expectedPTM;
                                 if (!expectedNames.isEmpty()) {
                                     expectedPTM = expectedNames.get(0);
                                 } else {

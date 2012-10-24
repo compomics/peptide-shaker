@@ -1721,15 +1721,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             updateSpectrum();
 
             // open protein links in web browser
-            int row = omssaTable.rowAtPoint(evt.getPoint());
-            int column = omssaTable.columnAtPoint(evt.getPoint());
+            if (evt != null) {
+                int row = omssaTable.rowAtPoint(evt.getPoint());
+                int column = omssaTable.columnAtPoint(evt.getPoint());
 
-            if (column == 1) {
+                if (column == 1) {
 
-                // open protein links in web browser
-                if (evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) omssaTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                    peptideShakerGUI.openProteinLinks((String) omssaTable.getValueAt(row, column));
+                    // open protein links in web browser
+                    if (evt.getButton() == MouseEvent.BUTTON1
+                            && ((String) omssaTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                        peptideShakerGUI.openProteinLinks((String) omssaTable.getValueAt(row, column));
+                    }
                 }
             }
         }
@@ -1754,15 +1756,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             updateSpectrum();
 
             // open protein links in web browser
-            int row = xTandemTable.rowAtPoint(evt.getPoint());
-            int column = xTandemTable.columnAtPoint(evt.getPoint());
+            if (evt != null) {
+                int row = xTandemTable.rowAtPoint(evt.getPoint());
+                int column = xTandemTable.columnAtPoint(evt.getPoint());
 
-            if (column == 1) {
+                if (column == 1) {
 
-                // open protein links in web browser
-                if (evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) xTandemTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                    peptideShakerGUI.openProteinLinks((String) xTandemTable.getValueAt(row, column));
+                    // open protein links in web browser
+                    if (evt.getButton() == MouseEvent.BUTTON1
+                            && ((String) xTandemTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                        peptideShakerGUI.openProteinLinks((String) xTandemTable.getValueAt(row, column));
+                    }
                 }
             }
         }
@@ -1787,15 +1791,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             updateSpectrum();
 
             // open protein links in web browser
-            int row = mascotTable.rowAtPoint(evt.getPoint());
-            int column = mascotTable.columnAtPoint(evt.getPoint());
+            if (evt != null) {
+                int row = mascotTable.rowAtPoint(evt.getPoint());
+                int column = mascotTable.columnAtPoint(evt.getPoint());
 
-            if (column == 1) {
+                if (column == 1) {
 
-                // open protein links in web browser
-                if (evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) mascotTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                    peptideShakerGUI.openProteinLinks((String) mascotTable.getValueAt(row, column));
+                    // open protein links in web browser
+                    if (evt.getButton() == MouseEvent.BUTTON1
+                            && ((String) mascotTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                        peptideShakerGUI.openProteinLinks((String) mascotTable.getValueAt(row, column));
+                    }
                 }
             }
         }
@@ -2501,7 +2507,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             xtandemUsed = true;
                         } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.MASCOT) {
                             mascotUsed = true;
-                        } 
+                        }
                     }
 
                     boolean multipleSearchEngines = false;
@@ -2540,9 +2546,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
                             if (probabilities.isValidated()) {
-                                
+
                                 totalPeptideShakerIds++;
-                                
+
                                 if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
                                     if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
                                         mascot = true;
@@ -2594,18 +2600,18 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         int nMascot = m;
                         int nOMSSA = o;
                         int nXTandem = x;
-                        
+
                         int no_m = totalNumberOfSpectra - nMascot;
                         int no_x = totalNumberOfSpectra - nXTandem;
                         int no_o = totalNumberOfSpectra - nOMSSA;
 
                         double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
                         biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
-                        
+
                         int uniqueOmssa = nOMSSA - ox - mo + omx;
                         int uniqueXTandem = nXTandem - ox - mx + omx;
                         int uniqueMascot = nMascot - mo - mx + omx;
-                        
+
                         // hide comparison values if empty
                         if (ox == 0) {
                             ox = null;
@@ -2673,13 +2679,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         null, null, null, null, null, null, null, null
                                     });
                         }
-                        
+
                         // add the peptide shaker results
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                        ++searchEngineRowCounter, "PeptideShaker",
-                                        totalPeptideShakerIds, null, null, null, null, null, 
-                                        totalNumberOfSpectra - totalPeptideShakerIds, (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100
-                                    });
+                                    ++searchEngineRowCounter, "PeptideShaker",
+                                    totalPeptideShakerIds, null, null, null, null, null,
+                                    totalNumberOfSpectra - totalPeptideShakerIds, (((double) totalPeptideShakerIds) / totalNumberOfSpectra) * 100
+                                });
 
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
                         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);

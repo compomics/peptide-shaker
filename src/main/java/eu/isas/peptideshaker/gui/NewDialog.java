@@ -721,10 +721,10 @@ public class NewDialog extends javax.swing.JDialog {
 
         JFileChooser fileChooser;
 
-        if (searchParameters != null) {
-            fileChooser = new JFileChooser(searchParameters.getFastaFile()); 
+        if (searchParameters != null && searchParameters.getFastaFile() != null) {
+            fileChooser = new JFileChooser(searchParameters.getFastaFile());
         } else {
-            fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder()); 
+            fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         }
 
         fileChooser.setDialogTitle("Select FASTA File(s)");
@@ -754,9 +754,10 @@ public class NewDialog extends javax.swing.JDialog {
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
             fastaFileTxt.setText(fastaFile.getName());
             checkFastaFile(fastaFile);
-            if (searchParameters != null) {
-                searchParameters.setFastaFile(fastaFile);
+            if (searchParameters == null) {
+                searchParameters = new SearchParameters();
             }
+            searchParameters.setFastaFile(fastaFile);
         }
 
         validateInput();
@@ -939,7 +940,7 @@ public class NewDialog extends javax.swing.JDialog {
         SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, searchParameters, peptideShakerGUI.loadPrideToPtmMap(), peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
         if (!searchPreferencesDialog.isCanceled()) {
             try {
-            searchPreferencesDialog.updatePtmToPrideMap();
+                searchPreferencesDialog.updatePtmToPrideMap();
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }

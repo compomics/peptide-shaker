@@ -104,7 +104,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * setting
      * @param ptmToPrideMap the PTM to pride map
      */
-    public SearchPreferencesDialog(JFrame parent, boolean editable, SearchParameters searchParameters, PtmToPrideMap ptmToPrideMap, String selectedRowHtmlTagFontColor, String notSelectedRowHtmlTagFontColor) {
+    public SearchPreferencesDialog(JFrame parent, boolean editable, SearchParameters searchParameters, 
+            PtmToPrideMap ptmToPrideMap, String selectedRowHtmlTagFontColor, String notSelectedRowHtmlTagFontColor) {
         super(parent, true);
 
         this.editable = editable;
@@ -755,7 +756,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             if (notFixedModifications.contains(name)) {
                 int choice = JOptionPane.showConfirmDialog(this,
                         new String[]{"The list of expected variable modifications already contains a modification named " + name + ".", "Shall it be replaced?"},
-                        "Modification name conflict", JOptionPane.YES_NO_OPTION);
+                        "Modification Name Conflict", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.NO_OPTION) {
                     return;
                 }
@@ -763,7 +764,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             PTM ptm = ptmFactory.getPTM(name);
             ArrayList<String> conflicts = new ArrayList<String>();
             for (String oldName : notFixedModifications) {
-                PTM oldPTM = ptmFactory.getPTM(name);
+                PTM oldPTM = ptmFactory.getPTM(oldName);
                 if (Math.abs(oldPTM.getMass() - ptm.getMass()) < searchParameters.getFragmentIonAccuracy()
                         && oldPTM.getPattern().isSameAs(ptm.getPattern())) {
                     conflicts.add(oldName);
@@ -772,7 +773,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             if (conflicts.size() == 1) {
                 int choice = JOptionPane.showConfirmDialog(this,
                         new String[]{name + " will be impossible to distinguish from " + conflicts.get(0) + ".", "Shall it be replaced?"},
-                        "Modification name conflict", JOptionPane.YES_NO_OPTION);
+                        "Modification Name Conflict", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.NO_OPTION) {
                     return;
                 } else {
@@ -793,7 +794,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 report += ".";
                 int choice = JOptionPane.showConfirmDialog(this,
                         new String[]{report, "Shall they be replaced?"},
-                        "Modification name conflict", JOptionPane.YES_NO_OPTION);
+                        "Modification Name Conflict", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.NO_OPTION) {
                     return;
                 } else {
@@ -838,7 +839,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * @param evt
      */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        JFileChooser fc = new JFileChooser();
+       
+        JFileChooser fc = new JFileChooser(); // @TODO: add last selected folder
 
         FileFilter filter = new FileFilter() {
 
@@ -1013,8 +1015,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         if (row != -1) {
             int ptmIndex = availableModificationsTable.convertRowIndexToModel(row);
-            String modificationName = modificationList.get(ptmIndex);
+
             if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
+
+                String modificationName = modificationList.get(ptmIndex);
 
                 // open protein link in web browser
                 if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
