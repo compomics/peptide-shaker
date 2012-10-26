@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -95,20 +96,14 @@ public class IdFilter implements Serializable {
         this.isPpm = isPpm;
         this.unknownPtm = unknownPTM;
     }
-
+    
     /**
-     * Validates a peptide assumption.
-     *
-     * @param assumption the considered peptide assumption
-     * @param spectrumKey the key of the spectrum used to get the precursor
-     * (Note that the precursor should be accessible via the spectrum factory)
-     * @return a boolean indicating whether the given assumption passes the
-     * filter
-     * @throws IOException
-     * @throws MzMLUnmarshallerException
+     * Validates the peptide assumption based on the peptide length and maximal e-values allowed
+     * @param assumption the assumption to validate
+     * @return a boolean indicating whether the assumption passed the test
      */
-    public boolean validateId(PeptideAssumption assumption, String spectrumKey) throws IOException, MzMLUnmarshallerException {
-
+    public boolean validatePeptideAssumption(PeptideAssumption assumption) {
+        
         int pepLength = assumption.getPeptide().getSequence().length();
 
         if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {
@@ -138,14 +133,40 @@ public class IdFilter implements Serializable {
                 return false;
             }
         }
+        return true;
+    }
+    
+    /**
+     * Validates the modifications of a peptide.
+     * @param peptide the peptide of interest
+     * @return a boolean indicating whether the peptide passed the test
+     */
+    public boolean validateModifications(Peptide peptide) {
+        
         if (unknownPtm) {
-            ArrayList<ModificationMatch> modificationMatches = assumption.getPeptide().getModificationMatches();
+            ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
             for (ModificationMatch modMatch : modificationMatches) {
                 if (modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                     return false;
                 }
             }
         }
+        return true;
+    }
+
+    /**
+     * Validates the mass deviation of a peptide assumption.
+     *
+     * @param assumption the considered peptide assumption
+     * @param spectrumKey the key of the spectrum used to get the precursor
+     * the precursor should be accessible via the spectrum factory
+     * 
+     * @return a boolean indicating whether the given assumption passes the
+     * filter
+     * @throws IOException
+     * @throws MzMLUnmarshallerException
+     */
+    public boolean validatePrecursor(PeptideAssumption assumption, String spectrumKey) throws IOException, MzMLUnmarshallerException {
 
         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
 

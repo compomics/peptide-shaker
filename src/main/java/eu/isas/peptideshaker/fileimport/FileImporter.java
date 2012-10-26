@@ -603,7 +603,6 @@ public class FileImporter {
                 nPSMs++;
                 nSecondary += match.getAllAssumptions().size() - 1;
 
-                PeptideAssumption firstHit = match.getFirstHit(searchEngine);
                 String spectrumKey = match.getKey();
                 String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
                 String fileName = Spectrum.getSpectrumFile(spectrumKey);
@@ -656,33 +655,22 @@ public class FileImporter {
                 }
 
                 goodFirstHit = false;
-                ArrayList<PeptideAssumption> allAssumptions = match.getAllAssumptions(searchEngine).get(firstHit.getEValue());
 
-                for (PeptideAssumption assumption : allAssumptions) {
-                    if (idFilter.validateId(assumption, spectrumKey)) {
-                        if (!goodFirstHit) {
-                            match.setFirstHit(searchEngine, assumption);
-                        }
-                        double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+                for (PeptideAssumption assumption : match.getAllAssumptions()) {
+                    if (idFilter.validatePeptideAssumption(assumption)) {
                         goodFirstHit = true;
-                        double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
 
-                        if (error > maxErrorPpm) {
-                            maxErrorPpm = error;
-                        }
 
-                        error = Math.abs(assumption.getDeltaMass(precursorMz, false));
+                    } else {
+                        match.removeAssumption(assumption);
+                    }
+                }
 
-                        if (error > maxErrorDa) {
-                            maxErrorDa = error;
-                        }
-
-                        int currentCharge = assumption.getIdentificationCharge().value;
-
-                        if (!charges.contains(currentCharge)) {
-                            charges.add(currentCharge);
-                        }
-
+                if (!goodFirstHit) {
+                    matchIt.remove();
+                } else {
+                    for (PeptideAssumption assumption : match.getAllAssumptions()) {
+                        // remap the proteins for X!Tandem
                         Peptide peptide = assumption.getPeptide();
                         String peptideSequence = peptide.getSequence();
                         if (searchEngine == Advocate.XTANDEM) {
@@ -692,29 +680,7 @@ public class FileImporter {
                             }
                         }
 
-                        for (String protein : peptide.getParentProteins()) {
-                            Integer count = proteinCount.get(protein);
-                            if (count != null) {
-                                proteinCount.put(protein, count + 1);
-                            } else {
-                                int index = singleProteinList.indexOf(protein);
-                                if (index != -1) {
-                                    singleProteinList.remove(index);
-                                    proteinCount.put(protein, 2);
-                                } else {
-                                    singleProteinList.add(protein);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!goodFirstHit) {
-                    matchIt.remove();
-                } else {
-                    // change the search engine modifications into expected modifications
-                    for (PeptideAssumption assumptions : match.getAllAssumptions()) {
-                        Peptide peptide = assumptions.getPeptide();
+                        // change the search engine modifications into expected modifications
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                             String sePTM = modMatch.getTheoreticPtm();
                             if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
@@ -748,12 +714,66 @@ public class FileImporter {
                                 modMatch.setTheoreticPtm(expectedPTM);
                             }
                         }
+
+                        if (idFilter.validateModifications(peptide)) {
+                            // Estimate the theoretic mass with the new modifications
+                            peptide.estimateTheoreticMass();
+                            if (!idFilter.validatePrecursor(assumption, spectrumKey)) {
+                                match.removeAssumption(assumption);
+                            }
+                        } else {
+                            match.removeAssumption(assumption);
+                        }
                     }
 
-                    if (idFilter.validateId(firstHit, spectrumKey)) {
-                        inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                        identification.addSpectrumMatch(match);
-                        nRetained++;
+                    PeptideAssumption firstHit = null;
+                    ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
+                    Collections.sort(eValues);
+                    // If everything went fine, the loops are not necessary here
+                    for (Double eValue : eValues) {
+                        for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(eValue)) {
+                            firstHit = assumption;
+                            match.setFirstHit(searchEngine, assumption);
+                            double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+                            double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
+
+                            if (error > maxErrorPpm) {
+                                maxErrorPpm = error;
+                            }
+
+                            error = Math.abs(assumption.getDeltaMass(precursorMz, false));
+
+                            if (error > maxErrorDa) {
+                                maxErrorDa = error;
+                            }
+
+                            int currentCharge = assumption.getIdentificationCharge().value;
+
+                            if (!charges.contains(currentCharge)) {
+                                charges.add(currentCharge);
+                            }
+                            for (String protein : assumption.getPeptide().getParentProteins()) {
+                                Integer count = proteinCount.get(protein);
+                                if (count != null) {
+                                    proteinCount.put(protein, count + 1);
+                                } else {
+                                    int index = singleProteinList.indexOf(protein);
+                                    if (index != -1) {
+                                        singleProteinList.remove(index);
+                                        proteinCount.put(protein, 2);
+                                    } else {
+                                        singleProteinList.add(protein);
+                                    }
+                                }
+                            }
+                            inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                            identification.addSpectrumMatch(match);
+                            nRetained++;
+                            break;
+                        }
+                        if (firstHit != null) {
+                            break;
+                        }
                     }
                 }
 

@@ -239,7 +239,7 @@ public class FractionError {
 
                 if (psParameter.isValidated()) {
 
-                    Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, false);
+                    Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                     double precursorMz = precursor.getMz();
                     double precursorRT = precursor.getRt();
 
