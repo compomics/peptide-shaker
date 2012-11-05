@@ -571,7 +571,7 @@ public class FileImporter {
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
 
-            boolean idReport, goodFirstHit, unknown = false;
+            boolean idReport, unknown = false;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
@@ -654,25 +654,24 @@ public class FileImporter {
                     idReport = true;
                 }
 
-                goodFirstHit = false;
-
                 for (PeptideAssumption assumption : match.getAllAssumptions()) {
-                    if (idFilter.validatePeptideAssumption(assumption)) {
-                        goodFirstHit = true;
-
-
-                    } else {
+                    if (!idFilter.validatePeptideAssumption(assumption)) {
                         match.removeAssumption(assumption);
                     }
                 }
 
-                if (!goodFirstHit) {
+                if (!match.hasAssumption(searchEngine)) {
                     matchIt.remove();
                 } else {
+                    if (match.getKey().equals("orbitrap003956.mgf_cus_701.85595703125_1424.3941")) {
+                        int debug = 1;
+                    }
                     for (PeptideAssumption assumption : match.getAllAssumptions()) {
-                        // remap the proteins for X!Tandem
+
                         Peptide peptide = assumption.getPeptide();
                         String peptideSequence = peptide.getSequence();
+
+                        // remap the proteins for X!Tandem
                         if (searchEngine == Advocate.XTANDEM) {
                             ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
                             if (!proteins.isEmpty()) {
@@ -682,36 +681,40 @@ public class FileImporter {
 
                         // change the search engine modifications into expected modifications
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            String sePTM = modMatch.getTheoreticPtm();
-                            if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
-                                if (!unknown) {
-                                    waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
-                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
-                                    unknown = true;
+                            if (modMatch.isVariable()) {
+                                String sePTM = modMatch.getTheoreticPtm();
+                                if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
+                                    if (!unknown) {
+                                        waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
+                                                + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
+                                        unknown = true;
+                                    }
+                                } else {
+                                    ArrayList<String> expectedNames;
+                                    if (ptmFactory.containsPTM(sePTM)) {
+                                        expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
+                                    } else {
+                                        String[] parsedName = sePTM.split("@");
+                                        double seMass = 0;
+                                        try {
+                                            seMass = new Double(parsedName[0]);
+                                        } catch (Exception e) {
+                                            throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem modification.\n"
+                                                    + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
+                                        }
+                                        expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
+                                    }
+
+                                    String expectedPTM;
+                                    if (!expectedNames.isEmpty()) {
+                                        expectedPTM = expectedNames.get(0);
+                                    } else {
+                                        expectedPTM = PTMFactory.unknownPTM.getName();
+                                    }
+                                    modMatch.setTheoreticPtm(expectedPTM);
                                 }
                             } else {
-                                ArrayList<String> expectedNames;
-                                if (ptmFactory.containsPTM(sePTM)) {
-                                    expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
-                                } else {
-                                    String[] parsedName = sePTM.split("@");
-                                    double seMass = 0;
-                                    try {
-                                        seMass = new Double(parsedName[0]);
-                                    } catch (Exception e) {
-                                        throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem modification.\n"
-                                                + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
-                                    }
-                                    expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
-                                }
-
-                                String expectedPTM;
-                                if (!expectedNames.isEmpty()) {
-                                    expectedPTM = expectedNames.get(0);
-                                } else {
-                                    expectedPTM = PTMFactory.unknownPTM.getName();
-                                }
-                                modMatch.setTheoreticPtm(expectedPTM);
+                                boolean debugFixed = true;
                             }
                         }
 
@@ -726,53 +729,55 @@ public class FileImporter {
                         }
                     }
 
-                    PeptideAssumption firstHit = null;
-                    ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
-                    Collections.sort(eValues);
-                    // If everything went fine, the loops are not necessary here
-                    for (Double eValue : eValues) {
-                        for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(eValue)) {
-                            firstHit = assumption;
-                            match.setFirstHit(searchEngine, assumption);
-                            double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
-                            double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
+                    if (match.hasAssumption(searchEngine)) {
+                        PeptideAssumption firstHit = null;
+                        ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
+                        Collections.sort(eValues);
+                        // If everything went fine, the loops are not necessary here
+                        for (Double eValue : eValues) {
+                            for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(eValue)) {
+                                firstHit = assumption;
+                                match.setFirstHit(searchEngine, assumption);
+                                double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+                                double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
 
-                            if (error > maxErrorPpm) {
-                                maxErrorPpm = error;
-                            }
+                                if (error > maxErrorPpm) {
+                                    maxErrorPpm = error;
+                                }
 
-                            error = Math.abs(assumption.getDeltaMass(precursorMz, false));
+                                error = Math.abs(assumption.getDeltaMass(precursorMz, false));
 
-                            if (error > maxErrorDa) {
-                                maxErrorDa = error;
-                            }
+                                if (error > maxErrorDa) {
+                                    maxErrorDa = error;
+                                }
 
-                            int currentCharge = assumption.getIdentificationCharge().value;
+                                int currentCharge = assumption.getIdentificationCharge().value;
 
-                            if (!charges.contains(currentCharge)) {
-                                charges.add(currentCharge);
-                            }
-                            for (String protein : assumption.getPeptide().getParentProteins()) {
-                                Integer count = proteinCount.get(protein);
-                                if (count != null) {
-                                    proteinCount.put(protein, count + 1);
-                                } else {
-                                    int index = singleProteinList.indexOf(protein);
-                                    if (index != -1) {
-                                        singleProteinList.remove(index);
-                                        proteinCount.put(protein, 2);
+                                if (!charges.contains(currentCharge)) {
+                                    charges.add(currentCharge);
+                                }
+                                for (String protein : assumption.getPeptide().getParentProteins()) {
+                                    Integer count = proteinCount.get(protein);
+                                    if (count != null) {
+                                        proteinCount.put(protein, count + 1);
                                     } else {
-                                        singleProteinList.add(protein);
+                                        int index = singleProteinList.indexOf(protein);
+                                        if (index != -1) {
+                                            singleProteinList.remove(index);
+                                            proteinCount.put(protein, 2);
+                                        } else {
+                                            singleProteinList.add(protein);
+                                        }
                                     }
                                 }
+                                inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                                identification.addSpectrumMatch(match);
+                                nRetained++;
+                                break;
                             }
-                            inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                            identification.addSpectrumMatch(match);
-                            nRetained++;
-                            break;
-                        }
-                        if (firstHit != null) {
-                            break;
+                            if (firstHit != null) {
+                                break;
+                            }
                         }
                     }
                 }

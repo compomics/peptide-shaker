@@ -20,6 +20,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.messages.FeedBack;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -1363,10 +1364,9 @@ public class PeptideShaker {
                         PTM ptm = ptmFactory.getPTM(modName);
                         ArrayList<Integer> possiblePositions = psPeptide.getPotentialModificationSites(ptm);
                         if (possiblePositions.size() < modMatches.get(modName).size()) {
-                            // note: had to remove the message below as this can often happen for the user defined ptms with patterns
-//                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size()
-//                                    + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence()
-//                                    + " in spectrum " + spectrumMatch.getKey() + ".");
+                            throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size()
+                                    + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence()
+                                    + " in spectrum " + spectrumMatch.getKey() + ".");
                         } else if (possiblePositions.size() == modMatches.get(modName).size()) {
                             for (ModificationMatch modMatch : modMatches.get(modName)) {
                                 modMatch.setConfident(true);
@@ -1868,65 +1868,93 @@ public class PeptideShaker {
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
         PSPtmScores ptmScores = new PSPtmScores();
-
         if (spectrumMatch.getUrParam(new PSPtmScores()) != null) {
             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
         }
 
-        HashMap<String, PTM> modifications = new HashMap<String, PTM>();
-        HashMap<String, Integer> nMod = new HashMap<String, Integer>();
-        HashMap<String, ModificationMatch> modificationMatches = new HashMap<String, ModificationMatch>();
+        HashMap<Double, ArrayList<PTM>> modifications = new HashMap<Double, ArrayList<PTM>>();
+        HashMap<Double, Integer> nMod = new HashMap<Double, Integer>();
+        HashMap<Double, ModificationMatch> modificationMatches = new HashMap<Double, ModificationMatch>();
+        Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
 
-        for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
+        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
-                PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                if (ptm.getType() == PTM.MODAA) {
-                    String modificationName = modificationMatch.getTheoreticPtm();
-                    if (!modifications.keySet().contains(modificationName)) {
-                        modifications.put(modificationName, ptm);
-                        nMod.put(modificationName, 1);
-                    } else {
-                        nMod.put(modificationName, nMod.get(modificationName) + 1);
+                PTM refPTM = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                double ptmMass = refPTM.getMass();
+                if (!modifications.containsKey(ptmMass)) {
+                    ArrayList<PTM> ptms = new ArrayList<PTM>();
+                    for (String ptmName : ptmProfile.getAllNotFixedModifications()) {
+                        PTM ptm = ptmFactory.getPTM(ptmName);
+                        if (ptm.getMass() == ptmMass) {
+                            ptms.add(ptm);
+                        }
                     }
-                    modificationMatches.put(modificationName, modificationMatch);
+                    modifications.put(ptmMass, ptms);
+                    nMod.put(ptmMass, 1);
+                } else {
+                    nMod.put(ptmMass, nMod.get(ptmMass) + 1);
                 }
+                modificationMatches.put(ptmMass, modificationMatch);
             }
         }
 
         if (!modifications.isEmpty()) {
 
             MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-            annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
+            annotationPreferences.setCurrentSettings(peptide, spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
 
-            for (String mod : modifications.keySet()) {
-                if (nMod.get(mod) == 1) {
-                    HashMap<ArrayList<Integer>, Double> aScores = PTMLocationScores.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
-                            modifications.get(mod), nMod.get(mod), spectrum, annotationPreferences.getIonTypes(),
+            for (Double ptmMass : modifications.keySet()) {
+                if (nMod.get(ptmMass) == 1) {
+                    HashMap<ArrayList<Integer>, Double> aScores = PTMLocationScores.getAScore(peptide,
+                            modifications.get(ptmMass), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                             searchParameters.getFragmentIonAccuracy(), scoringPreferences.isaScoreNeutralLosses());
-                    PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+
+                    PTM bestModification = null;
+                    for (PTM ptm : modifications.get(ptmMass)) {
+                        for (ArrayList<Integer> modificationProfile : aScores.keySet()) { //@TODO: use only the best scoring profile here
+                            if (modificationProfile.isEmpty()) {
+                                throw new IllegalArgumentException("No PTM localization returned by the A-score for PTM of mass " + ptmMass + " in spectrum " + spectrumMatch.getKey() + ".");
+                            }
+                            if (peptide.getPotentialModificationSites(ptm).contains(modificationProfile.get(0))) { //@TODO: implement this more elegantly with a method looking for the pattern in the peptide sequence inside the Peptide class. Will be faster.
+                                bestModification = ptm;
+                                break;
+                            }
+                        }
+                        if (bestModification != null) {
+                            break;
+                        }
+                    }
+                    if (bestModification == null) {
+                        throw new IllegalArgumentException("Could not map the A-score results to any modification.");
+                    }
+
+                    String ptmName = bestModification.getName();
+
+                    PtmScoring ptmScoring = ptmScores.getPtmScoring(ptmName);
 
                     if (ptmScoring == null) {
-                        ptmScoring = new PtmScoring(mod);
+                        ptmScoring = new PtmScoring(ptmName);
                     }
 
                     for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
                         ptmScoring.addAScore(modificationProfile, aScores.get(modificationProfile));
                     }
 
-                    ptmScores.addPtmScoring(mod, ptmScoring);
+                    ptmScores.addPtmScoring(ptmName, ptmScoring);
 
                     if (aScores.size() == 1) {
                         // here nMod = 1, no method available to date for nMod > 1
                         int location = (new ArrayList<ArrayList<Integer>>(aScores.keySet())).get(0).get(0);
-                        if (location != modificationMatches.get(mod).getModificationSite()) {
-                            ptmScores.getPtmScoring(mod).setConflict(true);
+                        if (location != modificationMatches.get(ptmMass).getModificationSite()) {
+                            ptmScores.getPtmScoring(ptmName).setConflict(true);
                         }
                     } else {
-                        ptmScores.getPtmScoring(mod).setConflict(true);
+                        ptmScores.getPtmScoring(ptmName).setConflict(true);
                     }
                 }
             }
