@@ -5,7 +5,6 @@ import com.compomics.software.ToolFactory;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import java.io.File;
-import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
@@ -503,6 +502,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        dispose();
         new PrideReshakeGui(peptideShakerGUI, true);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_reshakeJButtonActionPerformed

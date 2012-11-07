@@ -774,9 +774,16 @@ public class NewDialog extends javax.swing.JDialog {
         validateInput();
 }//GEN-LAST:event_clearSpectraActionPerformed
 
+    /**
+     * Open a file selection dialog where the user can select the spectrum 
+     * files to use.
+     * 
+     * @param evt 
+     */
     private void browseSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSpectraActionPerformed
 
-        // @TODO: implement mzML
+        // @TODO: implement mzML support
+
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Spectrum File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -1289,7 +1296,7 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Imports the search parameters from a searchGUI file.
+     * Imports the search parameters from a SearchGUI file.
      *
      * @param file the selected searchGUI file
      */

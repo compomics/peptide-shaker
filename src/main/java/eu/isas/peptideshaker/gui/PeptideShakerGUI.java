@@ -5219,6 +5219,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     progressDialog.setMaxProgressValue(identification.getSpectrumFiles().size() + 1);
                     progressDialog.increaseProgressValue();
 
+                    // @TODO: this only iterates the file names and not the original file paths, thus the mgfs are not found!!!
                     for (String filePath : identification.getSpectrumFiles()) {
 
                         progressDialog.increaseProgressValue();
@@ -5375,7 +5376,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         annotationPreferences.useAutomaticAnnotation(true);
                     }
 
-                    File mgfFile;
                     int cpt = 1;
                     progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
                     progressDialog.setIndeterminate(false);
@@ -5392,7 +5392,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         progressDialog.setTitle("Importing Spectrum Files (" + cpt++ + "/" + spectrumFiles.size() + "). Please Wait...");
 
                         try {
-                            mgfFile = new File(spectrumFile);
+                            File mgfFile = new File(spectrumFile);
                             spectrumFactory.addSpectra(mgfFile, progressDialog);
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -5404,7 +5404,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             e.printStackTrace();
                             return;
                         }
-                        
+
                         progressDialog.increaseProgressValue();
                     }
 
@@ -5443,11 +5443,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
 
                     progressDialog.setRunFinished();
-
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.updateFrameTitle();
-
                     dataSaved = !compatibilityIssue;
 
                 } catch (OutOfMemoryError error) {
@@ -5461,18 +5459,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     progressDialog.setRunFinished();
                     error.printStackTrace();
                 } catch (EOFException e) {
-
                     progressDialog.setRunFinished();
-
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + currentPSFile + ".\n\n"
                             + "The file is corrupted and cannot be opened anymore.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 } catch (Exception e) {
-
                     progressDialog.setRunFinished();
-
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             "An error occured while reading:\n" + currentPSFile + ".\n\n"
                             + "Please verify that the compomics-utilities version used to create\n"
@@ -6003,7 +5997,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param aDialogTitle the title for the dialog
      * @param openDialog if true an open dialog is shown, false results in a
      * save dialog
-     * @return the file selected by the user, or null if no file was selected
+     * @return the file selected by the user, or null if no file or folder was selected
      */
     public File getUserSelectedFile(String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
 
