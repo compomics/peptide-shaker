@@ -3,8 +3,8 @@ package eu.isas.peptideshaker.gui.pride;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import com.compomics.util.experiment.identification.SearchParameters;
 import java.awt.Toolkit;
-import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -23,12 +23,15 @@ import javax.swing.table.TableRowSorter;
 import org.jfree.chart.plot.PlotOrientation;
 import no.uib.jsparklines.renderers.*;
 import org.apache.commons.io.FileUtils;
-import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
-import uk.ac.ebi.pride.tools.jmzreader.model.Spectrum;
-import uk.ac.ebi.pride.tools.mzdata_parser.MzDataFile;
+import com.compomics.util.Util;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import javax.swing.filechooser.FileFilter;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import uk.ac.ebi.pride.jaxb.model.*;
+import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 
 /**
- * A simple GUI for downloading the mgf and search params for a PRIDE dataset.
+ * A simple GUI for getting the mgf and search params for a PRIDE dataset.
  *
  * @author Harald Barsnes
  */
@@ -39,9 +42,21 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The list of PubMed IDs for a give PRIDE project accession number.
+     * The list of PubMed IDs for a given PRIDE project accession number.
      */
     private HashMap<Integer, String> pumMedIdsForProject;
+    /**
+     * The list of taxonomies for a given PRIDE project accession number.
+     */
+    private HashMap<Integer, String> taxonomyForProject;
+    /**
+     * The list of species for a given PRIDE project accession number.
+     */
+    private HashMap<Integer, String> speciesForProject;
+    /**
+     * The list of ptms for a given PRIDE project accession number.
+     */
+    private HashMap<Integer, String> ptmsForProject;
     /**
      * Total number of PRIDE projects.
      */
@@ -59,13 +74,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private URL currentPrideProjectUrl;
     /**
-     * The current zipped mzData file.
+     * The current zipped PRIDE XML file.
      */
-    private File currentZippedMzDataFile;
+    private File currentZippedPrideXmlFile;
     /**
-     * The current mzData file.
+     * The current PRIDE XML file.
      */
-    private File currentMzDataFile;
+    private File currentPrideXmlFile;
     /**
      * The current mgf file.
      */
@@ -78,6 +93,18 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * True of a file is currently being downloaded.
      */
     private boolean isFileBeingDownloaded = false;
+    /**
+     * The output folder for the mgfs and spectrum properties.
+     */
+    private String outputFolder = "user.home";
+    /**
+     * The maximum precursor charge detected in the PRIDE XML files.
+     */
+    private int maxPrecursorCharge = 0;
+    /**
+     * The minmim precursor charge detected in the PRIDE XML files.
+     */
+    private int minPrecursorCharge = 1000;
 
     /**
      * Creates a new PrideReshakeGui dialog.
@@ -105,12 +132,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         projectsTable.getColumn("Accession").setMaxWidth(80);
         projectsTable.getColumn("Accession").setMinWidth(80);
-        projectsTable.getColumn("Reshake").setMaxWidth(70);
-        projectsTable.getColumn("Reshake").setMinWidth(70);
+        projectsTable.getColumn(" ").setMaxWidth(30);
+        projectsTable.getColumn(" ").setMinWidth(30);
         searchTable.getColumn("Accession").setMaxWidth(80);
         searchTable.getColumn("Accession").setMinWidth(80);
-        searchTable.getColumn("Reshake").setMaxWidth(70);
-        searchTable.getColumn("Reshake").setMinWidth(70);
+        searchTable.getColumn(" ").setMaxWidth(30);
+        searchTable.getColumn(" ").setMinWidth(30);
 
         // make sure that the scroll panes are see-through
         projectsScrollPane.getViewport().setOpaque(false);
@@ -131,7 +158,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         searchCorner.setBackground(searchTable.getTableHeader().getBackground());
         searchScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, searchCorner);
 
-        projectsTable.getColumn("Reshake").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        projectsTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
+        searchTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
+
+        projectsTable.getColumn("Title").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         projectsTableToolTips = new ArrayList<String>();
         projectsTableToolTips.add("PRIDE Accession Number");
@@ -153,6 +183,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private void insertData() {
 
         pumMedIdsForProject = new HashMap<Integer, String>();
+        taxonomyForProject = new HashMap<Integer, String>();
+        speciesForProject = new HashMap<Integer, String>();
+        ptmsForProject = new HashMap<Integer, String>();
 
         try {
             File databaseSummaryFile = new File(peptideShakerGUI.getJarFilePath(), "resources/conf/pride/database_summary.tsv");
@@ -200,9 +233,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     maxNumProteins = numProteins;
                 }
 
+                taxonomyForProject.put(accession, taxonomy);
+                speciesForProject.put(accession, species);
+                ptmsForProject.put(accession, ptms);
+
                 ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
                             accession,
-                            title,
+                            "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
+                            + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                            + title + "</font></a><html>",
                             project,
                             species,
                             tissue,
@@ -211,7 +250,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             numPeptides, // note that the order of peptides and proteins is different in the tsv file!
                             numProteins,
                             references,
-                            "<html><a href=\"dummy\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">Reshake</font></a>"
+                            false
                         });
 
                 line = br.readLine();
@@ -230,6 +269,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Spectra").getCellRenderer()).setLogScale(true);
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Peptides").getCellRenderer()).setLogScale(true);
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).setLogScale(true);
+
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Spectra").getCellRenderer()).setMinimumChartValue(2.0);
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Peptides").getCellRenderer()).setMinimumChartValue(2.0);
+            ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).setMinimumChartValue(2.0);
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PrideReshakeGui.class.getName()).log(Level.SEVERE, null, ex);
@@ -304,6 +351,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 };
             }
         };
+        reshakeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PRIDE - Public Projects");
@@ -318,14 +366,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", "Reshake"
+                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", " "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -352,7 +400,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         });
         projectsTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                projectsTableKeyReleased(evt);
+                projectsTablKeyReleased(evt);
             }
         });
         projectsScrollPane.setViewportView(projectsTable);
@@ -370,7 +418,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             allProjectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(allProjectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -626,14 +674,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         searchTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, ""}
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", "Reshake"
+                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", " "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 true, true, true, true, true, true, true, true, true, true, false
@@ -673,6 +721,17 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        reshakeButton.setBackground(new java.awt.Color(0, 153, 0));
+        reshakeButton.setFont(reshakeButton.getFont().deriveFont(reshakeButton.getFont().getStyle() | java.awt.Font.BOLD));
+        reshakeButton.setForeground(new java.awt.Color(255, 255, 255));
+        reshakeButton.setText("Reshake PRIDE Projects");
+        reshakeButton.setEnabled(false);
+        reshakeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reshakeButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -682,7 +741,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(selectedProjectPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(allProjectsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(reshakeButton)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -694,6 +756,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 .addComponent(allProjectsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(selectedProjectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(reshakeButton)
                 .addContainerGap())
         );
 
@@ -730,121 +794,21 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         if (evt != null) {
             peptideShakerGUI.resetSelectedItems();
-        }
 
-        final int selectedRow = projectsTable.getSelectedRow();
-        int column = projectsTable.getSelectedColumn();
+            int row = projectsTable.getSelectedRow();
+            int column = projectsTable.getSelectedColumn();
 
-        if (evt == null || (evt.getButton() == MouseEvent.BUTTON1)) {
+            // open pride project link in web browser
+            if (column == projectsTable.getColumn("Title").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) projectsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
 
+                String link = (String) projectsTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
 
-            // download mzData file
-            if (column == projectsTable.getColumn("Reshake").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
-                    && ((String) projectsTable.getValueAt(selectedRow, column)).lastIndexOf("<html>") != -1) {
-
-                try {
-                    currentPrideProjectUrl = new URL("ftp://ftp.ebi.ac.uk/pub/databases/pride/PRIDE_Exp_mzData_Ac_"
-                            + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + ".xml.gz");
-                    currentZippedMzDataFile = new File(peptideShakerGUI.getJarFilePath(), "resources/conf/pride/temp/PRIDE_Exp_mzData_Ac_"
-                            + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + ".xml.gz");
-                    currentMzDataFile = new File(peptideShakerGUI.getJarFilePath(), "resources/conf/pride/temp/PRIDE_Exp_mzData_Ac_"
-                            + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + ".xml");
-                    currentMgfFile = new File(peptideShakerGUI.getJarFilePath(), "resources/conf/pride/temp/PRIDE_Exp_mzData_Ac_"
-                            + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + ".mgf");
-                    URLConnection conn = currentPrideProjectUrl.openConnection();
-                    currentUrlContentLength = conn.getContentLength();
-                    // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
-
-                } catch (MalformedURLException ex) {
-                    ex.printStackTrace();
-                    currentPrideProjectUrl = null;
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    currentPrideProjectUrl = null;
-                }
-
-                if (currentPrideProjectUrl != null) {
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    
-                    if (currentUrlContentLength != -1) {
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setValue(0);
-                        progressDialog.setMaxProgressValue(currentUrlContentLength);
-                    } else {
-                        progressDialog.setIndeterminate(true);
-                    }
-
-                    progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
-                    progressDialog.setUnstoppable(true); // @TODO: not sure if this process can be stopped at all...
-                    isFileBeingDownloaded = true;
-
-                    new Thread(new Runnable() {
-
-                        public void run() {
-                            try {
-                                progressDialog.setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
-                            }
-                        }
-                    }, "ProgressDialog").start();
-
-                    new Thread("DownloadThread") {
-
-                        @Override
-                        public void run() {
-
-                            // download the mzData file
-                            try {
-                                FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedMzDataFile);
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-
-                            isFileBeingDownloaded = false;
-
-                            // file downloaded, unzip file
-                            progressDialog.setTitle("Unzipping Project. Please Wait...");
-                            progressDialog.setIndeterminate(true);
-                            unzipProject();
-
-                            // file unzipped, time to start the conversion to mgf
-                            convertMzDataToMgf();
-
-                            progressDialog.setRunFinished();
-                        }
-                    }.start();
-
-                    new Thread("DownloadMonitorThread") {
-
-                        @Override
-                        public void run() {
-
-                            long start = System.currentTimeMillis();
-
-                            while (isFileBeingDownloaded) {
-                                long now = System.currentTimeMillis();
-
-                                // update the progress dialog every 100 millisecond or so
-                                if ((now - start) > 100 && progressDialog != null) {
-                                    long length = currentZippedMzDataFile.length();
-
-                                    if (currentUrlContentLength != -1) {
-                                        progressDialog.setValue(new Long(length).intValue());
-                                    }
-
-                                    progressDialog.setTitle("Downloading PRIDE Project. Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
-
-                                    start = System.currentTimeMillis();
-                                }
-                            }
-                        }
-                    }.start();
-                }
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         }
     }//GEN-LAST:event_projectsTableMouseReleased
@@ -854,9 +818,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void projectsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_projectsTableKeyReleased
+    private void projectsTablKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_projectsTablKeyReleased
         updateSelectedProjectInfo();
-    }//GEN-LAST:event_projectsTableKeyReleased
+    }//GEN-LAST:event_projectsTablKeyReleased
 
     /**
      * Makes the links active.
@@ -894,7 +858,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         projectsTable.setToolTipText(null);
 
-        if (row != -1 && column != -1 && column == projectsTable.getColumn("Reshake").getModelIndex() && projectsTable.getValueAt(row, column) != null) {
+        if (row != -1 && column != -1 && column == projectsTable.getColumn("Title").getModelIndex() && projectsTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) projectsTable.getValueAt(row, column);
 
@@ -916,6 +880,73 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private void projectsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectsTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_projectsTableMouseExited
+
+    /**
+     * Reshake the selected PRIDE experiments.
+     *
+     * @param evt
+     */
+    private void reshakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeButtonActionPerformed
+
+        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Select Output Folder");
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Mascot generic files) *.mgf";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+        File selectedFolder = null;
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            selectedFolder = fileChooser.getSelectedFile();
+
+            if (!selectedFolder.exists()) {
+                int value = JOptionPane.showConfirmDialog(this, "The folder \'" + selectedFolder.getAbsolutePath() + "\' does not exist.\n"
+                        + "Do you want to create it?", "Create Folder?", JOptionPane.YES_NO_OPTION);
+                if (value == JOptionPane.NO_OPTION) {
+                    return;
+                } else { // yes option selected
+                    boolean success = selectedFolder.mkdir();
+
+                    if (!success) {
+                        JOptionPane.showMessageDialog(this, "Failed to create the folder. Please create it manually and then select it.",
+                                "File Error", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                }
+            }
+
+            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
+        }
+
+        if (selectedFolder != null) {
+            outputFolder = selectedFolder.getAbsolutePath();
+            ArrayList<Integer> selectedProjects = new ArrayList<Integer>();
+
+            for (int i = 0; i < projectsTable.getRowCount(); i++) {
+                if ((Boolean) projectsTable.getValueAt(i, projectsTable.getColumn(" ").getModelIndex())) {
+                    selectedProjects.add((Integer) projectsTable.getValueAt(i, projectsTable.getColumn("Accession").getModelIndex()));
+                }
+            }
+
+            downloadPrideDatasets(selectedProjects);
+        }
+    }//GEN-LAST:event_reshakeButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel accessionLabel;
     private javax.swing.JTextField accessionTextField;
@@ -940,6 +971,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private javax.swing.JPanel referencesPanel;
     private javax.swing.JScrollPane referencesScrollPane;
     private javax.swing.JTextArea referencesTextArea;
+    private javax.swing.JButton reshakeButton;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JScrollPane searchScrollPane;
     private javax.swing.JTable searchTable;
@@ -953,6 +985,274 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private javax.swing.JScrollPane titleScrollPane;
     private javax.swing.JTextArea titleTextArea;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Download and convert a PRIDE project to mgf.
+     *
+     * @param accession the accession numbers of the PRIDE projects
+     */
+    private void downloadPrideDatasets(ArrayList<Integer> aSelectedProjects) {
+
+        final ArrayList<Integer> selectedProjects = aSelectedProjects;
+        final PrideReshakeGui finalRef = this;
+        maxPrecursorCharge = 0;
+        minPrecursorCharge = 1000;
+
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true);
+
+        progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
+        progressDialog.setUnstoppable(true); // @TODO: can this be removed??
+        isFileBeingDownloaded = true;
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+
+        new Thread("DownloadThread") {
+
+            @Override
+            public void run() {
+
+                // set up the identification parameters
+                SearchParameters prideSearchParameters = new SearchParameters();
+
+                for (int i = 0; i < selectedProjects.size(); i++) {
+
+                    if (progressDialog.isRunCanceled()) {
+                        progressDialog.setRunFinished();
+                        return;
+                    }
+
+                    final Integer prideAccession = selectedProjects.get(i);
+                    final int counter = i;
+
+                    if (selectedProjects.size() > 1) {
+                        progressDialog.setTitle("Downloading PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                    } else {
+                        progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
+                    }
+
+                    try {
+                        currentPrideProjectUrl = new URL("ftp://ftp.ebi.ac.uk/pub/databases/pride/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
+                        currentZippedPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
+                        currentPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
+                        currentMgfFile = new File(outputFolder, "PRIDE_Exp_Complete_Ac_" + prideAccession + ".mgf");
+                        URLConnection conn = currentPrideProjectUrl.openConnection();
+                        currentUrlContentLength = conn.getContentLength();
+                        // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
+
+                    } catch (MalformedURLException ex) {
+                        ex.printStackTrace();
+                        currentPrideProjectUrl = null;
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        currentPrideProjectUrl = null;
+                    }
+
+                    if (currentPrideProjectUrl != null) {
+                        if (currentUrlContentLength != -1) {
+                            progressDialog.setIndeterminate(false);
+                            progressDialog.setValue(0);
+                            progressDialog.setMaxProgressValue(currentUrlContentLength);
+                        } else {
+                            progressDialog.setIndeterminate(true);
+                        }
+
+                        isFileBeingDownloaded = true;
+
+                        new Thread("DownloadMonitorThread") {
+
+                            @Override
+                            public void run() {
+
+                                long start = System.currentTimeMillis();
+
+                                while (isFileBeingDownloaded) {
+
+                                    if (progressDialog.isRunCanceled()) {
+                                        progressDialog.setRunFinished();
+                                        return;
+                                    }
+
+                                    long now = System.currentTimeMillis();
+
+                                    // update the progress dialog every 100 millisecond or so
+                                    if ((now - start) > 100 && progressDialog != null) {
+                                        long length = currentZippedPrideXmlFile.length();
+
+                                        if (currentUrlContentLength != -1) {
+                                            progressDialog.setValue(new Long(length).intValue());
+                                        }
+
+                                        if (selectedProjects.size() > 1) {
+                                            progressDialog.setTitle("Downloading PRIDE Project (" + (counter + 1) + "/" + selectedProjects.size()
+                                                    + "). Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
+                                        } else {
+                                            progressDialog.setTitle("Downloading PRIDE Project. Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
+                                        }
+
+                                        start = System.currentTimeMillis();
+                                    }
+                                }
+                            }
+                        }.start();
+
+                        // download the pride xml file
+                        try {
+                            FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedPrideXmlFile);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        isFileBeingDownloaded = false;
+
+                        // file downloaded, unzip file
+                        if (selectedProjects.size() > 1) {
+                            progressDialog.setTitle("Unzipping PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                        } else {
+                            progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
+                        }
+                        progressDialog.setIndeterminate(true);
+                        unzipProject();
+
+                        // file unzipped, time to start the conversion to mgf
+                        if (selectedProjects.size() > 1) {
+                            progressDialog.setTitle("Converting PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                        } else {
+                            progressDialog.setTitle("Converting PRIDE Project. Please Wait...");
+                        }
+                        convertPrideXmlToMgf();
+                        
+                        // get the search params from the pride xml file
+                        progressDialog.setIndeterminate(true); // @TODO: if this takes long we should use a real progress bar...
+                        if (selectedProjects.size() > 1) {
+                            progressDialog.setTitle("Getting Search Settings (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                        } else {
+                            progressDialog.setTitle("Getting Search Settings. Please Wait...");
+                        }
+                        getSearchParams(prideAccession);
+                    }
+                }
+
+                // save the search params
+                try {
+                    SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                // clear the temp folder
+                progressDialog.setTitle("Clearing Temp Files. Please Wait...");
+                progressDialog.setIndeterminate(true);
+                Util.deleteDir(currentZippedPrideXmlFile.getParentFile());
+
+                progressDialog.setRunFinished();
+
+                JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE project(s) downloaded, converted to mgf and stored here:\n"
+                        + outputFolder, "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }.start();
+    }
+
+    /**
+     * Get the search params from the PRIDE project.
+     */
+    private void getSearchParams(Integer prideAccession) {
+
+        Double fragmentIonMassTolerance = null;
+        Double peptideIonMassTolerance = null;
+        Integer maxMissedCleavages = null;
+        String enzyme = null;
+
+        PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
+
+        Description description = prideXmlReader.getDescription();
+        DataProcessing dataProcessing = description.getDataProcessing();
+
+        List<CvParam> processingMethods = dataProcessing.getProcessingMethod().getCvParam();
+
+        for (CvParam cvParam : processingMethods) {
+            if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000161")) { // fragment mass tolerance
+                fragmentIonMassTolerance = new Double(cvParam.getValue());
+            } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000078")) { // peptide mass tolerance
+                peptideIonMassTolerance = new Double(cvParam.getValue());
+            } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000162")) { // allowed missed cleavages
+                maxMissedCleavages = new Integer(cvParam.getValue());
+            }
+        }
+
+        List<Param> protocolStepDescription = prideXmlReader.getProtocol().getProtocolSteps().getStepDescription();
+
+        for (Param stepDescription : protocolStepDescription) {
+            List<CvParam> stepCvParams = stepDescription.getCvParam();
+
+            for (CvParam stepCvParam : stepCvParams) {
+                if (stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000160") || stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000024")) { // enzyme
+                    enzyme = stepCvParam.getValue();
+                }
+            }
+        }
+        
+        // @TODO: get the fragment ion types??
+
+//        ArrayList<String> ionTypes = new ArrayList<String>();
+//        //ArrayList<String> peptideSequences = new ArrayList<String>();
+//
+//        // get the fragment ion types used
+//        List<String> ids = prideXmlReader.getIdentIds();
+//        for(String id : ids) { 
+//            Identification identification = prideXmlReader.getIdentById(id);
+//            List<PeptideItem> peptides = identification.getPeptideItem();
+//
+//            for (PeptideItem peptide : peptides) {
+//                //peptideSequences.add(peptide.getSequence());     
+//                List<FragmentIon> fragmentIons = peptide.getFragmentIon();
+//                for (FragmentIon fragmentIon : fragmentIons) {
+//                    if (!ionTypes.contains(fragmentIon.getIonType())) {
+//                        ionTypes.add(fragmentIon.getIonType()); // @TODO: this seems to always return null!!!
+//                    }
+//                }
+//            }
+//        } 
+        
+        // @TODO: map the ptms to our own utilities ptms!
+        
+        // @TODO: get the enzyme from the peptide sequences if not reported??
+        
+
+        System.out.println("\nfragmentIonMassTolerance: " + fragmentIonMassTolerance);
+        System.out.println("peptideIonMassTolerance: " + peptideIonMassTolerance);
+        System.out.println("maxMissedCleavages: " + maxMissedCleavages);
+
+        System.out.println("taxonomy: " + taxonomyForProject.get(prideAccession));
+        System.out.println("species: " + speciesForProject.get(prideAccession));
+        System.out.println("ptms: " + ptmsForProject.get(prideAccession));
+
+        System.out.println("enzyme: " + enzyme);
+        System.out.println("minPrecursorCharge: " + minPrecursorCharge);
+        System.out.println("maxPrecursorCharge: " + maxPrecursorCharge);
+
+//        System.out.print("ion types: ");
+//        for (String ionType : ionTypes) {
+//            System.out.print(ionType + ", ");
+//        }
+//        System.out.println();
+    }
 
     /**
      * Filters the project table according to the current filter settings.
@@ -1143,7 +1443,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private void updateSelectedProjectInfo() {
 
-        // clear the old datra
+        // clear the old data
         ((TitledBorder) selectedProjectPanel.getBorder()).setTitle("Selected Project");
         numbersLabel.setText("  ");
         accessionTextField.setText(null);
@@ -1158,11 +1458,30 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         int selectedRow = projectsTable.getSelectedRow();
 
+        // iterate the pride table and see if any projects are selected // @TODO: could perhaps be sped up, but there are not that many projects...
+        boolean selected = false;
+
+        for (int i = 0; i < projectsTable.getRowCount(); i++) {
+            if ((Boolean) projectsTable.getValueAt(i, projectsTable.getColumn(" ").getModelIndex())) {
+                selected = true;
+                break;
+            }
+        }
+
+        // enable/disable the reshake button
+        reshakeButton.setEnabled(selected);
+
+        // update the information about the selected project
         if (selectedRow != -1) {
+
+            // remove the html for the title
+            String title = (String) projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Title").getModelIndex());
+            title = title.substring(title.lastIndexOf("\">") + 2, title.lastIndexOf("</font"));
+
 
             ((TitledBorder) selectedProjectPanel.getBorder()).setTitle("Selected Project ("
                     + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()) + " - "
-                    + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Title").getModelIndex()) + ")");
+                    + title + ")");
             selectedProjectPanel.repaint();
 
             // display the info about the selected project
@@ -1170,7 +1489,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     + " / " + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("#Peptides").getModelIndex())
                     + " / " + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("#Proteins").getModelIndex()));
             accessionTextField.setText("" + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Accession").getModelIndex()));
-            titleTextArea.setText("" + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Title").getModelIndex()));
+            titleTextArea.setText("" + title);
             titleTextArea.setCaretPosition(0);
             projectTextArea.setText("" + projectsTable.getValueAt(selectedRow, projectsTable.getColumn("Project").getModelIndex()));
             projectTextArea.setCaretPosition(0);
@@ -1204,24 +1523,28 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     }
 
     /**
-     * Convert the mzData file to mgf.
+     * Convert the PRIDE XML file to mgf.
      */
-    private void convertMzDataToMgf() {
+    private void convertPrideXmlToMgf() {
         try {
-            MzDataFile inputParser = new MzDataFile(currentMzDataFile);
+            PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
             FileWriter w = new FileWriter(currentMgfFile);
             BufferedWriter bw = new BufferedWriter(w);
-            int spectraCount = inputParser.getSpectraCount();
-
-            inputParser.getDescription();
+            List<String> spectra = prideXmlReader.getSpectrumIds();
+            int spectraCount = spectra.size();
 
             progressDialog.setIndeterminate(false);
-            progressDialog.setTitle("Converting Spectra. Please Wait...");
             progressDialog.setMaxProgressValue(spectraCount);
             progressDialog.setValue(0);
 
-            for (int i = 1; i <= spectraCount; i++) {
-                Spectrum spectrum = inputParser.getSpectrumByIndex(i);
+            for (String spectrumId : spectra) {
+
+                if (progressDialog.isRunCanceled()) {
+                    progressDialog.setRunFinished();
+                    return;
+                }
+
+                Spectrum spectrum = prideXmlReader.getSpectrumById(spectrumId);
                 String spectrumAsMgf = asMgf(spectrum);
                 bw.write(spectrumAsMgf);
                 progressDialog.increaseProgressValue();
@@ -1229,19 +1552,16 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
             bw.close();
             w.close();
-
-        } catch (JMzReaderException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
     /**
-     * Returns the mzData values as an mgf bloc.
+     * Returns a PRIDE XML spectrum as an mgf bloc.
      *
      * @param spectrum
-     * @return the mzData spectrum as an mgf bloc
+     * @return the PRIDE XML spectrum as an mgf bloc
      */
     public String asMgf(Spectrum spectrum) {
 
@@ -1249,37 +1569,77 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         result += "TITLE=" + spectrum.getId() + System.getProperty("line.separator");
 
         // @TODO: what to do if precursor details are missing???
-        
-        // add precursor details
-        result += "PEPMASS=" + spectrum.getPrecursorMZ(); // @TODO: verify that this is the correct value!!!
 
-        // get the spectrum's precursor intensity
-        Double precursorIntensity = spectrum.getPrecursorIntensity();
-        if (precursorIntensity != null) {
-            result += "\t" + precursorIntensity;
-        }
+        int msLevel = spectrum.getSpectrumDesc().getSpectrumSettings().getSpectrumInstrument().getMsLevel();
 
-        result += System.getProperty("line.separator");
+        // ignore ms levels other than 2
+        if (msLevel == 2) {
 
-        //result += "RTINSECONDS="; // @TODO: get from spectrum.getAdditional();
+            // add precursor details
+            if (spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().size() > 0) {
+
+                Precursor precursor = spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().get(0); // get the first precursor
+                List<CvParam> precursorCvParams = precursor.getIonSelection().getCvParam();
+                Double precursorMz = null, precursorIntensity = null;
+                Integer precursorCharge = null;
+
+                for (CvParam cvParam : precursorCvParams) {
+                    if (cvParam.getAccession().equalsIgnoreCase("MS:1000744") || cvParam.getAccession().equalsIgnoreCase("PSI:1000040")) { // precursor m/z
+                        precursorMz = new Double(cvParam.getValue());
+                    } else if (cvParam.getAccession().equalsIgnoreCase("MS:1000042") || cvParam.getAccession().equalsIgnoreCase("PSI:1000042")) { // precursor intensity
+                        precursorIntensity = new Double(cvParam.getValue());
+                    } else if (cvParam.getAccession().equalsIgnoreCase("MS:1000041") || cvParam.getAccession().equalsIgnoreCase("PSI:1000041")) { // precursor charge
+                        precursorCharge = new Integer(cvParam.getValue());
+                    }
+                }
+
+                if (precursorMz != null) {
+                    result += "PEPMASS=" + precursorMz;
+                } else {
+                    // @TODO: cancel conversion??
+                }
+
+                if (precursorIntensity != null) {
+                    result += "\t" + precursorIntensity;
+                }
+
+                result += System.getProperty("line.separator");
+
+                // @TODO: add retention time!!
+                //result += "RTINSECONDS="; 
 //        if (precursor.hasRTWindow()) {
 //            result += "RTINSECONDS=" + precursor.getRtWindow()[0] + "-" + precursor.getRtWindow()[1] + System.getProperty("line.separator");
 //        } else if (precursor.getRt() != -1) {
 //            result += "RTINSECONDS=" + precursor.getRt() + System.getProperty("line.separator");
 //        }
 
-        result += "CHARGE=" + spectrum.getPrecursorCharge() + System.getProperty("line.separator");
+                if (precursorCharge != null) {
+                    result += "CHARGE=" + precursorCharge + System.getProperty("line.separator");
 
-        // retrieve the spectrum's peaklist
-        Map<Double, Double> peakList = spectrum.getPeakList();
+                    if (precursorCharge > maxPrecursorCharge) {
+                        maxPrecursorCharge = precursorCharge;
+                    }
+                    if (precursorCharge < minPrecursorCharge) {
+                        minPrecursorCharge = precursorCharge;
+                    }
+                } else {
+                    // @TODO: cancel conversion??
+                }
 
-        // process all peaks by iterating over the m/z values
-        for (Double mz : peakList.keySet()) {
-            Double intensity = peakList.get(mz);
-            result += mz + " " + intensity + System.getProperty("line.separator");
+                // process all peaks by iterating over the m/z values
+                Number[] mzBinaryArray = spectrum.getMzNumberArray();
+                Number[] intensityArray = spectrum.getIntentArray();
+
+                for (int i = 0; i < mzBinaryArray.length; i++) {
+                    result += mzBinaryArray[i] + " " + intensityArray[i] + System.getProperty("line.separator");
+                }
+
+                result += "END IONS" + System.getProperty("line.separator") + System.getProperty("line.separator");
+
+            } else {
+                // @TODO: cancel conversion??
+            }
         }
-
-        result += "END IONS" + System.getProperty("line.separator") + System.getProperty("line.separator");
 
         return result;
     }
@@ -1290,16 +1650,26 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private void unzipProject() {
 
         try {
-            FileInputStream instream = new FileInputStream(currentZippedMzDataFile);
+            FileInputStream instream = new FileInputStream(currentZippedPrideXmlFile);
             GZIPInputStream ginstream = new GZIPInputStream(instream);
-            FileOutputStream outstream = new FileOutputStream(currentMzDataFile);
+            FileOutputStream outstream = new FileOutputStream(currentPrideXmlFile);
             byte[] buf = new byte[1024];
             int len;
             while ((len = ginstream.read(buf)) > 0) {
+
+                if (progressDialog.isRunCanceled()) {
+                    ginstream.close();
+                    outstream.close();
+                    instream.close();
+                    progressDialog.setRunFinished();
+                    return;
+                }
+
                 outstream.write(buf, 0, len);
             }
             ginstream.close();
             outstream.close();
+            instream.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

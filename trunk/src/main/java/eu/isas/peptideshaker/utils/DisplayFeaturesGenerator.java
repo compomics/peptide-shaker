@@ -107,6 +107,7 @@ public class DisplayFeaturesGenerator {
         for (int i = 0; i < proteins.size(); i++) {
 
             String proteinAccession = proteins.get(i);
+
             try {
                 if (!SequenceFactory.isDecoy(proteins.get(i)) && sequenceFactory.getHeader(proteinAccession) != null) {
 
@@ -179,6 +180,17 @@ public class DisplayFeaturesGenerator {
     public String getNcbiAccessionLink(String proteinAccession) {
         return "http://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
     }
+    
+    /**
+     * Returns the project accession number as a web link to the given project
+     * in PRIDE.
+     *
+     * @param projectAccession the project accession number
+     * @return the project accession web link
+     */
+    public String getPrideAccessionLink(String projectAccession) {
+        return "http://www.ebi.ac.uk/pride/directLink.do?experimentAccessionNumber=" + projectAccession;
+    }
 
     /**
      * Returns a String with the HTML tooltip for the peptide indicating the
@@ -200,17 +212,20 @@ public class DisplayFeaturesGenerator {
             if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) {
 
                 int modSite = modifications.get(i).getModificationSite();
-                String modName = modifications.get(i).getTheoreticPtm();
-                char affectedResidue = peptide.getSequence().charAt(modSite - 1);
-                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modifications.get(i).getTheoreticPtm());
 
-                if (!alreadyAnnotated.contains(modName + "_" + affectedResidue)) {
-                    tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
-                            + affectedResidue
-                            + "</span>"
-                            + ": " + modName + "<br>";
+                if (modSite > 0) {
+                    String modName = modifications.get(i).getTheoreticPtm();
+                    char affectedResidue = peptide.getSequence().charAt(modSite - 1);
+                    Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modifications.get(i).getTheoreticPtm());
 
-                    alreadyAnnotated.add(modName + "_" + affectedResidue);
+                    if (!alreadyAnnotated.contains(modName + "_" + affectedResidue)) {
+                        tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
+                                + affectedResidue
+                                + "</span>"
+                                + ": " + modName + "<br>";
+
+                        alreadyAnnotated.add(modName + "_" + affectedResidue);
+                    }
                 }
             }
         }

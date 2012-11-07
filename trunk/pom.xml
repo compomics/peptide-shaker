@@ -345,7 +345,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
-            <version>0.5.42</version>
+            <version>0.5.43</version>
         </dependency>
 
         <dependency>
@@ -413,13 +413,12 @@
             <artifactId>twitter4j-core</artifactId>
             <version>2.2.6</version>
         </dependency>
-       
+           
         <dependency>   
-            <groupId>uk.ac.ebi.pride.tools</groupId>   
-            <artifactId>mzdata-parser</artifactId>   
-            <version>1.2.1</version>
+            <groupId>uk.ac.ebi.pride.jaxb</groupId>   
+            <artifactId>pride-jaxb</artifactId>   
+            <version>1.0.8</version> 
         </dependency>
-            
 
     </dependencies>
 
