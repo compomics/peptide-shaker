@@ -11,6 +11,8 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -680,43 +682,112 @@ public class FileImporter {
                         }
 
                         // change the search engine modifications into expected modifications
+                        // If there are not enough sites to put them all on the sequence, add an unknown modifcation
+                        HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
+                        HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (modMatch.isVariable()) {
-                                String sePTM = modMatch.getTheoreticPtm();
-                                if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
-                                    if (!unknown) {
-                                        waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
-                                                + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
-                                        unknown = true;
-                                    }
-                                } else {
-                                    ArrayList<String> expectedNames;
-                                    if (ptmFactory.containsPTM(sePTM)) {
-                                        expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
-                                    } else {
-                                        String[] parsedName = sePTM.split("@");
-                                        double seMass = 0;
-                                        try {
-                                            seMass = new Double(parsedName[0]);
-                                        } catch (Exception e) {
-                                            throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem modification.\n"
-                                                    + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
-                                        }
-                                        expectedNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
-                                    }
-
-                                    String expectedPTM;
-                                    if (!expectedNames.isEmpty()) {
-                                        expectedPTM = expectedNames.get(0);
-                                    } else {
-                                        expectedPTM = PTMFactory.unknownPTM.getName();
-                                    }
-                                    modMatch.setTheoreticPtm(expectedPTM);
+                            String sePTM = modMatch.getTheoreticPtm();
+                            if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
+                                if (!unknown) {
+                                    waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
+                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
+                                    unknown = true;
                                 }
                             } else {
-                                boolean debugFixed = true;
+                                if (ptmFactory.containsPTM(sePTM)) {
+                                    tempNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
+                                } else {
+                                    String[] parsedName = sePTM.split("@");
+                                    double seMass = 0;
+                                    try {
+                                        seMass = new Double(parsedName[0]);
+                                    } catch (Exception e) {
+                                        throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem modification.\n"
+                                                + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
+                                    }
+                                    tempNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
+                                }
+                                ArrayList<String> allNames = new ArrayList<String>();
+                                for (ArrayList<String> namesAtAA : tempNames.values()) {
+                                    for (String name : namesAtAA) {
+                                        if (!allNames.contains(name)) {
+                                            allNames.add(name);
+                                        }
+                                    }
+                                }
+                                modNames.put(modMatch, allNames);
+                                for (int pos : tempNames.keySet()) {
+                                    if (expectedNames.containsKey(pos)) {
+                                        expectedNames.get(pos).addAll(tempNames.get(pos));
+                                    } else {
+                                        expectedNames.put(pos, tempNames.get(pos));
+                                    }
+                                }
                             }
                         }
+
+                        // Map the modifications according to search engine localization
+                        HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
+                        HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
+                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                            int modSite = modMatch.getModificationSite();
+                            if (expectedNames.containsKey(modSite)) {
+                                for (String modName : expectedNames.get(modSite)) {
+                                    if (modNames.get(modMatch).contains(modName)) {
+                                        ptmMappingRegular.put(modSite, modMatch);
+                                        ptmMappingGoofy.put(modMatch, modSite);
+                                        modMatch.setTheoreticPtm(modName);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Try to correct incompatible localizations
+                        HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
+                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                            if (!ptmMappingGoofy.containsKey(modMatch)) {
+                                int modSite = modMatch.getModificationSite();
+                                for (int candidateSite : expectedNames.keySet()) {
+                                    if (!ptmMappingRegular.containsKey(candidateSite)) {
+                                        for (String modName : expectedNames.get(candidateSite)) {
+                                            if (modNames.get(modMatch).contains(modName)) {
+                                                if (!remap.containsKey(modSite)) {
+                                                    remap.put(modSite, new ArrayList<Integer>());
+                                                }
+                                                remap.get(modSite).add(candidateSite);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
+                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                            if (!ptmMappingGoofy.containsKey(modMatch)) {
+                                Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
+                                if (modSite != null) {
+                                    if (expectedNames.containsKey(modSite)) {
+                                        for (String modName : expectedNames.get(modSite)) {
+                                            if (modNames.get(modMatch).contains(modName)) {
+                                                ptmMappingRegular.put(modSite, modMatch); // for the record
+                                                ptmMappingGoofy.put(modMatch, modSite);
+                                                modMatch.setTheoreticPtm(modName);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    ptmMappingRegular.put(modSite, modMatch); // for the record
+                                    ptmMappingGoofy.put(modMatch, modSite);
+                                    modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
+                                }
+                                if (!ptmMappingGoofy.containsKey(modMatch)) {
+                                    modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
+                                }
+                            }
+                        }
+
 
                         if (idFilter.validateModifications(peptide)) {
                             // Estimate the theoretic mass with the new modifications
@@ -786,16 +857,19 @@ public class FileImporter {
                     return;
                 }
 
-                waitingHandler.setSecondaryProgressValue(++progress);
-            }
-            metrics.addFoundCharges(charges);
-            if (maxErrorDa > metrics.getMaxPrecursorErrorDa()) {
-                metrics.setMaxPrecursorErrorDa(maxErrorDa);
-            }
-            if (maxErrorPpm > metrics.getMaxPrecursorErrorPpm()) {
-                metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
+                waitingHandler.setSecondaryProgressValue(
+                        ++progress);
             }
 
+            metrics.addFoundCharges(charges);
+            if (maxErrorDa
+                    > metrics.getMaxPrecursorErrorDa()) {
+                metrics.setMaxPrecursorErrorDa(maxErrorDa);
+            }
+            if (maxErrorPpm
+                    > metrics.getMaxPrecursorErrorPpm()) {
+                metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
+            }
 
             // Free at least 1GB for the next parser if not anymore available
             // (not elegant so most likely not optimal)

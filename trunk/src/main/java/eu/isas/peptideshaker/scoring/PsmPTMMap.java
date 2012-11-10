@@ -203,6 +203,9 @@ public class PsmPTMMap implements Serializable {
      * @return the corresponding key
      */
     public Integer getCorrectedKey(String modification, int specificKey) {
+        if (!grouping.containsKey(modification)) {
+            throw new IllegalArgumentException(modification + " not present in the PSM PTM grouping mapping keys.");
+        }
         if (grouping.get(modification).containsKey(specificKey)) {
             return grouping.get(modification).get(specificKey);
         }
