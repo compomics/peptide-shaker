@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
+import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -1297,14 +1298,14 @@ public class PeptideShaker {
                                     nonConfidentMatches.put(modificationMatch.getModificationSite(), modificationMatch);
                                 }
                             }
-                            HashMap<Integer, Integer> mapping = Util.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
+                            HashMap<Integer, Integer> mapping = PtmSiteMapping.align(nonConfidentMatches.keySet(), newLocalizationCandidates);
                             for (Integer oldLocalization : mapping.keySet()) {
                                 ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
-                                Integer newLocalization = mapping.get(oldLocalization); // @TODO: can this be null??
-                                if (newLocalization != oldLocalization) {
-                                    System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
-                                }
+                                Integer newLocalization = mapping.get(oldLocalization);
                                 if (modificationMatch != null && newLocalization != null) {
+                                    if (newLocalization != oldLocalization) {
+                                        System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+                                    }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
                                 }
