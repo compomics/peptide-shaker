@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
+import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -1071,6 +1072,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         selectAllMenuItem = new javax.swing.JMenuItem();
         deselectAllMenuItem = new javax.swing.JMenuItem();
         selectSignificantMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        statisticsMenuItem = new javax.swing.JMenuItem();
         significanceLevelButtonGroup = new javax.swing.ButtonGroup();
         mappingsTableLayeredPane = new javax.swing.JLayeredPane();
         mappingsPanel = new javax.swing.JPanel();
@@ -1149,6 +1152,15 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
         });
         selectTermsJPopupMenu.add(selectSignificantMenuItem);
+        selectTermsJPopupMenu.add(jSeparator1);
+
+        statisticsMenuItem.setText("Statistics");
+        statisticsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                statisticsMenuItemActionPerformed(evt);
+            }
+        });
+        selectTermsJPopupMenu.add(statisticsMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1420,6 +1432,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         plotPanel.setOpaque(false);
 
         goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+        goPlotsTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                goPlotsTabbedPaneStateChanged(evt);
+            }
+        });
 
         proteinsPanel.setOpaque(false);
 
@@ -1450,6 +1467,9 @@ public class GOEAPanel extends javax.swing.JPanel {
         });
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                proteinTableMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
             }
@@ -2373,6 +2393,51 @@ public class GOEAPanel extends javax.swing.JPanel {
             peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
         }
     }//GEN-LAST:event_proteinTableKeyReleased
+
+    /**
+     * Open the XY plotting dialog.
+     * 
+     * @param evt 
+     */
+    private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
+        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, mappingsTableToolTips, true);
+    }//GEN-LAST:event_statisticsMenuItemActionPerformed
+
+    /**
+     * Make sure that a go term is selected.
+     * 
+     * @param evt
+     */
+    private void goPlotsTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_goPlotsTabbedPaneStateChanged
+        if (goPlotsTabbedPane.getSelectedIndex() == 0) {
+            if (goMappingsTable.getSelectedRow() == -1 && goMappingsTable.getRowCount() > 0) {
+                goMappingsTable.setRowSelectionInterval(0, 0);
+                goMappingsTableKeyReleased(null);
+            }
+        }
+    }//GEN-LAST:event_goPlotsTabbedPaneStateChanged
+
+    /**
+     * Show the statisics popup menu.
+     * 
+     * @param evt 
+     */
+    private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
+
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(proteinTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_proteinTableMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel biasWarningLabel;
     private javax.swing.JPanel contextMenuMappingsBackgroundPanel;
@@ -2389,6 +2454,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane goPlotsTabbedPane;
     private javax.swing.JLabel goProteinCountLabel;
     private javax.swing.JPanel goSignificancePlotPanel;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JButton mappingsHelpJButton;
     private javax.swing.JPanel mappingsPanel;
     private javax.swing.JLayeredPane mappingsTableLayeredPane;
@@ -2406,6 +2472,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     private javax.swing.JLabel significanceJLabel;
     private javax.swing.ButtonGroup significanceLevelButtonGroup;
     private javax.swing.JComboBox speciesJComboBox;
+    private javax.swing.JMenuItem statisticsMenuItem;
     private javax.swing.JLabel unknownSpeciesLabel;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
