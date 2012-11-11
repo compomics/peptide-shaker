@@ -158,7 +158,7 @@ public class PeptideTableModel extends DefaultTableModel {
                         return "IO Exception";
                     }
                     Collections.sort(indexes);
-                    return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort of the first index if multiple indexes
+                    return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort on the first index if multiple indexes
                 case 5:
                     try {
                         peptideKey = peptideKeys.get(row);

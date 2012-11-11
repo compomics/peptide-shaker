@@ -14,6 +14,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -52,6 +53,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import javax.swing.table.TableCellRenderer;
 
 /**
  * The Spectrum ID panel.
@@ -1161,6 +1163,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.setOpaque(false);
         spectrumTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                spectrumTableMouseClicked(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 spectrumTableMouseReleased(evt);
             }
@@ -2375,6 +2380,27 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
     }//GEN-LAST:event_exportSpectrumJButtonMouseReleased
+
+    /**
+     * Show the statisics popup menu.
+     * 
+     * @param evt 
+     */
+    private void spectrumTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && spectrumTable.getRowCount() > 0) {
+
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips, true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(spectrumTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_spectrumTableMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuPsmsBackgroundPanel;

@@ -16,6 +16,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.GuiUtilities;
+import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
@@ -798,6 +799,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                proteinTableMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
             }
@@ -1145,6 +1149,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         peptideTable.setOpaque(false);
         peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                peptideTableMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 peptideTableMouseExited(evt);
             }
@@ -1317,6 +1324,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         });
         psmTable.setOpaque(false);
         psmTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                psmTableMouseClicked(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 psmTableMouseReleased(evt);
             }
@@ -3407,6 +3417,66 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void coverageShowPossiblePeptidesJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_coverageShowPossiblePeptidesJCheckBoxMenuItemActionPerformed
         coverageShowAllPeptidesJRadioButtonMenuItemActionPerformed(null);
     }//GEN-LAST:event_coverageShowPossiblePeptidesJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Show the statisics popup menu.
+     * 
+     * @param evt 
+     */
+    private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(proteinTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_proteinTableMouseClicked
+
+    /**
+     * Show the statisics popup menu.
+     * 
+     * @param evt 
+     */
+    private void peptideTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && peptideTable.getRowCount() > 0) {
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips, true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(peptideTable, evt.getX(), evt.getY());       
+        }
+    }//GEN-LAST:event_peptideTableMouseClicked
+
+    /**
+     * Show the statisics popup menu.
+     * 
+     * @param evt 
+     */
+    private void psmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && psmTable.getRowCount() > 0) {
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips, true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(psmTable, evt.getX(), evt.getY()); 
+        }
+    }//GEN-LAST:event_psmTableMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
