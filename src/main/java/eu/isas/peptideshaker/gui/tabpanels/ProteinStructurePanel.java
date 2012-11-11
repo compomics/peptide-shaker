@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.GuiUtilities;
+import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
@@ -806,6 +807,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                proteinTableMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
             }
@@ -2558,6 +2562,27 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         // @TODO: use Jmol's export options...
     }//GEN-LAST:event_exportPdbStructureJButtonActionPerformed
+
+    /**
+     * Show the statisics popup menu.
+     * 
+     * @param evt 
+     */
+    private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
+            JPopupMenu popupMenu = new JPopupMenu();
+            JMenuItem menuItem = new JMenuItem("Statistics");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, true);
+                }
+            });
+            popupMenu.add(menuItem);
+            popupMenu.show(proteinTable, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_proteinTableMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backboneJButton;
     private javax.swing.JPanel contextMenuPdbChainsBackgroundPanel;
