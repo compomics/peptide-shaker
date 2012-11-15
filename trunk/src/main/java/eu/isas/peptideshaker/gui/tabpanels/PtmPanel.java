@@ -22,7 +22,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -2960,7 +2960,7 @@ public class PtmPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
+                    new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
                 }
             });
 
@@ -2992,7 +2992,7 @@ public class PtmPanel extends javax.swing.JPanel {
         menuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
+                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
             }
         });
 

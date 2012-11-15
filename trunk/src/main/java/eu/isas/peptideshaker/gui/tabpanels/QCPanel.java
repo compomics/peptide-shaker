@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -771,7 +771,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportPsmPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPsmPlotJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, psmQCPlotPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, psmQCPlotPanel);
     }//GEN-LAST:event_exportPsmPlotJButtonActionPerformed
 
     /**
@@ -862,7 +862,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportPeptidesPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesPlotJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, peptideQCPlotPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, peptideQCPlotPanel);
     }//GEN-LAST:event_exportPeptidesPlotJButtonActionPerformed
 
     /**
@@ -953,7 +953,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportProteinsPlotJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsPlotJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, proteinQCPlotPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, proteinQCPlotPanel);
     }//GEN-LAST:event_exportProteinsPlotJButtonActionPerformed
 
     /**

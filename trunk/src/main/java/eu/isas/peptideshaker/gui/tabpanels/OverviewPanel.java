@@ -3430,7 +3430,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, true);
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);
@@ -3450,7 +3452,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips, true);
+                    new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);
@@ -3470,7 +3474,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips, true);
+                    new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);

@@ -5,7 +5,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
@@ -2418,7 +2418,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void pepPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, pepChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, pepChartPanel);
     }//GEN-LAST:event_pepPlotExportJButtonActionPerformed
 
     /**
@@ -2445,7 +2445,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void fdrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, fdrsChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, fdrsChartPanel);
     }//GEN-LAST:event_fdrPlotExportJButtonActionPerformed
 
     /**
@@ -2472,7 +2472,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void confidencePlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidencePlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, confidenceChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, confidenceChartPanel);
     }//GEN-LAST:event_confidencePlotExportJButtonActionPerformed
 
     /**
@@ -2499,7 +2499,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void fdrFnrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrFnrPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, fdrFnrChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, fdrFnrChartPanel);
     }//GEN-LAST:event_fdrFnrPlotExportJButtonActionPerformed
 
     /**
@@ -2526,7 +2526,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void benefitPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, benefitCostChartPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, benefitCostChartPanel);
     }//GEN-LAST:event_benefitPlotExportJButtonActionPerformed
 
     /**
