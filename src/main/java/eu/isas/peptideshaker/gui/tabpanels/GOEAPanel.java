@@ -10,7 +10,7 @@ import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -1980,10 +1980,10 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (index == 1) {
             // frequency plot
-            new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goFrequencyPlotPanel.getComponent(0));
+            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, (ChartPanel) goFrequencyPlotPanel.getComponent(0));
         } else if (index == 2) {
             // significance plot
-            new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
+            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
         } else {
             // protein table
 
@@ -2400,7 +2400,9 @@ public class GOEAPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
-        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, mappingsTableToolTips, true);
+        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, mappingsTableToolTips, 
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
     }//GEN-LAST:event_statisticsMenuItemActionPerformed
 
     /**
@@ -2430,7 +2432,9 @@ public class GOEAPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, true);
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);

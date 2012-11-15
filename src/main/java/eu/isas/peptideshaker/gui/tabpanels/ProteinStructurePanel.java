@@ -18,7 +18,7 @@ import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.protein_inference.ProteinInferencePeptideLevelDialog;
@@ -2558,7 +2558,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportPdbStructureJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, true, pdbPanel);
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, pdbPanel);
 
         // @TODO: use Jmol's export options...
     }//GEN-LAST:event_exportPdbStructureJButtonActionPerformed
@@ -2575,7 +2575,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, true);
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);

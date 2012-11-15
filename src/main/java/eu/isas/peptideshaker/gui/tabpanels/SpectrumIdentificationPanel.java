@@ -23,7 +23,7 @@ import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -2341,7 +2341,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         menuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, true, vennDiagramButton);
+                new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, vennDiagramButton);
             }
         });
 
@@ -2394,7 +2394,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips, true);
+                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips, 
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);

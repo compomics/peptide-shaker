@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
@@ -28,6 +29,7 @@ import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -102,7 +104,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner {
+public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent {
 
     /**
      * The current PeptideShaker cps file.
@@ -1879,11 +1881,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, true, (Component) overviewPanel.getSpectrum());
+            new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getSpectrum());
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+            new ExportGraphicsDialog(this, this, true, (Component) spectrumIdentificationPanel.getSpectrum());
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+            new ExportGraphicsDialog(this, this, true, (Component) ptmPanel.getSpectrum());
         }
     }//GEN-LAST:event_exportSpectrumGraphicsJMenuItemActionPerformed
 
@@ -2021,7 +2023,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
-        new ExportGraphicsDialog(this, true, (Component) overviewPanel.getBubblePlot());
+        new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getBubblePlot());
     }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
 
     /**
@@ -2321,7 +2323,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
-            new ExportGraphicsDialog(this, true, (Component) overviewPanel.getSequenceFragmentationPlot());
+            new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getSequenceFragmentationPlot());
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 //            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
@@ -2346,7 +2348,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
             tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
 
-            new ExportGraphicsDialog(this, true, tempChartPanel);
+            new ExportGraphicsDialog(this, this, true, tempChartPanel);
         }
 //        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
 //            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
@@ -2372,7 +2374,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
                 tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
 
-                new ExportGraphicsDialog(this, true, tempChartPanel);
+                new ExportGraphicsDialog(this, this, true, tempChartPanel);
             } else {
                 JOptionPane.showMessageDialog(this, "No mass error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -6403,5 +6405,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         return tweets;
+    }
+
+    @Override
+    public void setSelectedExportFolder(String selectedFile) {
+        lastSelectedFolder = selectedFile;
+    }
+
+    @Override
+    public String getDefaultExportFolder() {
+        return lastSelectedFolder;
     }
 }

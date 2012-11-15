@@ -9,7 +9,7 @@ import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.FractionDetailsDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.protein_sequence.ProteinSequencePanel;
@@ -1619,7 +1619,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         }
 
         if (chartPanel != null) {
-            new ExportGraphicsDialog(peptideShakerGUI, true, chartPanel);
+            new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, chartPanel);
         }
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
 
