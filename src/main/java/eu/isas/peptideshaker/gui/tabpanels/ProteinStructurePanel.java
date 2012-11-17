@@ -1605,7 +1605,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 }
 
                 // open the protein inference at the petide level dialog
-                if (evt != null && column == peptideTable.getColumn("PI").getModelIndex()) {
+                if (column == peptideTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                     String proteinKey = proteinKeys.get(proteinIndex);
                     String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                     new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
