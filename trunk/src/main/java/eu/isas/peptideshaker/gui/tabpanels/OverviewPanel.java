@@ -77,7 +77,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         PROTEIN_TABLE, PEPTIDE_TABLE, PSM_TABLE
     };
     /**
-     * A list of the panels that where visible when the spectum was maximixed.
+     * A list of the panels that where visible when the spectrum was maximized.
      * The order is: protein, peptides and psms, coverage.
      */
     private ArrayList<Boolean> panelsShownUponMaximze;
@@ -2099,7 +2099,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.getStarHider().unStarPsm(key);
                 }
             }
-            if (column == 2) {
+            if (column == 2 && evt.getButton() == 1) {
                 peptideShakerGUI.jumpToTab(PeptideShakerGUI.SPECTRUM_ID_TAB_INDEX);
             }
 
@@ -2203,6 +2203,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             final int peptideIndex = peptideTable.convertRowIndexToModel(row);
             updatePsmSelection(row);
+            
+            final MouseEvent finalMouseEvent = evt;
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
@@ -2225,7 +2227,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
 
                     // open the protein inference at the petide level dialog
-                    if (column == peptideTable.getColumn("PI").getModelIndex()) {
+                    if (column == peptideTable.getColumn("PI").getModelIndex() && finalMouseEvent != null && finalMouseEvent.getButton() == MouseEvent.BUTTON1) {
                         try {
                             String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
                             new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
@@ -3419,7 +3421,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }//GEN-LAST:event_coverageShowPossiblePeptidesJCheckBoxMenuItemActionPerformed
 
     /**
-     * Show the statisics popup menu.
+     * Show the statistics popup menu.
      * 
      * @param evt 
      */
@@ -3441,7 +3443,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }//GEN-LAST:event_proteinTableMouseClicked
 
     /**
-     * Show the statisics popup menu.
+     * Show the statistics popup menu.
      * 
      * @param evt 
      */
@@ -3463,7 +3465,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }//GEN-LAST:event_peptideTableMouseClicked
 
     /**
-     * Show the statisics popup menu.
+     * Show the statistics popup menu.
      * 
      * @param evt 
      */
