@@ -77,11 +77,11 @@ public class FileImporter {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
     /**
-     * Peptide to protein map: peptide sequence -> protein accession.
+     * Peptide to protein map: peptide sequence -> protein accessions.
      */
     private HashMap<String, ArrayList<String>> sharedPeptides = new HashMap<String, ArrayList<String>>();
     /**
-     * Peptide to protein map: peptide sequence -> protein accession.
+     * Peptide to protein map: peptide sequence -> protein accessions.
      */
     private HashMap<String, ArrayList<String>> foundSharedPeptides = new HashMap<String, ArrayList<String>>();
     /**
@@ -97,10 +97,6 @@ public class FileImporter {
      * Metrics of the dataset picked-up while loading the data.
      */
     private Metrics metrics;
-    /**
-     * The search parameters.
-     */
-    private SearchParameters searchParameters;
     /**
      * The mass tolerance to be used to match PTMs from search engines and
      * expected PTMs. 0.01 by default, as far as I can remember it is the mass
@@ -119,13 +115,12 @@ public class FileImporter {
      * @param metrics metrics of the dataset to be saved for the GUI
      * @param searchParameters the search parameters
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics, SearchParameters searchParameters) {
+    public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics) {
         this.peptideShaker = identificationShaker;
         this.waitingHandler = waitingHandler;
         this.proteomicAnalysis = proteomicAnalysis;
         this.idFilter = idFilter;
         this.metrics = metrics;
-        this.searchParameters = searchParameters;
     }
 
     /**
@@ -665,7 +660,8 @@ public class FileImporter {
                 if (!match.hasAssumption(searchEngine)) {
                     matchIt.remove();
                 } else {
-                    if (match.getKey().equals("orbitrap003956.mgf_cus_701.85595703125_1424.3941")) {
+                    if (match.getKey().equals("orbitrap003956.mgf_cus_701.85595703125_1424.3941")
+                            || match.getKey().equals("AG_MAP_SPEG10.mgf_cus_AG_MAP_SPEG10.4824.4824.3")) {
                         int debug = 1;
                     }
                     for (PeptideAssumption assumption : match.getAllAssumptions()) {
@@ -689,7 +685,7 @@ public class FileImporter {
                             String sePTM = modMatch.getTheoreticPtm();
                             if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
                                 if (!unknown) {
-                                    waitingHandler.appendReport("An unknown modification was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
+                                    waitingHandler.appendReport("An unknown modification (at site " + modMatch.getModificationSite() + " of peptide " + peptide.getSequence() + ", variable " + modMatch.isVariable() + ") was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
                                             + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
                                     unknown = true;
                                 }
@@ -730,14 +726,16 @@ public class FileImporter {
                         HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
                         HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            int modSite = modMatch.getModificationSite();
-                            if (expectedNames.containsKey(modSite)) {
-                                for (String modName : expectedNames.get(modSite)) {
-                                    if (modNames.get(modMatch).contains(modName)) {
-                                        ptmMappingRegular.put(modSite, modMatch);
-                                        ptmMappingGoofy.put(modMatch, modSite);
-                                        modMatch.setTheoreticPtm(modName);
-                                        break;
+                            if (!modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                int modSite = modMatch.getModificationSite();
+                                if (expectedNames.containsKey(modSite)) {
+                                    for (String modName : expectedNames.get(modSite)) {
+                                        if (modNames.get(modMatch).contains(modName)) {
+                                            ptmMappingRegular.put(modSite, modMatch);
+                                            ptmMappingGoofy.put(modMatch, modSite);
+                                            modMatch.setTheoreticPtm(modName);
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -746,7 +744,7 @@ public class FileImporter {
                         // Try to correct incompatible localizations
                         HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (!ptmMappingGoofy.containsKey(modMatch)) {
+                            if (!ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 int modSite = modMatch.getModificationSite();
                                 for (int candidateSite : expectedNames.keySet()) {
                                     if (!ptmMappingRegular.containsKey(candidateSite)) {
@@ -755,7 +753,9 @@ public class FileImporter {
                                                 if (!remap.containsKey(modSite)) {
                                                     remap.put(modSite, new ArrayList<Integer>());
                                                 }
-                                                remap.get(modSite).add(candidateSite);
+                                                if (!remap.get(modSite).contains(candidateSite)) {
+                                                    remap.get(modSite).add(candidateSite);
+                                                }
                                             }
                                         }
                                     }
@@ -764,7 +764,7 @@ public class FileImporter {
                         }
                         HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (!ptmMappingGoofy.containsKey(modMatch)) {
+                            if (!ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
                                 if (modSite != null) {
                                     if (expectedNames.containsKey(modSite)) {
