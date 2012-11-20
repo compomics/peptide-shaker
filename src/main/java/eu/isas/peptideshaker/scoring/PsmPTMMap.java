@@ -98,6 +98,7 @@ public class PsmPTMMap implements Serializable {
     public void addPoint(String modification, double probabilityScore, SpectrumMatch spectrumMatch) {
         if (!psmMaps.containsKey(modification)) {
             psmMaps.put(modification, new HashMap<Integer, TargetDecoyMap>());
+            grouping.put(modification, new HashMap<Integer, Integer>());
         }
         int key = getKey(spectrumMatch);
         if (!psmMaps.get(modification).containsKey(key)) {

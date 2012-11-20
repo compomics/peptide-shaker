@@ -517,7 +517,7 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + Spectrum.getSpectrumTitle(spectrumKey) + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Protein inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+                        confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         if (peptideProbabilities.isValidated()) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));
@@ -525,7 +525,7 @@ public class PRIDEExport {
                             br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Validation\" value=\"No\" />" + System.getProperty("line.separator"));
                         }
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence\" value=\"" + Util.roundDouble(psmProbabilities.getPsmConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
-                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
+                        confidenceThreshold = psmTargetDecoyMap.getTargetDecoyMap(psmTargetDecoyMap.getCorrectedKey(psmProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
                         br.write(getCurrentTabSpace() + "<userParam name=\"PSM Confidence Threshold\" value=\"" + Util.roundDouble(confidenceThreshold, CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         if (psmProbabilities.isValidated()) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"Yes\" />" + System.getProperty("line.separator"));

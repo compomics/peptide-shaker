@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.scoring;
 
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -34,10 +36,6 @@ public class PeptideSpecificMap implements Serializable {
      * The index of the dustbin.
      */
     public final static String DUSTBIN = "OTHER";
-    /**
-     * index correction map for unexpected modifications.
-     */
-    private HashMap<String, String> nameCorrectionMap = new HashMap<String, String>();
 
     /**
      * Constructor.
@@ -145,23 +143,27 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * This method returns the indexing key of a peptide match.
+     * This method returns the indexing key of a peptide match. Note that the
+     * peptide variable modifications must be in the PTM factory.
      *
      * @param peptideMatch the considered peptide match
      * @return the corresponding key
      */
     public String getKey(PeptideMatch peptideMatch) {
-        ArrayList<String> modifications = new ArrayList<String>();
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+        PTM ptm;
+        ArrayList<Double> modificationMasses = new ArrayList<Double>();
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.getTheoreticPtm() != null
                     && modificationMatch.isVariable()) {
-                modifications.add(modificationMatch.getTheoreticPtm());
+                ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                modificationMasses.add(ptm.getMass());
             }
         }
-        Collections.sort(modifications);
+        Collections.sort(modificationMasses);
         String key = "";
-        for (String modification : modifications) {
-            key += modification + "_";
+        for (Double mass : modificationMasses) {
+            key += mass + "_";
         }
         return key;
     }

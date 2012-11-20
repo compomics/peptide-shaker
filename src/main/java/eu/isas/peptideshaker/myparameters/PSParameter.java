@@ -452,18 +452,38 @@ public class PSParameter implements UrParameter {
     /**
      * Returns the match key in the corresponding specific map.
      *
+     * @deprecated use method without typo
      * @return the match key in the corresponding specific map
      */
-    public String getSecificMapKey() { // yes, we know about the typo, but cannot change it for backwards compatability reasons...
-        return secificMapKey;
+    public String getSecificMapKey() {
+        return getSpecificMapKey();
     }
 
     /**
      * Sets the match key in the corresponding specific map.
      *
+     * @deprecated use method without typo
      * @param specificMapKey the match key in the corresponding specific map
      */
-    public void setSecificMapKey(String specificMapKey) { // yes, we know about the typo, but cannot change it for backwards compatability reasons...
+    public void setSecificMapKey(String specificMapKey) {
+        setSpecificMapKey(specificMapKey);
+    }
+    
+    /**
+     * Returns the match key in the corresponding specific map.
+     *
+     * @return the match key in the corresponding specific map
+     */
+    public String getSpecificMapKey() {
+        return secificMapKey;
+    }
+    
+    /**
+     * Sets the match key in the corresponding specific map.
+     *
+     * @param specificMapKey the match key in the corresponding specific map
+     */
+    public void setSpecificMapKey(String specificMapKey) {
         this.secificMapKey = specificMapKey;
     }
 
