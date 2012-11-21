@@ -79,11 +79,11 @@ public class FileImporter {
     /**
      * Peptide to protein map: peptide sequence -> protein accessions.
      */
-    private HashMap<String, ArrayList<String>> sharedPeptides = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, HashMap<String, ArrayList<String>>> sharedPeptides = new HashMap<String, HashMap<String, ArrayList<String>>>();
     /**
      * Peptide to protein map: peptide sequence -> protein accessions.
      */
-    private HashMap<String, ArrayList<String>> foundSharedPeptides = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, HashMap<String, ArrayList<String>>> foundSharedPeptides = new HashMap<String, HashMap<String, ArrayList<String>>>();
     /**
      * db processing disabled if no X!Tandem file is selected.
      */
@@ -185,7 +185,7 @@ public class FileImporter {
                     int nMissedCleavages = searchParameters.getnMissedCleavages();
                     int nMin = idFilter.getMinPepLength();
                     int nMax = idFilter.getMaxPepLength();
-                    sharedPeptides = new HashMap<String, ArrayList<String>>();
+                    sharedPeptides = new HashMap<String, HashMap<String, ArrayList<String>>>();
                     HashMap<String, String> tempMap = new HashMap<String, String>();
 
                     int numberOfSequences = sequenceFactory.getAccessions().size();
@@ -200,7 +200,13 @@ public class FileImporter {
                         String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
 
                         for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
-                            ArrayList<String> proteins = sharedPeptides.get(peptide);
+
+                            String sequenceKey = getPeptideIndexingKey(peptide);
+                            ArrayList<String> proteins = null;
+                            HashMap<String, ArrayList<String>> subMap = sharedPeptides.get(sequenceKey);
+                            if (subMap != null) {
+                                proteins = subMap.get(peptide);
+                            }
                             if (proteins != null) {
                                 proteins.add(proteinKey);
                             } else {
@@ -209,7 +215,10 @@ public class FileImporter {
                                     ArrayList<String> tempList = new ArrayList<String>(2);
                                     tempList.add(tempProtein);
                                     tempList.add(proteinKey);
-                                    sharedPeptides.put(peptide, tempList);
+                                    if (subMap == null) {
+                                        sharedPeptides.put(sequenceKey, new HashMap<String, ArrayList<String>>());
+                                    }
+                                    sharedPeptides.get(sequenceKey).put(peptide, tempList);
                                 } else {
                                     tempMap.put(peptide, proteinKey);
                                 }
@@ -274,12 +283,17 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingHandler waitingHandler) {
 
-        // @TODO: the use of contains(...) below is very slow!! using something like suffix trees should be a lot faster
-
-        ArrayList<String> result = foundSharedPeptides.get(peptideSequence);
-
+        ArrayList<String> result = null;
+        String sequenceKey = getPeptideIndexingKey(peptideSequence);
+        HashMap<String, ArrayList<String>> subMap1 = foundSharedPeptides.get(sequenceKey);
+        if (subMap1 != null) {
+            result = subMap1.get(peptideSequence);
+        }
         if (result == null) {
-            result = sharedPeptides.get(peptideSequence);
+            HashMap<String, ArrayList<String>> subMap2 = sharedPeptides.get(sequenceKey);
+            if (subMap2 != null) {
+                result = subMap2.get(peptideSequence);
+            }
 
             boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
 
@@ -311,10 +325,16 @@ public class FileImporter {
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     }
-                    sharedPeptides.put(peptideSequence, result);
+                    if (subMap2 == null) {
+                        sharedPeptides.put(sequenceKey, new HashMap<String, ArrayList<String>>());
+                    }
+                    sharedPeptides.get(sequenceKey).put(peptideSequence, result);
                 }
             } else {
-                foundSharedPeptides.put(peptideSequence, result);
+                if (subMap1 == null) {
+                    foundSharedPeptides.put(sequenceKey, new HashMap<String, ArrayList<String>>());
+                }
+                foundSharedPeptides.get(sequenceKey).put(peptideSequence, result);
             }
         }
         return result;
@@ -932,5 +952,17 @@ public class FileImporter {
      */
     public static boolean isCLIMode() {
         return boolCLI;
+    }
+
+    /**
+     * Returns a key used to sort peptide sequences
+     *
+     * @param peptideSequence
+     * @return tu
+     */
+    public static String getPeptideIndexingKey(String peptideSequence) {
+        int intMin = Math.max(peptideSequence.length() / 2 - 1, 0);
+        int intMax = Math.min(peptideSequence.length() / 2 + 1, peptideSequence.length());
+        return peptideSequence.charAt(intMin) + peptideSequence.charAt(intMax) + "";
     }
 }
