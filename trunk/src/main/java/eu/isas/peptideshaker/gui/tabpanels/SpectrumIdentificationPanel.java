@@ -2383,8 +2383,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * Show the statisics popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void spectrumTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && spectrumTable.getRowCount() > 0) {
@@ -2394,7 +2394,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips, 
+                    new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
@@ -2654,21 +2654,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             mx = null;
                         }
 
-                        if (omssaUsed && xtandemUsed && mascotUsed) {
-                            updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
-                                    ox, mo, mx, omx,
-                                    "OMSSA", "X!Tandem", "Mascot");
-                        } else if (omssaUsed && xtandemUsed) {
-                            updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
-                        } else if (xtandemUsed && mascotUsed) {
-                            updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot");
-                        } else if (omssaUsed && mascotUsed) {
-                            updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot");
-                        } else {
-                            vennDiagramButton.setText(null);
-                            vennDiagramButton.setToolTipText(null);
-                            vennDiagramButton.setIcon(null);
-                        }
+                        // update the search engine venn diagram
+                        updateVennDiagram(nOMSSA, nXTandem, nMascot, ox, mo, mx, omx);
 
                         int searchEngineRowCounter = 0;
 
@@ -3914,5 +3901,32 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
         }
+    }
+
+    /**
+     * Updates the search engine Venn diagram.
+     */
+    private void updateVennDiagram(final Integer nOMSSA, final Integer nXTandem, final Integer nMascot, final Integer ox, final Integer mo, final Integer mx, final Integer omx) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+
+                if (omssaUsed && xtandemUsed && mascotUsed) {
+                    updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
+                            ox, mo, mx, omx,
+                            "OMSSA", "X!Tandem", "Mascot");
+                } else if (omssaUsed && xtandemUsed) {
+                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
+                } else if (xtandemUsed && mascotUsed) {
+                    updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot");
+                } else if (omssaUsed && mascotUsed) {
+                    updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot");
+                } else {
+                    vennDiagramButton.setText(null);
+                    vennDiagramButton.setToolTipText(null);
+                    vennDiagramButton.setIcon(null);
+                }
+            }
+        });
     }
 }

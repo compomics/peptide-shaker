@@ -2090,7 +2090,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             newItemSelection();
             updateSpectrum(row, false);
 
-
             if (column == psmTable.getColumn("  ").getModelIndex()) {
                 String key = psmKeys.get(psmTable.convertRowIndexToModel(row));
                 if ((Boolean) psmTable.getValueAt(row, column)) {
@@ -2203,7 +2202,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             final int peptideIndex = peptideTable.convertRowIndexToModel(row);
             updatePsmSelection(row);
-            
+
             final MouseEvent finalMouseEvent = evt;
 
             // invoke later to give time for components to update
@@ -3422,8 +3421,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Show the statistics popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
@@ -3432,7 +3431,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, 
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
@@ -3444,8 +3443,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Show the statistics popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void peptideTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && peptideTable.getRowCount() > 0) {
@@ -3454,20 +3453,20 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips, 
+                    new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);
-            popupMenu.show(peptideTable, evt.getX(), evt.getY());       
+            popupMenu.show(peptideTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_peptideTableMouseClicked
 
     /**
      * Show the statistics popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void psmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && psmTable.getRowCount() > 0) {
@@ -3476,13 +3475,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips, 
+                    new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
             });
             popupMenu.add(menuItem);
-            popupMenu.show(psmTable, evt.getX(), evt.getY()); 
+            popupMenu.show(psmTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_psmTableMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
