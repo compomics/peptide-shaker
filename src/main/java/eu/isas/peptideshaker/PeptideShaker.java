@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker;
 
-import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -1093,9 +1092,8 @@ public class PeptideShaker {
      */
     public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingHandler waitingHandler, SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        SpectrumMatch spectrumMatch;
 
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         int max = inspectedSpectra.size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
@@ -1107,7 +1105,7 @@ public class PeptideShaker {
         PSParameter psParameter = new PSParameter();
         for (String spectrumKey : inspectedSpectra) {
             waitingHandler.increaseSecondaryProgressValue();
-            spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
             double confidenceThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
             scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, confidenceThreshold);
@@ -1376,7 +1374,7 @@ public class PeptideShaker {
                             int confidence = PtmScoring.VERY_CONFIDENT;
                             ptmScoring.setPtmSite(bestDKey, confidence);
                         } else {
-                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation()) {
+                            if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestAScoreLocations() != null) {
                                 String bestAKey = ptmScoring.getBestAScoreLocations();
                                 int key = psmPTMMap.getCorrectedKey(modName, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
                                 TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(modName, key);
@@ -1768,7 +1766,6 @@ public class PeptideShaker {
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
 
         if (ptmScores != null) {
-
             for (String modification : ptmScores.getScoredPTMs()) {
 
                 PtmScoring ptmScoring = ptmScores.getPtmScoring(modification);
@@ -1957,6 +1954,8 @@ public class PeptideShaker {
                     } else {
                         ptmScores.getPtmScoring(ptmName).setConflict(true);
                     }
+                } else {
+                    // @TODO: this means that there will be no a-scores for a peptide with two or more ptms with the same mass?!
                 }
             }
 

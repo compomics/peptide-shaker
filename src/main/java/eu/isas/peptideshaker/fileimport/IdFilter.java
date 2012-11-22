@@ -98,12 +98,13 @@ public class IdFilter implements Serializable {
     }
     
     /**
-     * Validates the peptide assumption based on the peptide length and maximal e-values allowed
+     * Validates the peptide assumption based on the peptide length and maximal e-values allowed.
+     * 
      * @param assumption the assumption to validate
      * @return a boolean indicating whether the assumption passed the test
      */
     public boolean validatePeptideAssumption(PeptideAssumption assumption) {
-        
+
         int pepLength = assumption.getPeptide().getSequence().length();
 
         if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {
@@ -138,11 +139,12 @@ public class IdFilter implements Serializable {
     
     /**
      * Validates the modifications of a peptide.
+     * 
      * @param peptide the peptide of interest
      * @return a boolean indicating whether the peptide passed the test
      */
     public boolean validateModifications(Peptide peptide) {
-        
+
         if (unknownPtm) {
             ArrayList<ModificationMatch> modificationMatches = peptide.getModificationMatches();
             for (ModificationMatch modMatch : modificationMatches) {

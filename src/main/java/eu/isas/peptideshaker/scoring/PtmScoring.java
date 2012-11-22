@@ -162,9 +162,9 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the best scoring modification profile based on the delta score.
+     * Returns the best scoring modification profile based on the a-score score.
      *
-     * @return the best scoring modification profile based on the delta score
+     * @return the best scoring modification profile based on the a-score score
      */
     public String getBestAScoreLocations() {
         String bestKey = null;

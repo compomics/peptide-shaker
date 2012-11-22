@@ -5735,6 +5735,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (Exception e) {
+                    progressDialog.setRunFinished();
                     e.printStackTrace();
                     catchException(e);
                 }
@@ -5955,7 +5956,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         resetSelectedItems();
         overviewPanel.updateSelection();
 
-        CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache, displayPreferences);
+        CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences, 
+                spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences, 
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache, displayPreferences);
     }
 
     /**
@@ -6023,7 +6026,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public void jumpToTab(int tabIndex) {
         allTabsJTabbedPane.setSelectedIndex(tabIndex);
-        allTabsJTabbedPaneStateChanged(null);
     }
 
     /**
