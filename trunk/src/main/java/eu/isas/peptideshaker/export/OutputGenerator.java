@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
@@ -601,7 +600,7 @@ public class OutputGenerator {
                         PSParameter secondaryPSParameter = new PSParameter();
                         int peptideCounter = 0;
                         Protein currentProtein = null;
-                        HashMap<Integer, String[]> surroundingAAs = null;
+                        HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
                         ProteinMatch proteinMatch = null;
 
                         for (String peptideKey : peptideKeys) {
@@ -620,10 +619,11 @@ public class OutputGenerator {
                                         if ((onlyStarred && peptidePSParameter.isStarred()) || !onlyStarred) {
 
                                             Peptide peptide = peptideMatch.getTheoreticPeptide();
+                                            ArrayList<String> possibleProteins = new ArrayList<String>();
+                                            ArrayList<String> orderedProteinsKeys = new ArrayList<String>(); // @TODO: could be merged with one of the other maps perhaps?
 
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
-                                                    ArrayList<String> possibleProteins = new ArrayList<String>();
                                                     for (String parentProtein : peptide.getParentProteins()) {
                                                         ArrayList<String> parentProteins = identification.getProteinMap().get(parentProtein);
                                                         if (parentProteins != null) {
@@ -636,7 +636,7 @@ public class OutputGenerator {
                                                                         }
                                                                     } catch (Exception e) {
                                                                         // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                                                        System.out.println("Non-existing protein key in protein map:" + proteinKey);
+                                                                        System.out.println("Non-existing protein key in protein map: " + proteinKey);
                                                                     }
                                                                 }
                                                             }
@@ -651,7 +651,9 @@ public class OutputGenerator {
                                                 }
                                             }
 
-                                            if (!shared || !uniqueOnly) { // @TODO: so unique only means that the peptide maps to only one protein? i.e. not a shared peptide?
+                                            if (shared && uniqueOnly) {
+                                                // these will be ignored as the user requested unique only
+                                            } else {
 
                                                 if (indexes) {
                                                     writer.write(++peptideCounter + SEPARATOR);
@@ -662,28 +664,36 @@ public class OutputGenerator {
                                                     String mainMatchDescription, secondaryProteinsDescriptions = "", peptideProteinDescriptions = "";
                                                     boolean first;
                                                     ArrayList<String> accessions = new ArrayList<String>();
+
+                                                    mainMatch = proteinMatch.getMainMatch();
+                                                    mainMatchDescription = sequenceFactory.getHeader(mainMatch).getDescription();
+                                                    first = true;
+
                                                     if (!shared) {
-                                                        mainMatch = proteinMatch.getMainMatch();
-                                                        mainMatchDescription = sequenceFactory.getHeader(mainMatch).getDescription();
-                                                        first = true;
-                                                        accessions.addAll(proteinMatch.getTheoreticProteinsAccessions());
-                                                        Collections.sort(accessions);
-                                                        for (String key : accessions) {
-                                                            if (!key.equals(mainMatch)) {
-                                                                if (first) {
-                                                                    first = false;
-                                                                } else {
-                                                                    secondaryProteins += ", ";
-                                                                    secondaryProteinsDescriptions += "; ";
-                                                                }
-                                                                secondaryProteins += key;
-                                                                secondaryProteinsDescriptions += sequenceFactory.getHeader(key).getDescription();
+                                                        orderedProteinsKeys.add(mainMatch);
+                                                    }
+
+                                                    accessions.addAll(proteinMatch.getTheoreticProteinsAccessions());
+                                                    Collections.sort(accessions);
+                                                    for (String key : accessions) {
+                                                        if (!key.equals(mainMatch)) {
+                                                            if (first) {
+                                                                first = false;
+                                                            } else {
+                                                                secondaryProteins += ", ";
+                                                                secondaryProteinsDescriptions += "; ";
                                                             }
+                                                            secondaryProteins += key;
+                                                            secondaryProteinsDescriptions += sequenceFactory.getHeader(key).getDescription();
+                                                            orderedProteinsKeys.add(key);
                                                         }
-                                                    } else {
+                                                    }
+
+                                                    if (shared) {
                                                         mainMatch = "shared peptide";
                                                         mainMatchDescription = "shared peptide";
                                                     }
+
                                                     first = true;
                                                     ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins());
                                                     Collections.sort(peptideAccessions);
@@ -697,6 +707,7 @@ public class OutputGenerator {
                                                             }
                                                             peptideProteins += key;
                                                             peptideProteinDescriptions += sequenceFactory.getHeader(key).getDescription();
+                                                            orderedProteinsKeys.add(key);
                                                         }
                                                     }
 
@@ -713,16 +724,19 @@ public class OutputGenerator {
                                                 }
 
                                                 if (location || surroundings) {
-                                                    if (!shared) {
-                                                        surroundingAAs = currentProtein.getSurroundingAA(peptide.getSequence(),
-                                                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides());
+                                                    for (String proteinAccession : orderedProteinsKeys) {
+                                                        surroundingAAs.put(proteinAccession,
+                                                                sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
+                                                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides()));
                                                     }
                                                 }
 
                                                 if (surroundings) {
-                                                    if (!shared) {
-                                                        String subSequence = "";
-                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+
+                                                    String subSequence = "";
+
+                                                    for (String proteinAccession : orderedProteinsKeys) {
+                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.get(proteinAccession).keySet());
                                                         Collections.sort(starts);
                                                         boolean first = true;
                                                         for (int start : starts) {
@@ -731,14 +745,15 @@ public class OutputGenerator {
                                                             } else {
                                                                 subSequence += "|";
                                                             }
-                                                            subSequence += surroundingAAs.get(start)[0];
+                                                            subSequence += surroundingAAs.get(proteinAccession).get(start)[0];
                                                         }
-                                                        writer.write(subSequence + SEPARATOR);
-                                                    } else if (!accession) {
-                                                        writer.write("shared peptide" + SEPARATOR);
-                                                    } else {
-                                                        writer.write(SEPARATOR);
+
+                                                        subSequence += ";";
                                                     }
+
+                                                    subSequence = subSequence.substring(0, subSequence.length() - 1);
+
+                                                    writer.write(subSequence + SEPARATOR);
                                                 }
 
                                                 if (sequence) {
@@ -746,9 +761,11 @@ public class OutputGenerator {
                                                 }
 
                                                 if (surroundings) {
-                                                    if (!shared) {
-                                                        String subSequence = "";
-                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+
+                                                    String subSequence = "";
+
+                                                    for (String proteinAccession : orderedProteinsKeys) {
+                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.get(proteinAccession).keySet());
                                                         Collections.sort(starts);
                                                         boolean first = true;
                                                         for (int start : starts) {
@@ -757,21 +774,23 @@ public class OutputGenerator {
                                                             } else {
                                                                 subSequence += "|";
                                                             }
-                                                            subSequence += surroundingAAs.get(start)[1];
+                                                            subSequence += surroundingAAs.get(proteinAccession).get(start)[1];
                                                         }
-                                                        writer.write(subSequence + SEPARATOR);
-                                                    } else {
-                                                        writer.write(SEPARATOR);
+                                                        subSequence += ";";
                                                     }
+
+                                                    subSequence = subSequence.substring(0, subSequence.length() - 1);
+
+                                                    writer.write(subSequence + SEPARATOR);
                                                 }
 
                                                 if (location) {
                                                     String start = "";
                                                     String end = "";
-                                                    if (!shared) {
+                                                    for (String proteinAccession : orderedProteinsKeys) {
                                                         int endAA;
                                                         String sequence = peptide.getSequence();
-                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.keySet());
+                                                        ArrayList<Integer> starts = new ArrayList<Integer>(surroundingAAs.get(proteinAccession).keySet());
                                                         Collections.sort(starts);
                                                         boolean first = true;
                                                         for (int startAa : starts) {
@@ -786,10 +805,12 @@ public class OutputGenerator {
                                                             end += endAA;
                                                         }
 
-                                                    } else if (!accession && !surroundings) {
-                                                        start += "shared peptide";
-                                                        end += "shared peptide";
+                                                        start += "; ";
+                                                        end += "; ";
                                                     }
+
+                                                    start = start.substring(0, start.length() - 2);
+                                                    end = end.substring(0, end.length() - 2);
 
                                                     writer.write(start + SEPARATOR + end + SEPARATOR);
                                                 }
@@ -1040,9 +1061,9 @@ public class OutputGenerator {
                                 spectrumKeys.get(spectrumFile).add(spectrumKey);
                             }
                         }
-                        
+
                         int fileCounter = 0;
-                        
+
                         for (String spectrumFile : spectrumKeys.keySet()) {
 
                             if (psmKeys == null) {
@@ -1056,7 +1077,7 @@ public class OutputGenerator {
                                 progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                                 identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
                             }
-                            
+
                             for (String psmKey : spectrumKeys.get(spectrumFile)) {
 
                                 if (progressDialog.isRunCanceled()) {
@@ -2072,7 +2093,7 @@ public class OutputGenerator {
 
         // find all unique the charges
         try {
-                identification.loadSpectrumMatches(spectrumKeys, null);
+            identification.loadSpectrumMatches(spectrumKeys, null);
         } catch (Exception e) {
             e.printStackTrace();
             //ignore caching error
