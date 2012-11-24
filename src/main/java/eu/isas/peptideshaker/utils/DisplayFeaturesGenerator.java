@@ -209,7 +209,7 @@ public class DisplayFeaturesGenerator {
 
             PTM ptm = ptmFactory.getPTM(modifications.get(i).getTheoreticPtm());
 
-            if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) {
+            if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: also annotate fixed mods??
 
                 int modSite = modifications.get(i).getModificationSite();
 

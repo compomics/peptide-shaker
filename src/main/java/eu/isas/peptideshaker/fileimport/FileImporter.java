@@ -11,7 +11,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -81,11 +80,11 @@ public class FileImporter {
     /**
      * Peptide to protein map: peptide sequence -> protein accessions.
      */
-    private HashMap<String, HashMap<String, ArrayList<String>>> sharedPeptides = new HashMap<String, HashMap<String, ArrayList<String>>>();
+    private HashMap<String, ArrayList<String>> sharedPeptides = new HashMap<String, ArrayList<String>>();
     /**
      * Peptide to protein map: peptide sequence -> protein accessions.
      */
-    private HashMap<String, HashMap<String, ArrayList<String>>> foundSharedPeptides = new HashMap<String, HashMap<String, ArrayList<String>>>();
+    private HashMap<String, ArrayList<String>> foundSharedPeptides = new HashMap<String, ArrayList<String>>();
     /**
      * db processing disabled if no X!Tandem file is selected.
      */
@@ -115,7 +114,6 @@ public class FileImporter {
      * @param proteomicAnalysis The current proteomic analysis
      * @param idFilter The identification filter to use
      * @param metrics metrics of the dataset to be saved for the GUI
-     * @param searchParameters the search parameters
      */
     public FileImporter(PeptideShaker identificationShaker, WaitingHandler waitingHandler, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics) {
         this.peptideShaker = identificationShaker;
@@ -187,7 +185,7 @@ public class FileImporter {
                     int nMissedCleavages = searchParameters.getnMissedCleavages();
                     int nMin = idFilter.getMinPepLength();
                     int nMax = idFilter.getMaxPepLength();
-                    sharedPeptides = new HashMap<String, HashMap<String, ArrayList<String>>>();
+                    sharedPeptides = new HashMap<String, ArrayList<String>>();
                     HashMap<String, String> tempMap = new HashMap<String, String>();
 
                     int numberOfSequences = sequenceFactory.getAccessions().size();
@@ -202,13 +200,7 @@ public class FileImporter {
                         String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
 
                         for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
-
-                            String sequenceKey = getPeptideIndexingKey(peptide);
-                            ArrayList<String> proteins = null;
-                            HashMap<String, ArrayList<String>> subMap = sharedPeptides.get(sequenceKey);
-                            if (subMap != null) {
-                                proteins = subMap.get(peptide);
-                            }
+                            ArrayList<String> proteins = sharedPeptides.get(peptide);
                             if (proteins != null) {
                                 proteins.add(proteinKey);
                             } else {
@@ -217,10 +209,7 @@ public class FileImporter {
                                     ArrayList<String> tempList = new ArrayList<String>(2);
                                     tempList.add(tempProtein);
                                     tempList.add(proteinKey);
-                                    if (subMap == null) {
-                                        sharedPeptides.put(sequenceKey, new HashMap<String, ArrayList<String>>());
-                                    }
-                                    sharedPeptides.get(sequenceKey).put(peptide, tempList);
+                                    sharedPeptides.put(peptide, tempList);
                                 } else {
                                     tempMap.put(peptide, proteinKey);
                                 }
@@ -285,17 +274,12 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingHandler waitingHandler) {
 
-        ArrayList<String> result = null;
-        String sequenceKey = getPeptideIndexingKey(peptideSequence);
-        HashMap<String, ArrayList<String>> subMap1 = foundSharedPeptides.get(sequenceKey);
-        if (subMap1 != null) {
-            result = subMap1.get(peptideSequence);
-        }
+        // @TODO: the use of contains(...) below is very slow!! using something like suffix trees should be a lot faster
+
+        ArrayList<String> result = foundSharedPeptides.get(peptideSequence);
+
         if (result == null) {
-            HashMap<String, ArrayList<String>> subMap2 = sharedPeptides.get(sequenceKey);
-            if (subMap2 != null) {
-                result = subMap2.get(peptideSequence);
-            }
+            result = sharedPeptides.get(peptideSequence);
 
             boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
 
@@ -305,7 +289,9 @@ public class FileImporter {
                     try {
                         for (String proteinKey : sequenceFactory.getAccessions()) {
                             if (sequenceFactory.getProtein(proteinKey).getSequence().contains(peptideSequence)) {
-                                result.add(proteinKey);
+                                if (!result.contains(proteinKey)) {
+                                    result.add(proteinKey);
+                                }
                             }
                             if (waitingHandler.isRunCanceled()) {
                                 return new ArrayList<String>();
@@ -327,16 +313,10 @@ public class FileImporter {
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     }
-                    if (subMap2 == null) {
-                        sharedPeptides.put(sequenceKey, new HashMap<String, ArrayList<String>>());
-                    }
-                    sharedPeptides.get(sequenceKey).put(peptideSequence, result);
+                    sharedPeptides.put(peptideSequence, result);
                 }
             } else {
-                if (subMap1 == null) {
-                    foundSharedPeptides.put(sequenceKey, new HashMap<String, ArrayList<String>>());
-                }
-                foundSharedPeptides.get(sequenceKey).put(peptideSequence, result);
+                foundSharedPeptides.put(peptideSequence, result);
             }
         }
         return result;
@@ -695,7 +675,14 @@ public class FileImporter {
                         if (searchEngine == Advocate.XTANDEM) {
                             ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
                             if (!proteins.isEmpty()) {
-                                peptide.setParentProteins(proteins);
+                                
+                                ArrayList<String> parentProteins = new ArrayList<String>();
+                                
+                                for (String accession : proteins) {
+                                    if (!parentProteins.contains(accession)) { // @TODO: should not be needed, but somewhere along the way the same proteins are added more than once...
+                                        parentProteins.add(accession);
+                                    }
+                                }
                             }
                         }
 
@@ -791,7 +778,9 @@ public class FileImporter {
                                 }
                             }
                         }
+
                         HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
+
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                             if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
@@ -886,17 +875,14 @@ public class FileImporter {
                     return;
                 }
 
-                waitingHandler.setSecondaryProgressValue(
-                        ++progress);
+                waitingHandler.setSecondaryProgressValue(++progress);
             }
 
             metrics.addFoundCharges(charges);
-            if (maxErrorDa
-                    > metrics.getMaxPrecursorErrorDa()) {
+            if (maxErrorDa > metrics.getMaxPrecursorErrorDa()) {
                 metrics.setMaxPrecursorErrorDa(maxErrorDa);
             }
-            if (maxErrorPpm
-                    > metrics.getMaxPrecursorErrorPpm()) {
+            if (maxErrorPpm > metrics.getMaxPrecursorErrorPpm()) {
                 metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
             }
 
@@ -961,17 +947,5 @@ public class FileImporter {
      */
     public static boolean isCLIMode() {
         return boolCLI;
-    }
-
-    /**
-     * Returns a key used to sort peptide sequences
-     *
-     * @param peptideSequence
-     * @return tu
-     */
-    public static String getPeptideIndexingKey(String peptideSequence) {
-        int intMin = Math.max(peptideSequence.length() / 2 - 1, 0);
-        int intMax = Math.min(peptideSequence.length() / 2 + 1, peptideSequence.length());
-        return peptideSequence.charAt(intMin) + peptideSequence.charAt(intMax) + "";
     }
 }
