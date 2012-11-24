@@ -12,6 +12,7 @@ import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -19,6 +20,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -588,7 +590,7 @@ public class FileImporter {
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
 
-            boolean idReport, unknown = false;
+            boolean idReport;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
@@ -699,29 +701,36 @@ public class FileImporter {
 
                         // change the search engine modifications into expected modifications
                         // If there are not enough sites to put them all on the sequence, add an unknown modifcation
+                        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+                        ptmFactory.checkFixedModifications(modificationProfile, peptide);
                         HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
                         HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            String sePTM = modMatch.getTheoreticPtm();
-                            if (sePTM.equals(PTMFactory.unknownPTM.getName())) {
-                                if (!unknown) {
-                                    waitingHandler.appendReport("An unknown modification (at site " + modMatch.getModificationSite() + " of peptide " + peptide.getSequence() + ", variable " + modMatch.isVariable() + ") was encountered when parsing PSM " + spectrumTitle + " in file " + fileName + " and might impair further processing."
-                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.", true, true);
-                                    unknown = true;
-                                }
-                            } else {
-                                if (ptmFactory.containsPTM(sePTM)) {
-                                    tempNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, sePTM);
-                                } else {
+                            tempNames = new HashMap<Integer, ArrayList<String>>();
+                            if (modMatch.isVariable()) {
+                                String sePTM = modMatch.getTheoreticPtm();
+                                if (searchEngine == Advocate.OMSSA) {
+                                    Integer omssaIndex = null;
+                                    try {
+                                        omssaIndex = new Integer(sePTM);
+                                    } catch (Exception e) {
+                                        waitingHandler.appendReport("Impossible to parse OMSSA modification " + sePTM + ".", true, true);
+                                    }
+                                    if (omssaIndex != null) {
+                                        tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, modificationProfile.getModification(omssaIndex));
+                                    }
+                                } else if (searchEngine == Advocate.MASCOT || searchEngine == Advocate.XTANDEM) {
                                     String[] parsedName = sePTM.split("@");
                                     double seMass = 0;
                                     try {
                                         seMass = new Double(parsedName[0]);
                                     } catch (Exception e) {
-                                        throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem modification.\n"
-                                                + "Error encountered in spectrum " + spectrumTitle + " in file " + fileName + ".");
+                                        throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem or Mascot modification.\n"
+                                                + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                     }
                                     tempNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
+                                } else {
+                                    throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + SearchEngine.getName(searchEngine) + ".");
                                 }
                                 ArrayList<String> allNames = new ArrayList<String>();
                                 for (ArrayList<String> namesAtAA : tempNames.values()) {
@@ -746,7 +755,7 @@ public class FileImporter {
                         HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
                         HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (!modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                            if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 int modSite = modMatch.getModificationSite();
                                 if (expectedNames.containsKey(modSite)) {
                                     for (String modName : expectedNames.get(modSite)) {
@@ -764,7 +773,7 @@ public class FileImporter {
                         // Try to correct incompatible localizations
                         HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (!ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                            if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 int modSite = modMatch.getModificationSite();
                                 for (int candidateSite : expectedNames.keySet()) {
                                     if (!ptmMappingRegular.containsKey(candidateSite)) {
@@ -784,7 +793,7 @@ public class FileImporter {
                         }
                         HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (!ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                            if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                 Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
                                 if (modSite != null) {
                                     if (expectedNames.containsKey(modSite)) {
