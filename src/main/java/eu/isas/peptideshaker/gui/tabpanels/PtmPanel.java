@@ -4334,7 +4334,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true);
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
@@ -4452,7 +4452,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true);
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();

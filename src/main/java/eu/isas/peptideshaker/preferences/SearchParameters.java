@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.massspectrometry.Charge;
 import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
@@ -605,5 +606,53 @@ public class SearchParameters implements Serializable {
      */
     public void setFractionMolecularWeights(HashMap<String, Double> fractionMolecularWeights) {
         this.fractionMolecularWeights = fractionMolecularWeights;
+    }
+    
+    /**
+     * Returns an updated version of the search parameters. The following values are missing, the given arbitrary value will be given:
+     * min charge searched: 2+
+     * max charge searched: 4+
+     * max eValue: 100
+     * hitlist length: 100
+     * charge for multiple fragments: 3+
+     * max pep length: 20
+     * min pep length: 6
+     * estimate charge: true
+     * remove precursor: false
+     * scale precursor: false
+     * 
+     * @return an updated version of the search parameters
+     */
+    public com.compomics.util.experiment.identification.SearchParameters getUpdatedVersion() {
+        com.compomics.util.experiment.identification.SearchParameters updatedVersion = new com.compomics.util.experiment.identification.SearchParameters();
+        
+        ModificationProfile modificationProfile = getModificationProfile();
+        updatedVersion.setModificationProfile(modificationProfile);
+        updatedVersion.setFragmentIonAccuracy(fragmentIonMZTolerance);
+        updatedVersion.setEnzyme(enzyme);
+        updatedVersion.setParametersFile(parametersFile);
+        updatedVersion.setFastaFile(fastaFile);
+        updatedVersion.setnMissedCleavages(nMissedCleavages);
+        updatedVersion.setIonSearched1(PeptideFragmentIon.getSubTypeAsString(forwardIon));
+        updatedVersion.setIonSearched2(PeptideFragmentIon.getSubTypeAsString(rewindIon));
+        updatedVersion.setPrecursorAccuracy(precursorTolerance);
+        if (currentPrecursorAccuracyType == PrecursorAccuracyType.PPM) {
+            updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.PPM);
+        } else {
+            updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.DA);
+        }
+        updatedVersion.setFractionMolecularWeights(fractionMolecularWeights);
+        updatedVersion.setMaxChargeSearched(new Charge(Charge.PLUS, 4));
+        updatedVersion.setMinChargeSearched(new Charge(Charge.PLUS, 2));
+        updatedVersion.setMaxEValue(100.0);
+        updatedVersion.setHitListLength(100);
+        updatedVersion.setMinimalChargeForMultipleChargedFragments(new Charge(Charge.PLUS, 3));
+        updatedVersion.setMaxPeptideLength(20);
+        updatedVersion.setMinPeptideLength(6);
+        updatedVersion.setEstimateCharge(true);
+        updatedVersion.setRemovePrecursor(false);
+        updatedVersion.setScalePrecursor(false);
+        
+        return updatedVersion;
     }
 }

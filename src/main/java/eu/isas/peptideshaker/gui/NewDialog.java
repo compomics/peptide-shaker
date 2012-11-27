@@ -1534,8 +1534,6 @@ public class NewDialog extends javax.swing.JDialog {
     private ProjectDetails getProjectDetails() {
         ProjectDetails projectDetails = new ProjectDetails();
         projectDetails.setCreationDate(new Date());
-        projectDetails.setIdentificationFiles(idFiles);
-
         return projectDetails;
     }
 

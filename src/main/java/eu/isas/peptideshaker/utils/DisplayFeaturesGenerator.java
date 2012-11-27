@@ -256,12 +256,12 @@ public class DisplayFeaturesGenerator {
             if (ptmScores != null) {
                 HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
                 HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
-                return Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(),
+                return Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(),
                         includeHtmlStartEndTag, peptideMatch.getTheoreticPeptide(),
                         mainLocations, secondaryLocations);
             } else {
                 return peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
-                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), includeHtmlStartEndTag);
+                        peptideShakerGUI.getSearchParameters().getModificationProfile(), includeHtmlStartEndTag);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

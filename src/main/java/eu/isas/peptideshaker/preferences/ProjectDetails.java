@@ -1,10 +1,12 @@
 package eu.isas.peptideshaker.preferences;
 
+import com.compomics.util.Util;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import com.compomics.util.pride.prideobjects.*;
+import java.util.HashMap;
 
 /**
  * This class contains the details about a project.
@@ -16,23 +18,19 @@ public class ProjectDetails implements Serializable {
     /**
      * Serial version UID for post-serialization compatibility.
      */
-    static final long serialVersionUID = -2635206350852992221L; // @TODO: has to be updated!!
+    static final long serialVersionUID = -2635206350852992221L;
     /**
      * List of the identification files loaded.
      */
-    private ArrayList<File> identificationFiles;
+    private ArrayList<File> identificationFiles = new ArrayList<File>();
+    /**
+     * List of the spectrum files
+     */
+    private HashMap<String, File> spectrumFiles = new HashMap<String, File>();
     /**
      * When the project was created.
      */
     private Date creationDate;
-    /**
-     * The usermod file used in the project.
-     */
-    private File iUserModificationFile;
-    /**
-     * The mod file used in the project.
-     */
-    private File iModificationFile;
     /**
      * The report created during the loading of the tool 
      */
@@ -95,12 +93,35 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Setter for the identification files loaded.
+     * Adds an identification file to the list of loaded identification files
      *
-     * @param identificationFiles all identification files loaded
+     * @param identificationFile the identification file loaded
      */
-    public void setIdentificationFiles(ArrayList<File> identificationFiles) {
-        this.identificationFiles = identificationFiles;
+    public void addIdentificationFiles(File identificationFile) {
+        identificationFiles.add(identificationFile);
+    }
+    
+    /**
+     * Attaches a spectrum file to the project.
+     * Warning: any previous file with the same name will be silently ignored.
+     * @param spectrumFile the spectrum file to add
+     */
+    public void addSpectrumFile(File spectrumFile) {
+        String fileName = Util.getFileName(spectrumFile.getAbsolutePath());
+        spectrumFiles.put(fileName, spectrumFile);
+    }
+    
+    /**
+     * Returns the file corresponding to the given name
+     * @param fileName the name of the desired file
+     * @return the corresponding file, null if not found.
+     */
+    public File getSpectrumFile(String fileName) {
+        // Compatibility check
+        if (spectrumFiles == null) {
+            spectrumFiles = new HashMap<String, File>();
+        }
+        return spectrumFiles.get(fileName);
     }
 
     /**
@@ -119,42 +140,6 @@ public class ProjectDetails implements Serializable {
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
-    }
-
-    /**
-     * Returns the mods.xml file used in this search.
-     * 
-     * @return the mods.xml file
-     */
-    public File getModificationFile() {
-        return iModificationFile;
-    }
-
-    /**
-     * Set the mods.xml file used in this search.
-     * 
-     * @param aModificationFile 
-     */
-    public void setModificationFile(File aModificationFile) {
-        iModificationFile = aModificationFile;
-    }
-
-    /**
-     * Returns the usermods.xml file used in this search.
-     * 
-     * @return he usermods.xml File
-     */
-    public File getUserModificationFile() {
-        return iUserModificationFile;
-    }
-
-    /**
-     * Set the usermods.xml file used in this search.
-     * 
-     * @param aUserModificationFile 
-     */
-    public void setUserModificationFile(File aUserModificationFile) {
-        iUserModificationFile = aUserModificationFile;
     }
 
     /**

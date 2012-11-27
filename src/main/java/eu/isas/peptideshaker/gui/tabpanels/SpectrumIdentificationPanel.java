@@ -3049,7 +3049,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 isBestPsmEqualForAllSearchEngines(spectrumMatch),
                                 proteins,
                                 spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
                                 probabilities.getPsmScore(),
                                 probabilities.getPsmConfidence(),
                                 probabilities.isValidated()
@@ -3071,7 +3071,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             ++rank,
                                             proteins,
                                             currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
@@ -3099,7 +3099,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             ++rank,
                                             proteins,
                                             currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
@@ -3127,7 +3127,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             ++rank,
                                             proteins,
                                             currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
