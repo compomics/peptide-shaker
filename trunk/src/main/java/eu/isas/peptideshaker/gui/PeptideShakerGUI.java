@@ -5221,19 +5221,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     progressDialog.setMaxProgressValue(identification.getSpectrumFiles().size() + 1);
                     progressDialog.increaseProgressValue();
 
-                    // @TODO: this only iterates the file names and not the original file paths, thus the mgfs are not found!!!
-                    for (String filePath : identification.getSpectrumFiles()) {
+                    for (String fileName : identification.getSpectrumFiles()) {
 
                         progressDialog.increaseProgressValue();
 
                         try {
-                            File providedSpectrumLocation = new File(filePath);
-                            String fileName = providedSpectrumLocation.getName();
+                            File providedSpectrumLocation = projectDetails.getSpectrumFile(fileName);
                             File projectFolder = currentPSFile.getParentFile();
                             File dataFolder = new File(projectFolder, "data");
 
                             // try to locate the spectrum file
-                            if (providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) {
+                            if (providedSpectrumLocation != null && providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) {
                                 names.add(providedSpectrumLocation.getName());
                                 spectrumFiles.add(providedSpectrumLocation.getAbsolutePath());
                             } else if (new File(projectFolder, fileName).exists() && !names.contains(new File(projectFolder, fileName).getName())) {
@@ -5244,7 +5242,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 spectrumFiles.add(new File(dataFolder, fileName).getAbsolutePath());
                             } else {
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occured while reading:\n" + new File(filePath).getName() + "."
+                                        "An error occured while reading:\n" + fileName + "."
                                         + "\n\nPlease select the spectrum file or the folder containing it manually.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
 
@@ -5284,7 +5282,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                                     names.add(file.getName());
                                                     spectrumFiles.add(file.getPath());
                                                 }
-                                                if (new File(filePath).getName().equals(newFile2.getName())) {
+                                                if (fileName.equals(newFile2.getName())) {
                                                     found = true;
                                                 }
                                             } catch (Exception e) {
@@ -5294,7 +5292,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     }
                                     if (!found) {
                                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                                new File(filePath).getName() + " was not found in the given folder.",
+                                                fileName + " was not found in the given folder.",
                                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                                         clearData(true);
                                         clearPreferences();

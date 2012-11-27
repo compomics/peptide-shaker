@@ -3216,7 +3216,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         if (ptm.getType() == PTM.MODAA && modifications.get(k).isVariable()) {
                             if (modifications.get(k).getModificationSite() == (peptideIndex + 1)) {
 
-                                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(
+                                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(
                                         modifications.get(k).getTheoreticPtm());
 
                                 jmolPanel.getViewer().evalString(
@@ -3321,13 +3321,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        HashMap<String, Color> ptmColors = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors();
-
         try {
             // update the peptide table
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
                 String peptideKey = peptideTableMap.get(getPeptideIndex(i));
-                String modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(ptmColors, true);
+                String modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(), true);
                 peptideTable.setValueAt(modifiedSequence, i, peptideTable.getColumn("Sequence").getModelIndex());
             }
         } catch (Exception e) {

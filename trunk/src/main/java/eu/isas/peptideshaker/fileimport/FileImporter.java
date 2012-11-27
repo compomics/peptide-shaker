@@ -22,6 +22,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -135,11 +136,12 @@ public class FileImporter {
      * @param processingPreferences the processing preferences
      * @param ptmScoringPreferences the PTM scoring preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param projectDetails the project details
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences) {
+            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
 
         if (boolCLI) {
             // CLI mode needs to call the SwingWorker's running method directly.
@@ -366,6 +368,10 @@ public class FileImporter {
          */
         private PTMScoringPreferences ptmScoringPreferences;
         /**
+         * The project details
+         */
+        private ProjectDetails projectDetails;
+        /**
          * The spectrum counting preferences.
          */
         private SpectrumCountingPreferences spectrumCountingPreferences;
@@ -413,7 +419,7 @@ public class FileImporter {
          * @param idFiles ArrayList containing the identification files
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, IdFilter idFilter,
-                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences) {
+                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<File>();
             HashMap<String, File> filesMap = new HashMap<String, File>();
@@ -437,6 +443,7 @@ public class FileImporter {
             this.processingPreferences = processingPreferences;
             this.ptmScoringPreferences = ptmScoringPreferences;
             this.spectrumCountingPreferences = spectrumCountingPreferences;
+            this.projectDetails = projectDetails;
 
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
@@ -504,6 +511,7 @@ public class FileImporter {
                     for (String mgfName : missingMgfFiles.values()) {
                         File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
                         spectrumFiles.put(newFile.getName(), newFile);
+                        projectDetails.addSpectrumFile(newFile);
                     }
                     missingMgfFiles.clear();
                     for (File idFile : filesToProcess) {
@@ -636,11 +644,13 @@ public class FileImporter {
                 }
 
                 if (!mgfUsed.contains(fileName)) {
-                    if (spectrumFiles.containsKey(fileName)) {
-                        importSpectra(fileName, searchParameters);
+                    File spectrumFile = spectrumFiles.get(fileName);
+                    if (spectrumFile != null && spectrumFile.exists()) {
+                        importSpectra(fileName);
                         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                         waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
                         mgfUsed.add(fileName);
+                        projectDetails.addSpectrumFile(spectrumFile);
                         nSpectra += spectrumFactory.getNSpectra(fileName);
                     } else {
                         missingMgfFiles.put(idFile, fileName);
@@ -675,9 +685,9 @@ public class FileImporter {
                         if (searchEngine == Advocate.XTANDEM) {
                             ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
                             if (!proteins.isEmpty()) {
-                                
+
                                 ArrayList<String> parentProteins = new ArrayList<String>();
-                                
+
                                 for (String accession : proteins) {
                                     if (!parentProteins.contains(accession)) { // @TODO: should not be needed, but somewhere along the way the same proteins are added more than once...
                                         parentProteins.add(accession);
@@ -900,7 +910,7 @@ public class FileImporter {
                     waitingHandler.setSecondaryProgressDialogIndeterminate(true);
                 }
             }
-
+            projectDetails.addIdentificationFiles(idFile);
             waitingHandler.increaseProgressValue();
         }
 
@@ -909,9 +919,8 @@ public class FileImporter {
          * desired spectrum file if necessary.
          *
          * @param targetFileName the spectrum file
-         * @param searchParameters the search parameters
          */
-        public void importSpectra(String targetFileName, SearchParameters searchParameters) {
+        public void importSpectra(String targetFileName) {
 
             File spectrumFile = spectrumFiles.get(targetFileName);
 

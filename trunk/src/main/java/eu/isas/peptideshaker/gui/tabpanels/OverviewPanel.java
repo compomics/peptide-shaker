@@ -4143,8 +4143,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         Color ptmColor = Color.lightGray;
 
-                        if (peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(firstPtm) != null) {
-                            ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(firstPtm);
+                        if (peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(firstPtm) != null) {
+                            ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(firstPtm);
                         }
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
@@ -4342,7 +4342,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
                                     peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
                                     annotations, true, true,
-                                    peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                    peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile()),
                                     peptideAssumption.getPeptide().getPTMShortNameMap(), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);

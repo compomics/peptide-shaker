@@ -1,0 +1,67 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (os_windows_x86.cpp:149), pid=3276, tid=3612
+#  guarantee(result == EXCEPTION_CONTINUE_EXECUTION) failed: Unexpected result from topLevelExceptionFilter
+#
+# JRE version: 6.0_31-b05
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (20.6-b01 mixed mode windows-amd64 compressed oops)
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00000000096a1800):  JavaThread "AWT-EventQueue-0" [_thread_in_Java, id=3612, stack(0x000000000a080000,0x000000000a180000)]
+
+Stack: [0x000000000a080000,0x000000000a180000]
+[error occurred during error reporting (printing stack bounds), id 0xc0000005]
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x000000000b8e2000 JavaThread "DisplayThread" [_thread_blocked, id=5464, stack(0x0000000008e20000,0x0000000008f20000)]
+  0x000000000b8e1000 JavaThread "ProgressDialog" [_thread_blocked, id=2032, stack(0x0000000008b70000,0x0000000008c70000)]
+  0x000000000b8e0800 JavaThread "derby.rawStoreDaemon" daemon [_thread_blocked, id=2824, stack(0x000000000d450000,0x000000000d550000)]
+  0x000000000b8df800 JavaThread "Timer-0" daemon [_thread_blocked, id=4572, stack(0x000000000d350000,0x000000000d450000)]
+  0x000000000b8df000 JavaThread "SwingWorker-pool-2-thread-1" daemon [_thread_blocked, id=2704, stack(0x000000000d250000,0x000000000d350000)]
+  0x0000000008a31000 JavaThread "Swing-Shell" daemon [_thread_blocked, id=4824, stack(0x000000000aab0000,0x000000000abb0000)]
+  0x000000000033d800 JavaThread "DestroyJavaVM" [_thread_blocked, id=4268, stack(0x00000000026c0000,0x00000000027c0000)]
+  0x000000000b1a4000 JavaThread "TimerQueue" daemon [_thread_blocked, id=1272, stack(0x00000000025c0000,0x00000000026c0000)]
+  0x00000000094d4800 JavaThread "NewsFeedThread" [_thread_blocked, id=2840, stack(0x000000000cd50000,0x000000000ce50000)]
+  0x000000000b84a800 JavaThread "HoverWatcher" [_thread_blocked, id=3436, stack(0x000000000cc50000,0x000000000cd50000)]
+=>0x00000000096a1800 JavaThread "AWT-EventQueue-0" [_thread_in_Java, id=3612, stack(0x000000000a080000,0x000000000a180000)]
+  0x00000000092d1000 JavaThread "AWT-Shutdown" [_thread_blocked, id=3944, stack(0x0000000009b70000,0x0000000009c70000)]
+  0x00000000092d1800 JavaThread "AWT-Windows" daemon [_thread_in_native, id=2744, stack(0x0000000009c70000,0x0000000009d70000)]
+  0x0000000008b68000 JavaThread "Java2D Disposer" daemon [_thread_blocked, id=4848, stack(0x0000000009a70000,0x0000000009b70000)]
+  0x0000000007255000 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=384, stack(0x0000000008570000,0x0000000008670000)]
+  0x0000000007252000 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=5016, stack(0x0000000008470000,0x0000000008570000)]
+  0x000000000723b000 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=4432, stack(0x0000000008370000,0x0000000008470000)]
+  0x0000000007237800 JavaThread "Attach Listener" daemon [_thread_blocked, id=4016, stack(0x0000000008270000,0x0000000008370000)]
+  0x0000000007232000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=1268, stack(0x0000000008170000,0x0000000008270000)]
+  0x00000000071db000 JavaThread "Finalizer" daemon [_thread_blocked, id=4960, stack(0x0000000008070000,0x0000000008170000)]
+  0x00000000071d4000 JavaThread "Reference Handler" daemon [_thread_blocked, id=2548, stack(0x0000000007f70000,0x0000000008070000)]
+
+Other Threads:
+  0x00000000071ce000 VMThread [stack: 0x0000000007e70000,0x0000000007f70000] [id=1888]
+  0x0000000007266800 WatcherThread [stack: 0x0000000008670000,0x0000000008770000] [id=4220]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ PSYoungGen      total 990528K, used 751779K [0x0000000783000000, 0x00000007cc890000, 0x0000000800000000)
+  eden space 836096K, 82% used [0x0000000783000000,0x00000007ad075ca0,0x00000007b6080000)
+  from space 154432K, 40% used [0x00000007b6080000,0x00000007b9e32fb0,0x00000007bf750000)
+  to   space 152256K, 0% used [0x00000007c33e0000,0x00000007c33e0000,0x00000007cc890000)
+ PSOldGen        total 862208K, used 605494K [0x0000000689000000, 0x00000006bda00000, 0x0000000783000000)
+  object space 862208K, 70% used [0x0000000689000000,0x00000006adf4d948,0x00000006bda00000)
+ PSPermGen       total 82816K, used 50171K [0x0000000683e00000, 0x0000000688ee0000, 0x0000000689000000)
+  object space 82816K, 60% used [0x0000000683e00000,0x0000000686efee10,0x0000000688ee0000)
+
+Code Cache  [0x0000000002980000, 0x0000000003110000, 0x0000000005980000)
+ total_blobs=2587 nmethods=1701 adapters=837 free_code_cache=42515328 largest_free_block=15424
+
+Dynamic libraries:

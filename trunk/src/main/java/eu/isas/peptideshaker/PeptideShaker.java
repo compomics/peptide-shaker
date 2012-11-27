@@ -210,7 +210,7 @@ public class PeptideShaker {
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
 
-        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
+        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
     }
 
     /**

@@ -19,9 +19,14 @@ public class PSSettings implements UrParameter {
      */
     static final long serialVersionUID = -3531908843597367812L;
     /**
+     * The search parameters (versions < 0.19) still present for backward compatibility
+     * @deprecated use utilitiesSearchParamters
+     */
+    private eu.isas.peptideshaker.preferences.SearchParameters searchParameters;
+    /**
      * The parameters linked to the search.
      */
-    private SearchParameters searchParameters;
+    private SearchParameters utiltiesSearchParameters;
     /**
      * The initial processing preferences.
      */
@@ -89,7 +94,7 @@ public class PSSettings implements UrParameter {
             ProcessingPreferences processingPreferences,
             IdentificationFeaturesCache identificationFeaturesCache,
             PTMScoringPreferences ptmScoringPreferences) {
-        this.searchParameters = searchParameters;
+        this.utiltiesSearchParameters = searchParameters;
         this.utilitiesAnnotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
@@ -120,7 +125,10 @@ public class PSSettings implements UrParameter {
      * @return the parameters linked to the search
      */
     public SearchParameters getSearchParameters() {
-        return searchParameters;
+        if (utiltiesSearchParameters == null) {
+            utiltiesSearchParameters = searchParameters.getUpdatedVersion();
+        }
+        return utiltiesSearchParameters;
     }
 
     /**

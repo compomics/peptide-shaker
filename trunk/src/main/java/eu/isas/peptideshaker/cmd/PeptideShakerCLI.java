@@ -28,6 +28,7 @@ import org.apache.commons.cli.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.Callable;
 
 /**
@@ -86,12 +87,7 @@ public class PeptideShakerCLI implements Callable {
 
         // Set the project details
         ProjectDetails projectDetails = new ProjectDetails();
-        try {
-            projectDetails.setModificationFile(getModificationFile());
-            projectDetails.setUserModificationFile(getUserModificationFile());
-        } catch (URISyntaxException e) {
-            System.err.println(e.getMessage());
-        }
+        projectDetails.setCreationDate(new Date());
 
         // Get the search parameters
         SearchParameters searchParameters = cliInputBean.getIdentificationParameters();
@@ -99,7 +95,7 @@ public class PeptideShakerCLI implements Callable {
         if (error != null) {
             System.out.println(error);
         }
-
+        
         // Get the input files
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
         ArrayList<File> identificationFiles = cliInputBean.getIdFiles();
