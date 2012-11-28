@@ -2715,7 +2715,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportModifiedPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportModifiedPsmsJButtonActionPerformed
-        copyTableContentToClipboard(TableIndex.MODIFIED_PSMS_TABLE);
+        copyTableContentToFileOrClipboard(TableIndex.MODIFIED_PSMS_TABLE);
     }//GEN-LAST:event_exportModifiedPsmsJButtonActionPerformed
 
     /**
@@ -2774,7 +2774,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void exportRelatedPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRelatedPsmsJButtonActionPerformed
-        copyTableContentToClipboard(TableIndex.RELATED_PSMS_TABLE);
+        copyTableContentToFileOrClipboard(TableIndex.RELATED_PSMS_TABLE);
     }//GEN-LAST:event_exportRelatedPsmsJButtonActionPerformed
 
     /**
@@ -2912,7 +2912,7 @@ public class PtmPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    copyTableContentToClipboard(TableIndex.A_SCORES_TABLE);
+                    copyTableContentToFileOrClipboard(TableIndex.A_SCORES_TABLE);
                 }
             });
 
@@ -2925,7 +2925,7 @@ public class PtmPanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    copyTableContentToClipboard(TableIndex.DELTA_SCORES_TABLE);
+                    copyTableContentToFileOrClipboard(TableIndex.DELTA_SCORES_TABLE);
                 }
             });
 
@@ -2944,11 +2944,11 @@ public class PtmPanel extends javax.swing.JPanel {
     private void exportRelatedPeptideProfileJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboard(TableIndex.RELATED_PEPTIDES_TABLE);
+                copyTableContentToFileOrClipboard(TableIndex.RELATED_PEPTIDES_TABLE);
             }
         });
 
@@ -2978,11 +2978,11 @@ public class PtmPanel extends javax.swing.JPanel {
     private void exportModifiedPeptideProfileJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboard(TableIndex.MODIFIED_PEPTIDES_TABLE);
+                copyTableContentToFileOrClipboard(TableIndex.MODIFIED_PEPTIDES_TABLE);
             }
         });
 
@@ -4675,7 +4675,7 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @param index
      */
-    private void copyTableContentToClipboard(TableIndex index) {
+    private void copyTableContentToFileOrClipboard(TableIndex index) {
 
         final TableIndex tableIndex = index;
 
@@ -4692,7 +4692,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
             progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Copying to Clipboard. Please Wait...");
+            progressDialog.setTitle("Copying to File/Clipboard. Please Wait...");
 
             new Thread(new Runnable() {
 
@@ -4713,7 +4713,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                         OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
                         String clipboardString = null;
-                        
+
                         if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
                             outputGenerator.getPeptidesOutput(
                                     null, displayedPeptides, null, true, false, true, true, true, true,

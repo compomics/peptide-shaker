@@ -51,8 +51,8 @@
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="okButton" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jPanel1" max="32767" attributes="0"/>
-                      <Component id="jPanel2" max="32767" attributes="0"/>
+                      <Component id="ptmScoringPanel" max="32767" attributes="0"/>
+                      <Component id="fractionsPanel" max="32767" attributes="0"/>
                       <Component id="processingParamsPanel" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -65,9 +65,9 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="processingParamsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                  <Component id="ptmScoringPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                  <Component id="fractionsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="okButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
@@ -104,7 +104,7 @@
                           <Component id="peptideFdrLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="psmFdrLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="32" max="32767" attributes="0"/>
+                      <EmptySpace min="32" pref="87" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="proteinFdrTxt" max="32767" attributes="0"/>
@@ -155,17 +155,17 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="proteinFdrLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Protein FDR:"/>
+                <Property name="text" type="java.lang.String" value="Protein FDR"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="peptideFdrLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Peptide FDR:"/>
+                <Property name="text" type="java.lang.String" value="Peptide FDR"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="psmFdrLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="PSM FDR:"/>
+                <Property name="text" type="java.lang.String" value="PSM FDR"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="psmFdrTxt">
@@ -203,7 +203,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel1">
+        <Container class="javax.swing.JPanel" name="ptmScoringPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -227,20 +227,18 @@
                                   <Component id="neutralLossesCmb" alignment="1" pref="185" max="32767" attributes="0"/>
                                   <Component id="flrTxt" pref="185" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="neutralLossesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="aScoreLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="222" max="-2" attributes="0"/>
-                                      <Component id="percentLabel1" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="aScoreLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="percentLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -290,7 +288,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="aScoreLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="False Localization Rate:"/>
+                <Property name="text" type="java.lang.String" value="False Localization Rate"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="ascoreCmb">
@@ -305,12 +303,12 @@
             </Component>
             <Component class="javax.swing.JLabel" name="neutralLossesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Account Neutral Losses:"/>
+                <Property name="text" type="java.lang.String" value="Account Neutral Losses"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="estimateAScoreLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Estimate A-score:"/>
+                <Property name="text" type="java.lang.String" value="Estimate A-score"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="percentLabel1">
@@ -320,7 +318,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel2">
+        <Container class="javax.swing.JPanel" name="fractionsPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -335,7 +333,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="proteinMwLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="proteinConfidenceMwTxt" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -351,7 +349,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="proteinConfidenceMwTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="percentLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="proteinMwLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -359,9 +357,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="proteinMwLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Protein Confidence MW:"/>
+                <Property name="text" type="java.lang.String" value="Protein Confidence MW"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;The minium protein confidence required to be included in the&lt;br&gt;&#xa;average molecular weight analysis in the Fractions tab.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>

@@ -31,7 +31,7 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
      * @param editable a boolean indicating whether the processing parameters
      * are editable
      * @param processingPreferences the processing preferences
-     * @param ptmScoringPreferences
+     * @param ptmScoringPreferences the ptm scoring preferences
      */
     public ProcessingPreferencesDialog(java.awt.Frame parent, boolean editable,
             ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences) {
@@ -180,7 +180,7 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         percentLabel2 = new javax.swing.JLabel();
         proteinFdrTxt = new javax.swing.JTextField();
         percentLabel3 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        ptmScoringPanel = new javax.swing.JPanel();
         neutralLossesCmb = new javax.swing.JComboBox();
         flrTxt = new javax.swing.JTextField();
         aScoreLabel = new javax.swing.JLabel();
@@ -188,8 +188,8 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         neutralLossesLabel = new javax.swing.JLabel();
         estimateAScoreLabel = new javax.swing.JLabel();
         percentLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        fractionsPanel = new javax.swing.JPanel();
+        proteinMwLabel = new javax.swing.JLabel();
         proteinConfidenceMwTxt = new javax.swing.JTextField();
         percentLabel4 = new javax.swing.JLabel();
 
@@ -209,11 +209,11 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         processingParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
         processingParamsPanel.setOpaque(false);
 
-        proteinFdrLabel.setText("Protein FDR:");
+        proteinFdrLabel.setText("Protein FDR");
 
-        peptideFdrLabel.setText("Peptide FDR:");
+        peptideFdrLabel.setText("Peptide FDR");
 
-        psmFdrLabel.setText("PSM FDR:");
+        psmFdrLabel.setText("PSM FDR");
 
         psmFdrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         psmFdrTxt.setText("1");
@@ -240,7 +240,7 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(proteinFdrLabel)
                     .addComponent(peptideFdrLabel)
                     .addComponent(psmFdrLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(32, 87, Short.MAX_VALUE)
                 .addGroup(processingParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, processingParamsPanelLayout.createSequentialGroup()
                         .addComponent(proteinFdrTxt)
@@ -277,8 +277,8 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
-        jPanel1.setOpaque(false);
+        ptmScoringPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PTM Scoring"));
+        ptmScoringPanel.setOpaque(false);
 
         neutralLossesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
@@ -290,64 +290,63 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        aScoreLabel.setText("False Localization Rate:");
+        aScoreLabel.setText("False Localization Rate");
 
         ascoreCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Yes", "No" }));
 
-        neutralLossesLabel.setText("Account Neutral Losses:");
+        neutralLossesLabel.setText("Account Neutral Losses");
 
-        estimateAScoreLabel.setText("Estimate A-score:");
+        estimateAScoreLabel.setText("Estimate A-score");
 
         percentLabel1.setText("%");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout ptmScoringPanelLayout = new javax.swing.GroupLayout(ptmScoringPanel);
+        ptmScoringPanel.setLayout(ptmScoringPanelLayout);
+        ptmScoringPanelLayout.setHorizontalGroup(
+            ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ptmScoringPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ptmScoringPanelLayout.createSequentialGroup()
                         .addComponent(estimateAScoreLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(ascoreCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 185, Short.MAX_VALUE)
                             .addComponent(neutralLossesCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 185, Short.MAX_VALUE)
-                            .addComponent(flrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))
-                        .addGap(25, 25, 25))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(flrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
+                    .addGroup(ptmScoringPanelLayout.createSequentialGroup()
+                        .addGroup(ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(neutralLossesLabel)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(aScoreLabel)
-                                .addGap(222, 222, 222)
-                                .addComponent(percentLabel1)))
-                        .addContainerGap())))
+                            .addComponent(aScoreLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(percentLabel1)
+                .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        ptmScoringPanelLayout.setVerticalGroup(
+            ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ptmScoringPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(estimateAScoreLabel)
                     .addComponent(ascoreCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(neutralLossesLabel)
                     .addComponent(neutralLossesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(9, 9, 9)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(ptmScoringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aScoreLabel)
                     .addComponent(flrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(percentLabel1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Fractions"));
-        jPanel2.setOpaque(false);
+        fractionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Fractions"));
+        fractionsPanel.setOpaque(false);
 
-        jLabel1.setText("Protein Confidence MW:");
-        jLabel1.setToolTipText("<html>\nThe minium protein confidence required to be included in the<br>\naverage molecular weight analysis in the Fractions tab.\n</html>");
+        proteinMwLabel.setText("Protein Confidence MW");
+        proteinMwLabel.setToolTipText("<html>\nThe minium protein confidence required to be included in the<br>\naverage molecular weight analysis in the Fractions tab.\n</html>");
 
         proteinConfidenceMwTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         proteinConfidenceMwTxt.setText("95");
@@ -355,27 +354,27 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
 
         percentLabel4.setText("%");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout fractionsPanelLayout = new javax.swing.GroupLayout(fractionsPanel);
+        fractionsPanel.setLayout(fractionsPanelLayout);
+        fractionsPanelLayout.setHorizontalGroup(
+            fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fractionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(proteinMwLabel)
                 .addGap(30, 30, 30)
                 .addComponent(proteinConfidenceMwTxt)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(percentLabel4)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        fractionsPanelLayout.setVerticalGroup(
+            fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fractionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(proteinConfidenceMwTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(percentLabel4)
-                    .addComponent(jLabel1))
+                    .addComponent(proteinMwLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -389,8 +388,8 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(okButton))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(ptmScoringPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fractionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(processingParamsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -400,9 +399,9 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(processingParamsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ptmScoringPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(fractionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(okButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -450,9 +449,7 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JLabel estimateAScoreLabel;
     private javax.swing.JTextField flrTxt;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel fractionsPanel;
     private javax.swing.JComboBox neutralLossesCmb;
     private javax.swing.JLabel neutralLossesLabel;
     private javax.swing.JButton okButton;
@@ -467,7 +464,9 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField proteinConfidenceMwTxt;
     private javax.swing.JLabel proteinFdrLabel;
     private javax.swing.JTextField proteinFdrTxt;
+    private javax.swing.JLabel proteinMwLabel;
     private javax.swing.JLabel psmFdrLabel;
     private javax.swing.JTextField psmFdrTxt;
+    private javax.swing.JPanel ptmScoringPanel;
     // End of variables declaration//GEN-END:variables
 }
