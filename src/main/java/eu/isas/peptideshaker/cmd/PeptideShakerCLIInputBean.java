@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.SearchParameters;
 import org.apache.commons.cli.CommandLine;
 
@@ -75,8 +76,8 @@ public class PeptideShakerCLIInputBean {
      *
      * @param aLine the command line
      * @throws FileNotFoundException
-     * @throws IOException 
-     * @throws ClassNotFoundException  
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     public PeptideShakerCLIInputBean(CommandLine aLine) throws FileNotFoundException, IOException, ClassNotFoundException {
 
@@ -87,27 +88,11 @@ public class PeptideShakerCLIInputBean {
             replicate = new Integer(aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id));
         }
 
-        spectrumFiles = new ArrayList<File>();
         String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
-        for (String file : splitInput(filesTxt)) {
-            File testFile = new File(file);
-            if (testFile.exists()) {
-                spectrumFiles.add(testFile);
-            } else {
-                throw new FileNotFoundException(file + " not found.");
-            }
-        }
+        spectrumFiles = getSpectrumFiles(filesTxt);
 
-        idFiles = new ArrayList<File>();
         filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
-        for (String file : splitInput(filesTxt)) {
-            File testFile = new File(file);
-            if (testFile.exists()) {
-                idFiles.add(testFile);
-            } else {
-                throw new FileNotFoundException(file + " not found.");
-            }
-        }
+        idFiles = getIdentificationFiles(filesTxt);
 
         output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
 
@@ -409,5 +394,88 @@ public class PeptideShakerCLIInputBean {
             results.add(file.trim());
         }
         return results;
+    }
+    
+    /**
+     * Returns a list of spectrum files as imported from the command line option
+     * @param optionInput the command line option
+     * @return a list of file candidates
+     * @throws FileNotFoundException exception thrown whenever a file is not found
+     */
+    public static ArrayList<File> getSpectrumFiles(String optionInput) throws FileNotFoundException {
+        ArrayList<String> extentions = new ArrayList<String>();
+        extentions.add(".mgf");
+        return getFiles(optionInput, extentions);
+    }
+    
+    /**
+     * Returns a list of identification files as imported from the command line option
+     * @param optionInput the command line option
+     * @return a list of file candidates
+     * @throws FileNotFoundException exception thrown whenever a file is not found
+     */
+    public static ArrayList<File> getIdentificationFiles(String optionInput) throws FileNotFoundException {
+        ArrayList<String> extentions = new ArrayList<String>();
+        extentions.add(".dat");
+        extentions.add(".omx");
+        extentions.add(".t.xml");
+        return getFiles(optionInput, extentions);
+    }
+    
+    /**
+     * Returns a list of files as imported from the command line option
+     * @param optionInput the command line option
+     * @param fileExtentions the file extensions to be considered
+     * @return a list of file candidates
+     * @throws FileNotFoundException exception thrown whenever a file is not found
+     */
+    private static ArrayList<File> getFiles(String optionInput, ArrayList<String> fileExtentions) throws FileNotFoundException {
+        ArrayList<File> result = new ArrayList<File>();
+        ArrayList<String> files = splitInput(optionInput);
+        if (files.size() == 1) {
+            File testFile = new File(files.get(0));
+            if (testFile.exists()) {
+                if (testFile.isDirectory()) {
+                    for (File childFile : testFile.listFiles()) {
+                        String fileName = Util.getFileName(childFile.getAbsolutePath());
+                        for (String extention : fileExtentions) {
+                            if (fileName.toLowerCase().endsWith(extention)) {
+                            if (childFile.exists()) {
+                                result.add(childFile);
+                                break;
+                            } else {
+                                throw new FileNotFoundException(childFile.getAbsolutePath() + " not found.");
+                            }
+                            }
+                        }
+                    }
+                } else {
+                    String fileName = Util.getFileName(testFile.getAbsolutePath());
+                        for (String extention : fileExtentions) {
+                            if (fileName.toLowerCase().endsWith(extention)) {
+                        result.add(testFile);
+                        break;
+                            }
+                        }
+                    }
+            } else {
+                throw new FileNotFoundException(files.get(0) + " not found.");
+            }
+        } else {
+            for (String file : files) {
+                        for (String extention : fileExtentions) {
+                            if (file.toLowerCase().endsWith(extention)) {
+                    File testFile = new File(file);
+                    if (testFile.exists()) {
+                        result.add(testFile);
+                    } else {
+                        throw new FileNotFoundException(file + " not found.");
+                    }
+                    break;
+                            }
+                }
+            }
+        }
+        return result;
     }
 }

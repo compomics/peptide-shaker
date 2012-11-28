@@ -192,11 +192,12 @@ public class PeptideShaker {
      * @param projectDetails The project details
      * @param processingPreferences the initial processing preferences
      * @param ptmScoringPreferences the PTM scoring preferences
-     * @param spectrumCountingPreferences
+     * @param backgroundThread boolean indicating whether the import should be done in a background thread (GUI mode) or in the current thread  (command line mode). 
+     * @param spectrumCountingPreferences the spectrum counting preferences
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
-            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences) {
+            ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, boolean backgroundThread) {
 
         waitingHandler.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n", true, true);
 
@@ -210,7 +211,7 @@ public class PeptideShaker {
 
         fileImporter = new FileImporter(this, waitingHandler, analysis, idFilter, metrics);
 
-        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
+        fileImporter.importFiles(idFiles, spectrumFiles, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails, backgroundThread);
     }
 
     /**

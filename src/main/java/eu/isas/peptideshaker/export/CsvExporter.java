@@ -17,6 +17,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -76,10 +77,6 @@ public class CsvExporter {
      */
     private String assumptionFile;
     /**
-     * The enzyme used for digestion.
-     */
-    private Enzyme enzyme;
-    /**
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -105,11 +102,10 @@ public class CsvExporter {
      * @param enzyme the enzyme used
      * @param identificationFeaturesGenerator
      */
-    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, Enzyme enzyme, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
-        this.enzyme = enzyme;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
 
         proteinFile = "PeptideShaker_" + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
@@ -121,19 +117,16 @@ public class CsvExporter {
     /**
      * Exports the results to csv files.
      *
-     * @param progressDialog a progress dialog, can be null
+     * @param waitingHandler a waitingHandler displaying progress to the user, can be null
      * @param folder the folder to store the results in.
-     * @return true if the export was sucessfull
+     * @return true if the export was successful
      */
-    public boolean exportResults(ProgressDialogX progressDialog, File folder) {
+    public boolean exportResults(WaitingHandler waitingHandler, File folder) {
 
         try {
-            // write the proteins
-            String lMessage = "Exporting Proteins. Please Wait...";
-            if (progressDialog != null) {
-                progressDialog.setTitle(lMessage);
-            } else {
-                System.out.println(lMessage);
+            
+            if (waitingHandler != null) {
+                waitingHandler.setWaitingText("Exporting Proteins. Please Wait...");
             }
 
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
@@ -144,24 +137,22 @@ public class CsvExporter {
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-            if (progressDialog != null) {
-                progressDialog.setIndeterminate(false);
-                progressDialog.setMaxProgressValue(identification.getProteinIdentification().size()
+            if (waitingHandler != null) {
+                waitingHandler.setIndeterminate(false);
+                waitingHandler.setMaxProgressValue(identification.getProteinIdentification().size()
                         + identification.getPeptideIdentification().size()
                         + 2 * identification.getSpectrumIdentificationSize());
             }
-
-            int progress = 0;
 
             for (String proteinKey : identification.getProteinIdentification()) {
 
                 proteinWriter.write(getProteinLine(proteinKey));
 
-                if (progressDialog != null) {
-                    progressDialog.setValue(++progress);
+                if (waitingHandler != null) {
+                    waitingHandler.increaseProgressValue();
                 }
 
-                if (progressDialog!= null  && progressDialog.isRunCanceled()) {
+                if (waitingHandler!= null  && waitingHandler.isRunCanceled()) {
                     break;
                 }
             }
@@ -170,13 +161,9 @@ public class CsvExporter {
 
 
             // write the peptides
-            lMessage = "Exporting Peptides. Please Wait...";
-            if (progressDialog != null) {
-                progressDialog.setTitle(lMessage);
-            } else {
-                System.out.println(lMessage);
+            if (waitingHandler != null) {
+                waitingHandler.setWaitingText("Exporting Peptides. Please Wait...");
             }
-
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
                     + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
@@ -186,11 +173,11 @@ public class CsvExporter {
 
                 peptideWriter.write(getPeptideLine(peptideKey));
 
-                if (progressDialog != null) {
-                    progressDialog.setValue(++progress);
+                if (waitingHandler != null) {
+                    waitingHandler.increaseProgressValue();
                 }
 
-                if (progressDialog != null && progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
             }
@@ -199,11 +186,8 @@ public class CsvExporter {
 
 
             // write the spectra
-            lMessage = "Exporting Spectra. Please Wait...";
-            if (progressDialog != null) {
-                progressDialog.setTitle(lMessage);
-            } else {
-                System.out.println(lMessage);
+            if (waitingHandler != null) {
+                waitingHandler.setWaitingText("Exporting Spectra. Please Wait...");
             }
 
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
@@ -215,17 +199,17 @@ public class CsvExporter {
             spectrumWriter.write(content);
 
             for (String spectrumFile : identification.getSpectrumFiles()) {
-                identification.loadSpectrumMatches(spectrumFile, progressDialog);
-                identification.loadSpectrumMatchParameters(lMessage, new PSParameter(), progressDialog);
+                identification.loadSpectrumMatches(spectrumFile, waitingHandler);
+                identification.loadSpectrumMatchParameters(spectrumFile, new PSParameter(), waitingHandler);
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
 
                 spectrumWriter.write(getSpectrumLine(spectrumKey));
 
-                if (progressDialog != null) {
-                    progressDialog.setValue(++progress);
+                if (waitingHandler != null) {
+                    waitingHandler.increaseProgressValue();
                 }
 
-                if (progressDialog != null && progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
             }

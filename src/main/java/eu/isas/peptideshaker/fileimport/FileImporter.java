@@ -45,11 +45,6 @@ import java.util.*;
 public class FileImporter {
 
     /**
-     * This boolean sets the FileImporter to be aware that PeptideShaker is
-     * working in CLI.
-     */
-    private static boolean boolCLI = false;
-    /**
      * The class which will load the information into the various maps and do
      * the associated calculations.
      */
@@ -137,23 +132,17 @@ public class FileImporter {
      * @param ptmScoringPreferences the PTM scoring preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
+     * @param backgroundThread boolean indicating whether the import should be done in a background thread (GUI mode) or in the current thread  (command line mode). 
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
+            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
 
-        if (boolCLI) {
-            // CLI mode needs to call the SwingWorker's running method directly.
-            try {
-                idProcessor.doInBackground();
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
-            }
-
-        } else {
-            // GUI mode
+        if (backgroundThread) {
             idProcessor.execute();
+        } else {
+            idProcessor.importFiles();
         }
     }
 
@@ -412,6 +401,10 @@ public class FileImporter {
          * appeared as first hit.
          */
         private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
+        /**
+         * Boolean indicating whether we can display gui stuffs
+         */
+        private boolean hasGUI = false;;
 
         /**
          * Constructor of the worker.
@@ -452,6 +445,15 @@ public class FileImporter {
 
         @Override
         protected Object doInBackground() throws Exception {
+            hasGUI = true;
+            return importFiles();
+        }
+        
+        /**
+         * Imports the identifications from the files given to the worker
+         * @return 
+         */
+        public int importFiles() {
 
             waitingHandler.appendReport("Establishing database connection.", true, true);
 
@@ -487,7 +489,12 @@ public class FileImporter {
                 }
 
                 while (!missingMgfFiles.isEmpty()) {
-                    if (boolCLI) {
+                    if (hasGUI) {
+                        new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
+                        if (waitingHandler.isRunCanceled()) {
+                            return 1;
+                        }
+                    } else {
                         String missingFiles = "";
                         boolean first = true;
                         for (File mgfFile : missingMgfFiles.keySet()) {
@@ -499,11 +506,7 @@ public class FileImporter {
                             missingFiles += mgfFile.getName();
                         }
                         waitingHandler.displayMessage("MGF files missing", missingFiles, 1);
-                    } else {
-                        new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
-                        if (waitingHandler.isRunCanceled()) {
-                            return 1;
-                        }
+                        return 1;
                     }
                     waitingHandler.appendReport("Processing files with the new input.", true, true);
                     ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
@@ -937,24 +940,5 @@ public class FileImporter {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Needs to be set to TRUE when working in CLI modus to avoid the
-     * SwingWorker backgroundthread.
-     *
-     * @param status CLI mode : TRUE GUI mode : FALSE
-     */
-    public static void setCLIMode(boolean status) {
-        boolCLI = status;
-    }
-
-    /**
-     * Returns whether the FileImporter is working in CLI modus.
-     *
-     * @return true if the file importer is working in command line mode
-     */
-    public static boolean isCLIMode() {
-        return boolCLI;
     }
 }

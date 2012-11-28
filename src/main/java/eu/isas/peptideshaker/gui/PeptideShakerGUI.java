@@ -3239,14 +3239,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Updates the ions used for fragment annotation.
      */
     public void updateAnnotationPreferencesFromSearchSettings() {
-        annotationPreferences.clearIonTypes();
-        annotationPreferences.addIonType(Ion.IonType.PEPTIDE_FRAGMENT_ION, searchParameters.getIonSearched1());
-        annotationPreferences.addIonType(Ion.IonType.PEPTIDE_FRAGMENT_ION, searchParameters.getIonSearched2());
-        annotationPreferences.addIonType(Ion.IonType.PRECURSOR_ION);
-        annotationPreferences.addIonType(Ion.IonType.IMMONIUM_ION);
-        annotationPreferences.addIonType(Ion.IonType.REPORTER_ION);
-        annotationPreferences.setFragmentIonAccuracy(searchParameters.getFragmentIonAccuracy());
-
+        annotationPreferences.setPreferencesFromSearchParamaers(searchParameters);
         if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("a-ions");
         } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {

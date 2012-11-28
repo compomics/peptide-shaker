@@ -854,7 +854,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 return myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("omx")
-                        || myFile.getName().toLowerCase().endsWith("xml")
+                        || myFile.getName().toLowerCase().endsWith("t.xml")
                         || myFile.isDirectory();
             }
 
@@ -1294,7 +1294,7 @@ public class NewDialog extends javax.swing.JDialog {
         peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles,
                 spectrumFiles, searchParameters,
                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails(),
-                processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences());
+                processingPreferences, ptmScoringPreferences, peptideShakerGUI.getSpectrumCountingPreferences(), true);
     }
 
     /**
