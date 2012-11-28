@@ -1,69 +1,44 @@
-#summary How to use PeptideShaker from the command line or from other Java applications
+#summary How to use PeptideShaker from the command line - available for version 0.19.0 and following.
+
 
 =PeptideShaker Command Line Interface=
 
-The PeptideShaker command line tool takes a [http://searchgui.googlecode.com SearchGUI] result folder, performs the X!Tandem/OMSSA integrated FDR calculations, and subsequently generates PSM, peptide and protein an output files.
-
-To make use of *PeptideShakerCLI* from the command line use the following command:
+The command line interface can be used to process identification files and output identification results in various formats.
 
 {{{
-java -cp PeptideShaker-X.Y.Z eu.isas.peptideshaker.cmd.PeptideShakerCLI [options and input]
-
-   available options and inputs:
-
-Options:
--ascore             Include ascore to estimate the probability of phospho sites
--out                PeptideShaker output folder
--pep                FDR at PEPTIDE level (default 1% FDR: <1>)
--prot               FDR at PROTEIN level (default 1% FDR: <1>)
--psm                FDR at PSM level (default 1% FDR: <1>)
--search_gui_results SearchGUI result folder
-
-}}}
- 
-To show the usage description in the command line, start PeptideShakerCLI without parameters.
-
-An example command line:
-{{{
-java -cp PeptideShaker-X.Y.Z eu.isas.peptideshaker.cmd.PeptideShakerCLI 
-  -search_gui_results ~/tmp/searchgui_result_folder_projectA/ 
-  -out ~/tmp/peptidshaker_projectA/  -pep 1 -prot 1 -psm 1 -ascore
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
 
-This will start *PeptideShaker* and import the X!Tandem, OMSSA and/or Mascot results files in the specified SearchGUI output folder. After importing and integrating the identification files, the PSMs/Peptides/Proteins will be validated to a resulting 1% FDR. 
 
-----
-
-=PeptideShaker API=
-
-Other applications can also make use of the PeptideShaker API by creating PeptideShakerCLI instances. To make such an instance, you first need to fill a dedicated Java Bean (PeptideShakerCLIInputBean) with the required parameters.
+The following parameters are mandatory:
 
 {{{
-PeptideShakerCLIInputBean:
-
-// Accepted PSM FDR
-private double iPSMFDR = 1.0;
-
-// Accepted Peptide sequence FDR
-private double iPeptideFDR = 1.0;
-
-// Accepted Protein FDR
-private double iProteinFDR = 1.0;
-
-// Include estimation of AScore
-private boolean boolAScore = false;
-
-// SearchGUI input folder
-private File iInput = null;
-
-// PeptideShaker output folder
-private File iOutput = null;
-
-// Taskname which will be used to name the experiment
-private String iExperimentID = "peptideshaker_cli_exp_default";
-
-// Taskname which will be used to name the sample
-private String iSampleID = "peptideshaker_cli_sample_default";
+-experiment                 Specifies the experiment name
+-sample                     Specifies the sample name
+-replicate                  The replicate number
+-spectrum_files             The spectrum files (mgf format) in a comma separated list or an entire folder. Example: 'file1.mgf, file2.mgf'.
+-identification_files       The identification files (Mascot .dat, OMSSA .omx and X!Tandem .t.xml formats) in a comma separated list or an entire folder. Example: 'file1.omx, file1.dat, file1.t.xml'.
+-out                        PeptideShaker output file. If the file already exists it will be silently overwritten.
 }}}
 
-Using one such Bean will, you can create a Callable PeptideShakerCLI instance which will start *PeptideShaker* and import the X!Tandem, OMSSA and/or Mascot results files in the specified SearchGUI output folder. After importing and integrating the identification files, the PSMs/Peptides/Proteins will be validated to a resulting 1% FDR. 
+
+The following parameters are optional:
+
+{{{
+-out_csv                    Output folder for csv summary
+-out_pride                  PeptideShaker Pride xml output file (not implemented yet)
+-psm_FDR                    FDR at the PSM level in percent (default 1% FDR: '1')
+-psm_FLR                    FLR at the PSM level in percent for peptides with different potential modification sites and one variable modification (default 1% FLR: '1')
+-peptide_FDR                FDR at the peptide level in percent (default 1% FDR: '1')
+-protein_FDR                FDR at the protein level in percent (default 1% FDR: '1')
+-identification_parameters  The identification parameters as serialized file of com.compomics.util.experiment.identification.SearchParameters. This file is automatically saved by SearchGUI along with the identification files. If not provided default settings will be tried. If the default settings don't work the import will crash - hopefully decently.
+}}}
+
+
+Here is an example for windows where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI -experiment myExperiment -sample mySample -replicate 1 -identification_files "C:\my folder" -spectrum_files "C:\my folder" -identification_parameters "C:\my folder" -out "C:\my folder\myCpsFile.cps"
+}}}
+
+
+If you experience any problem with the command line or have any suggestion please contact us via the [[https://groups.google.com/group/peptide-shaker PeptideShaker mailing list]].
