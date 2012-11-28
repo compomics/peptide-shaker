@@ -1252,7 +1252,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
-                            peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdentificationFeaturesGenerator());
+                            peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getIdentificationFeaturesGenerator());
                     boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
 
                     boolean processCancelled = progressDialog.isRunCanceled();

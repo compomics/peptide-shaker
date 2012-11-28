@@ -95,7 +95,7 @@ public class PeptideShakerCLI implements Callable {
         if (error != null) {
             System.out.println(error);
         }
-        
+
         // Get the input files
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
         ArrayList<File> identificationFiles = cliInputBean.getIdFiles();
@@ -118,12 +118,13 @@ public class PeptideShakerCLI implements Callable {
 
         // Set the annotation preferences
         AnnotationPreferences annotationPreferences = new AnnotationPreferences();
+        annotationPreferences.setPreferencesFromSearchParamaers(searchParameters);
 
         // Create a shaker which will perform the analysis
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
         // Import the files
-        peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters, annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
+        peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters, annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, false);
 
         // Identification as created by PeptideShaker
         ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
@@ -140,6 +141,7 @@ public class PeptideShakerCLI implements Callable {
 
         // Save results
         try {
+            waitingHandler.appendReport("Saving results, please wait...", true, true);
             File ouptutFile = cliInputBean.getOutput();
             CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, metrics, processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, true);
         } catch (Exception e) {
@@ -148,8 +150,9 @@ public class PeptideShakerCLI implements Callable {
 
         // CSV output required?
         if (cliInputBean.getCsvDirectory() != null) {
-            CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, searchParameters.getEnzyme(), identificationFeaturesGenerator);
-            exporter.exportResults(null, cliInputBean.getCsvDirectory());
+            waitingHandler.appendReport("Exporting results in csv file, please wait...", true, true);
+            CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+            exporter.exportResults(waitingHandler, cliInputBean.getCsvDirectory());
         }
 
         // Pride output required?
@@ -159,8 +162,7 @@ public class PeptideShakerCLI implements Callable {
         //@TODO!
 
         // Finished
-        System.out.println("finished PeptideShaker-CLI");
-
+        System.out.println(System.getProperty("line.separator") + "End of PeptideShaker command line execution" + System.getProperty("line.separator"));
         return null;
     }
 
@@ -175,31 +177,17 @@ public class PeptideShakerCLI implements Callable {
                 + System.getProperty("line.separator")
                 + "----------------------" + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "The PeptideShaker command line tool takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files.\n"
+                + "The PeptideShaker command line tool takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files." + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + "If you encounter any issue please visit our website (http://peptide-shaker.googlecode.com). You might find help in the troubleshooting section (https://code.google.com/p/peptide-shaker/#Troubleshooting) and in our help wiki for the command line use (https://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI)." + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + "If the problem persists, you will find support (for free!) at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "----------------------" + System.getProperty("line.separator")
                 + "OPTIONS" + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "----------------------" + System.getProperty("line.separator")
                 + "";
-    }
-
-    /**
-     * Returns a File handle from to the mods.xml file in the classpath.
-     *
-     * @return a File handle from to the mods.xml file in the classpath
-     */
-    private File getModificationFile() throws URISyntaxException {
-        return new File(PeptideShaker.MODIFICATIONS_FILE);
-    }
-
-    /**
-     * Returns a File handle from to the mods.xml file in the classpath.
-     *
-     * @return a File handle from to the mods.xml file in the classpath
-     */
-    private File getUserModificationFile() throws URISyntaxException {
-        return new File(PeptideShaker.USER_MODIFICATIONS_FILE);
     }
 
     /**
@@ -245,13 +233,11 @@ public class PeptideShakerCLI implements Callable {
             System.out.println("Spectrum files not specified.");
             return false;
         } else {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
-            for (String file : PeptideShakerCLIInputBean.splitInput(filesTxt)) {
-                File testFile = new File(file);
-                if (!testFile.exists()) {
-                    System.out.println("Spectrum file " + file + " not found.");
-                    return false;
-                }
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
+            ArrayList<File> idFiles = PeptideShakerCLIInputBean.getSpectrumFiles(filesTxt);
+            if (idFiles.isEmpty()) {
+                System.out.println("No spectrum file found.");
+                return false;
             }
         }
 
@@ -260,12 +246,10 @@ public class PeptideShakerCLI implements Callable {
             return false;
         } else {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
-            for (String file : PeptideShakerCLIInputBean.splitInput(filesTxt)) {
-                File testFile = new File(file);
-                if (!testFile.exists()) {
-                    System.out.println("Identification file " + file + " not found.");
-                    return false;
-                }
+            ArrayList<File> idFiles = PeptideShakerCLIInputBean.getIdentificationFiles(filesTxt);
+            if (idFiles.isEmpty()) {
+                System.out.println("No identification file found.");
+                return false;
             }
         }
 
@@ -382,7 +366,7 @@ public class PeptideShakerCLI implements Callable {
                 HelpFormatter formatter = new HelpFormatter();
 
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("PeptideShaker-CLI" + System.getProperty("line.separator"));
+                lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));
 
                 lPrintWriter.print(getHeader());
 
@@ -394,8 +378,6 @@ public class PeptideShakerCLI implements Callable {
 
                 System.exit(0);
             } else {
-                System.out.println("PeptideShaker-CLI startup parameters ok.");
-
                 PeptideShakerCLIInputBean lCLIBean = new PeptideShakerCLIInputBean(line);
                 PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI(lCLIBean);
                 lPeptideShakerCLI.call();

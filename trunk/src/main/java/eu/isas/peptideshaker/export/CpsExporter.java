@@ -102,8 +102,7 @@ public class CpsExporter {
 
         // transfer all files in the match directory
         if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-            waitingHandler.getPrimaryProgressBar().setIndeterminate(true);
-            waitingHandler.getPrimaryProgressBar().setStringPainted(false);
+            waitingHandler.setIndeterminate(true);
             File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
             ExperimentIO.save(experimentFile, experiment);
         }
