@@ -249,9 +249,8 @@ public class PtmScoring implements Serializable {
         ArrayList<Integer> result = new ArrayList<Integer>();
         if (locationsKey.length() > 1) {
             String tempKey = locationsKey.substring(0, locationsKey.lastIndexOf(separator));
-            int index;
             while (tempKey.length() >= 1) {
-                index = tempKey.lastIndexOf(separator);
+                int index = tempKey.lastIndexOf(separator);
                 result.add(new Integer(tempKey.substring(index + 1)));
                 if (index > -1) {
                     tempKey = tempKey.substring(0, index);

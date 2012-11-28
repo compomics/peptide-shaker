@@ -17,6 +17,7 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -89,11 +90,15 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * Boolean indicating whether the user pushed on cancel.
      */
     private boolean canceled = false;
+    /*
+     * The PeptideShakerGUI parent.
+     */
+    private PeptideShakerGUI peptideShakerGUI;
 
     /**
      * Creates a new search parameters dialog.
      *
-     * @param parent the parent frame
+     * @param peptideShakerGUI the parent frame
      * @param editable a boolean indicating whether the search parameters can be
      * edited
      * @param searchParameters the search parameters. If null default versions
@@ -104,9 +109,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      * setting
      * @param ptmToPrideMap the PTM to pride map
      */
-    public SearchPreferencesDialog(JFrame parent, boolean editable, SearchParameters searchParameters, 
+    public SearchPreferencesDialog(PeptideShakerGUI peptideShakerGUI, boolean editable, SearchParameters searchParameters, 
             PtmToPrideMap ptmToPrideMap, String selectedRowHtmlTagFontColor, String notSelectedRowHtmlTagFontColor) {
-        super(parent, true);
+        super(peptideShakerGUI, true);
+        this.peptideShakerGUI = peptideShakerGUI;
 
         this.editable = editable;
 
@@ -122,7 +128,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
         initComponents();
         setUpGui();
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
@@ -840,7 +846,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
        
-        JFileChooser fc = new JFileChooser(); // @TODO: add last selected folder
+        String currentPath = peptideShakerGUI.getLastSelectedFolder();
+
+        if (new File(fileTxt.getText()).exists()) {
+            currentPath = fileTxt.getText();
+        }
+
+        JFileChooser fc = new JFileChooser(currentPath);
 
         FileFilter filter = new FileFilter() {
 
@@ -861,7 +873,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             loadSearchParameters(file);
-
+            peptideShakerGUI.setLastSelectedFolder(file.getAbsolutePath());
         }
     }//GEN-LAST:event_loadButtonActionPerformed
 
@@ -1407,11 +1419,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void loadSearchParameters(File file) {
         try {
             searchParameters = SearchParameters.getIdentificationParameters(file);
+            searchParameters.setParametersFile(file);
             PeptideShaker.loadModifications(searchParameters);
             setScreenProps();
             expectedModificationsTable.revalidate();
             expectedModificationsTable.repaint();
-
         } catch (Exception e) {
             try {
                 // Old school format, overwrite old file
