@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.Util;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -23,9 +25,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -80,43 +82,46 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         backgroundPanel = new javax.swing.JPanel();
         spectraPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        exportSpectraLabel = new javax.swing.JLabel();
         spectrumValidationCmb = new javax.swing.JComboBox();
         exportMgfButton = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
+        recalibrateSpectraLabel = new javax.swing.JLabel();
         spectrumRecalibrationCmb = new javax.swing.JComboBox();
         recalibrateMgfButton = new javax.swing.JButton();
         inclusionListPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        ignoredPeptidesLabel = new javax.swing.JLabel();
         miscleavedCheck = new javax.swing.JCheckBox();
         reactiveCheck = new javax.swing.JCheckBox();
-        jLabel3 = new javax.swing.JLabel();
+        includeValidatedPsmsLabel = new javax.swing.JLabel();
         idSelectionCmb = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
+        formatLabel = new javax.swing.JLabel();
         vendorCmb = new javax.swing.JComboBox();
         inclusionListButton = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
+        ignoredProteinsLabel = new javax.swing.JLabel();
         isoformsCheck = new javax.swing.JCheckBox();
         isoformsUnrelatedCheck = new javax.swing.JCheckBox();
         unrelatedCheck = new javax.swing.JCheckBox();
         degeneratedCheck = new javax.swing.JCheckBox();
-        jLabel6 = new javax.swing.JLabel();
+        minRtWindowLabel = new javax.swing.JLabel();
         rtWindow = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
+        minRtWindowUnitLabel = new javax.swing.JLabel();
         progenesisPanel = new javax.swing.JPanel();
         exportProgenesisButton = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
+        exportToProgenesisPart1Label = new javax.swing.JLabel();
+        progensisWarningLabel = new javax.swing.JLabel();
+        exportToProgenesisLinkLabel = new javax.swing.JLabel();
+        exportToProgenesisPart2Label = new javax.swing.JLabel();
         unidentifiedProteinsPanel = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
+        exportAllUnidentifiedProteinsAsFastaLabel = new javax.swing.JLabel();
         exportUnidentifiedProteinsAsFastaButton = new javax.swing.JButton();
         includeNonValidatedInUnidentifiedFastaCheckBox = new javax.swing.JCheckBox();
-        jLabel11 = new javax.swing.JLabel();
+        exportAllUnidentifiedAccessionsLabel = new javax.swing.JLabel();
         includeNonValidatedInProteinUnidentifiedCsvCheckBox = new javax.swing.JCheckBox();
         exportUnidentifiedProteinsAccessionNumbersAsCsvButton = new javax.swing.JButton();
         unidentifiedProteinsPanel1 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
+        exportAllIdentifiedProteinsAsFastaLabel = new javax.swing.JLabel();
         exportIdentifiedProteinsAsFastaButton = new javax.swing.JButton();
-        jLabel13 = new javax.swing.JLabel();
+        exportAllIdentifiedProteinAccessionsLabel = new javax.swing.JLabel();
         exportIdentifiedProteinAccessionNumbersAsCsvButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -128,7 +133,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectra"));
         spectraPanel.setOpaque(false);
 
-        jLabel1.setText("Export Spectra:");
+        exportSpectraLabel.setText("Export Spectra");
 
         spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs / Unidentified Spectra", "Non-Validated Peptides", "Non-Validated Proteins" }));
 
@@ -139,7 +144,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel9.setText("Recalibrate Spectra:");
+        recalibrateSpectraLabel.setText("Recalibrate Spectra");
 
         spectrumRecalibrationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor and Fragment Ions", "Precursor Ions", "Fragment Ions" }));
 
@@ -157,12 +162,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel9))
+                    .addComponent(exportSpectraLabel)
+                    .addComponent(recalibrateSpectraLabel))
                 .addGap(31, 31, 31)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(spectraPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumValidationCmb, 0, 391, Short.MAX_VALUE)
+                        .addComponent(spectrumValidationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(spectraPanelLayout.createSequentialGroup()
@@ -176,12 +181,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
+                    .addComponent(recalibrateSpectraLabel)
                     .addComponent(recalibrateMgfButton)
                     .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(exportSpectraLabel)
                     .addComponent(exportMgfButton)
                     .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -190,7 +195,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion Lists"));
         inclusionListPanel.setOpaque(false);
 
-        jLabel2.setText("Ignored Peptides:");
+        ignoredPeptidesLabel.setText("Ignored Peptides");
 
         miscleavedCheck.setSelected(true);
         miscleavedCheck.setText("miscleaved peptides");
@@ -202,11 +207,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         reactiveCheck.setIconTextGap(10);
         reactiveCheck.setOpaque(false);
 
-        jLabel3.setText("Include Validated PSMs:");
+        includeValidatedPsmsLabel.setText("Include Validated PSMs");
 
         idSelectionCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All Validated PSMs", "Validated PSMs of All Validated Peptides", "Validated PSMs of Validated Peptides of All Validated Proteins", "Validated PSMs of Currently Displayed Peptides", "Validated PSMs of Currently Displayed Proteins" }));
 
-        jLabel4.setText("Format:");
+        formatLabel.setText("Format");
 
         vendorCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Thermo", "ABI", "Bruker", "MassLynx" }));
 
@@ -217,7 +222,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel5.setText("Ignored Proteins:");
+        ignoredProteinsLabel.setText("Ignored Proteins");
 
         isoformsCheck.setText("isoforms");
         isoformsCheck.setIconTextGap(10);
@@ -237,12 +242,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         degeneratedCheck.setIconTextGap(10);
         degeneratedCheck.setOpaque(false);
 
-        jLabel6.setText("Minimum RT Window:");
+        minRtWindowLabel.setText("Minimum RT Window");
 
         rtWindow.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         rtWindow.setText("20");
 
-        jLabel7.setText("s");
+        minRtWindowUnitLabel.setText("s");
 
         javax.swing.GroupLayout inclusionListPanelLayout = new javax.swing.GroupLayout(inclusionListPanel);
         inclusionListPanel.setLayout(inclusionListPanelLayout);
@@ -251,14 +256,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                    .addComponent(includeValidatedPsmsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(minRtWindowLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ignoredPeptidesLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ignoredProteinsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
+                            .addComponent(formatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
@@ -279,11 +284,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                                 .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel7))))
+                                .addComponent(minRtWindowUnitLabel))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(vendorCmb, 0, 378, Short.MAX_VALUE)
-                            .addComponent(idSelectionCmb, 0, 378, Short.MAX_VALUE))
+                            .addComponent(vendorCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(idSelectionCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -299,28 +304,28 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(miscleavedCheck)
-                            .addComponent(jLabel2)
+                            .addComponent(ignoredPeptidesLabel)
                             .addComponent(reactiveCheck))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(isoformsCheck)
-                            .addComponent(jLabel5)
+                            .addComponent(ignoredProteinsLabel)
                             .addComponent(unrelatedCheck)
                             .addComponent(isoformsUnrelatedCheck))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
+                            .addComponent(minRtWindowLabel)
                             .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7)))
+                            .addComponent(minRtWindowUnitLabel)))
                     .addComponent(degeneratedCheck))
                 .addGap(8, 8, 8)
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(includeValidatedPsmsLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
+                    .addComponent(formatLabel)
                     .addComponent(inclusionListButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -335,7 +340,37 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel8.setText("Export Spectrum IDs to Progenesis Tab Separated Phenyx Format:");
+        exportToProgenesisPart1Label.setText("Export Spectrum IDs to");
+
+        progensisWarningLabel.setText("<html><color=\"red\"><a href=\"\">Warning</a></html>");
+        progensisWarningLabel.setToolTipText("Progenesis format warning");
+        progensisWarningLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                progensisWarningLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                progensisWarningLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                progensisWarningLabelMouseExited(evt);
+            }
+        });
+
+        exportToProgenesisLinkLabel.setText("<html><a href=\\\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\\\">Progenesis</a></html>");
+        exportToProgenesisLinkLabel.setToolTipText("Open Progenesis LC-MS web page");
+        exportToProgenesisLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exportToProgenesisLinkLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportToProgenesisLinkLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportToProgenesisLinkLabelMouseExited(evt);
+            }
+        });
+
+        exportToProgenesisPart2Label.setText("as Tab Separated Phenyx Format");
 
         javax.swing.GroupLayout progenesisPanelLayout = new javax.swing.GroupLayout(progenesisPanel);
         progenesisPanel.setLayout(progenesisPanelLayout);
@@ -343,8 +378,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progenesisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(progenesisPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel8)
+                .addComponent(exportToProgenesisPart1Label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportToProgenesisLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exportToProgenesisPart2Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(progensisWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(178, 178, 178)
                 .addComponent(exportProgenesisButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -353,15 +394,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(progenesisPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(progenesisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(exportProgenesisButton))
+                    .addComponent(exportToProgenesisPart1Label)
+                    .addComponent(exportProgenesisButton)
+                    .addComponent(progensisWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportToProgenesisLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportToProgenesisPart2Label))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         unidentifiedProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unidentified Proteins"));
         unidentifiedProteinsPanel.setOpaque(false);
 
-        jLabel10.setText("<html>Export all the <b>unidentified</b> proteins as a FASTA file:</html>");
+        exportAllUnidentifiedProteinsAsFastaLabel.setText("<html>Export all the <b>unidentified</b> proteins as a FASTA file</html>");
 
         exportUnidentifiedProteinsAsFastaButton.setText("Export as FASTA");
         exportUnidentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
@@ -376,7 +420,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         includeNonValidatedInUnidentifiedFastaCheckBox.setIconTextGap(10);
         includeNonValidatedInUnidentifiedFastaCheckBox.setOpaque(false);
 
-        jLabel11.setText("<html>Export all the <b>unidentified</b> proteins accession numbers:</html>");
+        exportAllUnidentifiedAccessionsLabel.setText("<html>Export all the <b>unidentified</b> proteins accession numbers</html>");
 
         includeNonValidatedInProteinUnidentifiedCsvCheckBox.setSelected(true);
         includeNonValidatedInProteinUnidentifiedCsvCheckBox.setText("Include Non-Validated");
@@ -399,14 +443,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(exportAllUnidentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(includeNonValidatedInUnidentifiedFastaCheckBox))
                     .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(exportAllUnidentifiedAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exportUnidentifiedProteinsAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(exportUnidentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
@@ -417,12 +461,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportAllUnidentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportUnidentifiedProteinsAsFastaButton)
                     .addComponent(includeNonValidatedInUnidentifiedFastaCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportAllUnidentifiedAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportUnidentifiedProteinsAccessionNumbersAsCsvButton)
                     .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -431,7 +475,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         unidentifiedProteinsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Identified Proteins"));
         unidentifiedProteinsPanel1.setOpaque(false);
 
-        jLabel12.setText("<html>Export all the <b>identified</b> proteins as a FASTA file:</html>");
+        exportAllIdentifiedProteinsAsFastaLabel.setText("<html>Export all the <b>identified</b> proteins as a FASTA file</html>");
 
         exportIdentifiedProteinsAsFastaButton.setText("Export as FASTA");
         exportIdentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
@@ -440,7 +484,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel13.setText("<html>Export all the <b>identified</b> proteins accession numbers:</html>");
+        exportAllIdentifiedProteinAccessionsLabel.setText("<html>Export all the <b>identified</b> proteins accession numbers</html>");
 
         exportIdentifiedProteinAccessionNumbersAsCsvButton.setText("Export as CSV");
         exportIdentifiedProteinAccessionNumbersAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
@@ -456,9 +500,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
+                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addComponent(exportIdentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
@@ -469,11 +513,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportIdentifiedProteinsAsFastaButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -490,7 +534,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(progenesisPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -753,7 +797,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                                         retentionTimes.add(precursor.getRt());
                                                     }
 
-                peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+                                                    peptideShakerGUI.getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                                                         if (progressDialog.isRunCanceled()) {
@@ -1260,6 +1304,87 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
 
     /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void progensisWarningLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_progensisWarningLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_progensisWarningLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void progensisWarningLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_progensisWarningLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_progensisWarningLabelMouseExited
+
+    /**
+     * Show the Progensis warning.
+     *
+     * @param evt
+     */
+    private void progensisWarningLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_progensisWarningLabelMouseClicked
+
+        // create an empty label to put the message in
+        JLabel label = new JLabel();
+
+        // html content 
+        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                + "Note that using the Phenyx format simplifies the identification results.<br>"
+                + "A direct PeptideShaker import is currently not available in Progenesis.<br>"
+                + "If you would like this supported please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."
+                + "</body></html>");
+
+        // handle link events 
+        ep.addHyperlinkListener(new HyperlinkListener() {
+
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                }
+            }
+        });
+
+        ep.setBorder(null);
+        ep.setEditable(false);
+
+        JOptionPane.showMessageDialog(this, ep, "Progenesis Format Warning", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_progensisWarningLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseExited
+
+    /**
+     * Open the Progenesis home page.
+     * 
+     * @param evt 
+     */
+    private void exportToProgenesisLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.nonlinear.com/products/progenesis/lc-ms/overview/");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisLinkLabelMouseClicked
+
+    /**
      * Indicates whether a spectrum is validated according to the user's
      * settings.
      *
@@ -1446,36 +1571,39 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox degeneratedCheck;
+    private javax.swing.JLabel exportAllIdentifiedProteinAccessionsLabel;
+    private javax.swing.JLabel exportAllIdentifiedProteinsAsFastaLabel;
+    private javax.swing.JLabel exportAllUnidentifiedAccessionsLabel;
+    private javax.swing.JLabel exportAllUnidentifiedProteinsAsFastaLabel;
     private javax.swing.JButton exportIdentifiedProteinAccessionNumbersAsCsvButton;
     private javax.swing.JButton exportIdentifiedProteinsAsFastaButton;
     private javax.swing.JButton exportMgfButton;
     private javax.swing.JButton exportProgenesisButton;
+    private javax.swing.JLabel exportSpectraLabel;
+    private javax.swing.JLabel exportToProgenesisLinkLabel;
+    private javax.swing.JLabel exportToProgenesisPart1Label;
+    private javax.swing.JLabel exportToProgenesisPart2Label;
     private javax.swing.JButton exportUnidentifiedProteinsAccessionNumbersAsCsvButton;
     private javax.swing.JButton exportUnidentifiedProteinsAsFastaButton;
+    private javax.swing.JLabel formatLabel;
     private javax.swing.JComboBox idSelectionCmb;
+    private javax.swing.JLabel ignoredPeptidesLabel;
+    private javax.swing.JLabel ignoredProteinsLabel;
     private javax.swing.JCheckBox includeNonValidatedInProteinUnidentifiedCsvCheckBox;
     private javax.swing.JCheckBox includeNonValidatedInUnidentifiedFastaCheckBox;
+    private javax.swing.JLabel includeValidatedPsmsLabel;
     private javax.swing.JButton inclusionListButton;
     private javax.swing.JPanel inclusionListPanel;
     private javax.swing.JCheckBox isoformsCheck;
     private javax.swing.JCheckBox isoformsUnrelatedCheck;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel minRtWindowLabel;
+    private javax.swing.JLabel minRtWindowUnitLabel;
     private javax.swing.JCheckBox miscleavedCheck;
     private javax.swing.JPanel progenesisPanel;
+    private javax.swing.JLabel progensisWarningLabel;
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JButton recalibrateMgfButton;
+    private javax.swing.JLabel recalibrateSpectraLabel;
     private javax.swing.JTextField rtWindow;
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;

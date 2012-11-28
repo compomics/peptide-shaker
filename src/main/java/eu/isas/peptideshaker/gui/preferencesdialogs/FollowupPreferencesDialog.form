@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.8" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Export - Follow Up Analysis"/>
@@ -53,7 +53,7 @@
                       <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="inclusionListPanel" alignment="0" max="32767" attributes="3"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="13" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -92,13 +92,13 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportSpectraLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="recalibrateSpectraLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="spectrumValidationCmb" pref="391" max="32767" attributes="0"/>
+                              <Component id="spectrumValidationCmb" max="32767" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="exportMgfButton" min="-2" pref="180" max="-2" attributes="0"/>
                           </Group>
@@ -117,13 +117,13 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="recalibrateSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="recalibrateMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumRecalibrationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumValidationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -133,9 +133,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="exportSpectraLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Spectra:"/>
+                <Property name="text" type="java.lang.String" value="Export Spectra"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="spectrumValidationCmb">
@@ -157,9 +157,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportMgfButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel9">
+            <Component class="javax.swing.JLabel" name="recalibrateSpectraLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Recalibrate Spectra:"/>
+                <Property name="text" type="java.lang.String" value="Recalibrate Spectra"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="spectrumRecalibrationCmb">
@@ -199,15 +199,15 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel3" alignment="0" pref="142" max="32767" attributes="1"/>
+                          <Component id="includeValidatedPsmsLabel" alignment="0" max="32767" attributes="1"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="jLabel6" alignment="1" max="32767" attributes="1"/>
-                                      <Component id="jLabel2" alignment="0" max="32767" attributes="1"/>
-                                      <Component id="jLabel5" alignment="0" pref="126" max="32767" attributes="1"/>
+                                      <Component id="minRtWindowLabel" alignment="1" max="32767" attributes="1"/>
+                                      <Component id="ignoredPeptidesLabel" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="ignoredProteinsLabel" alignment="0" pref="126" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="jLabel4" alignment="0" min="-2" pref="116" max="-2" attributes="1"/>
+                                  <Component id="formatLabel" alignment="0" min="-2" pref="116" max="-2" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -235,14 +235,14 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="rtWindow" min="-2" pref="104" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                                      <Component id="minRtWindowUnitLabel" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="vendorCmb" pref="378" max="32767" attributes="0"/>
-                                  <Component id="idSelectionCmb" alignment="1" pref="378" max="32767" attributes="1"/>
+                                  <Component id="vendorCmb" max="32767" attributes="0"/>
+                                  <Component id="idSelectionCmb" alignment="1" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
@@ -260,21 +260,21 @@
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="miscleavedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ignoredPeptidesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="reactiveCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="isoformsCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ignoredProteinsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="unrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="isoformsUnrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="minRtWindowLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="rtWindow" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="minRtWindowUnitLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="degeneratedCheck" min="-2" max="-2" attributes="0"/>
@@ -282,12 +282,12 @@
                       <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="idSelectionCmb" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="includeValidatedPsmsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="vendorCmb" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="formatLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="inclusionListButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -296,9 +296,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="ignoredPeptidesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ignored Peptides:"/>
+                <Property name="text" type="java.lang.String" value="Ignored Peptides"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="miscleavedCheck">
@@ -317,9 +317,9 @@
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
+            <Component class="javax.swing.JLabel" name="includeValidatedPsmsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Include Validated PSMs:"/>
+                <Property name="text" type="java.lang.String" value="Include Validated PSMs"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="idSelectionCmb">
@@ -335,9 +335,9 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
+            <Component class="javax.swing.JLabel" name="formatLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Format:"/>
+                <Property name="text" type="java.lang.String" value="Format"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="vendorCmb">
@@ -360,9 +360,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inclusionListButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel5">
+            <Component class="javax.swing.JLabel" name="ignoredProteinsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ignored Proteins:"/>
+                <Property name="text" type="java.lang.String" value="Ignored Proteins"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="isoformsCheck">
@@ -395,9 +395,9 @@
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel6">
+            <Component class="javax.swing.JLabel" name="minRtWindowLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Minimum RT Window:"/>
+                <Property name="text" type="java.lang.String" value="Minimum RT Window"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="rtWindow">
@@ -406,7 +406,7 @@
                 <Property name="text" type="java.lang.String" value="20"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel7">
+            <Component class="javax.swing.JLabel" name="minRtWindowUnitLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="s"/>
               </Properties>
@@ -428,8 +428,14 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportToProgenesisPart1Label" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="exportToProgenesisLinkLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="exportToProgenesisPart2Label" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="progensisWarningLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
                       <Component id="exportProgenesisButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -440,8 +446,11 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToProgenesisPart1Label" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportProgenesisButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="progensisWarningLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToProgenesisLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToProgenesisPart2Label" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -457,9 +466,36 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProgenesisButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel8">
+            <Component class="javax.swing.JLabel" name="exportToProgenesisPart1Label">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Spectrum IDs to Progenesis Tab Separated Phenyx Format:"/>
+                <Property name="text" type="java.lang.String" value="Export Spectrum IDs to"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="progensisWarningLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;color=&quot;red&quot;&gt;&lt;a href=&quot;&quot;&gt;Warning&lt;/a&gt;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Progenesis format warning"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progensisWarningLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progensisWarningLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progensisWarningLabelMouseExited"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="exportToProgenesisLinkLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://www.nonlinear.com/products/progenesis/lc-ms/overview/\u005c&quot;&gt;Progenesis&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open Progenesis LC-MS web page"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseExited"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="exportToProgenesisPart2Label">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="as Tab Separated Phenyx Format"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -481,17 +517,17 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" alignment="0" attributes="1">
-                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                              <Component id="exportAllUnidentifiedProteinsAsFastaLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="includeNonValidatedInUnidentifiedFastaCheckBox" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                              <Component id="exportAllUnidentifiedAccessionsLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="includeNonValidatedInProteinUnidentifiedCsvCheckBox" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="110" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="exportUnidentifiedProteinsAccessionNumbersAsCsvButton" pref="180" max="32767" attributes="0"/>
                           <Component id="exportUnidentifiedProteinsAsFastaButton" pref="180" max="32767" attributes="0"/>
@@ -505,13 +541,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAllUnidentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportUnidentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="includeNonValidatedInUnidentifiedFastaCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAllUnidentifiedAccessionsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportUnidentifiedProteinsAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="includeNonValidatedInProteinUnidentifiedCsvCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -521,9 +557,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel10">
+            <Component class="javax.swing.JLabel" name="exportAllUnidentifiedProteinsAsFastaLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins as a FASTA file:&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins as a FASTA file&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportUnidentifiedProteinsAsFastaButton">
@@ -543,9 +579,9 @@
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel11">
+            <Component class="javax.swing.JLabel" name="exportAllUnidentifiedAccessionsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins accession numbers:&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins accession numbers&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="includeNonValidatedInProteinUnidentifiedCsvCheckBox">
@@ -583,10 +619,10 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="279" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="0" pref="180" max="32767" attributes="0"/>
                           <Component id="exportIdentifiedProteinsAsFastaButton" alignment="0" pref="180" max="32767" attributes="0"/>
@@ -600,12 +636,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -614,9 +650,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel12">
+            <Component class="javax.swing.JLabel" name="exportAllIdentifiedProteinsAsFastaLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins as a FASTA file:&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins as a FASTA file&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportIdentifiedProteinsAsFastaButton">
@@ -627,9 +663,9 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIdentifiedProteinsAsFastaButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel13">
+            <Component class="javax.swing.JLabel" name="exportAllIdentifiedProteinAccessionsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins accession numbers:&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins accession numbers&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportIdentifiedProteinAccessionNumbersAsCsvButton">
