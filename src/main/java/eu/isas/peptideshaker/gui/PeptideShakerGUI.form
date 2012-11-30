@@ -841,7 +841,6 @@
                   <KeyStroke key="Ctrl+Alt+F"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="70"/>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Fixed Modifications"/>
               </Properties>
               <Events>

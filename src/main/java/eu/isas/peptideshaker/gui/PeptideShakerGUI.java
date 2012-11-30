@@ -1558,7 +1558,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         fixedModsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         fixedModsJCheckBoxMenuItem.setMnemonic('F');
-        fixedModsJCheckBoxMenuItem.setSelected(true);
         fixedModsJCheckBoxMenuItem.setText("Fixed Modifications");
         fixedModsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2922,8 +2921,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         showFixedMods = fixedModsJCheckBoxMenuItem.isSelected();
         updateSpectrumAnnotations();
         // @TODO: have to reselect in the tabs to show/hide the fixed mods directly...
-        revalidate();
-        repaint();
+        backgroundPanel.revalidate();
+        backgroundPanel.repaint();
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
     /**
