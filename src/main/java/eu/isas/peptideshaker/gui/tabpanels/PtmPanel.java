@@ -2159,7 +2159,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     peptidesTable.setToolTipText(
                             peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(
-                            (Integer) peptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
+                            (Integer) peptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide(), peptideShakerGUI.annotateFixedMods()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2216,7 +2216,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     relatedPeptidesTable.setToolTipText(
                             peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(
-                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
+                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide(), 
+                            peptideShakerGUI.annotateFixedMods()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2447,7 +2448,8 @@ public class PtmPanel extends javax.swing.JPanel {
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     selectedPsmsTable.setToolTipText(
-                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide(), 
+                            peptideShakerGUI.annotateFixedMods()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2524,14 +2526,13 @@ public class PtmPanel extends javax.swing.JPanel {
         int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
 
         if (row != -1 && column != -1 && relatedPsmsTable.getValueAt(row, column) != null) {
-
             if (column == relatedPsmsTable.getColumn("Sequence").getModelIndex()) {
-
                 try {
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     relatedPsmsTable.setToolTipText(
-                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide(), 
+                            peptideShakerGUI.annotateFixedMods()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -3941,7 +3942,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + 
-                        "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true) + ")"
+                        "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + ")"
                          + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumAndFragmentIonPanel.revalidate();
                 spectrumAndFragmentIonPanel.repaint();
@@ -4333,8 +4334,8 @@ public class PtmPanel extends javax.swing.JPanel {
                         return probabilities.isStarred();
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
-                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true);
+                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml( 
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods());
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
@@ -4452,7 +4453,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true);
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods());
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
@@ -4812,7 +4813,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 probabilities = (PSParameter) identification.getPeptideMatchParameter(peptides.get(i), probabilities);
                 results += proteinInferenceTooltipMap.get(probabilities.getGroupClass()) + "\t";
 
-                results += identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getModifiedSequenceAsString(true) + "\t";
+                results += identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + "\t";
                 results += OutputGenerator.getPeptideModificationsAsString(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide()) + "\t";
                 results += OutputGenerator.getPeptideModificationLocations(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide(),
                         identification.getPeptideMatch(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getKey())) + "\t";
@@ -4866,7 +4867,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 progressDialog.increaseProgressValue();
 
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
-                results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t";
+                results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + "\t";
                 results += OutputGenerator.getPeptideModificationsAsString(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide()) + "\t";
                 results += OutputGenerator.getPeptideModificationLocations(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(),
                         identification.getPeptideMatch(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getKey())) + "\t";

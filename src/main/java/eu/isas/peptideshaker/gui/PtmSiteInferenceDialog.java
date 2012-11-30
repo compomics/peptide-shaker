@@ -118,7 +118,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         // set the modification tooltip
         try {
-        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide());
+        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(
+                peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide(), peptideShakerGUI.annotateFixedMods());
         sequenceLabel.setToolTipText(tooltip);
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
@@ -229,7 +230,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         }
 
         sequenceLabel.setText(Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(),
-                true, peptideMatch.getTheoreticPeptide(), mainLocations, secondaryLocations));
+                true, peptideMatch.getTheoreticPeptide(), mainLocations, secondaryLocations, peptideShakerGUI.annotateFixedMods()));
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             sequenceLabel.setText("Error");

@@ -3049,13 +3049,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 isBestPsmEqualForAllSearchEngines(spectrumMatch),
                                 proteins,
                                 spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods()),
                                 probabilities.getPsmScore(),
                                 probabilities.getPsmConfidence(),
                                 probabilities.isValidated()
                             });
 
-                    peptideShakerJTablePeptideTooltip = featuresGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide());
+                    peptideShakerJTablePeptideTooltip = featuresGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide(), peptideShakerGUI.annotateFixedMods());
 
                     // Fill Mascot table
                     if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
@@ -3071,13 +3071,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             ++rank,
                                             proteins,
                                             currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods()),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
                                         });
 
-                                mascotTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
+                                mascotTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide(), peptideShakerGUI.annotateFixedMods()));
                                 mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                             }
                         }
@@ -3099,13 +3099,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             ++rank,
                                             proteins,
                                             currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods()),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
                                         });
 
-                                omssaTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
+                                omssaTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide(), peptideShakerGUI.annotateFixedMods()));
                                 omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                             }
                         }
@@ -3127,13 +3127,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             ++rank,
                                             proteins,
                                             currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods()),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
                                         });
 
-                                xTandemTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
+                                xTandemTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide(), peptideShakerGUI.annotateFixedMods()));
                                 xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                             }
                         }
@@ -3537,7 +3537,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         writer.write("\t");
 
-                                        writer.write(spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t");
+                                        writer.write(spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide()) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
                                                 identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t");
@@ -3623,7 +3623,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     result += "\t";
 
-                    result += currentAssumption.getPeptide().getModifiedSequenceAsString(true) + "\t";
+                    result += currentAssumption.getPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + "\t";
                     result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
                     try {
                         result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
@@ -3695,7 +3695,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             if (eValues.size() > 0) {
                 if (spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).size() > 0) {
-                    omssaMatch = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
+                    omssaMatch = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true, PeptideShakerGUI.annotateFixedMods());
                     omssaCharge = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getIdentificationCharge().value;
                 }
             }
@@ -3707,7 +3707,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             if (eValues.size() > 0) {
                 if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).size() > 0) {
-                    xtandemMatch = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
+                    xtandemMatch = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true, PeptideShakerGUI.annotateFixedMods());
                     xtandemCharge = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getIdentificationCharge().value;
                 }
             }
@@ -3719,7 +3719,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             if (eValues.size() > 0) {
                 if (spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).size() > 0) {
-                    mascotMatch = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
+                    mascotMatch = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true, PeptideShakerGUI.annotateFixedMods());
                     mascotCharge = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getIdentificationCharge().value;
                 }
             }

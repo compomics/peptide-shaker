@@ -110,7 +110,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         exportToProgenesisPart1Label = new javax.swing.JLabel();
         progensisWarningLabel = new javax.swing.JLabel();
         exportToProgenesisLinkLabel = new javax.swing.JLabel();
-        exportToProgenesisPart2Label = new javax.swing.JLabel();
+        exportToProgenesisHelpLabel = new javax.swing.JLabel();
         unidentifiedProteinsPanel = new javax.swing.JPanel();
         exportAllUnidentifiedProteinsAsFastaLabel = new javax.swing.JLabel();
         exportUnidentifiedProteinsAsFastaButton = new javax.swing.JButton();
@@ -288,7 +288,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(vendorCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(idSelectionCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(idSelectionCmb, 0, 362, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -370,7 +370,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        exportToProgenesisPart2Label.setText("as Tab Separated Phenyx Format");
+        exportToProgenesisHelpLabel.setText("<html>as <a href=\"\">Tab Separated Text</a></html>");
+        exportToProgenesisHelpLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportToProgenesisHelpLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportToProgenesisHelpLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportToProgenesisHelpLabelMouseReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout progenesisPanelLayout = new javax.swing.GroupLayout(progenesisPanel);
         progenesisPanel.setLayout(progenesisPanelLayout);
@@ -382,10 +393,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(exportToProgenesisLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exportToProgenesisPart2Label)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(exportToProgenesisHelpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(progensisWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(178, 178, 178)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(exportProgenesisButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -398,7 +409,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(exportProgenesisButton)
                     .addComponent(progensisWarningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(exportToProgenesisLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportToProgenesisPart2Label))
+                    .addComponent(exportToProgenesisHelpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -534,7 +545,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(progenesisPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1385,6 +1396,59 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_exportToProgenesisLinkLabelMouseClicked
 
     /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisHelpLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisHelpLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportToProgenesisHelpLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportToProgenesisHelpLabelMouseExited
+
+    /**
+     * Open the export to Progenesis help.
+     * 
+     * @param evt 
+     */
+    private void exportToProgenesisHelpLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabelMouseReleased
+        // create an empty label to put the message in
+        JLabel label = new JLabel();
+
+        // html content 
+        JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
+                + "<a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a> does not yet have a specific PeptideShaker import. In order to get the<br>"
+                + "identifications back into Progenesis one therefore has to rely on the Phenyx import<br>"
+                + "format, i.e., select 'Phenyx' when importing the results back into Progenesis.<br><br>"
+                + "Note that converting to the 'Phenyx' format simplifies the identification results.<br><br>"
+                + "If you would like to see a proper PeptideShaker import please contact <a href=\"http://www.nonlinear.com/products/progenesis/lc-ms/overview/\">Progenesis</a>."
+                + "</body></html>");
+
+        // handle link events 
+        ep.addHyperlinkListener(new HyperlinkListener() {
+
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    BareBonesBrowserLaunch.openURL(e.getURL().toString());
+                }
+            }
+        });
+
+        ep.setBorder(null);
+        ep.setEditable(false);
+
+        JOptionPane.showMessageDialog(this, ep, "Progenesis Help", JOptionPane.WARNING_MESSAGE);
+    }//GEN-LAST:event_exportToProgenesisHelpLabelMouseReleased
+
+    /**
      * Indicates whether a spectrum is validated according to the user's
      * settings.
      *
@@ -1580,9 +1644,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportMgfButton;
     private javax.swing.JButton exportProgenesisButton;
     private javax.swing.JLabel exportSpectraLabel;
+    private javax.swing.JLabel exportToProgenesisHelpLabel;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
     private javax.swing.JLabel exportToProgenesisPart1Label;
-    private javax.swing.JLabel exportToProgenesisPart2Label;
     private javax.swing.JButton exportUnidentifiedProteinsAccessionNumbersAsCsvButton;
     private javax.swing.JButton exportUnidentifiedProteinsAsFastaButton;
     private javax.swing.JLabel formatLabel;

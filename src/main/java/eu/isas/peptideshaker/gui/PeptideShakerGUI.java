@@ -385,7 +385,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     /**
      * Boolean indicating whether the news feed shall be displayed
      */
-    private boolean newsfeed = true;
+    private boolean showNewsFeed = false;
+    /**
+     * If true, the fixed modifications are annotated in the sequences.
+     */
+    private static boolean showFixedMods = false; // @TODO: move to user settings?
 
     /**
      * The main method used to start PeptideShaker.
@@ -454,6 +458,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
 
         initComponents();
+        
+        // disable the notification menu until we have implemented its us
+        noteButton.setVisible(false);
+        helpButton.setVisible(false);
+        newsButton.setVisible(false);
 
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
@@ -707,6 +716,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spectrumSlidersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator11 = new javax.swing.JPopupMenu.Separator();
+        fixedModsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
@@ -1545,6 +1555,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         });
         viewJMenu.add(spectrumSlidersCheckBoxMenuItem);
         viewJMenu.add(jSeparator11);
+
+        fixedModsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        fixedModsJCheckBoxMenuItem.setMnemonic('F');
+        fixedModsJCheckBoxMenuItem.setSelected(true);
+        fixedModsJCheckBoxMenuItem.setText("Fixed Modifications");
+        fixedModsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fixedModsJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(fixedModsJCheckBoxMenuItem);
 
         scoresJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         scoresJCheckBoxMenuItem.setMnemonic('c');
@@ -2838,29 +2859,72 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         updateAnnotationPreferences();
     }//GEN-LAST:event_deNovoChargeTwoJRadioButtonMenuItemActionPerformed
 
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
     private void helpButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_helpButtonMouseEntered
 
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
     private void helpButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpButtonMouseExited
 
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
     private void noteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_noteButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_noteButtonMouseEntered
 
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
     private void noteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_noteButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_noteButtonMouseExited
 
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
     private void newsButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newsButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_newsButtonMouseEntered
 
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
     private void newsButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newsButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_newsButtonMouseExited
+
+    /**
+     * Show/hide the fixed modifications.
+     * 
+     * @param evt 
+     */
+    private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
+        showFixedMods = fixedModsJCheckBoxMenuItem.isSelected();
+        updateSpectrumAnnotations();
+        // @TODO: have to reselect in the tabs to show/hide the fixed mods directly...
+        revalidate();
+        repaint();
+    }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
@@ -3004,6 +3068,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenuItem findJMenuItem;
+    private javax.swing.JCheckBoxMenuItem fixedModsJCheckBoxMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JCheckBoxMenuItem forwardIonsDeNovoCheckBoxMenuItem;
     private javax.swing.JMenuItem fractionDetailsJMenuItem;
@@ -6344,7 +6409,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 int currentTipIndex = 0;
 
-                while (newsfeed) {
+                while (showNewsFeed) {
                     String news = "";
                     news += "<b>Tip of the day:</b>\n";
 
@@ -6368,7 +6433,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     try {
                         wait(600000);
                     } catch (Exception e) {
-                        newsfeed = false;
+                        showNewsFeed = false;
                         e.printStackTrace();
                     }
                 }
@@ -6408,5 +6473,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     @Override
     public String getDefaultExportFolder() {
         return lastSelectedFolder;
+    }
+    
+    /**
+     * Returns true if the fixed modifications are to be annotated.
+     * 
+     * @return true if the fixed modifications are to be annotated
+     */
+    public static boolean annotateFixedMods() {
+        return showFixedMods;
     }
 }

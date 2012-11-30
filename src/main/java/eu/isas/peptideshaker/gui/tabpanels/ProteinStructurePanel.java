@@ -1963,7 +1963,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
+                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide, peptideShakerGUI.annotateFixedMods());
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -3325,7 +3325,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             // update the peptide table
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
                 String peptideKey = peptideTableMap.get(getPeptideIndex(i));
-                String modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(), true);
+                String modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
+                        peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods());
                 peptideTable.setValueAt(modifiedSequence, i, peptideTable.getColumn("Sequence").getModelIndex());
             }
         } catch (Exception e) {
