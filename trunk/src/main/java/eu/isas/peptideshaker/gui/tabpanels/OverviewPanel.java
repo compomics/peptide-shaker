@@ -2274,7 +2274,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         String peptideKey = peptideKeys.get(peptideTable.convertRowIndexToModel(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
+                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide, peptideShakerGUI.annotateFixedMods());
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2410,7 +2410,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         if (peptideAssumption.getPeptide().isSameAs(currentPeptideMatch.getTheoreticPeptide())) {
                             Peptide peptide = peptideAssumption.getPeptide();
-                            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
+                            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide, peptideShakerGUI.annotateFixedMods());
                             psmTable.setToolTipText(tooltip);
                         } else {
                             // @TODO: do we have to do anything here??
@@ -4117,6 +4117,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 int unmodifiedCounter = 0;
 
                 for (int aa = 0; aa < sequence.length(); aa++) {
+                    
+                    // @TODO: add fixed ptms!
 
                     if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
 
@@ -4340,10 +4342,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             secondarySpectrumPlotsJPanel.removeAll();
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
-                                    peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
+                                    peptideAssumption.getPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()),
                                     annotations, true, true,
-                                    peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile()),
-                                    peptideAssumption.getPeptide().getPTMShortNameMap(), forwardIon, rewindIon);
+                                    peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile(), peptideShakerGUI.annotateFixedMods()),
+                                    peptideAssumption.getPeptide().getPTMShortNameMap(peptideShakerGUI.annotateFixedMods()), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
                             sequenceFragmentationPanel.setBackground(Color.WHITE);
@@ -5111,7 +5113,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (!after.equals("")) {
                         after = " - " + after;
                     }
-                    String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
+                    String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false, peptideShakerGUI.annotateFixedMods());
                     ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                             PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                             + "Spectrum & Fragment Ions (" + before + modifiedSequence + after

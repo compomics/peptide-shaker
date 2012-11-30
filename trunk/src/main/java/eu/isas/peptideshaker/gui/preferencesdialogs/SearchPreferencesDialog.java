@@ -1612,7 +1612,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         public void setValueAt(Object aValue, int row, int column) {
             try {
                 String modificationName = modificationList.get(row);
-                if (column == 4) {
+                if (column == 3) {
                     PTM ptm = ptmFactory.getPTM(modificationName);
                     ptm.setShortName(aValue.toString().trim());
                 }

@@ -53,7 +53,7 @@
                       <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="inclusionListPanel" alignment="0" max="32767" attributes="3"/>
                   </Group>
-                  <EmptySpace pref="13" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -242,7 +242,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="vendorCmb" max="32767" attributes="0"/>
-                                  <Component id="idSelectionCmb" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="idSelectionCmb" alignment="1" pref="362" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
@@ -432,10 +432,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="exportToProgenesisLinkLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisPart2Label" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="exportToProgenesisHelpLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="progensisWarningLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="exportProgenesisButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -450,7 +450,7 @@
                           <Component id="exportProgenesisButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="progensisWarningLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportToProgenesisLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportToProgenesisPart2Label" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToProgenesisHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -493,10 +493,15 @@
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseExited"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="exportToProgenesisPart2Label">
+            <Component class="javax.swing.JLabel" name="exportToProgenesisHelpLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="as Tab Separated Phenyx Format"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;as &lt;a href=&quot;&quot;&gt;Tab Separated Text&lt;/a&gt;&lt;/html&gt;"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabelMouseExited"/>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabelMouseReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

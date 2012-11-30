@@ -197,9 +197,10 @@ public class DisplayFeaturesGenerator {
      * modification details.
      *
      * @param peptide
+     * @param showFixedMods if true, the fixed mods are annotated
      * @return a String with the HTML tooltip for the peptide
      */
-    public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
+    public String getPeptideModificationTooltipAsHtml(Peptide peptide, boolean showFixedMods) {
 
         String tooltip = "<html>";
         ArrayList<ModificationMatch> modifications = peptide.getModificationMatches();
@@ -209,7 +210,8 @@ public class DisplayFeaturesGenerator {
 
             PTM ptm = ptmFactory.getPTM(modifications.get(i).getTheoreticPtm());
 
-            if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: also annotate fixed mods??
+            if ((ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) 
+                    || (!modifications.get(i).isVariable() && showFixedMods)) {
 
                 int modSite = modifications.get(i).getModificationSite();
 
@@ -258,10 +260,10 @@ public class DisplayFeaturesGenerator {
                 HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
                 return Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(),
                         includeHtmlStartEndTag, peptideMatch.getTheoreticPeptide(),
-                        mainLocations, secondaryLocations);
+                        mainLocations, secondaryLocations, peptideShakerGUI.annotateFixedMods());
             } else {
                 return peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
-                        peptideShakerGUI.getSearchParameters().getModificationProfile(), includeHtmlStartEndTag);
+                        peptideShakerGUI.getSearchParameters().getModificationProfile(), includeHtmlStartEndTag, peptideShakerGUI.annotateFixedMods());
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
