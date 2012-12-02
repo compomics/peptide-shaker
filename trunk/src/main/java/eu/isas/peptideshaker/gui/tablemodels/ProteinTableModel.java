@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;
@@ -181,33 +182,18 @@ public class ProteinTableModel extends DefaultTableModel {
                     }
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 6:
-                    try {
-                        proteinKey = proteinKeys.get(row);
-                        int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                        proteinMatch = identification.getProteinMatch(proteinKey);
-                        return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
+                    proteinKey = proteinKeys.get(row);
+                    int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                    proteinMatch = identification.getProteinMatch(proteinKey);
+                    return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
                 case 7:
-                    try {
-                        proteinKey = proteinKeys.get(row);
-                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
-                        int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
+                    proteinKey = proteinKeys.get(row);
+                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                    int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 8:
                     proteinKey = proteinKeys.get(row);
-                    try {
-                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
+                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                 case 9:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey);
@@ -233,6 +219,9 @@ public class ProteinTableModel extends DefaultTableModel {
                 default:
                     return "";
             }
+        } catch (SQLNonTransientConnectionException e) {
+            e.printStackTrace(); // this one can be ignored i think?
+            return null;
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return "";

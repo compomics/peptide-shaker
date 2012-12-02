@@ -142,7 +142,7 @@
                             <Column editable="false" title="&lt;html&gt;&amp;#8745; Mascot&lt;/html&gt;" type="java.lang.Integer"/>
                             <Column editable="false" title="&lt;html&gt;&amp;#8745; All&lt;/html&gt;" type="java.lang.Integer"/>
                             <Column editable="false" title="Unassigned" type="java.lang.Integer"/>
-                            <Column editable="false" title="ID Rate" type="java.lang.Double"/>
+                            <Column editable="false" title="ID Rate (%)" type="java.lang.Double"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

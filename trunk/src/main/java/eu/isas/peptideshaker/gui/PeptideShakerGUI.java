@@ -1777,11 +1777,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             } catch (Exception e) {
                 catchException(e);
             }
-            //@TODO: do that only if the new search settings are different from the old ones
+
+            //@TODO: do this only if the new search settings are different from the old ones
             searchParameters = searchPreferencesDialog.getSearchParameters();
-            updateAnnotationPreferencesFromSearchSettings();
-            //@TODO: set not saved if the new search parameters are different from the old ones
-            //@TODO: update the results if necessary
+            updateAnnotationPreferencesFromSearchSettings(); 
+            setSelectedItems();
+            backgroundPanel.revalidate();
+            backgroundPanel.repaint();
+            dataSaved = false;
         }
     }//GEN-LAST:event_searchParametersMenuActionPerformed
 
@@ -2919,8 +2922,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
         showFixedMods = fixedModsJCheckBoxMenuItem.isSelected();
-        updateSpectrumAnnotations();
-        // @TODO: have to reselect in the tabs to show/hide the fixed mods directly...
+        setSelectedItems();
         backgroundPanel.revalidate();
         backgroundPanel.repaint();
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
@@ -3628,6 +3630,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
+        PeptideShaker.loadModifications(searchParameters);
     }
 
     /**
@@ -3666,7 +3669,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void resetPtmFactory() {
 
         // reset ptm factory
-        ptmFactory.clearFactory();
+        ptmFactory.reloadFactory();
         ptmFactory = PTMFactory.getInstance();
 
         try {
@@ -5774,6 +5777,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 try {
                     saveProjectProcess(closeWhenDone);
 
+                    try {
+                        ptmFactory.saveFactory();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     if (!progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
                         userPreferences.addRecentProject(currentPSFile);
@@ -6008,8 +6017,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         // select the default protein, peptide and psm. this will speed up the reopening of the project
         // as the data will then be saved in the id features cache
-        resetSelectedItems();
-        overviewPanel.updateSelection();
+        //resetSelectedItems();
+        //overviewPanel.updateSelection();
 
         CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences, 
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences, 
