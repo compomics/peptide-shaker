@@ -132,10 +132,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         // set up the table header tooltips
         setUpTableHeaderToolTips();
 
-        // @TODO: re-enable when the plots are added
-        plotsTabbedPane.setEnabledAt(1, false);
-        plotsTabbedPane.setEnabledAt(2, false);
-
         // correct the color for the upper right corner
         JPanel proteinCorner = new JPanel();
         proteinCorner.setBackground(proteinTable.getTableHeader().getBackground());
@@ -359,7 +355,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 ((TitledBorder) proteinPanel.getBorder()).setTitle(title);
                 proteinPanel.repaint();
 
-                plotsTabbedPane.setSelectedIndex(6);
+                plotsTabbedPane.setSelectedIndex(4);
 
                 // enable the contextual export options
                 exportProteinsJButton.setEnabled(true);
@@ -393,7 +389,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             int[] selectedRows = proteinTable.getSelectedRows();
 
             // disable the coverage tab if more than one protein is selected
-            plotsTabbedPane.setEnabledAt(3, selectedRows.length == 1);
+            plotsTabbedPane.setEnabledAt(1, selectedRows.length == 1);
 
             if (selectedRows.length > 1 && plotsTabbedPane.getSelectedIndex() == 1) {
                 plotsTabbedPane.setSelectedIndex(4);

@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.IOException;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.table.DefaultTableModel;
@@ -160,16 +161,11 @@ public class PeptideTableModel extends DefaultTableModel {
                     Collections.sort(indexes);
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort on the first index if multiple indexes
                 case 5:
-                    try {
-                        peptideKey = peptideKeys.get(row);
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
-                        int nSpectra = peptideMatch.getSpectrumMatches().size();
-                        return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
+                    peptideKey = peptideKeys.get(row);
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+                    int nSpectra = peptideMatch.getSpectrumMatches().size();
+                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 6:
                     peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
@@ -185,9 +181,12 @@ public class PeptideTableModel extends DefaultTableModel {
                 default:
                     return "";
             }
+        } catch (SQLNonTransientConnectionException e) {
+            // this one can be ignored i think?
+            return null;
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-            return "";
+            return null;
         }
     }
 

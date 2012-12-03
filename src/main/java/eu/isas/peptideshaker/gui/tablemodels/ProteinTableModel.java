@@ -220,11 +220,11 @@ public class ProteinTableModel extends DefaultTableModel {
                     return "";
             }
         } catch (SQLNonTransientConnectionException e) {
-            e.printStackTrace(); // this one can be ignored i think?
+            // this one can be ignored i think?
             return null;
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-            return "";
+            return null;
         }
     }
 

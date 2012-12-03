@@ -3,15 +3,15 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
-import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -4116,11 +4116,32 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
                 int unmodifiedCounter = 0;
 
-                for (int aa = 0; aa < sequence.length(); aa++) {
-                    
-                    // @TODO: add fixed ptms!
+                PTMFactory ptmFactory = PTMFactory.getInstance();
 
-                    if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+                // get the fixed ptms
+                HashMap<Integer, PTM> fixedPtms = new HashMap<Integer, PTM>(); // @TODO: note this this only supports one fixed ptm per residue
+
+                if (peptideShakerGUI.annotateFixedMods()) {
+                    Identification identification = peptideShakerGUI.getIdentification();
+
+                    for (String peptideKey : peptideKeys) {
+                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                        for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                            if (!modMatch.isVariable()) {
+                                PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+                                ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey));
+                                for (Integer index : indexes) {
+                                    fixedPtms.put(modMatch.getModificationSite() + index - 2, ptm);
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                for (int aa = 0; aa < sequence.length(); aa++) {
+
+                    if (!psPtmScores.getMainModificationsAt(aa).isEmpty() || fixedPtms.containsKey(aa)) {
 
                         // add the non-modified area
                         if (unmodifiedCounter > 0) {
@@ -4131,7 +4152,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         }
 
                         // add the modification
-                        String firstPtm = psPtmScores.getMainModificationsAt(aa).get(0);
+                        String tempPtm;
+
+                        if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+                            tempPtm = psPtmScores.getMainModificationsAt(aa).get(0);
+                        } else {
+                            tempPtm = fixedPtms.get(aa).getName();
+                        }
 
                         // @TODO: what about multiple ptms on the same residue..?
 //                        if (psPtmScores.getMainModificationsAt(aa).size() > 1) {
@@ -4140,17 +4167,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                            }
 //                        }
 
-                        // @TODO: are fixed mods excluded??
                         // @TODO: are peptide terminal mods excluded??  
 
                         Color ptmColor = Color.lightGray;
 
-                        if (peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(firstPtm) != null) {
-                            ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(firstPtm);
+                        if (peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(tempPtm) != null) {
+                            ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(tempPtm);
                         }
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
-                        annotations.add(new ResidueAnnotation(firstPtm, null, false));
+                        annotations.add(new ResidueAnnotation(tempPtm, null, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<Double>(1);
@@ -5034,7 +5060,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         try {
-
             // update the peptide table
             ((DefaultTableModel) peptideTable.getModel()).fireTableDataChanged();
 
