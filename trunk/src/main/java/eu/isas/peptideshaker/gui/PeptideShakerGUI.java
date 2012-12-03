@@ -2922,9 +2922,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
         showFixedMods = fixedModsJCheckBoxMenuItem.isSelected();
-        setSelectedItems();
-        backgroundPanel.revalidate();
-        backgroundPanel.repaint();
+        updatePtmColorCoding();
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
     /**

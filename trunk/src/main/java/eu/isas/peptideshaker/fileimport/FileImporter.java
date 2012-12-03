@@ -544,8 +544,14 @@ public class FileImporter {
                 peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
-                waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+
+                if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
+                    waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
+                    waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
+                } else {
+                    waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                    waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+                }
                 waitingHandler.setRunCanceled();
                 e.printStackTrace();
             } catch (OutOfMemoryError error) {
