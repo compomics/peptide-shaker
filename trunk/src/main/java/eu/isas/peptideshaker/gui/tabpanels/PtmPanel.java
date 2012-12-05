@@ -2159,7 +2159,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     peptidesTable.setToolTipText(
                             peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(
-                            (Integer) peptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide(), peptideShakerGUI.annotateFixedMods()));
+                            (Integer) peptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2216,8 +2216,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     relatedPeptidesTable.setToolTipText(
                             peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(
-                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide(), 
-                            peptideShakerGUI.annotateFixedMods()));
+                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2448,8 +2447,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     selectedPsmsTable.setToolTipText(
-                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide(), 
-                            peptideShakerGUI.annotateFixedMods()));
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2531,8 +2529,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     relatedPsmsTable.setToolTipText(
-                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide(), 
-                            peptideShakerGUI.annotateFixedMods()));
+                            peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -3942,7 +3939,9 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + 
-                        "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + ")"
+                        "Spectrum & Fragment Ions (" + 
+                        peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(currentPeptide, true)
+                        + ")"
                          + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumAndFragmentIonPanel.revalidate();
                 spectrumAndFragmentIonPanel.repaint();
@@ -4334,8 +4333,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         return probabilities.isStarred();
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
-                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml( 
-                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods());
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(), true);
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
@@ -4452,8 +4450,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         return probabilities.isStarred();
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
-                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods());
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(), true);
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
@@ -4774,116 +4771,6 @@ public class PtmPanel extends javax.swing.JPanel {
             };
             appThread.start();
         }
-    }
-
-    /**
-     * Returns the given peptides table as a string.
-     *
-     * @param modifiedPeptides if true the modified peptides table is converted,
-     * false converts the related peptides table.
-     * @return the peptide table convered to a string
-     */
-    private String getPeptidesTableAsString(boolean modifiedPeptides) {
-
-        String results = "\tPI\tSequence\tVariable Modification\tLocation Confidence\tPeptide Confidence\tPeptide Validated" + System.getProperty("line.separator");
-        try {
-            JTable table;
-            ArrayList<String> peptides;
-
-            if (modifiedPeptides) {
-                table = peptidesTable;
-                peptides = displayedPeptides;
-            } else {
-                table = relatedPeptidesTable;
-                peptides = relatedPeptides;
-            }
-
-            progressDialog.setMaxProgressValue(table.getRowCount());
-
-            for (int i = 0; i < table.getRowCount(); i++) {
-
-                if (progressDialog.isRunCanceled()) {
-                    return "";
-                }
-
-                results += (i + 1) + "\t";
-                progressDialog.increaseProgressValue();
-
-                PSParameter probabilities = new PSParameter();
-                probabilities = (PSParameter) identification.getPeptideMatchParameter(peptides.get(i), probabilities);
-                results += proteinInferenceTooltipMap.get(probabilities.getGroupClass()) + "\t";
-
-                results += identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + "\t";
-                results += OutputGenerator.getPeptideModificationsAsString(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide()) + "\t";
-                results += OutputGenerator.getPeptideModificationLocations(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide(),
-                        identification.getPeptideMatch(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getKey())) + "\t";
-
-                probabilities = new PSParameter();
-                probabilities = (PSParameter) identification.getPeptideMatchParameter(peptides.get(i), probabilities);
-                results += probabilities.getPeptideConfidence() + "\t";
-
-                probabilities = new PSParameter();
-                probabilities = (PSParameter) identification.getPeptideMatchParameter(peptides.get(i), probabilities);
-                results += probabilities.isValidated() + System.getProperty("line.separator");
-            }
-
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            results = "Error";
-        }
-        return results;
-    }
-
-    /**
-     * Returns the given psm table as a string.
-     *
-     * @param modifiedPeptides if true the modified psms table is converted,
-     * false converts the related psms table.
-     * @return the psm table convered to a string
-     */
-    private String getPsmTableAsString(boolean modifiedPeptides) {
-
-        String results = "\tSequence\tVariable Modification\tLocation Confidence\tCharge\tPSM Validated" + System.getProperty("line.separator");
-
-        try {
-
-            JTable table;
-
-            if (modifiedPeptides) {
-                table = selectedPsmsTable;
-            } else {
-                table = relatedPsmsTable;
-            }
-
-            progressDialog.setMaxProgressValue(table.getRowCount());
-
-            for (int i = 0; i < table.getRowCount(); i++) {
-
-                if (progressDialog.isRunCanceled()) {
-                    return "";
-                }
-
-                results += (i + 1) + "\t";
-                progressDialog.increaseProgressValue();
-
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
-                results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()) + "\t";
-                results += OutputGenerator.getPeptideModificationsAsString(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide()) + "\t";
-                results += OutputGenerator.getPeptideModificationLocations(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(),
-                        identification.getPeptideMatch(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getKey())) + "\t";
-                results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value + "\t";
-
-                PSParameter probabilities = new PSParameter();
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
-                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, probabilities);
-                results += probabilities.isValidated() + System.getProperty("line.separator");
-            }
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            results = "Error";
-        }
-
-        return results;
     }
 
     /**
