@@ -1354,9 +1354,7 @@ public class FindDialog extends javax.swing.JDialog {
                         }
                         return descriptions;
                     case 6:
-                        peptideMatch = identification.getPeptideMatch(peptideKey);
-                        return peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile(), true, peptideShakerGUI.annotateFixedMods());
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
                     case 7:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         return peptideMatch.getSpectrumCount();

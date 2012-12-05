@@ -33,6 +33,7 @@ import eu.isas.peptideshaker.gui.tablemodels.PsmTableModel;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -2274,7 +2275,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     try {
                         String peptideKey = peptideKeys.get(peptideTable.convertRowIndexToModel(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide, peptideShakerGUI.annotateFixedMods());
+                        String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2410,7 +2411,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         if (peptideAssumption.getPeptide().isSameAs(currentPeptideMatch.getTheoreticPeptide())) {
                             Peptide peptide = peptideAssumption.getPeptide();
-                            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide, peptideShakerGUI.annotateFixedMods());
+                            String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
                             psmTable.setToolTipText(tooltip);
                         } else {
                             // @TODO: do we have to do anything here??
@@ -3891,6 +3892,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
 
         try {
+            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
             currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
             String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
 
@@ -4121,29 +4123,37 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 PTMFactory ptmFactory = PTMFactory.getInstance();
 
                 // get the fixed ptms
-                HashMap<Integer, PTM> fixedPtms = new HashMap<Integer, PTM>(); // @TODO: note this this only supports one fixed ptm per residue
+                HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note this this only supports one fixed ptm per residue
 
-                if (peptideShakerGUI.annotateFixedMods()) {
                     Identification identification = peptideShakerGUI.getIdentification();
 
                     for (String peptideKey : peptideKeys) {
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
                             if (!modMatch.isVariable()) {
-                                PTM ptm = ptmFactory.getPTM(modMatch.getTheoreticPtm());
+                                String ptmName = modMatch.getTheoreticPtm();
+                                if (displayPreferences.isDisplayedPTM(ptmName)) {
                                 ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey));
                                 for (Integer index : indexes) {
-                                    fixedPtms.put(modMatch.getModificationSite() + index - 2, ptm);
+                                    fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
                                 }
+                            }
                             }
                         }
                     }
-                }
 
 
                 for (int aa = 0; aa < sequence.length(); aa++) {
-
-                    if (!psPtmScores.getMainModificationsAt(aa).isEmpty() || fixedPtms.containsKey(aa)) {
+                    
+                    String ptmName = fixedPtms.get(aa);
+                        for (String variablePTM : psPtmScores.getMainModificationsAt(aa)) {
+                            if (displayPreferences.isDisplayedPTM(variablePTM)) {
+                                ptmName = variablePTM;
+                                break;
+                            }
+                        }
+                    
+                    if (ptmName != null) {
 
                         // add the non-modified area
                         if (unmodifiedCounter > 0) {
@@ -4151,15 +4161,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             data.add(new Double(unmodifiedCounter));
                             sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                             sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
-                        }
-
-                        // add the modification
-                        String tempPtm;
-
-                        if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
-                            tempPtm = psPtmScores.getMainModificationsAt(aa).get(0);
-                        } else {
-                            tempPtm = fixedPtms.get(aa).getName();
                         }
 
                         // @TODO: what about multiple ptms on the same residue..?
@@ -4171,14 +4172,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                         // @TODO: are peptide terminal mods excluded??  
 
-                        Color ptmColor = Color.lightGray;
-
-                        if (peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(tempPtm) != null) {
-                            ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(tempPtm);
+                        Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
+                        if (ptmColor == null) {
+                            ptmColor = Color.lightGray;
                         }
 
                         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
-                        annotations.add(new ResidueAnnotation(tempPtm, null, false));
+                        annotations.add(new ResidueAnnotation(ptmName, null, false));
                         proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
 
                         data = new ArrayList<Double>(1);
@@ -4370,10 +4370,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             secondarySpectrumPlotsJPanel.removeAll();
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
-                                    peptideAssumption.getPeptide().getModifiedSequenceAsString(true, peptideShakerGUI.annotateFixedMods()),
+                                    peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideAssumption.getPeptide(), true),
                                     annotations, true, true,
-                                    peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile(), peptideShakerGUI.annotateFixedMods()),
-                                    peptideAssumption.getPeptide().getPTMShortNameMap(peptideShakerGUI.annotateFixedMods()), forwardIon, rewindIon);
+                                    peptideShakerGUI.getSearchParameters().getModificationProfile(), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
                             sequenceFragmentationPanel.setBackground(Color.WHITE);
@@ -5140,7 +5139,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (!after.equals("")) {
                         after = " - " + after;
                     }
-                    String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false, peptideShakerGUI.annotateFixedMods());
+                    String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideAssumption.getPeptide(), false);
                     ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                             PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                             + "Spectrum & Fragment Ions (" + before + modifiedSequence + after

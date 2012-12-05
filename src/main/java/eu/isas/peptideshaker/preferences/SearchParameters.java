@@ -58,8 +58,7 @@ public class SearchParameters implements Serializable {
      * The expected modifications. Modified peptides will be grouped and
      * displayed according to this classification.
      *
-     * @deprecated use
-     * com.compomics.util.experiment.identification.SearchParameters instead
+     * @deprecated use com.compomics.util.experiment.identification.SearchParameters instead
      * instead
      */
     private ModificationProfile utilitiesModificationProfile = new ModificationProfile();

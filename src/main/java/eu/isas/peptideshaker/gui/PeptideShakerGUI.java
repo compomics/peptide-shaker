@@ -386,10 +386,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Boolean indicating whether the news feed shall be displayed
      */
     private boolean showNewsFeed = false;
-    /**
-     * If true, the fixed modifications are annotated in the sequences.
-     */
-    private static boolean showFixedMods = false; // @TODO: move to user settings?
 
     /**
      * The main method used to start PeptideShaker.
@@ -1556,9 +1552,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         viewJMenu.add(spectrumSlidersCheckBoxMenuItem);
         viewJMenu.add(jSeparator11);
 
-        fixedModsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        fixedModsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         fixedModsJCheckBoxMenuItem.setMnemonic('F');
-        fixedModsJCheckBoxMenuItem.setText("Fixed Modifications");
+        fixedModsJCheckBoxMenuItem.setText("Disaplayed modifications");
         fixedModsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fixedModsJCheckBoxMenuItemActionPerformed(evt);
@@ -2921,7 +2917,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt 
      */
     private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
-        showFixedMods = fixedModsJCheckBoxMenuItem.isSelected();
+        //@TODO: allow selection of displayed modifications
         updatePtmColorCoding();
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
@@ -2956,6 +2952,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         try {
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
+            
+            // Display the variable modifications
+            displayPreferences.setDefaultSelection(searchParameters.getModificationProfile());
 
             overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
@@ -5125,8 +5124,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }
                     if (experimentSettings.getDisplayPreferences() != null) {
                         setDisplayPreferences(experimentSettings.getDisplayPreferences());
+                        displayPreferences.compatibilityCheck(searchParameters.getModificationProfile());
                     } else {
                         setDisplayPreferences(new DisplayPreferences());
+                        displayPreferences.setDefaultSelection(searchParameters.getModificationProfile());
                     }
 
                     if (progressDialog.isRunCanceled()) {
@@ -6479,14 +6480,5 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     @Override
     public String getDefaultExportFolder() {
         return lastSelectedFolder;
-    }
-    
-    /**
-     * Returns true if the fixed modifications are to be annotated.
-     * 
-     * @return true if the fixed modifications are to be annotated
-     */
-    public static boolean annotateFixedMods() {
-        return showFixedMods;
     }
 }

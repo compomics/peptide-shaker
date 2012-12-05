@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.preferences;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class contains the display preferences for the current project.
@@ -25,6 +27,10 @@ public class DisplayPreferences implements Serializable {
      * The number of aa surrounding a peptide
      */
     private Integer nAASurroundingPeptides = 2;
+    /**
+     * The displayed PTMs
+     */
+    private HashMap<String, Boolean> displayedPTMs = new HashMap<String, Boolean>();
 
     /**
      * Constructor
@@ -81,5 +87,55 @@ public class DisplayPreferences implements Serializable {
      */
     public void setnAASurroundingPeptides(int nAASurroundingPeptides) {
         this.nAASurroundingPeptides = nAASurroundingPeptides;
+    }
+    
+    /**
+     * Sets whether a PTM shall be displayed on the sequences or not
+     * @param ptm the name of the ptm
+     * @param displayed a boolean indicating whether the PTM shall be displayed
+     */
+    public void setDisplayedPTM(String ptmName, boolean displayed) {
+        if (displayedPTMs == null) {
+            // Backward compatibility check
+            displayedPTMs = new HashMap<String, Boolean>();
+        }
+        displayedPTMs.put(ptmName, displayed);
+    }
+    
+    /**
+     * Indicates whether a PTM shall be displayed on the interface
+     * @param ptmName the name of the PTM
+     * @return a boolean indicating whether the PTM shall be displayed
+     */
+    public boolean isDisplayedPTM(String ptmName) {
+        if (displayedPTMs == null) {
+            throw new IllegalArgumentException("The displayed PTM map is not set for this project.");
+        }
+        Boolean result = displayedPTMs.get(ptmName);
+        if (result == null) {
+            result = false;
+            setDisplayedPTM(ptmName, result);
+        }
+        return result;
+    }
+    
+    /**
+     * Sets the variable modifications visible
+     * @param modificationProfile the modification profile
+     */
+    public void setDefaultSelection(com.compomics.util.preferences.ModificationProfile modificationProfile) {
+        for (String ptm : modificationProfile.getAllNotFixedModifications()) {
+            setDisplayedPTM(ptm, true);
+        }
+    }
+    
+    /**
+     * Verifies that the current object version has a display map and sets variable modifications visible if not
+     * @param modificationProfile the modification profile
+     */
+    public void compatibilityCheck(com.compomics.util.preferences.ModificationProfile modificationProfile) {
+        if (displayedPTMs == null) {
+            setDefaultSelection(modificationProfile);
+        }
     }
 }
