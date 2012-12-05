@@ -3884,6 +3884,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void updateSequenceCoverage(String proteinAccession) {
 
+        // @TODO: the code below should be extracted into a separate class!
+
         ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
         ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
         HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
