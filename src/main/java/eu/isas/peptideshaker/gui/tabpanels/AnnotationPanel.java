@@ -61,76 +61,83 @@ public class AnnotationPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        annotationLinksJPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        basicAnnotationJPanel = new javax.swing.JPanel();
+        accessionNumberLabel = new javax.swing.JLabel();
         accessionNumberJTextField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        descriptionLabel = new javax.swing.JLabel();
+        geneNameLabel = new javax.swing.JLabel();
         geneNameJTextField = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
+        texonomyLabel = new javax.swing.JLabel();
         taxonomyJTextField = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
+        databaseLabel = new javax.swing.JLabel();
         databaseJTextField = new javax.swing.JTextField();
         proteinDescriptionScrollPane = new javax.swing.JScrollPane();
         proteinDescriptionTextArea = new javax.swing.JTextArea();
-        annotationLinksJPanel1 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        uniprotLinkJPanel = new javax.swing.JPanel();
+        uniprotLabel = new javax.swing.JLabel();
         loadUniProtJButton = new javax.swing.JButton();
         webUniProtLabel = new javax.swing.JLabel();
-        annotationLinksJPanel2 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        dastyLinkJPanel = new javax.swing.JPanel();
+        dastyLabel = new javax.swing.JLabel();
         loadDastyJButton = new javax.swing.JButton();
         webDasty3Label = new javax.swing.JLabel();
-        annotationLinksJPanel3 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        reactomeLinkJPanel = new javax.swing.JPanel();
+        reactomeLabel = new javax.swing.JLabel();
         loadReactomeJButton = new javax.swing.JButton();
         webReactomeLabel = new javax.swing.JLabel();
-        annotationLinksJPanel4 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
+        stringLinkJPanel = new javax.swing.JPanel();
+        stringLabel = new javax.swing.JLabel();
         loadStringJButton = new javax.swing.JButton();
         webStringLabel = new javax.swing.JLabel();
-        annotationLinksJPanel5 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
+        davidLinkJPanel = new javax.swing.JPanel();
+        davidLabel = new javax.swing.JLabel();
         loadDavidJButton = new javax.swing.JButton();
         webDavidLabel = new javax.swing.JLabel();
-        annotationLinksJPanel6 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
+        intActLinkJPanel = new javax.swing.JPanel();
+        intactLabel = new javax.swing.JLabel();
         loadIntActJButton = new javax.swing.JButton();
         webIntActLabel = new javax.swing.JLabel();
-        annotationLinksJPanel7 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
+        quickGOLinkJPanel = new javax.swing.JPanel();
+        quickGoLabel = new javax.swing.JLabel();
         loadQuickGOJButton = new javax.swing.JButton();
         webQuickGOLabel = new javax.swing.JLabel();
-        annotationLinksJPanel8 = new javax.swing.JPanel();
-        jLabel14 = new javax.swing.JLabel();
+        interProLinkJPanel = new javax.swing.JPanel();
+        interProLabel = new javax.swing.JLabel();
         loadInterProJButton = new javax.swing.JButton();
         webInterProLabel = new javax.swing.JLabel();
         helpPanel = new javax.swing.JPanel();
         helpScrollPane = new javax.swing.JScrollPane();
         helpEditorPane = new javax.swing.JEditorPane();
-        warningJLabel = new javax.swing.JLabel();
         picrLinkJLabel = new javax.swing.JLabel();
+        nextProtLinkJPanel = new javax.swing.JPanel();
+        nextProtLabel = new javax.swing.JLabel();
+        loadNextProtJButton = new javax.swing.JButton();
+        webNextProtLabel = new javax.swing.JLabel();
+        pdbLinkJPanel = new javax.swing.JPanel();
+        pdbLabel = new javax.swing.JLabel();
+        loadPdbJButton = new javax.swing.JButton();
+        webPdbLabel = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        annotationLinksJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Protein Annotation"));
-        annotationLinksJPanel.setOpaque(false);
+        basicAnnotationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Protein Annotation"));
+        basicAnnotationJPanel.setOpaque(false);
 
-        jLabel1.setText("Accession Number");
+        accessionNumberLabel.setText("Accession Number");
 
         accessionNumberJTextField.setEditable(false);
 
-        jLabel3.setText("Description");
+        descriptionLabel.setText("Description");
 
-        jLabel4.setText("Gene Name");
+        geneNameLabel.setText("Gene Name");
 
         geneNameJTextField.setEditable(false);
 
-        jLabel8.setText("Taxonomy");
+        texonomyLabel.setText("Taxonomy");
 
         taxonomyJTextField.setEditable(false);
 
-        jLabel16.setText("Database");
+        databaseLabel.setText("Database");
 
         databaseJTextField.setEditable(false);
 
@@ -142,20 +149,20 @@ public class AnnotationPanel extends javax.swing.JPanel {
         proteinDescriptionTextArea.setWrapStyleWord(true);
         proteinDescriptionScrollPane.setViewportView(proteinDescriptionTextArea);
 
-        javax.swing.GroupLayout annotationLinksJPanelLayout = new javax.swing.GroupLayout(annotationLinksJPanel);
-        annotationLinksJPanel.setLayout(annotationLinksJPanelLayout);
-        annotationLinksJPanelLayout.setHorizontalGroup(
-            annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout basicAnnotationJPanelLayout = new javax.swing.GroupLayout(basicAnnotationJPanel);
+        basicAnnotationJPanel.setLayout(basicAnnotationJPanelLayout);
+        basicAnnotationJPanelLayout.setHorizontalGroup(
+            basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(basicAnnotationJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel16))
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(accessionNumberLabel)
+                    .addComponent(descriptionLabel)
+                    .addComponent(geneNameLabel)
+                    .addComponent(texonomyLabel)
+                    .addComponent(databaseLabel))
                 .addGap(38, 38, 38)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                     .addComponent(proteinDescriptionScrollPane)
                     .addComponent(geneNameJTextField)
@@ -164,41 +171,41 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        annotationLinksJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel3, jLabel8});
+        basicAnnotationJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {accessionNumberLabel, descriptionLabel, texonomyLabel});
 
-        annotationLinksJPanelLayout.setVerticalGroup(
-            annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+        basicAnnotationJPanelLayout.setVerticalGroup(
+            basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(basicAnnotationJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+                    .addComponent(accessionNumberLabel))
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(basicAnnotationJPanelLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addComponent(jLabel3))
-                    .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+                        .addComponent(descriptionLabel))
+                    .addGroup(basicAnnotationJPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(proteinDescriptionScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(geneNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(geneNameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(texonomyLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(databaseJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16))
+                    .addComponent(databaseLabel))
                 .addContainerGap())
         );
 
-        annotationLinksJPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("UniProt - protein knowledgebase"));
-        annotationLinksJPanel1.setOpaque(false);
+        uniprotLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("UniProt - protein knowledgebase"));
+        uniprotLinkJPanel.setOpaque(false);
 
-        jLabel5.setText("High-quality protein sequence and functional information.");
+        uniprotLabel.setText("High-quality protein sequence and functional information.");
 
         loadUniProtJButton.setText("Search UniProt");
         loadUniProtJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -221,34 +228,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel1Layout = new javax.swing.GroupLayout(annotationLinksJPanel1);
-        annotationLinksJPanel1.setLayout(annotationLinksJPanel1Layout);
-        annotationLinksJPanel1Layout.setHorizontalGroup(
-            annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout uniprotLinkJPanelLayout = new javax.swing.GroupLayout(uniprotLinkJPanel);
+        uniprotLinkJPanel.setLayout(uniprotLinkJPanelLayout);
+        uniprotLinkJPanelLayout.setHorizontalGroup(
+            uniprotLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(uniprotLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadUniProtJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel5)
+                .addComponent(uniprotLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
                 .addComponent(webUniProtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel1Layout.setVerticalGroup(
-            annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel1Layout.createSequentialGroup()
+        uniprotLinkJPanelLayout.setVerticalGroup(
+            uniprotLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(uniprotLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(uniprotLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadUniProtJButton)
-                    .addComponent(jLabel5)
+                    .addComponent(uniprotLabel)
                     .addComponent(webUniProtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        annotationLinksJPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Dasty 3 - protein sequence features"));
-        annotationLinksJPanel2.setOpaque(false);
+        dastyLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dasty 3 - protein sequence features"));
+        dastyLinkJPanel.setOpaque(false);
 
-        jLabel7.setText("Web client for visualizing protein sequence feature information.");
+        dastyLabel.setText("Web client for visualizing protein sequence feature information.");
 
         loadDastyJButton.setText("Search Dasty 3");
         loadDastyJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -271,34 +278,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel2Layout = new javax.swing.GroupLayout(annotationLinksJPanel2);
-        annotationLinksJPanel2.setLayout(annotationLinksJPanel2Layout);
-        annotationLinksJPanel2Layout.setHorizontalGroup(
-            annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout dastyLinkJPanelLayout = new javax.swing.GroupLayout(dastyLinkJPanel);
+        dastyLinkJPanel.setLayout(dastyLinkJPanelLayout);
+        dastyLinkJPanelLayout.setHorizontalGroup(
+            dastyLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dastyLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadDastyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
+                .addComponent(dastyLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(webDasty3Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel2Layout.setVerticalGroup(
-            annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel2Layout.createSequentialGroup()
+        dastyLinkJPanelLayout.setVerticalGroup(
+            dastyLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dastyLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(dastyLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadDastyJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel7)
+                    .addComponent(dastyLabel)
                     .addComponent(webDasty3Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        annotationLinksJPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Reactome - pathway database"));
-        annotationLinksJPanel3.setOpaque(false);
+        reactomeLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reactome - pathway database"));
+        reactomeLinkJPanel.setOpaque(false);
 
-        jLabel9.setText("Manually curated and peer-reviewed pathway database.");
+        reactomeLabel.setText("Manually curated and peer-reviewed pathway database.");
 
         loadReactomeJButton.setText("Search Reactome");
         loadReactomeJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -321,34 +328,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel3Layout = new javax.swing.GroupLayout(annotationLinksJPanel3);
-        annotationLinksJPanel3.setLayout(annotationLinksJPanel3Layout);
-        annotationLinksJPanel3Layout.setHorizontalGroup(
-            annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout reactomeLinkJPanelLayout = new javax.swing.GroupLayout(reactomeLinkJPanel);
+        reactomeLinkJPanel.setLayout(reactomeLinkJPanelLayout);
+        reactomeLinkJPanelLayout.setHorizontalGroup(
+            reactomeLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(reactomeLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadReactomeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                .addComponent(reactomeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(webReactomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel3Layout.setVerticalGroup(
-            annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel3Layout.createSequentialGroup()
+        reactomeLinkJPanelLayout.setVerticalGroup(
+            reactomeLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(reactomeLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
+                .addGroup(reactomeLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(reactomeLabel)
                     .addComponent(loadReactomeJButton)
                     .addComponent(webReactomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        annotationLinksJPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("STRING - protein interaction"));
-        annotationLinksJPanel4.setOpaque(false);
+        stringLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("STRING - protein interaction"));
+        stringLinkJPanel.setOpaque(false);
 
-        jLabel10.setText("Known and Predicted Protein-Protein Interactions.");
+        stringLabel.setText("Known and Predicted Protein-Protein Interactions.");
 
         loadStringJButton.setText("Search STRING");
         loadStringJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -371,34 +378,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel4Layout = new javax.swing.GroupLayout(annotationLinksJPanel4);
-        annotationLinksJPanel4.setLayout(annotationLinksJPanel4Layout);
-        annotationLinksJPanel4Layout.setHorizontalGroup(
-            annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout stringLinkJPanelLayout = new javax.swing.GroupLayout(stringLinkJPanel);
+        stringLinkJPanel.setLayout(stringLinkJPanelLayout);
+        stringLinkJPanelLayout.setHorizontalGroup(
+            stringLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(stringLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadStringJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel10)
+                .addComponent(stringLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
                 .addComponent(webStringLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel4Layout.setVerticalGroup(
-            annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel4Layout.createSequentialGroup()
+        stringLinkJPanelLayout.setVerticalGroup(
+            stringLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(stringLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
+                .addGroup(stringLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(stringLabel)
                     .addComponent(loadStringJButton)
                     .addComponent(webStringLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        annotationLinksJPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("DAVID - functional annotation"));
-        annotationLinksJPanel5.setOpaque(false);
+        davidLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("DAVID - functional annotation"));
+        davidLinkJPanel.setOpaque(false);
 
-        jLabel11.setText("Database for Annotation, Visualization and Integrated Discovery.");
+        davidLabel.setText("Database for Annotation, Visualization and Integrated Discovery.");
 
         loadDavidJButton.setText("Search DAVID");
         loadDavidJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -421,34 +428,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel5Layout = new javax.swing.GroupLayout(annotationLinksJPanel5);
-        annotationLinksJPanel5.setLayout(annotationLinksJPanel5Layout);
-        annotationLinksJPanel5Layout.setHorizontalGroup(
-            annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout davidLinkJPanelLayout = new javax.swing.GroupLayout(davidLinkJPanel);
+        davidLinkJPanel.setLayout(davidLinkJPanelLayout);
+        davidLinkJPanelLayout.setHorizontalGroup(
+            davidLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(davidLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadDavidJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel11)
+                .addComponent(davidLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
                 .addComponent(webDavidLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel5Layout.setVerticalGroup(
-            annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel5Layout.createSequentialGroup()
+        davidLinkJPanelLayout.setVerticalGroup(
+            davidLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(davidLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
+                .addGroup(davidLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(davidLabel)
                     .addComponent(loadDavidJButton)
                     .addComponent(webDavidLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        annotationLinksJPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("IntAct - protein interaction"));
-        annotationLinksJPanel6.setOpaque(false);
+        intActLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("IntAct - protein interaction"));
+        intActLinkJPanel.setOpaque(false);
 
-        jLabel12.setText("Analysis tools for protein interaction data.");
+        intactLabel.setText("Analysis tools for protein interaction data.");
 
         loadIntActJButton.setText("Search IntAct");
         loadIntActJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -471,34 +478,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel6Layout = new javax.swing.GroupLayout(annotationLinksJPanel6);
-        annotationLinksJPanel6.setLayout(annotationLinksJPanel6Layout);
-        annotationLinksJPanel6Layout.setHorizontalGroup(
-            annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout intActLinkJPanelLayout = new javax.swing.GroupLayout(intActLinkJPanel);
+        intActLinkJPanel.setLayout(intActLinkJPanelLayout);
+        intActLinkJPanelLayout.setHorizontalGroup(
+            intActLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(intActLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadIntActJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 207, Short.MAX_VALUE)
+                .addComponent(intactLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(webIntActLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel6Layout.setVerticalGroup(
-            annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel6Layout.createSequentialGroup()
+        intActLinkJPanelLayout.setVerticalGroup(
+            intActLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(intActLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
+                .addGroup(intActLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(intactLabel)
                     .addComponent(loadIntActJButton)
                     .addComponent(webIntActLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        annotationLinksJPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("QuickGO - gene ontology terms and annotations"));
-        annotationLinksJPanel7.setOpaque(false);
+        quickGOLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("QuickGO - gene ontology terms and annotations"));
+        quickGOLinkJPanel.setOpaque(false);
 
-        jLabel13.setText("Web-based browser for Gene Ontology terms.");
+        quickGoLabel.setText("Web-based browser for Gene Ontology terms.");
 
         loadQuickGOJButton.setText("Search QuickGO");
         loadQuickGOJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -521,34 +528,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel7Layout = new javax.swing.GroupLayout(annotationLinksJPanel7);
-        annotationLinksJPanel7.setLayout(annotationLinksJPanel7Layout);
-        annotationLinksJPanel7Layout.setHorizontalGroup(
-            annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel7Layout.createSequentialGroup()
+        javax.swing.GroupLayout quickGOLinkJPanelLayout = new javax.swing.GroupLayout(quickGOLinkJPanel);
+        quickGOLinkJPanel.setLayout(quickGOLinkJPanelLayout);
+        quickGOLinkJPanelLayout.setHorizontalGroup(
+            quickGOLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(quickGOLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadQuickGOJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel13)
+                .addComponent(quickGoLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
                 .addComponent(webQuickGOLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel7Layout.setVerticalGroup(
-            annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel7Layout.createSequentialGroup()
+        quickGOLinkJPanelLayout.setVerticalGroup(
+            quickGOLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(quickGOLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
+                .addGroup(quickGOLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(quickGoLabel)
                     .addComponent(loadQuickGOJButton)
                     .addComponent(webQuickGOLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        annotationLinksJPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("InterPro - predictive protein signatures"));
-        annotationLinksJPanel8.setOpaque(false);
+        interProLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("InterPro - predictive protein signatures"));
+        interProLinkJPanel.setOpaque(false);
 
-        jLabel14.setText("Integrated database of predictive protein signatures.");
+        interProLabel.setText("Integrated database of predictive protein signatures.");
 
         loadInterProJButton.setText("Search InterPro");
         loadInterProJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -571,25 +578,25 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout annotationLinksJPanel8Layout = new javax.swing.GroupLayout(annotationLinksJPanel8);
-        annotationLinksJPanel8.setLayout(annotationLinksJPanel8Layout);
-        annotationLinksJPanel8Layout.setHorizontalGroup(
-            annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel8Layout.createSequentialGroup()
+        javax.swing.GroupLayout interProLinkJPanelLayout = new javax.swing.GroupLayout(interProLinkJPanel);
+        interProLinkJPanel.setLayout(interProLinkJPanelLayout);
+        interProLinkJPanelLayout.setHorizontalGroup(
+            interProLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(interProLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(loadInterProJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                .addComponent(interProLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(webInterProLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        annotationLinksJPanel8Layout.setVerticalGroup(
-            annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(annotationLinksJPanel8Layout.createSequentialGroup()
+        interProLinkJPanelLayout.setVerticalGroup(
+            interProLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(interProLinkJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
+                .addGroup(interProLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(interProLabel)
                     .addComponent(loadInterProJButton)
                     .addComponent(webInterProLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -619,7 +626,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             .addGroup(helpPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(helpScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         helpPanelLayout.setVerticalGroup(
             helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -628,10 +635,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(helpScrollPane)
                 .addContainerGap())
         );
-
-        warningJLabel.setFont(warningJLabel.getFont().deriveFont((warningJLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        warningJLabel.setForeground(new java.awt.Color(255, 0, 0));
-        warningJLabel.setText(" ");
 
         picrLinkJLabel.setText("<html><a href=\\\"dummy_link\\\">PICR - Protein Identifier Cross-Reference Service</a></html>");
         picrLinkJLabel.setToolTipText("<html>\nMap protein identifiers across<br>\nmultiple source databases\n</html>");
@@ -647,6 +650,106 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
+        nextProtLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("neXProt - human protein knowledgebase"));
+        nextProtLinkJPanel.setOpaque(false);
+
+        nextProtLabel.setText("High-quality human protein information and annotation.");
+
+        loadNextProtJButton.setText("Search neXtProt");
+        loadNextProtJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadNextProtJButtonActionPerformed(evt);
+            }
+        });
+
+        webNextProtLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webNextProtLabel.setToolTipText("Open the neXtProt web page");
+        webNextProtLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webNextProtLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webNextProtLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webNextProtLabelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout nextProtLinkJPanelLayout = new javax.swing.GroupLayout(nextProtLinkJPanel);
+        nextProtLinkJPanel.setLayout(nextProtLinkJPanelLayout);
+        nextProtLinkJPanelLayout.setHorizontalGroup(
+            nextProtLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(nextProtLinkJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(loadNextProtJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(nextProtLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(webNextProtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        nextProtLinkJPanelLayout.setVerticalGroup(
+            nextProtLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(nextProtLinkJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(nextProtLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(loadNextProtJButton)
+                    .addComponent(nextProtLabel)
+                    .addComponent(webNextProtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pdbLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB - protein data bank"));
+        pdbLinkJPanel.setOpaque(false);
+
+        pdbLabel.setText("Biological macromolecular resource.");
+
+        loadPdbJButton.setText("Search PDB");
+        loadPdbJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadPdbJButtonActionPerformed(evt);
+            }
+        });
+
+        webPdbLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webPdbLabel.setToolTipText("Open the PDB web page");
+        webPdbLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webPdbLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webPdbLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webPdbLabelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pdbLinkJPanelLayout = new javax.swing.GroupLayout(pdbLinkJPanel);
+        pdbLinkJPanel.setLayout(pdbLinkJPanelLayout);
+        pdbLinkJPanelLayout.setHorizontalGroup(
+            pdbLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pdbLinkJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(loadPdbJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pdbLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 240, Short.MAX_VALUE)
+                .addComponent(webPdbLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        pdbLinkJPanelLayout.setVerticalGroup(
+            pdbLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pdbLinkJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pdbLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pdbLabel)
+                    .addComponent(loadPdbJButton)
+                    .addComponent(webPdbLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -656,60 +759,65 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(warningJLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(basicAnnotationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(quickGOLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(stringLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(uniprotLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nextProtLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dastyLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(davidLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(intActLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(interProLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(10, 10, 10))))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(reactomeLinkJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(10, 10, 10))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(pdbLinkJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(basicAnnotationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(reactomeLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(davidLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(intActLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(interProLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(uniprotLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nextProtLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(stringLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(quickGOLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(warningJLabel)
-                    .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dastyLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pdbLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(63, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1092,52 +1200,140 @@ public class AnnotationPanel extends javax.swing.JPanel {
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/Tools/picr/");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_picrLinkJLabelMouseClicked
+
+    /**
+     * Open the protein accession in neXtProt.
+     *
+     * @param evt
+     */
+    private void loadNextProtJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadNextProtJButtonActionPerformed
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.nextprot.org/db/entry/NX_" + accessionNumberJTextField.getText());
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_loadNextProtJButtonActionPerformed
+
+    /**
+     * Open the neXtProt web page.
+     *
+     * @param evt
+     */
+    private void webNextProtLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webNextProtLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.nextprot.org/db/");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webNextProtLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void webNextProtLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webNextProtLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webNextProtLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void webNextProtLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webNextProtLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webNextProtLabelMouseExited
+
+    /**
+     * Open the protein accession in PDB.
+     *
+     * @param evt
+     */
+    private void loadPdbJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadPdbJButtonActionPerformed
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.rcsb.org/pdb/protein/" + accessionNumberJTextField.getText());
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_loadPdbJButtonActionPerformed
+
+    /**
+     * Open the PDB web page.
+     *
+     * @param evt
+     */
+    private void webPdbLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webPdbLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.rcsb.org/pdb/");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webPdbLabelMouseClicked
+
+    /**
+     * Change the cursor back to a hand icon.
+     *
+     * @param evt
+     */
+    private void webPdbLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webPdbLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webPdbLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     *
+     * @param evt
+     */
+    private void webPdbLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webPdbLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webPdbLabelMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
-    private javax.swing.JPanel annotationLinksJPanel;
-    private javax.swing.JPanel annotationLinksJPanel1;
-    private javax.swing.JPanel annotationLinksJPanel2;
-    private javax.swing.JPanel annotationLinksJPanel3;
-    private javax.swing.JPanel annotationLinksJPanel4;
-    private javax.swing.JPanel annotationLinksJPanel5;
-    private javax.swing.JPanel annotationLinksJPanel6;
-    private javax.swing.JPanel annotationLinksJPanel7;
-    private javax.swing.JPanel annotationLinksJPanel8;
+    private javax.swing.JLabel accessionNumberLabel;
+    private javax.swing.JPanel basicAnnotationJPanel;
+    private javax.swing.JLabel dastyLabel;
+    private javax.swing.JPanel dastyLinkJPanel;
     private javax.swing.JTextField databaseJTextField;
+    private javax.swing.JLabel databaseLabel;
+    private javax.swing.JLabel davidLabel;
+    private javax.swing.JPanel davidLinkJPanel;
+    private javax.swing.JLabel descriptionLabel;
     private javax.swing.JTextField geneNameJTextField;
+    private javax.swing.JLabel geneNameLabel;
     private javax.swing.JEditorPane helpEditorPane;
     private javax.swing.JPanel helpPanel;
     private javax.swing.JScrollPane helpScrollPane;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel intActLinkJPanel;
+    private javax.swing.JLabel intactLabel;
+    private javax.swing.JLabel interProLabel;
+    private javax.swing.JPanel interProLinkJPanel;
     private javax.swing.JButton loadDastyJButton;
     private javax.swing.JButton loadDavidJButton;
     private javax.swing.JButton loadIntActJButton;
     private javax.swing.JButton loadInterProJButton;
+    private javax.swing.JButton loadNextProtJButton;
+    private javax.swing.JButton loadPdbJButton;
     private javax.swing.JButton loadQuickGOJButton;
     private javax.swing.JButton loadReactomeJButton;
     private javax.swing.JButton loadStringJButton;
     private javax.swing.JButton loadUniProtJButton;
+    private javax.swing.JLabel nextProtLabel;
+    private javax.swing.JPanel nextProtLinkJPanel;
+    private javax.swing.JLabel pdbLabel;
+    private javax.swing.JPanel pdbLinkJPanel;
     private javax.swing.JLabel picrLinkJLabel;
     private javax.swing.JScrollPane proteinDescriptionScrollPane;
     private javax.swing.JTextArea proteinDescriptionTextArea;
+    private javax.swing.JPanel quickGOLinkJPanel;
+    private javax.swing.JLabel quickGoLabel;
+    private javax.swing.JLabel reactomeLabel;
+    private javax.swing.JPanel reactomeLinkJPanel;
+    private javax.swing.JLabel stringLabel;
+    private javax.swing.JPanel stringLinkJPanel;
     private javax.swing.JTextField taxonomyJTextField;
-    private javax.swing.JLabel warningJLabel;
+    private javax.swing.JLabel texonomyLabel;
+    private javax.swing.JLabel uniprotLabel;
+    private javax.swing.JPanel uniprotLinkJPanel;
     private javax.swing.JLabel webDasty3Label;
     private javax.swing.JLabel webDavidLabel;
     private javax.swing.JLabel webIntActLabel;
     private javax.swing.JLabel webInterProLabel;
+    private javax.swing.JLabel webNextProtLabel;
+    private javax.swing.JLabel webPdbLabel;
     private javax.swing.JLabel webQuickGOLabel;
     private javax.swing.JLabel webReactomeLabel;
     private javax.swing.JLabel webStringLabel;

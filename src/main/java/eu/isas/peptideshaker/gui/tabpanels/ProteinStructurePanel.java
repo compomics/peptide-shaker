@@ -1711,11 +1711,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     if (chains[j].getStart_protein() != chains[j].getEnd_protein()) {
                         ((DefaultTableModel) pdbChainsJTable.getModel()).addRow(new Object[]{
-                                (j + 1),
-                                chains[j].getBlock(),
-                                temp,
-                                (((double) chains[j].getEnd_protein() - chains[j].getStart_protein()) / proteinSequenceLength) * 100
-                            });
+                                    (j + 1),
+                                    chains[j].getBlock(),
+                                    temp,
+                                    (((double) chains[j].getEnd_protein() - chains[j].getStart_protein()) / proteinSequenceLength) * 100
+                                });
                     }
                 }
 
@@ -2565,8 +2565,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
     /**
      * Show the statisics popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
@@ -2575,7 +2575,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, 
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
@@ -2584,7 +2584,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             popupMenu.show(proteinTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_proteinTableMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backboneJButton;
     private javax.swing.JPanel contextMenuPdbChainsBackgroundPanel;
@@ -3213,7 +3212,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 for (int j = peptideTempStart; j < peptideTempEnd && !progressDialog.isRunCanceled(); j++) {
                     for (int k = 0; k < modifications.size() && !progressDialog.isRunCanceled(); k++) {
                         PTM ptm = pmtFactory.getPTM(modifications.get(k).getTheoreticPtm());
-                        if (ptm.getType() == PTM.MODAA && modifications.get(k).isVariable()) {
+                        if ((ptm.getType() == PTM.MODAA && modifications.get(k).isVariable())
+                                || (!modifications.get(k).isVariable() && peptideShakerGUI.annotateFixedMods())) {
                             if (modifications.get(k).getModificationSite() == (peptideIndex + 1)) {
 
                                 Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(

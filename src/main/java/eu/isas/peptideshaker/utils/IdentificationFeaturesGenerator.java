@@ -746,7 +746,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a summary of the PTMs present on the sequence confidently
-     * assigned to an amino acid. Example: SEQVEM<mox>CE gives Oxidation of M
+     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation of M
      * (M6)
      *
      * @param proteinKey the key of the protein match of interest
@@ -818,7 +818,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a summary of the PTMs present on the sequence not confidently
-     * assigned to an amino acid. Example: SEQVEM<mox>CE gives Oxidation of M
+     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation of M
      * (M6)
      *
      * @param proteinKey the key of the protein match of interest

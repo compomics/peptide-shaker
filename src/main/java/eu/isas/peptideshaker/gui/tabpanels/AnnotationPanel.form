@@ -24,35 +24,40 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="10" pref="10" max="10" attributes="0"/>
-                      <Component id="warningJLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                       <Component id="picrLinkJLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="annotationLinksJPanel" max="32767" attributes="2"/>
-                          <Component id="annotationLinksJPanel7" alignment="0" max="32767" attributes="2"/>
-                          <Component id="annotationLinksJPanel3" alignment="1" max="32767" attributes="2"/>
-                          <Component id="annotationLinksJPanel4" alignment="0" max="32767" attributes="2"/>
-                          <Component id="annotationLinksJPanel1" alignment="0" max="32767" attributes="2"/>
+                          <Component id="basicAnnotationJPanel" alignment="0" max="32767" attributes="2"/>
+                          <Component id="quickGOLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                          <Component id="stringLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                          <Component id="uniprotLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                          <Component id="nextProtLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                          <Component id="dastyLinkJPanel" alignment="0" max="32767" attributes="2"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="annotationLinksJPanel2" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="annotationLinksJPanel5" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="annotationLinksJPanel6" alignment="0" max="32767" attributes="2"/>
-                                  <Component id="annotationLinksJPanel8" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="davidLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="intActLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="interProLinkJPanel" alignment="0" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="helpPanel" max="32767" attributes="2"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="reactomeLinkJPanel" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="helpPanel" max="32767" attributes="2"/>
+                              </Group>
                               <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="pdbLinkJPanel" max="32767" attributes="2"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -65,42 +70,44 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="annotationLinksJPanel" max="32767" attributes="1"/>
+                  <Component id="basicAnnotationJPanel" max="32767" attributes="1"/>
                   <Component id="helpPanel" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="annotationLinksJPanel2" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="reactomeLinkJPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="davidLinkJPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationLinksJPanel5" min="-2" max="-2" attributes="0"/>
+                      <Component id="intActLinkJPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationLinksJPanel6" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationLinksJPanel8" min="-2" max="-2" attributes="0"/>
+                      <Component id="interProLinkJPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="annotationLinksJPanel1" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="uniprotLinkJPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="nextProtLinkJPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="stringLinkJPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationLinksJPanel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationLinksJPanel4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="annotationLinksJPanel7" min="-2" max="-2" attributes="0"/>
+                      <Component id="quickGOLinkJPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="warningJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="picrLinkJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="dastyLinkJPanel" min="-2" max="-2" attributes="0"/>
+                  <Component id="pdbLinkJPanel" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="54" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="picrLinkJLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="63" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel">
+    <Container class="javax.swing.JPanel" name="basicAnnotationJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -116,11 +123,11 @@
               <Group type="102" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel3" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel8" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel16" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="accessionNumberLabel" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="descriptionLabel" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="geneNameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="texonomyLabel" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="databaseLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -140,12 +147,12 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="accessionNumberJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="accessionNumberLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-                          <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                          <Component id="descriptionLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -155,17 +162,17 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="geneNameJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="geneNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="taxonomyJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="texonomyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="databaseJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="databaseLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -173,7 +180,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="accessionNumberLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Accession Number"/>
           </Properties>
@@ -183,12 +190,12 @@
             <Property name="editable" type="boolean" value="false"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel3">
+        <Component class="javax.swing.JLabel" name="descriptionLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Description"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel4">
+        <Component class="javax.swing.JLabel" name="geneNameLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Gene Name"/>
           </Properties>
@@ -198,7 +205,7 @@
             <Property name="editable" type="boolean" value="false"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel8">
+        <Component class="javax.swing.JLabel" name="texonomyLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Taxonomy"/>
           </Properties>
@@ -208,7 +215,7 @@
             <Property name="editable" type="boolean" value="false"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel16">
+        <Component class="javax.swing.JLabel" name="databaseLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Database"/>
           </Properties>
@@ -239,7 +246,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel1">
+    <Container class="javax.swing.JPanel" name="uniprotLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -256,7 +263,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadUniProtJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                  <Component id="uniprotLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="144" max="32767" attributes="0"/>
                   <Component id="webUniProtLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -269,7 +276,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="loadUniProtJButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="uniprotLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webUniProtLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -278,7 +285,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel5">
+        <Component class="javax.swing.JLabel" name="uniprotLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="High-quality protein sequence and functional information."/>
           </Properties>
@@ -304,7 +311,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel2">
+    <Container class="javax.swing.JPanel" name="dastyLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -321,8 +328,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadDastyJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="105" max="32767" attributes="0"/>
+                  <Component id="dastyLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="webDasty3Label" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -334,7 +341,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="loadDastyJButton" alignment="3" max="32767" attributes="1"/>
-                      <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="dastyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webDasty3Label" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -343,7 +350,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel7">
+        <Component class="javax.swing.JLabel" name="dastyLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Web client for visualizing protein sequence feature information."/>
           </Properties>
@@ -369,7 +376,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel3">
+    <Container class="javax.swing.JPanel" name="reactomeLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -386,8 +393,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadReactomeJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="146" max="32767" attributes="0"/>
+                  <Component id="reactomeLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="webReactomeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -398,7 +405,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="reactomeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="loadReactomeJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webReactomeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -408,7 +415,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel9">
+        <Component class="javax.swing.JLabel" name="reactomeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Manually curated and peer-reviewed pathway database."/>
           </Properties>
@@ -434,7 +441,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel4">
+    <Container class="javax.swing.JPanel" name="stringLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -451,7 +458,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadStringJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                  <Component id="stringLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="178" max="32767" attributes="0"/>
                   <Component id="webStringLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -463,7 +470,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="stringLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="loadStringJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webStringLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -473,7 +480,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel10">
+        <Component class="javax.swing.JLabel" name="stringLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Known and Predicted Protein-Protein Interactions."/>
           </Properties>
@@ -499,7 +506,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel5">
+    <Container class="javax.swing.JPanel" name="davidLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -516,7 +523,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadDavidJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                  <Component id="davidLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="95" max="32767" attributes="0"/>
                   <Component id="webDavidLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -528,7 +535,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="davidLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="loadDavidJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webDavidLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -538,7 +545,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel11">
+        <Component class="javax.swing.JLabel" name="davidLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Database for Annotation, Visualization and Integrated Discovery."/>
           </Properties>
@@ -564,7 +571,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel6">
+    <Container class="javax.swing.JPanel" name="intActLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -581,8 +588,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadIntActJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="207" max="32767" attributes="0"/>
+                  <Component id="intactLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="webIntActLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -593,7 +600,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="intactLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="loadIntActJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webIntActLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -603,7 +610,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel12">
+        <Component class="javax.swing.JLabel" name="intactLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Analysis tools for protein interaction data."/>
           </Properties>
@@ -629,7 +636,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel7">
+    <Container class="javax.swing.JPanel" name="quickGOLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -646,7 +653,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadQuickGOJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
+                  <Component id="quickGoLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="196" max="32767" attributes="0"/>
                   <Component id="webQuickGOLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -658,7 +665,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="quickGoLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="loadQuickGOJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webQuickGOLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -668,7 +675,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel13">
+        <Component class="javax.swing.JLabel" name="quickGoLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Web-based browser for Gene Ontology terms."/>
           </Properties>
@@ -694,7 +701,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="annotationLinksJPanel8">
+    <Container class="javax.swing.JPanel" name="interProLinkJPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -711,8 +718,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="loadInterProJButton" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jLabel14" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="152" max="32767" attributes="0"/>
+                  <Component id="interProLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="webInterProLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -723,7 +730,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="interProLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="loadInterProJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="webInterProLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -733,7 +740,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel14">
+        <Component class="javax.swing.JLabel" name="interProLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Integrated database of predictive protein signatures."/>
           </Properties>
@@ -775,7 +782,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="helpScrollPane" min="-2" pref="481" max="-2" attributes="0"/>
-                  <EmptySpace pref="106" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -818,19 +825,6 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JLabel" name="warningJLabel">
-      <Properties>
-        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-          <FontInfo relative="true">
-            <Font component="warningJLabel" italic="true" property="font" relativeSize="true" size="0"/>
-          </FontInfo>
-        </Property>
-        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="0" green="0" red="ff" type="rgb"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value=" "/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JLabel" name="picrLinkJLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;dummy_link\u005c&quot;&gt;PICR - Protein Identifier Cross-Reference Service&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
@@ -842,5 +836,135 @@
         <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="picrLinkJLabelMouseExited"/>
       </Events>
     </Component>
+    <Container class="javax.swing.JPanel" name="nextProtLinkJPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="neXProt - human protein knowledgebase"/>
+          </Border>
+        </Property>
+        <Property name="opaque" type="boolean" value="false"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="loadNextProtJButton" min="-2" pref="130" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="nextProtLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="webNextProtLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="loadNextProtJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="nextProtLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="webNextProtLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="nextProtLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="High-quality human protein information and annotation."/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="loadNextProtJButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Search neXtProt"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadNextProtJButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="webNextProtLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the neXtProt web page"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webNextProtLabelMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webNextProtLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webNextProtLabelMouseExited"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="pdbLinkJPanel">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="PDB - protein data bank"/>
+          </Border>
+        </Property>
+        <Property name="opaque" type="boolean" value="false"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="loadPdbJButton" min="-2" pref="130" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="pdbLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="240" max="32767" attributes="0"/>
+                  <Component id="webPdbLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="pdbLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="loadPdbJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="webPdbLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="pdbLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Biological macromolecular resource."/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="loadPdbJButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Search PDB"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadPdbJButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="webPdbLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the PDB web page"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webPdbLabelMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webPdbLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webPdbLabelMouseExited"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
   </SubComponents>
 </Form>
