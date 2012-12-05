@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -4370,7 +4369,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             secondarySpectrumPlotsJPanel.removeAll();
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
-                                    peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideAssumption.getPeptide(), true),
+                                    peptideAssumption.getPeptide().getModifiedSequenceAsString(true, false), // @TODO: fixed mods should not be hardcoded here!!
                                     annotations, true, true,
                                     peptideShakerGUI.getSearchParameters().getModificationProfile(), forwardIon, rewindIon);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
@@ -5139,7 +5138,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (!after.equals("")) {
                         after = " - " + after;
                     }
-                    String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideAssumption.getPeptide(), false);
+                    String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(true, false); // @TODO: show fixed ptms should not be hardcoded here!!
                     ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                             PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
                             + "Spectrum & Fragment Ions (" + before + modifiedSequence + after

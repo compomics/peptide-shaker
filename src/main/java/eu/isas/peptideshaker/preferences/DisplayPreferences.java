@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.preferences;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,7 +11,7 @@ import java.util.HashMap;
 public class DisplayPreferences implements Serializable {
 
     /**
-     * the serial number for serialization compatibility
+     * The serial number for serialization compatibility.
      */
     static final long serialVersionUID = -7923024103783392695L;
     /**
@@ -24,30 +23,33 @@ public class DisplayPreferences implements Serializable {
      */
     private boolean showScores = false;
     /**
-     * The number of aa surrounding a peptide
+     * The number of aa surrounding a peptide.
      */
     private Integer nAASurroundingPeptides = 2;
     /**
-     * The displayed PTMs
+     * The displayed PTMs.
      */
     private HashMap<String, Boolean> displayedPTMs = new HashMap<String, Boolean>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public DisplayPreferences() {
     }
 
     /**
-     * Sets whether hidden proteins should be displayed
-     * @param showHiddenProteins a boolean indicating whether hidden proteins should be displayed
+     * Sets whether hidden proteins should be displayed.
+     *
+     * @param showHiddenProteins a boolean indicating whether hidden proteins
+     * should be displayed
      */
     public void showHiddenProteins(boolean showHiddenProteins) {
         this.showHiddenProteins = showHiddenProteins;
     }
 
     /**
-     * Returns whether hidden proteins should be displayed
+     * Returns whether hidden proteins should be displayed.
+     *
      * @return true if the hidden proteins should be displayed
      */
     public boolean showHiddenProteins() {
@@ -55,7 +57,8 @@ public class DisplayPreferences implements Serializable {
     }
 
     /**
-     * Sets whether scores should be displayed
+     * Sets whether scores should be displayed.
+     *
      * @param showScores a boolean indicating whether scores should be displayed
      */
     public void showScores(boolean showScores) {
@@ -63,7 +66,8 @@ public class DisplayPreferences implements Serializable {
     }
 
     /**
-     * Returns whether scores should be displayed
+     * Returns whether scores should be displayed.
+     *
      * @return true of the scores are to be displayed
      */
     public boolean showScores() {
@@ -71,7 +75,9 @@ public class DisplayPreferences implements Serializable {
     }
 
     /**
-     * Returns the number of amino acids surrounding a peptide sequence (1 by default)
+     * Returns the number of amino acids surrounding a peptide sequence (1 by
+     * default).
+     *
      * @return the number of amino acids surrounding a peptide sequence
      */
     public int getnAASurroundingPeptides() {
@@ -82,16 +88,19 @@ public class DisplayPreferences implements Serializable {
     }
 
     /**
-     * Sets the number of amino acids surrounding a peptide sequence
-     * @param nAASurroundingPeptides the number of amino acids surrounding a peptide sequence
+     * Sets the number of amino acids surrounding a peptide sequence.
+     *
+     * @param nAASurroundingPeptides the number of amino acids surrounding a
+     * peptide sequence
      */
     public void setnAASurroundingPeptides(int nAASurroundingPeptides) {
         this.nAASurroundingPeptides = nAASurroundingPeptides;
     }
-    
+
     /**
-     * Sets whether a PTM shall be displayed on the sequences or not
-     * @param ptm the name of the ptm
+     * Sets whether a PTM shall be displayed on the sequences or not.
+     *
+     * @param ptmName the name of the ptm
      * @param displayed a boolean indicating whether the PTM shall be displayed
      */
     public void setDisplayedPTM(String ptmName, boolean displayed) {
@@ -101,9 +110,10 @@ public class DisplayPreferences implements Serializable {
         }
         displayedPTMs.put(ptmName, displayed);
     }
-    
+
     /**
-     * Indicates whether a PTM shall be displayed on the interface
+     * Indicates whether a PTM shall be displayed on the interface.
+     *
      * @param ptmName the name of the PTM
      * @return a boolean indicating whether the PTM shall be displayed
      */
@@ -118,9 +128,10 @@ public class DisplayPreferences implements Serializable {
         }
         return result;
     }
-    
+
     /**
-     * Sets the variable modifications visible
+     * Sets the variable modifications visible.
+     *
      * @param modificationProfile the modification profile
      */
     public void setDefaultSelection(com.compomics.util.preferences.ModificationProfile modificationProfile) {
@@ -128,9 +139,11 @@ public class DisplayPreferences implements Serializable {
             setDisplayedPTM(ptm, true);
         }
     }
-    
+
     /**
-     * Verifies that the current object version has a display map and sets variable modifications visible if not
+     * Verifies that the current object version has a display map and sets
+     * variable modifications visible if not.
+     *
      * @param modificationProfile the modification profile
      */
     public void compatibilityCheck(com.compomics.util.preferences.ModificationProfile modificationProfile) {
