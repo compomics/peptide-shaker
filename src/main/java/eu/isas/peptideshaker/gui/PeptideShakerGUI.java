@@ -1552,9 +1552,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         viewJMenu.add(spectrumSlidersCheckBoxMenuItem);
         viewJMenu.add(jSeparator11);
 
-        fixedModsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        fixedModsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         fixedModsJCheckBoxMenuItem.setMnemonic('F');
-        fixedModsJCheckBoxMenuItem.setText("Disaplayed modifications");
+        fixedModsJCheckBoxMenuItem.setText("Fixed Modifications");
         fixedModsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fixedModsJCheckBoxMenuItemActionPerformed(evt);
@@ -2917,7 +2917,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt 
      */
     private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
-        //@TODO: allow selection of displayed modifications
+        
+        // @TODO: replace by user select ptm visability
+        
+        if (fixedModsJCheckBoxMenuItem.isSelected()) {
+            for (String ptm : searchParameters.getModificationProfile().getFixedModifications()) {
+                displayPreferences.setDisplayedPTM(ptm, true);
+            }
+        } else {
+            for (String ptm : searchParameters.getModificationProfile().getFixedModifications()) {
+                displayPreferences.setDisplayedPTM(ptm, false);
+            }
+        }
+
         updatePtmColorCoding();
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
@@ -5716,7 +5728,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // iterate the modifications list and add the non-terminal modifications
         for (String modification : modificationList) {
             PTM ptm = ptmFactory.getPTM(modification);
-            String shortName = ptm.getShortName();
+            String shortName = ptmFactory.getShortName(modification);
             AminoAcidPattern ptmPattern = ptm.getPattern();
 
             if (ptm != null) {

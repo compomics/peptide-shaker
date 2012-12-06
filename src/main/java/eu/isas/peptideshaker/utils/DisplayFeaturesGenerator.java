@@ -199,7 +199,6 @@ public class DisplayFeaturesGenerator {
      * modification details.
      *
      * @param peptide
-     * @param showFixedMods if true, the fixed mods are annotated
      * @return a String with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
@@ -208,13 +207,12 @@ public class DisplayFeaturesGenerator {
         ArrayList<String> alreadyAnnotated = new ArrayList<String>();
 
         DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-        
+
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             String modName = modMatch.getTheoreticPtm();
             PTM ptm = ptmFactory.getPTM(modName);
 
-            if ((ptm.getType() == PTM.MODAA && modMatch.isVariable())
-                    || displayPreferences.isDisplayedPTM(modName)) {
+            if ((ptm.getType() == PTM.MODAA && modMatch.isVariable()) || displayPreferences.isDisplayedPTM(modName)) {
 
                 int modSite = modMatch.getModificationSite();
 
@@ -244,31 +242,37 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Returns the peptide with modification sites colored on the sequence based on PeptideShaker site inference results.
-     * Shall be used for peptides, not PSMs.
+     * Returns the peptide with modification sites tagged (color coded or with
+     * ptm tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
+     * inference results. Shall be used for peptides, not PSMs, for PSM use the 
+     * one taking in a Peptide object instead.
      *
      * @param peptideKey the peptide key
-     * @param includeHtmlStartEndTag if true, html start and end tags are added
-     * @return the colored peptide sequence
+     * @param useHtmlColorCoding if true, color coded html is used, otherwise
+     * ptm tags, e.g, &lt;mox&gt;, are used
+     * @param includeHtmlStartEndTags if true, html start and end tags are added
+     * @param useShortName if true the short names are used in the tags
+     * @return the tagged peptide sequence
      */
-    public String getColoredPeptideSequence(String peptideKey, boolean includeHtmlStartEndTag) {
+    public String getTaggedPeptideSequence(String peptideKey, boolean useHtmlColorCoding, boolean includeHtmlStartEndTags, boolean useShortName) {
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
             Identification identification = peptideShakerGUI.getIdentification();
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
             Peptide peptide = peptideMatch.getTheoreticPeptide();
-            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences),
-                    mainLocations = new HashMap<Integer, ArrayList<String>>(),
-                    secondaryLocations = new HashMap<Integer, ArrayList<String>>();
+
+            HashMap<Integer, ArrayList<String>> fixedModifications = getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences);
+            HashMap<Integer, ArrayList<String>> mainLocations = new HashMap<Integer, ArrayList<String>>();
+            HashMap<Integer, ArrayList<String>> secondaryLocations = new HashMap<Integer, ArrayList<String>>();
+
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
             if (ptmScores != null) {
                 mainLocations = getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences);
                 secondaryLocations = getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences);
             }
-            return Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(),
-                    includeHtmlStartEndTag, peptide,
-                    mainLocations, secondaryLocations, fixedModifications);
+            return Peptide.getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(),
+                    peptide, mainLocations, secondaryLocations, fixedModifications, useHtmlColorCoding, includeHtmlStartEndTags, useShortName);
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             return "Error";
@@ -276,51 +280,64 @@ public class DisplayFeaturesGenerator {
     }
 
     /**
-     * Returns the modified sequence as an HTML string with potential
-     * modification sites color coding. /!\ this method will work only if the
-     * ptm found in the peptide are in the PTMFactory. /!\ this method uses the
-     * modifications as set in the modification matches of this peptide and
-     * displays all of them
+     * Returns the modified sequence as an tagged string with potential
+     * modification sites color coded or with ptm tags, e.g, &lt;mox&gt;. /!\
+     * This method will work only if the ptm found in the peptide are in the
+     * PTMFactory. /!\ This method uses the modifications as set in the
+     * modification matches of this peptide and displays all of them.
      *
-     * @param modificationProfile the modification profile of the search
+     * @param peptide the peptide
+     * @param useHtmlColorCoding if true, color coded html is used, otherwise
+     * ptm tags, e.g, &lt;mox&gt;, are used
      * @param includeHtmlStartEndTag if true, start and end html tags are added
-     * @return the modified sequence as an HTML string
+     * @param useShortName if true the short names are used in the tags
+     * @return the tagged sequence as a string
      */
-    public String getColoredPeptideSequence(Peptide peptide, boolean includeHtmlStartEndTag) {
-        HashMap<Integer, ArrayList<String>> mainModificationSites = new HashMap<Integer, ArrayList<String>>(),
-                secondaryModificationSites = new HashMap<Integer, ArrayList<String>>(),
-                fixedModificationSites = new HashMap<Integer, ArrayList<String>>();
+    public String getTaggedPeptideSequence(Peptide peptide, boolean useHtmlColorCoding, boolean includeHtmlStartEndTag, boolean useShortName) {
+
+        HashMap<Integer, ArrayList<String>> mainModificationSites = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> secondaryModificationSites = new HashMap<Integer, ArrayList<String>>();
+        HashMap<Integer, ArrayList<String>> fixedModificationSites = new HashMap<Integer, ArrayList<String>>();
+
         ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
         DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             String modName = modMatch.getTheoreticPtm();
             if (displayPreferences.isDisplayedPTM(modName)) {
-            int modSite = modMatch.getModificationSite();
-            if (modMatch.isVariable()) {
-                if (modMatch.isConfident()) {
-                    if (!mainModificationSites.containsKey(modSite)) {
-                        mainModificationSites.put(modSite, new ArrayList<String>());
+
+                if (ptmFactory.getPTM(modMatch.getTheoreticPtm()).getType() == PTM.MODAA) { // exclude terminal ptms
+
+                    int modSite = modMatch.getModificationSite();
+
+                    if (modMatch.isVariable()) {
+                        if (modMatch.isConfident()) {
+                            if (!mainModificationSites.containsKey(modSite)) {
+                                mainModificationSites.put(modSite, new ArrayList<String>());
+                            }
+                            mainModificationSites.get(modSite).add(modName);
+                        } else {
+                            if (!secondaryModificationSites.containsKey(modSite)) {
+                                secondaryModificationSites.put(modSite, new ArrayList<String>());
+                            }
+                            secondaryModificationSites.get(modSite).add(modName);
+                        }
+                    } else {
+                        if (!fixedModificationSites.containsKey(modSite)) {
+                            fixedModificationSites.put(modSite, new ArrayList<String>());
+                        }
+                        fixedModificationSites.get(modSite).add(modName);
                     }
-                    mainModificationSites.get(modSite).add(modName);
-                } else {
-                    if (!secondaryModificationSites.containsKey(modSite)) {
-                        secondaryModificationSites.put(modSite, new ArrayList<String>());
-                    }
-                    secondaryModificationSites.get(modSite).add(modName);
                 }
-            } else {
-                if (!fixedModificationSites.containsKey(modSite)) {
-                    fixedModificationSites.put(modSite, new ArrayList<String>());
-                }
-                fixedModificationSites.get(modSite).add(modName);
-            }
             }
         }
-        return Peptide.getModifiedSequenceAsHtml(modificationProfile, includeHtmlStartEndTag, peptide, mainModificationSites, secondaryModificationSites, fixedModificationSites);
+
+        return Peptide.getTaggedModifiedSequence(modificationProfile, peptide, mainModificationSites,
+                secondaryModificationSites, fixedModificationSites, useHtmlColorCoding, includeHtmlStartEndTag, useShortName);
     }
 
     /**
-     * Filters the modification map according to the user's display preferences
+     * Filters the modification map according to the user's display preferences.
      *
      * @param modificationMap the map of modifications to filter (amino acid ->
      * list of modifications, 1 is the first aa)

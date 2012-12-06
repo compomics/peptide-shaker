@@ -147,7 +147,7 @@ public class PeptideTableModel extends DefaultTableModel {
                     return pSParameter.getGroupClass();
                 case 3:
                     peptideKey = peptideKeys.get(row);
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideKey, true);
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
                 case 4:
                     peptideKey = peptideKeys.get(row);
                     ArrayList<Integer> indexes;

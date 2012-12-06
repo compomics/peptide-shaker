@@ -86,7 +86,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         // insert the values
-        sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(peptideMatchKey, true));
+        sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatchKey, true, true, true));
 
         // set the modification tooltip
         String tooltip = peptideShakerGUI.getDisplayFeaturesGenerator().getPeptideModificationTooltipAsHtml(
