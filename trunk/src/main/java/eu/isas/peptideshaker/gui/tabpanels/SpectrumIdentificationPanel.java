@@ -3055,7 +3055,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 1,
                                 isBestPsmEqualForAllSearchEngines(spectrumMatch),
                                 proteins,
-                                displayFeaturesGenerator.getColoredPeptideSequence(spectrumMatch.getBestAssumption().getPeptide(), true),
+                                displayFeaturesGenerator.getTaggedPeptideSequence(spectrumMatch.getBestAssumption().getPeptide(), true, true, true),
                                 probabilities.getPsmScore(),
                                 probabilities.getPsmConfidence(),
                                 probabilities.isValidated()
@@ -3076,7 +3076,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
                                             ++rank,
                                             proteins,
-                                displayFeaturesGenerator.getColoredPeptideSequence(currentAssumption.getPeptide(), true),
+                                            displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
@@ -3103,7 +3103,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
                                             ++rank,
                                             proteins,
-                                displayFeaturesGenerator.getColoredPeptideSequence(currentAssumption.getPeptide(), true),
+                                            displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
@@ -3130,7 +3130,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
                                             ++rank,
                                             proteins,
-                                displayFeaturesGenerator.getColoredPeptideSequence(currentAssumption.getPeptide(), true),
+                                            displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getEValue(),
                                             probabilities.getSearchEngineConfidence()
@@ -3540,7 +3540,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                                         writer.write("\t");
 
-                                        writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(spectrumMatch.getBestAssumption().getPeptide(), true) + "\t");
+                                        writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch.getBestAssumption().getPeptide(), false, false, true) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide()) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
                                                 identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t");
@@ -3625,8 +3625,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }
 
                     result += "\t";
-
-                                        result += peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(currentAssumption.getPeptide(), true) + "\t";
+                    result += peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentAssumption.getPeptide(), false, false, true) + "\t";
                     result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
                     try {
                         result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),

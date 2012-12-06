@@ -916,7 +916,7 @@ public class IdentificationFeaturesGenerator {
                     } else {
                         result += ", ";
                     }
-                    result += ptmFactory.getPTM(ptm).getShortName();
+                    result += ptmFactory.getShortName(ptm);
                 }
                 result += ">";
             }

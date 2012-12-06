@@ -1251,7 +1251,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                     missing.add(name);
                 } else {
                     PTM ptm = ptmFactory.getPTM(name);
-                    if (ptm.getShortName() == null) {
+                    if (ptm.getShortName() == null) { // @TODO: replace by ptmFactory.getShortName(name)?
                         int index = name.length() - 1;
                         if (name.lastIndexOf(" ") > 0) {
                             index = name.indexOf(" ");
@@ -1259,7 +1259,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         if (name.lastIndexOf("-") > 0) {
                             index = Math.min(index, name.indexOf("-"));
                         }
-                        ptm.setShortName(name.substring(0, index));
+                        ptm.setShortName(name.substring(0, index)); // @TODO: replace by ptmFactory.setShortName(...)?
                     }
                     if (searchParameters.getModificationProfile().getColor(name) == null) {
                         searchParameters.getModificationProfile().setColor(name, Color.lightGray);
@@ -1584,8 +1584,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 case 2:
                     return modificationList.get(row);
                 case 3:
-                    PTM ptm = ptmFactory.getPTM(modificationName);
-                    return ptm.getShortName();
+                    return ptmFactory.getShortName(modificationName);
                 case 4:
                     return ptmFactory.isUserDefined(modificationName);
                 case 5:
@@ -1613,8 +1612,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             try {
                 String modificationName = modificationList.get(row);
                 if (column == 3) {
-                    PTM ptm = ptmFactory.getPTM(modificationName);
-                    ptm.setShortName(aValue.toString().trim());
+                    ptmFactory.setShortName(modificationName, aValue.toString().trim());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",

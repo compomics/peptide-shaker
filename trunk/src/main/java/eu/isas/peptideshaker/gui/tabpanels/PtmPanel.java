@@ -2299,6 +2299,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 currentPtmRow = row;
 
                 progressDialog.setRunFinished();
+                newItemSelection();
             }
         }).start();
     }//GEN-LAST:event_ptmJTableMouseReleased
@@ -2337,6 +2338,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     updatePeptideTable(progressDialog);
                     progressDialog.setRunFinished();
+                    newItemSelection();
                 }
             }.start();
         }
@@ -3338,7 +3340,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * Tries to find the last selected peptide.
-     *
      */
     private void updateSelection(ProgressDialogX progressDialog) {
 
@@ -3510,7 +3511,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
                     progressDialog.increaseProgressValue();
-                    
+
                     if (progressDialog.isRunCanceled()) {
                         break;
                     }
@@ -3940,7 +3941,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + 
                         "Spectrum & Fragment Ions (" + 
-                        peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(currentPeptide, true)
+                        peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentPeptide.getKey(), false, false, true)
                         + ")"
                          + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumAndFragmentIonPanel.revalidate();
@@ -4135,7 +4136,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(displayedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
                     case 3:
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(displayedPeptides.get(row), true);
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(displayedPeptides.get(row), true, true, true);
                     case 4:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(displayedPeptides.get(row)).getUrParam(ptmScores);
@@ -4231,7 +4232,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(relatedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
                     case 3:
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(relatedPeptides.get(row), true);
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(relatedPeptides.get(row), true, true, true);
                     case 4:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(relatedPeptides.get(row)).getUrParam(ptmScores);
@@ -4333,7 +4334,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         return probabilities.isStarred();
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(), true);
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(), true, true, true);
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
@@ -4450,7 +4451,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         return probabilities.isStarred();
                     case 2:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(), true);
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(), true, true, true);
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();

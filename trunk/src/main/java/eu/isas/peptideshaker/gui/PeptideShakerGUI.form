@@ -838,10 +838,10 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="fixedModsJCheckBoxMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+Alt+M"/>
+                  <KeyStroke key="Ctrl+Alt+F"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="70"/>
-                <Property name="text" type="java.lang.String" value="Disaplayed modifications"/>
+                <Property name="text" type="java.lang.String" value="Fixed Modifications"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fixedModsJCheckBoxMenuItemActionPerformed"/>

@@ -233,8 +233,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
             }
 
-            sequenceLabel.setText(Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile(),
-                    true, peptideMatch.getTheoreticPeptide(), mainLocations, secondaryLocations, fixedModifications));
+            sequenceLabel.setText(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideMatch.getTheoreticPeptide(), true, true, true));
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             sequenceLabel.setText("Error");

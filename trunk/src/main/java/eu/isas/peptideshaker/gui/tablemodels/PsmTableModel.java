@@ -140,7 +140,7 @@ public class PsmTableModel extends DefaultTableModel {
 
                     if (spectrumMatch != null) {
                         PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getColoredPeptideSequence(bestAssumption.getPeptide(), true);
+                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
                     } else {
                         return null;
                     }
