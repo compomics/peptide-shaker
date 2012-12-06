@@ -454,7 +454,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         UIManager.put("TitledBorder.titleColor", new Color(59, 59, 59));
 
         initComponents();
-        
+
         // disable the notification menu until we have implemented its us
         noteButton.setVisible(false);
         helpButton.setVisible(false);
@@ -497,7 +497,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         loadEnzymes();
         resetPtmFactory();
-        
+
         //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.NH3);
@@ -1776,7 +1776,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
             //@TODO: do this only if the new search settings are different from the old ones
             searchParameters = searchPreferencesDialog.getSearchParameters();
-            updateAnnotationPreferencesFromSearchSettings(); 
+            updateAnnotationPreferencesFromSearchSettings();
             setSelectedItems();
             backgroundPanel.revalidate();
             backgroundPanel.repaint();
@@ -2913,13 +2913,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Show/hide the fixed modifications.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void fixedModsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedModsJCheckBoxMenuItemActionPerformed
-        
+
         // @TODO: replace by user select ptm visability
-        
+
         if (fixedModsJCheckBoxMenuItem.isSelected()) {
             for (String ptm : searchParameters.getModificationProfile().getFixedModifications()) {
                 displayPreferences.setDisplayedPTM(ptm, true);
@@ -2964,7 +2964,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         try {
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
-            
+
             // Display the variable modifications
             displayPreferences.setDefaultSelection(searchParameters.getModificationProfile());
 
@@ -4901,18 +4901,30 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-                    if (!new File(filePath).exists()) {
-                        JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
-                        temp.getUserPreferences().removerRecentProject(filePath);
-                    } else {
-                        clearData(true);
-                        clearPreferences();
+                    if (!dataSaved && experiment != null) {
+                        int value = JOptionPane.showConfirmDialog(temp,
+                                "Do you want to save the changes to " + experiment.getReference() + "?",
+                                "Unsaved Changes",
+                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
 
-                        importPeptideShakerFile(new File(filePath));
-                        userPreferences.addRecentProject(filePath);
-                        lastSelectedFolder = new File(filePath).getAbsolutePath();
+                        if (value == JOptionPane.YES_OPTION) {
+                            saveMenuItemActionPerformed(null);
+                        } else if (value == JOptionPane.NO_OPTION) {
+                            if (!new File(filePath).exists()) {
+                                JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                                temp.getUserPreferences().removerRecentProject(filePath);
+                            } else {
+                                clearData(true);
+                                clearPreferences();
+
+                                importPeptideShakerFile(new File(filePath));
+                                userPreferences.addRecentProject(filePath);
+                                lastSelectedFolder = new File(filePath).getAbsolutePath();
+                            }
+                            updateRecentProjectsList();
+                        }
                     }
-                    updateRecentProjectsList();
                 }
             });
 
@@ -6031,8 +6043,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         //resetSelectedItems();
         //overviewPanel.updateSelection();
 
-        CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences, 
-                spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences, 
+        CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences,
+                spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences,
                 identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache, displayPreferences);
     }
 
@@ -6077,7 +6089,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param aDialogTitle the title for the dialog
      * @param openDialog if true an open dialog is shown, false results in a
      * save dialog
-     * @return the file selected by the user, or null if no file or folder was selected
+     * @return the file selected by the user, or null if no file or folder was
+     * selected
      */
     public File getUserSelectedFile(String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
 

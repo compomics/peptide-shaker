@@ -310,7 +310,13 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.4</version>
+            <version>3.4.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.lowagie</groupId>
+                    <artifactId>itext</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <!-- The junit JAR file -->

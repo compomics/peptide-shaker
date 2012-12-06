@@ -4704,7 +4704,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             }).start();
 
-            final Thread exportThread = new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -4758,19 +4758,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         e.printStackTrace();
                     }
                 }
-            };
-
-            Thread appThread = new Thread() {
-
-                public void run() {
-                    try {
-                        SwingUtilities.invokeAndWait(exportThread);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            appThread.start();
+            }).start();
         }
     }
 
