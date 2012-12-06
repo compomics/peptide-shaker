@@ -702,6 +702,8 @@ public class FileImporter {
                                         parentProteins.add(accession);
                                     }
                                 }
+
+                                peptide.setParentProteins(parentProteins);
                             }
                         }
 
@@ -711,6 +713,7 @@ public class FileImporter {
                         ptmFactory.checkFixedModifications(modificationProfile, peptide);
                         HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
                         HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
+
                         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
                             tempNames = new HashMap<Integer, ArrayList<String>>();
                             if (modMatch.isVariable()) {
