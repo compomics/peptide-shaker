@@ -1339,17 +1339,6 @@ public class NewDialog extends javax.swing.JDialog {
             if (!ptmFactory.containsPTM(name)) {
                 missing.add(name);
             } else {
-                PTM ptm = ptmFactory.getPTM(name);
-                if (ptm.getShortName() == null) { // @TODO: replace by ptmFactory.getShortName(name)?
-                    int index = name.length() - 1;
-                    if (name.lastIndexOf(" ") > 0) {
-                        index = name.indexOf(" ");
-                    }
-                    if (name.lastIndexOf("-") > 0) {
-                        index = Math.min(index, name.indexOf("-"));
-                    }
-                    ptm.setShortName(name.substring(0, index)); // @TODO: replace by ptmFactory.setShortName(...)?
-                }
                 if (modificationProfile.getColor(name) == null) {
                     searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                 }
