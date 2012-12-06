@@ -1,9 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.experiment.biology.Ion;
-import com.compomics.util.experiment.biology.NeutralLoss;
-import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -398,14 +395,17 @@ public class PtmTable extends JTable {
         ArrayList<Double> data;
         int[] histogram;
         String modification = "";
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+        String ptmName = ptm.getName(),
+                shortName = ptmFactory.getShortName(ptmName);
 
         for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
 
             if (modCpt > 0) {
                 if (modCpt == 1) {
-                    modification = " <" + ptm.getShortName() + ">";
+                    modification = " <" + shortName + ">";
                 } else {
-                    modification = " <" + modCpt + ptm.getShortName() + ">";
+                    modification = " <" + modCpt + shortName + ">";
                 }
             }
 
@@ -463,6 +463,9 @@ public class PtmTable extends JTable {
         MSnSpectrum spectrum;
         SpectrumMatch spectrumMatch;
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+        String ptmName = ptm.getName(),
+                shortName = ptmFactory.getShortName(ptmName);
 
         for (String spectrumKey : spectrumKeys) {
             try {
@@ -523,9 +526,9 @@ public class PtmTable extends JTable {
 
             if (modCpt > 0) {
                 if (modCpt == 1) {
-                    modification = " <" + ptm.getShortName() + ">";
+                    modification = " <" + shortName + ">";
                 } else {
-                    modification = " <" + modCpt + ptm.getShortName() + ">";
+                    modification = " <" + modCpt + shortName + ">";
                 }
             }
 

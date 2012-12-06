@@ -681,10 +681,6 @@ public class FileImporter {
                 if (!match.hasAssumption(searchEngine)) {
                     matchIt.remove();
                 } else {
-                    if (match.getKey().equals("orbitrap003956.mgf_cus_701.85595703125_1424.3941")
-                            || match.getKey().equals("AG_MAP_SPEG10.mgf_cus_AG_MAP_SPEG10.4824.4824.3")) {
-                        int debug = 1;
-                    }
                     for (PeptideAssumption assumption : match.getAllAssumptions()) {
 
                         Peptide peptide = assumption.getPeptide();
@@ -694,15 +690,12 @@ public class FileImporter {
                         if (searchEngine == Advocate.XTANDEM) {
                             ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
                             if (!proteins.isEmpty()) {
-
                                 ArrayList<String> parentProteins = new ArrayList<String>();
-
                                 for (String accession : proteins) {
                                     if (!parentProteins.contains(accession)) { // @TODO: should not be needed, but somewhere along the way the same proteins are added more than once...
                                         parentProteins.add(accession);
                                     }
                                 }
-
                                 peptide.setParentProteins(parentProteins);
                             }
                         }
@@ -813,6 +806,7 @@ public class FileImporter {
                                                 ptmMappingRegular.put(modSite, modMatch); // for the record
                                                 ptmMappingGoofy.put(modMatch, modSite);
                                                 modMatch.setTheoreticPtm(modName);
+                                                modMatch.setModificationSite(modSite);
                                                 break;
                                             }
                                         }
