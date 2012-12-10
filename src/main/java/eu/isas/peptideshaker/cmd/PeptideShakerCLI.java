@@ -26,7 +26,6 @@ import eu.isas.peptideshaker.utils.Metrics;
 import org.apache.commons.cli.*;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -36,6 +35,7 @@ import java.util.concurrent.Callable;
  *
  * @author Kenny Helsens
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PeptideShakerCLI implements Callable {
 
@@ -66,9 +66,7 @@ public class PeptideShakerCLI implements Callable {
      */
     public PeptideShakerCLI(PeptideShakerCLIInputBean cliInputBean) {
         this.cliInputBean = cliInputBean;
-
         loadEnzymes();
-
     }
 
     /**
@@ -124,7 +122,9 @@ public class PeptideShakerCLI implements Callable {
         PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
         // Import the files
-        peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters, annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, false);
+        peptideShaker.importFiles(waitingHandler, idFilter, identificationFiles, spectrumFiles, searchParameters,
+                annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
+                spectrumCountingPreferences, false);
 
         // Identification as created by PeptideShaker
         ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
@@ -137,13 +137,17 @@ public class PeptideShakerCLI implements Callable {
         ObjectsCache objectsCache = peptideShaker.getCache();
 
         // The identification feature generator
-        IdentificationFeaturesGenerator identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
+        IdentificationFeaturesGenerator identificationFeaturesGenerator =
+                new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
         // Save results
         try {
             waitingHandler.appendReport("Saving results, please wait...", true, true);
             File ouptutFile = cliInputBean.getOutput();
-            CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, metrics, processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, true);
+            CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
+                    annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
+                    processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
+                    ptmScoringPreferences, objectsCache, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -170,8 +174,8 @@ public class PeptideShakerCLI implements Callable {
      * PeptideShaker CLI header message when printing the usage.
      */
     private static String getHeader() {
-        return ""
-                + "----------------------" + System.getProperty("line.separator")
+        return "\n"
+                + "----------------------"
                 + System.getProperty("line.separator")
                 + "INFO"
                 + System.getProperty("line.separator")
@@ -179,15 +183,16 @@ public class PeptideShakerCLI implements Callable {
                 + System.getProperty("line.separator")
                 + "The PeptideShaker command line tool takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "If you encounter any issue please visit our website (http://peptide-shaker.googlecode.com). You might find help in the troubleshooting section (https://code.google.com/p/peptide-shaker/#Troubleshooting) and in our help wiki for the command line use (https://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI)." + System.getProperty("line.separator")
+                + "For further help see http://peptide-shaker.googlecode.com and http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "If the problem persists, you will find support (for free!) at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
+                + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + "----------------------" 
+                + System.getProperty("line.separator")
+                + "OPTIONS"
                 + System.getProperty("line.separator")
                 + "----------------------" + System.getProperty("line.separator")
-                + "OPTIONS" + System.getProperty("line.separator")
-                + System.getProperty("line.separator")
-                + "----------------------" + System.getProperty("line.separator")
-                + "";
+                + "\n";
     }
 
     /**
@@ -215,53 +220,53 @@ public class PeptideShakerCLI implements Callable {
         }
 
         if (!aLine.hasOption(PeptideShakerCLIParams.EXPERIMENT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.EXPERIMENT.id)).equals("")) {
-            System.out.println("Experiment name not specified.");
+            System.out.println("\nExperiment name not specified.\n");
             return false;
         }
 
         if (!aLine.hasOption(PeptideShakerCLIParams.SAMPLE.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.SAMPLE.id)).equals("")) {
-            System.out.println("Sample name not specified.");
+            System.out.println("\nSample name not specified.\n");
             return false;
         }
 
         if (!aLine.hasOption(PeptideShakerCLIParams.REPLICATE.id) || aLine.getOptionValue(PeptideShakerCLIParams.REPLICATE.id) == null) {
-            System.out.println("Replicate number not specified.");
+            System.out.println("\nReplicate number not specified.\n");
             return false;
         }
 
         if (!aLine.hasOption(PeptideShakerCLIParams.SPECTRUM_FILES.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id)).equals("")) {
-            System.out.println("Spectrum files not specified.");
+            System.out.println("\nSpectrum files not specified.\n");
             return false;
         } else {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SPECTRUM_FILES.id);
             ArrayList<File> idFiles = PeptideShakerCLIInputBean.getSpectrumFiles(filesTxt);
             if (idFiles.isEmpty()) {
-                System.out.println("No spectrum file found.");
+                System.out.println("\nNo spectrum file found.\n");
                 return false;
             }
         }
 
         if (!aLine.hasOption(PeptideShakerCLIParams.IDENTIFICATION_FILES.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id)).equals("")) {
-            System.out.println("Identification files not specified.");
+            System.out.println("\nIdentification files not specified.\n");
             return false;
         } else {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
             ArrayList<File> idFiles = PeptideShakerCLIInputBean.getIdentificationFiles(filesTxt);
             if (idFiles.isEmpty()) {
-                System.out.println("No identification file found.");
+                System.out.println("\nNo identification file found.\n");
                 return false;
             }
         }
 
         if (!aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id) || ((String) aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id)).equals("")) {
-            System.out.println("Output file not specified.");
+            System.out.println("\nOutput file not specified.\n");
             return false;
         } else {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.IDENTIFICATION_FILES.id);
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id);
             File testFile = new File(filesTxt.trim());
             File parentFolder = testFile.getParentFile();
             if (!parentFolder.exists()) {
-                System.out.println("Destination folder " + parentFolder.getPath() + " not found.");
+                System.out.println("\nDestination folder " + parentFolder.getPath() + " not found.\n");
                 return false;
             }
         }
@@ -270,7 +275,7 @@ public class PeptideShakerCLI implements Callable {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id).trim();
             File testFile = new File(filesTxt);
             if (!testFile.exists()) {
-                System.out.println("Destination folder for CSV " + filesTxt + " not found.");
+                System.out.println("\nDestination folder for CSV " + filesTxt + " not found.\n");
                 return false;
             }
         }
@@ -280,7 +285,7 @@ public class PeptideShakerCLI implements Callable {
             File testFile = new File(filesTxt.trim());
             File parentFolder = testFile.getParentFile();
             if (!parentFolder.exists()) {
-                System.out.println("Destination folder for Pride file " + parentFolder.getPath() + " not found.");
+                System.out.println("\nDestination folder for Pride file " + parentFolder.getPath() + " not found.\n");
                 return false;
             }
         }
@@ -290,7 +295,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("Could not parse " + input + " as PSM FDR threshold.");
+                System.out.println("\nCould not parse " + input + " as PSM FDR threshold.\n");
                 return false;
             }
         }
@@ -300,7 +305,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("Could not parse " + input + " as PSM FLR threshold.");
+                System.out.println("\nCould not parse " + input + " as PSM FLR threshold.\n");
                 return false;
             }
         }
@@ -310,7 +315,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("Could not parse " + input + " as peptide FDR threshold.");
+                System.out.println("\nCould not parse " + input + " as peptide FDR threshold.\n");
                 return false;
             }
         }
@@ -320,7 +325,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("Could not parse " + input + " as protein FDR threshold.");
+                System.out.println("\nCould not parse " + input + " as protein FDR threshold.\n");
                 return false;
             }
         }
@@ -333,11 +338,11 @@ public class PeptideShakerCLI implements Callable {
                 try {
                     SearchParameters identificationParameters = SearchParameters.getIdentificationParameters(testFile);
                 } catch (Exception e) {
-                    System.out.println("An error occurred while parsing " + filesTxt + ".");
+                    System.out.println("\nAn error occurred while parsing " + filesTxt + ".\n");
                     e.printStackTrace();
                 }
             } else {
-                System.out.println("Search parameters file " + filesTxt + " not found.");
+                System.out.println("\nSearch parameters file " + filesTxt + " not found.\n");
                 return false;
             }
         }
@@ -354,25 +359,17 @@ public class PeptideShakerCLI implements Callable {
     public static void main(String[] args) {
         try {
             Options lOptions = new Options();
-
             PeptideShakerCLIParams.createOptionsCLI(lOptions);
-
             BasicParser parser = new BasicParser();
-
-            CommandLine line = null;
-            line = parser.parse(lOptions, args);
+            CommandLine line = parser.parse(lOptions, args);
 
             if (!isValidStartup(line)) {
                 HelpFormatter formatter = new HelpFormatter();
 
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));
-
+                lPrintWriter.print("\nPeptideShaker - Command Line" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
-
-                lPrintWriter.print(System.getProperty("line.separator") + "Options:" + System.getProperty("line.separator"));
                 formatter.printOptions(lPrintWriter, 200, lOptions, 0, 0);
-
                 lPrintWriter.flush();
                 lPrintWriter.close();
 
@@ -383,11 +380,11 @@ public class PeptideShakerCLI implements Callable {
                 lPeptideShakerCLI.call();
             }
         } catch (ParseException e) {
-            System.err.println(e.getMessage());
+            System.err.println("\n" + e.getMessage() + "\n");
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("\n" + e.getMessage() + "\n");
         } catch (ClassNotFoundException e) {
-            System.err.println(e.getMessage());
+            System.err.println("\n" + e.getMessage() + "\n");
         }
     }
 

@@ -396,8 +396,7 @@ public class PtmTable extends JTable {
         int[] histogram;
         String modification = "";
         PTMFactory ptmFactory = PTMFactory.getInstance();
-        String ptmName = ptm.getName(),
-                shortName = ptmFactory.getShortName(ptmName);
+        String ptmName = ptm.getName(), shortName = ptmFactory.getShortName(ptmName);
 
         for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
 
@@ -464,8 +463,7 @@ public class PtmTable extends JTable {
         SpectrumMatch spectrumMatch;
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         PTMFactory ptmFactory = PTMFactory.getInstance();
-        String ptmName = ptm.getName(),
-                shortName = ptmFactory.getShortName(ptmName);
+        String ptmName = ptm.getName(), shortName = ptmFactory.getShortName(ptmName);
 
         for (String spectrumKey : spectrumKeys) {
             try {

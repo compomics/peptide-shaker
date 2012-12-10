@@ -730,7 +730,7 @@ public class FileImporter {
                                         throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem or Mascot modification.\n"
                                                 + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                     }
-                                    tempNames = ptmFactory.getExpectedPTMs(searchParameters.getModificationProfile(), peptide, seMass, ptmMassTolerance);
+                                    tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance);
                                 } else {
                                     throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + SearchEngine.getName(searchEngine) + ".");
                                 }
