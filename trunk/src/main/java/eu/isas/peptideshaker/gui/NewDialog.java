@@ -917,7 +917,7 @@ public class NewDialog extends javax.swing.JDialog {
             if (parameterFiles.size() == 1) {
                 parameterFile = parameterFiles.get(0);
             } else if (parameterFiles.size() > 1) {
-                FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Please select the SearchGUI parameters corresponding to the imported identifications.");
+                FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
                 if (!fileSelection.isCanceled()) {
                     parameterFile = fileSelection.getSelectedFile();
                 }

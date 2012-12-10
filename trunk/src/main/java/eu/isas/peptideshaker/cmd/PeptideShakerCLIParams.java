@@ -7,6 +7,7 @@ import org.apache.commons.cli.Options;
  *
  * @author Kenny Helsens
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public enum PeptideShakerCLIParams {
 
@@ -14,16 +15,16 @@ public enum PeptideShakerCLIParams {
     EXPERIMENT("experiment", "Mandatory: Specifies the experiment name", true),
     SAMPLE("sample", "Mandatory: Specifies the sample name", true),
     REPLICATE("replicate", "The replicate number", true),
-    SPECTRUM_FILES("spectrum_files", "Mandatory: The spectrum files (mgf format) in a comma separated list or an entire folder. Example: 'file1.mgf, file2.mgf'.", true),
-    IDENTIFICATION_FILES("identification_files", "Mandatory: The identification files (Mascot .dat, OMSSA .omx and X!Tandem .t.xml formats) in a comma separated list or an entire folder. Example: 'file1.omx, file1.dat, file1.t.xml'.", true),
-    PEPTIDESHAKER_OUTPUT("out", "Mandatory: PeptideShaker output file. If the file already exists it will be silently overwritten.", true),
+    SPECTRUM_FILES("spectrum_files", "Mandatory: Spectrum files (mgf format), comma separated list or an entire folder.", true),
+    IDENTIFICATION_FILES("identification_files", "Mandatory: Identification files (.dat, .omx or .t.xml), comma separated list or an entire folder.", true),
+    PEPTIDESHAKER_OUTPUT("out", "Mandatory: PeptideShaker output file. Note: if file exists it will be overwritten.", true),
     PEPTIDESHAKER_CSV("out_csv", "Output folder for csv summary", false),
-    PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker Pride xml output file (not implemented yet)", false),
-    PSM_FDR("psm_FDR", "FDR at the PSM level in percent (default 1% FDR: '1')", false),
-    PSM_FLR("psm_FLR", "FLR at the PSM level in percent for peptides with different potential modification sites and one variable modification (default 1% FLR: '1')", false),
-    PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level in percent (default 1% FDR: '1')", false),
-    PROTEIN_FDR("protein_FDR", "FDR at the protein level in percent (default 1% FDR: '1')", false),
-    SEARCH_PARAMETERS("identification_parameters", "The identification parameters as serialized file of com.compomics.util.experiment.identification.SearchParameters. This file is automatically saved by SearchGUI along with the identification files. If not provided default settings will be tried. If the default settings don't work the import will crash - hopefully decently.", false);
+    PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file (not yet implemented)", false),
+    PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1')", false),
+    PSM_FLR("psm_FLR", "FLR at the PSM level (default 1% FLR: '1')", false),
+    PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1')", false),
+    PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1')", false),
+    SEARCH_PARAMETERS("identification_parameters", "Serialized com.compomics.util.experiment.identification.SearchParameters file created by SearchGUI.", false);
     /**
      * Short Id for the CLI parameter.
      */
