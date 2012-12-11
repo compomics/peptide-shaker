@@ -565,6 +565,9 @@ public class OutputGenerator {
                                 writer.write("Peptide End" + SEPARATOR);
                             }
                             if (modifications) {
+                                writer.write("Fixed Modification" + SEPARATOR);
+                            }
+                            if (modifications) {
                                 writer.write("Variable Modification" + SEPARATOR);
                             }
                             if (ptmLocations) {
@@ -814,9 +817,12 @@ public class OutputGenerator {
 
                                                     writer.write(start + SEPARATOR + end + SEPARATOR);
                                                 }
-
                                                 if (modifications) {
-                                                    writer.write(getPeptideModificationsAsString(peptide));
+                                                    writer.write(getPeptideModificationsAsString(peptide, false));
+                                                    writer.write(SEPARATOR);
+                                                }
+                                                if (modifications) {
+                                                    writer.write(getPeptideModificationsAsString(peptide, true));
                                                     writer.write(SEPARATOR);
                                                 }
                                                 if (ptmLocations) {
@@ -2130,15 +2136,16 @@ public class OutputGenerator {
      * Returns the peptide modifications as a string.
      *
      * @param peptide the peptide
+     * @param variablePtms if true, only variable ptms are shown, false return only the fixed ptms
      * @return the peptide modifications as a string
      */
-    public static String getPeptideModificationsAsString(Peptide peptide) {
+    public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
 
         String result = "";
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (modificationMatch.isVariable()) {
+            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                     modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                 }
@@ -2155,7 +2162,7 @@ public class OutputGenerator {
                 result += ", ";
             }
             first2 = true;
-            result += mod + "(";
+            result += mod + " (";
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;

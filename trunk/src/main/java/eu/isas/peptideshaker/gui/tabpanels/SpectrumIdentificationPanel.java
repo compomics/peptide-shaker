@@ -3519,7 +3519,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 } else if (tableIndex == TableIndex.PSM_TABLES) {
 
                                     writer.write("PeptideShaker" + System.getProperty("line.separator") + System.getProperty("line.separator"));
-                                    writer.write("\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated" + System.getProperty("line.separator"));
+                                    writer.write("\tProtein(s)\tSequence\tFixed Modifications\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated" + System.getProperty("line.separator"));
 
                                     try {
                                         // the PeptideShaker PSM table
@@ -3541,7 +3541,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         writer.write("\t");
 
                                         writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch.getBestAssumption().getPeptide(), false, false, true) + "\t");
-                                        writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide()) + "\t");
+                                        writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide(), false) + "\t");
+                                        writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide(), true) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
                                                 identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
@@ -3626,7 +3627,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     result += "\t";
                     result += peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentAssumption.getPeptide(), false, false, true) + "\t";
-                    result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
+                    result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), false) + "\t";
+                    result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), true) + "\t";
                     try {
                         result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
                                 identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";

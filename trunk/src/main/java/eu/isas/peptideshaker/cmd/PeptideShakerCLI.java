@@ -159,7 +159,7 @@ public class PeptideShakerCLI implements Callable {
             exporter.exportResults(waitingHandler, cliInputBean.getCsvDirectory());
         }
 
-        // Pride output required?
+        // PRIDE output required?
         //@TODO!
 
         //Export entire project?
