@@ -377,7 +377,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             ArrayList<String> fileNames = new ArrayList<String>();
 
-            for (String fileName : peptideShakerGUI.getIdentification().getSpectrumFiles()) {
+            for (String fileName : peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames()) {
                 fileNames.add(fileName);
             }
 
@@ -587,7 +587,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             DefaultBoxAndWhiskerCategoryDataset mwPlotDataset = new DefaultBoxAndWhiskerCategoryDataset();
 
             HashMap<String, Double> molecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
-            ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getSpectrumFiles();
+            ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
 
             for (int i = 0; i < spectrumFiles.size(); i++) {
 
@@ -1821,6 +1821,11 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
         ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
 
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
