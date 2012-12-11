@@ -1911,7 +1911,7 @@ public class OutputGenerator {
                     try {
                         ArrayList<String> fractionFileNames = new ArrayList<String>();
 
-                        for (String fileName : peptideShakerGUI.getIdentification().getSpectrumFiles()) {
+                        for (String fileName : peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames()) {
                             fractionFileNames.add(fileName);
                         }
 
