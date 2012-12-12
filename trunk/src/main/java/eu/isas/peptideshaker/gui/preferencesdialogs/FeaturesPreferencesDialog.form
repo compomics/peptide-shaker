@@ -138,39 +138,42 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="proteinDescription" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinAccession" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinScore" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinConfidence" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinNPeptides" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinPI" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="proteinNSpectra" linkSize="1" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                              <Component id="proteinSequenceCoverage" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="proteinNsaf" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinEmpai" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinValidated" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinStarred" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinHidden" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="ptmSummary" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="molecularWeight" min="-2" pref="150" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="0" pref="64" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="proteinDescription" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinScore" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinConfidence" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinNPeptides" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinPI" linkSize="1" max="32767" attributes="0"/>
+                                  <Component id="proteinNSpectra" linkSize="1" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Component id="proteinSelectAllLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="slashLabel1" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinDeselectAllLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="proteinAccession" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinSequenceCoverage" linkSize="1" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="proteinValidated" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="proteinStarred" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="proteinHidden" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="ptmSummary" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="molecularWeight" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="maximalProteinSetCheckBox" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="proteinNsaf" max="32767" attributes="0"/>
+                                              <Component id="proteinEmpai" pref="138" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace min="0" pref="64" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       <Component id="proteinExport" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -182,38 +185,37 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="proteinAccession" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinNsaf" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="proteinAccession" linkSize="15" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="proteinDescription" linkSize="15" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="proteinDescription" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinEmpai" linkSize="15" alignment="1" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Component id="proteinPI" linkSize="15" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinScore" linkSize="15" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="proteinEmpai" linkSize="15" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="proteinNsaf" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinConfidence" linkSize="15" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="ptmSummary" linkSize="15" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="molecularWeight" linkSize="15" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="proteinConfidence" linkSize="15" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
                                       <Component id="proteinNPeptides" linkSize="15" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinNSpectra" linkSize="15" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinSequenceCoverage" linkSize="15" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="ptmSummary" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="molecularWeight" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="maximalProteinSetCheckBox" linkSize="15" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinValidated" linkSize="15" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinStarred" linkSize="15" min="-2" max="-2" attributes="0"/>
@@ -372,6 +374,14 @@
                     <Component class="javax.swing.JCheckBox" name="molecularWeight">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Molecular Weight"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="maximalProteinSetCheckBox">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Maximal Protein Set"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Returns a separate file with the maximal protein set"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>

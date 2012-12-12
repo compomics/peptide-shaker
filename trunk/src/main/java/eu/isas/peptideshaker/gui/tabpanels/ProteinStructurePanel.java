@@ -3371,7 +3371,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     outputGenerator.getProteinsOutput(
                             null, selectedProteins, true, false, true, true, true,
                             true, true, true, true, false, true,
-                            true, true, true, true, true, false, true, false);
+                            true, true, true, true, true, false, true, false, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
                     String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));

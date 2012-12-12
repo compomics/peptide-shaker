@@ -81,6 +81,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinDeselectAllLabel = new javax.swing.JLabel();
         slashLabel1 = new javax.swing.JLabel();
         molecularWeight = new javax.swing.JCheckBox();
+        maximalProteinSetCheckBox = new javax.swing.JCheckBox();
         peptidesPanel = new javax.swing.JPanel();
         peptideAccession = new javax.swing.JCheckBox();
         peptideModification = new javax.swing.JCheckBox();
@@ -263,79 +264,86 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         molecularWeight.setIconTextGap(10);
         molecularWeight.setOpaque(false);
 
+        maximalProteinSetCheckBox.setText("Maximal Protein Set");
+        maximalProteinSetCheckBox.setToolTipText("Returns a separate file with the maximal protein set");
+        maximalProteinSetCheckBox.setIconTextGap(10);
+        maximalProteinSetCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
         proteinsPanelLayout.setHorizontalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(proteinDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinScore, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinNPeptides, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinPI, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(proteinNSpectra, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(proteinSequenceCoverage, javax.swing.GroupLayout.Alignment.TRAILING)))
-                        .addGap(75, 75, 75)
-                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(proteinNsaf, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinEmpai, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(proteinHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ptmSummary, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(molecularWeight, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 64, Short.MAX_VALUE))
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(proteinDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinScore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinConfidence, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinNPeptides, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinPI, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinNSpectra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
                         .addComponent(proteinSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(slashLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(proteinDeselectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(proteinAccession, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinSequenceCoverage))
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(proteinsPanelLayout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(proteinValidated, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(proteinStarred, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(proteinHidden, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ptmSummary, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(molecularWeight, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(maximalProteinSetCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(proteinNsaf, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(proteinEmpai, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)))
+                        .addGap(0, 64, Short.MAX_VALUE))
+                    .addGroup(proteinsPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(proteinExport)))
                 .addContainerGap())
         );
 
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
+        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinConfidence, proteinDescription, proteinHidden, proteinNPeptides, proteinNSpectra, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
 
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(proteinAccession)
+                    .addComponent(proteinNsaf))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinDescription)
+                    .addComponent(proteinEmpai, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addComponent(proteinAccession)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinDescription)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinPI)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinScore))
-                    .addGroup(proteinsPanelLayout.createSequentialGroup()
-                        .addComponent(proteinEmpai)
+                        .addComponent(proteinScore)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinNsaf)
+                        .addComponent(proteinConfidence)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ptmSummary)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(molecularWeight)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proteinConfidence)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(proteinsPanelLayout.createSequentialGroup()
                         .addComponent(proteinNPeptides)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinNSpectra)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinSequenceCoverage))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
+                        .addComponent(ptmSummary)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(molecularWeight)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(maximalProteinSetCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinStarred)
@@ -350,7 +358,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {molecularWeight, proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
+        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {maximalProteinSetCheckBox, molecularWeight, proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
 
         tabbedPane.addTab("Proteins", proteinsPanel);
 
@@ -1133,10 +1141,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void proteinExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportActionPerformed
-        outputGenerator.getProteinsOutput(this, null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), true, proteinPI.isSelected(),
+        outputGenerator.getProteinsOutput(this, null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), proteinAccession.isSelected(), proteinPI.isSelected(),
                 proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
                 proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), molecularWeight.isSelected(), true, proteinStarred.isSelected(),
-                true, proteinHidden.isSelected());
+                true, proteinHidden.isSelected(), maximalProteinSetCheckBox.isSelected());
     }//GEN-LAST:event_proteinExportActionPerformed
 
     /**
@@ -1332,6 +1340,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinConfidence.setSelected(true);
         proteinSequenceCoverage.setSelected(true);
         proteinValidated.setSelected(true);
+        maximalProteinSetCheckBox.setSelected(true);
     }//GEN-LAST:event_proteinSelectAllLabelMouseClicked
 
     /**
@@ -1369,6 +1378,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinConfidence.setSelected(false);
         proteinSequenceCoverage.setSelected(false);
         ptmSummary.setSelected(false);
+        maximalProteinSetCheckBox.setSelected(false);
         proteinValidated.setSelected(false);
         proteinStarred.setSelected(false);
         proteinHidden.setSelected(false);
@@ -1708,6 +1718,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JCheckBox maximalProteinSetCheckBox;
     private javax.swing.JCheckBox molecularWeight;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;

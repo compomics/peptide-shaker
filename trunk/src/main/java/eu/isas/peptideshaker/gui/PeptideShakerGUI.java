@@ -4901,6 +4901,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
 
+                    boolean open = true;
+
                     if (!dataSaved && experiment != null) {
                         int value = JOptionPane.showConfirmDialog(temp,
                                 "Do you want to save the changes to " + experiment.getReference() + "?",
@@ -4910,20 +4912,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                         if (value == JOptionPane.YES_OPTION) {
                             saveMenuItemActionPerformed(null);
-                        } else if (value == JOptionPane.NO_OPTION) {
-                            if (!new File(filePath).exists()) {
-                                JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
-                                temp.getUserPreferences().removerRecentProject(filePath);
-                            } else {
-                                clearData(true);
-                                clearPreferences();
-
-                                importPeptideShakerFile(new File(filePath));
-                                userPreferences.addRecentProject(filePath);
-                                lastSelectedFolder = new File(filePath).getAbsolutePath();
-                            }
-                            updateRecentProjectsList();
+                            open = false;
+                        } else if (value == JOptionPane.CANCEL_OPTION) {
+                            open = false;
                         }
+                    }
+    
+                    if (open) {
+                        if (!new File(filePath).exists()) {
+                            JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                            temp.getUserPreferences().removerRecentProject(filePath);
+                        } else {
+                            clearData(true);
+                            clearPreferences();
+
+                            importPeptideShakerFile(new File(filePath));
+                            userPreferences.addRecentProject(filePath);
+                            lastSelectedFolder = new File(filePath).getAbsolutePath();
+                        }
+                        updateRecentProjectsList();
                     }
                 }
             });
