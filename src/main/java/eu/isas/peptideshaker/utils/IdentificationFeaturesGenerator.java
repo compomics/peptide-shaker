@@ -98,10 +98,10 @@ public class IdentificationFeaturesGenerator {
      * @return an array of boolean indicating whether the amino acids of given
      * peptides can generate peptides
      * @throws IllegalArgumentException
-     * @throws SQLException 
-     * @throws IOException 
+     * @throws SQLException
+     * @throws IOException
      * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public boolean[] getCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         boolean[] result = (boolean[]) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.coverable_AA, proteinMatchKey);
@@ -118,11 +118,11 @@ public class IdentificationFeaturesGenerator {
      * been altered.
      *
      * @param proteinMatchKey the key of the protein of interest
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
-     * @throws IOException 
+     * @throws IOException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public void updateCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         boolean[] result = estimateCoverableAA(proteinMatchKey);
@@ -192,10 +192,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein of interest
      * @return the sequence coverage
      * @throws IllegalArgumentException
-     * @throws SQLException 
+     * @throws SQLException
      * @throws IOException
-     * @throws ClassNotFoundException 
-     * @throws InterruptedException  
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     public Double getSequenceCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
@@ -212,10 +212,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein of interest
      * @throws IllegalArgumentException
-     * @throws SQLException 
-     * @throws IOException 
+     * @throws SQLException
+     * @throws IOException
      * @throws InterruptedException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public void updateSequenceCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = estimateSequenceCoverage(proteinMatchKey);
@@ -272,10 +272,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match of interest
      * @return the corresponding spectrum counting metric
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public Double getSpectrumCounting(String proteinMatchKey) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
         return getSpectrumCounting(proteinMatchKey, spectrumCountingPreferences.getSelectedMethod());
@@ -289,10 +289,10 @@ public class IdentificationFeaturesGenerator {
      * @param method the method to use
      * @return the corresponding spectrum counting metric
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
         if (method == spectrumCountingPreferences.getSelectedMethod()) {
@@ -445,10 +445,10 @@ public class IdentificationFeaturesGenerator {
      * @return the best protein coverage possible according to the given
      * cleavage settings
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public Double getObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey);
@@ -466,10 +466,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinMatchKey the key of the protein match of interest
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public void updateObservableCoverage(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Double result = estimateObservableCoverage(proteinMatchKey);
@@ -503,10 +503,10 @@ public class IdentificationFeaturesGenerator {
      *
      * @return the amount of validated proteins
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public int getNValidatedProteins() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (metrics.getnValidatedProteins() == -1) {
@@ -538,10 +538,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated peptides
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public int estimateNValidatedPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
@@ -567,10 +567,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated peptides
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public int getNValidatedPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
@@ -589,10 +589,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the given protein match
      * @return the number of spectra for the given protein match
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public Integer getNSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey);
@@ -632,10 +632,10 @@ public class IdentificationFeaturesGenerator {
      * @return the maximum number of spectra accounted by a single peptide Match
      * all found in a protein match
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public int getMaxNSpectra() throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         return identificationFeaturesCache.getMaxSpectrumCount();
@@ -647,10 +647,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated spectra
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public int getNValidatedSpectra(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
@@ -697,10 +697,10 @@ public class IdentificationFeaturesGenerator {
      * @param peptideMatchKey the key of the peptide match
      * @return the number of validated spectra
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public int getNValidatedSpectraForPeptide(String peptideMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey);
@@ -746,34 +746,33 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a summary of the PTMs present on the sequence confidently
-     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation of M
-     * (M6)
+     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation
+     * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
      * @return a PTM summary for the given protein
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public String getPrimaryPTMSummary(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
-        String report;
-        int index;
 
         for (int aa = 0; aa < sequence.length(); aa++) {
             if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
-                index = aa + 1;
+                int index = aa + 1;
                 for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
                     if (!locations.containsKey(ptm)) {
                         locations.put(ptm, new ArrayList<String>());
                     }
-                    report = sequence.charAt(aa) + "" + index;
+                    String report = sequence.charAt(aa) + "" + index;
                     if (!locations.get(ptm).contains(report)) {
                         locations.get(ptm).add(report);
                     }
@@ -782,7 +781,7 @@ public class IdentificationFeaturesGenerator {
         }
 
         String result = "";
-        boolean firstSite, firstPtm = true;
+        boolean firstPtm = true;
         ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
         Collections.sort(ptms);
 
@@ -793,7 +792,7 @@ public class IdentificationFeaturesGenerator {
                 result += "; ";
             }
             result += ptm + "(";
-            firstSite = true;
+            boolean firstSite = true;
             for (String site : locations.get(ptm)) {
                 if (!firstSite) {
                     result += ", ";
@@ -804,7 +803,10 @@ public class IdentificationFeaturesGenerator {
             }
             result += ")";
         }
+
         result += OutputGenerator.SEPARATOR;
+        firstPtm = true;
+
         for (String ptm : ptms) {
             if (firstPtm) {
                 firstPtm = false;
@@ -818,34 +820,33 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a summary of the PTMs present on the sequence not confidently
-     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation of M
-     * (M6)
+     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation
+     * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
      * @return a PTM summary for the given protein
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public String getSecondaryPTMSummary(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
         HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
-        String report;
-        int index;
 
         for (int aa = 0; aa < sequence.length(); aa++) {
             if (!psPtmScores.getSecondaryModificationsAt(aa).isEmpty()) {
-                index = aa + 1;
+                int index = aa + 1;
                 for (String ptm : psPtmScores.getSecondaryModificationsAt(aa)) {
                     if (!locations.containsKey(ptm)) {
                         locations.put(ptm, new ArrayList<String>());
                     }
-                    report = sequence.charAt(aa) + "" + index;
+                    String report = sequence.charAt(aa) + "" + index;
                     if (!locations.get(ptm).contains(report)) {
                         locations.get(ptm).add(report);
                     }
@@ -854,9 +855,10 @@ public class IdentificationFeaturesGenerator {
         }
 
         String result = "";
-        boolean firstSite, firstPtm = true;
+        boolean firstPtm = true;
         ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
         Collections.sort(ptms);
+
         for (String ptm : ptms) {
             if (firstPtm) {
                 firstPtm = false;
@@ -864,7 +866,7 @@ public class IdentificationFeaturesGenerator {
                 result += "; ";
             }
             result += ptm + "(";
-            firstSite = true;
+            boolean firstSite = true;
             for (String site : locations.get(ptm)) {
                 if (!firstSite) {
                     result += ", ";
@@ -875,7 +877,10 @@ public class IdentificationFeaturesGenerator {
             }
             result += ")";
         }
+
         result += OutputGenerator.SEPARATOR;
+        firstPtm = true;
+
         for (String ptm : ptms) {
             if (firstPtm) {
                 firstPtm = false;
@@ -893,10 +898,10 @@ public class IdentificationFeaturesGenerator {
      * @param proteinKey the key of the protein match
      * @return the protein sequence annotated with modifications
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public String getModifiedSequence(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -942,10 +947,10 @@ public class IdentificationFeaturesGenerator {
      * @param progressDialog the progress dialog, can be null
      * @return the sorted list of protein keys
      * @throws IOException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      * @throws InterruptedException
      * @throws SQLException
-     * @throws ClassNotFoundException  
+     * @throws ClassNotFoundException
      */
     public ArrayList<String> getProcessedProteinKeys(ProgressDialogX progressDialog, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (identificationFeaturesCache.getProteinList() == null) {
@@ -1115,8 +1120,8 @@ public class IdentificationFeaturesGenerator {
      * @return the ordered protein keys to display when no filtering is applied.
      * @throws SQLException
      * @throws IOException
-     * @throws ClassNotFoundException 
-     * @throws InterruptedException  
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     public ArrayList<String> getProteinKeys(ProgressDialogX progressDialogX, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (identificationFeaturesCache.getProteinList() == null) {
@@ -1133,7 +1138,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public ArrayList<String> getSortedPeptideKeys(String proteinKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (!proteinKey.equals(identificationFeaturesCache.getCurrentProteinKey()) || identificationFeaturesCache.getPeptideList() == null) {
@@ -1196,8 +1201,8 @@ public class IdentificationFeaturesGenerator {
      * @return the ordered list of spectrum keys
      * @throws SQLException
      * @throws IOException
-     * @throws ClassNotFoundException 
-     * @throws InterruptedException  
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     public ArrayList<String> getSortedPsmKeys(String peptideKey) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (!peptideKey.equals(identificationFeaturesCache.getCurrentPeptideKey()) || identificationFeaturesCache.getPsmList() == null) {

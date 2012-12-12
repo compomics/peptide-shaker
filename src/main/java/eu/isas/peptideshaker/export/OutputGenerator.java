@@ -121,10 +121,12 @@ public class OutputGenerator {
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
+     * @param aMaximalProteinSet if true an additional file with the maximal
+     * protein set is created
      */
     public void getProteinsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
-            boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
+            boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden, boolean aMaximalProteinSet) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -147,6 +149,7 @@ public class OutputGenerator {
         final boolean onlyStarred = aOnlyStarred;
         final boolean showStar = aShowStar;
         final boolean includeHidden = aIncludeHidden;
+        final boolean createMaximalProteinSet = aMaximalProteinSet;
 
         final JDialog parentDialog = aParentDialog;
 
@@ -265,16 +268,26 @@ public class OutputGenerator {
                         PSParameter proteinPSParameter = new PSParameter();
                         int proteinCounter = 0;
 
+                        progressDialog.setTitle("Loading Protein Matches. Please Wait...");
+                        identification.loadProteinMatches(progressDialog);
+                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
+                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
+
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(proteinKeys.size());
+                        progressDialog.setValue(0);
+                        progressDialog.setTitle("Copying to File. Please Wait...");
 
-                        for (String proteinKey : proteinKeys) {
+                        // store the maximal protein set of validated proteins
+                        ArrayList<String> maximalProteinSet = new ArrayList<String>();
+
+                        for (String proteinKey : proteinKeys) { // @TODO: replace by batch selection!!!
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
-                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter); // @TODO: replace by batch selection!!
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
@@ -284,14 +297,17 @@ public class OutputGenerator {
                                                 writer.write(++proteinCounter + SEPARATOR);
                                             }
 
-                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey); // @TODO: replace by batch selection!!
+                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                                             if (mainAccession) {
                                                 writer.write(proteinMatch.getMainMatch() + SEPARATOR);
                                             }
-                                            if (otherAccessions) {
+                                            if (createMaximalProteinSet && !maximalProteinSet.contains(proteinMatch.getMainMatch())) {
+                                                maximalProteinSet.add(proteinMatch.getMainMatch());
+                                            }
+                                            if (createMaximalProteinSet || otherAccessions) {
                                                 boolean first = true;
                                                 for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
-                                                    if (!otherProtein.equals(proteinMatch.getMainMatch())) {
+                                                    if (otherAccessions && !otherProtein.equals(proteinMatch.getMainMatch())) {
                                                         if (first) {
                                                             first = false;
                                                         } else {
@@ -299,8 +315,13 @@ public class OutputGenerator {
                                                         }
                                                         writer.write(otherProtein);
                                                     }
+                                                    if (createMaximalProteinSet && !maximalProteinSet.contains(otherProtein)) {
+                                                        maximalProteinSet.add(otherProtein);
+                                                    }
                                                 }
-                                                writer.write(SEPARATOR);
+                                                if (otherAccessions) {
+                                                    writer.write(SEPARATOR);
+                                                }
                                             }
                                             if (piDetails) {
                                                 writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
@@ -410,6 +431,15 @@ public class OutputGenerator {
                         }
 
                         writer.close();
+
+                        // print the maximal protein set to file
+                        if (createMaximalProteinSet) {
+                            writer = new BufferedWriter(new FileWriter(new File(selectedFile.getParentFile(), "maximal_protein_set.txt")));
+                            for (String tempAccession : maximalProteinSet) {
+                                writer.write(tempAccession + "\n");
+                            }
+                            writer.close();
+                        }
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -534,8 +564,6 @@ public class OutputGenerator {
                 public void run() {
 
                     try {
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(peptideKeys.size());
 
                         if (includeHeader) {
                             if (indexes) {
@@ -602,19 +630,28 @@ public class OutputGenerator {
                         PSParameter peptidePSParameter = new PSParameter();
                         PSParameter secondaryPSParameter = new PSParameter();
                         int peptideCounter = 0;
-                        Protein currentProtein = null;
                         HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
                         ProteinMatch proteinMatch = null;
 
-                        for (String peptideKey : peptideKeys) {
+                        progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
+                        identification.loadPeptideMatches(progressDialog);
+                        progressDialog.setTitle("Loading Peptide Details. Please Wait...");
+                        identification.loadPeptideMatchParameters(peptidePSParameter, progressDialog);
+
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMaxProgressValue(peptideKeys.size());
+                        progressDialog.setValue(0);
+                        progressDialog.setTitle("Copying to File. Please Wait...");
+
+                        for (String peptideKey : peptideKeys) { // @TODO: replace by batch selection!!!
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
                             boolean shared = false;
-                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey); // @TODO: replace by batch selection!!
-                            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter); // @TODO: replace by batch selection!!
+                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
                             if (!peptideMatch.isDecoy() || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.isValidated()) || !onlyValidated) {
@@ -647,10 +684,8 @@ public class OutputGenerator {
                                                     }
                                                     shared = possibleProteins.size() > 1;
                                                     proteinMatch = identification.getProteinMatch(possibleProteins.get(0));
-                                                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 } else {
                                                     proteinMatch = identification.getProteinMatch(proteinKey);
-                                                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 }
                                             }
 
@@ -2136,7 +2171,8 @@ public class OutputGenerator {
      * Returns the peptide modifications as a string.
      *
      * @param peptide the peptide
-     * @param variablePtms if true, only variable ptms are shown, false return only the fixed ptms
+     * @param variablePtms if true, only variable ptms are shown, false return
+     * only the fixed ptms
      * @return the peptide modifications as a string
      */
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
