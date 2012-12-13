@@ -1,52 +1,59 @@
 package eu.isas.peptideshaker.filtering;
 
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.IdentificationMatch;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 import javax.swing.RowFilter.ComparisonType;
 
 /**
- * Peptide Filter
+ * Peptide Filter.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PeptideFilter extends MatchFilter {
 
     /**
-     * Serial number for serialization compatibility
+     * Serial number for serialization compatibility.
      */
     static final long serialVersionUID = 959658989341486818L;
     /**
-     * A protein regex
+     * A protein regex.
      */
     private String protein = null;
     /**
-     * sequence regex
+     * Sequence regex.
      */
     private String sequence = null;
     /**
-     * Number of spectra limit
+     * The compiled protein pattern.
+     */
+    private Pattern proteinPattern = null;
+    /**
+     * The compiled peptide sequence pattern.
+     */
+    private Pattern sequencePattern = null;
+    /**
+     * Number of spectra limit.
      */
     private Integer nSpectra = null;
     /**
-     * The type of comparison to be used for the number of spectra
+     * The type of comparison to be used for the number of spectra.
      */
     private ComparisonType nSpectraComparison = ComparisonType.EQUAL;
     /**
-     * Score limit
+     * Score limit.
      */
     private Double peptideScore = null;
     /**
-     * The type of comparison to be used for the peptide score
+     * The type of comparison to be used for the peptide score.
      */
     private ComparisonType peptideScoreComparison = ComparisonType.EQUAL;
     /**
-     * Confidence limit
+     * Confidence limit.
      */
     private Double peptideConfidence = null;
     /**
-     * The type of comparison to be used for the peptide confidence
+     * The type of comparison to be used for the peptide confidence.
      */
     private ComparisonType peptideConfidenceComparison = ComparisonType.EQUAL;
     /**
@@ -54,16 +61,17 @@ public class PeptideFilter extends MatchFilter {
      */
     private int pi = 5;
     /**
-     * The type of comparison to be used for the PI
+     * The type of comparison to be used for the PI.
      */
     private ComparisonType piComparison = ComparisonType.EQUAL;
     /**
-     * The list of modifications allowed for the peptide
+     * The list of modifications allowed for the peptide.
      */
     private ArrayList<String> modificationStatus;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param name the name of the filter
      * @param allModifications list of all modifications found in peptides
      */
@@ -74,7 +82,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the peptide confidence
+     * Returns the threshold for the peptide confidence.
+     *
      * @return the threshold for the peptide confidence
      */
     public Double getPeptideConfidence() {
@@ -82,7 +91,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the peptide confidence
+     * Sets the threshold for the peptide confidence.
+     *
      * @param peptideConfidence the threshold for the peptide confidence
      */
     public void setPeptideConfidence(Double peptideConfidence) {
@@ -90,7 +100,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the number of spectra
+     * Returns the threshold for the number of spectra.
+     *
      * @return the threshold for the number of spectra
      */
     public Integer getNSpectra() {
@@ -98,7 +109,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the number of spectra
+     * Sets the threshold for the number of spectra.
+     *
      * @param nSpectra the threshold for the number of spectra
      */
     public void setNSpectra(Integer nSpectra) {
@@ -107,6 +119,7 @@ public class PeptideFilter extends MatchFilter {
 
     /**
      * Returns the threshold for the peptide score
+     *
      * @return the threshold for the peptide score
      */
     public Double getPeptideScore() {
@@ -114,7 +127,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the peptide score
+     * Sets the threshold for the peptide score.
+     *
      * @param peptideScore the threshold for the peptide score
      */
     public void setPeptideScore(Double peptideScore) {
@@ -122,7 +136,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the number of spectra
+     * Returns the comparison type used for the number of spectra.
+     *
      * @return the comparison type used for the number of spectra
      */
     public ComparisonType getnSpectraComparison() {
@@ -130,15 +145,18 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the number of spectra
-     * @param nSpectraComparison the comparison type used for the number of spectra
+     * Sets the comparison type used for the number of spectra.
+     *
+     * @param nSpectraComparison the comparison type used for the number of
+     * spectra
      */
     public void setnSpectraComparison(ComparisonType nSpectraComparison) {
         this.nSpectraComparison = nSpectraComparison;
     }
 
     /**
-     * Returns the protein inference desired
+     * Returns the protein inference desired.
+     *
      * @return the protein inference desired
      */
     public int getPi() {
@@ -146,7 +164,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the protein inference desired
+     * Sets the protein inference desired.
+     *
      * @param pi the protein inference desired
      */
     public void setPi(int pi) {
@@ -154,7 +173,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the confidence
+     * Returns the comparison type used for the confidence.
+     *
      * @return the comparison type used for the confidence
      */
     public ComparisonType getPeptideConfidenceComparison() {
@@ -162,15 +182,18 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the confidence
-     * @param peptideConfidenceComparison the comparison type used for the confidence
+     * Sets the comparison type used for the confidence.
+     *
+     * @param peptideConfidenceComparison the comparison type used for the
+     * confidence
      */
     public void setPeptideConfidenceComparison(ComparisonType peptideConfidenceComparison) {
         this.peptideConfidenceComparison = peptideConfidenceComparison;
     }
 
     /**
-     * Returns the comparison type used for the peptide score
+     * Returns the comparison type used for the peptide score.
+     *
      * @return the comparison type used for the peptide score
      */
     public ComparisonType getPeptideScoreComparison() {
@@ -178,15 +201,18 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the peptide score
-     * @param peptideScoreComparison the comparison type used for the peptide score
+     * Sets the comparison type used for the peptide score.
+     *
+     * @param peptideScoreComparison the comparison type used for the peptide
+     * score
      */
     public void setPeptideScoreComparison(ComparisonType peptideScoreComparison) {
         this.peptideScoreComparison = peptideScoreComparison;
     }
 
     /**
-     * Returns the modifications to retain
+     * Returns the modifications to retain.
+     *
      * @return the modifications to retain
      */
     public ArrayList<String> getModificationStatus() {
@@ -194,7 +220,8 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets the modifications to retain
+     * Sets the modifications to retain.
+     *
      * @param modificationStatus the modifications to retain
      */
     public void setModificationStatus(ArrayList<String> modificationStatus) {
@@ -202,23 +229,31 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Returns a regular exception to be searched in protein which contain the peptide sequence
-     * @return a regular exception to be searched in protein which contain the peptide sequence
+     * Returns a regular exception to be searched in protein which contain the
+     * peptide sequence.
+     *
+     * @return a regular exception to be searched in protein which contain the
+     * peptide sequence
      */
     public String getProtein() {
         return protein;
     }
 
     /**
-     * Sets a regular exception to be searched in protein which contain the peptide sequence
-     * @param protein a regular exception to be searched in protein which contain the peptide sequence
+     * Sets a regular exception to be searched in protein which contain the
+     * peptide sequence.
+     *
+     * @param protein a regular exception to be searched in protein which
+     * contain the peptide sequence
      */
     public void setProtein(String protein) {
         this.protein = protein;
+        this.proteinPattern = Pattern.compile("(.*?)" + protein + "(.*?)");
     }
 
     /**
-     * Returns a regex to be found in the sequence
+     * Returns a regex to be found in the sequence.
+     *
      * @return a regex to be found in the sequence
      */
     public String getSequence() {
@@ -226,26 +261,58 @@ public class PeptideFilter extends MatchFilter {
     }
 
     /**
-     * Sets a regex to be found in the sequence
+     * Sets a regex to be found in the sequence.
+     *
      * @param sequence a regex to be found in the sequence
      */
     public void setSequence(String sequence) {
         this.sequence = sequence;
+        this.sequencePattern = Pattern.compile("(.*?)" + sequence + "(.*?)");
     }
 
     /**
-     * Returns the comparison type to use for the PI
+     * Returns the comparison type to use for the PI.
+     *
      * @return the comparison type to use for the PI
      */
     public ComparisonType getPiComparison() {
         return piComparison;
     }
-/**
-     * Sets the comparison type to use for the PI
+
+    /**
+     * Sets the comparison type to use for the PI.
+     *
      * @param piComparison the comparison type to use for the PI
      */
     public void setPiComparison(ComparisonType piComparison) {
         this.piComparison = piComparison;
     }
-    
+
+    /**
+     * Returns the compiled protein pattern. Null if no pattern is set.
+     * 
+     * @return the compiled protein pattern
+     */
+    public Pattern getProteinPattern() {
+        if (protein != null) {
+            if (proteinPattern != null) {
+                return proteinPattern;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the compiled peptide sequence pattern. Null if no pattern is set.
+     * 
+     * @return the compiled peptide sequence pattern
+     */
+    public Pattern getSequencePattern() {
+        if (sequence != null) {
+            if (sequencePattern != null) {
+                return sequencePattern;
+            }
+        }
+        return null;
+    }
 }

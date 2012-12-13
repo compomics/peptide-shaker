@@ -468,6 +468,7 @@ public class OutputGenerator {
      * @param aOnlyValidated
      * @param aAccession
      * @param aProteinDescription
+     * @param aProteinInferenceType 
      * @param aLocation
      * @param aSurroundings
      * @param aSequence
@@ -485,7 +486,7 @@ public class OutputGenerator {
      */
     public void getPeptidesOutput(JDialog parentDialog, ArrayList<String> aPeptideKeys,
             ArrayList<String> aPeptidePdbArray, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aProteinDescription,
-            boolean aLocation, boolean aSurroundings, boolean aSequence, boolean aModifications, boolean aPtmLocations, boolean aCharges,
+            boolean aProteinInferenceType, boolean aLocation, boolean aSurroundings, boolean aSequence, boolean aModifications, boolean aPtmLocations, boolean aCharges,
             boolean aNSpectra, boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred,
             boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) {
 
@@ -496,6 +497,7 @@ public class OutputGenerator {
         final boolean onlyValidated = aOnlyValidated;
         final boolean accession = aAccession;
         final boolean proteinDescription = aProteinDescription;
+        final boolean proteinInferenceType = aProteinInferenceType;
         final boolean location = aLocation;
         final boolean surroundings = aSurroundings;
         final boolean sequence = aSequence;
@@ -574,6 +576,9 @@ public class OutputGenerator {
                                 writer.write("Other Protein(s)" + SEPARATOR);
                                 writer.write("Peptide Protein(s)" + SEPARATOR);
                             }
+                            if (proteinInferenceType) {
+                                writer.write("Protein Inference" + SEPARATOR);
+                            }
                             if (proteinDescription) {
                                 writer.write("Protein Description" + SEPARATOR);
                                 writer.write("Other Protein Description(s)" + SEPARATOR);
@@ -622,6 +627,9 @@ public class OutputGenerator {
                             }
                             if (includeHidden) {
                                 writer.write("Hidden" + SEPARATOR);
+                            }
+                            if (!onlyStarred) {
+                                writer.write("Starred" + SEPARATOR);
                             }
 
                             writer.write(System.getProperty("line.separator"));
@@ -759,6 +767,10 @@ public class OutputGenerator {
                                                         writer.write(secondaryProteinsDescriptions + SEPARATOR);
                                                         writer.write(peptideProteinDescriptions + SEPARATOR);
                                                     }
+                                                }
+                                                
+                                                if (proteinInferenceType) {
+                                                    writer.write(peptidePSParameter.getGroupClass() + SEPARATOR);
                                                 }
 
                                                 if (location || surroundings) {
@@ -902,6 +914,9 @@ public class OutputGenerator {
                                                 }
                                                 if (includeHidden) {
                                                     writer.write(peptidePSParameter.isHidden() + SEPARATOR);
+                                                }
+                                                if (!onlyStarred) {
+                                                    writer.write(peptidePSParameter.isStarred() + SEPARATOR);
                                                 }
                                                 writer.write(System.getProperty("line.separator"));
                                             }
