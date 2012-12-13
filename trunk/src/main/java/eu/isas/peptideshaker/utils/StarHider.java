@@ -18,6 +18,8 @@ import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import java.awt.Toolkit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.RowFilter.ComparisonType;
 
 /**
@@ -96,6 +98,7 @@ public class StarHider {
 
                         identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
                         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                             if (progressDialog.isRunCanceled()) {
@@ -1056,6 +1059,42 @@ public class StarHider {
                     }
                 }
             }
+            
+            // sequence pattern
+            if (peptideFilter.getSequence() != null && peptideFilter.getSequence().trim().length() > 0) {
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                Matcher m;
+                if (peptideFilter.getSequencePattern() != null) {
+                    m = peptideFilter.getSequencePattern().matcher(peptideSequence);
+                } else {
+                    Pattern p = Pattern.compile("(.*?)" + peptideFilter.getSequence() + "(.*?)");
+                    m = p.matcher(peptideSequence);
+                }
+                if (!m.matches()) {
+                    return false;
+                }
+            }
+            
+            // protein pattern
+            if (peptideFilter.getProtein() != null && peptideFilter.getProtein().trim().length() > 0) {
+                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                String accessions = "";
+                for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                    accessions += accession + " ";
+                }
+                Matcher m;
+                if (peptideFilter.getProteinPattern() != null) {
+                    m = peptideFilter.getProteinPattern().matcher(accessions);
+                } else {
+                    Pattern p = Pattern.compile("(.*?)" + peptideFilter.getProtein() + "(.*?)");
+                    m = p.matcher(accessions);
+                }
+                if (!m.matches()) {
+                    return false;
+                }
+            }
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();

@@ -2002,6 +2002,11 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         filterTypeJTabbedPane.setBackground(new java.awt.Color(230, 230, 230));
+        filterTypeJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                filterTypeJTabbedPaneStateChanged(evt);
+            }
+        });
 
         proteinsPanel.setOpaque(false);
 
@@ -2039,21 +2044,21 @@ public class FindDialog extends javax.swing.JDialog {
         proteinFilterParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
         proteinFilterParamsPanel.setOpaque(false);
 
-        jLabel1.setText("Identifier:");
+        jLabel1.setText("Identifier");
 
-        jLabel3.setText("PI Status:");
+        jLabel3.setText("PI Status");
 
-        jLabel4.setText("MS2 Quant.:");
+        jLabel4.setText("MS2 Quant.");
 
-        jLabel5.setText("#Peptides:");
+        jLabel5.setText("#Peptides");
 
-        jLabel6.setText("#Spectra:");
+        jLabel6.setText("#Spectra");
 
-        jLabel7.setText("Score:");
+        jLabel7.setText("Score");
 
-        jLabel8.setText("Coverage:");
+        jLabel8.setText("Coverage");
 
-        jLabel9.setText("Confidence:");
+        jLabel9.setText("Confidence");
 
         spectrumCountingTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         spectrumCountingTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2072,6 +2077,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel10.setText("RegExp");
+        jLabel10.setToolTipText("<html>\nRegular Expression<br>\nexample: N[^P][ST] returns all sequences with:<br>\nan N, then anything but a P, and then an S or a T\n</html>");
 
         proteinAccessionTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         proteinAccessionTxt.addActionListener(new java.awt.event.ActionListener() {
@@ -2366,7 +2372,7 @@ public class FindDialog extends javax.swing.JDialog {
         peptideFilterParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
         peptideFilterParamsPanel.setOpaque(false);
 
-        jLabel12.setText("Protein:");
+        jLabel12.setText("Protein");
 
         peptideProteinTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         peptideProteinTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2377,8 +2383,9 @@ public class FindDialog extends javax.swing.JDialog {
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel13.setText("RegExp");
+        jLabel13.setToolTipText("<html> Regular Expression<br> example: N[^P][ST] returns all sequences with:<br> an N, then anything but a P, and then an S or a T </html>");
 
-        jLabel14.setText("PI Status:");
+        jLabel14.setText("PI Status");
 
         peptidePICmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No Requirement", "Single Protein", "Isoforms", "Isoforms/Unrelated Proteins", "Unrelated Proteins" }));
         peptidePICmb.addActionListener(new java.awt.event.ActionListener() {
@@ -2409,7 +2416,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel16.setText("Confidence:");
+        jLabel16.setText("Confidence");
 
         peptideConfidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         peptideConfidenceTxt.addActionListener(new java.awt.event.ActionListener() {
@@ -2446,9 +2453,9 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel17.setText("Score:");
+        jLabel17.setText("Score");
 
-        jLabel19.setText("Sequence:");
+        jLabel19.setText("Sequence");
 
         peptideSequenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         peptideSequenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2459,6 +2466,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         jLabel20.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel20.setText("RegExp");
+        jLabel20.setToolTipText("<html> Regular Expression<br> example: N[^P][ST] returns all sequences with:<br> an N, then anything but a P, and then an S or a T </html>");
 
         peptidePiComparisonCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=" }));
         peptidePiComparisonCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -2725,7 +2733,7 @@ public class FindDialog extends javax.swing.JDialog {
         psmFilterParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
         psmFilterParamsPanel.setOpaque(false);
 
-        jLabel22.setText("Precursor RT:");
+        jLabel22.setText("Precursor RT");
 
         precursorRTTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         precursorRTTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2742,7 +2750,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel23.setText("Confidence:");
+        jLabel23.setText("Confidence");
 
         psmConfidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         psmConfidenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2759,7 +2767,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel24.setText("Precursor m/z:");
+        jLabel24.setText("Precursor m/z");
 
         precursorMzTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         precursorMzTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2776,7 +2784,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel25.setText("Precursor Error:");
+        jLabel25.setText("Precursor Error");
 
         precursorErrorTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         precursorErrorTxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2843,7 +2851,7 @@ public class FindDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jLabel2.setText("Charge:");
+        jLabel2.setText("Charge");
 
         charge2CheckBox.setSelected(true);
         charge2CheckBox.setText("2");
@@ -3117,10 +3125,10 @@ public class FindDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(filterTypeJTabbedPane)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saveButton)
                     .addComponent(exitButton))
                 .addContainerGap())
@@ -3754,6 +3762,16 @@ public class FindDialog extends javax.swing.JDialog {
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
+
+    /**
+     * Preload the tables
+     * 
+     * @param evt 
+     */
+    private void filterTypeJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_filterTypeJTabbedPaneStateChanged
+        // @TODO: batch load the table content!!
+    }//GEN-LAST:event_filterTypeJTabbedPaneStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox charge2CheckBox;

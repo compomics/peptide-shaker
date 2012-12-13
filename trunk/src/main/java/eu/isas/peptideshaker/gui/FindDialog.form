@@ -115,15 +115,15 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="filterTypeJTabbedPane" min="-2" pref="673" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="filterTypeJTabbedPane" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="openDialogHelpJButton" alignment="2" max="32767" attributes="1"/>
+                      <Component id="openDialogHelpJButton" alignment="2" min="-2" pref="23" max="-2" attributes="1"/>
                       <Component id="saveButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="exitButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -151,6 +151,9 @@
               <Color blue="e6" green="e6" red="e6" type="rgb"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="filterTypeJTabbedPaneStateChanged"/>
+          </Events>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
@@ -391,42 +394,42 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Identifier:"/>
+                        <Property name="text" type="java.lang.String" value="Identifier"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="PI Status:"/>
+                        <Property name="text" type="java.lang.String" value="PI Status"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel4">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="MS2 Quant.:"/>
+                        <Property name="text" type="java.lang.String" value="MS2 Quant."/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel5">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="#Peptides:"/>
+                        <Property name="text" type="java.lang.String" value="#Peptides"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel6">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="#Spectra:"/>
+                        <Property name="text" type="java.lang.String" value="#Spectra"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel7">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Score:"/>
+                        <Property name="text" type="java.lang.String" value="Score"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel8">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Coverage:"/>
+                        <Property name="text" type="java.lang.String" value="Coverage"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel9">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Confidence:"/>
+                        <Property name="text" type="java.lang.String" value="Confidence"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="spectrumCountingTxt">
@@ -459,6 +462,7 @@
                           <Font name="Tahoma" size="11" style="2"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="RegExp"/>
+                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Regular Expression&lt;br&gt;&#xa;example: N[^P][ST] returns all sequences with:&lt;br&gt;&#xa;an N, then anything but a P, and then an S or a T&#xa;&lt;/html&gt;"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="proteinAccessionTxt">
@@ -911,7 +915,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="jLabel12">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Protein:"/>
+                        <Property name="text" type="java.lang.String" value="Protein"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="peptideProteinTxt">
@@ -928,11 +932,12 @@
                           <Font name="Tahoma" size="11" style="2"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="RegExp"/>
+                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt; Regular Expression&lt;br&gt; example: N[^P][ST] returns all sequences with:&lt;br&gt; an N, then anything but a P, and then an S or a T &lt;/html&gt;"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel14">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="PI Status:"/>
+                        <Property name="text" type="java.lang.String" value="PI Status"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="peptidePICmb">
@@ -983,7 +988,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel16">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Confidence:"/>
+                        <Property name="text" type="java.lang.String" value="Confidence"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="peptideConfidenceTxt">
@@ -1037,12 +1042,12 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel17">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Score:"/>
+                        <Property name="text" type="java.lang.String" value="Score"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel19">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Sequence:"/>
+                        <Property name="text" type="java.lang.String" value="Sequence"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="peptideSequenceTxt">
@@ -1059,6 +1064,7 @@
                           <Font name="Tahoma" size="11" style="2"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="RegExp"/>
+                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt; Regular Expression&lt;br&gt; example: N[^P][ST] returns all sequences with:&lt;br&gt; an N, then anything but a P, and then an S or a T &lt;/html&gt;"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JComboBox" name="peptidePiComparisonCmb">
@@ -1476,7 +1482,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="jLabel22">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Precursor RT:"/>
+                        <Property name="text" type="java.lang.String" value="Precursor RT"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="precursorRTTxt">
@@ -1505,7 +1511,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel23">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Confidence:"/>
+                        <Property name="text" type="java.lang.String" value="Confidence"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="psmConfidenceTxt">
@@ -1534,7 +1540,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel24">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Precursor m/z:"/>
+                        <Property name="text" type="java.lang.String" value="Precursor m/z"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="precursorMzTxt">
@@ -1563,7 +1569,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel25">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Precursor Error:"/>
+                        <Property name="text" type="java.lang.String" value="Precursor Error"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="precursorErrorTxt">
@@ -1667,7 +1673,7 @@
                     </Container>
                     <Component class="javax.swing.JLabel" name="jLabel2">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Charge:"/>
+                        <Property name="text" type="java.lang.String" value="Charge"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="charge2CheckBox">

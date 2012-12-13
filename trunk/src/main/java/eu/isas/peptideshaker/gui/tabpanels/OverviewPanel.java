@@ -5200,7 +5200,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ArrayList<String> selectedPeptides = getDisplayedPeptides();
                 String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
                 outputGenerator.getPeptidesOutput(
-                        null, selectedPeptides, null, true, false, true, true, true, true,
+                        null, selectedPeptides, null, true, false, true, true, true, true, true,
                         true, true, true, true, true, true, true, true, false, false, false, proteinKey);
             } else if (tableIndex == TableIndex.PSM_TABLE) {
                 ArrayList<String> selectedPsms = getDisplayedPsms();
