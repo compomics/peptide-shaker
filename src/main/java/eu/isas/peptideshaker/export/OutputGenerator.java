@@ -589,6 +589,7 @@ public class OutputGenerator {
                             }
                             if (sequence) {
                                 writer.write("Sequence" + SEPARATOR);
+                                writer.write("Sequence Tagged" + SEPARATOR);
                             }
                             if (surroundings) {
                                 writer.write("AA After" + SEPARATOR);
@@ -808,6 +809,8 @@ public class OutputGenerator {
 
                                                 if (sequence) {
                                                     writer.write(peptide.getSequence() + SEPARATOR);
+                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), 
+                                                            false, false, true) + SEPARATOR);
                                                 }
 
                                                 if (surroundings) {
