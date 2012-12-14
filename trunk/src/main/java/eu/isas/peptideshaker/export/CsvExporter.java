@@ -117,14 +117,15 @@ public class CsvExporter {
     /**
      * Exports the results to csv files.
      *
-     * @param waitingHandler a waitingHandler displaying progress to the user, can be null
+     * @param waitingHandler a waitingHandler displaying progress to the user,
+     * can be null
      * @param folder the folder to store the results in.
      * @return true if the export was successful
      */
     public boolean exportResults(WaitingHandler waitingHandler, File folder) {
 
         try {
-            
+
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Exporting Proteins. Please Wait...");
             }
@@ -152,7 +153,7 @@ public class CsvExporter {
                     waitingHandler.increaseProgressValue();
                 }
 
-                if (waitingHandler!= null  && waitingHandler.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
             }
@@ -201,18 +202,18 @@ public class CsvExporter {
             for (String spectrumFile : identification.getSpectrumFiles()) {
                 identification.loadSpectrumMatches(spectrumFile, waitingHandler);
                 identification.loadSpectrumMatchParameters(spectrumFile, new PSParameter(), waitingHandler);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
 
-                spectrumWriter.write(getSpectrumLine(spectrumKey));
+                    spectrumWriter.write(getSpectrumLine(spectrumKey));
 
-                if (waitingHandler != null) {
-                    waitingHandler.increaseProgressValue();
+                    if (waitingHandler != null) {
+                        waitingHandler.increaseProgressValue();
+                    }
+
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                        break;
+                    }
                 }
-
-                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                    break;
-                }
-            }
             }
 
             spectrumWriter.close();
@@ -445,7 +446,7 @@ public class CsvExporter {
         PSParameter probabilities = new PSParameter();
         int nSpectraValidated = 0;
 
-                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), probabilities, null);
+        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), probabilities, null);
         for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
             if (probabilities.isValidated()) {

@@ -2505,25 +2505,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     Integer m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
                     int totalNumberOfSpectra = 0, totalPeptideShakerIds = 0;
-                    boolean mascot, omssa, xTandem;
                     PSParameter probabilities = new PSParameter();
-                    SpectrumMatch spectrumMatch;
 
-
-                    ArrayList<String> fileNames = identification.getSpectrumFiles();
-                    String[] filesArray = new String[fileNames.size()];
+                    ArrayList<String> spectrumFileNames = identification.getSpectrumFiles();
+                    String[] filesArray = new String[spectrumFileNames.size()];
                     int cpt = 0;
 
-                    for (String tempName : fileNames) {
-                        filesArray[cpt] = Util.getFileName(tempName);
+                    for (String tempName : spectrumFileNames) {
+                        filesArray[cpt] = tempName;
                         cpt++;
                     }
-
 
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
                     progressDialog.setValue(0);
-
 
                     // @TODO: this should be moved to when the files are loaded and done only once...?
 
@@ -2544,13 +2539,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             mascotUsed = true;
                         }
                     }
-
-                    boolean multipleSearchEngines = false;
-
-                    if (omssaUsed && xtandemUsed || omssaUsed && mascotUsed || xtandemUsed && mascotUsed) {
-                        multipleSearchEngines = true;
-                    }
-
 
                     // @TODO: hide the unused search engine columns in the Search Engine Performance table
                     // @TODO: hide the columns in the table for the search engines that are not used...
@@ -2574,10 +2562,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 break;
                             }
 
-                            spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                            mascot = false;
-                            omssa = false;
-                            xTandem = false;
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            boolean mascot = false;
+                            boolean omssa = false;
+                            boolean xTandem = false;
                             probabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, probabilities);
 
                             if (probabilities.isValidated()) {

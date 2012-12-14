@@ -1932,10 +1932,10 @@ public class QCPanel extends javax.swing.JPanel {
                 Precursor precursor;
 
 
-                for (String spectrumFile : identification.getSpectrumFiles()) {
-                    identification.loadSpectrumMatches(spectrumFile, progressDialog);
-                    identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
-                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                for (String spectrumFileName : identification.getSpectrumFiles()) {
+                    identification.loadSpectrumMatches(spectrumFileName, progressDialog);
+                    identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, progressDialog);
+                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                         if (progressDialog.isRunCanceled()) {
                             break;
@@ -1980,10 +1980,10 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
 
-                for (String spectrumFile : identification.getSpectrumFiles()) {
-                    identification.loadSpectrumMatches(spectrumFile, progressDialog);
-                    identification.loadSpectrumMatchParameters(spectrumFile, psParameter, progressDialog);
-                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+                for (String spectrumFileName : identification.getSpectrumFiles()) {
+                    identification.loadSpectrumMatches(spectrumFileName, progressDialog);
+                    identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, progressDialog);
+                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
                         if (progressDialog.isRunCanceled()) {
                             break;
                         }

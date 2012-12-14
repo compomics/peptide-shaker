@@ -221,10 +221,10 @@ public class FindDialog extends javax.swing.JDialog {
             }
         }
 
-        for (String file : identification.getSpectrumFiles()) {
+        for (String fileName : identification.getSpectrumFiles()) {
             ((DefaultTableModel) spectrumFilesTable.getModel()).addRow(new Object[]{
                         true,
-                        file
+                        fileName
                     });
         }
 
@@ -1742,15 +1742,15 @@ public class FindDialog extends javax.swing.JDialog {
     private String getSpectrumKey(int row) {
         int tempIndex = row;
         String spectrumKey = null;
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            ArrayList<String> fileKeys = identification.getSpectrumIdentification(spectrumFile);
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            ArrayList<String> fileKeys = identification.getSpectrumIdentification(spectrumFileName);
             if (tempIndex >= fileKeys.size()) {
                 tempIndex -= fileKeys.size();
             } else {
                 spectrumKey = fileKeys.get(tempIndex);
-                if (lastLoadedFile == null || !lastLoadedFile.equals(spectrumFile)) {
+                if (lastLoadedFile == null || !lastLoadedFile.equals(spectrumFileName)) {
                     try {
-                        identification.loadSpectrumMatches(spectrumFile, null);
+                        identification.loadSpectrumMatches(spectrumFileName, null);
                         identification.loadSpectrumMatchParameters(spectrumKey, new PSParameter(), null);
                     } catch (Exception e) {
                         e.printStackTrace();

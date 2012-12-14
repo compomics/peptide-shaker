@@ -2442,8 +2442,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     final PeptideShakerGUI tempRef = this; // needed due to threading issues
                     progressDialog = new ProgressDialogX(this,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true);
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting Project. Please Wait...");
@@ -2485,18 +2485,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                             ArrayList<String> names = new ArrayList<String>();
 
-                            for (String filePath : identification.getSpectrumFiles()) {
+                            for (String spectrumFileName : identification.getSpectrumFiles()) {
 
                                 progressDialog.increaseProgressValue();
 
-                                File spectrumLocation = new File(filePath);
+                                File spectrumFile = projectDetails.getSpectrumFile(spectrumFileName);
 
-                                if (spectrumLocation.exists() && !names.contains(spectrumLocation.getName())) {
+                                if (spectrumFile.exists() && !names.contains(spectrumFile.getName())) {
 
-                                    names.add(spectrumLocation.getName());
-                                    dataFiles.add(spectrumLocation.getAbsolutePath());
+                                    names.add(spectrumFile.getName());
+                                    dataFiles.add(spectrumFile.getAbsolutePath());
 
-                                    indexFile = new File(spectrumLocation.getParentFile(), spectrumLocation.getName() + ".cui");
+                                    indexFile = new File(spectrumFile.getParentFile(), spectrumFile.getName() + ".cui");
 
                                     if (indexFile.exists()) {
                                         dataFiles.add(indexFile.getAbsolutePath());
@@ -5311,12 +5311,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     progressDialog.setMaxProgressValue(identification.getSpectrumFiles().size() + 1);
                     progressDialog.increaseProgressValue();
 
-                    for (String fileName : identification.getSpectrumFiles()) {
+                    for (String spectrumFileName : identification.getSpectrumFiles()) {
 
                         progressDialog.increaseProgressValue();
 
                         try {
-                            File providedSpectrumLocation = projectDetails.getSpectrumFile(fileName);
+                            File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
                             File projectFolder = currentPSFile.getParentFile();
                             File dataFolder = new File(projectFolder, "data");
 
@@ -5324,15 +5324,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             if (providedSpectrumLocation != null && providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) {
                                 names.add(providedSpectrumLocation.getName());
                                 spectrumFiles.add(providedSpectrumLocation.getAbsolutePath());
-                            } else if (new File(projectFolder, fileName).exists() && !names.contains(new File(projectFolder, fileName).getName())) {
-                                names.add(new File(projectFolder, fileName).getName());
-                                spectrumFiles.add(new File(projectFolder, fileName).getAbsolutePath());
-                            } else if (new File(dataFolder, fileName).exists() && !names.contains(new File(dataFolder, fileName).getName())) {
-                                names.add(new File(dataFolder, fileName).getName());
-                                spectrumFiles.add(new File(dataFolder, fileName).getAbsolutePath());
+                            } else if (new File(projectFolder, spectrumFileName).exists() && !names.contains(new File(projectFolder, spectrumFileName).getName())) {
+                                names.add(new File(projectFolder, spectrumFileName).getName());
+                                spectrumFiles.add(new File(projectFolder, spectrumFileName).getAbsolutePath());
+                            } else if (new File(dataFolder, spectrumFileName).exists() && !names.contains(new File(dataFolder, spectrumFileName).getName())) {
+                                names.add(new File(dataFolder, spectrumFileName).getName());
+                                spectrumFiles.add(new File(dataFolder, spectrumFileName).getAbsolutePath());
                             } else {
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occured while reading:\n" + fileName + "."
+                                        "An error occured while reading:\n" + spectrumFileName + "."
                                         + "\n\nPlease select the spectrum file or the folder containing it manually.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
 
@@ -5364,15 +5364,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     setLastSelectedFolder(mgfFolder.getAbsolutePath());
                                     boolean found = false;
                                     for (File file : mgfFolder.listFiles()) {
-                                        for (String filePath2 : identification.getSpectrumFiles()) {
+                                        for (String spectrumFileName2 : identification.getSpectrumFiles()) {
                                             try {
-                                                File newFile2 = new File(filePath2);
-                                                if (newFile2.getName().equals(file.getName())
-                                                        && !names.contains(file.getName())) {
+                                                File newFile2 = projectDetails.getSpectrumFile(spectrumFileName2);
+                                                if (newFile2.getName().equals(file.getName()) && !names.contains(file.getName())) {
                                                     names.add(file.getName());
                                                     spectrumFiles.add(file.getPath());
                                                 }
-                                                if (fileName.equals(newFile2.getName())) {
+                                                if (spectrumFileName.equals(newFile2.getName())) {
                                                     found = true;
                                                 }
                                             } catch (Exception e) {
@@ -5382,7 +5381,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     }
                                     if (!found) {
                                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                                fileName + " was not found in the given folder.",
+                                                spectrumFileName + " was not found in the given folder.",
                                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                                         clearData(true);
                                         clearPreferences();

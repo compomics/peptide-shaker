@@ -4,67 +4,68 @@ import java.util.ArrayList;
 import javax.swing.RowFilter.ComparisonType;
 
 /**
- * PSM filter
+ * PSM filter.
  *
  * @author Marc Vaudel
  */
 public class PsmFilter extends MatchFilter {
 
     /**
-     * Serial number for serialization compatibility
+     * Serial number for serialization compatibility.
      */
     static final long serialVersionUID = 2930349531911042645L;
     /**
-     * The charges allowed
+     * The charges allowed.
      */
     private ArrayList<Integer> charges;
     /**
-     * the precursor m/z
+     * the precursor m/z.
      */
     private Double precursorMz = null;
     /**
-     * The type of comparison to be used for the precursor m/z
+     * The type of comparison to be used for the precursor m/z.
      */
     private ComparisonType precursorMzComparison = ComparisonType.EQUAL;
     /**
-     * The precursor retention time
+     * The precursor retention time.
      */
     private Double precursorRT = null;
     /**
-     * The type of comparison to be used for the precursor retention time
+     * The type of comparison to be used for the precursor retention time.
      */
     private ComparisonType precursorRTComparison = ComparisonType.EQUAL;
     /**
-     * The precursor m/z error
+     * The precursor m/z error.
      */
     private Double precursorMzError = null;
     /**
-     * The type of comparison to be used for the precursor m/z error
+     * The type of comparison to be used for the precursor m/z error.
      */
     private ComparisonType precursorMzErrorComparison = ComparisonType.EQUAL;
     /**
-     * Score limit
+     * Score limit.
      */
     private Double psmScore = null;
     /**
-     * The type of comparison to be used for the psm score
+     * The type of comparison to be used for the psm score.
      */
     private ComparisonType psmScoreComparison = ComparisonType.EQUAL;
     /**
-     * Confidence limit
+     * Confidence limit.
      */
     private Double psmConfidence = null;
     /**
-     * The type of comparison to be used for the psm confidence
+     * The type of comparison to be used for the psm confidence.
      */
     private ComparisonType psmConfidenceComparison = ComparisonType.EQUAL;
     /**
-     * List of spectrum files names retained
+     * List of spectrum files names retained.
      */
     private ArrayList<String> fileName = null;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param name the name of the filter
      * @param charges list of allowed charges
      * @param files list of allowed files
@@ -77,7 +78,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the allowed charges
+     * Returns the allowed charges.
+     *
      * @return the allowed charges
      */
     public ArrayList<Integer> getCharges() {
@@ -85,7 +87,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the allowed charges
+     * Sets the allowed charges.
+     *
      * @param charges the allowed charges
      */
     public void setCharges(ArrayList<Integer> charges) {
@@ -93,7 +96,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the precursor m/z
+     * Returns the precursor m/z.
+     *
      * @return the precursor m/z
      */
     public Double getPrecursorMz() {
@@ -101,7 +105,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the precursor m/z
+     * Sets the precursor m/z.
+     *
      * @param precursorMz the precursor m/z
      */
     public void setPrecursorMz(Double precursorMz) {
@@ -109,7 +114,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the precursor m/z error
+     * Returns the precursor m/z error.
+     *
      * @return the precursor m/z error
      */
     public Double getPrecursorMzError() {
@@ -117,7 +123,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the precursor m/z error
+     * Sets the precursor m/z error.
+     *
      * @param precursorMzError the precursor m/z error
      */
     public void setPrecursorMzError(Double precursorMzError) {
@@ -125,7 +132,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the precursor retention time
+     * Returns the precursor retention time.
+     *
      * @return the precursor retention time
      */
     public Double getPrecursorRT() {
@@ -133,7 +141,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the precursor retention time
+     * Sets the precursor retention time.
+     *
      * @param precursorRT the precursor retention time
      */
     public void setPrecursorRT(Double precursorRT) {
@@ -141,7 +150,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the confidence
+     * Returns the comparison type used for the confidence.
+     *
      * @return the comparison type used for the confidence
      */
     public ComparisonType getPsmConfidenceComparison() {
@@ -149,15 +159,18 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the confidence
-     * @param psmConfidenceComparison the comparison type used for the confidence
+     * Sets the comparison type used for the confidence.
+     *
+     * @param psmConfidenceComparison the comparison type used for the
+     * confidence
      */
     public void setPsmConfidenceComparison(ComparisonType psmConfidenceComparison) {
         this.psmConfidenceComparison = psmConfidenceComparison;
     }
 
     /**
-     * Returns the comparison type used for the psm score
+     * Returns the comparison type used for the psm score.
+     *
      * @return the comparison type used for the psm score
      */
     public ComparisonType getPsmScoreComparison() {
@@ -165,7 +178,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the psm score
+     * Sets the comparison type used for the psm score.
+     *
      * @param psmScoreComparison the comparison type used for the psm score
      */
     public void setPsmScoreComparison(ComparisonType psmScoreComparison) {
@@ -173,7 +187,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the psm score
+     * Returns the threshold for the psm score.
+     *
      * @return the threshold for the psm score
      */
     public Double getPsmScore() {
@@ -181,7 +196,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the psm score
+     * Sets the threshold for the psm score.
+     *
      * @param psmScore the threshold for the psm score
      */
     public void setPsmScore(Double psmScore) {
@@ -189,7 +205,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the threshold for the psm confidence
+     * Returns the threshold for the psm confidence.
+     *
      * @return the threshold for the psm confidence
      */
     public Double getPsmConfidence() {
@@ -197,7 +214,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the threshold for the psm confidence
+     * Sets the threshold for the psm confidence.
+     *
      * @param psmConfidence the threshold for the psm confidence
      */
     public void setPsmConfidence(Double psmConfidence) {
@@ -205,7 +223,8 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Returns the comparison type used for the precursor m/z comparison
+     * Returns the comparison type used for the precursor m/z comparison.
+     *
      * @return the comparison type used for the precursor m/z comparison
      */
     public ComparisonType getPrecursorMzComparison() {
@@ -213,58 +232,69 @@ public class PsmFilter extends MatchFilter {
     }
 
     /**
-     * Sets the comparison type used for the precursor m/z comparison
-     * @param precursorMzComparison the comparison type used for the precursor m/z comparison
+     * Sets the comparison type used for the precursor m/z comparison.
+     *
+     * @param precursorMzComparison the comparison type used for the precursor
+     * m/z comparison
      */
     public void setPrecursorMzComparison(ComparisonType precursorMzComparison) {
         this.precursorMzComparison = precursorMzComparison;
     }
 
     /**
-     * Returns the comparison type used for the precursor m/z error comparison
-     * @return  the comparison type used for the precursor m/z error comparison
+     * Returns the comparison type used for the precursor m/z error comparison.
+     *
+     * @return the comparison type used for the precursor m/z error comparison
      */
     public ComparisonType getPrecursorMzErrorComparison() {
         return precursorMzErrorComparison;
     }
 
     /**
-     * Sets the comparison type used for the precursor m/z error comparison
-     * @param precursorMzErrorComparison the comparison type used for the precursor m/z error comparison
+     * Sets the comparison type used for the precursor m/z error comparison.
+     *
+     * @param precursorMzErrorComparison the comparison type used for the
+     * precursor m/z error comparison
      */
     public void setPrecursorMzErrorComparison(ComparisonType precursorMzErrorComparison) {
         this.precursorMzErrorComparison = precursorMzErrorComparison;
     }
 
     /**
-     * Returns the comparison type used for the precursor RT comparison
-     * @return  the comparison type used for the precursor RT comparison
+     * Returns the comparison type used for the precursor RT comparison.
+     *
+     * @return the comparison type used for the precursor RT comparison
      */
     public ComparisonType getPrecursorRTComparison() {
         return precursorRTComparison;
     }
 
     /**
-     * Sets the comparison type used for the precursor RT comparison
-     * @param precursorRTComparison the comparison type used for the precursor RT comparison
+     * Sets the comparison type used for the precursor RT comparison.
+     *
+     * @param precursorRTComparison the comparison type used for the precursor
+     * RT comparison
      */
     public void setPrecursorRTComparison(ComparisonType precursorRTComparison) {
         this.precursorRTComparison = precursorRTComparison;
     }
-    
+
     /**
-     * Returns the list of spectrum files containing the desired spectra
+     * Returns the list of spectrum files containing the desired spectra.
+     *
      * @return the list of spectrum files containing the desired spectra
      */
     public ArrayList<String> getFileNames() {
         return fileName;
     }
+
     /**
-     * Sets the list of spectrum files containing the desired spectra
-     * @param filesNames the list of spectrum files containing the desired spectra
+     * Sets the list of spectrum files containing the desired spectra.
+     *
+     * @param filesNames the list of spectrum files containing the desired
+     * spectra
      */
     public void setFileNames(ArrayList<String> filesNames) {
         this.fileName = filesNames;
     }
-    
 }
