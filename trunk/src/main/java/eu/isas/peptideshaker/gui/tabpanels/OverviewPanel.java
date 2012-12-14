@@ -4994,6 +4994,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public void updateScores() {
 
         ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
+        ((DefaultTableModel) peptideTable.getModel()).fireTableStructureChanged();
+        ((DefaultTableModel) psmTable.getModel()).fireTableStructureChanged();
         setTableProperties();
 
         if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.OVER_VIEW_TAB_INDEX) {
@@ -5002,8 +5004,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (peptideShakerGUI.getDisplayPreferences().showScores()) {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
+            peptideTableToolTips.set(peptideTable.getColumnCount() - 2, "Peptide Score");
+            psmTableToolTips.set(psmTable.getColumnCount() - 2, "PSM Score");
         } else {
             proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
+            peptideTableToolTips.set(peptideTable.getColumnCount() - 2, "Peptide Confidence");
+            psmTableToolTips.set(psmTable.getColumnCount() - 2, "PSM Confidence");
         }
 
         updateProteinTableCellRenderers();
