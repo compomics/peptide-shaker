@@ -86,8 +86,8 @@ public class ProteinFractionTableModel extends DefaultTableModel {
 
         fileNames = new ArrayList<String>();
 
-        for (String fileName : identification.getSpectrumFiles()) {
-            fileNames.add(fileName);
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            fileNames.add(spectrumFileName);
         }
     }
 

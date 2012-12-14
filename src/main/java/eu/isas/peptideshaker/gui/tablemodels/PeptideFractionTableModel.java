@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
