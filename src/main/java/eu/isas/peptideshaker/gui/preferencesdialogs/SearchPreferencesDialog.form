@@ -234,7 +234,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="MS/MS Tol. (Da):"/>
+                <Property name="text" type="java.lang.String" value="MS/MS Tol. (Da)"/>
                 <Property name="toolTipText" type="java.lang.String" value="Fragment ion tolerance"/>
               </Properties>
             </Component>
@@ -259,7 +259,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Enzyme:"/>
+                <Property name="text" type="java.lang.String" value="Enzyme"/>
                 <Property name="toolTipText" type="java.lang.String" value="Enzyme used"/>
               </Properties>
             </Component>
@@ -272,13 +272,13 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Missed Cleavages:"/>
+                <Property name="text" type="java.lang.String" value="Missed Cleavages"/>
                 <Property name="toolTipText" type="java.lang.String" value="Max number of missed cleavages"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fragment Ion Types:"/>
+                <Property name="text" type="java.lang.String" value="Fragment Ion Types"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="ion1Cmb">
@@ -299,7 +299,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Prec. Tol.:"/>
+                <Property name="text" type="java.lang.String" value="Prec. Tol."/>
                 <Property name="toolTipText" type="java.lang.String" value="Precursor tolerance"/>
               </Properties>
             </Component>
@@ -567,7 +567,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="SearchGUI File:"/>
+                <Property name="text" type="java.lang.String" value="SearchGUI File"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fileTxt">

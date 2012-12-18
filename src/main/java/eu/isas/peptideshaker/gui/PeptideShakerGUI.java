@@ -460,6 +460,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         helpButton.setVisible(false);
         newsButton.setVisible(false);
 
+        quantifyMenuItem.setVisible(false); // @TODO: re-enable later!!
+        
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
 
@@ -3000,6 +3002,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             helpJMenu.setEnabled(true);
             scoresJCheckBoxMenuItem.setEnabled(true);
             sparklinesJCheckBoxMenuItem.setEnabled(true);
+            quantifyMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
             allTabsJTabbedPane.setEnabledAt(2, identification.getSpectrumFiles().size() > 1);
