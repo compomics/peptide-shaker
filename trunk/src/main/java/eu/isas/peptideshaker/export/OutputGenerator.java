@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -330,9 +329,7 @@ public class OutputGenerator {
                                                 try {
                                                     writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
-                                                    }
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
                                             }
 
@@ -341,9 +338,7 @@ public class OutputGenerator {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
-                                                    }
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
                                             }
                                             if (ptmSummary) {
@@ -351,9 +346,7 @@ public class OutputGenerator {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey) + SEPARATOR);
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
-                                                    }
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
                                             }
 
@@ -362,9 +355,7 @@ public class OutputGenerator {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     peptideShakerGUI.catchException(e);
-                                                    if (nPeptides) {
-                                                        writer.write(Double.NaN + SEPARATOR);
-                                                    }
+                                                    writer.write(Double.NaN + SEPARATOR);
                                                 }
                                             }
                                             if (nSpectra) {
@@ -372,9 +363,7 @@ public class OutputGenerator {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     peptideShakerGUI.catchException(e);
-                                                    if (nPeptides) {
-                                                        writer.write(Double.NaN + SEPARATOR);
-                                                    }
+                                                    writer.write(Double.NaN + SEPARATOR);
                                                 }
                                             }
                                             if (emPAI) {
@@ -382,9 +371,7 @@ public class OutputGenerator {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey,
                                                             SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
-                                                    }
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
                                             }
                                             if (nsaf) {
@@ -392,9 +379,7 @@ public class OutputGenerator {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey,
                                                             SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    if (nPeptides) {
-                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
-                                                    }
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
                                             }
                                             if (mw) {
@@ -1874,6 +1859,12 @@ public class OutputGenerator {
      * shall be output
      * @param aDescription boolean indicating whether protein description of the
      * main match shall be output
+     * @param aNPeptides boolean indicating wheter the total number of validated 
+     * peptides for the protein shall be output
+     * @param aNSpectra boolean indicating wheter the total number of validated 
+     * spectra for the protein shall be output
+     * @param aSequenceCoverage boolean indicating whether the sequence coverage
+     * shall be output
      * @param aNPeptidesPerFraction boolean indicating whether the number of
      * validated
      * @param aNSpectraPerFraction
@@ -1888,8 +1879,9 @@ public class OutputGenerator {
      * output
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
-            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction,
-            boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden) {
+            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage, 
+            boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred, 
+            boolean aShowStar, boolean aIncludeHidden) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -1899,6 +1891,9 @@ public class OutputGenerator {
         final boolean otherAccessions = aOtherAccessions;
         final boolean piDetails = aPiDetails;
         final boolean description = aDescription;
+        final boolean nPeptides = aNPeptides;
+        final boolean nSpectra = aNSpectra;
+        final boolean sequenceCoverage = aSequenceCoverage;
         final boolean nPeptidesPerFraction = aNPeptidesPerFraction;
         final boolean nSpectraPerFraction = aNSpectraPerFraction;
         final boolean precursorIntensities = aPrecursorIntensities;
@@ -1985,6 +1980,16 @@ public class OutputGenerator {
                             if (description) {
                                 writer.write("Description" + SEPARATOR);
                             }
+                            if (nPeptides) {
+                                writer.write("#Validated Peptides" + SEPARATOR);
+                            }
+                            if (nSpectra) {
+                                writer.write("#Validated Spectra" + SEPARATOR);
+                            }
+                            if (sequenceCoverage) {
+                                writer.write("Sequence Coverage (%)" + SEPARATOR);
+                                writer.write("Observable Coverage (%)" + SEPARATOR);
+                            }
                             if (nPeptidesPerFraction) {
                                 for (String fraction : fractionFileNames) {
                                     writer.write("#Peptides " + fraction + SEPARATOR);
@@ -2062,7 +2067,30 @@ public class OutputGenerator {
 
                                             // @TODO: all of the above selects should be replaced by batch selection!!
 
-
+                                            if (nPeptides) {
+                                                try {
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    peptideShakerGUI.catchException(e);
+                                                    writer.write(Double.NaN + SEPARATOR);
+                                                }
+                                            }
+                                            if (nSpectra) {
+                                                try {
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    peptideShakerGUI.catchException(e);
+                                                    writer.write(Double.NaN + SEPARATOR);
+                                                }
+                                            }
+                                            if (sequenceCoverage) {
+                                                try {
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                }
+                                            }
 
                                             if (nPeptidesPerFraction) {
                                                 for (String fraction : fractionFileNames) {

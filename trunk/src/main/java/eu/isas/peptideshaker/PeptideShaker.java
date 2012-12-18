@@ -283,7 +283,7 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Scoring PTMs in PSMs.", true, true);
+        waitingHandler.appendReport("Scoring PTMs in PSMs.", true, true); // @TODO: this is very slow if memory is full!!
         scorePsmPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
@@ -304,35 +304,35 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Saving probabilities, building peptides and proteins.", true, true);
-        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler);
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler); // @TODO: this is very slow if memory is full!!
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Generating peptide map.", true, true);
+        waitingHandler.appendReport("Generating peptide map.", true, true); // slow?
         fillPeptideMaps(waitingHandler);
         peptideMap.cure();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Computing peptide probabilities.", true, true);
+        waitingHandler.appendReport("Computing peptide probabilities.", true, true); // should be fast
         peptideMap.estimateProbabilities(waitingHandler);
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Saving peptide probabilities.", true, true);
+        waitingHandler.appendReport("Saving peptide probabilities.", true, true); // could be slow
         attachPeptideProbabilities(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Generating protein map.", true, true);
+        waitingHandler.appendReport("Generating protein map.", true, true); // could be slow
         fillProteinMap(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
         }
-        waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true);
+        waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
         cleanProteinGroups(waitingHandler);
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
@@ -620,9 +620,9 @@ public class PeptideShaker {
 
 
         // validate the spectra
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatchParameters(spectrumFile, new PSParameter(), null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatchParameters(spectrumFileName, new PSParameter(), null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 double psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().getScoreLimit();
                 boolean noValidated = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSpecificMapKey())).getTargetDecoyResults().noValidated();
@@ -840,9 +840,9 @@ public class PeptideShaker {
         PSParameter psParameter, psParameter2;
         boolean multiSE = inputMap.isMultipleSearchEngines();
 
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFile, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFileName, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
                 psParameter = new PSParameter();
                 ArrayList<String> identifications = new ArrayList<String>();
                 peptideAssumptions = new HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>>();
@@ -999,9 +999,9 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
 
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFile, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFileName, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 waitingHandler.increaseSecondaryProgressValue();
 
@@ -1059,10 +1059,10 @@ public class PeptideShaker {
 
         PSParameter psParameter = new PSParameter();
 
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFile, null);
-            identification.loadSpectrumMatchParameters(spectrumFile, psParameter, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFileName, null);
+            identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
 
                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                 psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getPsmProbabilityScore()));
@@ -1144,9 +1144,9 @@ public class PeptideShaker {
         HashMap<String, HashMap<String, ArrayList<String>>> confidentPeptideInference = new HashMap<String, HashMap<String, ArrayList<String>>>();
         HashMap<String, HashMap<String, ArrayList<String>>> notConfidentPeptideInference = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFile, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFileName, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 boolean variableAA = false;
                 for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
@@ -1168,13 +1168,13 @@ public class PeptideShaker {
                             PTM ptm = ptmFactory.getPTM(modName);
                             if (ptm.getType() == PTM.MODAA) {
                                 if (!modMatch.isConfident()) {
-                                    if (!notConfidentPeptideInference.containsKey(spectrumFile)) {
-                                        notConfidentPeptideInference.put(spectrumFile, new HashMap<String, ArrayList<String>>());
+                                    if (!notConfidentPeptideInference.containsKey(spectrumFileName)) {
+                                        notConfidentPeptideInference.put(spectrumFileName, new HashMap<String, ArrayList<String>>());
                                     }
-                                    if (!notConfidentPeptideInference.get(spectrumFile).containsKey(modMatch.getTheoreticPtm())) {
-                                        notConfidentPeptideInference.get(spectrumFile).put(modMatch.getTheoreticPtm(), new ArrayList<String>());
+                                    if (!notConfidentPeptideInference.get(spectrumFileName).containsKey(modMatch.getTheoreticPtm())) {
+                                        notConfidentPeptideInference.get(spectrumFileName).put(modMatch.getTheoreticPtm(), new ArrayList<String>());
                                     }
-                                    notConfidentPeptideInference.get(spectrumFile).get(modMatch.getTheoreticPtm()).add(spectrumKey);
+                                    notConfidentPeptideInference.get(spectrumFileName).get(modMatch.getTheoreticPtm()).add(spectrumKey);
                                     confident = false;
                                 } else {
                                     if (!confidentPeptideInference.containsKey(modName)) {
@@ -1303,7 +1303,7 @@ public class PeptideShaker {
                                 Integer newLocalization = mapping.get(oldLocalization);
                                 if (modificationMatch != null && newLocalization != null) {
                                     if (newLocalization != oldLocalization) {
-                                        System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+                                        //System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
                                     }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
@@ -1443,9 +1443,9 @@ public class PeptideShaker {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
 
-        for (String spectrumFile : identification.getSpectrumFiles()) {
-            identification.loadSpectrumMatches(spectrumFile, null);
-            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
+        for (String spectrumFileName : identification.getSpectrumFiles()) {
+            identification.loadSpectrumMatches(spectrumFileName, null);
+            for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 scorePTMs(spectrumMatch, searchParameters, annotationPreferences, ptmScoringPreferences, replicateNumber);
                 waitingHandler.increaseSecondaryProgressValue();
@@ -1979,10 +1979,13 @@ public class PeptideShaker {
         PSParameter psParameter = new PSParameter();
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
+        waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size()*2);
 
         ArrayList<String> foundModifications = new ArrayList<String>();
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
+
+        // load the peptides into memory
+        identification.loadPeptideMatches(identification.getPeptideIdentification(), waitingHandler); // @TODO: should speed up the process below?
 
         for (String peptideKey : identification.getPeptideIdentification()) {
             for (String modification : Peptide.getModificationFamily(peptideKey)) {
@@ -2026,7 +2029,7 @@ public class PeptideShaker {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
 
-            identification.addPeptideMatchParameter(peptideKey, psParameter);
+            identification.addPeptideMatchParameter(peptideKey, psParameter); // @TODO: batch insertion?
             peptideMap.addPoint(probaScore, peptideMatch);
 
             waitingHandler.increaseSecondaryProgressValue();
@@ -2068,7 +2071,7 @@ public class PeptideShaker {
             for (String fraction : psParameter.getFractions()) {
                 psParameter.setFractionPEP(fraction, peptideMap.getProbability(psParameter.getSpecificMapKey(), psParameter.getFractionScore(fraction)));
             }
-            identification.updatePeptideMatchParameter(peptideKey, psParameter);
+            identification.updatePeptideMatchParameter(peptideKey, psParameter); // @TODO: batch insert?
             waitingHandler.increaseSecondaryProgressValue();
             if (waitingHandler.isRunCanceled()) {
                 return;
@@ -2097,6 +2100,7 @@ public class PeptideShaker {
 
         identification.loadPeptideMatchParameters(psParameter, null);
         identification.loadProteinMatches(null);
+
         for (String proteinKey : identification.getProteinIdentification()) {
 
             waitingHandler.increaseSecondaryProgressValue();
@@ -2113,7 +2117,7 @@ public class PeptideShaker {
             }
 
             // get the fraction scores
-            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+            identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null); // @TODO: already covered by the loadPeptideMatchParameters call above?
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                 psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -2136,7 +2140,7 @@ public class PeptideShaker {
                 psParameter.setFractionScore(fractionName, fractionScores.get(fractionName));
             }
 
-            identification.addProteinMatchParameter(proteinKey, psParameter);
+            identification.addProteinMatchParameter(proteinKey, psParameter); // @TODO: batch insertion?
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
 
@@ -2221,12 +2225,13 @@ public class PeptideShaker {
 
         int max = 3 * identification.getProteinIdentification().size();
 
+        identification.loadProteinMatchParameters(psParameter, null);
+        identification.loadProteinMatches(waitingHandler);
+        
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
-        identification.loadProteinMatchParameters(psParameter, null);
         for (String proteinSharedKey : identification.getProteinIdentification()) {
-
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
                 double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
@@ -2279,7 +2284,7 @@ public class PeptideShaker {
         double maxMW = 0;
         Protein currentProtein = null;
 
-        identification.loadProteinMatches(null);
+        //identification.loadProteinMatches(null); // @TODO: already done above?
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
