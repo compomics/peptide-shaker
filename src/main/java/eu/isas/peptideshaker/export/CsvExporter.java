@@ -99,7 +99,6 @@ public class CsvExporter {
      * @param experiment the ms experiment
      * @param sample the sample
      * @param replicateNumber the replicate number
-     * @param enzyme the enzyme used
      * @param identificationFeaturesGenerator
      */
     public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator) {

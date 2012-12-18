@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -3897,8 +3896,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 double sequenceCoverage = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                 title += Util.roundDouble(sequenceCoverage, 2);
                 try {
-                    double possiblecoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                    title += "% of exp " + Util.roundDouble(possiblecoverarge, 2) + "%";
+                    double possibleCoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                    title += "% of exp " + Util.roundDouble(possibleCoverarge, 2) + "%";
                 } catch (Exception ePossibleCoverage) {
                     // skip the possible coverage
                     peptideShakerGUI.catchException(ePossibleCoverage);
@@ -3987,8 +3986,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     possibleCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getCoverableAA(proteinKey);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
-                    possibleCoverage = new boolean[currentProteinSequence.length()];
-                    for (int i = 0; i < currentProteinSequence.length(); i++) {
+                    possibleCoverage = new boolean[currentProteinSequence.length() + 1];
+                    for (int i = 0; i < currentProteinSequence.length() + 1; i++) {
                         possibleCoverage[i] = true;
                     }
                 }
@@ -3996,13 +3995,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // create the coverage plot
                 ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
 
-                for (int i = 0; i < coverage.length; i++) {
+                for (int i = 1; i < coverage.length; i++) {
 
                     boolean covered = coverage[i] > 0;
                     boolean possibleToCover = false;
 
-                    if (i > 0) {
-                        possibleToCover = possibleCoverage[i - 1];
+                    try {
+                        possibleToCover = possibleCoverage[i];
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore, can happen to old projects due to a bug
                     }
 
                     int sequenceCounter = 1;
@@ -5274,7 +5275,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+            
+            for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) { // @TODO: batch selection??
                 try {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
                     if (proteinMatch.getPeptideMatches().contains(peptideKey)) {

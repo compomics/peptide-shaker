@@ -91,7 +91,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns an array of boolean indicating whether the amino acids of given
+     * Returns an array of booleans indicating whether the amino acids of given
      * peptides can generate peptides.
      *
      * @param proteinMatchKey the key of the protein of interest
@@ -162,9 +162,11 @@ public class IdentificationFeaturesGenerator {
      * peptides can generate peptides
      */
     private boolean[] estimateCoverableAA(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-        boolean[] result = new boolean[sequence.length()];
+        boolean[] result = new boolean[sequence.length() + 1];
+
         if (searchParameters.getEnzyme().enzymeCleaves()) {
             int pepMax = idFilter.getMaxPepLength();
             Enzyme enzyme = searchParameters.getEnzyme();
@@ -181,7 +183,15 @@ public class IdentificationFeaturesGenerator {
                     lastCleavage = cleavageAA;
                 }
             }
+
+            // add the last peptide if short enough
+            if (sequence.length() - lastCleavage < pepMax) {
+                for (int i = lastCleavage; i < sequence.length(); i++) {
+                    result[i] = true;
+                }
+            }
         }
+
         result[sequence.length() - 1] = result[sequence.length() - 2];
         return result;
     }

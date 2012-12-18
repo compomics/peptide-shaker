@@ -51,6 +51,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        quantifyJButton = new javax.swing.JButton();
         backgroundPanel = new javax.swing.JPanel();
         openJButton = new javax.swing.JButton();
         newJButton = new javax.swing.JButton();
@@ -59,10 +60,23 @@ public class WelcomeDialog extends javax.swing.JDialog {
         isasButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         searchJButton = new javax.swing.JButton();
-        quantifyJButton = new javax.swing.JButton();
         recentProjectsLabel = new javax.swing.JLabel();
         reshakeJButton = new javax.swing.JButton();
         gettingStartedJButton1 = new javax.swing.JButton();
+        openExampleDatasetJButton = new javax.swing.JButton();
+
+        quantifyJButton.setFont(quantifyJButton.getFont().deriveFont(quantifyJButton.getFont().getStyle() | java.awt.Font.BOLD, quantifyJButton.getFont().getSize()+3));
+        quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
+        quantifyJButton.setText("Reporter Ions");
+        quantifyJButton.setToolTipText("<html>\nQuantify your proteins using reporter ions<br>\n(Coming soon...)\n</html>");
+        quantifyJButton.setFocusPainted(false);
+        quantifyJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        quantifyJButton.setIconTextGap(11);
+        quantifyJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quantifyJButtonActionPerformed(evt);
+            }
+        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Welcome to PeptideShaker");
@@ -166,19 +180,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        quantifyJButton.setFont(quantifyJButton.getFont().deriveFont(quantifyJButton.getFont().getStyle() | java.awt.Font.BOLD, quantifyJButton.getFont().getSize()+3));
-        quantifyJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/reporter_logo.png"))); // NOI18N
-        quantifyJButton.setText("Reporter Ions");
-        quantifyJButton.setToolTipText("<html>\nQuantify your proteins using reporter ions<br>\n(Coming soon...)\n</html>");
-        quantifyJButton.setFocusPainted(false);
-        quantifyJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        quantifyJButton.setIconTextGap(11);
-        quantifyJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                quantifyJButtonActionPerformed(evt);
-            }
-        });
-
         recentProjectsLabel.setFont(recentProjectsLabel.getFont().deriveFont(recentProjectsLabel.getFont().getStyle() | java.awt.Font.BOLD));
         recentProjectsLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/next_grey.png"))); // NOI18N
         recentProjectsLabel.setText("<html><a href>Recent Projects</html>");
@@ -222,6 +223,19 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
+        openExampleDatasetJButton.setFont(openExampleDatasetJButton.getFont().deriveFont(openExampleDatasetJButton.getFont().getStyle() | java.awt.Font.BOLD, openExampleDatasetJButton.getFont().getSize()+3));
+        openExampleDatasetJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptideshaker_example_dataset.png"))); // NOI18N
+        openExampleDatasetJButton.setText("Open Example");
+        openExampleDatasetJButton.setToolTipText("Opens a PeptideShaker example dataset");
+        openExampleDatasetJButton.setFocusPainted(false);
+        openExampleDatasetJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        openExampleDatasetJButton.setIconTextGap(20);
+        openExampleDatasetJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openExampleDatasetJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -244,7 +258,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(openJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                        .addComponent(quantifyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(openExampleDatasetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addGroup(backgroundPanelLayout.createSequentialGroup()
@@ -274,8 +288,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
                     .addComponent(reshakeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(quantifyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(openExampleDatasetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -312,7 +326,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void newJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJButtonActionPerformed
         this.setVisible(false);
         openDialog.setVisible(true);
-        this.dispose();
+        this.dispose(); // @TODO: the waiting dialog should be reopened if the user cancels the open project dialog
     }//GEN-LAST:event_newJButtonActionPerformed
 
     /**
@@ -323,6 +337,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
         this.setVisible(false);
 
+        // @TODO: the default folder should be the example dataset folder!!
+        
         File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
 
         if (newFile != null) {
@@ -434,6 +450,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
+
+        // @TODO: the default searchgui folder has to be set
+
         new Thread(new Runnable() {
             public void run() { 
                 try {
@@ -515,6 +534,20 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void gettingStartedJButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedJButton1ActionPerformed
         new GettingStartedDialog(peptideShakerGUI, true);
     }//GEN-LAST:event_gettingStartedJButton1ActionPerformed
+
+    /**
+     * Open the example dataset.
+     * 
+     * @param evt 
+     */
+    private void openExampleDatasetJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openExampleDatasetJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        JOptionPane.showMessageDialog(this, "Example data set not yet selected.", "Example Dataset", JOptionPane.INFORMATION_MESSAGE);
+        //dispose();
+        //peptideShakerGUI.importPeptideShakerFile(new File(peptideShakerGUI.getJarFilePath() + "/resources/example_dataset/wt_course_old_test_dataset.cps")); // @TODO: replace and rename test dataset!
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_openExampleDatasetJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton compomicsButton;
@@ -522,6 +555,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private javax.swing.JButton isasButton;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton newJButton;
+    private javax.swing.JButton openExampleDatasetJButton;
     private javax.swing.JButton openJButton;
     private javax.swing.JButton probeButton;
     private javax.swing.JButton quantifyJButton;
