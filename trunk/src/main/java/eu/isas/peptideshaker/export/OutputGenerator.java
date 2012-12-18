@@ -336,7 +336,7 @@ public class OutputGenerator {
                                             if (sequenceCoverage) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
@@ -1859,6 +1859,8 @@ public class OutputGenerator {
      * shall be output
      * @param aDescription boolean indicating whether protein description of the
      * main match shall be output
+     * @param aMW boolean indicating whether the molecular weight is to be
+     * included in the output
      * @param aNPeptides boolean indicating wheter the total number of validated 
      * peptides for the protein shall be output
      * @param aNSpectra boolean indicating wheter the total number of validated 
@@ -1879,7 +1881,7 @@ public class OutputGenerator {
      * output
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
-            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage, 
+            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aMW, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage, 
             boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred, 
             boolean aShowStar, boolean aIncludeHidden) {
 
@@ -1891,6 +1893,7 @@ public class OutputGenerator {
         final boolean otherAccessions = aOtherAccessions;
         final boolean piDetails = aPiDetails;
         final boolean description = aDescription;
+        final boolean mw = aMW;
         final boolean nPeptides = aNPeptides;
         final boolean nSpectra = aNSpectra;
         final boolean sequenceCoverage = aSequenceCoverage;
@@ -1980,6 +1983,9 @@ public class OutputGenerator {
                             if (description) {
                                 writer.write("Description" + SEPARATOR);
                             }
+                            if (mw) {
+                                writer.write("MW (kDa)" + SEPARATOR);
+                            }
                             if (nPeptides) {
                                 writer.write("#Validated Peptides" + SEPARATOR);
                             }
@@ -2065,6 +2071,11 @@ public class OutputGenerator {
                                                 }
                                             }
 
+                                            if (mw) {
+                                                Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+                                                writer.write(proteinMW + SEPARATOR);
+                                            }
+
                                             // @TODO: all of the above selects should be replaced by batch selection!!
 
                                             if (nPeptides) {
@@ -2086,7 +2097,7 @@ public class OutputGenerator {
                                             if (sequenceCoverage) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }

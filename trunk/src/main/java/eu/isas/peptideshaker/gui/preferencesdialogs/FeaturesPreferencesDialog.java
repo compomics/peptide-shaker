@@ -1632,7 +1632,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void fractionsExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionsExportActionPerformed
         // @TODO: this export can be extended with more options
-        outputGenerator.getFractionsOutput(this, null, false, true, true, true, true, true, true, 
+        outputGenerator.getFractionsOutput(this, null, false, true, true, true, true, true, true, true, 
                 true, true, peptidesPerFraction.isSelected(), spectraPerFraction.isSelected(), precursorIntensitiesPerFraction.isSelected(), 
                 true, false, true, false);
     }//GEN-LAST:event_fractionsExportActionPerformed

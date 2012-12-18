@@ -330,7 +330,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         enzymeAndFragmentIonsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Enzyme and Fragment Ions"));
         enzymeAndFragmentIonsPanel.setOpaque(false);
 
-        jLabel1.setText("MS/MS Tol. (Da):");
+        jLabel1.setText("MS/MS Tol. (Da)");
         jLabel1.setToolTipText("Fragment ion tolerance");
 
         fragmentIonAccuracyTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -339,17 +339,17 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         enzymesCmb.setToolTipText("Enzyme used");
 
-        jLabel5.setText("Enzyme:");
+        jLabel5.setText("Enzyme");
         jLabel5.setToolTipText("Enzyme used");
 
         missedCleavagesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         missedCleavagesTxt.setText("1");
         missedCleavagesTxt.setToolTipText("Max number of missed cleavages");
 
-        jLabel7.setText("Missed Cleavages:");
+        jLabel7.setText("Missed Cleavages");
         jLabel7.setToolTipText("Max number of missed cleavages");
 
-        jLabel2.setText("Fragment Ion Types:");
+        jLabel2.setText("Fragment Ion Types");
 
         ion1Cmb.setModel(new DefaultComboBoxModel(searchParameters.getForwardIons()));
         ion1Cmb.setToolTipText("Fragment ion types");
@@ -357,7 +357,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         ion2Cmb.setModel(new DefaultComboBoxModel(searchParameters.getRewindIons()));
         ion2Cmb.setToolTipText("Fragment ion types");
 
-        jLabel9.setText("Prec. Tol.:");
+        jLabel9.setText("Prec. Tol.");
         jLabel9.setToolTipText("Precursor tolerance");
 
         precursorAccuracy.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -564,7 +564,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         searchGuiParamsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("SearchGUI Parameters File"));
         searchGuiParamsPanel.setOpaque(false);
 
-        jLabel4.setText("SearchGUI File:");
+        jLabel4.setText("SearchGUI File");
 
         fileTxt.setEditable(false);
 
