@@ -456,7 +456,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new Thread(new Runnable() {
             public void run() { 
                 try {
-                    ToolFactory.startSearchGUI(peptideShakerGUI);
+                    ToolFactory.startSearchGUI(peptideShakerGUI, null, new File("test"));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }

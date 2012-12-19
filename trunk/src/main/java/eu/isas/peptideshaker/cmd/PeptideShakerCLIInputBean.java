@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.CommandLineUtils;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.SearchParameters;
 import org.apache.commons.cli.CommandLine;
@@ -383,20 +384,6 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns a list of file names for inputs of comma separated files.
-     *
-     * @param cliInput the CLI input
-     * @return a list of file names
-     */
-    public static ArrayList<String> splitInput(String cliInput) {
-        ArrayList<String> results = new ArrayList<String>();
-        for (String file : cliInput.split(",")) {
-            results.add(file.trim());
-        }
-        return results;
-    }
-
-    /**
      * Returns a list of spectrum files as imported from the command line option.
      *
      * @param optionInput the command line option
@@ -407,7 +394,7 @@ public class PeptideShakerCLIInputBean {
     public static ArrayList<File> getSpectrumFiles(String optionInput) throws FileNotFoundException {
         ArrayList<String> extentions = new ArrayList<String>();
         extentions.add(".mgf");
-        return getFiles(optionInput, extentions);
+        return CommandLineUtils.getFiles(optionInput, extentions);
     }
 
     /**
@@ -424,65 +411,6 @@ public class PeptideShakerCLIInputBean {
         extentions.add(".dat");
         extentions.add(".omx");
         extentions.add(".t.xml");
-        return getFiles(optionInput, extentions);
-    }
-
-    /**
-     * Returns a list of files as imported from the command line option.
-     *
-     * @param optionInput the command line option
-     * @param fileExtentions the file extensions to be considered
-     * @return a list of file candidates
-     * @throws FileNotFoundException exception thrown whenever a file is not
-     * found
-     */
-    private static ArrayList<File> getFiles(String optionInput, ArrayList<String> fileExtentions) throws FileNotFoundException {
-        ArrayList<File> result = new ArrayList<File>();
-        ArrayList<String> files = splitInput(optionInput);
-        if (files.size() == 1) {
-            File testFile = new File(files.get(0));
-            if (testFile.exists()) {
-                if (testFile.isDirectory()) {
-                    for (File childFile : testFile.listFiles()) {
-                        String fileName = Util.getFileName(childFile.getAbsolutePath());
-                        for (String extention : fileExtentions) {
-                            if (fileName.toLowerCase().endsWith(extention)) {
-                                if (childFile.exists()) {
-                                    result.add(childFile);
-                                    break;
-                                } else {
-                                    throw new FileNotFoundException(childFile.getAbsolutePath() + " not found.");
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    String fileName = Util.getFileName(testFile.getAbsolutePath());
-                    for (String extention : fileExtentions) {
-                        if (fileName.toLowerCase().endsWith(extention)) {
-                            result.add(testFile);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                throw new FileNotFoundException(files.get(0) + " not found.");
-            }
-        } else {
-            for (String file : files) {
-                for (String extention : fileExtentions) {
-                    if (file.toLowerCase().endsWith(extention)) {
-                        File testFile = new File(file);
-                        if (testFile.exists()) {
-                            result.add(testFile);
-                        } else {
-                            throw new FileNotFoundException(file + " not found.");
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        return result;
+        return CommandLineUtils.getFiles(optionInput, extentions);
     }
 }

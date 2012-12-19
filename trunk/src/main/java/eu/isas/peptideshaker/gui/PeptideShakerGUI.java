@@ -393,7 +393,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param args
      */
     public static void main(String[] args) {
-
+        
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
         try {
@@ -412,14 +412,33 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         if (!System.getProperty("java.version").startsWith("1.6")) {
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
         }
+        
+        File cpsFile = null;
+        boolean cps = false;
+        for (String arg : args) {
+            if (cps) {
+                cpsFile = new File(arg);
+                cps = false;
+            }
+            if (arg.equals(ToolFactory.peptideShakerFile)) {
+                cps = true;
+            }
+        }
 
-        new PeptideShakerGUI();
+        new PeptideShakerGUI(cpsFile);
     }
 
     /**
      * Creates a new PeptideShaker frame.
      */
     public PeptideShakerGUI() {
+        this(null);
+    }
+
+    /**
+     * Creates a new PeptideShaker frame.
+     */
+    public PeptideShakerGUI(File cpsFile) {
 
         // check for new version
         CompomicsWrapper.checkForNewVersion(getVersion(), "PeptideShaker", "peptide-shaker");
@@ -511,8 +530,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         setLocationRelativeTo(null);
         setVisible(true);
 
+        if (cpsFile == null) {
         // open the welcome dialog
         new WelcomeDialog(this, true);
+        } else {
+            importPeptideShakerFile(cpsFile);
+        }
     }
 
     /**

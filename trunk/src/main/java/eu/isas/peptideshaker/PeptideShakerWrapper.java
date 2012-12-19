@@ -17,6 +17,14 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
      * class in the jar file.
      */
     public PeptideShakerWrapper() {
+        this(null);
+    }
+    /**
+     * Starts the launcher by calling the launch method. Use this as the main
+     * class in the jar file.
+     * @param args the command line arguments (ignored if null)
+     */
+    public PeptideShakerWrapper(String[] args) {
 
         // get the version number set in the pom file
         String jarFileName = "PeptideShaker-" + new Properties().getVersion() + ".jar";
@@ -30,7 +38,7 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
         String splash = "peptide-shaker-splash.png";
         String mainClass = "eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
-        launchTool("PeptideShaker", jarFile, splash, mainClass);
+        launchTool("PeptideShaker", jarFile, splash, mainClass, args);
     }
 
     /**
@@ -40,6 +48,6 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
      * @param args
      */
     public static void main(String[] args) {
-        new PeptideShakerWrapper();
+        new PeptideShakerWrapper(args);
     }
 }
