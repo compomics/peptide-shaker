@@ -393,7 +393,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param args
      */
     public static void main(String[] args) {
-        
+
         // set the look and feel
         boolean numbusLookAndFeelSet = false;
         try {
@@ -412,7 +412,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         if (!System.getProperty("java.version").startsWith("1.6")) {
             TITLED_BORDER_HORIZONTAL_PADDING = "   ";
         }
-        
+
         File cpsFile = null;
         boolean cps = false;
         for (String arg : args) {
@@ -480,7 +480,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         newsButton.setVisible(false);
 
         quantifyMenuItem.setVisible(false); // @TODO: re-enable later!!
-        
+
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
 
@@ -531,8 +531,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         setVisible(true);
 
         if (cpsFile == null) {
-        // open the welcome dialog
-        new WelcomeDialog(this, true);
+            // open the welcome dialog
+            new WelcomeDialog(this, true);
         } else {
             importPeptideShakerFile(cpsFile);
         }
@@ -4943,7 +4943,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             open = false;
                         }
                     }
-    
+
                     if (open) {
                         if (!new File(filePath).exists()) {
                             JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
