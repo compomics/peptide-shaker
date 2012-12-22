@@ -72,7 +72,7 @@ Here is an example for Windows where _X_, _Y_ and _Z_ have to be replaced by the
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 -experiment myExperiment -sample mySample -replicate 1 
 -identification_files "C:\my folder" -spectrum_files 
-"C:\my folder" -identification_parameters "C:\my folder" 
+"C:\my folder" -identification_parameters "C:\my folder\my_id_params" 
 -out "C:\my folder\myCpsFile.cps"
 }}}
 
