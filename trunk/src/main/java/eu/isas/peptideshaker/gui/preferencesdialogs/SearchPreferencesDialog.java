@@ -1417,7 +1417,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             try {
                 // Old school format, overwrite old file
                 Properties props = loadProperties(file);
-                searchParameters = IdentificationParametersReader.getSearchParameters(props);
+                // We need the user mods file, try to see if it is along the search parameters or use the PeptideShaker version
+                File userMods = new File(file.getParent(), "usermods.xml");
+                if (!userMods.exists()) {
+                    userMods = new File(PeptideShaker.USER_MODIFICATIONS_FILE);
+                }
+                searchParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
                 setScreenProps();
                 String fileName = file.getName();
                 if (fileName.endsWith(".properties")) {
