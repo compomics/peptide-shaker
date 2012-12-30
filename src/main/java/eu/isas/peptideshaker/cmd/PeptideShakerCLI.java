@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.ToolFactory;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -14,6 +15,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
@@ -23,6 +25,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
+import java.awt.Toolkit;
 import org.apache.commons.cli.*;
 
 import java.io.*;
@@ -43,7 +46,7 @@ public class PeptideShakerCLI implements Callable {
      * The Progress messaging handler reports the status throughout all
      * PeptideShaker processes.
      */
-    private WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
+    private WaitingHandler waitingHandler;
     /**
      * The CLI input parameters to start PeptideShaker from command line.
      */
@@ -73,6 +76,27 @@ public class PeptideShakerCLI implements Callable {
      * Calling this method will run the configured PeptideShaker process.
      */
     public Object call() {
+        
+        // Set up the waiting handler
+        if (cliInputBean.isGUI()) {
+            waitingHandler = new WaitingDialog(null, 
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true, null, "Importing Data", "PeptideShaker", null, true);
+            
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            try {
+                                ((WaitingDialog) waitingHandler).setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
+                        }
+                    }, "ProgressDialog").start();
+        } else {
+            waitingHandler = new WaitingHandlerCLIImpl();
+        }
 
         // Define new project references.
         MsExperiment experiment = new MsExperiment(cliInputBean.getiExperimentID());
@@ -141,9 +165,9 @@ public class PeptideShakerCLI implements Callable {
                 new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
         // Save results
+            File ouptutFile = cliInputBean.getOutput();
         try {
             waitingHandler.appendReport("Saving results, please wait...", true, true);
-            File ouptutFile = cliInputBean.getOutput();
             CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
                     annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                     processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
@@ -167,6 +191,16 @@ public class PeptideShakerCLI implements Callable {
 
         // Finished
         System.out.println(System.getProperty("line.separator") + "End of PeptideShaker command line execution" + System.getProperty("line.separator"));
+        
+        if (cliInputBean.displayResults()) {
+            try {
+            ToolFactory.startPeptideShaker(null, ouptutFile);
+            } catch (Exception e) {
+            waitingHandler.appendReport("An exception occurred while opening the cps file: " + e.getLocalizedMessage(), true, true);
+                e.printStackTrace();
+            }
+        }
+        
         return null;
     }
 

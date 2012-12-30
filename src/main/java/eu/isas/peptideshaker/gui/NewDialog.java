@@ -883,7 +883,8 @@ public class NewDialog extends javax.swing.JDialog {
                             } else if (file.getName().endsWith("usermods.xml")) {
                                 modificationFiles.add(file);
                             }
-                        } else if (file.getName().toLowerCase().endsWith(".parameters")) {
+                        } else if (file.getName().toLowerCase().endsWith(".parameters")
+                                || file.getName().toLowerCase().endsWith(".properties")) {
                             boolean found = false;
                             for (File tempFile : parameterFiles) {
                                 if (tempFile.getName().equals(file.getName())) {
@@ -900,7 +901,8 @@ public class NewDialog extends javax.swing.JDialog {
                     folders.add(newFile.getParentFile());
                     idFiles.add(newFile);
                     for (File file : newFile.getParentFile().listFiles()) {
-                        if (file.getName().toLowerCase().endsWith(".parameters")) {
+                        if (file.getName().toLowerCase().endsWith(".parameters")
+                                || file.getName().toLowerCase().endsWith(".properties")) {
                             if (!parameterFiles.contains(file)) {
                                 parameterFiles.add(file);
                             }
@@ -1311,7 +1313,12 @@ public class NewDialog extends javax.swing.JDialog {
             try {
                 // Old school format, overwrite old file
                 Properties props = loadProperties(file);
-                searchParameters = IdentificationParametersReader.getSearchParameters(props);
+                // We need the user mods file, try to see if it is along the search parameters or use the PeptideShaker version
+                File userMods = new File(file.getParent(), "usermods.xml");
+                if (!userMods.exists()) {
+                    userMods = new File(PeptideShaker.USER_MODIFICATIONS_FILE);
+                }
+                searchParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
 
                 String fileName = file.getName();
                 if (fileName.endsWith(".properties")) {

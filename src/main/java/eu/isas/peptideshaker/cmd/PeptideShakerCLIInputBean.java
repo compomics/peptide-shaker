@@ -71,6 +71,15 @@ public class PeptideShakerCLIInputBean {
      * The identification parameters used for the search.
      */
     private SearchParameters identificationParameters = null;
+    /**
+     * boolean indicating whether a waiting dialog shall be used
+     */
+    private boolean gui = false;
+    /**
+     * boolean indicating whether the results shall be displayed in the GUI
+     * after processing
+     */
+    private boolean displayResults = false;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -138,6 +147,19 @@ public class PeptideShakerCLIInputBean {
                 identificationParameters = SearchParameters.getIdentificationParameters(testFile);
             } else {
                 throw new FileNotFoundException(filesTxt + " not found.");
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.GUI.id)) {
+            String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.GUI.id);
+            if (guiOption.trim().equals("1")) {
+                gui = true;
+            }
+        }
+        if (aLine.hasOption(PeptideShakerCLIParams.DISPLAY_RESULTS.id)) {
+            String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.DISPLAY_RESULTS.id);
+            if (guiOption.trim().equals("1")) {
+                displayResults = true;
             }
         }
 
@@ -384,7 +406,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns a list of spectrum files as imported from the command line option.
+     * Returns a list of spectrum files as imported from the command line
+     * option.
      *
      * @param optionInput the command line option
      * @return a list of file candidates
@@ -412,5 +435,26 @@ public class PeptideShakerCLIInputBean {
         extentions.add(".omx");
         extentions.add(".t.xml");
         return CommandLineUtils.getFiles(optionInput, extentions);
+    }
+
+    /**
+     * Indicates whether a gui shall be used to display the progress
+     *
+     * @return a boolean indicating whether a gui shall be used to display the
+     * progress
+     */
+    public boolean isGUI() {
+        return gui;
+    }
+
+    /**
+     * Indicates whether the results shall be displayed in the gui after
+     * processing
+     *
+     * @return a boolean indicating whether the results shall be displayed in
+     * the gui after processing
+     */
+    public boolean displayResults() {
+        return displayResults;
     }
 }
