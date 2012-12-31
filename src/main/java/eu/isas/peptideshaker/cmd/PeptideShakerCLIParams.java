@@ -26,7 +26,7 @@ public enum PeptideShakerCLIParams {
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1')", false),
     SEARCH_PARAMETERS("identification_parameters", "Serialized com.compomics.util.experiment.identification.SearchParameters file created by SearchGUI.", false),
     GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is 0)", false),
-    DISPLAY_RESULTS("display", "Display the results in the gui after processing (1: true, 0: false, default is 0)", false);
+    DISPLAY_RESULTS("display", "Display the results in the GUI after processing (1: true, 0: false, default is 0)", false);
     /**
      * Short Id for the CLI parameter.
      */
