@@ -114,6 +114,15 @@ public class FindDialog extends javax.swing.JDialog {
      * A reference to the filter selection dialog.
      */
     private FiltersDialog filterDialog;
+    /**
+     * Counts the number of times the users has pressed a key on the keyboard in
+     * the search field.
+     */
+    private int keyPressedCounter = 0;
+    /**
+     * The time to wait between keys typed before updating the search.
+     */
+    private int waitingTime = 1000;
 
     /**
      * Creates a new find dialog.
@@ -860,83 +869,110 @@ public class FindDialog extends javax.swing.JDialog {
      */
     private void filterProteins() {
 
-        if (validateInput()) {
+        keyPressedCounter++;
 
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        final FindDialog finalRef = this;
 
-            List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+        new Thread("ProteinFilterThread") {
 
-            // protein accession filter
-            // @TODO can we make this not case sensitive?
-            String text = proteinAccessionTxt.getText().trim();
-            if (!text.equals("")) {
+            @Override
+            public synchronized void run() {
+
                 try {
-                    List<RowFilter<Object, Object>> accessionFilters = new ArrayList<RowFilter<Object, Object>>();
-                    accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Accession").getModelIndex()));
-                    accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Isoforms").getModelIndex()));
-                    accessionFilters.add(RowFilter.regexFilter(text.toLowerCase(), proteinTable.getColumn("Description").getModelIndex()));
-                    filters.add(RowFilter.orFilter(accessionFilters));
-                } catch (PatternSyntaxException pse) {
-                    JOptionPane.showMessageDialog(this, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                    wait(waitingTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // see if the gui is to be updated or not
+                if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1 && previewProteinFilterJCheckBox.isSelected()) {
+
+                    if (validateInput()) {
+
+                        finalRef.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+                        List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+
+                        // protein accession filter
+                        // @TODO can we make this not case sensitive?
+                        String text = proteinAccessionTxt.getText().trim();
+                        if (!text.equals("")) {
+                            try {
+                                List<RowFilter<Object, Object>> accessionFilters = new ArrayList<RowFilter<Object, Object>>();
+                                accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Accession").getModelIndex()));
+                                accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Isoforms").getModelIndex()));
+                                accessionFilters.add(RowFilter.regexFilter(text.toLowerCase(), proteinTable.getColumn("Description").getModelIndex()));
+                                filters.add(RowFilter.orFilter(accessionFilters));
+                            } catch (PatternSyntaxException pse) {
+                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+
+                        if (proteinPICmb.getSelectedIndex() > 0) {
+                            int pi = proteinPICmb.getSelectedIndex() - 1;
+                            filters.add(RowFilter.numberFilter(getComparisonType(proteinPiComparisonCmb.getSelectedIndex()), pi, proteinTable.getColumn("PI").getModelIndex()));
+                        }
+
+                        text = spectrumCountingTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(spectrumCountingCmb.getSelectedIndex()), value, proteinTable.getColumn("MS2 Quant.").getModelIndex()));
+                        }
+
+                        text = proteinCoverageTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(proteinCoverageCmb.getSelectedIndex()), value, proteinTable.getColumn("Coverage").getModelIndex()));
+                        }
+
+                        text = nPeptidesTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(nPeptidesCmb.getSelectedIndex()), value,
+                                    proteinTable.getColumn("#Peptides").getModelIndex()));
+                        }
+
+                        text = proteinsNSpectraTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(proteinNSpectraCmb.getSelectedIndex()), value,
+                                    proteinTable.getColumn("#Spectra").getModelIndex()));
+                        }
+
+                        text = proteinScoreTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(proteinScoreCmb.getSelectedIndex()), value,
+                                    proteinTable.getColumn("Score").getModelIndex()));
+                        }
+
+                        text = proteinConfidenceTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(proteinConfidenceCmb.getSelectedIndex()), value,
+                                    proteinTable.getColumn("Confidence").getModelIndex()));
+                        }
+
+                        // set the filters to the table
+                        RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
+                        ((TableRowSorter) proteinTable.getRowSorter()).setRowFilter(allFilters);
+
+                        ((TitledBorder) proteinTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Proteins ("
+                                + proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                        proteinTablePanel.revalidate();
+                        proteinTablePanel.repaint();
+
+                        finalRef.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    }
+
+                    // gui updated, reset the counter
+                    keyPressedCounter = 0;
+                } else {
+                    // gui not updated, decrease the counter
+                    keyPressedCounter--;
                 }
             }
-
-            if (proteinPICmb.getSelectedIndex() > 0) {
-                int pi = proteinPICmb.getSelectedIndex() - 1;
-                filters.add(RowFilter.numberFilter(getComparisonType(proteinPiComparisonCmb.getSelectedIndex()), pi, proteinTable.getColumn("PI").getModelIndex()));
-            }
-
-            text = spectrumCountingTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(spectrumCountingCmb.getSelectedIndex()), value, proteinTable.getColumn("MS2 Quant.").getModelIndex()));
-            }
-
-            text = proteinCoverageTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(proteinCoverageCmb.getSelectedIndex()), value, proteinTable.getColumn("Coverage").getModelIndex()));
-            }
-
-            text = nPeptidesTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(nPeptidesCmb.getSelectedIndex()), value,
-                        proteinTable.getColumn("#Peptides").getModelIndex()));
-            }
-
-            text = proteinsNSpectraTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(proteinNSpectraCmb.getSelectedIndex()), value,
-                        proteinTable.getColumn("#Spectra").getModelIndex()));
-            }
-
-            text = proteinScoreTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(proteinScoreCmb.getSelectedIndex()), value,
-                        proteinTable.getColumn("Score").getModelIndex()));
-            }
-
-            text = proteinConfidenceTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(proteinConfidenceCmb.getSelectedIndex()), value,
-                        proteinTable.getColumn("Confidence").getModelIndex()));
-            }
-
-            // set the filters to the table
-            RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
-            ((TableRowSorter) proteinTable.getRowSorter()).setRowFilter(allFilters);
-
-            ((TitledBorder) proteinTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Proteins ("
-                    + proteinTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-            proteinTablePanel.revalidate();
-            proteinTablePanel.repaint();
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
+        }.start();
     }
 
     /**
@@ -1141,93 +1177,119 @@ public class FindDialog extends javax.swing.JDialog {
      */
     private void filterPeptides() {
 
-        if (validateInput()) {
+        keyPressedCounter++;
 
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        final FindDialog finalRef = this;
 
-            List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+        new Thread("ProteinFilterThread") {
 
-            // protein filter
-            String text = peptideProteinTxt.getText().trim();
-            if (!text.equals("")) {
+            @Override
+            public synchronized void run() {
+
                 try {
-                    List<RowFilter<Object, Object>> accessionFilters = new ArrayList<RowFilter<Object, Object>>();
-                    accessionFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Proteins").getModelIndex()));
-                    accessionFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Descriptions").getModelIndex()));
-                    filters.add(RowFilter.orFilter(accessionFilters));
-                } catch (PatternSyntaxException pse) {
-                    JOptionPane.showMessageDialog(this, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                    wait(waitingTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
 
-            if (peptidePICmb.getSelectedIndex() > 0) {
-                int pi = peptidePICmb.getSelectedIndex() - 1;
-                filters.add(RowFilter.numberFilter(getComparisonType(peptidePiComparisonCmb.getSelectedIndex()), pi, peptideTable.getColumn("PI").getModelIndex()));
-            }
+                // see if the gui is to be updated or not
+                if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1 && previewPeptideFilterJCheckBox.isSelected()) {
 
-            text = peptideNSpectraTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(peptideNSpectraCmb.getSelectedIndex()), value,
-                        peptideTable.getColumn("#Spectra").getModelIndex()));
-            }
+                    if (validateInput()) {
 
-            text = peptideScoreTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(peptideScoreCmb.getSelectedIndex()), value,
-                        peptideTable.getColumn("Score").getModelIndex()));
-            }
+                        finalRef.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            text = peptideConfidenceTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(peptideConfidenceCmb.getSelectedIndex()), value,
-                        peptideTable.getColumn("Confidence").getModelIndex()));
-            }
+                        List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
 
-            List<RowFilter<Object, Object>> ptmFilters = new ArrayList<RowFilter<Object, Object>>();
-            List<RowFilter<Object, Object>> noPtmFilters = new ArrayList<RowFilter<Object, Object>>();
-            boolean noPTMSelected = false;
+                        // protein filter
+                        String text = peptideProteinTxt.getText().trim();
+                        if (!text.equals("")) {
+                            try {
+                                List<RowFilter<Object, Object>> accessionFilters = new ArrayList<RowFilter<Object, Object>>();
+                                accessionFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Proteins").getModelIndex()));
+                                accessionFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Descriptions").getModelIndex()));
+                                filters.add(RowFilter.orFilter(accessionFilters));
+                            } catch (PatternSyntaxException pse) {
+                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
 
-            for (int row = 0; row < modificationTable.getRowCount(); row++) {
-                text = (String) modificationTable.getValueAt(row, 2);
-                if (!text.equals(PtmPanel.NO_MODIFICATION)) {
-                    if ((Boolean) modificationTable.getValueAt(row, 0)) {
-                        ptmFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("peptideKey").getModelIndex()));
+                        if (peptidePICmb.getSelectedIndex() > 0) {
+                            int pi = peptidePICmb.getSelectedIndex() - 1;
+                            filters.add(RowFilter.numberFilter(getComparisonType(peptidePiComparisonCmb.getSelectedIndex()), pi, peptideTable.getColumn("PI").getModelIndex()));
+                        }
+
+                        text = peptideNSpectraTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(peptideNSpectraCmb.getSelectedIndex()), value,
+                                    peptideTable.getColumn("#Spectra").getModelIndex()));
+                        }
+
+                        text = peptideScoreTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(peptideScoreCmb.getSelectedIndex()), value,
+                                    peptideTable.getColumn("Score").getModelIndex()));
+                        }
+
+                        text = peptideConfidenceTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(peptideConfidenceCmb.getSelectedIndex()), value,
+                                    peptideTable.getColumn("Confidence").getModelIndex()));
+                        }
+
+                        List<RowFilter<Object, Object>> ptmFilters = new ArrayList<RowFilter<Object, Object>>();
+                        List<RowFilter<Object, Object>> noPtmFilters = new ArrayList<RowFilter<Object, Object>>();
+                        boolean noPTMSelected = false;
+
+                        for (int row = 0; row < modificationTable.getRowCount(); row++) {
+                            text = (String) modificationTable.getValueAt(row, 2);
+                            if (!text.equals(PtmPanel.NO_MODIFICATION)) {
+                                if ((Boolean) modificationTable.getValueAt(row, 0)) {
+                                    ptmFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("peptideKey").getModelIndex()));
+                                }
+                                noPtmFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("peptideKey").getModelIndex()));
+                            } else if ((Boolean) modificationTable.getValueAt(row, 0)) {
+                                noPTMSelected = true;
+                            }
+                        }
+
+                        if (noPTMSelected) {
+                            ptmFilters.add(RowFilter.notFilter(RowFilter.orFilter(noPtmFilters)));
+                        }
+
+                        filters.add(RowFilter.orFilter(ptmFilters));
+
+                        text = peptideSequenceTxt.getText().trim();
+                        if (!text.equals("")) {
+                            try {
+                                filters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Sequence").getModelIndex()));
+                            } catch (PatternSyntaxException pse) {
+                                JOptionPane.showMessageDialog(finalRef, "Incorrect regex pattern for peptide proteins.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+
+                        // set the filters to the table
+                        RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
+                        ((TableRowSorter) peptideTable.getRowSorter()).setRowFilter(allFilters);
+
+                        ((TitledBorder) peptideTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Peptides ("
+                                + peptideTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                        peptideTablePanel.revalidate();
+                        peptideTablePanel.repaint();
+
+                        finalRef.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     }
-                    noPtmFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("peptideKey").getModelIndex()));
-                } else if ((Boolean) modificationTable.getValueAt(row, 0)) {
-                    noPTMSelected = true;
+                    // gui updated, reset the counter
+                    keyPressedCounter = 0;
+                } else {
+                    // gui not updated, decrease the counter
+                    keyPressedCounter--;
                 }
             }
-
-            if (noPTMSelected) {
-                ptmFilters.add(RowFilter.notFilter(RowFilter.orFilter(noPtmFilters)));
-            }
-
-            filters.add(RowFilter.orFilter(ptmFilters));
-            
-            text = peptideSequenceTxt.getText().trim();
-            if (!text.equals("")) {
-                try {
-                    filters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Sequence").getModelIndex()));
-                } catch (PatternSyntaxException pse) {
-                    JOptionPane.showMessageDialog(this, "Incorrect regex pattern for peptide proteins.", "Filter Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-
-            // set the filters to the table
-            RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
-            ((TableRowSorter) peptideTable.getRowSorter()).setRowFilter(allFilters);
-
-            ((TitledBorder) peptideTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered Peptides ("
-                    + peptideTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-            peptideTablePanel.revalidate();
-            peptideTablePanel.repaint();
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
+        }.start();
     }
 
     /**
@@ -1402,83 +1464,110 @@ public class FindDialog extends javax.swing.JDialog {
      */
     private void filterPsms() {
 
-        if (validateInput()) {
+        keyPressedCounter++;
 
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        final FindDialog finalRef = this;
 
-            List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+        new Thread("ProteinFilterThread") {
 
-            String text = precursorRTTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(precursorRTCmb.getSelectedIndex()), value,
-                        psmTable.getColumn("RT").getModelIndex()));
-            }
+            @Override
+            public synchronized void run() {
 
-            text = precursorMzTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(precursorMzCmb.getSelectedIndex()), value,
-                        psmTable.getColumn("m/z").getModelIndex()));
-            }
+                try {
+                    wait(waitingTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-            text = precursorErrorTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(precursorErrorCmb.getSelectedIndex()), value,
-                        psmTable.getColumn("Mass Error").getModelIndex()));
-            }
+                // see if the gui is to be updated or not
+                if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1 && previewPsmFilterJCheckBox.isSelected()) {
+
+                    if (validateInput()) {
+
+                        finalRef.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+                        List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+
+                        String text = precursorRTTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(precursorRTCmb.getSelectedIndex()), value,
+                                    psmTable.getColumn("RT").getModelIndex()));
+                        }
+
+                        text = precursorMzTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(precursorMzCmb.getSelectedIndex()), value,
+                                    psmTable.getColumn("m/z").getModelIndex()));
+                        }
+
+                        text = precursorErrorTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(precursorErrorCmb.getSelectedIndex()), value,
+                                    psmTable.getColumn("Mass Error").getModelIndex()));
+                        }
 
 
-            text = psmConfidenceTxt.getText().trim();
-            if (!text.equals("")) {
-                Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(psmConfidenceCmb.getSelectedIndex()), value,
-                        peptideTable.getColumn("Confidence").getModelIndex()));
-            }
+                        text = psmConfidenceTxt.getText().trim();
+                        if (!text.equals("")) {
+                            Double value = new Double(text);
+                            filters.add(RowFilter.numberFilter(getComparisonType(psmConfidenceCmb.getSelectedIndex()), value,
+                                    peptideTable.getColumn("Confidence").getModelIndex()));
+                        }
 
-            List<RowFilter<Object, Object>> chargeFilters = new ArrayList<RowFilter<Object, Object>>();
+                        List<RowFilter<Object, Object>> chargeFilters = new ArrayList<RowFilter<Object, Object>>();
 
-            if (charge2CheckBox.isSelected()) {
-                chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 2,
-                        psmTable.getColumn("Charge").getModelIndex()));
-            }
-            if (charge3CheckBox.isSelected()) {
-                chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 3,
-                        psmTable.getColumn("Charge").getModelIndex()));
-            }
-            if (charge4CheckBox.isSelected()) {
-                chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 4,
-                        psmTable.getColumn("Charge").getModelIndex()));
-            }
-            if (chargeOver4CheckBox.isSelected()) {
-                chargeFilters.add(RowFilter.numberFilter(ComparisonType.AFTER, 4,
-                        psmTable.getColumn("Charge").getModelIndex()));
-            }
+                        if (charge2CheckBox.isSelected()) {
+                            chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 2,
+                                    psmTable.getColumn("Charge").getModelIndex()));
+                        }
+                        if (charge3CheckBox.isSelected()) {
+                            chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 3,
+                                    psmTable.getColumn("Charge").getModelIndex()));
+                        }
+                        if (charge4CheckBox.isSelected()) {
+                            chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, 4,
+                                    psmTable.getColumn("Charge").getModelIndex()));
+                        }
+                        if (chargeOver4CheckBox.isSelected()) {
+                            chargeFilters.add(RowFilter.numberFilter(ComparisonType.AFTER, 4,
+                                    psmTable.getColumn("Charge").getModelIndex()));
+                        }
 
-            filters.add(RowFilter.orFilter(chargeFilters));
+                        filters.add(RowFilter.orFilter(chargeFilters));
 
-            List<RowFilter<Object, Object>> filesFilters = new ArrayList<RowFilter<Object, Object>>();
-            for (int row = 0; row < spectrumFilesTable.getRowCount(); row++) {
-                if ((Boolean) spectrumFilesTable.getValueAt(row, 0)) {
-                    text = (String) spectrumFilesTable.getValueAt(row, 1);
-                    filesFilters.add(RowFilter.regexFilter(text, psmTable.getColumn("File").getModelIndex()));
+                        List<RowFilter<Object, Object>> filesFilters = new ArrayList<RowFilter<Object, Object>>();
+                        for (int row = 0; row < spectrumFilesTable.getRowCount(); row++) {
+                            if ((Boolean) spectrumFilesTable.getValueAt(row, 0)) {
+                                text = (String) spectrumFilesTable.getValueAt(row, 1);
+                                filesFilters.add(RowFilter.regexFilter(text, psmTable.getColumn("File").getModelIndex()));
+                            }
+                        }
+
+                        filters.add(RowFilter.orFilter(filesFilters));
+
+                        // set the filters to the table
+                        RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
+                        ((TableRowSorter) psmTable.getRowSorter()).setRowFilter(allFilters);
+
+                        ((TitledBorder) psmTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered PSMs ("
+                                + psmTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                        psmTablePanel.revalidate();
+                        psmTablePanel.repaint();
+
+                        finalRef.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    }
+
+                    // gui updated, reset the counter
+                    keyPressedCounter = 0;
+                } else {
+                    // gui not updated, decrease the counter
+                    keyPressedCounter--;
                 }
             }
-
-            filters.add(RowFilter.orFilter(filesFilters));
-
-            // set the filters to the table
-            RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
-            ((TableRowSorter) psmTable.getRowSorter()).setRowFilter(allFilters);
-
-            ((TitledBorder) psmTablePanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Filtered PSMs ("
-                    + psmTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-            psmTablePanel.revalidate();
-            psmTablePanel.repaint();
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
+        }.start();
     }
 
     /**
@@ -1799,6 +1888,7 @@ public class FindDialog extends javax.swing.JDialog {
                 };
             }
         };
+        previewProteinFilterJCheckBox = new javax.swing.JCheckBox();
         proteinFilterParamsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -1891,6 +1981,7 @@ public class FindDialog extends javax.swing.JDialog {
                 };
             }
         };
+        previewPeptideFilterJCheckBox = new javax.swing.JCheckBox();
         psmPanel = new javax.swing.JPanel();
         psmFilterParamsPanel = new javax.swing.JPanel();
         jLabel22 = new javax.swing.JLabel();
@@ -1949,6 +2040,7 @@ public class FindDialog extends javax.swing.JDialog {
                 };
             }
         };
+        previewPsmFilterJCheckBox = new javax.swing.JCheckBox();
         openDialogHelpJButton = new javax.swing.JButton();
 
         selectAllPtmsMenuItem.setText("Select All");
@@ -2025,20 +2117,31 @@ public class FindDialog extends javax.swing.JDialog {
         });
         proteinScrollPane.setViewportView(proteinTable);
 
+        previewProteinFilterJCheckBox.setSelected(true);
+        previewProteinFilterJCheckBox.setText("Preview Filter");
+        previewProteinFilterJCheckBox.setIconTextGap(10);
+        previewProteinFilterJCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout proteinTablePanelLayout = new javax.swing.GroupLayout(proteinTablePanel);
         proteinTablePanel.setLayout(proteinTablePanelLayout);
         proteinTablePanelLayout.setHorizontalGroup(
             proteinTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinTablePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane)
+                .addGroup(proteinTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(proteinTablePanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(previewProteinFilterJCheckBox))
+                    .addComponent(proteinScrollPane))
                 .addContainerGap())
         );
         proteinTablePanelLayout.setVerticalGroup(
             proteinTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(previewProteinFilterJCheckBox)
                 .addContainerGap())
         );
 
@@ -2686,20 +2789,31 @@ public class FindDialog extends javax.swing.JDialog {
         });
         peptidesScrollPane.setViewportView(peptideTable);
 
+        previewPeptideFilterJCheckBox.setSelected(true);
+        previewPeptideFilterJCheckBox.setText("Preview Filter");
+        previewPeptideFilterJCheckBox.setIconTextGap(10);
+        previewPeptideFilterJCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout peptideTablePanelLayout = new javax.swing.GroupLayout(peptideTablePanel);
         peptideTablePanel.setLayout(peptideTablePanelLayout);
         peptideTablePanelLayout.setHorizontalGroup(
             peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(peptideTablePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptideTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesScrollPane)
+                .addGroup(peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(peptideTablePanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(previewPeptideFilterJCheckBox))
+                    .addComponent(peptidesScrollPane))
                 .addContainerGap())
         );
         peptideTablePanelLayout.setVerticalGroup(
             peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptideTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addComponent(peptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(previewPeptideFilterJCheckBox)
                 .addContainerGap())
         );
 
@@ -3039,20 +3153,31 @@ public class FindDialog extends javax.swing.JDialog {
         });
         psmTableScrollPane.setViewportView(psmTable);
 
+        previewPsmFilterJCheckBox.setSelected(true);
+        previewPsmFilterJCheckBox.setText("Preview Filter");
+        previewPsmFilterJCheckBox.setIconTextGap(10);
+        previewPsmFilterJCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout psmTablePanelLayout = new javax.swing.GroupLayout(psmTablePanel);
         psmTablePanel.setLayout(psmTablePanelLayout);
         psmTablePanelLayout.setHorizontalGroup(
             psmTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmTablePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmTableScrollPane)
+                .addGroup(psmTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(psmTablePanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(previewPsmFilterJCheckBox))
+                    .addComponent(psmTableScrollPane))
                 .addContainerGap())
         );
         psmTablePanelLayout.setVerticalGroup(
             psmTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                .addComponent(psmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(previewPsmFilterJCheckBox)
                 .addContainerGap())
         );
 
@@ -3766,13 +3891,12 @@ public class FindDialog extends javax.swing.JDialog {
 
     /**
      * Preload the tables
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void filterTypeJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_filterTypeJTabbedPaneStateChanged
         // @TODO: batch load the table content!!
     }//GEN-LAST:event_filterTypeJTabbedPaneStateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox charge2CheckBox;
@@ -3842,6 +3966,9 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JTextField precursorMzTxt;
     private javax.swing.JComboBox precursorRTCmb;
     private javax.swing.JTextField precursorRTTxt;
+    private javax.swing.JCheckBox previewPeptideFilterJCheckBox;
+    private javax.swing.JCheckBox previewProteinFilterJCheckBox;
+    private javax.swing.JCheckBox previewPsmFilterJCheckBox;
     private javax.swing.JTextField proteinAccessionTxt;
     private javax.swing.JComboBox proteinConfidenceCmb;
     private javax.swing.JTextField proteinConfidenceTxt;

@@ -285,6 +285,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                 try {
                     wait(waitingTime);
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
                 // see if the gui is to be updated or not

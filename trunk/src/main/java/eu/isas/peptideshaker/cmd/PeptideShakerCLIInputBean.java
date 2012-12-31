@@ -44,7 +44,7 @@ public class PeptideShakerCLIInputBean {
      */
     private File output = null;
     /**
-     * csv output directory.
+     * CSV output directory.
      */
     private File csvDirectory = null;
     /**
@@ -72,12 +72,12 @@ public class PeptideShakerCLIInputBean {
      */
     private SearchParameters identificationParameters = null;
     /**
-     * boolean indicating whether a waiting dialog shall be used
+     * Boolean indicating whether a waiting dialog shall be used.
      */
     private boolean gui = false;
     /**
-     * boolean indicating whether the results shall be displayed in the GUI
-     * after processing
+     * Boolean indicating whether the results shall be displayed in the GUI
+     * after processing.
      */
     private boolean displayResults = false;
 
@@ -438,7 +438,7 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Indicates whether a gui shall be used to display the progress
+     * Indicates whether a gui shall be used to display the progress.
      *
      * @return a boolean indicating whether a gui shall be used to display the
      * progress
@@ -449,7 +449,7 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Indicates whether the results shall be displayed in the gui after
-     * processing
+     * processing.
      *
      * @return a boolean indicating whether the results shall be displayed in
      * the gui after processing
