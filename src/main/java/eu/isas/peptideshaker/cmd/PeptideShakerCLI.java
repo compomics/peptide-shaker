@@ -11,6 +11,7 @@ import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
@@ -32,6 +33,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Callable;
+import javax.swing.JFrame;
 
 /**
  * A Command line interface to run PeptideShaker on a SearchGUI output folder.
@@ -76,24 +78,33 @@ public class PeptideShakerCLI implements Callable {
      * Calling this method will run the configured PeptideShaker process.
      */
     public Object call() {
-        
+
         // Set up the waiting handler
         if (cliInputBean.isGUI()) {
-            waitingHandler = new WaitingDialog(null, 
+
+            // set the look and feel
+            try {
+                UtilitiesGUIDefaults.setLookAndFeel();
+            } catch (Exception e) {
+                // ignore, use default look and feel
+            }
+
+            waitingHandler = new WaitingDialog(new JFrame(),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true, null, "Importing Data", "PeptideShaker", null, true);
-            
-                    new Thread(new Runnable() {
+                    true, null, "Importing Data", "PeptideShaker", null, true); // @TODO: add tips and version number
+            ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
 
-                        public void run() {
-                            try {
-                                ((WaitingDialog) waitingHandler).setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
-                            }
-                        }
-                    }, "ProgressDialog").start();
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        ((WaitingDialog) waitingHandler).setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
         } else {
             waitingHandler = new WaitingHandlerCLIImpl();
         }
@@ -165,7 +176,7 @@ public class PeptideShakerCLI implements Callable {
                 new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
         // Save results
-            File ouptutFile = cliInputBean.getOutput();
+        File ouptutFile = cliInputBean.getOutput();
         try {
             waitingHandler.appendReport("Saving results, please wait...", true, true);
             CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
@@ -191,16 +202,16 @@ public class PeptideShakerCLI implements Callable {
 
         // Finished
         System.out.println(System.getProperty("line.separator") + "End of PeptideShaker command line execution" + System.getProperty("line.separator"));
-        
+
         if (cliInputBean.displayResults()) {
             try {
-            ToolFactory.startPeptideShaker(null, ouptutFile);
+                ToolFactory.startPeptideShaker(null, ouptutFile);
             } catch (Exception e) {
-            waitingHandler.appendReport("An exception occurred while opening the cps file: " + e.getLocalizedMessage(), true, true);
+                waitingHandler.appendReport("An exception occurred while opening the cps file: " + e.getLocalizedMessage(), true, true);
                 e.printStackTrace();
             }
         }
-        
+
         return null;
     }
 
@@ -221,7 +232,7 @@ public class PeptideShakerCLI implements Callable {
                 + System.getProperty("line.separator")
                 + "Or contact the developers at https://groups.google.com/group/peptide-shaker." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "----------------------" 
+                + "----------------------"
                 + System.getProperty("line.separator")
                 + "OPTIONS"
                 + System.getProperty("line.separator")
