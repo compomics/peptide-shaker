@@ -56,13 +56,13 @@ The following parameters are optional:
 -protein_FDR               FDR at the protein level in percent 
                            (default 1% FDR: '1')
 
--identification_parameters The identification parameters as serialized
+-search_params             The search parameters as a serialized
                            file of com.compomics.util.experiment.
                            identification.SearchParameters. This file 
                            is automatically saved by SearchGUI along 
                            with the identification files. If not 
                            provided default settings will be tried. If 
-                           the default settings don't work the import 
+                           the default settings do not work the import 
                            will crash - hopefully decently.
 }}}
 
@@ -72,7 +72,7 @@ Here is an example for Windows where _X_, _Y_ and _Z_ have to be replaced by the
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 -experiment myExperiment -sample mySample -replicate 1 
 -identification_files "C:\my folder" -spectrum_files 
-"C:\my folder" -identification_parameters "C:\my folder\my_id_params.parameters" 
+"C:\my folder" -search_params "C:\my folder\my_search_params.parameters" 
 -out "C:\my folder\myCpsFile.cps"
 }}}
 
