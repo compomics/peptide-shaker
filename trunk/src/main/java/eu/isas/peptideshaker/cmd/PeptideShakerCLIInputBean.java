@@ -140,7 +140,6 @@ public class PeptideShakerCLIInputBean {
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.SEARCH_PARAMETERS.id)) {
-
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.SEARCH_PARAMETERS.id);
             File testFile = new File(filesTxt);
             if (testFile.exists()) {

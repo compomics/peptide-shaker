@@ -226,7 +226,7 @@ public class PeptideShakerCLI implements Callable {
                 + System.getProperty("line.separator")
                 + "----------------------" + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
-                + "The PeptideShaker command line tool takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files." + System.getProperty("line.separator")
+                + "The PeptideShaker command line takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see http://peptide-shaker.googlecode.com and http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
@@ -381,7 +381,7 @@ public class PeptideShakerCLI implements Callable {
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
                 try {
-                    SearchParameters identificationParameters = SearchParameters.getIdentificationParameters(testFile);
+                    SearchParameters.getIdentificationParameters(testFile);
                 } catch (Exception e) {
                     System.out.println("\nAn error occurred while parsing " + filesTxt + ".\n");
                     e.printStackTrace();
@@ -412,9 +412,11 @@ public class PeptideShakerCLI implements Callable {
                 HelpFormatter formatter = new HelpFormatter();
 
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("\nPeptideShaker - Command Line" + System.getProperty("line.separator"));
+                lPrintWriter.print("\n==============================" + System.getProperty("line.separator"));
+                lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));
+                lPrintWriter.print("==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
-                formatter.printOptions(lPrintWriter, 200, lOptions, 0, 0);
+                formatter.printOptions(lPrintWriter, 200, lOptions, 0, 5);
                 lPrintWriter.flush();
                 lPrintWriter.close();
 
