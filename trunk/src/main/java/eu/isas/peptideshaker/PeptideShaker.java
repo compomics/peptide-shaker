@@ -1866,12 +1866,12 @@ public class PeptideShaker {
      */
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
 
-        String title = Spectrum.getSpectrumTitle(
-            spectrumMatch.getKey());
-        if (title.equals("qExactive02_00276_Fr4,12 mix6.22946.22946.2") || title.equals("qExactive02_00276_Fr4,12 mix6.8460.8460.2")) {
-            int debug = 1;
-        }
-        
+//        String title = Spectrum.getSpectrumTitle(
+//            spectrumMatch.getKey());
+//        if (title.equals("qExactive02_00276_Fr4,12 mix6.22946.22946.2") || title.equals("qExactive02_00276_Fr4,12 mix6.8460.8460.2")) {
+//            int debug = 1;
+//        }
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
