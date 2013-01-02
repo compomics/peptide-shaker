@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.AdvocateFactory;
@@ -453,7 +455,7 @@ public class OutputGenerator {
      * @param aOnlyValidated
      * @param aAccession
      * @param aProteinDescription
-     * @param aProteinInferenceType 
+     * @param aProteinInferenceType
      * @param aLocation
      * @param aSurroundings
      * @param aSequence
@@ -754,7 +756,7 @@ public class OutputGenerator {
                                                         writer.write(peptideProteinDescriptions + SEPARATOR);
                                                     }
                                                 }
-                                                
+
                                                 if (proteinInferenceType) {
                                                     writer.write(peptidePSParameter.getGroupClass() + SEPARATOR);
                                                 }
@@ -794,7 +796,7 @@ public class OutputGenerator {
 
                                                 if (sequence) {
                                                     writer.write(peptide.getSequence() + SEPARATOR);
-                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), 
+                                                    writer.write(peptide.getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(),
                                                             false, false, true) + SEPARATOR);
                                                 }
 
@@ -1545,6 +1547,280 @@ public class OutputGenerator {
     }
 
     /**
+     * Sends the desired psm output (based on the elements needed as provided in
+     * arguments) to a user chosen file.
+     *
+     * @param parentDialog the parent dialog, can be null.
+     * @param aPsmKeys
+     */
+    public void getPSMsPhosphoOutput(JDialog parentDialog, File file) {
+
+        // get the file to send the output to
+        final File selectedFile = file;
+
+        if (selectedFile != null) {
+
+            final String filePath = selectedFile.getPath();
+
+            try {
+                writer = new BufferedWriter(new FileWriter(selectedFile));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return;
+            }
+
+            if (parentDialog != null) {
+                progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+            } else {
+                progressDialog = new ProgressDialogX(peptideShakerGUI,
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                        Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                        true);
+            }
+
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Copying to File. Please Wait...");
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+
+                    try {
+                        
+                        PTMFactory ptmFactory = PTMFactory.getInstance();
+                        
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
+
+                        writer.write("Index" + SEPARATOR);
+                        writer.write("Protein(s)" + SEPARATOR);
+                        writer.write("Protein(s) Descriptions" + SEPARATOR);
+                        writer.write("Sequence" + SEPARATOR);
+                        writer.write("Variable Modification(s)" + SEPARATOR);
+                        writer.write("A-score" + SEPARATOR);
+                        writer.write("D-score" + SEPARATOR);
+                        writer.write("A-score localization" + SEPARATOR);
+                        writer.write("D-score localization" + SEPARATOR);
+                        writer.write("# phosphorylations" + SEPARATOR);
+                        writer.write("# phosphorylation sites" + SEPARATOR);
+                        writer.write("Conflict" + SEPARATOR);
+                        writer.write("Spectrum File" + SEPARATOR);
+                        writer.write("Spectrum Title" + SEPARATOR);
+                        writer.write("Precursor m/z" + SEPARATOR);
+                        writer.write("Precursor Charge" + SEPARATOR);
+                        writer.write("Precursor Retention Time" + SEPARATOR);
+                        writer.write("Peptide Theoretical Mass" + SEPARATOR);
+                        if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
+                            writer.write("Mass Error [ppm]" + SEPARATOR);
+                        } else {
+                            writer.write("Mass Error [Da]" + SEPARATOR);
+                        }
+                        writer.write("Confidence" + SEPARATOR);
+                        writer.write("Validated" + SEPARATOR);
+                        writer.write("Decoy" + SEPARATOR);
+
+                        writer.write(System.getProperty("line.separator"));
+
+                        PSParameter psParameter = new PSParameter();
+                        int psmCounter = 0;
+
+                        HashMap<String, ArrayList<String>> spectrumKeys = new HashMap<String, ArrayList<String>>();
+                        spectrumKeys = identification.getSpectrumIdentificationMap();
+
+                        int fileCounter = 0;
+
+                        for (String spectrumFile : spectrumKeys.keySet()) {
+
+                            progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
+                            identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog);
+                            progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
+                            identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
+
+                            for (String psmKey : spectrumKeys.get(spectrumFile)) {
+
+                                if (progressDialog.isRunCanceled()) {
+                                    break;
+                                }
+
+                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
+                                PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+
+                                writer.write(++psmCounter + SEPARATOR);
+
+                                String proteinAccessions = "";
+                                String proteinDescriptions = "";
+
+                                for (String protein : bestAssumption.getPeptide().getParentProteins()) {
+                                    if (!proteinAccessions.equals("")) {
+                                        proteinAccessions += ", ";
+                                        proteinDescriptions += "; ";
+                                    }
+                                    proteinAccessions += protein;
+                                    proteinDescriptions += sequenceFactory.getHeader(protein).getDescription();
+                                }
+                                writer.write(proteinAccessions + SEPARATOR);
+                                writer.write(proteinDescriptions + SEPARATOR);
+                                String sequence = bestAssumption.getPeptide().getSequence();
+                                writer.write(sequence + SEPARATOR);
+                                HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+                                for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                                    if (modificationMatch.isVariable()) {
+                                        if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                            modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                        }
+                                        modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                                    }
+                                }
+                                boolean first = true, first2;
+                                ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                                Collections.sort(mods);
+                                for (String mod : mods) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        writer.write(", ");
+                                    }
+                                    first2 = true;
+                                    writer.write(mod + "(");
+                                    for (int aa : modMap.get(mod)) {
+                                        if (first2) {
+                                            first2 = false;
+                                        } else {
+                                            writer.write(", ");
+                                        }
+                                        writer.write(aa + "");
+                                    }
+                                    writer.write(")");
+                                }
+                                writer.write(SEPARATOR);
+                                ArrayList<String> modList = new ArrayList<String>();
+                                for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                                    if (modificationMatch.isVariable()) {
+                                        if (!modList.contains(modificationMatch.getTheoreticPtm())) {
+                                            modList.add(modificationMatch.getTheoreticPtm());
+                                        }
+                                    }
+                                }
+                                Collections.sort(modList);
+                                PSPtmScores ptmScores = new PSPtmScores();
+                                first = true;
+                                String dLocalizations = "";
+                                String aLocalizations = "";
+                                String dScore = "";
+                                String aScore = "";
+                                String conflict = "";
+                                int nPhospho = 0;
+                                String[] split = sequence.split("[STY]");
+                                int nSites = split.length-1;
+                                for (String mod : modList) {
+                                    if (mod.contains("phospho")) {
+                                        nPhospho++;
+                                        if (spectrumMatch.getUrParam(ptmScores) != null) {
+                                            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+                                            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                                                PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
+                                                if (ptmScoring.isConflict()) {
+                                                    conflict += 1;
+                                                } else {
+                                                    conflict += 0;
+                                                }
+                                                String location = ptmScoring.getBestAScoreLocations();
+                                                if (location != null) {
+                                                    ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                                    Collections.sort(locations);
+                                                    for (int aa : locations) {
+                                                        if (!aLocalizations.equals("")) {
+                                                            aLocalizations += ", ";
+                                                        }
+                                                        aLocalizations += aa;
+                                                    }
+                                                    Double score = ptmScores.getPtmScoring(mod).getAScore(location);
+                                                    aScore = score + "";
+                                                }
+                                                
+                                                location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
+                                                if (location != null) {
+                                                    ArrayList<Integer> locations = PtmScoring.getLocations(location);
+                                                    Collections.sort(locations);
+                                                    for (int aa : locations) {
+                                                        if (!dLocalizations.equals("")) {
+                                                            dLocalizations += ", ";
+                                                        }
+                                                        dLocalizations += aa;
+                                                    }
+                                                    Double score = ptmScores.getPtmScoring(mod).getDeltaScore(location);
+                                                    dScore = score + "";
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                writer.write(aLocalizations + SEPARATOR);
+                                writer.write(dLocalizations + SEPARATOR);
+                                writer.write(aScore + SEPARATOR);
+                                writer.write(dScore + SEPARATOR);
+                                writer.write(nPhospho + SEPARATOR);
+                                writer.write(nSites + SEPARATOR);
+                                writer.write(conflict + SEPARATOR);
+                                writer.write(spectrumFile + SEPARATOR);
+                                writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
+                                Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                                writer.write(prec.getMz() + SEPARATOR);
+                                writer.write(bestAssumption.getIdentificationCharge().value + SEPARATOR);
+                                writer.write(prec.getRt() + SEPARATOR);
+                                writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
+                                writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                writer.write(psParameter.getPsmConfidence() + SEPARATOR);
+                                if (psParameter.isValidated()) {
+                                    writer.write(1 + SEPARATOR);
+                                } else {
+                                    writer.write(0 + SEPARATOR);
+                                }
+                                if (bestAssumption.isDecoy()) {
+                                    writer.write(1 + SEPARATOR);
+                                } else {
+                                    writer.write(0 + SEPARATOR);
+                                }
+                                writer.write(System.getProperty("line.separator"));
+                                progressDialog.increaseProgressValue();
+                            }
+                        }
+                        writer.close();
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
      * Sends the desired assumption output (based on the elements needed as
      * provided in arguments) to a user chosen file.
      *
@@ -1861,9 +2137,9 @@ public class OutputGenerator {
      * main match shall be output
      * @param aMW boolean indicating whether the molecular weight is to be
      * included in the output
-     * @param aNPeptides boolean indicating wheter the total number of validated 
+     * @param aNPeptides boolean indicating wheter the total number of validated
      * peptides for the protein shall be output
-     * @param aNSpectra boolean indicating wheter the total number of validated 
+     * @param aNSpectra boolean indicating wheter the total number of validated
      * spectra for the protein shall be output
      * @param aSequenceCoverage boolean indicating whether the sequence coverage
      * shall be output
@@ -1881,8 +2157,8 @@ public class OutputGenerator {
      * output
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
-            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aMW, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage, 
-            boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred, 
+            boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aMW, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage,
+            boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred,
             boolean aShowStar, boolean aIncludeHidden) {
 
         // create final versions of all variables use inside the export thread

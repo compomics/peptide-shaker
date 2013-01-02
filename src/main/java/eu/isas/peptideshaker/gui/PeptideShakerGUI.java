@@ -420,7 +420,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 cpsFile = new File(arg);
                 cps = false;
             }
-            if (arg.equals(ToolFactory.peptideShakerFile)) {
+            if (arg.equals(ToolFactory.peptideShakerFileOption)) {
                 cps = true;
             }
         }
