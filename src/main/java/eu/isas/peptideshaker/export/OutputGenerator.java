@@ -1551,7 +1551,7 @@ public class OutputGenerator {
      * arguments) to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
-     * @param aPsmKeys
+     * @param file the file to send the output to
      */
     public void getPSMsPhosphoOutput(JDialog parentDialog, File file) {
 
