@@ -1270,6 +1270,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         reshakeMenuItem.setMnemonic('E');
         reshakeMenuItem.setText("Reshake...");
         reshakeMenuItem.setToolTipText("<html>\nReanalyze PRIDE experiments.<br>\n(Coming soon...)\n</html>");
+        reshakeMenuItem.setEnabled(false);
         reshakeMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reshakeMenuItemActionPerformed(evt);

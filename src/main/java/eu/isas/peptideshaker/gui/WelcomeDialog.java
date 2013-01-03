@@ -520,10 +520,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        dispose();
-        new PrideReshakeGui(peptideShakerGUI, true);
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+       JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
+//        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+//        dispose();
+//        new PrideReshakeGui(peptideShakerGUI, true);
+//        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**

@@ -330,8 +330,9 @@ public class PRIDEExport {
                 br.write(getCurrentTabSpace() + "<Accession>" + proteinMatch.getMainMatch() + "</Accession>" + System.getProperty("line.separator"));
                 br.write(getCurrentTabSpace() + "<Database>" + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDatabaseType() + "</Database>" + System.getProperty("line.separator"));
 
-                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+                identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
                 identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), peptideProbabilities, null);
+
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
                     if (prideExportDialog.progressCancelled()) {
@@ -341,8 +342,9 @@ public class PRIDEExport {
                     PeptideMatch currentMatch = identification.getPeptideMatch(peptideKey);
                     peptideProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, peptideProbabilities);
 
-                    identification.loadSpectrumMatches(currentMatch.getSpectrumMatches(), progressDialog);
-                    identification.loadSpectrumMatchParameters(currentMatch.getSpectrumMatches(), psmProbabilities, progressDialog);
+                    identification.loadSpectrumMatches(currentMatch.getSpectrumMatches(), null); // @TODO: should use the progress dialog here, but this messes up the overall progress bar...
+                    identification.loadSpectrumMatchParameters(currentMatch.getSpectrumMatches(), psmProbabilities, null);
+
                     for (String spectrumKey : currentMatch.getSpectrumMatches()) {
 
                         if (prideExportDialog.progressCancelled()) {
