@@ -31,7 +31,12 @@ public class PeptideShakerWrapper extends CompomicsWrapper {
         // get the version number set in the pom file
         String jarFileName = "PeptideShaker-" + new Properties().getVersion() + ".jar";
         String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
-        path = path.substring(5, path.indexOf(jarFileName));
+        // remove starting 'file:' tag if there
+        if (path.startsWith("file:")) {
+            path = path.substring("file:".length(), path.indexOf(jarFileName));
+        } else {
+            path = path.substring(0, path.indexOf(jarFileName));
+        }
         path = path.replace("%20", " ");
         path = path.replace("%5b", "[");
         path = path.replace("%5d", "]");

@@ -192,8 +192,10 @@ public class PeptideShaker {
      * @param projectDetails The project details
      * @param processingPreferences the initial processing preferences
      * @param ptmScoringPreferences the PTM scoring preferences
-     * @param backgroundThread boolean indicating whether the import should be done in a background thread (GUI mode) or in the current thread  (command line mode). 
      * @param spectrumCountingPreferences the spectrum counting preferences
+     * @param backgroundThread boolean indicating whether the import should be
+     * done in a background thread (GUI mode) or in the current thread (command
+     * line mode).
      */
     public void importFiles(WaitingHandler waitingHandler, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails,
@@ -1985,7 +1987,7 @@ public class PeptideShaker {
         PSParameter psParameter = new PSParameter();
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size()*2);
+        waitingHandler.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size() * 2);
 
         ArrayList<String> foundModifications = new ArrayList<String>();
         HashMap<String, ArrayList<String>> fractionPsmMatches = new HashMap<String, ArrayList<String>>();
@@ -2233,7 +2235,7 @@ public class PeptideShaker {
 
         identification.loadProteinMatchParameters(psParameter, null);
         identification.loadProteinMatches(waitingHandler);
-        
+
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 

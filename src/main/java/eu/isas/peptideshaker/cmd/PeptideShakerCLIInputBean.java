@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
-import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.SearchParameters;
 import org.apache.commons.cli.CommandLine;
 
@@ -153,12 +152,6 @@ public class PeptideShakerCLIInputBean {
             String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.GUI.id);
             if (guiOption.trim().equals("1")) {
                 gui = true;
-            }
-        }
-        if (aLine.hasOption(PeptideShakerCLIParams.DISPLAY_RESULTS.id)) {
-            String guiOption = aLine.getOptionValue(PeptideShakerCLIParams.DISPLAY_RESULTS.id);
-            if (guiOption.trim().equals("1")) {
-                displayResults = true;
             }
         }
     }

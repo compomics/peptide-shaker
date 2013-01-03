@@ -92,7 +92,7 @@ public class PeptideShakerCLI implements Callable {
             waitingHandler = new WaitingDialog(new JFrame(),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true, null, "Importing Data", "PeptideShaker", null, true); // @TODO: add tips and version number
+                    false, null, "Importing Data", "PeptideShaker", null, true); // @TODO: add tips and version number
             ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
 
             new Thread(new Runnable() {
@@ -175,23 +175,32 @@ public class PeptideShakerCLI implements Callable {
         IdentificationFeaturesGenerator identificationFeaturesGenerator =
                 new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
+        waitingHandler.setWaitingText("Saving Data. Please Wait...");
+        if (waitingHandler instanceof WaitingDialog) { 
+            ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString(null);
+        }
+
         // Save results
         File ouptutFile = cliInputBean.getOutput();
         try {
-            waitingHandler.appendReport("Saving results, please wait...", true, true);
+            waitingHandler.appendReport("Saving results. Please wait...", true, true);
             CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
                     annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                     processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
                     ptmScoringPreferences, objectsCache, true);
+            waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReportEndLine();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // CSV output required?
         if (cliInputBean.getCsvDirectory() != null) {
-            waitingHandler.appendReport("Exporting results in csv file, please wait...", true, true);
+            waitingHandler.appendReport("Exporting results as csv file. Please wait...", true, true);
             CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
             exporter.exportResults(waitingHandler, cliInputBean.getCsvDirectory());
+            waitingHandler.appendReport("Results saved as csv in " + cliInputBean.getCsvDirectory().getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReportEndLine();
         }
 
         // PRIDE output required?
@@ -201,7 +210,14 @@ public class PeptideShakerCLI implements Callable {
         //@TODO!
 
         // Finished
-        System.out.println(System.getProperty("line.separator") + "End of PeptideShaker command line execution" + System.getProperty("line.separator"));
+        waitingHandler.setIndeterminate(false);
+        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+        waitingHandler.setWaitingText("PeptideShaker Processing - Completed!");
+        waitingHandler.appendReportEndLine();
+        waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
+        if (waitingHandler instanceof WaitingDialog) { 
+            ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
+        }
 
         if (cliInputBean.displayResults()) {
             try {
@@ -211,6 +227,8 @@ public class PeptideShakerCLI implements Callable {
                 e.printStackTrace();
             }
         }
+        
+        System.exit(0); // @TODO: find other ways of cancelling the process... if not cancelled searchgui will not stop
 
         return null;
     }
