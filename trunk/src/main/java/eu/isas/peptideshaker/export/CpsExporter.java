@@ -63,7 +63,7 @@ public class CpsExporter {
     }
 
     /**
-     * Saves the given data in a cps file
+     * Saves the given data in a cps file.
      *
      * @param destinationFile the destination cps file
      * @param waitingHandler a waiting handler used to cancel the saving
@@ -103,6 +103,7 @@ public class CpsExporter {
         // transfer all files in the match directory
         if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
             waitingHandler.setIndeterminate(true);
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
             File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
             ExperimentIO.save(experimentFile, experiment);
         }

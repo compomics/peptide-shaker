@@ -132,12 +132,16 @@ public class FileImporter {
      * @param ptmScoringPreferences the PTM scoring preferences
      * @param spectrumCountingPreferences the spectrum counting preferences
      * @param projectDetails the project details
-     * @param backgroundThread boolean indicating whether the import should be done in a background thread (GUI mode) or in the current thread  (command line mode). 
+     * @param backgroundThread boolean indicating whether the import should be
+     * done in a background thread (GUI mode) or in the current thread (command
+     * line mode).
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, SearchParameters searchParameters,
-            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
+            AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences,
+            SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, boolean backgroundThread) {
 
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, idFilter, searchParameters, annotationPreferences, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, idFilter, searchParameters, annotationPreferences,
+                processingPreferences, ptmScoringPreferences, spectrumCountingPreferences, projectDetails);
 
         if (backgroundThread) {
             idProcessor.execute();
@@ -404,7 +408,7 @@ public class FileImporter {
         /**
          * Boolean indicating whether we can display gui stuffs
          */
-        private boolean hasGUI = false;;
+        private boolean hasGUI = false;
 
         /**
          * Constructor of the worker.
@@ -448,10 +452,11 @@ public class FileImporter {
             hasGUI = true;
             return importFiles();
         }
-        
+
         /**
-         * Imports the identifications from the files given to the worker
-         * @return 
+         * Imports the identifications from the files given to the worker.
+         *
+         * @return
          */
         public int importFiles() {
 
@@ -541,7 +546,8 @@ public class FileImporter {
                 waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.setProteinCountMap(proteinCount);
-                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
+                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, 
+                        idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
             } catch (Exception e) {
 

@@ -25,8 +25,7 @@ public enum PeptideShakerCLIParams {
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1')", false),
     PROTEIN_FDR("protein_FDR", "FDR at the protein level (default 1% FDR: '1')", false),
     SEARCH_PARAMETERS("search_params", "Serialized com.compomics.util.experiment.identification.SearchParameters file created by SearchGUI.", false),
-    GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is 0)", false),
-    DISPLAY_RESULTS("display", "Display the results in the GUI after processing (1: true, 0: false, default is 0)", false);
+    GUI("gui", "Use a dialog to display the progress (1: true, 0: false, default is 0)", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -75,6 +74,5 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(PROTEIN_FDR.id, true, PROTEIN_FDR.description);
         aOptions.addOption(SEARCH_PARAMETERS.id, true, SEARCH_PARAMETERS.description);
         aOptions.addOption(GUI.id, true, GUI.description);
-        aOptions.addOption(DISPLAY_RESULTS.id, true, DISPLAY_RESULTS.description);
     }
 }
