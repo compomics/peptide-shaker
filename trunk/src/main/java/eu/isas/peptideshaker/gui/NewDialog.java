@@ -628,6 +628,7 @@ public class NewDialog extends javax.swing.JDialog {
             experiment.addAnalysisSet(sample, analysisSet);
 
             peptideShakerGUI.setProjectDetails(getProjectDetails());
+            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
