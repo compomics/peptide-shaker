@@ -77,4 +77,4 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI
 }}}
 
 
-If you experience any problem with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list].
+If you experience any problems with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list].
