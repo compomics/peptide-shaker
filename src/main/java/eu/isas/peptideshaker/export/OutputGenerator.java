@@ -1563,7 +1563,6 @@ public class OutputGenerator {
      * Sends the desired phospho output to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
-     * @param file the file to send the output to
      */
     public void getPhosphoOutput(JDialog parentDialog) {
 

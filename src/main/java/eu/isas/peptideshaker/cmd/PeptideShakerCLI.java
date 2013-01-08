@@ -219,15 +219,6 @@ public class PeptideShakerCLI implements Callable {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
         }
 
-        if (cliInputBean.displayResults()) {
-            try {
-                ToolFactory.startPeptideShaker(null, ouptutFile);
-            } catch (Exception e) {
-                waitingHandler.appendReport("An exception occurred while opening the cps file: " + e.getLocalizedMessage(), true, true);
-                e.printStackTrace();
-            }
-        }
-        
         System.exit(0); // @TODO: find other ways of cancelling the process... if not cancelled searchgui will not stop
 
         return null;

@@ -74,11 +74,6 @@ public class PeptideShakerCLIInputBean {
      * Boolean indicating whether a waiting dialog shall be used.
      */
     private boolean gui = false;
-    /**
-     * Boolean indicating whether the results shall be displayed in the GUI
-     * after processing.
-     */
-    private boolean displayResults = false;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -436,16 +431,5 @@ public class PeptideShakerCLIInputBean {
      */
     public boolean isGUI() {
         return gui;
-    }
-
-    /**
-     * Indicates whether the results shall be displayed in the gui after
-     * processing.
-     *
-     * @return a boolean indicating whether the results shall be displayed in
-     * the gui after processing
-     */
-    public boolean displayResults() {
-        return displayResults;
     }
 }
