@@ -11,7 +11,9 @@ import org.apache.commons.cli.Options;
  */
 public enum PeptideShakerCLIParams {
 
-    // Any change here must be reported in the wiki: https://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // IMPORTANT: Any change here must be reported in the wiki: http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     EXPERIMENT("experiment", "Mandatory: Specifies the experiment name", true),
     SAMPLE("sample", "Mandatory: Specifies the sample name", true),
     REPLICATE("replicate", "The replicate number", true),
