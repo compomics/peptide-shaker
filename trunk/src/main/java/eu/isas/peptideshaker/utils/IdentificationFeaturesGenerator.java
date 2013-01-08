@@ -774,7 +774,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * Returns a summary of the PTMs present on the sequence confidently
      * assigned to an amino acid with focus on given PTMs. Example:
-     * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K gives 6, 9
+     * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns 6, 9.
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the ptms to include in the summary
@@ -890,7 +890,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * Returns a summary of the PTMs present on the sequence not confidently
      * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
-     * gives 6, 9
+     * returns 6, 9.
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the targeted PTMs, can be null

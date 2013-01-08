@@ -147,9 +147,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         projectPanel = new javax.swing.JPanel();
         exportAll = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        exportAllLabel = new javax.swing.JLabel();
+        exportPhospoJButton = new javax.swing.JButton();
+        exportPhosphLabel = new javax.swing.JLabel();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
@@ -1028,20 +1028,21 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel2.setText("Advanced export. For expert use only.");
-        jLabel2.setToolTipText("Export all the identification results as four tab separated text files.");
+        exportAllLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        exportAllLabel.setText("Advanced export. For expert use only.");
+        exportAllLabel.setToolTipText("Export all the identification results as four tab separated text files.");
 
-        jButton1.setText("Export phosphorylation summary");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        exportPhospoJButton.setText("Export Phosphorylation Summary");
+        exportPhospoJButton.setToolTipText("Export phosphorylation summary to a text file");
+        exportPhospoJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                exportPhospoJButtonActionPerformed(evt);
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel3.setText("Beta version.");
-        jLabel3.setToolTipText("Export all the identification results as four tab separated text files.");
+        exportPhosphLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        exportPhosphLabel.setText("Beta version.");
+        exportPhosphLabel.setToolTipText("Export all the identification results as four tab separated text files.");
 
         javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
         projectPanel.setLayout(projectPanelLayout);
@@ -1051,12 +1052,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGap(21, 21, 21)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(exportPhospoJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap(65, Short.MAX_VALUE))
+                    .addComponent(exportPhosphLabel)
+                    .addComponent(exportAllLabel))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         projectPanelLayout.setVerticalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1064,11 +1065,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGap(106, 106, 106)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportAll)
-                    .addComponent(jLabel2))
+                    .addComponent(exportAllLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jLabel3))
+                    .addComponent(exportPhospoJButton)
+                    .addComponent(exportPhosphLabel))
                 .addContainerGap(115, Short.MAX_VALUE))
         );
 
@@ -1125,7 +1126,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 422, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(exitButton))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
@@ -1716,9 +1717,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fractionsDeselectAllLabelMouseExited
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    /**
+     * Export a phosphorylation summary to a text file.
+     * 
+     * @param evt 
+     */
+    private void exportPhospoJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPhospoJButtonActionPerformed
         outputGenerator.getPhosphoOutput(this);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_exportPhospoJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
@@ -1734,16 +1740,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton exitButton;
     private javax.swing.JButton exportAll;
+    private javax.swing.JLabel exportAllLabel;
+    private javax.swing.JLabel exportPhosphLabel;
+    private javax.swing.JButton exportPhospoJButton;
     private javax.swing.JPanel featuresPanel;
     private javax.swing.JLabel fractionsDeselectAllLabel;
     private javax.swing.JButton fractionsExport;
     private javax.swing.JPanel fractionsPanel;
     private javax.swing.JLabel fractionsSelectAllLabel;
     private javax.swing.JButton helpJButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBox maximalProteinSetCheckBox;
     private javax.swing.JCheckBox molecularWeight;
     private javax.swing.JCheckBox peptideAccession;
