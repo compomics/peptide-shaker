@@ -52,6 +52,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 
 /**
@@ -3510,6 +3511,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     writer.write("\tProtein(s)\tSequence\tFixed Modifications\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated" + System.getProperty("line.separator"));
 
                                     try {
+                                        ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
                                         // the PeptideShaker PSM table
                                         String key = getSelectedSpectrumKey();
                                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
@@ -3532,7 +3534,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide(), false) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide(), true) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
-                                                identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t");
+                                                identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey()), modificationProfile) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
                                         writer.write(probabilities.isValidated() + System.getProperty("line.separator"));
@@ -3598,6 +3600,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (spectrumMatch.getAllAssumptions(advocate) != null) {
 
             ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocate).keySet());
+                                        ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
             Collections.sort(eValues);
             int rank = 0;
             for (double eValue : eValues) {
@@ -3619,7 +3622,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), true) + "\t";
                     try {
                         result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
-                                identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";
+                                identification.getPeptideMatch(currentAssumption.getPeptide().getKey()), modificationProfile) + "\t";
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         result += "error\t";

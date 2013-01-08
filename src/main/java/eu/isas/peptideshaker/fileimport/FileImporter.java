@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
+import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -546,7 +547,7 @@ public class FileImporter {
                 waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
                 waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.setProteinCountMap(proteinCount);
-                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences, 
+                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
                         idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
             } catch (Exception e) {
@@ -608,28 +609,34 @@ public class FileImporter {
             }
 
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-            HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
+            HashSet<SpectrumMatch> tempSet = null;
+            try {
+                tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while loading spectrum matches from " + Util.getFileName(idFile) + ". This file will be ignored. This is most likely due to memory issues, you can increase the memory settings in Edit -> Java Options. You will find more help on our website: http://peptide-shaker.googlecode.com.", true, true);
+            }
             fileReader.close();
-            Iterator<SpectrumMatch> matchIt = tempSet.iterator();
+            if (tempSet != null) {
+                Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
-            int numberOfMatches = tempSet.size();
-            int progress = 0;
-            waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
-            idReport = false;
-            ArrayList<Integer> charges = new ArrayList<Integer>();
-            double maxErrorPpm = 0, maxErrorDa = 0;
+                int numberOfMatches = tempSet.size();
+                int progress = 0;
+                waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
+                idReport = false;
+                ArrayList<Integer> charges = new ArrayList<Integer>();
+                double maxErrorPpm = 0, maxErrorDa = 0;
 
-            while (matchIt.hasNext()) {
+                while (matchIt.hasNext()) {
 
-                SpectrumMatch match = matchIt.next();
-                nPSMs++;
-                nSecondary += match.getAllAssumptions().size() - 1;
+                    SpectrumMatch match = matchIt.next();
+                    nPSMs++;
+                    nSecondary += match.getAllAssumptions().size() - 1;
 
-                String spectrumKey = match.getKey();
-                String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
-                String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                    String spectrumKey = match.getKey();
+                    String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+                    String fileName = Spectrum.getSpectrumFile(spectrumKey);
 
-                // @TODO: verify that this is not needed
+                    // @TODO: verify that this is not needed
 //                if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
 //                    try {
 //                        spectrumTitle = URLDecoder.decode(spectrumTitle, "utf-8");
@@ -639,290 +646,291 @@ public class FileImporter {
 //                    }
 //                }
 
-                if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
-                    fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
-                    match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
-                    spectrumKey = match.getKey();
-                }
-
-                if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-                    String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
-                    spectrumTitle = match.getSpectrumNumber() + "";
-                    spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                    match.setKey(spectrumKey);
-                    if (spectrumFactory.fileLoaded(fileName)
-                            && !spectrumFactory.spectrumLoaded(spectrumKey)) {
-                        waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
-                        waitingHandler.setRunCanceled();
-                        return;
+                    if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
+                        fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
+                        match.setKey(Spectrum.getSpectrumKey(fileName, spectrumTitle));
+                        spectrumKey = match.getKey();
                     }
-                }
 
-                if (!mgfUsed.contains(fileName)) {
-                    File spectrumFile = spectrumFiles.get(fileName);
-                    if (spectrumFile != null && spectrumFile.exists()) {
-                        importSpectra(fileName);
-                        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                        waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
-                        mgfUsed.add(fileName);
-                        projectDetails.addSpectrumFile(spectrumFile);
-                        nSpectra += spectrumFactory.getNSpectra(fileName);
-                    } else {
-                        missingMgfFiles.put(idFile, fileName);
-                        waitingHandler.appendReport(fileName + " not found.", true, true);
-                        break;
+                    if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                        String oldTitle = Spectrum.getSpectrumTitle(spectrumKey);
+                        spectrumTitle = match.getSpectrumNumber() + "";
+                        spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
+                        match.setKey(spectrumKey);
+                        if (spectrumFactory.fileLoaded(fileName)
+                                && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                            waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
+                            waitingHandler.setRunCanceled();
+                            return;
+                        }
                     }
-                }
-                if (!idReport) {
-                    waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
-                    idReport = true;
-                }
 
-                for (PeptideAssumption assumption : match.getAllAssumptions()) {
-                    if (!idFilter.validatePeptideAssumption(assumption)) {
-                        match.removeAssumption(assumption);
-                    }
-                }
-
-                if (!match.hasAssumption(searchEngine)) {
-                    matchIt.remove();
-                } else {
-                    for (PeptideAssumption assumption : match.getAllAssumptions()) {
-
-                        Peptide peptide = assumption.getPeptide();
-                        String peptideSequence = peptide.getSequence();
-
-                        // remap the proteins for X!Tandem
-                        if (searchEngine == Advocate.XTANDEM) {
-                            ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
-                            if (!proteins.isEmpty()) {
-                                ArrayList<String> parentProteins = new ArrayList<String>();
-                                for (String accession : proteins) {
-                                    if (!parentProteins.contains(accession)) { // @TODO: should not be needed, but somewhere along the way the same proteins are added more than once...
-                                        parentProteins.add(accession);
-                                    }
-                                }
-                                peptide.setParentProteins(parentProteins);
-                            }
-                        }
-
-                        // change the search engine modifications into expected modifications
-                        // If there are not enough sites to put them all on the sequence, add an unknown modifcation
-                        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
-                        ptmFactory.checkFixedModifications(modificationProfile, peptide);
-                        HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
-                        HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
-
-                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            tempNames = new HashMap<Integer, ArrayList<String>>();
-                            if (modMatch.isVariable()) {
-                                String sePTM = modMatch.getTheoreticPtm();
-                                if (searchEngine == Advocate.OMSSA) {
-                                    Integer omssaIndex = null;
-                                    try {
-                                        omssaIndex = new Integer(sePTM);
-                                    } catch (Exception e) {
-                                        waitingHandler.appendReport("Impossible to parse OMSSA modification " + sePTM + ".", true, true);
-                                    }
-                                    if (omssaIndex != null) {
-                                        tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, modificationProfile.getModification(omssaIndex));
-                                    }
-                                } else if (searchEngine == Advocate.MASCOT || searchEngine == Advocate.XTANDEM) {
-                                    String[] parsedName = sePTM.split("@");
-                                    double seMass = 0;
-                                    try {
-                                        seMass = new Double(parsedName[0]);
-                                    } catch (Exception e) {
-                                        throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem or Mascot modification.\n"
-                                                + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
-                                    }
-                                    tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance);
-                                } else {
-                                    throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + SearchEngine.getName(searchEngine) + ".");
-                                }
-                                ArrayList<String> allNames = new ArrayList<String>();
-                                for (ArrayList<String> namesAtAA : tempNames.values()) {
-                                    for (String name : namesAtAA) {
-                                        if (!allNames.contains(name)) {
-                                            allNames.add(name);
-                                        }
-                                    }
-                                }
-                                modNames.put(modMatch, allNames);
-                                for (int pos : tempNames.keySet()) {
-                                    if (expectedNames.containsKey(pos)) {
-                                        expectedNames.get(pos).addAll(tempNames.get(pos));
-                                    } else {
-                                        expectedNames.put(pos, tempNames.get(pos));
-                                    }
-                                }
-                            }
-                        }
-
-                        // Map the modifications according to search engine localization
-                        HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
-                        HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
-                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
-                                int modSite = modMatch.getModificationSite();
-                                if (expectedNames.containsKey(modSite)) {
-                                    for (String modName : expectedNames.get(modSite)) {
-                                        if (modNames.get(modMatch).contains(modName)) {
-                                            ptmMappingRegular.put(modSite, modMatch);
-                                            ptmMappingGoofy.put(modMatch, modSite);
-                                            modMatch.setTheoreticPtm(modName);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Try to correct incompatible localizations
-                        HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
-                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
-                                int modSite = modMatch.getModificationSite();
-                                for (int candidateSite : expectedNames.keySet()) {
-                                    if (!ptmMappingRegular.containsKey(candidateSite)) {
-                                        for (String modName : expectedNames.get(candidateSite)) {
-                                            if (modNames.get(modMatch).contains(modName)) {
-                                                if (!remap.containsKey(modSite)) {
-                                                    remap.put(modSite, new ArrayList<Integer>());
-                                                }
-                                                if (!remap.get(modSite).contains(candidateSite)) {
-                                                    remap.get(modSite).add(candidateSite);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
-
-                        for (ModificationMatch modMatch : peptide.getModificationMatches()) {
-                            if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
-                                Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
-                                if (modSite != null) {
-                                    if (expectedNames.containsKey(modSite)) {
-                                        for (String modName : expectedNames.get(modSite)) {
-                                            if (modNames.get(modMatch).contains(modName)) {
-                                                ptmMappingRegular.put(modSite, modMatch); // for the record
-                                                ptmMappingGoofy.put(modMatch, modSite);
-                                                modMatch.setTheoreticPtm(modName);
-                                                modMatch.setModificationSite(modSite);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    ptmMappingRegular.put(modSite, modMatch); // for the record
-                                    ptmMappingGoofy.put(modMatch, modSite);
-                                    modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
-                                }
-                                if (!ptmMappingGoofy.containsKey(modMatch)) {
-                                    modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
-                                }
-                            }
-                        }
-
-
-                        if (idFilter.validateModifications(peptide)) {
-                            // Estimate the theoretic mass with the new modifications
-                            peptide.estimateTheoreticMass();
-                            if (!idFilter.validatePrecursor(assumption, spectrumKey)) {
-                                match.removeAssumption(assumption);
-                            }
+                    if (!mgfUsed.contains(fileName)) {
+                        File spectrumFile = spectrumFiles.get(fileName);
+                        if (spectrumFile != null && spectrumFile.exists()) {
+                            importSpectra(fileName);
+                            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+                            waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
+                            mgfUsed.add(fileName);
+                            projectDetails.addSpectrumFile(spectrumFile);
+                            nSpectra += spectrumFactory.getNSpectra(fileName);
                         } else {
+                            missingMgfFiles.put(idFile, fileName);
+                            waitingHandler.appendReport(fileName + " not found.", true, true);
+                            break;
+                        }
+                    }
+                    if (!idReport) {
+                        waitingHandler.appendReport("Importing PSMs from " + idFile.getName(), true, true);
+                        idReport = true;
+                    }
+
+                    for (PeptideAssumption assumption : match.getAllAssumptions()) {
+                        if (!idFilter.validatePeptideAssumption(assumption)) {
                             match.removeAssumption(assumption);
                         }
                     }
 
-                    if (match.hasAssumption(searchEngine)) {
-                        PeptideAssumption firstHit = null;
-                        ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
-                        Collections.sort(eValues);
-                        // If everything went fine, the loops are not necessary here
-                        for (Double eValue : eValues) {
-                            for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(eValue)) {
-                                firstHit = assumption;
-                                match.setFirstHit(searchEngine, assumption);
-                                double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
-                                double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
+                    if (!match.hasAssumption(searchEngine)) {
+                        matchIt.remove();
+                    } else {
+                        for (PeptideAssumption assumption : match.getAllAssumptions()) {
 
-                                if (error > maxErrorPpm) {
-                                    maxErrorPpm = error;
+                            Peptide peptide = assumption.getPeptide();
+                            String peptideSequence = peptide.getSequence();
+
+                            // remap the proteins for X!Tandem
+                            if (searchEngine == Advocate.XTANDEM) {
+                                ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
+                                if (!proteins.isEmpty()) {
+                                    ArrayList<String> parentProteins = new ArrayList<String>();
+                                    for (String accession : proteins) {
+                                        if (!parentProteins.contains(accession)) { // @TODO: should not be needed, but somewhere along the way the same proteins are added more than once...
+                                            parentProteins.add(accession);
+                                        }
+                                    }
+                                    peptide.setParentProteins(parentProteins);
                                 }
+                            }
 
-                                error = Math.abs(assumption.getDeltaMass(precursorMz, false));
+                            // change the search engine modifications into expected modifications
+                            // If there are not enough sites to put them all on the sequence, add an unknown modifcation
+                            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+                            ptmFactory.checkFixedModifications(modificationProfile, peptide);
+                            HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
+                            HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
-                                if (error > maxErrorDa) {
-                                    maxErrorDa = error;
-                                }
-
-                                int currentCharge = assumption.getIdentificationCharge().value;
-
-                                if (!charges.contains(currentCharge)) {
-                                    charges.add(currentCharge);
-                                }
-                                for (String protein : assumption.getPeptide().getParentProteins()) {
-                                    Integer count = proteinCount.get(protein);
-                                    if (count != null) {
-                                        proteinCount.put(protein, count + 1);
+                            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                tempNames = new HashMap<Integer, ArrayList<String>>();
+                                if (modMatch.isVariable()) {
+                                    String sePTM = modMatch.getTheoreticPtm();
+                                    if (searchEngine == Advocate.OMSSA) {
+                                        Integer omssaIndex = null;
+                                        try {
+                                            omssaIndex = new Integer(sePTM);
+                                        } catch (Exception e) {
+                                            waitingHandler.appendReport("Impossible to parse OMSSA modification " + sePTM + ".", true, true);
+                                        }
+                                        if (omssaIndex != null) {
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, modificationProfile.getModification(omssaIndex));
+                                        }
+                                    } else if (searchEngine == Advocate.MASCOT || searchEngine == Advocate.XTANDEM) {
+                                        String[] parsedName = sePTM.split("@");
+                                        double seMass = 0;
+                                        try {
+                                            seMass = new Double(parsedName[0]);
+                                        } catch (Exception e) {
+                                            throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem or Mascot modification.\n"
+                                                    + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
+                                        }
+                                        tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance);
                                     } else {
-                                        int index = singleProteinList.indexOf(protein);
-                                        if (index != -1) {
-                                            singleProteinList.remove(index);
-                                            proteinCount.put(protein, 2);
+                                        throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + SearchEngine.getName(searchEngine) + ".");
+                                    }
+                                    ArrayList<String> allNames = new ArrayList<String>();
+                                    for (ArrayList<String> namesAtAA : tempNames.values()) {
+                                        for (String name : namesAtAA) {
+                                            if (!allNames.contains(name)) {
+                                                allNames.add(name);
+                                            }
+                                        }
+                                    }
+                                    modNames.put(modMatch, allNames);
+                                    for (int pos : tempNames.keySet()) {
+                                        if (expectedNames.containsKey(pos)) {
+                                            expectedNames.get(pos).addAll(tempNames.get(pos));
                                         } else {
-                                            singleProteinList.add(protein);
+                                            expectedNames.put(pos, tempNames.get(pos));
                                         }
                                     }
                                 }
-                                inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                                identification.addSpectrumMatch(match);
-                                nRetained++;
-                                break;
                             }
-                            if (firstHit != null) {
-                                break;
+
+                            // Map the modifications according to search engine localization
+                            HashMap<Integer, ModificationMatch> ptmMappingRegular = new HashMap<Integer, ModificationMatch>();
+                            HashMap<ModificationMatch, Integer> ptmMappingGoofy = new HashMap<ModificationMatch, Integer>();
+                            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                if (modMatch.isVariable() && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                    int modSite = modMatch.getModificationSite();
+                                    if (expectedNames.containsKey(modSite)) {
+                                        for (String modName : expectedNames.get(modSite)) {
+                                            if (modNames.get(modMatch).contains(modName)) {
+                                                ptmMappingRegular.put(modSite, modMatch);
+                                                ptmMappingGoofy.put(modMatch, modSite);
+                                                modMatch.setTheoreticPtm(modName);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Try to correct incompatible localizations
+                            HashMap<Integer, ArrayList<Integer>> remap = new HashMap<Integer, ArrayList<Integer>>();
+                            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                    int modSite = modMatch.getModificationSite();
+                                    for (int candidateSite : expectedNames.keySet()) {
+                                        if (!ptmMappingRegular.containsKey(candidateSite)) {
+                                            for (String modName : expectedNames.get(candidateSite)) {
+                                                if (modNames.get(modMatch).contains(modName)) {
+                                                    if (!remap.containsKey(modSite)) {
+                                                        remap.put(modSite, new ArrayList<Integer>());
+                                                    }
+                                                    if (!remap.get(modSite).contains(candidateSite)) {
+                                                        remap.get(modSite).add(candidateSite);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            HashMap<Integer, Integer> correctedIndexes = PtmSiteMapping.alignAll(remap);
+
+                            for (ModificationMatch modMatch : peptide.getModificationMatches()) {
+                                if (modMatch.isVariable() && !ptmMappingGoofy.containsKey(modMatch) && !modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                    Integer modSite = correctedIndexes.get(modMatch.getModificationSite());
+                                    if (modSite != null) {
+                                        if (expectedNames.containsKey(modSite)) {
+                                            for (String modName : expectedNames.get(modSite)) {
+                                                if (modNames.get(modMatch).contains(modName)) {
+                                                    ptmMappingRegular.put(modSite, modMatch); // for the record
+                                                    ptmMappingGoofy.put(modMatch, modSite);
+                                                    modMatch.setTheoreticPtm(modName);
+                                                    modMatch.setModificationSite(modSite);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        ptmMappingRegular.put(modSite, modMatch); // for the record
+                                        ptmMappingGoofy.put(modMatch, modSite);
+                                        modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
+                                    }
+                                    if (!ptmMappingGoofy.containsKey(modMatch)) {
+                                        modMatch.setTheoreticPtm(PTMFactory.unknownPTM.getName());
+                                    }
+                                }
+                            }
+
+
+                            if (idFilter.validateModifications(peptide)) {
+                                // Estimate the theoretic mass with the new modifications
+                                peptide.estimateTheoreticMass();
+                                if (!idFilter.validatePrecursor(assumption, spectrumKey)) {
+                                    match.removeAssumption(assumption);
+                                }
+                            } else {
+                                match.removeAssumption(assumption);
+                            }
+                        }
+
+                        if (match.hasAssumption(searchEngine)) {
+                            PeptideAssumption firstHit = null;
+                            ArrayList<Double> eValues = new ArrayList<Double>(match.getAllAssumptions(searchEngine).keySet());
+                            Collections.sort(eValues);
+                            // If everything went fine, the loops are not necessary here
+                            for (Double eValue : eValues) {
+                                for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(eValue)) {
+                                    firstHit = assumption;
+                                    match.setFirstHit(searchEngine, assumption);
+                                    double precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
+                                    double error = Math.abs(assumption.getDeltaMass(precursorMz, true));
+
+                                    if (error > maxErrorPpm) {
+                                        maxErrorPpm = error;
+                                    }
+
+                                    error = Math.abs(assumption.getDeltaMass(precursorMz, false));
+
+                                    if (error > maxErrorDa) {
+                                        maxErrorDa = error;
+                                    }
+
+                                    int currentCharge = assumption.getIdentificationCharge().value;
+
+                                    if (!charges.contains(currentCharge)) {
+                                        charges.add(currentCharge);
+                                    }
+                                    for (String protein : assumption.getPeptide().getParentProteins()) {
+                                        Integer count = proteinCount.get(protein);
+                                        if (count != null) {
+                                            proteinCount.put(protein, count + 1);
+                                        } else {
+                                            int index = singleProteinList.indexOf(protein);
+                                            if (index != -1) {
+                                                singleProteinList.remove(index);
+                                                proteinCount.put(protein, 2);
+                                            } else {
+                                                singleProteinList.add(protein);
+                                            }
+                                        }
+                                    }
+                                    inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                                    identification.addSpectrumMatch(match);
+                                    nRetained++;
+                                    break;
+                                }
+                                if (firstHit != null) {
+                                    break;
+                                }
                             }
                         }
                     }
+
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+
+                    waitingHandler.setSecondaryProgressValue(++progress);
                 }
 
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                metrics.addFoundCharges(charges);
+                if (maxErrorDa > metrics.getMaxPrecursorErrorDa()) {
+                    metrics.setMaxPrecursorErrorDa(maxErrorDa);
+                }
+                if (maxErrorPpm > metrics.getMaxPrecursorErrorPpm()) {
+                    metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
                 }
 
-                waitingHandler.setSecondaryProgressValue(++progress);
-            }
-
-            metrics.addFoundCharges(charges);
-            if (maxErrorDa > metrics.getMaxPrecursorErrorDa()) {
-                metrics.setMaxPrecursorErrorDa(maxErrorDa);
-            }
-            if (maxErrorPpm > metrics.getMaxPrecursorErrorPpm()) {
-                metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
-            }
-
-            // Free at least 1GB for the next parser if not anymore available
-            // (not elegant so most likely not optimal)
-            if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
-                System.gc();
+                // Free at least 1GB for the next parser if not anymore available
+                // (not elegant so most likely not optimal)
                 if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
-                    waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
-                    waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                    double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
-                    share = Math.min(share, 1);
-                    peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                     System.gc();
-                    waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+                    if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
+                        waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
+                        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+                        double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
+                        share = Math.min(share, 1);
+                        peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
+                        System.gc();
+                        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+                    }
                 }
+                projectDetails.addIdentificationFiles(idFile);
             }
-            projectDetails.addIdentificationFiles(idFile);
             waitingHandler.increaseProgressValue();
         }
 

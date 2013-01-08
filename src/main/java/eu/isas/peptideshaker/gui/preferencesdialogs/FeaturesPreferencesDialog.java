@@ -148,6 +148,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         projectPanel = new javax.swing.JPanel();
         exportAll = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
@@ -1030,25 +1032,44 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         jLabel2.setText("Advanced export. For expert use only.");
         jLabel2.setToolTipText("Export all the identification results as four tab separated text files.");
 
+        jButton1.setText("Export phosphorylation summary");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel3.setText("Beta version.");
+        jLabel3.setToolTipText("Export all the identification results as four tab separated text files.");
+
         javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
         projectPanel.setLayout(projectPanelLayout);
         projectPanelLayout.setHorizontalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(exportAll)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         projectPanelLayout.setVerticalGroup(
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, projectPanelLayout.createSequentialGroup()
-                .addContainerGap(131, Short.MAX_VALUE)
+            .addGroup(projectPanelLayout.createSequentialGroup()
+                .addGap(106, 106, 106)
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportAll)
                     .addComponent(jLabel2))
-                .addGap(124, 124, 124))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel3))
+                .addContainerGap(115, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Project", projectPanel);
@@ -1059,7 +1080,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         featuresPanelLayout.setVerticalGroup(
@@ -1104,7 +1125,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 422, Short.MAX_VALUE)
                         .addComponent(exitButton))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
@@ -1695,6 +1716,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fractionsDeselectAllLabelMouseExited
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        outputGenerator.getPhosphoOutput(this);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
     private javax.swing.JCheckBox assumptionConfidence;
@@ -1715,8 +1740,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel fractionsPanel;
     private javax.swing.JLabel fractionsSelectAllLabel;
     private javax.swing.JButton helpJButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBox maximalProteinSetCheckBox;
     private javax.swing.JCheckBox molecularWeight;
     private javax.swing.JCheckBox peptideAccession;
