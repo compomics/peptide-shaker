@@ -16,6 +16,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -30,7 +31,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * This class will generate the output as requested by the user.
@@ -628,6 +631,7 @@ public class OutputGenerator {
                         int peptideCounter = 0;
                         HashMap<String, HashMap<Integer, String[]>> surroundingAAs = new HashMap<String, HashMap<Integer, String[]>>();
                         ProteinMatch proteinMatch = null;
+                        ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
 
                         progressDialog.setTitle("Loading Peptide Matches. Please Wait...");
                         identification.loadPeptideMatches(progressDialog);
@@ -863,7 +867,7 @@ public class OutputGenerator {
                                                     writer.write(SEPARATOR);
                                                 }
                                                 if (ptmLocations) {
-                                                    writer.write(getPeptideModificationLocations(peptide, peptideMatch));
+                                                    writer.write(getPeptideModificationLocations(peptide, peptideMatch, ptmProfile));
                                                     writer.write(SEPARATOR);
                                                 }
                                                 if (charges) {
@@ -1029,6 +1033,10 @@ public class OutputGenerator {
                 public void run() {
 
                     try {
+
+                        PTMFactory ptmFactory = PTMFactory.getInstance();
+                        ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+
                         progressDialog.setIndeterminate(false);
                         if (psmKeys != null) {
                             progressDialog.setMaxProgressValue(psmKeys.size());
@@ -1124,6 +1132,8 @@ public class OutputGenerator {
                                 identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
                             }
 
+                            progressDialog.setMaxProgressValue(spectrumKeys.get(spectrumFile).size());
+                            progressDialog.setValue(0);
                             for (String psmKey : spectrumKeys.get(spectrumFile)) {
 
                                 if (progressDialog.isRunCanceled()) {
@@ -1214,8 +1224,11 @@ public class OutputGenerator {
                                                     ArrayList<String> modList = new ArrayList<String>();
                                                     for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
                                                         if (modificationMatch.isVariable()) {
-                                                            if (!modList.contains(modificationMatch.getTheoreticPtm())) {
-                                                                modList.add(modificationMatch.getTheoreticPtm());
+                                                            PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                                                            for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                                                                if (!modList.contains(equivalentPtm)) {
+                                                                    modList.add(equivalentPtm);
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -1547,28 +1560,40 @@ public class OutputGenerator {
     }
 
     /**
-     * Sends the desired psm output (based on the elements needed as provided in
-     * arguments) to a user chosen file.
+     * Sends the desired phospho output to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
      * @param file the file to send the output to
      */
-    public void getPSMsPhosphoOutput(JDialog parentDialog, File file) {
+    public void getPhosphoOutput(JDialog parentDialog) {
 
-        // get the file to send the output to
-        final File selectedFile = file;
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Select Result Folder");
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        if (selectedFile != null) {
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Tab separated text file) *.txt";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(parentDialog);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            
+            final File selectedFile = fileChooser.getSelectedFile();
 
             final String filePath = selectedFile.getPath();
-
-            try {
-                writer = new BufferedWriter(new FileWriter(selectedFile));
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-                return;
-            }
 
             if (parentDialog != null) {
                 progressDialog = new ProgressDialogX(parentDialog, peptideShakerGUI,
@@ -1602,9 +1627,17 @@ public class OutputGenerator {
                 public void run() {
 
                     try {
-                        
+                        try {
+                            writer = new BufferedWriter(new FileWriter(new File(selectedFile, "PSMs_phospho.txt")));
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                            return;
+                        }
+
                         PTMFactory ptmFactory = PTMFactory.getInstance();
-                        
+                        ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
 
@@ -1613,10 +1646,10 @@ public class OutputGenerator {
                         writer.write("Protein(s) Descriptions" + SEPARATOR);
                         writer.write("Sequence" + SEPARATOR);
                         writer.write("Variable Modification(s)" + SEPARATOR);
-                        writer.write("A-score" + SEPARATOR);
-                        writer.write("D-score" + SEPARATOR);
                         writer.write("A-score localization" + SEPARATOR);
                         writer.write("D-score localization" + SEPARATOR);
+                        writer.write("A-score" + SEPARATOR);
+                        writer.write("D-score" + SEPARATOR);
                         writer.write("# phosphorylations" + SEPARATOR);
                         writer.write("# phosphorylation sites" + SEPARATOR);
                         writer.write("Conflict" + SEPARATOR);
@@ -1647,10 +1680,13 @@ public class OutputGenerator {
 
                         for (String spectrumFile : spectrumKeys.keySet()) {
 
-                            progressDialog.setTitle("Copying Spectrum Matches to File. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
+                            progressDialog.setTitle("Loading Spectrum Matches. Please Wait... (" + ++fileCounter + "/" + spectrumKeys.size() + ")");
                             identification.loadSpectrumMatches(spectrumKeys.get(spectrumFile), progressDialog);
-                            progressDialog.setTitle("Copying Spectrum Matches Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
+                            progressDialog.setTitle("Loading Spectrum Matches Details. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                             identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
+                            progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
+                            progressDialog.setMaxProgressValue(spectrumKeys.get(spectrumFile).size());
+                            progressDialog.setValue(0);
 
                             for (String psmKey : spectrumKeys.get(spectrumFile)) {
 
@@ -1710,11 +1746,19 @@ public class OutputGenerator {
                                     writer.write(")");
                                 }
                                 writer.write(SEPARATOR);
+                                int nPhospho = 0;
                                 ArrayList<String> modList = new ArrayList<String>();
                                 for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
                                     if (modificationMatch.isVariable()) {
-                                        if (!modList.contains(modificationMatch.getTheoreticPtm())) {
-                                            modList.add(modificationMatch.getTheoreticPtm());
+                                        String ptmName = modificationMatch.getTheoreticPtm();
+                                        if (ptmName.contains("phospho")) {
+                                            nPhospho++;
+                                        }
+                                        PTM refPtm = ptmFactory.getPTM(ptmName);
+                                        for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                                            if (!modList.contains(equivalentPtm)) {
+                                                modList.add(equivalentPtm);
+                                            }
                                         }
                                     }
                                 }
@@ -1726,12 +1770,10 @@ public class OutputGenerator {
                                 String dScore = "";
                                 String aScore = "";
                                 String conflict = "";
-                                int nPhospho = 0;
                                 String[] split = sequence.split("[STY]");
-                                int nSites = split.length-1;
+                                int nSites = split.length - 1;
                                 for (String mod : modList) {
                                     if (mod.contains("phospho")) {
-                                        nPhospho++;
                                         if (spectrumMatch.getUrParam(ptmScores) != null) {
                                             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
@@ -1754,7 +1796,7 @@ public class OutputGenerator {
                                                     Double score = ptmScores.getPtmScoring(mod).getAScore(location);
                                                     aScore = score + "";
                                                 }
-                                                
+
                                                 location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
                                                 if (location != null) {
                                                     ArrayList<Integer> locations = PtmScoring.getLocations(location);
@@ -1803,6 +1845,137 @@ public class OutputGenerator {
                             }
                         }
                         writer.close();
+                        try {
+                            writer = new BufferedWriter(new FileWriter(new File(selectedFile, "Proteins_phospho.txt")));
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(null, "An error occured when saving the protein details.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        ArrayList<String> targetedPtms = new ArrayList<String>();
+                        for (String ptm : ptmProfile.getAllNotFixedModifications()) {
+                            if (ptm.contains("phospho")) {
+                                targetedPtms.add(ptm);
+                            }
+                        }
+
+                        writer.write(SEPARATOR);
+                        writer.write("Accession" + SEPARATOR);
+                        writer.write("Other Protein(s)" + SEPARATOR);
+                        writer.write("Protein Inference Class" + SEPARATOR);
+                        writer.write("Description" + SEPARATOR);
+                        writer.write("Sequence Coverage (%)" + SEPARATOR);
+                        writer.write("Observable Coverage (%)" + SEPARATOR);
+                        writer.write("Confident Phosphorylation Sites" + SEPARATOR);
+                        writer.write("# Confident" + SEPARATOR);
+                        writer.write("Other Phosphorylation Sites" + SEPARATOR);
+                        writer.write("# Other" + SEPARATOR);
+                        writer.write("#Validated Peptides" + SEPARATOR);
+                        writer.write("#Validated Spectra" + SEPARATOR);
+                        writer.write("NSAF" + SEPARATOR);
+                        writer.write("MW (kDa)" + SEPARATOR);
+                        writer.write("Confidence" + SEPARATOR);
+                        writer.write("Validated" + SEPARATOR);
+                        writer.write("Decoy" + SEPARATOR);
+                        writer.write(System.getProperty("line.separator"));
+
+                        PSParameter proteinPSParameter = new PSParameter();
+                        int proteinCounter = 0;
+
+                        progressDialog.setTitle("Loading Protein Matches. Please Wait...");
+                        identification.loadProteinMatches(progressDialog);
+                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
+                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
+
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
+                        progressDialog.setValue(0);
+                        progressDialog.setTitle("Copying Protein Phospho Details to File. Please Wait...");
+
+                        for (String proteinKey : identification.getProteinIdentification()) {
+
+                            if (progressDialog.isRunCanceled()) {
+                                break;
+                            }
+
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
+
+                            writer.write(++proteinCounter + SEPARATOR);
+
+                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                            writer.write(proteinMatch.getMainMatch() + SEPARATOR);
+                            boolean first = true;
+                            for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    writer.write(", ");
+                                }
+                                writer.write(otherProtein);
+                            }
+                            writer.write(SEPARATOR);
+                            writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
+                            try {
+                                writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
+
+                            try {
+                                writer.write(SEPARATOR + SEPARATOR);
+                         //       writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                           //     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
+                            try {
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey, targetedPtms) + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey, targetedPtms) + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
+                            try {
+                                writer.write(SEPARATOR);
+                        //        writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                                writer.write(Double.NaN + SEPARATOR);
+                            }
+                            try {
+                                writer.write(SEPARATOR);
+                          //      writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                                writer.write(Double.NaN + SEPARATOR);
+                            }
+                            try {
+                                writer.write(SEPARATOR);
+                            //    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey,
+                            //            SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
+                            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+                            writer.write(proteinMW + SEPARATOR);
+                            writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
+                            if (proteinPSParameter.isValidated()) {
+                                writer.write(1 + SEPARATOR);
+                            } else {
+                                writer.write(0 + SEPARATOR);
+                            }
+                            if (proteinMatch.isDecoy()) {
+                                writer.write(1 + SEPARATOR);
+                            } else {
+                                writer.write(0 + SEPARATOR);
+                            }
+                            writer.write(System.getProperty("line.separator"));
+                            progressDialog.increaseProgressValue();
+                        }
+
+
+                        writer.close();
+
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -2553,15 +2726,19 @@ public class OutputGenerator {
      * @param peptideMatch the peptide match
      * @return the peptide modification location confidence as a string.
      */
-    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch) {
+    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
+
+        PTMFactory ptmFactory = PTMFactory.getInstance();
 
         String result = "";
-
         ArrayList<String> modList = new ArrayList<String>();
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
-                if (!modList.contains(modificationMatch.getTheoreticPtm())) {
-                    modList.add(modificationMatch.getTheoreticPtm());
+                PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                    if (!modList.contains(equivalentPtm)) {
+                        modList.add(equivalentPtm);
+                    }
                 }
             }
         }

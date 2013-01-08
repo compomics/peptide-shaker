@@ -1887,11 +1887,8 @@ public class PeptideShaker {
                 double ptmMass = refPTM.getMass();
                 if (!modifications.containsKey(ptmMass)) {
                     ArrayList<PTM> ptms = new ArrayList<PTM>();
-                    for (String ptmName : ptmProfile.getAllNotFixedModifications()) {
-                        PTM ptm = ptmFactory.getPTM(ptmName);
-                        if (ptm.getMass() == ptmMass) {
-                            ptms.add(ptm);
-                        }
+                    for (String ptm : ptmProfile.getSimilarNotFixedModifications(ptmMass)) {
+                        ptms.add(ptmFactory.getPTM(ptm));
                     }
                     modifications.put(ptmMass, ptms);
                     nMod.put(ptmMass, 1);

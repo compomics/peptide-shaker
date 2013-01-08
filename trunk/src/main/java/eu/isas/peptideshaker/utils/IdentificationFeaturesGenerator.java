@@ -755,7 +755,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns a summary of the PTMs present on the sequence confidently
+     * Returns a summary of all PTMs present on the sequence confidently
      * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CE gives Oxidation
      * of M (M6)
      *
@@ -768,6 +768,24 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public String getPrimaryPTMSummary(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return getPrimaryPTMSummary(proteinKey, null);
+    }
+
+    /**
+     * Returns a summary of the PTMs present on the sequence confidently
+     * assigned to an amino acid with focus on given PTMs. Example:
+     * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K gives 6, 9
+     *
+     * @param proteinKey the key of the protein match of interest
+     * @param targetedPtms the ptms to include in the summary
+     * @return a PTM summary for the given protein
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String getPrimaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
@@ -795,35 +813,59 @@ public class IdentificationFeaturesGenerator {
         ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
         Collections.sort(ptms);
 
-        for (String ptm : ptms) {
-            if (firstPtm) {
-                firstPtm = false;
-            } else {
-                result += "; ";
-            }
-            result += ptm + "(";
-            boolean firstSite = true;
-            for (String site : locations.get(ptm)) {
-                if (!firstSite) {
-                    result += ", ";
+        if (targetedPtms == null) {
+            for (String ptm : ptms) {
+                if (firstPtm) {
+                    firstPtm = false;
                 } else {
-                    firstSite = false;
+                    result += "; ";
                 }
-                result += site;
+                result += ptm + "(";
+                boolean firstSite = true;
+                for (String site : locations.get(ptm)) {
+                    if (!firstSite) {
+                        result += ", ";
+                    } else {
+                        firstSite = false;
+                    }
+                    result += site;
+                }
+                result += ")";
             }
-            result += ")";
+        } else {
+            Collections.sort(targetedPtms);
+            for (String ptm : targetedPtms) {
+                if (locations.containsKey(ptm)) {
+                    for (String site : locations.get(ptm)) {
+                        if (!result.equals("")) {
+                            result += ", ";
+                        }
+                        result += site;
+                    }
+                }
+            }
         }
 
         result += OutputGenerator.SEPARATOR;
         firstPtm = true;
 
-        for (String ptm : ptms) {
-            if (firstPtm) {
-                firstPtm = false;
-            } else {
-                result += "; ";
+        if (targetedPtms == null) {
+            for (String ptm : ptms) {
+                if (firstPtm) {
+                    firstPtm = false;
+                } else {
+                    result += "; ";
+                }
+                result += ptm + "(" + locations.get(ptm).size() + ")";
             }
-            result += ptm + "(" + locations.get(ptm).size() + ")";
+        } else {
+            int n = 0;
+            for (String ptm : targetedPtms) {
+                if (locations.containsKey(ptm)) {
+                    n += locations.get(ptm).size();
+                }
+            }
+            result += n;
         }
         return result;
     }
@@ -842,6 +884,24 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public String getSecondaryPTMSummary(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return getSecondaryPTMSummary(proteinKey, null);
+    }
+
+    /**
+     * Returns a summary of the PTMs present on the sequence not confidently
+     * assigned to an amino acid. Example: SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K
+     * gives 6, 9
+     *
+     * @param proteinKey the key of the protein match of interest
+     * @param targetedPtms the targeted PTMs, can be null
+     * @return a PTM summary for the given protein
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws InterruptedException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public String getSecondaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
@@ -869,35 +929,59 @@ public class IdentificationFeaturesGenerator {
         ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
         Collections.sort(ptms);
 
-        for (String ptm : ptms) {
-            if (firstPtm) {
-                firstPtm = false;
-            } else {
-                result += "; ";
-            }
-            result += ptm + "(";
-            boolean firstSite = true;
-            for (String site : locations.get(ptm)) {
-                if (!firstSite) {
-                    result += ", ";
+        if (targetedPtms == null) {
+            for (String ptm : ptms) {
+                if (firstPtm) {
+                    firstPtm = false;
                 } else {
-                    firstSite = false;
+                    result += "; ";
                 }
-                result += site;
+                result += ptm + "(";
+                boolean firstSite = true;
+                for (String site : locations.get(ptm)) {
+                    if (!firstSite) {
+                        result += ", ";
+                    } else {
+                        firstSite = false;
+                    }
+                    result += site;
+                }
+                result += ")";
             }
-            result += ")";
+        } else {
+            Collections.sort(targetedPtms);
+            for (String ptm : targetedPtms) {
+                if (locations.containsKey(ptm)) {
+                    for (String site : locations.get(ptm)) {
+                        if (!result.equals("")) {
+                            result += ", ";
+                        }
+                        result += site;
+                    }
+                }
+            }
         }
 
         result += OutputGenerator.SEPARATOR;
         firstPtm = true;
 
-        for (String ptm : ptms) {
-            if (firstPtm) {
-                firstPtm = false;
-            } else {
-                result += "; ";
+        if (targetedPtms == null) {
+            for (String ptm : ptms) {
+                if (firstPtm) {
+                    firstPtm = false;
+                } else {
+                    result += "; ";
+                }
+                result += ptm + "(" + locations.get(ptm).size() + ")";
             }
-            result += ptm + "(" + locations.get(ptm).size() + ")";
+        } else {
+            int n = 0;
+            for (String ptm : targetedPtms) {
+                if (locations.containsKey(ptm)) {
+                    n += locations.get(ptm).size();
+                }
+            }
+            result += n;
         }
         return result;
     }
