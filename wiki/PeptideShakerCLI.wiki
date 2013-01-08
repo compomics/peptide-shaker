@@ -1,6 +1,5 @@
 #summary How to use PeptideShaker from the command line - available from version 0.19.0.
 
-
 =PeptideShaker Command Line Interface=
 
 The command line interface can be used to process identification files and output identification results in various formats.
@@ -66,6 +65,7 @@ The following parameters are optional:
                            will crash - hopefully decently.
 }}}
 
+==Example==
 
 Here is an example for Windows where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
 {{{
@@ -76,10 +76,22 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI
 -out "C:\my folder\myCpsFile.cps"
 }}}
 
+==Memory Settings==
+
 Remember that big datasets will require more than the default memory provided to the Java virtual machine, so for larger dataset please increase the maximum memory setting. Example, for a maximum of 2GB of memory:
 
 {{{
 java -Xmx2048M -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
+
+==Open a PeptideShaker Project==
+
+To open a PeptideShaker project (a cps file) from the command line use the following command (with the above memory parameters if needed):
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLIOpenProject "C:\my folder\myCpsFile.cps"
+}}}
+
+==Help=
 
 If you experience any problems with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list].
