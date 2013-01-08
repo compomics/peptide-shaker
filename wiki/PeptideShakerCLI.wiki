@@ -1,4 +1,4 @@
-#summary How to use PeptideShaker from the command line - available for version 0.19.0 and following.
+#summary How to use PeptideShaker from the command line - available from version 0.19.0.
 
 
 =PeptideShaker Command Line Interface=
