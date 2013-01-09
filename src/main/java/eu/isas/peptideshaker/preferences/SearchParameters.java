@@ -58,7 +58,8 @@ public class SearchParameters implements Serializable {
      * The expected modifications. Modified peptides will be grouped and
      * displayed according to this classification.
      *
-     * @deprecated use com.compomics.util.experiment.identification.SearchParameters instead
+     * @deprecated use
+     * com.compomics.util.experiment.identification.SearchParameters instead
      * instead
      */
     private ModificationProfile utilitiesModificationProfile = new ModificationProfile();
@@ -572,20 +573,40 @@ public class SearchParameters implements Serializable {
         com.compomics.util.experiment.identification.SearchParameters updatedVersion = new com.compomics.util.experiment.identification.SearchParameters();
 
         updatedVersion.setModificationProfile(getModificationProfile());
-        updatedVersion.setFragmentIonAccuracy(fragmentIonMZTolerance);
-        updatedVersion.setEnzyme(enzyme);
-        updatedVersion.setParametersFile(parametersFile);
-        updatedVersion.setFastaFile(fastaFile);
-        updatedVersion.setnMissedCleavages(nMissedCleavages);
-        updatedVersion.setIonSearched1(PeptideFragmentIon.getSubTypeAsString(forwardIon));
-        updatedVersion.setIonSearched2(PeptideFragmentIon.getSubTypeAsString(rewindIon));
-        updatedVersion.setPrecursorAccuracy(precursorTolerance);
-        if (currentPrecursorAccuracyType == PrecursorAccuracyType.PPM) {
-            updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.PPM);
-        } else {
-            updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.DA);
+        if (fragmentIonMZTolerance>0) {
+            updatedVersion.setFragmentIonAccuracy(fragmentIonMZTolerance);
         }
-        updatedVersion.setFractionMolecularWeights(fractionMolecularWeights);
+        if (enzyme != null) {
+            updatedVersion.setEnzyme(enzyme);
+        }
+        if (parametersFile != null) {
+            updatedVersion.setParametersFile(parametersFile);
+        }
+        if (fastaFile != null) {
+            updatedVersion.setFastaFile(fastaFile);
+        }
+        if (nMissedCleavages >= 0) {
+            updatedVersion.setnMissedCleavages(nMissedCleavages);
+        }
+        if (forwardIon != null) {
+            updatedVersion.setIonSearched1(PeptideFragmentIon.getSubTypeAsString(forwardIon));
+        }
+        if (rewindIon != null) {
+            updatedVersion.setIonSearched2(PeptideFragmentIon.getSubTypeAsString(rewindIon));
+        }
+        if (precursorTolerance > 0) {
+            updatedVersion.setPrecursorAccuracy(precursorTolerance);
+        }
+        if (currentPrecursorAccuracyType != null) {
+            if (currentPrecursorAccuracyType == PrecursorAccuracyType.PPM) {
+                updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.PPM);
+            } else {
+                updatedVersion.setPrecursorAccuracyType(com.compomics.util.experiment.identification.SearchParameters.PrecursorAccuracyType.DA);
+            }
+        }
+        if (fractionMolecularWeights != null) {
+            updatedVersion.setFractionMolecularWeights(fractionMolecularWeights);
+        }
         updatedVersion.setMaxChargeSearched(new Charge(Charge.PLUS, 4));
         updatedVersion.setMinChargeSearched(new Charge(Charge.PLUS, 2));
         updatedVersion.setMaxEValue(100.0);

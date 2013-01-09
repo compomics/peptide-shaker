@@ -222,7 +222,11 @@ public class PSSettings implements UrParameter {
             ptmScoringPreferences = new PTMScoringPreferences();
             ptmScoringPreferences.setFlrThreshold(1);
             ptmScoringPreferences.setaScoreNeutralLosses(true);
+            try {
             ptmScoringPreferences.setaScoreCalculation(processingPreferences.isAScoreCalculated());
+            } catch (Exception e) {
+                ptmScoringPreferences.setaScoreCalculation(true);
+            }
         }
         return ptmScoringPreferences;
     }

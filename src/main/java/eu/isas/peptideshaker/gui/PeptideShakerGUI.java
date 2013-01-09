@@ -5325,9 +5325,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         }
                     }
 
-                    ArrayList<String> names = new ArrayList<String>();
-                    ArrayList<String> spectrumFiles = new ArrayList<String>();
-
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
                         return;
@@ -5344,82 +5341,82 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                         try {
                             File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
-                            File projectFolder = currentPSFile.getParentFile();
-                            File dataFolder = new File(projectFolder, "data");
-
                             // try to locate the spectrum file
-                            if (providedSpectrumLocation != null && providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) {
-                                names.add(providedSpectrumLocation.getName());
-                                spectrumFiles.add(providedSpectrumLocation.getAbsolutePath());
-                            } else if (new File(projectFolder, spectrumFileName).exists() && !names.contains(new File(projectFolder, spectrumFileName).getName())) {
-                                names.add(new File(projectFolder, spectrumFileName).getName());
-                                spectrumFiles.add(new File(projectFolder, spectrumFileName).getAbsolutePath());
-                            } else if (new File(dataFolder, spectrumFileName).exists() && !names.contains(new File(dataFolder, spectrumFileName).getName())) {
-                                names.add(new File(dataFolder, spectrumFileName).getName());
-                                spectrumFiles.add(new File(dataFolder, spectrumFileName).getAbsolutePath());
-                            } else {
-                                JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occured while reading:\n" + spectrumFileName + "."
-                                        + "\n\nPlease select the spectrum file or the folder containing it manually.",
-                                        "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
+                                File projectFolder = currentPSFile.getParentFile();
+                                File fileInProjectFolder = new File(projectFolder, spectrumFileName);
+                                File dataFolder = new File(projectFolder, "data");
+                                File fileInDataFolder = new File(dataFolder, spectrumFileName);
+                                File fileInLastSelectedFolder = new File(getLastSelectedFolder(), spectrumFileName);
+                                if (fileInProjectFolder.exists()) {
+                                    projectDetails.addSpectrumFile(fileInProjectFolder);
+                                } else if (fileInDataFolder.exists()) {
+                                    projectDetails.addSpectrumFile(fileInDataFolder);
+                                } else if (fileInLastSelectedFolder.exists()) {
+                                    projectDetails.addSpectrumFile(fileInLastSelectedFolder);
+                                } else {
+                                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                                            "An error occured while reading:\n" + spectrumFileName + "."
+                                            + "\n\nPlease select the spectrum file or the folder containing it manually.",
+                                            "File Input Error", JOptionPane.ERROR_MESSAGE);
 
-                                JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
-                                fileChooser.setDialogTitle("Open Spectrum File");
+                                    JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+                                    fileChooser.setDialogTitle("Open Spectrum File");
 
-                                FileFilter filter = new FileFilter() {
+                                    FileFilter filter = new FileFilter() {
 
-                                    @Override
-                                    public boolean accept(File myFile) {
-                                        return myFile.getName().toLowerCase().endsWith("mgf")
-                                                || myFile.isDirectory();
-                                    }
+                                        @Override
+                                        public boolean accept(File myFile) {
+                                            return myFile.getName().toLowerCase().endsWith("mgf")
+                                                    || myFile.isDirectory();
+                                        }
 
-                                    @Override
-                                    public String getDescription() {
-                                        return "Supported formats: Mascot Generic Format (.mgf)";
-                                    }
-                                };
+                                        @Override
+                                        public String getDescription() {
+                                            return "Supported formats: Mascot Generic Format (.mgf)";
+                                        }
+                                    };
 
-                                fileChooser.setFileFilter(filter);
-                                int returnVal = fileChooser.showDialog(peptideShakerGUI, "Open");
+                                    fileChooser.setFileFilter(filter);
+                                    int returnVal = fileChooser.showDialog(peptideShakerGUI, "Open");
 
-                                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                    File mgfFolder = fileChooser.getSelectedFile();
-                                    if (!mgfFolder.isDirectory()) {
-                                        mgfFolder = mgfFolder.getParentFile();
-                                    }
-                                    setLastSelectedFolder(mgfFolder.getAbsolutePath());
-                                    boolean found = false;
-                                    for (File file : mgfFolder.listFiles()) {
-                                        for (String spectrumFileName2 : identification.getSpectrumFiles()) {
-                                            try {
-                                                File newFile2 = projectDetails.getSpectrumFile(spectrumFileName2);
-                                                if (newFile2.getName().equals(file.getName()) && !names.contains(file.getName())) {
-                                                    names.add(file.getName());
-                                                    spectrumFiles.add(file.getPath());
+                                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                        File mgfFolder = fileChooser.getSelectedFile();
+                                        if (!mgfFolder.isDirectory()) {
+                                            mgfFolder = mgfFolder.getParentFile();
+                                        }
+                                        setLastSelectedFolder(mgfFolder.getAbsolutePath());
+                                        boolean found = false;
+                                        for (File file : mgfFolder.listFiles()) {
+                                            for (String spectrumFileName2 : identification.getSpectrumFiles()) {
+                                                try {
+                                                    String fileName = file.getName();
+                                                    if (spectrumFileName2.equals(fileName)) {
+                                                        projectDetails.addSpectrumFile(file);
+                                                    }
+                                                    if (fileName.equals(spectrumFileName2)) {
+                                                        found = true;
+                                                    }
+                                                } catch (Exception e) {
+                                                    // ignore
                                                 }
-                                                if (spectrumFileName.equals(newFile2.getName())) {
-                                                    found = true;
-                                                }
-                                            } catch (Exception e) {
-                                                // ignore
                                             }
                                         }
-                                    }
-                                    if (!found) {
-                                        JOptionPane.showMessageDialog(peptideShakerGUI,
-                                                spectrumFileName + " was not found in the given folder.",
-                                                "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                        if (!found) {
+                                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                                    spectrumFileName + " was not found in the given folder.",
+                                                    "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                            clearData(true);
+                                            clearPreferences();
+                                            progressDialog.setRunFinished();
+                                            return;
+                                        }
+                                    } else {
                                         clearData(true);
                                         clearPreferences();
                                         progressDialog.setRunFinished();
                                         return;
                                     }
-                                } else {
-                                    clearData(true);
-                                    clearPreferences();
-                                    progressDialog.setRunFinished();
-                                    return;
                                 }
                             }
                         } catch (Exception e) {
@@ -5474,7 +5471,49 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting Project. Please Wait...");
                             String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
-                            identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache);
+                            File serializationDirectory = new File(identification.getSerializationDirectory());
+                            if (!serializationDirectory.exists()) {
+                                final String folderName = Util.getFileName(serializationDirectory);
+                                serializationDirectory = new File(experimentFile.getParent(), folderName);
+                                if (!serializationDirectory.exists()) {
+                                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                                            "CPS folder " + folderName + " not found, please locate it manually.",
+                                            "File Not Found", JOptionPane.ERROR_MESSAGE);
+                                    JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+                                    fileChooser.setDialogTitle("Select " + folderName + " Folder");
+                                    fileChooser.setMultiSelectionEnabled(false);
+                                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                                    FileFilter filter = new FileFilter() {
+
+                                        @Override
+                                        public boolean accept(File myFile) {
+                                            return myFile.isDirectory();
+                                        }
+
+                                        @Override
+                                        public String getDescription() {
+                                            return folderName + " Folder";
+                                        }
+                                    };
+
+                                    fileChooser.setFileFilter(filter);
+
+                                    int returnVal = fileChooser.showSaveDialog(peptideShakerGUI);
+
+                                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+                                        serializationDirectory = fileChooser.getSelectedFile();
+                                        if (!serializationDirectory.exists() || !serializationDirectory.getName().equals(folderName)) {
+                                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                                    "CPS folder " + folderName + " not found.",
+                                                    "File Not Found", JOptionPane.ERROR_MESSAGE);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            identification.convert(progressDialog, PeptideShaker.SERIALIZATION_DIRECTORY, idReference, objectsCache, serializationDirectory);
                             progressDialog.setTitle("Saving. Please Wait...");
                             // replace old protein names (before 0.18.0) by new ones
                             ArrayList<String> oldKeys = new ArrayList<String>(metrics.getProteinKeys());
@@ -5492,27 +5531,28 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         annotationPreferences.useAutomaticAnnotation(true);
                     }
 
-                    int cpt = 1;
+                    int cpt = 1,
+                            nfiles = identification.getSpectrumFiles().size();
                     progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
                     progressDialog.setIndeterminate(false);
-                    progressDialog.setMaxProgressValue(spectrumFiles.size() + 1);
+                    progressDialog.setMaxProgressValue(nfiles + 1);
                     progressDialog.increaseProgressValue();
 
-                    for (String spectrumFile : spectrumFiles) {
+                    for (String fileName : identification.getSpectrumFiles()) {
 
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
                             return;
                         }
 
-                        progressDialog.setTitle("Importing Spectrum Files (" + cpt++ + "/" + spectrumFiles.size() + "). Please Wait...");
+                        progressDialog.setTitle("Importing Spectrum Files (" + cpt++ + "/" + nfiles + "). Please Wait...");
 
                         try {
-                            File mgfFile = new File(spectrumFile);
+                            File mgfFile = projectDetails.getSpectrumFile(fileName);
                             spectrumFactory.addSpectra(mgfFile, progressDialog);
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(peptideShakerGUI,
-                                    "An error occured while importing " + spectrumFile + ".",
+                                    "An error occured while importing " + fileName + ".",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
                             clearData(true);
                             clearPreferences();
