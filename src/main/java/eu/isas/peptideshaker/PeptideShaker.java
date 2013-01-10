@@ -458,14 +458,14 @@ public class PeptideShaker {
 
         waitingHandler.setWaitingText("Estimating FLR. Please Wait...");
 
-        for (String modification : psmPTMMap.getModificationsScored()) {
+        for (Double ptmMass : psmPTMMap.getModificationsScored()) {
 
-            for (int mapKey : psmPTMMap.getKeys(modification).keySet()) {
+            for (int mapKey : psmPTMMap.getKeys(ptmMass).keySet()) {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
                 waitingHandler.increaseSecondaryProgressValue();
-                TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(modification, mapKey);
+                TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, mapKey);
                 TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
                 currentResults.setInputType(1);
                 currentResults.setUserInput(psmFLR);
@@ -1379,8 +1379,9 @@ public class PeptideShaker {
                         } else {
                             if (modMatches.get(modName).size() == 1 && ptmScoringPreferences.aScoreCalculation() && ptmScoring.getBestAScoreLocations() != null) {
                                 String bestAKey = ptmScoring.getBestAScoreLocations();
-                                int key = psmPTMMap.getCorrectedKey(modName, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
-                                TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(modName, key);
+                                Double ptmMass = ptm.getMass();
+                                int key = psmPTMMap.getCorrectedKey(ptmMass, spectrumMatch.getBestAssumption().getIdentificationCharge().value);
+                                TargetDecoyMap currentMap = psmPTMMap.getTargetDecoyMap(ptmMass, key);
                                 double aScoreThreshold = -currentMap.getTargetDecoyResults().getScoreLimit();
                                 ArrayList<Integer> aLocations = PtmScoring.getLocations(bestAKey);
                                 if (aLocations.size() > 1) {
@@ -1868,6 +1869,11 @@ public class PeptideShaker {
      */
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
         
+        if (Spectrum.getSpectrumTitle(
+            spectrumMatch.getKey()).contains("20062.20062.2")) {
+            int debug = 1;
+        }
+        
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
@@ -1955,7 +1961,7 @@ public class PeptideShaker {
                         ptmScores.getPtmScoring(ptmName).setConflict(true);
                     }
                 } else {
-                    // @TODO: this means that there will be no a-scores for a peptide with two or more ptms with the same mass?!
+                    // No method available for now.
                 }
             }
 
