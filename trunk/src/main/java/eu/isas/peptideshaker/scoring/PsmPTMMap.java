@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.scoring;
 
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -19,12 +21,16 @@ public class PsmPTMMap implements Serializable {
     /**
      * Map of PSM maps.
      */
-    private HashMap<String, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<String, HashMap<Integer, TargetDecoyMap>>();
+    private HashMap<Double, HashMap<Integer, TargetDecoyMap>> psmMaps = new HashMap<Double, HashMap<Integer, TargetDecoyMap>>();
     /**
      * Map used to group charges together in order to ensure statistical
      * relevance.
      */
-    private HashMap<String, HashMap<Integer, Integer>> grouping = new HashMap<String, HashMap<Integer, Integer>>();
+    private HashMap<Double, HashMap<Integer, Integer>> grouping = new HashMap<Double, HashMap<Integer, Integer>>();
+    /**
+     * The compomics PTM factory.
+     */
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
 
     /**
      * Constructor.
@@ -42,11 +48,11 @@ public class PsmPTMMap implements Serializable {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
 
-        for (String modification : psmMaps.keySet()) {
-            HashMap<Integer, TargetDecoyMap> map = psmMaps.get(modification);
+        for (Double ptmMass : psmMaps.keySet()) {
+            HashMap<Integer, TargetDecoyMap> map = psmMaps.get(ptmMass);
             for (Integer charge : map.keySet()) {
                 waitingHandler.increaseSecondaryProgressValue();
-                if (!grouping.get(modification).containsKey(charge)) {
+                if (!grouping.get(ptmMass).containsKey(charge)) {
                     map.get(charge).estimateProbabilities(waitingHandler);
                 }
             }
@@ -58,33 +64,33 @@ public class PsmPTMMap implements Serializable {
      * Returns the probability of the given modification at the given charge and
      * A-score.
      *
-     * @param modification the modification
+     * @param ptmMass the modification
      * @param specificKey the charge of the match of interest
      * @param score the corresponding score
      * @return the probability of the given spectrum match at the given score
      */
-    public double getProbability(String modification, Integer specificKey, double score) {
-        int key = getCorrectedKey(modification, specificKey);
-        return psmMaps.get(modification).get(key).getProbability(score);
+    public double getProbability(Double ptmMass, Integer specificKey, double score) {
+        int key = getCorrectedKey(ptmMass, specificKey);
+        return psmMaps.get(ptmMass).get(key).getProbability(score);
     }
 
     /**
      * Returns the probability of the given modification at the given charge and
      * A-score.
      *
-     * @param modification the modification
+     * @param ptmMass the modification
      * @param specificKey the charge of the match
      * @param score the corresponding score
      * @return the probability of the given spectrum match at the given score
      */
-    public double getProbability(String modification, String specificKey, double score) {
+    public double getProbability(Double ptmMass, String specificKey, double score) {
         Integer keeyAsInteger;
         try {
             keeyAsInteger = new Integer(specificKey);
         } catch (Exception e) {
             throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
         }
-        return getProbability(modification, keeyAsInteger, score);
+        return getProbability(ptmMass, keeyAsInteger, score);
     }
 
     /**
@@ -96,34 +102,47 @@ public class PsmPTMMap implements Serializable {
      * @param spectrumMatch the spectrum match of interest
      */
     public void addPoint(String modification, double probabilityScore, SpectrumMatch spectrumMatch) {
-        if (!psmMaps.containsKey(modification)) {
-            psmMaps.put(modification, new HashMap<Integer, TargetDecoyMap>());
-            grouping.put(modification, new HashMap<Integer, Integer>());
+        PTM ptm = ptmFactory.getPTM(modification);
+        double ptmMass = ptm.getMass();
+        if (!psmMaps.containsKey(ptmMass)) {
+            psmMaps.put(ptmMass, new HashMap<Integer, TargetDecoyMap>());
+            grouping.put(ptmMass, new HashMap<Integer, Integer>());
         }
         int key = getKey(spectrumMatch);
-        if (!psmMaps.get(modification).containsKey(key)) {
-            psmMaps.get(modification).put(key, new TargetDecoyMap());
+        if (!psmMaps.get(ptmMass).containsKey(key)) {
+            psmMaps.get(ptmMass).put(key, new TargetDecoyMap());
         }
         PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-        PtmScoring ptmScoring = ptmScores.getPtmScoring(modification);
-        psmMaps.get(modification).get(key).put(probabilityScore, false);
-        if (ptmScoring.isConflict()) {
-            psmMaps.get(modification).get(key).put(probabilityScore, ptmScoring.isConflict());
+        boolean conflict = false;
+        for (String modification2 : ptmScores.getScoredPTMs()) {
+            PTM ptm2 = ptmFactory.getPTM(modification2);
+            if (ptm2.getMass() == ptmMass) {
+                PtmScoring ptmScoring = ptmScores.getPtmScoring(modification2);
+                if (ptmScoring.isConflict()) {
+                    conflict = true;
+                    break;
+                }
+            }
+        }
+        
+        psmMaps.get(ptmMass).get(key).put(probabilityScore, false);
+        if (conflict) {
+            psmMaps.get(ptmMass).get(key).put(probabilityScore, true);
         }
     }
 
     /**
      * Returns a map of keys from maps presenting a suspicious input.
-     * modification -> charge.
+     * modification mass -> charge.
      *
      * @return a list of keys from maps presenting a suspicious input
      */
-    public HashMap<String, String> suspiciousInput() {
-        HashMap<String, String> result = new HashMap<String, String>();
-        for (String modification : psmMaps.keySet()) {
-            for (Integer key : psmMaps.get(modification).keySet()) {
-                if (psmMaps.get(modification).get(key).suspiciousInput() && !grouping.get(modification).containsKey(key)) {
-                    result.put(modification, getGroupKey(modification, key));
+    public HashMap<Double, String> suspiciousInput() {
+        HashMap<Double, String> result = new HashMap<Double, String>();
+        for (double ptmMass : psmMaps.keySet()) {
+            for (Integer key : psmMaps.get(ptmMass).keySet()) {
+                if (psmMaps.get(ptmMass).get(key).suspiciousInput() && !grouping.get(ptmMass).containsKey(key)) {
+                    result.put(ptmMass, getGroupKey(ptmMass, key));
                 }
             }
         }
@@ -135,26 +154,26 @@ public class PsmPTMMap implements Serializable {
      * having a charge directly smaller.
      */
     public void cure() {
-        for (String modification : psmMaps.keySet()) {
-            ArrayList<Integer> charges = new ArrayList(psmMaps.get(modification).keySet());
+        for (double ptmMass : psmMaps.keySet()) {
+            ArrayList<Integer> charges = new ArrayList(psmMaps.get(ptmMass).keySet());
             Collections.sort(charges);
             int ref = 0;
             for (int charge : charges) {
-                if (psmMaps.get(modification).get(charge).getnMax() >= 100 && psmMaps.get(modification).get(charge).getnTargetOnly() >= 100) {
+                if (psmMaps.get(ptmMass).get(charge).getnMax() >= 100 && psmMaps.get(ptmMass).get(charge).getnTargetOnly() >= 100) {
                     ref = charge;
                 } else if (ref == 0) {
                     ref = charge;
                 } else {
-                    if (!grouping.containsKey(modification)) {
-                        grouping.put(modification, new HashMap<Integer, Integer>());
+                    if (!grouping.containsKey(ptmMass)) {
+                        grouping.put(ptmMass, new HashMap<Integer, Integer>());
                     }
-                    grouping.get(modification).put(charge, ref);
+                    grouping.get(ptmMass).put(charge, ref);
                 }
             }
-            if (grouping.containsKey(modification)) {
-                for (int charge : grouping.get(modification).keySet()) {
-                    ref = grouping.get(modification).get(charge);
-                    psmMaps.get(modification).get(ref).addAll(psmMaps.get(modification).get(charge));
+            if (grouping.containsKey(ptmMass)) {
+                for (int charge : grouping.get(ptmMass).keySet()) {
+                    ref = grouping.get(ptmMass).get(charge);
+                    psmMaps.get(ptmMass).get(ref).addAll(psmMaps.get(ptmMass).get(charge));
                 }
             }
         }
@@ -164,14 +183,14 @@ public class PsmPTMMap implements Serializable {
      * Returns a map of the keys: charge -> group name for the given
      * modification.
      *
-     * @param modification the modification of interest
+     * @param ptmMass the modification mass of interest
      * @return a map of the keys: charge -> group name
      */
-    public HashMap<Integer, String> getKeys(String modification) {
+    public HashMap<Integer, String> getKeys(Double ptmMass) {
         HashMap<Integer, String> result = new HashMap<Integer, String>();
-        for (int key : psmMaps.get(modification).keySet()) {
-            if (!grouping.get(modification).containsKey(key)) {
-                result.put(key, getGroupKey(modification, key));
+        for (int key : psmMaps.get(ptmMass).keySet()) {
+            if (!grouping.get(ptmMass).containsKey(key)) {
+                result.put(key, getGroupKey(ptmMass, key));
             }
         }
         return result;
@@ -181,14 +200,14 @@ public class PsmPTMMap implements Serializable {
      * Return a key of the selected charge group indexed by the main charge for
      * the given modification.
      *
-     * @param modification the modification of interest
+     * @param ptmMass the modification mass of interest
      * @param mainCharge the selected charge
      * @return key of the corresponding charge group
      */
-    private String getGroupKey(String modification, Integer mainCharge) {
+    private String getGroupKey(Double ptmMass, Integer mainCharge) {
         String tempKey = mainCharge + "";
-        for (int mergedKey : grouping.get(modification).keySet()) {
-            if (grouping.get(modification).get(mergedKey) == mainCharge) {
+        for (int mergedKey : grouping.get(ptmMass).keySet()) {
+            if (grouping.get(ptmMass).get(mergedKey) == mainCharge) {
                 tempKey += ", " + mergedKey;
             }
         }
@@ -199,16 +218,16 @@ public class PsmPTMMap implements Serializable {
      * Returns the key (here the charge) associated to the corresponding
      * spectrum match after curation for the given modification.
      *
-     * @param modification the modification of interest
+     * @param ptmMass the modification mass of interest
      * @param specificKey the spectrum match of interest
      * @return the corresponding key
      */
-    public Integer getCorrectedKey(String modification, int specificKey) {
-        if (!grouping.containsKey(modification)) {
-            throw new IllegalArgumentException(modification + " not present in the PSM PTM grouping mapping keys.");
+    public Integer getCorrectedKey(Double ptmMass, int specificKey) {
+        if (!grouping.containsKey(ptmMass)) {
+            throw new IllegalArgumentException(ptmMass + " not present in the PSM PTM grouping mapping keys.");
         }
-        if (grouping.get(modification).containsKey(specificKey)) {
-            return grouping.get(modification).get(specificKey);
+        if (grouping.get(ptmMass).containsKey(specificKey)) {
+            return grouping.get(ptmMass).get(specificKey);
         }
         return specificKey;
     }
@@ -217,18 +236,18 @@ public class PsmPTMMap implements Serializable {
      * Returns the key (here the charge) associated to the corresponding
      * spectrum match after curation.
      *
-     * @param modification the modification of interest
+     * @param ptmMass the modification mass of interest
      * @param specificKey the spectrum match of interest
      * @return the corresponding key
      */
-    public Integer getCorrectedKey(String modification, String specificKey) {
+    public Integer getCorrectedKey(Double ptmMass, String specificKey) {
         Integer keeyAsInteger;
         try {
             keeyAsInteger = new Integer(specificKey);
         } catch (Exception e) {
             throw new IllegalArgumentException("PSM maps are indexed by charge. Input: " + specificKey);
         }
-        return getCorrectedKey(modification, keeyAsInteger);
+        return getCorrectedKey(ptmMass, keeyAsInteger);
     }
 
     /**
@@ -250,12 +269,12 @@ public class PsmPTMMap implements Serializable {
      * Returns the desired target decoy map. Here a decoy indicates a PSM
      * localization conflict.
      *
-     * @param modification the name of the modification
+     * @param ptmMass the modification mass of interest
      * @param key the key of the desired map
      * @return the corresponding target decoy map
      */
-    public TargetDecoyMap getTargetDecoyMap(String modification, int key) {
-        return psmMaps.get(modification).get(key);
+    public TargetDecoyMap getTargetDecoyMap(Double ptmMass, int key) {
+        return psmMaps.get(ptmMass).get(key);
     }
 
     /**
@@ -265,8 +284,8 @@ public class PsmPTMMap implements Serializable {
      */
     public int getMapsSize() {
         int result = 0;
-        for (String modification : psmMaps.keySet()) {
-            for (TargetDecoyMap targetDecoyMap : psmMaps.get(modification).values()) {
+        for (Double ptmMass : psmMaps.keySet()) {
+            for (TargetDecoyMap targetDecoyMap : psmMaps.get(ptmMass).values()) {
                 result += targetDecoyMap.getMapSize();
             }
         }
@@ -278,7 +297,7 @@ public class PsmPTMMap implements Serializable {
      *
      * @return a list of all modifications loaded in the map
      */
-    public ArrayList<String> getModificationsScored() {
-        return new ArrayList<String>(psmMaps.keySet());
+    public ArrayList<Double> getModificationsScored() {
+        return new ArrayList<Double>(psmMaps.keySet());
     }
 }

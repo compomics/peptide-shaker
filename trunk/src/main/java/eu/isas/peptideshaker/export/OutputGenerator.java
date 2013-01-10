@@ -1768,7 +1768,7 @@ public class OutputGenerator {
                                 String aLocalizations = "";
                                 String dScore = "";
                                 String aScore = "";
-                                String conflict = "";
+                                int conflict = 0;
                                 String[] split = sequence.split("[STY]");
                                 int nSites = split.length - 1;
                                 for (String mod : modList) {
@@ -1778,9 +1778,7 @@ public class OutputGenerator {
                                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                                                 PtmScoring ptmScoring = ptmScores.getPtmScoring(mod);
                                                 if (ptmScoring.isConflict()) {
-                                                    conflict += 1;
-                                                } else {
-                                                    conflict += 0;
+                                                    conflict = 1;
                                                 }
                                                 String location = ptmScoring.getBestAScoreLocations();
                                                 if (location != null) {
