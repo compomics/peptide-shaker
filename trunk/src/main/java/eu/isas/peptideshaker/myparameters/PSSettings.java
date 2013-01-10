@@ -19,7 +19,9 @@ public class PSSettings implements UrParameter {
      */
     static final long serialVersionUID = -3531908843597367812L;
     /**
-     * The search parameters (versions < 0.19) still present for backward compatibility
+     * The search parameters (versions older than 0.19) still present for
+     * backward compatibility.
+     *
      * @deprecated use utilitiesSearchParamters
      */
     private eu.isas.peptideshaker.preferences.SearchParameters searchParameters;
@@ -223,7 +225,7 @@ public class PSSettings implements UrParameter {
             ptmScoringPreferences.setFlrThreshold(1);
             ptmScoringPreferences.setaScoreNeutralLosses(true);
             try {
-            ptmScoringPreferences.setaScoreCalculation(processingPreferences.isAScoreCalculated());
+                ptmScoringPreferences.setaScoreCalculation(processingPreferences.isAScoreCalculated());
             } catch (Exception e) {
                 ptmScoringPreferences.setaScoreCalculation(true);
             }
