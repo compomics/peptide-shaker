@@ -5498,7 +5498,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                                 || (endIndex <= peptideEnd && peptideEnd <= endIndex))
                                 && psParameter.isValidated()
                                 && !psParameter.isHidden()) {
-                            String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, false, false, true);
+                            String modifiedSequence = peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, false, true);
                             annotations.add(new ResidueAnnotation(peptideStart + " - " + modifiedSequence + " - " + peptideEnd, peptideKey, true));
                         }
                     }
