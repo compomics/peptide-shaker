@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -3167,7 +3166,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
         String tempSequence = proteinSequence;
-        PTMFactory pmtFactory = PTMFactory.getInstance();
 
         while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !progressDialog.isRunCanceled()) {
 
@@ -3186,9 +3184,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         // remove old labels
         jmolPanel.getViewer().evalString("select all; label off");
 
+        DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
         // annotate the modified covered residues
         for (int i = 0; i < peptideTable.getRowCount() && !progressDialog.isRunCanceled(); i++) {
+
             peptideKey = peptideTableMap.get(getPeptideIndex(i));
             peptideSequence = Peptide.getSequence(peptideKey);
             tempSequence = proteinSequence;
@@ -3199,23 +3199,20 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
-            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
 
             while (tempSequence.lastIndexOf(peptideSequence) >= 0 && !progressDialog.isRunCanceled()) {
 
                 int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
-
-                int peptideIndex = 0;
+                int peptideIndex = 1;
 
                 for (int j = peptideTempStart; j < peptideTempEnd && !progressDialog.isRunCanceled(); j++) {
                     for (ModificationMatch modMatch : modifications) {
                         String modName = modMatch.getTheoreticPtm();
                         if (displayPreferences.isDisplayedPTM(modName)) {
-                            if (modMatch.getModificationSite() == (peptideIndex + 1)) {
+                            if (modMatch.getModificationSite() == peptideIndex) {
 
-                                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(
-                                        modName);
+                                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modName);
 
                                 jmolPanel.getViewer().evalString(
                                         "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
