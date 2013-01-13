@@ -2486,7 +2486,8 @@ public class GOEAPanel extends javax.swing.JPanel {
      * QuickGO.
      *
      * @param goAccession
-     * @return
+     * @return the GO accession number as a web link to the given GO term at
+     * QuickGO
      */
     private String addGoLink(String goAccession) {
         return "<html><a href=\"" + getGoAccessionLink(goAccession)
