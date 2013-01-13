@@ -21,6 +21,7 @@ import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -467,7 +468,8 @@ public class FileImporter {
             identification.setIsDB(true);
 
             try {
-                identification.establishConnection(PeptideShaker.SERIALIZATION_DIRECTORY, true, peptideShaker.getCache());
+                String dbFolder = new File(new PeptideShakerGUI().getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
+                identification.establishConnection(dbFolder, true, peptideShaker.getCache());
             } catch (SQLException e) {
                 e.printStackTrace();
                 waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.", true, true);

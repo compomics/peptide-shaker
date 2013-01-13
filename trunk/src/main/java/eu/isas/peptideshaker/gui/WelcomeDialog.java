@@ -1,12 +1,10 @@
 package eu.isas.peptideshaker.gui;
 
-import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import com.compomics.software.ToolFactory;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import java.io.File;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 /**
  * A simple welcome dialog with the option to open an existing project or create
@@ -33,12 +31,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param modal modal or not modal
      */
     public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
-        super(peptideShakerGUI, modal);
+        super(new DummyFrame(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
         openDialog = new NewDialog(peptideShakerGUI, false);
-        setLocationRelativeTo(peptideShakerGUI);
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -78,9 +76,14 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Welcome to PeptideShaker");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -325,6 +328,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void newJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJButtonActionPerformed
         this.setVisible(false);
+        openDialog.setModal(true);
         openDialog.setVisible(true);
         this.dispose(); // @TODO: the waiting dialog should be reopened if the user cancels the open project dialog
     }//GEN-LAST:event_newJButtonActionPerformed
@@ -335,24 +339,22 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
-        this.setVisible(false);
 
         // @TODO: the default folder should be the example dataset folder!!
-        
+
         File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
 
         if (newFile != null) {
             if (!newFile.getName().toLowerCase().endsWith("cps")) {
-                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
-                        "Wrong File.", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).", "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
-
-                this.setVisible(false);
+                setVisible(false);
+                peptideShakerGUI.setVisible(true);
                 peptideShakerGUI.importPeptideShakerFile(newFile);
                 peptideShakerGUI.getUserPreferences().addRecentProject(newFile);
                 peptideShakerGUI.updateRecentProjectsList();
                 peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
-                this.dispose();
+                dispose();
             }
         }
     }//GEN-LAST:event_openJButtonActionPerformed
@@ -453,10 +455,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         // @TODO: the default searchgui folder has to be set
 
+        this.setVisible(false);
+        peptideShakerGUI.setVisible(false);
+
         new Thread(new Runnable() {
-            public void run() { 
+
+            public void run() {
                 try {
                     ToolFactory.startSearchGUI(peptideShakerGUI, null, null, null);
+                    peptideShakerGUI.close();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -520,11 +527,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-       JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
 //        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 //        dispose();
 //        new PrideReshakeGui(peptideShakerGUI, true);
 //        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+//        peptideShakerGUI.close();
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**
@@ -538,17 +546,28 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
     /**
      * Open the example dataset.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void openExampleDatasetJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openExampleDatasetJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        JOptionPane.showMessageDialog(this, "Example data set not yet selected.", "Example Dataset", JOptionPane.INFORMATION_MESSAGE);
-        //dispose();
-        //peptideShakerGUI.importPeptideShakerFile(new File(peptideShakerGUI.getJarFilePath() + "/resources/example_dataset/wt_course_old_test_dataset.cps")); // @TODO: replace and rename test dataset!
+        //JOptionPane.showMessageDialog(this, "Example data set not yet selected.", "Example Dataset", JOptionPane.INFORMATION_MESSAGE);
+        setVisible(false);
+        peptideShakerGUI.setVisible(true);
+        dispose();
+        peptideShakerGUI.importPeptideShakerFile(new File(peptideShakerGUI.getJarFilePath() + "/resources/example_dataset/peptideshaker_HeLa-phospho-enriched_example.cps"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openExampleDatasetJButtonActionPerformed
 
+    /**
+     * The dialog is closing. Close the main PeptideShaker frame.
+     *
+     * @param evt
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        setVisible(false);
+        peptideShakerGUI.close();
+    }//GEN-LAST:event_formWindowClosing
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton compomicsButton;
@@ -564,4 +583,16 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private javax.swing.JButton reshakeJButton;
     private javax.swing.JButton searchJButton;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Make sure that the dummy frame is hidden when the dialog is not visible.
+     * 
+     * @param visible 
+     */
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (!visible) {
+            ((DummyFrame) getParent()).dispose();
+        }
+    }
 }

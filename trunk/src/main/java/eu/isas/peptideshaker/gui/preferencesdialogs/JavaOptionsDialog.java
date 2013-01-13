@@ -203,6 +203,7 @@ public class JavaOptionsDialog extends javax.swing.JDialog {
             int newValue = new Integer(memoryTxt.getText().trim());
             if (newValue != peptideShakerGUI.getUtilitiesUserPreferences().getMemoryPreference()) {
                 peptideShakerGUI.getUtilitiesUserPreferences().setMemoryPreference(newValue);
+                peptideShakerGUI.saveUserPreferences();
                 int outcome = JOptionPane.showConfirmDialog(this, "PeptideShaker needs to restart in order to take the new settings into account. Restart now?",
                         "Restart Requested", JOptionPane.OK_CANCEL_OPTION);
                 if (outcome == JOptionPane.OK_OPTION) {
