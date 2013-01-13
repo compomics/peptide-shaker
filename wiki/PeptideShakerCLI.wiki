@@ -86,10 +86,10 @@ java -Xmx2048M -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShak
 
 ==Open a PeptideShaker Project==
 
-To open a PeptideShaker project (a cps file) from the command line use the following command (with the above memory parameters if needed):
+To open a PeptideShaker project (a cps file) from the command line use the following command:
 
 {{{
-java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLIOpenProject "C:\my folder\myCpsFile.cps"
+java -jar PeptideShaker-X.Y.Z.jar -cps "C:\my folder\myCpsFile.cps"
 }}}
 
 ==Help=
