@@ -619,6 +619,7 @@ public class NewDialog extends javax.swing.JDialog {
         if (validateUserInput()) {
 
             this.setVisible(false);
+            peptideShakerGUI.setVisible(true); // @TODO: perhaps not make the ps main frame visible until the waiting dialog is closed? (but then the waiting dialog needs a dummy parent)
             peptideShakerGUI.clearData(true);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
@@ -1317,7 +1318,7 @@ public class NewDialog extends javax.swing.JDialog {
                 // We need the user mods file, try to see if it is along the search parameters or use the PeptideShaker version
                 File userMods = new File(file.getParent(), "usermods.xml");
                 if (!userMods.exists()) {
-                    userMods = new File(PeptideShaker.USER_MODIFICATIONS_FILE);
+                    userMods = new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
                 }
                 searchParameters = IdentificationParametersReader.getSearchParameters(props, userMods);
 
