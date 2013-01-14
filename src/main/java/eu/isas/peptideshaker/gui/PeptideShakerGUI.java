@@ -4,6 +4,8 @@ import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.software.ToolFactory;
+import com.compomics.software.dialogs.JavaOptionsDialog;
+import com.compomics.software.dialogs.JavaOptionsDialogParent;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.software.dialogs.ReporterSetupDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -100,7 +102,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent {
+public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent {
 
     /**
      * The current PeptideShaker cps file.
@@ -479,6 +481,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         newsButton.setVisible(false);
 
         quantifyMenuItem.setVisible(false); // @TODO: re-enable later!!
+        reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later!!
 
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
@@ -2702,7 +2705,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void javaOptionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaOptionsJMenuItemActionPerformed
-        new JavaOptionsDialog(this);
+        new JavaOptionsDialog(this, this, null, "PeptideShaker");
     }//GEN-LAST:event_javaOptionsJMenuItemActionPerformed
 
     /**
@@ -2715,7 +2718,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
     /**
-     * Open the spectrum colors dialg.
+     * Open the spectrum colors dialog.
      *
      * @param evt
      */
@@ -3218,7 +3221,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     /**
      * Loads the user preferences.
      */
-    private void loadUserPreferences() {
+    public void loadUserPreferences() {
 
         try {
             utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
