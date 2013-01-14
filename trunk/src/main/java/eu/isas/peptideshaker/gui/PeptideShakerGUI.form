@@ -450,15 +450,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newJMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="startSearchGuiMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="New Search..."/>
-                <Property name="toolTipText" type="java.lang.String" value="Start a new SearchGUI protein identification search"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startSearchGuiMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator18">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="openJMenuItem">

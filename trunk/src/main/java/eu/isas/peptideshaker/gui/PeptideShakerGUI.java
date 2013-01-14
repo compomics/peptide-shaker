@@ -691,7 +691,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
-        startSearchGuiMenuItem = new javax.swing.JMenuItem();
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
@@ -1241,15 +1240,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         fileJMenu.add(newJMenuItem);
-
-        startSearchGuiMenuItem.setText("New Search...");
-        startSearchGuiMenuItem.setToolTipText("Start a new SearchGUI protein identification search");
-        startSearchGuiMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startSearchGuiMenuItemActionPerformed(evt);
-            }
-        });
-        fileJMenu.add(startSearchGuiMenuItem);
         fileJMenu.add(jSeparator18);
 
         openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
@@ -2769,26 +2759,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_searchGuiPreferencesJMenuItemActionPerformed
 
     /**
-     * Open SearchGUI.
-     *
-     * @param evt
-     */
-    private void startSearchGuiMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSearchGuiMenuItemActionPerformed
-
-        final PeptideShakerGUI finalRef = this;
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    ToolFactory.startSearchGUI(finalRef);
-                } catch (Exception e) {
-                    catchException(e);
-                }
-            }
-        }, "StartSearchGUI").start();
-    }//GEN-LAST:event_startSearchGuiMenuItemActionPerformed
-
-    /**
      * Open the Getting Started tutorial.
      *
      * @param evt
@@ -3188,7 +3158,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenu splitterMenu8;
     private javax.swing.JMenu splitterMenu9;
     private javax.swing.JMenuItem starHideJMenuItem;
-    private javax.swing.JMenuItem startSearchGuiMenuItem;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JMenu viewJMenu;
@@ -5527,8 +5496,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         annotationPreferences.useAutomaticAnnotation(true);
                     }
 
-                    int cpt = 1,
-                            nfiles = identification.getSpectrumFiles().size();
+                    int cpt = 1, nfiles = identification.getSpectrumFiles().size();
                     progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMaxProgressValue(nfiles + 1);

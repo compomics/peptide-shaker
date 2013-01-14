@@ -27,6 +27,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
+import java.awt.Point;
 import java.awt.Toolkit;
 import org.apache.commons.cli.*;
 
@@ -89,11 +90,14 @@ public class PeptideShakerCLI implements Callable {
                 // ignore, use default look and feel
             }
 
-            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + new PeptideShakerGUI().getVersion()),
+            PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
+            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + peptideShakerGUI.getVersion()),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    false, null, "Importing Data", "PeptideShaker", new PeptideShakerGUI().getVersion(), true); // @TODO: add tips
-            ((WaitingDialog) waitingHandler).setLocationRelativeTo(null); // should not be directly on top of the SearchGUI waiting dialog!!!
+                    false, peptideShakerGUI.getTips(), "Importing Data", "PeptideShaker", peptideShakerGUI.getVersion(), true);
+            ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
+            Point tempLocation = ((WaitingDialog) waitingHandler).getLocation();
+            ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
 
             new Thread(new Runnable() {
 
@@ -178,7 +182,7 @@ public class PeptideShakerCLI implements Callable {
         waitingHandler.setWaitingText("Saving Data. Please Wait...");
         if (waitingHandler instanceof WaitingDialog) {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString(null);
-            // @TODO: add "set run not finished", i.e., orange watiting icon and cancel button etc
+            // @TODO: add "set run not finished", i.e., orange watiting icon and cancel button etc...
         }
 
         // Save results
@@ -220,8 +224,8 @@ public class PeptideShakerCLI implements Callable {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
         }
 
-        System.exit(0); // @TODO: find other ways of cancelling the process... if not cancelled searchgui will not stop
-                   // note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!
+        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+                   // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!
 
         return null;
     }
@@ -256,7 +260,7 @@ public class PeptideShakerCLI implements Callable {
      */
     private void loadEnzymes() {
         try {
-            File lEnzymeFile = new File(new PeptideShakerGUI().getJarFilePath() + PeptideShaker.ENZYME_FILE);
+            File lEnzymeFile = new File(new PeptideShakerGUI().getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
