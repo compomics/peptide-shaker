@@ -9,7 +9,6 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
@@ -735,7 +734,6 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.setMultiSelectionEnabled(false);
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("fasta")
@@ -779,10 +777,10 @@ public class NewDialog extends javax.swing.JDialog {
 }//GEN-LAST:event_clearSpectraActionPerformed
 
     /**
-     * Open a file selection dialog where the user can select the spectrum 
-     * files to use.
-     * 
-     * @param evt 
+     * Open a file selection dialog where the user can select the spectrum files
+     * to use.
+     *
+     * @param evt
      */
     private void browseSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSpectraActionPerformed
 
@@ -794,7 +792,6 @@ public class NewDialog extends javax.swing.JDialog {
         fileChooser.setMultiSelectionEnabled(true);
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("mgf")
@@ -845,7 +842,6 @@ public class NewDialog extends javax.swing.JDialog {
         ArrayList<File> folders = new ArrayList<File>();
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
 
@@ -1044,6 +1040,10 @@ public class NewDialog extends javax.swing.JDialog {
 
         this.setVisible(false);
         this.dispose();
+
+        if (!peptideShakerGUI.isVisible()) {
+            new WelcomeDialog(peptideShakerGUI, true);
+        }
     }//GEN-LAST:event_formWindowClosing
 
     /**
@@ -1424,7 +1424,6 @@ public class NewDialog extends javax.swing.JDialog {
 
             // handle link events 
             ep.addHyperlinkListener(new HyperlinkListener() {
-
                 @Override
                 public void hyperlinkUpdate(HyperlinkEvent e) {
                     if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
@@ -1468,8 +1467,8 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * Imports the mgf files from a searchGUI file.
      *
-     * @param searchGUIFile a searchGUI file @returns true of the mgf files were
-     * imported successfully
+     * @param searchGUIFile a searchGUI file
+     * @returns true of the mgf files were imported successfully
      */
     private boolean importMgfFiles(File searchGUIFile) {
 
@@ -1554,7 +1553,6 @@ public class NewDialog extends javax.swing.JDialog {
         final File fastaFile = file;
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -1565,7 +1563,6 @@ public class NewDialog extends javax.swing.JDialog {
         }, "ProgressDialog").start();
 
         new Thread("DisplayThread") {
-
             @Override
             public void run() {
 
@@ -1636,7 +1633,6 @@ public class NewDialog extends javax.swing.JDialog {
 
         // handle link events 
         ep.addHyperlinkListener(new HyperlinkListener() {
-
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {

@@ -330,7 +330,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         this.setVisible(false);
         openDialog.setModal(true);
         openDialog.setVisible(true);
-        this.dispose(); // @TODO: the waiting dialog should be reopened if the user cancels the open project dialog
+        this.dispose();
     }//GEN-LAST:event_newJButtonActionPerformed
 
     /**
@@ -340,7 +340,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
 
-        // @TODO: the default folder should be the example dataset folder!!
+        // @TODO: the default folder should be the example dataset folder!!!
 
         File newFile = peptideShakerGUI.getUserSelectedFile(".cps", "Supported formats: PeptideShaker (.cps)", "Open PeptideShaker Project", true);
 
@@ -453,7 +453,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void searchJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchJButtonActionPerformed
 
-        // @TODO: the default searchgui folder has to be set
+        // @TODO: the default searchgui folder has to be set!
 
         this.setVisible(false);
         peptideShakerGUI.setVisible(false);
