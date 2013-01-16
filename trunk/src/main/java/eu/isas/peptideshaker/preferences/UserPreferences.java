@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class UserPreferences implements Serializable {
 
     /**
-     * The serial number for serialization compatibilty.
+     * The serial number for serialization compatibility.
      */
     static final long serialVersionUID = 3298905131097982664L;
     /**
@@ -224,6 +224,9 @@ public class UserPreferences implements Serializable {
      * @param recentProject the recent project to remove
      */
     public void removerRecentProject(String recentProject) {
+        
+        // @TODO: the typo in the method name should be fixed, but results in backwards compatibility issues...
+        
         recentProjects.remove(recentProject);
     }
 
