@@ -25,6 +25,7 @@ import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import java.awt.Point;
@@ -62,6 +63,10 @@ public class PeptideShakerCLI implements Callable {
      * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    /**
+     * The user preferences.
+     */
+    private UserPreferences userPreferences;
 
     /**
      * Construct a new PeptideShakerCLI runnable from a PeptideShakerCLI Bean.
@@ -100,7 +105,6 @@ public class PeptideShakerCLI implements Callable {
             ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         ((WaitingDialog) waitingHandler).setVisible(true);
@@ -179,10 +183,13 @@ public class PeptideShakerCLI implements Callable {
         IdentificationFeaturesGenerator identificationFeaturesGenerator =
                 new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
+        projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
+
         waitingHandler.setWaitingText("Saving Data. Please Wait...");
         if (waitingHandler instanceof WaitingDialog) {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString(null);
-            // @TODO: add "set run not finished", i.e., orange watiting icon and cancel button etc...
+            // @TODO: add "set run not finished", i.e., orange watiting icon and cancel button etc..
+            // @TODO: make it possible to set the "close when complete" to true (and disabled (?))
         }
 
         // Save results
@@ -195,6 +202,9 @@ public class PeptideShakerCLI implements Callable {
                     ptmScoringPreferences, objectsCache, true);
             waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
+            loadUserPreferences();
+            userPreferences.addRecentProject(ouptutFile);
+            saveUserPreferences();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,7 +235,7 @@ public class PeptideShakerCLI implements Callable {
         }
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-                   // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!
+        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
         return null;
     }
@@ -458,5 +468,65 @@ public class PeptideShakerCLI implements Callable {
                 + ", ptmFactory=" + ptmFactory
                 + ", enzymeFactory=" + enzymeFactory
                 + '}';
+    }
+
+    /**
+     * Loads the user preferences.
+     */
+    public void loadUserPreferences() {
+
+        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
+
+        try {
+            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
+            if (!file.exists()) {
+                userPreferences = new UserPreferences();
+                saveUserPreferences();
+            } else {
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                ObjectInputStream in = new ObjectInputStream(bis);
+                Object inObject = in.readObject();
+                fis.close();
+                bis.close();
+                in.close();
+                userPreferences = (UserPreferences) inObject;
+                checkVersionCompatibility();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks the version compatibility and makes the necessary adjustments.
+     */
+    private void checkVersionCompatibility() {
+        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
+        // should be good now
+    }
+
+    /**
+     * Saves the user preferences.
+     */
+    public void saveUserPreferences() {
+
+        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
+
+        try {
+            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdir();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(userPreferences);
+            oos.close();
+            bos.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
