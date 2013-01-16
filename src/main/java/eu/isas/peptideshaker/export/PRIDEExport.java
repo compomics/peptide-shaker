@@ -175,11 +175,11 @@ public class PRIDEExport {
     }
 
     /**
-     * Creates the PRIDE xml file.
+     * Creates the PRIDE XML file.
      *
      * @param progressDialog a dialog displaying progress to the user
      * @throws IOException exception thrown whenever a problem occurred while
-     * reading/wrinting a file
+     * reading/writing a file
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
      */
