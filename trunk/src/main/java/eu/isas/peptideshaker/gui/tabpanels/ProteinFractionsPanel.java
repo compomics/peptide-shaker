@@ -39,6 +39,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.*;
@@ -719,7 +720,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
             // set up the renderer
             BoxAndWhiskerRenderer boxPlotRenderer = new BoxAndWhiskerRenderer();
-            boxPlotRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            boxPlotRenderer.setBaseToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
             boxPlotRenderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
             boxPlotRenderer.setSeriesPaint(1, Color.RED);
             chart.getCategoryPlot().setRenderer(boxPlotRenderer);
