@@ -75,7 +75,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ArrayList<File> idFiles = new ArrayList<File>();
     /**
-     * The xml modification files found.
+     * The XML modification files found.
      */
     private ArrayList<File> modificationFiles = new ArrayList<File>();
     /**
@@ -95,7 +95,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private ProcessingPreferences processingPreferences = new ProcessingPreferences();
     /**
-     * The ptm scoring preferences.
+     * The PTM scoring preferences.
      */
     private PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
     /**
@@ -157,7 +157,7 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Set up the gui.
+     * Set up the GUI.
      */
     private void setUpGui() {
         initComponents();
@@ -1140,7 +1140,7 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Sets the search params field to the given text.
+     * Sets the search parameters field to the given text.
      *
      * @param text
      */

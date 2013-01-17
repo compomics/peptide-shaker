@@ -1096,7 +1096,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
                             + "PRIDE XML file \'"
                             + new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").getAbsolutePath() + "\' created.<br><br>"
-                            + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE."
+                            + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE.<br><br>"
+                            + "We recommend checking the file in <a href=\"http://code.google.com/p/pride-toolsuite/wiki/PRIDEInspector\">PRIDE Inspector</a> before uploading."
                             + "</body></html>");
 
                     // handle link events 

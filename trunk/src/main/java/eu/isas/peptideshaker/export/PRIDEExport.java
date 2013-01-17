@@ -65,7 +65,7 @@ public class PRIDEExport {
      */
     private String experimentProject;
     /**
-     * The references to include in the PRIDE xml file.
+     * The references to include in the PRIDE XML file.
      */
     private ReferenceGroup referenceGroup;
     /**
@@ -111,7 +111,7 @@ public class PRIDEExport {
      */
     private HashMap<String, Long> spectrumIndexes;
     /**
-     * The ptm to PRIDE map.
+     * The PTM to PRIDE map.
      */
     private PtmToPrideMap ptmToPrideMap;
     /**
@@ -259,7 +259,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Writes all psms.
+     * Writes all PSMs.
      *
      * @param progressDialog a progress dialog to display progress to the user
      * @throws IOException exception thrown whenever a problem occurred while
@@ -457,10 +457,10 @@ public class PRIDEExport {
                         String aScore = "";
 
                         if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
+
                             first = true;
 
                             for (String mod : modifications) {
-
 
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
 
@@ -469,6 +469,7 @@ public class PRIDEExport {
                                     } else {
                                         aScore += ", ";
                                     }
+
                                     ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                     aScore += mod + " (";
 
@@ -572,9 +573,11 @@ public class PRIDEExport {
                 }
                 try {
                     if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\"" 
+                                + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
                     } else {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\"" + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
+                        br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\"" 
+                                + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
                     }
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -662,7 +665,6 @@ public class PRIDEExport {
      */
     private void writeFragmentIon(IonMatch ionMatch) throws IOException {
 
-
         // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
         // @TODO: to add phospho neutral losses we need to create new CV terms!!
 
@@ -714,6 +716,14 @@ public class PRIDEExport {
             } else {
                 cvTermName = cvTerm.getName();
                 ptmMass = cvTerm.getValue();
+                
+                // two extra tests to guard against problems with the cv terms, better to have a valid ptm than no ptm at all...
+                if (cvTermName == null) {
+                    cvTermName = modName;
+                }
+                if (ptmMass == null) {
+                    ptmMass = "" + ptm.getMass();
+                }
             }
 
             br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>" + System.getProperty("line.separator"));
@@ -759,7 +769,8 @@ public class PRIDEExport {
         tabCounter++;
 
         // include the ontologies used, only MS is included by default
-        br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"MS\" fullName=\"PSI Mass Spectrometry Ontology\" version=\"1.0.0\" address=\"http://psidev.sourceforge.net/ontology\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvLookup cvLabel=\"MS\" fullName=\"PSI Mass Spectrometry Ontology\" version=\"1.0.0\" "
+                + "address=\"http://psidev.sourceforge.net/ontology\" />" + System.getProperty("line.separator"));
 
         // write the mzData description (project description, sample details, contact details, instrument details and software details)
         writeMzDataDescription();
@@ -1097,13 +1108,16 @@ public class PRIDEExport {
         tabCounter++;
 
         // XML generation software
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000175\" name=\"XML generation software\" value=\"PeptideShaker v" + peptideShakerGUI.getVersion() + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000175\" name=\"XML generation software\" "
+                + "value=\"PeptideShaker v" + peptideShakerGUI.getVersion() + "\" />" + System.getProperty("line.separator"));
 
         // Project
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" value=\"" + experimentProject + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000097\" name=\"Project\" "
+                + "value=\"" + experimentProject + "\" />" + System.getProperty("line.separator"));
 
         // Experiment description
-        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000040\" name=\"Experiment description\" value=\"" + experimentDescription + "\" />" + System.getProperty("line.separator"));
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000040\" name=\"Experiment description\" "
+                + "value=\"" + experimentDescription + "\" />" + System.getProperty("line.separator"));
 
         // Global peptide FDR
         //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001364\" name=\"pep:global FDR\" value=\"" + peptideShakerGUI. + "\" />" + System.getProperty("line.separator"));  // @TODO: add global peptide FDR?
@@ -1381,7 +1395,7 @@ public class PRIDEExport {
     }
 
     /**
-     * Convenience method writing a cv Term.
+     * Convenience method writing a CV Term.
      *
      * @param cvTerm the cvTerm
      * @throws IOException exception thrown whenever a problem occurred while
