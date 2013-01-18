@@ -600,7 +600,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private void openExampleDatasetJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openExampleDatasetJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        //JOptionPane.showMessageDialog(this, "Example data set not yet selected.", "Example Dataset", JOptionPane.INFORMATION_MESSAGE);
         setVisible(false);
         peptideShakerGUI.setVisible(true);
         dispose();

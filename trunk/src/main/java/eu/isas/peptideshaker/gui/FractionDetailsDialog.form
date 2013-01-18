@@ -97,7 +97,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="fractionJScrollPane" pref="656" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jPanel1" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="importFractionRangesButton" alignment="1" min="-2" pref="36" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -109,7 +112,8 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="importFractionRangesButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="fractionJScrollPane" pref="389" max="32767" attributes="0"/>
                       </Group>
@@ -129,10 +133,11 @@
                 <Component class="javax.swing.JTable" name="fractionTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="3" rowCount="0">
+                      <Table columnCount="4" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Fraction" type="java.lang.String"/>
-                        <Column editable="true" title="MW" type="java.lang.Double"/>
+                        <Column editable="true" title="Lower Range (kDa)" type="java.lang.Double"/>
+                        <Column editable="true" title="Upper Range (kDa)" type="java.lang.Double"/>
                       </Table>
                     </Property>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
@@ -262,6 +267,17 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JButton" name="importFractionRangesButton">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/list2.gif"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Import fraction ranges from file"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importFractionRangesButtonActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Component class="javax.swing.JButton" name="okButton">
