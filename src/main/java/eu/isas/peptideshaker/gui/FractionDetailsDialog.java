@@ -2,13 +2,20 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * A dialog where the order of the fractions can be decided.
@@ -59,20 +66,23 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
         spectrumFileNameMap = new HashMap<String, String>();
 
-        HashMap<String,Double> expectedMolecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
+        HashMap<String, XYDataPoint> expectedMolecularWeightRanges = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
 
         for (int i = 0; i < spectrumFiles.size(); i++) {
 
-            Double expectedMw = 0.0;
+            Double lower = 0.0;
+            Double upper = 0.0;
 
-            if (expectedMolecularWeights != null && expectedMolecularWeights.containsKey(spectrumFiles.get(i))) {
-                expectedMw = expectedMolecularWeights.get(spectrumFiles.get(i));
+            if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.containsKey(spectrumFiles.get(i))) {
+                lower = expectedMolecularWeightRanges.get(spectrumFiles.get(i)).getX();
+                upper = expectedMolecularWeightRanges.get(spectrumFiles.get(i)).getY();
             }
 
             ((DefaultTableModel) fractionTable.getModel()).addRow(new Object[]{
                         (i + 1),
                         Util.getFileName(spectrumFiles.get(i)),
-                        expectedMw
+                        lower,
+                        upper
                     });
 
             spectrumFileNameMap.put(Util.getFileName(spectrumFiles.get(i)), spectrumFiles.get(i));
@@ -98,14 +108,17 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         tableToolTips = new ArrayList<String>();
         tableToolTips.add(null);
         tableToolTips.add("Fraction File");
-        tableToolTips.add("Expected Molecular Weight");
+        tableToolTips.add("Expected Lower Molecular Weight For Fraction (kDa)");
+        tableToolTips.add("Expected Upper Molecular Weight For Fraction (kDa)");
 
         // the index column
         fractionTable.getColumn(" ").setMaxWidth(50);
         fractionTable.getColumn(" ").setMinWidth(50);
 
-        fractionTable.getColumn("MW").setMaxWidth(150);
-        fractionTable.getColumn("MW").setMinWidth(150);
+        fractionTable.getColumn("Lower Range (kDa)").setMaxWidth(120);
+        fractionTable.getColumn("Lower Range (kDa)").setMinWidth(120);
+        fractionTable.getColumn("Upper Range (kDa)").setMaxWidth(120);
+        fractionTable.getColumn("Upper Range (kDa)").setMinWidth(120);
     }
 
     /**
@@ -138,6 +151,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         moveTopButton = new javax.swing.JButton();
         moveDownButton = new javax.swing.JButton();
         moveBottomButton = new javax.swing.JButton();
+        importFractionRangesButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -157,14 +171,14 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Fraction", "MW"
+                " ", "Fraction", "Lower Range (kDa)", "Upper Range (kDa)"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -265,6 +279,14 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        importFractionRangesButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/list2.gif"))); // NOI18N
+        importFractionRangesButton.setToolTipText("Import fraction ranges from file");
+        importFractionRangesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importFractionRangesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout fractionsPanelLayout = new javax.swing.GroupLayout(fractionsPanel);
         fractionsPanel.setLayout(fractionsPanelLayout);
         fractionsPanelLayout.setHorizontalGroup(
@@ -273,7 +295,9 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(fractionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(importFractionRangesButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         fractionsPanelLayout.setVerticalGroup(
@@ -283,7 +307,8 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fractionsPanelLayout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(importFractionRangesButton))
                     .addComponent(fractionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -454,7 +479,6 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_moveBottomButtonActionPerformed
 
-    
     /**
      * Enable/disable the move options based on which row that is selected.
      *
@@ -471,14 +495,15 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         ArrayList<String> spectrumFiles = new ArrayList<String>();
-        HashMap<String, Double> molecularWeights = new HashMap<String, Double>();
+        HashMap<String, XYDataPoint> fractionRanges = new HashMap<String, XYDataPoint>();
 
         for (int i = 0; i < fractionTable.getRowCount(); i++) {
             String filePath = spectrumFileNameMap.get((String) fractionTable.getValueAt(i, fractionTable.getColumn("Fraction").getModelIndex()));
             spectrumFiles.add(filePath);
 
-            Double mw = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("MW").getModelIndex());
-            molecularWeights.put(filePath, mw);
+            Double lower = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("Lower Range (kDa)").getModelIndex());
+            Double upper = (Double) fractionTable.getValueAt(i, fractionTable.getColumn("Upper Range (kDa)").getModelIndex());
+            fractionRanges.put(filePath, new XYDataPoint(lower, upper));
         }
 
         peptideShakerGUI.setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
@@ -488,7 +513,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         }
 
         peptideShakerGUI.getIdentification().setOrderedListOfSpectrumFileNames(spectrumFiles);
-        peptideShakerGUI.getSearchParameters().setFractionMolecularWeights(molecularWeights);
+        peptideShakerGUI.getSearchParameters().setFractionMolecularWeightRanges(fractionRanges);
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
@@ -514,6 +539,52 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_fractionTableMouseReleased
 
+    /**
+     * Import the fraction ranges from file.
+     *
+     * @param evt
+     */
+    private void importFractionRangesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFractionRangesButtonActionPerformed
+
+        // get the file to get the fraction ranges from
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Import...", true);
+
+        if (selectedFile != null) {
+
+            ArrayList<XYDataPoint> lowerAndUpper = new ArrayList<XYDataPoint>();
+
+            try {
+                FileReader r = new FileReader(selectedFile);
+                BufferedReader br = new BufferedReader(r);
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] values = line.split("\t");
+                    lowerAndUpper.add(new XYDataPoint(new Double(values[0]), new Double(values[1])));
+                    line = br.readLine();
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Could not find the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Not Found", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "An error occurred when parsing the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "One of the values in the file is not a number.\nPlease include tab separated values only.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            if (lowerAndUpper.size() > fractionTable.getRowCount()) {
+                JOptionPane.showMessageDialog(this, "There are more values in the file than there are rows in the table!\nSome rows will be ignored.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            for (int i = 0; i < lowerAndUpper.size(); i++) {
+                ((DefaultTableModel) fractionTable.getModel()).setValueAt(lowerAndUpper.get(i).getX(), i, 2);
+                ((DefaultTableModel) fractionTable.getModel()).setValueAt(lowerAndUpper.get(i).getY(), i, 3);
+            }
+        }
+    }//GEN-LAST:event_importFractionRangesButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
@@ -522,6 +593,7 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane fractionJScrollPane;
     private javax.swing.JTable fractionTable;
     private javax.swing.JPanel fractionsPanel;
+    private javax.swing.JButton importFractionRangesButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton moveBottomButton;

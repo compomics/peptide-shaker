@@ -153,7 +153,7 @@ public class FileImporter {
     }
 
     /**
-     * Imports sequences from a fasta file.
+     * Imports sequences from a FASTA file.
      *
      * @param waitingHandler the handler displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
@@ -249,13 +249,9 @@ public class FileImporter {
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         } catch (NullPointerException e) {
-
-            // @TODO: this might not the only null pointer that can oocur?
-
-            waitingHandler.appendReport("The enzyme to use was not found.\n"
-                    + "Please verify the Search Parameters given while creating the project.\n"
-                    + "If the enzyme does not appear, verify that it is implemented in peptideshaker_enzymes.xml located in the conf folder of the PeptideShaker folder.\n\n"
-                    + "If the error persists please report bug at http://peptide-shaker.googlecode.com.", true, true);
+            waitingHandler.appendReport("An error occurred when importing the sequences. "
+                    + "Please check the Search Parameters. See the log file for details. "
+                    + "If the error persists please let us know at http://peptide-shaker.googlecode.com.", true, true);
             e.printStackTrace();
             waitingHandler.setRunCanceled();
         }
@@ -488,101 +484,102 @@ public class FileImporter {
 
             importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
-            try {
+            if (!waitingHandler.isRunCanceled()) {
 
-                waitingHandler.appendReport("Reading identification files.", true, true);
+                try {
+                    waitingHandler.appendReport("Reading identification files.", true, true);
 
-                for (File idFile : idFiles) {
-                    importPsms(idFile);
-                }
+                    for (File idFile : idFiles) {
+                        importPsms(idFile);
+                    }
 
-                while (!missingMgfFiles.isEmpty()) {
-                    if (hasGUI) {
-                        new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
+                    while (!missingMgfFiles.isEmpty()) {
+                        if (hasGUI) {
+                            new MgfFilesNotFoundDialog((WaitingDialog) waitingHandler, missingMgfFiles);
+                            if (waitingHandler.isRunCanceled()) {
+                                return 1;
+                            }
+                        } else {
+                            String missingFiles = "";
+                            boolean first = true;
+                            for (File mgfFile : missingMgfFiles.keySet()) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    missingFiles += ", ";
+                                }
+                                missingFiles += mgfFile.getName();
+                            }
+                            waitingHandler.displayMessage("MGF files missing", missingFiles, 1);
+                            return 1;
+                        }
+                        waitingHandler.appendReport("Processing files with the new input.", true, true);
+                        ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
+
+                        for (String mgfName : missingMgfFiles.values()) {
+                            File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
+                            spectrumFiles.put(newFile.getName(), newFile);
+                            projectDetails.addSpectrumFile(newFile);
+                        }
+                        missingMgfFiles.clear();
+                        for (File idFile : filesToProcess) {
+                            importPsms(idFile);
+                        }
                         if (waitingHandler.isRunCanceled()) {
                             return 1;
                         }
-                    } else {
-                        String missingFiles = "";
-                        boolean first = true;
-                        for (File mgfFile : missingMgfFiles.keySet()) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                missingFiles += ", ";
-                            }
-                            missingFiles += mgfFile.getName();
-                        }
-                        waitingHandler.displayMessage("MGF files missing", missingFiles, 1);
+                    }
+
+                    // clear the objects not needed anymore
+                    sharedPeptides.clear();
+                    foundSharedPeptides.clear();
+                    singleProteinList.clear();
+
+                    if (nRetained == 0) {
+                        waitingHandler.appendReport("No identifications retained.", true, true);
+                        waitingHandler.setRunCanceled();
                         return 1;
                     }
-                    waitingHandler.appendReport("Processing files with the new input.", true, true);
-                    ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
 
-                    for (String mgfName : missingMgfFiles.values()) {
-                        File newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
-                        spectrumFiles.put(newFile.getName(), newFile);
-                        projectDetails.addSpectrumFile(newFile);
-                    }
-                    missingMgfFiles.clear();
-                    for (File idFile : filesToProcess) {
-                        importPsms(idFile);
-                    }
-                    if (waitingHandler.isRunCanceled()) {
-                        return 1;
-                    }
-                }
+                    waitingHandler.appendReport("File import completed. "
+                            + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.", true, true);
+                    waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
+                    waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
+                    peptideShaker.setProteinCountMap(proteinCount);
+                    peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
+                            idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
-                // clear the objects not needed anymore
-                sharedPeptides.clear();
-                foundSharedPeptides.clear();
-                singleProteinList.clear();
-
-                if (nRetained == 0) {
-                    waitingHandler.appendReport("No identifications retained.", true, true);
+                } catch (Exception e) {
                     waitingHandler.setRunCanceled();
-                    return 1;
+                    e.printStackTrace();
+                    if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
+                        waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
+                        waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
+                    } else {
+                        waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                        waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+                    }
+                } catch (OutOfMemoryError error) {
+                    System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
+                    Runtime.getRuntime().gc();
+                    waitingHandler.appendReportEndLine();
+                    waitingHandler.appendReport("Ran out of memory!", true, true);
+                    waitingHandler.setRunCanceled();
+                    JOptionPane.showMessageDialog(null,
+                            "The task used up all the available memory and had to be stopped.\n"
+                            + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
+                            + "More help can be found at our website http://peptide-shaker.googlecode.com.",
+                            "Out Of Memory Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    error.printStackTrace();
                 }
-
-                waitingHandler.appendReport("File import completed. "
-                        + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.", true, true);
-                waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
-                waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
-                peptideShaker.setProteinCountMap(proteinCount);
-                peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
-                        idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
-
-            } catch (Exception e) {
-
-                waitingHandler.setRunCanceled();
-                e.printStackTrace();
-                if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
-                    waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
-                    waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
-                } else {
-                    waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
-                    waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                }
-            } catch (OutOfMemoryError error) {
-                System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
-                Runtime.getRuntime().gc();
-                waitingHandler.appendReportEndLine();
-                waitingHandler.appendReport("Ran out of memory!", true, true);
-                waitingHandler.setRunCanceled();
-                JOptionPane.showMessageDialog(null,
-                        "The task used up all the available memory and had to be stopped.\n"
-                        + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
-                        + "More help can be found at our website http://peptide-shaker.googlecode.com.",
-                        "Out Of Memory Error",
-                        JOptionPane.ERROR_MESSAGE);
-                error.printStackTrace();
             }
 
             return 0;
         }
 
         /**
-         * Imports the psms from an identification file.
+         * Imports the PSMs from an identification file.
          *
          * @param idFile the identification file
          * @throws FileNotFoundException exception thrown whenever a file was
@@ -590,7 +587,7 @@ public class FileImporter {
          * @throws IOException exception thrown whenever an error occurred while
          * reading or writing a file
          * @throws SAXException exception thrown whenever an error occurred
-         * while parsing an xml file
+         * while parsing an XML file
          * @throws MzMLUnmarshallerException exception thrown whenever an error
          * occurred while reading an mzML file
          */
@@ -615,7 +612,10 @@ public class FileImporter {
             try {
                 tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while loading spectrum matches from " + Util.getFileName(idFile) + ". This file will be ignored. This is most likely due to memory issues, you can increase the memory settings in Edit -> Java Options. You will find more help on our website: http://peptide-shaker.googlecode.com.", true, true);
+                waitingHandler.appendReport("An error occurred while loading spectrum matches from " + Util.getFileName(idFile)
+                        + ". This file will be ignored. This is most likely due to memory issues, you can increase the memory "
+                        + "settings in Edit -> Java Options. You will find more help on our website: http://peptide-shaker.googlecode.com.", true, true);
+                e.printStackTrace();
             }
             fileReader.close();
             if (tempSet != null) {
