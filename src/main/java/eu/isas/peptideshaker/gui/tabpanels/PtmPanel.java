@@ -81,11 +81,11 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> relatedPeptidesTableToolTips;
     /**
-     * The selected psms table column header tooltips.
+     * The selected PSMs table column header tooltips.
      */
     private ArrayList<String> selectedPsmsTableToolTips;
     /**
-     * The related psms table column header tooltips.
+     * The related PSMs table column header tooltips.
      */
     private ArrayList<String> relatedPsmsTableToolTips;
     /**
@@ -125,7 +125,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private boolean relatedSelected = false;
     /**
-     * The current spectrum panel for the upper psm.
+     * The current spectrum panel for the upper PSM.
      */
     private SpectrumPanel spectrum;
     /**
@@ -137,12 +137,12 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private HashMap<Integer, String> proteinInferenceTooltipMap;
     /**
-     * PTM confidence tooltip map, key: ptm confidence type, element: ptm
+     * PTM confidence tooltip map, key: PTM confidence type, element: PTM
      * confidence as a string.
      */
     private HashMap<Integer, String> ptmConfidenceTooltipMap;
     /**
-     * The ptm factory
+     * The PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
 
@@ -189,7 +189,6 @@ public class PtmPanel extends javax.swing.JPanel {
         final Color endColor = Color.BLUE;
 
         JPanel deltaScoreGradientJPanel = new JPanel() {
-
             @Override
             protected void paintComponent(Graphics grphcs) {
                 Graphics2D g2d = (Graphics2D) grphcs;
@@ -213,7 +212,6 @@ public class PtmPanel extends javax.swing.JPanel {
         deltaScoreGradientPanel.add(deltaScoreGradientJPanel);
 
         JPanel aScoreGradientJPanel = new JPanel() {
-
             @Override
             protected void paintComponent(Graphics grphcs) {
                 Graphics2D g2d = (Graphics2D) grphcs;
@@ -1717,7 +1715,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * @see #peptidesTableMouseClicked(java.awt.event.MouseEvent)
+     * @see #peptidesTableMouseReleased(java.awt.event.MouseEvent)
      */
     private void peptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidesTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
@@ -1727,7 +1725,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptidesTableKeyReleased
 
     /**
-     * @see #relatedPeptidesTableMouseClicked(java.awt.event.MouseEvent)
+     * @see #relatedPeptidesTableMouseReleased(java.awt.event.MouseEvent)
      */
     private void relatedPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPeptidesTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN
@@ -1761,7 +1759,6 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSplitPane.setDividerLocation(psmSplitPane.getHeight() / 2);
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 selectedPeptidesJSplitPane.setDividerLocation(selectedPeptidesJSplitPane.getWidth() / 2);
                 updateUI();
@@ -1771,7 +1768,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -1919,7 +1915,6 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrumLayeredPane.repaint();
 
                 SwingUtilities.invokeLater(new Runnable() {
-
                     public void run() {
                         // set the sliders split pane divider location
                         if (peptideShakerGUI.getUserPreferences().showSliders()) {
@@ -1934,7 +1929,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formComponentResized
 
     /**
-     * Update the related peptides and modified peptide psms tables.
+     * Update the related peptides and modified peptide PSMs tables.
      *
      * @param evt
      */
@@ -1950,7 +1945,6 @@ public class PtmPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Getting Peptides. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -1961,7 +1955,6 @@ public class PtmPanel extends javax.swing.JPanel {
         }, "ProgressDialog").start();
 
         new Thread("DisplayThread") {
-
             public void run() {
 
                 if (finalEvt != null) {
@@ -2032,7 +2025,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
-     * Update the related peptides psm table.
+     * Update the related peptides PSM table.
      *
      * @param evt
      */
@@ -2048,7 +2041,6 @@ public class PtmPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Getting Related Peptides. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -2059,7 +2051,6 @@ public class PtmPanel extends javax.swing.JPanel {
         }).start();
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 relatedSelected = true;
@@ -2254,7 +2245,6 @@ public class PtmPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Getting Modifications. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -2265,7 +2255,6 @@ public class PtmPanel extends javax.swing.JPanel {
         }).start();
 
         new Thread(new Runnable() {
-
             @Override
             public void run() {
 
@@ -2321,7 +2310,6 @@ public class PtmPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Getting Peptides. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2332,7 +2320,6 @@ public class PtmPanel extends javax.swing.JPanel {
             }).start();
 
             new Thread("DisplayThread") {
-
                 @Override
                 public void run() {
 
@@ -2432,7 +2419,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * See if we ought to show a tooltip with modification details for the
-     * sequenence column.
+     * sequences column.
      *
      * @param evt
      */
@@ -2858,18 +2845,18 @@ public class PtmPanel extends javax.swing.JPanel {
         if (spectrumTabIndex == 0) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#AScore",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    "PeptideShaker - Help");
         } else if (spectrumTabIndex == 1) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#DeltsScore",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    "PeptideShaker - Help");
         } else if (spectrumTabIndex == 2) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum",
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    "PeptideShaker - Help");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2886,7 +2873,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsFigure();
             }
@@ -2896,7 +2882,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         menuItem = new JMenuItem("Spectrum As MGF");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsMgf();
             }
@@ -2910,7 +2895,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
             menuItem = new JMenuItem("Table to Clipboard");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     copyTableContentToFileOrClipboard(TableIndex.A_SCORES_TABLE);
                 }
@@ -2923,7 +2907,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
             menuItem = new JMenuItem("Table to Clipboard");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     copyTableContentToFileOrClipboard(TableIndex.DELTA_SCORES_TABLE);
                 }
@@ -2946,7 +2929,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyTableContentToFileOrClipboard(TableIndex.RELATED_PEPTIDES_TABLE);
             }
@@ -2958,7 +2940,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
             menuItem = new JMenuItem("Modification Profile Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
                 }
@@ -2980,7 +2961,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyTableContentToFileOrClipboard(TableIndex.MODIFIED_PEPTIDES_TABLE);
             }
@@ -2990,7 +2970,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         menuItem = new JMenuItem("Modification Profile Plot");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
             }
@@ -3017,7 +2996,6 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_spectrumTabbedPaneStateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel aScoreGradientPanel;
     private javax.swing.JLabel aScoreMaxValueJLabel;
@@ -3133,9 +3111,9 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns a list of the psms keys of the currently displayed assumptions.
+     * Returns a list of the PSM keys of the currently displayed assumptions.
      *
-     * @return a list of the psms keys of the currently displayed assumptions
+     * @return a list of the PSM keys of the currently displayed assumptions
      */
     public ArrayList<String> getDisplayedPsms() {
         ArrayList<String> result = new ArrayList<String>();
@@ -3252,7 +3230,6 @@ public class PtmPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Updating Data. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -3263,7 +3240,6 @@ public class PtmPanel extends javax.swing.JPanel {
         }).start();
 
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
 
@@ -3464,7 +3440,6 @@ public class PtmPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Updating Selection. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -3475,7 +3450,6 @@ public class PtmPanel extends javax.swing.JPanel {
         }).start();
 
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 updateSelection(progressDialog);
@@ -3503,7 +3477,7 @@ public class PtmPanel extends javax.swing.JPanel {
             try {
                 HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
                 PSParameter probabilities = new PSParameter();
-                
+
                 progressDialog.setIndeterminate(false);
                 progressDialog.setValue(0);
                 progressDialog.setMaxProgressValue(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size());
@@ -3586,11 +3560,11 @@ public class PtmPanel extends javax.swing.JPanel {
                     selectedPTM = "- " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
                 }
 
-                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Modified Peptides " 
+                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Modified Peptides "
                         + selectedPTM + "(" + peptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 selectedPeptidesJPanel.repaint();
 
-                ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides (" 
+                ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides ("
                         + relatedPeptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 relatedPeptidesPanel.repaint();
 
@@ -3703,7 +3677,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
-
                 public void run() {
                     // set the preferred size of the accession column
                     int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
@@ -3716,7 +3689,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             });
 
-            ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides (" 
+            ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Related Peptides ("
                     + relatedPeptidesTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
             relatedPeptidesPanel.repaint();
         }
@@ -3760,7 +3733,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         }
 
-        ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches - Modified Peptide (" 
+        ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches - Modified Peptide ("
                 + selectedPsmsTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         modsPsmsLayeredPanel.repaint();
     }
@@ -3842,7 +3815,7 @@ public class PtmPanel extends javax.swing.JPanel {
             e.printStackTrace();
         }
 
-        ((TitledBorder) relatedPsmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches - Related Peptide (" 
+        ((TitledBorder) relatedPsmsPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Peptide-Spectrum Matches - Related Peptide ("
                 + relatedPsmsTable.getRowCount() + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
         relatedPsmsPanel.repaint();
     }
@@ -3928,22 +3901,22 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 int forwardIon = peptideShakerGUI.getSearchParameters().getIonSearched1();
                 int rewindIon = peptideShakerGUI.getSearchParameters().getIonSearched2();
-                
+
                 // add de novo sequencing
-                spectrum.addAutomaticDeNovoSequencing(currentPeptide, annotations, 
-                                    forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(), 
-                                    annotationPreferences.showForwardIonDeNovoTags(), 
-                                    annotationPreferences.showRewindIonDeNovoTags());
+                spectrum.addAutomaticDeNovoSequencing(currentPeptide, annotations,
+                        forwardIon, rewindIon, annotationPreferences.getDeNovoCharge(),
+                        annotationPreferences.showForwardIonDeNovoTags(),
+                        annotationPreferences.showRewindIonDeNovoTags());
 
                 spectrumChartJPanel.add(spectrum);
                 peptideShakerGUI.updateAnnotationMenus(identificationCharge, currentPeptide);
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
-                        PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + 
-                        "Spectrum & Fragment Ions (" + 
-                        peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentPeptide.getKey(), false, false, true)
+                        PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING
+                        + "Spectrum & Fragment Ions ("
+                        + peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentPeptide.getKey(), false, false, true)
                         + ")"
-                         + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                        + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                 spectrumAndFragmentIonPanel.revalidate();
                 spectrumAndFragmentIonPanel.repaint();
             }
@@ -4009,7 +3982,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * Returns the key of the selected peptide
      *
      * @param relatedPeptide if true, the related peptide table is used,
-     * otherwise the selecte peptide table is used
+     * otherwise the selected peptide table is used
      * @return the key of the selected peptide
      */
     private String getSelectedPeptide(boolean relatedPeptide) {
@@ -4044,11 +4017,11 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the keys of the selected psms.
+     * Returns the keys of the selected PSMs.
      *
-     * @param relatedPeptide if true, the related psm table is used, otherwise
-     * the selecte psm table is used
-     * @return the keys of the selected psms
+     * @param relatedPeptide if true, the related PSM table is used, otherwise
+     * the selected PSM table is used
+     * @return the keys of the selected PSMs
      */
     private ArrayList<String> getSelectedPsm(boolean relatedPeptide) {
         ArrayList<String> psmKey = new ArrayList<String>();
@@ -4072,9 +4045,9 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the keys of the selected psms.
+     * Returns the keys of the selected PSMs.
      *
-     * @return the keys of the selected psms
+     * @return the keys of the selected PSMs
      */
     private ArrayList<String> getSelectedPsm() {
         return getSelectedPsm(relatedSelected);
@@ -4391,7 +4364,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Table model for the related PSMs table
+     * Table model for the related PSMs table.
      */
     private class RelatedPsmsTable extends DefaultTableModel {
 
@@ -4533,7 +4506,7 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @param peptideMatch the peptide match to create the profile for
      * @param selectedPeptideProfile if true the selected peptide profile is
-     * updated, otherwise the releated peptide profile is updated
+     * updated, otherwise the related peptide profile is updated
      */
     private void updateModificationProfile(PeptideMatch peptideMatch, boolean selectedPeptideProfile) {
 
@@ -4644,7 +4617,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Redraws the modification profiles. For example if the ptm colors are
+     * Redraws the modification profiles. For example if the PTM colors are
      * updated.
      *
      * @param progressDialog
@@ -4694,7 +4667,6 @@ public class PtmPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Copying to File/Clipboard. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -4705,7 +4677,6 @@ public class PtmPanel extends javax.swing.JPanel {
             }).start();
 
             new Thread(new Runnable() {
-
                 @Override
                 public void run() {
                     try {
@@ -4767,12 +4738,11 @@ public class PtmPanel extends javax.swing.JPanel {
      * the GUI.
      */
     public void updateSeparators() {
-        
+
         formComponentResized(null);
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 // set the sliders split pane divider location
                 if (peptideShakerGUI.getUserPreferences().showSliders()) {
@@ -4785,7 +4755,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 formComponentResized(null);
             }
         });
-        
+
         formComponentResized(null);
     }
 
@@ -4807,7 +4777,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * Provides to the PeptideShakerGUI instance the currently selected peptide
-     * and psm
+     * and PSM.
      */
     public void newItemSelection() {
         String peptideKey = getSelectedPeptide();
@@ -4822,7 +4792,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Update the psm modification profiles table.
+     * Update the PSM modification profiles table.
      *
      * @param progressDialog
      */
@@ -4833,7 +4803,6 @@ public class PtmPanel extends javax.swing.JPanel {
             progressDialog.setIndeterminate(true);
 
             psmAScoresTable.setModel(new DefaultTableModel() {
-
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
@@ -4851,7 +4820,6 @@ public class PtmPanel extends javax.swing.JPanel {
             });
 
             psmDeltaScoresTable.setModel(new DefaultTableModel() {
-
                 @Override
                 public boolean isCellEditable(int row, int column) {
                     return false;
@@ -4934,7 +4902,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Update the psm delt and a score table cell renderers.
+     * Update the PSM delta and a score table cell renderers.
      */
     private void updatePsmScoresCellRenderers() {
         for (int i = 1; i < psmAScoresTable.getColumnCount(); i++) {
