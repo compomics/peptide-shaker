@@ -100,6 +100,7 @@ public class PeptideShakerCLI implements Callable {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     false, peptideShakerGUI.getTips(), "Importing Data", "PeptideShaker", peptideShakerGUI.getVersion(), true);
+            ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(false, false);
             ((WaitingDialog) waitingHandler).setLocationRelativeTo(null);
             Point tempLocation = ((WaitingDialog) waitingHandler).getLocation();
             ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
@@ -187,9 +188,8 @@ public class PeptideShakerCLI implements Callable {
 
         waitingHandler.setWaitingText("Saving Data. Please Wait...");
         if (waitingHandler instanceof WaitingDialog) {
-            ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString(null);
-            // @TODO: add "set run not finished", i.e., orange watiting icon and cancel button etc..
-            // @TODO: make it possible to set the "close when complete" to true (and disabled (?))
+            ((WaitingDialog) waitingHandler).setRunNotFinished();
+            ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(true, false);
         }
 
         // Save results

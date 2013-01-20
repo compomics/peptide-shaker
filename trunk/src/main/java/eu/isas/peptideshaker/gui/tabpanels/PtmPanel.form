@@ -122,11 +122,11 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="373" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="377" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="ptmJScrollPane" pref="351" max="32767" attributes="0"/>
+                                  <Component id="ptmJScrollPane" pref="355" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -319,7 +319,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="selectedPeptidesJSplitPane" pref="121" max="32767" attributes="0"/>
+                                  <Component id="selectedPeptidesJSplitPane" pref="125" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -546,11 +546,11 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="203" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="207" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="relatedPeptidesJSplitPane" pref="181" max="32767" attributes="0"/>
+                                      <Component id="relatedPeptidesJSplitPane" pref="185" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -799,7 +799,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="slidersSplitPane" max="32767" attributes="0"/>
+                              <Component id="slidersSplitPane" pref="395" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -872,7 +872,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmAScoresScrollPane" pref="318" max="32767" attributes="0"/>
+                                          <Component id="psmAScoresScrollPane" pref="322" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="2" attributes="0">
                                               <Component id="aScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -967,7 +967,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="psmDeltaScrollPane" pref="318" max="32767" attributes="0"/>
+                                          <Component id="psmDeltaScrollPane" pref="322" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="2" attributes="0">
                                               <Component id="deltaScoreMinValueJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1055,7 +1055,7 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumChartJPanel" pref="363" max="32767" attributes="0"/>
+                                          <Component id="spectrumChartJPanel" pref="367" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1130,9 +1130,9 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                                      <Component id="accuracySlider" pref="146" max="32767" attributes="0"/>
+                                      <Component id="accuracySlider" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                      <Component id="intensitySlider" pref="146" max="32767" attributes="0"/>
+                                      <Component id="intensitySlider" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1330,11 +1330,11 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="163" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="167" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="psmsModifiedTableJScrollPane" pref="141" max="32767" attributes="0"/>
+                                      <Component id="psmsModifiedTableJScrollPane" pref="145" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1523,11 +1523,11 @@
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="223" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="227" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="psmsRelatedTableJScrollPane" pref="201" max="32767" attributes="0"/>
+                                      <Component id="psmsRelatedTableJScrollPane" pref="205" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
