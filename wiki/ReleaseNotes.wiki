@@ -3,6 +3,62 @@
 
 ----
 
+*Changes in PeptideShaker 0.19.0 (January ??. 2013): coming soon...*
+ * NEW FEATURE: Added a new ID Rate column, and added a separate row for the total PeptideShaker results in the Spectrum IDs tab.
+ * NEW FEATURE: Made it possible to show/hide the fixed modifications in most tabs.
+ * NEW FEATURE: Added a new Plotting dialog, opend by right clicking in most tables.
+ * NEW FEATURE: Reimplemented the PeptideShaker command line support from scratch. (http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI) 
+ * NEW FEATURE: Added an open example dataset option to the WelcomeDialog.
+ * NEW FEATURE: Added a settings pop up menu to the WelcomeDialog.
+ * NEW FEATURE: Implemented False LocationRate (FLR) for modifications.
+ * NEW FEATURE: Modification patterns defined as part of a SearchGUI search are now supported.
+ * NEW FEATURE: Added precursor intensity to the spectrum table in the Spectrum IDs tab.
+ * NEW FEATURE: Added neXtProt and PDB links to the Annotation tab.
+ * NEW FEATURE: Added an option for exporting the maximal protein set (the accession numbers) to a file.
+
+ * FEATURE IMPROVEMENT: Simplified the way the user selected parameters are applied when moving away from the Validation tab. 
+ * FEATURE IMPROVEMENT: Changed the precursor intensity shown in the Fractions tab from average to sum.
+ * FEATURE IMPROVEMENT: Added lower and upper ranges for the fraction molecular weights in the FractionDetailsDialog.
+ * FEATURE IMPROVEMENT: Made it possible to cancel the progress bars in the Validation tab.
+ * FEATURE IMPROVEMENT: Improved the search engine PTM recognition.
+ * FEATURE IMPROVEMENT: Improved the default PTM selection for X!Tandem.
+ * FEATURE IMPROVEMENT: Removed the use of UniProt to get the basic protein information. Now taken from the FASTA files instead.
+ * FEATURE IMPROVEMENT: Gene name and protein evidence level are now shown in the protein inference dialogs for UniProt data.
+ * FEATURE IMPROVEMENT: Improved the progress dialog in the Spectrum IDs tab.
+ * FEATURE IMPROVEMENT: PeptideShaker can now be run from paths containing special characters.
+ * FEATURE IMPROVEMENT: Mgf files with spectrum titles encoded in unicode are now supported.
+ * FEATURE IMPROVEMENT: The modal progress dialog is now closed if an error occurs during the saving of a project.
+ * FEATURE IMPROVEMENT: Added protein inference type, star property, tagged peptide sequence, the surrounding peptide information for shared peptides and fixed modification details to the peptide exports.
+ * FEATURE IMPROVEMENT: Added total number of peptides and spectra, overall sequence coverage and MW to the fractions export.
+ * FEATURE IMPROVEMENT: The filters in the FindDialog are now previewed in the tables only after the user stops typing. And the previewing of the filters in the FindDialog can now be turned on or off by the user.
+ * FEATURE IMPROVEMENT: Improved the tooltips in the molecular weight box plot in the Fractions tab.
+
+ * BUG FIX: Fixed a bug where the masses of user defined PTMs in the PRIDE export where set to null if a CV term mapping was added.
+ * BUG FIX: Fixed a bug that occurred if the user clicked the SE column for a PSM in the Overview tab before loading the Spectrum IDs tab.
+ * BUG FIX: Fixed a bug with multiple fixed modifications on the same peptide, e.g., when using iTRAQ or TMT labeling.
+ * BUG FIX: Fixed a bug that made the saving of bigger projects very very slow.
+ * BUG FIX: Fixed a bug in the export spectrum as mgf feature that made it impossible to export as mgf.
+ * BUG FIX: Fixed a bug in the average precursor intensity calculation for the proteins.
+ * BUG FIX: Fixed the progress bars in the Validation and PTM tabs to show actual progress.
+ * BUG FIX: Fixed an issues in the Spectrum IDs tab where the number of unassigned spectra was incorrect.
+ * BUG FIX: Fixed a bug with the maximum sparkline values in the Fractions tab.
+ * BUG FIX: Fixed a bug so that the icon doesn't stay orange when finished exporting/zipping a PeptideShaker project.
+ * BUG FIX: Fixed a bug in the possible sequence coverage displayed in the coverage panel, where the first residue and the last non-enzymatic peptide was not included.
+ * BUG FIX: Fixed an inconsistency in the sequence coverage output in the exports, as both 0-100 and 0-1 was used for percent values.
+ * BUG FIX: Fixed a bug i the restart after changing the memory setting, it crashed if a project was currently open.
+ * BUG FIX: Made a minor change to the pom file to handle a recursive issues that can occur when opening the project in NetBeans 7.2.
+
+ * LIBRARY UPDATE: Removed unitprotjapi as a dependency.
+ * LIBRARY UPDATE: Added twitter4j as a dependency.
+ * LIBRARY UPDATE: Added mzdata-parser 1.2.1 as a dependency.
+ * LIBRARY UPDATE: Updated the default Ensembl human to version 69.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.44.
+ * LIBRARY UPDATE:  Updated omssa parser to version 1.5.8.
+ * LIBRARY UPDATE: Updated xtandem parser to version 1.5.10.
+ * LIBRARY UPDATE: Updated mascot dat file parser to version 3.4.7.
+ * LIBRARY UPDATE: Updated utilities to version 3.10.49.
+----
+
 *Changes in PeptideShaker 0.18.3 (September 15. 2012):*
  * FEATURE IMPROVEMENT: Improved the PRIDE export dialog.
  * FEATURE IMPROVEMENT: It is now possible to add more than one contact in the PRIDE export.
@@ -10,6 +66,8 @@
  * FEATURE IMPROVEMENT: Re-enabled the improved (but slower) ptm location code.
  * LIBRARY UPDATE: Updated ols-dialog to version 3.4.0, containing many GUI improvements.
  * LIBRARY UPDATE: Updated utilities to version 3.8.12.
+
+Download Count: 315
 
 ----
 
