@@ -65,7 +65,6 @@ public class StarHider {
         progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -76,7 +75,6 @@ public class StarHider {
         }, "ProgressDialog").start();
 
         new Thread("Star/Hide") {
-
             @Override
             public void run() {
 
@@ -86,6 +84,11 @@ public class StarHider {
                     progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
 
                     PSParameter psParameter = new PSParameter();
+
+                    identification.loadProteinMatches(null);
+                    identification.loadProteinMatchParameters(psParameter, null);
+
+                    // @TODO: implement better database batch interaction!!
 
                     for (String proteinKey : identification.getProteinIdentification()) {
 
@@ -109,6 +112,7 @@ public class StarHider {
                             boolean psmSurvived = false;
 
                             identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
+
                             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
 
                                 if (progressDialog.isRunCanceled()) {
@@ -123,6 +127,7 @@ public class StarHider {
                                     psParameter.setHidden(false);
                                     psmSurvived = true;
                                 }
+
                                 psParameter.setStarred(isPsmStarred(spectrumKey));
                                 identification.updateSpectrumMatchParameter(spectrumKey, psParameter);
                             }
@@ -158,6 +163,7 @@ public class StarHider {
                     }
 
                     progressDialog.setRunFinished();
+                    peptideShakerGUI.updateTabbedPanes();
 
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -1059,7 +1065,7 @@ public class StarHider {
                     }
                 }
             }
-            
+
             // sequence pattern
             if (peptideFilter.getSequence() != null && peptideFilter.getSequence().trim().length() > 0) {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -1075,7 +1081,7 @@ public class StarHider {
                     return false;
                 }
             }
-            
+
             // protein pattern
             if (peptideFilter.getProtein() != null && peptideFilter.getProtein().trim().length() > 0) {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);

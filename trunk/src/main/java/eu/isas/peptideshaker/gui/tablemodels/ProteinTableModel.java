@@ -215,7 +215,11 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 11:
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                    return pSParameter.isValidated();
+                    if (pSParameter != null) {
+                        return pSParameter.isValidated();
+                    } else {
+                        return null;
+                    }
                 default:
                     return "";
             }
