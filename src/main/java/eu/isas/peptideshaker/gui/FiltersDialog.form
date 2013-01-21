@@ -48,14 +48,14 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace pref="375" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="1" min="-2" pref="65" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="tabbedPane" pref="544" max="32767" attributes="0"/>
+                          <Component id="tabbedPane" pref="671" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -129,15 +129,16 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="starredProteinsScrollPane" pref="440" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="starredProteinsScrollPane" pref="561" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="editStarredProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="addStarredProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="clearStarredProtein" max="32767" attributes="1"/>
+                                  <Component id="editStarredProtein" linkSize="3" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addStarredProtein" linkSize="3" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearStarredProtein" linkSize="3" max="32767" attributes="1"/>
+                                  <Component id="deleteStarredProtein" linkSize="3" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -146,14 +147,17 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="starredProteinsScrollPane" alignment="0" pref="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addStarredProtein" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editStarredProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="deleteStarredProtein" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="clearStarredProtein" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="45" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="starredProteinsScrollPane" alignment="0" pref="151" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -219,6 +223,7 @@
                     <Component class="javax.swing.JButton" name="addStarredProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Add a starred proteins filter"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addStarredProteinActionPerformed"/>
@@ -227,6 +232,7 @@
                     <Component class="javax.swing.JButton" name="editStarredProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Edit selected filter"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
@@ -236,9 +242,20 @@
                     <Component class="javax.swing.JButton" name="clearStarredProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remove all starred proteins filters"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearStarredProteinActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="deleteStarredProtein">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Delete"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Delete selected filter"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteStarredProteinActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -265,15 +282,16 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="hiddenProteinsScrollPane" pref="440" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="editHiddenProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="addHiddenProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="clearHiddenProtein" alignment="0" max="32767" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="hiddenProteinsScrollPane" pref="561" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="editHiddenProtein" linkSize="4" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addHiddenProtein" linkSize="4" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="deleteHiddenProtein" linkSize="4" alignment="1" min="-2" max="-2" attributes="1"/>
+                                  <Component id="clearHiddenProtein" linkSize="4" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -282,14 +300,17 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="hiddenProteinsScrollPane" alignment="0" pref="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addHiddenProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="editHiddenProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="deleteHiddenProtein" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="clearHiddenProtein" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="48" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="hiddenProteinsScrollPane" alignment="0" pref="154" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -355,6 +376,7 @@
                     <Component class="javax.swing.JButton" name="addHiddenProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Add a hidden proteins filter"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addHiddenProteinActionPerformed"/>
@@ -363,6 +385,7 @@
                     <Component class="javax.swing.JButton" name="editHiddenProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Edit selected filter"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
@@ -372,9 +395,20 @@
                     <Component class="javax.swing.JButton" name="clearHiddenProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remove all hidden proteins filters"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearHiddenProteinActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="deleteHiddenProtein">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Delete"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Delete selected filter"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteHiddenProteinActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -424,15 +458,18 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="starredPeptidesScrollPane" pref="440" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="editStarredPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="addStarredPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="clearStarredPeptides" alignment="0" max="32767" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="starredPeptidesScrollPane" pref="561" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="editStarredPeptides" linkSize="5" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addStarredPeptides" linkSize="5" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                      <Component id="deleteStarredPeptides" linkSize="5" alignment="1" min="-2" max="-2" attributes="1"/>
+                                      <Component id="clearStarredPeptides" linkSize="5" alignment="0" min="-2" max="-2" attributes="1"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -441,14 +478,17 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
                                       <Component id="addStarredPeptides" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editStarredPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="deleteStarredPeptides" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="clearStarredPeptides" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="starredPeptidesScrollPane" alignment="0" pref="151" max="32767" attributes="0"/>
+                                  <Component id="starredPeptidesScrollPane" pref="155" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -514,6 +554,7 @@
                     <Component class="javax.swing.JButton" name="addStarredPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Add a starred peptides filter"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addStarredPeptidesActionPerformed"/>
@@ -522,6 +563,7 @@
                     <Component class="javax.swing.JButton" name="editStarredPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Edit selected filter"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
@@ -531,9 +573,20 @@
                     <Component class="javax.swing.JButton" name="clearStarredPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remove all starred peptides filters"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearStarredPeptidesActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="deleteStarredPeptides">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Delete"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Delete selected filter"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteStarredPeptidesActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -557,15 +610,18 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="hiddenPeptidesScrollPane" pref="440" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="editHiddenPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="addHiddenPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="clearHiddenPeptides" alignment="0" max="32767" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="hiddenPeptidesScrollPane" pref="561" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="editHiddenPeptides" linkSize="6" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                      <Component id="addHiddenPeptides" linkSize="6" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                      <Component id="clearHiddenPeptides" linkSize="6" alignment="0" max="32767" attributes="1"/>
+                                  </Group>
+                                  <Component id="deleteHiddenPeptides" linkSize="6" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -576,12 +632,15 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addHiddenPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="editHiddenPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="deleteHiddenPeptides" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="clearHiddenPeptides" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="48" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="hiddenPeptidesScrollPane" alignment="0" pref="154" max="32767" attributes="0"/>
+                                  <Component id="hiddenPeptidesScrollPane" alignment="0" pref="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -647,6 +706,7 @@
                     <Component class="javax.swing.JButton" name="addHiddenPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Add a hidden peptides filter"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addHiddenPeptidesActionPerformed"/>
@@ -655,6 +715,7 @@
                     <Component class="javax.swing.JButton" name="editHiddenPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Edit selected filter"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
@@ -664,9 +725,20 @@
                     <Component class="javax.swing.JButton" name="clearHiddenPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remove all hidden peptides filters"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearHiddenPeptidesActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="deleteHiddenPeptides">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Delete"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Delete selected filter"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteHiddenPeptidesActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -716,15 +788,18 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="starredPsmsScrollPane" pref="440" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="editStarredPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="addStarredPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="clearStarredPsm" alignment="0" max="32767" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="starredPsmsScrollPane" pref="561" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="editStarredPsm" linkSize="7" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                      <Component id="addStarredPsm" linkSize="7" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                      <Component id="clearStarredPsm" linkSize="7" alignment="0" max="32767" attributes="1"/>
+                                  </Group>
+                                  <Component id="deleteStarredPsm" linkSize="7" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -733,14 +808,17 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="starredPsmsScrollPane" alignment="0" pref="155" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addStarredPsm" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editStarredPsm" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="deleteStarredPsm" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="clearStarredPsm" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="starredPsmsScrollPane" alignment="0" pref="151" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -806,6 +884,7 @@
                     <Component class="javax.swing.JButton" name="addStarredPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Add a starred PSMs filter"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addStarredPsmActionPerformed"/>
@@ -814,6 +893,7 @@
                     <Component class="javax.swing.JButton" name="editStarredPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Edit selected filter"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
@@ -823,9 +903,20 @@
                     <Component class="javax.swing.JButton" name="clearStarredPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remove all starred PSMs filters"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearStarredPsmActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="deleteStarredPsm">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Delete"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Delete selected filter"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteStarredPsmActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -849,15 +940,18 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="hiddenPsmsScrollPane" pref="440" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="editHiddenPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="addHiddenPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
-                                  <Component id="clearHiddenPsm" alignment="0" max="32767" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="hiddenPsmsScrollPane" pref="561" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="editHiddenPsm" linkSize="8" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                      <Component id="addHiddenPsm" linkSize="8" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                      <Component id="clearHiddenPsm" linkSize="8" alignment="0" max="32767" attributes="1"/>
+                                  </Group>
+                                  <Component id="deleteHiddenPsm" linkSize="8" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -870,10 +964,13 @@
                                       <Component id="addHiddenPsm" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editHiddenPsm" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="deleteHiddenPsm" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="clearHiddenPsm" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
-                                  <Component id="hiddenPsmsScrollPane" alignment="0" pref="154" max="32767" attributes="0"/>
+                                  <Component id="hiddenPsmsScrollPane" pref="158" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -939,6 +1036,7 @@
                     <Component class="javax.swing.JButton" name="addHiddenPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Add a hidden PSMs filter"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addHiddenPsmActionPerformed"/>
@@ -947,6 +1045,7 @@
                     <Component class="javax.swing.JButton" name="editHiddenPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Edit selected filter"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
@@ -956,9 +1055,20 @@
                     <Component class="javax.swing.JButton" name="clearHiddenPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Remove all hidden PSMs filters"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearHiddenPsmActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="deleteHiddenPsm">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Delete"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Delete selected filter"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteHiddenPsmActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

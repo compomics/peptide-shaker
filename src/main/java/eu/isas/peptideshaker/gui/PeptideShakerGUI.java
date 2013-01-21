@@ -5872,7 +5872,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      *
      * @param tabIndex integer indicating which tab (according to the static
      * indexing) was updated.
-     * @param updated boolean indicating wheter the tab is updated or not
+     * @param updated boolean indicating whether the tab is updated or not
      */
     public void setUpdated(int tabIndex, boolean updated) {
         updateNeeded.put(tabIndex, !updated);

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
@@ -221,8 +221,8 @@
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="psmEffectCmb" alignment="1" pref="6" max="32767" attributes="2"/>
-                                  <Component id="psmFilterTxt" alignment="1" pref="6" max="32767" attributes="2"/>
+                                  <Component id="psmEffectCmb" alignment="1" pref="0" max="32767" attributes="2"/>
+                                  <Component id="psmFilterTxt" alignment="1" pref="0" max="32767" attributes="2"/>
                                   <Component id="psmFilterDescription" alignment="1" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -315,9 +315,9 @@
                           </Group>
                           <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="proteinEffectCmb" pref="6" max="32767" attributes="2"/>
+                              <Component id="proteinEffectCmb" pref="0" max="32767" attributes="2"/>
                               <Component id="proteinFilterDescription" max="32767" attributes="2"/>
-                              <Component id="proteinFilterTxt" alignment="0" pref="6" max="32767" attributes="2"/>
+                              <Component id="proteinFilterTxt" alignment="0" pref="0" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
