@@ -279,7 +279,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.10.50</version>
+            <version>3.10.51</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -303,13 +303,13 @@
         <dependency>
             <groupId>de.proteinms.omxparser</groupId>
             <artifactId>omssa-parser</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.9</version>
         </dependency>
         
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.5.10</version>
+            <version>1.5.11</version>
         </dependency>
         
         <dependency>

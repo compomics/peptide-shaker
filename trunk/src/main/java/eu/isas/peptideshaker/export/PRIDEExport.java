@@ -313,7 +313,18 @@ public class PRIDEExport {
             }
 
             searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerGUI.getVersion();
-
+            
+            for (String spectrumFile : identification.getSpectrumFiles()) {
+                identification.loadSpectrumMatchParameters(spectrumFile, psmProbabilities, null);
+            }
+            identification.loadPeptideMatches(null);
+            identification.loadProteinMatches(null);
+            for (String spectrumFile : identification.getSpectrumFiles()) {
+                identification.loadSpectrumMatchParameters(spectrumFile, psmProbabilities, null);
+            }
+            identification.loadPeptideMatchParameters(peptideProbabilities, null);
+            identification.loadProteinMatchParameters(proteinProbabilities, null);
+            
             for (String proteinKey : identification.getProteinIdentification()) {
 
                 if (prideExportDialog.progressCancelled()) {

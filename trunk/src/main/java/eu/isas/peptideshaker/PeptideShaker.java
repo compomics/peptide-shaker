@@ -1261,7 +1261,7 @@ public class PeptideShaker {
                                         String tempSequence = sequence;
                                         while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
                                             tempSequence = tempSequence.substring(tempIndex + 1);
-                                            ref += tempIndex + 1;
+                                            ref += tempIndex;
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = ref + localization;
                                                 if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
@@ -1279,7 +1279,7 @@ public class PeptideShaker {
                                         String tempSequence = otherSequence;
                                         while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
                                             tempSequence = tempSequence.substring(tempIndex + 1);
-                                            ref += tempIndex + 1;
+                                            ref += tempIndex;
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = localization - ref;
                                                 if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
@@ -1305,7 +1305,7 @@ public class PeptideShaker {
                                 Integer newLocalization = mapping.get(oldLocalization);
                                 if (modificationMatch != null && newLocalization != null) {
                                     if (newLocalization != oldLocalization) {
-                                        //System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+                                        System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
                                     }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
@@ -1868,12 +1868,7 @@ public class PeptideShaker {
      * computing the A-score
      */
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
-        
-        if (Spectrum.getSpectrumTitle(
-            spectrumMatch.getKey()).contains("20062.20062.2")) {
-            int debug = 1;
-        }
-        
+                
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
