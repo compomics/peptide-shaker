@@ -35,6 +35,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * This class will generate the output as requested by the user.
@@ -45,7 +46,7 @@ import javax.swing.filechooser.FileFilter;
 public class OutputGenerator {
 
     /**
-     * The main gui.
+     * The main GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
@@ -97,7 +98,7 @@ public class OutputGenerator {
      * @param aMainAccession boolean indicating whether the accessions shall be
      * output
      * @param aOtherAccessions boolean indicating whether the the additional
-     * protein accesion numbers should be included or not
+     * protein accession numbers should be included or not
      * @param aPiDetails boolean indicating whether protein inference details
      * shall be output
      * @param aDescription boolean indicating whether protein description of the
@@ -122,7 +123,7 @@ public class OutputGenerator {
      * output
      * @param aOnlyStarred boolean indicating whether only starred proteins
      * shall be output
-     * @param aShowStar boolean indicating wheter the starred proteins will be
+     * @param aShowStar boolean indicating whether the starred proteins will be
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
@@ -174,7 +175,11 @@ public class OutputGenerator {
             }
 
             if (aProteinKeys == null) {
-                proteinKeys = identification.getProteinIdentification();
+                if (onlyValidated) {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins();
+                } else {
+                    proteinKeys = identification.getProteinIdentification();
+                }
             } else {
                 proteinKeys = aProteinKeys;
             }
@@ -195,7 +200,6 @@ public class OutputGenerator {
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -206,7 +210,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -541,7 +544,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -552,7 +554,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -942,7 +943,7 @@ public class OutputGenerator {
     }
 
     /**
-     * Sends the desired psm output (based on the elements needed as provided in
+     * Sends the desired PSM output (based on the elements needed as provided in
      * arguments) to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
@@ -1018,7 +1019,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1029,7 +1029,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1561,7 +1560,7 @@ public class OutputGenerator {
     }
 
     /**
-     * Sends the desired phospho output to a user chosen file.
+     * Sends the desired phosphorylation output to a user chosen file.
      *
      * @param parentDialog the parent dialog, can be null.
      */
@@ -1573,7 +1572,6 @@ public class OutputGenerator {
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.isDirectory();
@@ -1611,7 +1609,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1622,7 +1619,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1673,8 +1669,7 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int psmCounter = 0;
 
-                        HashMap<String, ArrayList<String>> spectrumKeys = new HashMap<String, ArrayList<String>>();
-                        spectrumKeys = identification.getSpectrumIdentificationMap();
+                        HashMap<String, ArrayList<String>> spectrumKeys = identification.getSpectrumIdentificationMap();
 
                         int fileCounter = 0;
 
@@ -1762,6 +1757,7 @@ public class OutputGenerator {
                                         }
                                     }
                                 }
+
                                 Collections.sort(modList);
                                 PSPtmScores ptmScores = new PSPtmScores();
                                 first = true;
@@ -1772,6 +1768,7 @@ public class OutputGenerator {
                                 int conflict = 0;
                                 String[] split = sequence.split("[STY]");
                                 int nSites = split.length - 1;
+
                                 for (String mod : modList) {
                                     if (mod.contains("phospho")) {
                                         if (spectrumMatch.getUrParam(ptmScores) != null) {
@@ -1812,6 +1809,7 @@ public class OutputGenerator {
                                         }
                                     }
                                 }
+
                                 writer.write(aLocalizations + SEPARATOR);
                                 writer.write(dLocalizations + SEPARATOR);
                                 writer.write(aScore + SEPARATOR);
@@ -2101,7 +2099,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2112,7 +2109,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -2339,40 +2335,45 @@ public class OutputGenerator {
      * @param aParentDialog the parent dialog, can be null.
      * @param aProteinKeys The list of protein keys to output. If null, the
      * identification list will be used
-     * @param aIndexes
-     * @param aOnlyValidated
+     * @param aIndexes boolean indicating whether indexes shall be output
+     * @param aOnlyValidated boolean indicating whether only validated proteins
+     * shall be output
      * @param aMainAccession boolean indicating whether the accessions shall be
      * output
      * @param aOtherAccessions boolean indicating whether the the additional
-     * protein accesion numbers should be included or not
+     * protein accession numbers should be included or not
      * @param aPiDetails boolean indicating whether protein inference details
      * shall be output
      * @param aDescription boolean indicating whether protein description of the
      * main match shall be output
      * @param aMW boolean indicating whether the molecular weight is to be
      * included in the output
-     * @param aNPeptides boolean indicating wheter the total number of validated
-     * peptides for the protein shall be output
-     * @param aNSpectra boolean indicating wheter the total number of validated
+     * @param aNPeptides boolean indicating whether the total number of
+     * validated peptides for the protein shall be output
+     * @param aNSpectra boolean indicating whether the total number of validated
      * spectra for the protein shall be output
      * @param aSequenceCoverage boolean indicating whether the sequence coverage
      * shall be output
      * @param aNPeptidesPerFraction boolean indicating whether the number of
      * validated
-     * @param aNSpectraPerFraction
-     * @param aPrecursorIntensities
+     * @param aNSpectraPerFraction boolean indicating whether the number of
+     * spectra per fractions shall be output
+     * @param aPrecursorIntensities boolean indicating whether the precursor
+     * intensities shall be output
+     * @param aFractionSpread boolean indicating whether a value representing
+     * the spread of the fractions shall be output
      * @param aIncludeHeader boolean indicating whether the header shall be
      * output
      * @param aOnlyStarred boolean indicating whether only starred proteins
      * shall be output
-     * @param aShowStar boolean indicating wheter the starred proteins will be
+     * @param aShowStar boolean indicating whether the starred proteins will be
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
             boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aMW, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage,
-            boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aIncludeHeader, boolean aOnlyStarred,
+            boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aFractionSpread, boolean aIncludeHeader, boolean aOnlyStarred,
             boolean aShowStar, boolean aIncludeHidden) {
 
         // create final versions of all variables use inside the export thread
@@ -2390,6 +2391,7 @@ public class OutputGenerator {
         final boolean nPeptidesPerFraction = aNPeptidesPerFraction;
         final boolean nSpectraPerFraction = aNSpectraPerFraction;
         final boolean precursorIntensities = aPrecursorIntensities;
+        final boolean fractionSpread = aFractionSpread;
         final boolean includeHeader = aIncludeHeader;
         final boolean onlyStarred = aOnlyStarred;
         final boolean showStar = aShowStar;
@@ -2413,7 +2415,11 @@ public class OutputGenerator {
             }
 
             if (aProteinKeys == null) {
-                proteinKeys = identification.getProteinIdentification();
+                if (onlyValidated) {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins();
+                } else {
+                    proteinKeys = identification.getProteinIdentification();
+                }
             } else {
                 proteinKeys = aProteinKeys;
             }
@@ -2434,7 +2440,6 @@ public class OutputGenerator {
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2445,7 +2450,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -2501,6 +2505,12 @@ public class OutputGenerator {
                                     writer.write("Average precursor intensity " + fraction + SEPARATOR);
                                 }
                             }
+                            if (fractionSpread) {
+                                writer.write("Peptide Fraction Spread (lower range (kDa))" + SEPARATOR);
+                                writer.write("Peptide Fraction Spread (upper range (kDa))" + SEPARATOR);
+                                writer.write("Spectrum Fraction Spread (lower range (kDa))" + SEPARATOR);
+                                writer.write("Spectrum Fraction Spread (upper range (kDa))" + SEPARATOR);
+                            }
                             if (includeHidden) {
                                 writer.write("Hidden" + SEPARATOR);
                             }
@@ -2513,16 +2523,23 @@ public class OutputGenerator {
                         PSParameter proteinPSParameter = new PSParameter();
                         int proteinCounter = 0;
 
+                        progressDialog.setTitle("Loading Protein Matches. Please Wait...");
+                        identification.loadProteinMatches(progressDialog);
+                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
+                        identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
+
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMaxProgressValue(proteinKeys.size());
-
+                        progressDialog.setValue(0);
+                        progressDialog.setTitle("Copying to File. Please Wait...");
+                                
                         for (String proteinKey : proteinKeys) {
 
                             if (progressDialog.isRunCanceled()) {
                                 break;
                             }
 
-                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter); // @TODO: replace by batch selection!!
+                            proteinPSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, proteinPSParameter);
 
                             if (!ProteinMatch.isDecoy(proteinKey) || !onlyValidated) {
                                 if ((onlyValidated && proteinPSParameter.isValidated()) || !onlyValidated) {
@@ -2532,7 +2549,7 @@ public class OutputGenerator {
                                                 writer.write(++proteinCounter + SEPARATOR);
                                             }
 
-                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey); // @TODO: replace by batch selection!!
+                                            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
                                             if (mainAccession) {
                                                 writer.write(proteinMatch.getMainMatch() + SEPARATOR);
                                             }
@@ -2560,14 +2577,10 @@ public class OutputGenerator {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
                                             }
-
                                             if (mw) {
                                                 Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
                                                 writer.write(proteinMW + SEPARATOR);
                                             }
-
-                                            // @TODO: all of the above selects should be replaced by batch selection!!
-
                                             if (nPeptides) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
@@ -2623,6 +2636,66 @@ public class OutputGenerator {
                                                     }
                                                 }
                                             }
+                                            if (fractionSpread) {
+                                                
+                                                double maxMwRangePeptides = Double.MIN_VALUE;
+                                                double minMwRangePeptides = Double.MAX_VALUE;
+                                                
+                                                for (String fraction : fractionFileNames) {
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                            && proteinPSParameter.getFractionValidatedPeptides(fraction) != null 
+                                                            && proteinPSParameter.getFractionValidatedPeptides(fraction) > 0) {
+                                                        
+                                                        HashMap<String, XYDataPoint> expectedMolecularWeightRanges = 
+                                                                peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+                                                        
+                                                        double lower = expectedMolecularWeightRanges.get(fraction).getX();
+                                                        double upper = expectedMolecularWeightRanges.get(fraction).getY();
+                                                        
+                                                        if (lower < minMwRangePeptides) {
+                                                            minMwRangePeptides = lower;
+                                                        }
+                                                        if (upper > maxMwRangePeptides) {
+                                                            maxMwRangePeptides = upper;
+                                                        }   
+                                                    }
+                                                }
+                                                
+                                                if (maxMwRangePeptides != Double.MIN_VALUE && minMwRangePeptides != Double.MAX_VALUE) {
+                                                    writer.write(minMwRangePeptides + SEPARATOR + maxMwRangePeptides + SEPARATOR);
+                                                } else {
+                                                    writer.write("N/A" + SEPARATOR + "N/A" + SEPARATOR);
+                                                }
+                                                
+                                                double maxMwRangeSpectra = Double.MIN_VALUE;
+                                                double minMwRangeSpectra = Double.MAX_VALUE;
+                                                
+                                                for (String fraction : fractionFileNames) {
+                                                    if (proteinPSParameter.getFractions() != null && proteinPSParameter.getFractions().contains(fraction)
+                                                            && proteinPSParameter.getFractionValidatedSpectra(fraction) != null 
+                                                            && proteinPSParameter.getFractionValidatedSpectra(fraction) > 0) {
+                                                        
+                                                        HashMap<String, XYDataPoint> expectedMolecularWeightRanges = 
+                                                                peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
+                                                        
+                                                        double lower = expectedMolecularWeightRanges.get(fraction).getX();
+                                                        double upper = expectedMolecularWeightRanges.get(fraction).getY();
+                                                        
+                                                        if (lower < minMwRangeSpectra) {
+                                                            minMwRangeSpectra = lower;
+                                                        }
+                                                        if (upper > maxMwRangeSpectra) {
+                                                            maxMwRangeSpectra = upper;
+                                                        }   
+                                                    }
+                                                }
+                                                
+                                                if (maxMwRangeSpectra != Double.MIN_VALUE && minMwRangeSpectra != Double.MAX_VALUE) {
+                                                    writer.write(minMwRangeSpectra + SEPARATOR + maxMwRangeSpectra + SEPARATOR);
+                                                } else {
+                                                    writer.write("N/A" + SEPARATOR + "N/A" + SEPARATOR);
+                                                }
+                                            }
                                             if (!onlyValidated) {
                                                 if (proteinPSParameter.isValidated()) {
                                                     writer.write(1 + SEPARATOR);
@@ -2666,7 +2739,7 @@ public class OutputGenerator {
 
     /**
      * Returns the possible precursor charges for a given peptide match. The
-     * charges are returned in increading order with each charge only appearing
+     * charges are returned in increasing order with each charge only appearing
      * once.
      *
      * @param peptideMatch the peptide match
@@ -2718,8 +2791,8 @@ public class OutputGenerator {
      * Returns the peptide modifications as a string.
      *
      * @param peptide the peptide
-     * @param variablePtms if true, only variable ptms are shown, false return
-     * only the fixed ptms
+     * @param variablePtms if true, only variable PTMs are shown, false return
+     * only the fixed PTMs
      * @return the peptide modifications as a string
      */
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
@@ -2765,6 +2838,7 @@ public class OutputGenerator {
      *
      * @param peptide the peptide
      * @param peptideMatch the peptide match
+     * @param ptmProfile the PTM profile
      * @return the peptide modification location confidence as a string.
      */
     public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
@@ -2773,6 +2847,7 @@ public class OutputGenerator {
 
         String result = "";
         ArrayList<String> modList = new ArrayList<String>();
+
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
@@ -2783,16 +2858,17 @@ public class OutputGenerator {
                 }
             }
         }
+
         Collections.sort(modList);
-        PSPtmScores ptmScores = new PSPtmScores();
         boolean first = true;
+
         for (String mod : modList) {
             if (first) {
                 first = false;
             } else {
                 result += ", ";
             }
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+            PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             result += mod + " (";
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                 int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();

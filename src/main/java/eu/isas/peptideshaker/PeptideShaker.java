@@ -825,7 +825,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Fills the psm specific map.
+     * Fills the PSM specific map.
      *
      * @param inputMap The input map
      * @param waitingHandler the handler displaying feedback to the user

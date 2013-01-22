@@ -80,8 +80,15 @@ public class ProteinFractionTableModel extends DefaultTableModel {
         identification = peptideShakerGUI.getIdentification();
 
         if (identification != null) {
-            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
-            //proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null); // show all proteins
+            try {
+                if (peptideShakerGUI.getDisplayPreferences().showValidatedProteinsOnly()) {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
+                } else {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences()); // show all proteins
+                }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
         }
 
         fileNames = new ArrayList<String>();
@@ -152,12 +159,10 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 }
                 return description;
             } else if (column > 2 && column - 3 < fileNames.size()) {
-
                 String fraction = fileNames.get(column - 3);
                 PSParameter psParameter = new PSParameter();
                 String proteinKey = proteinKeys.get(row);
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-
                 if (psParameter.getFractions() != null && psParameter.getFractions().contains(fraction)) {
                     return psParameter.getFractionConfidence(fraction);
                 } else {

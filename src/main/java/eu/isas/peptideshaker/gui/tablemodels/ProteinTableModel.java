@@ -65,7 +65,11 @@ public class ProteinTableModel extends DefaultTableModel {
         identification = peptideShakerGUI.getIdentification();
         if (identification != null) {
             try {
-                proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences());
+                if (peptideShakerGUI.getDisplayPreferences().showValidatedProteinsOnly()) {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getValidatedProteins(); // show validated proteins only
+                } else {
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences()); // show all proteins
+                }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
@@ -207,10 +211,14 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 10:
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                        return pSParameter.getProteinScore();
+                    if (pSParameter != null) {
+                        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                            return pSParameter.getProteinScore();
+                        } else {
+                            return pSParameter.getProteinConfidence();
+                        }
                     } else {
-                        return pSParameter.getProteinConfidence();
+                        return null;
                     }
                 case 11:
                     proteinKey = proteinKeys.get(row);
