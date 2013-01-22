@@ -313,9 +313,9 @@ public class PRIDEExport {
             }
 
             searchEngineReport += " post-processed by PeptideShaker v" + peptideShakerGUI.getVersion();
-            
+
             for (String spectrumFile : identification.getSpectrumFiles()) {
-                identification.loadSpectrumMatchParameters(spectrumFile, psmProbabilities, null);
+                identification.loadSpectrumMatches(spectrumFile, null);
             }
             identification.loadPeptideMatches(null);
             identification.loadProteinMatches(null);
@@ -324,7 +324,7 @@ public class PRIDEExport {
             }
             identification.loadPeptideMatchParameters(peptideProbabilities, null);
             identification.loadProteinMatchParameters(proteinProbabilities, null);
-            
+
             for (String proteinKey : identification.getProteinIdentification()) {
 
                 if (prideExportDialog.progressCancelled()) {
@@ -377,7 +377,7 @@ public class PRIDEExport {
                         // peptide start and end
                         String proteinAccession = proteinMatch.getMainMatch();
                         String proteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
-                        int peptideStart = proteinSequence.lastIndexOf(tempPeptide.getSequence()) + 1;
+                        int peptideStart = proteinSequence.lastIndexOf(tempPeptide.getSequence()) + 1; // @TODO: lastIndexOf should be avoided!!
                         br.write(getCurrentTabSpace() + "<Start>" + peptideStart + "</Start>" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<End>" + (peptideStart + tempPeptide.getSequence().length() - 1) + "</End>" + System.getProperty("line.separator"));
 
@@ -584,10 +584,10 @@ public class PRIDEExport {
                 }
                 try {
                     if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\"" 
+                        br.write(getCurrentTabSpace() + "<userParam name=\"emPAI\" value=\""
                                 + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
                     } else {
-                        br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\"" 
+                        br.write(getCurrentTabSpace() + "<userParam name=\"NSAF+\" value=\""
                                 + peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey) + "\" />" + System.getProperty("line.separator"));
                     }
                 } catch (Exception e) {
@@ -727,7 +727,7 @@ public class PRIDEExport {
             } else {
                 cvTermName = cvTerm.getName();
                 ptmMass = cvTerm.getValue();
-                
+
                 // two extra tests to guard against problems with the cv terms, better to have a valid ptm than no ptm at all...
                 if (cvTermName == null) {
                     cvTermName = modName;
@@ -1270,13 +1270,37 @@ public class PRIDEExport {
      */
     private String getCurrentTabSpace() {
 
-        String tabSpace = "";
+        switch (tabCounter) {
+            case 0:
+                return "";
+            case 1:
+                return "\t";
+            case 2:
+                return "\t\t";
+            case 3:
+                return "\t\t\t";
+            case 4:
+                return "\t\t\t\t";
+            case 5:
+                return "\t\t\t\t\t";
+            case 6:
+                return "\t\t\t\t\t\t";
+            case 7:
+                return "\t\t\t\t\t\t\t";
+            case 8:
+                return "\t\t\t\t\t\t\t\t";
+            case 9:
+                return "\t\t\t\t\t\t\t\t\t";
+            case 10:
+                return "\t\t\t\t\t\t\t\t\t\t";
+            case 11:
+                return "\t\t\t\t\t\t\t\t\t\t\t";
+            case 12:
+                return "\t\t\t\t\t\t\t\t\t\t\t\t";
+            default:
+                return "";
 
-        for (int i = 0; i < tabCounter; i++) {
-            tabSpace += "\t";
         }
-
-        return tabSpace;
     }
 
     /**
