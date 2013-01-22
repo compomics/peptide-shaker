@@ -7,6 +7,7 @@ import java.util.HashMap;
  * This class contains the display preferences for the current project.
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class DisplayPreferences implements Serializable {
 
@@ -19,11 +20,15 @@ public class DisplayPreferences implements Serializable {
      */
     private boolean showHiddenProteins = true;
     /**
-     * Show/hide the hidden proteins.
+     * Show/hide the hidden scores.
      */
     private boolean showScores = false;
     /**
-     * The number of aa surrounding a peptide.
+     * If true, only the validated proteins are shown.
+     */
+    private boolean showValidatedProteinsOnly = false;
+    /**
+     * The number of amino acids surrounding a peptide.
      */
     private Integer nAASurroundingPeptides = 2;
     /**
@@ -68,10 +73,29 @@ public class DisplayPreferences implements Serializable {
     /**
      * Returns whether scores should be displayed.
      *
-     * @return true of the scores are to be displayed
+     * @return true if the scores are to be displayed
      */
     public boolean showScores() {
         return showScores;
+    }
+
+    /**
+     * Sets whether only the validated proteins should be displayed.
+     *
+     * @param showValidatedProteinsOnly a boolean indicating whether only the
+     * validated proteins should be displayed
+     */
+    public void showValidatedProteinsOnly(boolean showValidatedProteinsOnly) {
+        this.showValidatedProteinsOnly = showValidatedProteinsOnly;
+    }
+
+    /**
+     * Returns whether only the validated proteins should be displayed.
+     *
+     * @return true if only the validated proteins are to be displayed
+     */
+    public boolean showValidatedProteinsOnly() {
+        return showValidatedProteinsOnly;
     }
 
     /**
@@ -100,7 +124,7 @@ public class DisplayPreferences implements Serializable {
     /**
      * Sets whether a PTM shall be displayed on the sequences or not.
      *
-     * @param ptmName the name of the ptm
+     * @param ptmName the name of the PTM
      * @param displayed a boolean indicating whether the PTM shall be displayed
      */
     public void setDisplayedPTM(String ptmName, boolean displayed) {

@@ -742,6 +742,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         jSeparator11 = new javax.swing.JPopupMenu.Separator();
         fixedModsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        validatedProteinsOnlyJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         gettingStartedMenuItem = new javax.swing.JMenuItem();
@@ -1592,6 +1593,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         viewJMenu.add(scoresJCheckBoxMenuItem);
+
+        validatedProteinsOnlyJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        validatedProteinsOnlyJCheckBoxMenuItem.setMnemonic('N');
+        validatedProteinsOnlyJCheckBoxMenuItem.setText("Validated Proteins Only");
+        validatedProteinsOnlyJCheckBoxMenuItem.setEnabled(false);
+        validatedProteinsOnlyJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validatedProteinsOnlyJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(validatedProteinsOnlyJCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -2931,6 +2943,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_fixedModsJCheckBoxMenuItemActionPerformed
 
     /**
+     * Show/hide the not validated proteins.
+     * 
+     * @param evt 
+     */
+    private void validatedProteinsOnlyJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validatedProteinsOnlyJCheckBoxMenuItemActionPerformed
+        displayPreferences.showValidatedProteinsOnly(validatedProteinsOnlyJCheckBoxMenuItem.isSelected());
+        
+        resetSelectedItems();
+        setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+        setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+        setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+        setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+        setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, false);
+        setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
+        setUpdated(PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX, false);
+        
+        updateTabbedPanes();
+    }//GEN-LAST:event_validatedProteinsOnlyJCheckBoxMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -3163,6 +3195,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu toolsMenu;
+    private javax.swing.JCheckBoxMenuItem validatedProteinsOnlyJCheckBoxMenuItem;
     private javax.swing.JMenu viewJMenu;
     private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem yIonCheckBoxMenuItem;

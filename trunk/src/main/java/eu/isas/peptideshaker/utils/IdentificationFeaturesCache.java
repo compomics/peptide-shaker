@@ -105,21 +105,21 @@ public class IdentificationFeaturesCache implements Serializable {
      */
     private ArrayList<String> peptideList;
     /**
-     * The psm list.
+     * The PSM list.
      */
     private ArrayList<String> psmList;
     /**
      * Boolean indicating whether a filtering was already used. If yes, proteins
-     * might need to be unhiden.
+     * might need to be unhidden.
      */
     private boolean filtered = false;
     /**
-     * The maximum number of psms across all peptides of the last selected
+     * The maximum number of PSMs across all peptides of the last selected
      * protein.
      */
     private int maxSpectrumCount;
     /**
-     * The number of validated psms in the currently selected peptide.
+     * The number of validated PSMs in the currently selected peptide.
      */
     private int nValidatedPsms;
     /**
