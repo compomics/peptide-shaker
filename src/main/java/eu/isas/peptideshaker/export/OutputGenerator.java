@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -1589,7 +1590,7 @@ public class OutputGenerator {
         int returnVal = fileChooser.showSaveDialog(parentDialog);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            
+
             final File selectedFile = fileChooser.getSelectedFile();
 
             final String filePath = selectedFile.getPath();
@@ -1921,8 +1922,8 @@ public class OutputGenerator {
 
                             try {
                                 writer.write(SEPARATOR + SEPARATOR);
-                         //       writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
-                           //     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
+                                       writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
@@ -1934,22 +1935,22 @@ public class OutputGenerator {
                             }
                             try {
                                 writer.write(SEPARATOR);
-                        //        writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
+                                //        writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                                 writer.write(Double.NaN + SEPARATOR);
                             }
                             try {
                                 writer.write(SEPARATOR);
-                          //      writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
+                                      writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                                 writer.write(Double.NaN + SEPARATOR);
                             }
                             try {
                                 writer.write(SEPARATOR);
-                            //    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey,
-                            //            SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + SEPARATOR);
+                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey,
+                                            SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
@@ -1972,7 +1973,50 @@ public class OutputGenerator {
 
 
                         writer.close();
-
+//
+//                        try {
+//                            writer = new BufferedWriter(new FileWriter(new File(selectedFile, "reduced.mgf")));
+//                        } catch (IOException e) {
+//                            JOptionPane.showMessageDialog(null, "An error occured when saving the mgf file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+//                            e.printStackTrace();
+//                            return;
+//                        }
+//
+//                        ArrayList<String> taken = new ArrayList<String>();
+//
+//                        for (String peptideKey : identification.getPeptideIdentification()) {
+//                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+//                            String title = null;
+//                            double tempPEP, pep = 1;
+//                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+//                                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+//                                tempPEP = psParameter.getPsmProbabilityScore();
+//                                if (tempPEP < pep) {
+//                                    pep = tempPEP;
+//                                    title = spectrumKey;
+//                                }
+//                                taken.add(title);
+//                            }
+//                            if (title != null) {
+//                                    MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(title);
+//                                    writer.write(spectrum.asMgf());
+//                            }
+//                        }
+//                        int ratio = 10;
+//                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
+//                            int cpt = 0;
+//                            for (String title : spectrumFactory.getSpectrumTitles(mgfFile)) {
+//                                if (!taken.contains(title)) {
+//                                    if (cpt % ratio == 0) {
+//                                        MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(mgfFile, title);
+//                                        writer.write(spectrum.asMgf());
+//                                    }
+//                                    cpt++;
+//                                }
+//                            }
+//                        }
+//                        
+//                        writer.close();
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
