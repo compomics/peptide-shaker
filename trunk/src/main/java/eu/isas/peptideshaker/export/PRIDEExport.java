@@ -1299,7 +1299,6 @@ public class PRIDEExport {
                 return "\t\t\t\t\t\t\t\t\t\t\t\t";
             default:
                 return "";
-
         }
     }
 

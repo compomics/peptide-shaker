@@ -25,7 +25,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="coveragePeptideTypesButtonGroup"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Tryptic Peptides"/>
+            <Property name="text" type="java.lang.String" value="Enzymatic Peptides"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed"/>
@@ -36,7 +36,7 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="coveragePeptideTypesButtonGroup"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Non Tryptic Peptides"/>
+            <Property name="text" type="java.lang.String" value="Non Enzymatic Peptides"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed"/>
@@ -142,7 +142,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="plotsTabbedPane" pref="305" max="32767" attributes="0"/>
+                          <Component id="plotsTabbedPane" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

@@ -742,7 +742,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageJPopupMenu.add(coverageShowAllPeptidesJRadioButtonMenuItem);
 
         coveragePeptideTypesButtonGroup.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
-        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Tryptic Peptides");
+        coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.setText("Enzymatic Peptides");
         coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
@@ -751,7 +751,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         sequenceCoverageJPopupMenu.add(coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem);
 
         coveragePeptideTypesButtonGroup.add(coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem);
-        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Non Tryptic Peptides");
+        coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.setText("Non Enzymatic Peptides");
         coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItemActionPerformed(evt);
@@ -834,11 +834,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         );
         proteinsLayeredPanelLayout.setVerticalGroup(
             proteinsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+            .addGap(0, 277, Short.MAX_VALUE)
             .addGroup(proteinsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(proteinsLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                    .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -977,7 +977,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             sequenceCoverageTitledPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceCoverageTitledPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(sequenceCoverageInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                .addComponent(sequenceCoverageInnerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(sequencePtmsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1183,11 +1183,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         );
         peptidesPanelLayout.setVerticalGroup(
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 143, Short.MAX_VALUE)
+            .addGap(0, 147, Short.MAX_VALUE)
             .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(peptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                    .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1355,11 +1355,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         );
         psmsPanelLayout.setVerticalGroup(
             psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 143, Short.MAX_VALUE)
+            .addGap(0, 147, Short.MAX_VALUE)
             .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                    .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1525,7 +1525,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ionTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1560,11 +1560,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                .addContainerGap(284, Short.MAX_VALUE)
+                .addContainerGap(288, Short.MAX_VALUE)
                 .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                     .addGap(25, 25, 25)))
         );
 
@@ -1621,7 +1621,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             .addGroup(spectrumOuterJPanelLayout.createSequentialGroup()
                 .addComponent(spectrumPaddingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
+                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
         );
 
         spectrumSplitPane.setRightComponent(spectrumOuterJPanel);
@@ -1639,7 +1639,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumContainerJPanelLayout.setVerticalGroup(
             spectrumContainerJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumContainerJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1699,9 +1699,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(slidersPanelLayout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addGap(29, 29, 29)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addGap(66, 66, 66))
         );
 
@@ -3888,7 +3888,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
-            currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
+            Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
+            currentProteinSequence = currentProtein.getSequence();
             String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
 
             String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage (";
@@ -3954,13 +3955,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                             includePeptide = true;
                         } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                            if (peptideSequence.endsWith("R") || peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
-                                includePeptide = true;
-                            }
+                            includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, 
+                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(), 
+                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
+                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
                         } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                            if (!peptideSequence.endsWith("R") && !peptideSequence.endsWith("K")) { // @TODO: this test should be made more generic!!!
-                                includePeptide = true;
-                            }
+                            includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, 
+                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(), 
+                                                peptideShakerGUI.getIdFilter().getMinPepLength(), 
+                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
                         }
 
                         if (includePeptide) {
@@ -4644,7 +4649,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             public void run() {
 
                 try {
-
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
                     try {
                         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
@@ -4713,6 +4717,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
+                        
+                        // @TODO: this is not optimal as the progress bar does not move...
 
                         public void run() {
                             DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
@@ -5087,7 +5093,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Update the spectrum and fragment ions panel border title with information
-     * about the currently selected psm.
+     * about the currently selected PSM.
      *
      * @param currentPeptide
      * @param currentSpectrum

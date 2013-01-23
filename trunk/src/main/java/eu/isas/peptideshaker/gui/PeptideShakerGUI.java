@@ -5635,9 +5635,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Allows the user to locate the fasta file manually
+     * Allows the user to locate the FASTA file manually
      *
-     * @return the selected fasta file or null if the operation was canceled
+     * @return the selected FASTA file or null if the operation was canceled
      */
     private File locateFastaFileManually() {
         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());

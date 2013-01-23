@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
 public class ImportSettingsDialog extends javax.swing.JDialog {
 
     /**
-     * PeptideShaker GUI
+     * PeptideShaker GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
