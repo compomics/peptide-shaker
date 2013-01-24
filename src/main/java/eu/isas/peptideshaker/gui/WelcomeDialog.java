@@ -4,7 +4,10 @@ import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.JavaOptionsDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.gui.error_handlers.BugReport;
+import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
+import java.awt.Toolkit;
 import java.io.File;
 import javax.swing.*;
 
@@ -53,9 +56,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         quantifyJButton = new javax.swing.JButton();
         settingsPopupMenu = new javax.swing.JPopupMenu();
+        settingsMenu = new javax.swing.JMenu();
         javaSettingsMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         searchGUISettingsMenuItem = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        gettingStartedMenuItem = new javax.swing.JMenuItem();
+        bugReportMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        aboutMenuItem = new javax.swing.JMenuItem();
         backgroundPanel = new javax.swing.JPanel();
         openJButton = new javax.swing.JButton();
         newJButton = new javax.swing.JButton();
@@ -83,13 +92,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
+        settingsMenu.setText("Settings");
+
         javaSettingsMenuItem.setText("Java Memory Settings");
         javaSettingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 javaSettingsMenuItemActionPerformed(evt);
             }
         });
-        settingsPopupMenu.add(javaSettingsMenuItem);
+        settingsMenu.add(javaSettingsMenuItem);
 
         toolsMenu.setText("Tools");
 
@@ -101,7 +112,38 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
         toolsMenu.add(searchGUISettingsMenuItem);
 
-        settingsPopupMenu.add(toolsMenu);
+        settingsMenu.add(toolsMenu);
+
+        settingsPopupMenu.add(settingsMenu);
+
+        helpMenu.setText("Help");
+
+        gettingStartedMenuItem.setText("Getting Started");
+        gettingStartedMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gettingStartedMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(gettingStartedMenuItem);
+
+        bugReportMenuItem.setText("Bug Report");
+        bugReportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bugReportMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(bugReportMenuItem);
+        helpMenu.add(jSeparator2);
+
+        aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(aboutMenuItem);
+
+        settingsPopupMenu.add(helpMenu);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Welcome to PeptideShaker");
@@ -267,8 +309,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         settingsLabel.setFont(settingsLabel.getFont().deriveFont(settingsLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        settingsLabel.setText("<html><a href>Settings</html>");
-        settingsLabel.setToolTipText("Edit the general settings");
+        settingsLabel.setText("<html><a href>Settings & Help</html>");
+        settingsLabel.setToolTipText("Edit the general settings or see the basic help");
         settingsLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         settingsLabel.setIconTextGap(-4);
         settingsLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -293,37 +335,35 @@ public class WelcomeDialog extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(jSeparator1))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(compomicsButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(probeButton)
+                        .addGap(10, 10, 10)
+                        .addComponent(isasButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
                         .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(backgroundPanelLayout.createSequentialGroup()
+                                    .addComponent(newJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(openJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(backgroundPanelLayout.createSequentialGroup()
+                                    .addComponent(openExampleDatasetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(backgroundPanelLayout.createSequentialGroup()
+                                    .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(reshakeJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(compomicsButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(probeButton)
                                 .addGap(10, 10, 10)
-                                .addComponent(isasButton))
-                            .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                            .addComponent(newJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(openJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                            .addComponent(openExampleDatasetJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(gettingStartedJButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                            .addComponent(searchJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(reshakeJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                        .addGap(10, 10, 10)
-                                        .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(26, 26, 26)))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(settingsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)))))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -667,12 +707,47 @@ public class WelcomeDialog extends javax.swing.JDialog {
         new JavaOptionsDialog(peptideShakerGUI, peptideShakerGUI, this, "PeptideShaker");
     }//GEN-LAST:event_javaSettingsMenuItemActionPerformed
 
+    /**
+     * Open the Getting Started tutorial.
+     *
+     * @param evt
+     */
+    private void gettingStartedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedMenuItemActionPerformed
+        gettingStartedJButton1ActionPerformed(null);
+    }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
+
+    /**
+     * Opens a new bug report dialog.
+     *
+     * @param evt
+     */
+    private void bugReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugReportMenuItemActionPerformed
+        new BugReport(this, peptideShakerGUI.getLastSelectedFolder(), "PeptideShaker", "peptide-shaker",
+                peptideShakerGUI.getVersion(), new File(peptideShakerGUI.getJarFilePath() + "/resources/PeptideShaker.log"));
+    }//GEN-LAST:event_bugReportMenuItemActionPerformed
+
+    /**
+     * Opens the About dialog.
+     *
+     * @param evt
+     */
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AboutPeptideShaker.html"),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                "About PeptideShaker");
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JMenuItem bugReportMenuItem;
     private javax.swing.JButton compomicsButton;
     private javax.swing.JButton gettingStartedJButton1;
+    private javax.swing.JMenuItem gettingStartedMenuItem;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JButton isasButton;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuItem javaSettingsMenuItem;
     private javax.swing.JButton newJButton;
     private javax.swing.JButton openExampleDatasetJButton;
@@ -684,6 +759,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private javax.swing.JMenuItem searchGUISettingsMenuItem;
     private javax.swing.JButton searchJButton;
     private javax.swing.JLabel settingsLabel;
+    private javax.swing.JMenu settingsMenu;
     private javax.swing.JPopupMenu settingsPopupMenu;
     private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables

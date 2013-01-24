@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.export;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -2369,11 +2370,13 @@ public class OutputGenerator {
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
+     * @param aShowEnzymaticPeptidesColumn if true, a column indicating if the 
+     * protein has one or more non enzymatic peptides will be included
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
             boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aMW, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage,
             boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aFractionSpread, boolean aIncludeHeader, boolean aOnlyStarred,
-            boolean aShowStar, boolean aIncludeHidden) {
+            boolean aShowStar, boolean aIncludeHidden, boolean aShowEnzymaticPeptidesColumn) {
 
         // @TODO: add the non enzymatic peptides detected information!!
 
@@ -2397,6 +2400,7 @@ public class OutputGenerator {
         final boolean onlyStarred = aOnlyStarred;
         final boolean showStar = aShowStar;
         final boolean includeHidden = aIncludeHidden;
+        final boolean showEnzymaticPeptidesColumn = aShowEnzymaticPeptidesColumn;
 
         final JDialog parentDialog = aParentDialog;
 
@@ -2510,7 +2514,10 @@ public class OutputGenerator {
                                 writer.write("Peptide Fraction Spread (lower range (kDa))" + SEPARATOR);
                                 writer.write("Peptide Fraction Spread (upper range (kDa))" + SEPARATOR);
                                 writer.write("Spectrum Fraction Spread (lower range (kDa))" + SEPARATOR);
-                                writer.write("Spectrum Fraction Spread (upper range (kDa))" + SEPARATOR);
+                                writer.write("Spectrum Fraction Spread (upper range (kDa))" + SEPARATOR); 
+                            }
+                            if (showEnzymaticPeptidesColumn) {
+                                writer.write("Non Enzymatic Peptides" + SEPARATOR);
                             }
                             if (includeHidden) {
                                 writer.write("Hidden" + SEPARATOR);
@@ -2522,6 +2529,7 @@ public class OutputGenerator {
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
+                        PSParameter peptidePSParameter = new PSParameter();
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
@@ -2650,14 +2658,17 @@ public class OutputGenerator {
                                                         HashMap<String, XYDataPoint> expectedMolecularWeightRanges =
                                                                 peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
 
-                                                        double lower = expectedMolecularWeightRanges.get(fraction).getX();
-                                                        double upper = expectedMolecularWeightRanges.get(fraction).getY();
+                                                        if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
-                                                        if (lower < minMwRangePeptides) {
-                                                            minMwRangePeptides = lower;
-                                                        }
-                                                        if (upper > maxMwRangePeptides) {
-                                                            maxMwRangePeptides = upper;
+                                                            double lower = expectedMolecularWeightRanges.get(fraction).getX();
+                                                            double upper = expectedMolecularWeightRanges.get(fraction).getY();
+
+                                                            if (lower < minMwRangePeptides) {
+                                                                minMwRangePeptides = lower;
+                                                            }
+                                                            if (upper > maxMwRangePeptides) {
+                                                                maxMwRangePeptides = upper;
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2679,14 +2690,17 @@ public class OutputGenerator {
                                                         HashMap<String, XYDataPoint> expectedMolecularWeightRanges =
                                                                 peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
 
-                                                        double lower = expectedMolecularWeightRanges.get(fraction).getX();
-                                                        double upper = expectedMolecularWeightRanges.get(fraction).getY();
+                                                        if (expectedMolecularWeightRanges != null && expectedMolecularWeightRanges.get(fraction) != null) {
 
-                                                        if (lower < minMwRangeSpectra) {
-                                                            minMwRangeSpectra = lower;
-                                                        }
-                                                        if (upper > maxMwRangeSpectra) {
-                                                            maxMwRangeSpectra = upper;
+                                                            double lower = expectedMolecularWeightRanges.get(fraction).getX();
+                                                            double upper = expectedMolecularWeightRanges.get(fraction).getY();
+
+                                                            if (lower < minMwRangeSpectra) {
+                                                                minMwRangeSpectra = lower;
+                                                            }
+                                                            if (upper > maxMwRangeSpectra) {
+                                                                maxMwRangeSpectra = upper;
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2696,6 +2710,38 @@ public class OutputGenerator {
                                                 } else {
                                                     writer.write("N/A" + SEPARATOR + "N/A" + SEPARATOR);
                                                 }
+                                            }
+                                            if (showEnzymaticPeptidesColumn) {
+                                                
+                                                ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
+                                                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                                                boolean allPeptidesEnzymatic = true;
+
+                                                identification.loadPeptideMatches(peptideKeys, null);
+                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null);
+
+                                                // see if we have non-tryptic peptides
+                                                for (String peptideKey : peptideKeys) {
+
+                                                    String peptideSequence = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getSequence();
+                                                    peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
+
+                                                    if (peptidePSParameter.isValidated()) {
+
+                                                        boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
+                                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
+                                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+
+                                                        if (!isEnzymatic) {
+                                                            allPeptidesEnzymatic = false;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
+                                                writer.write(!allPeptidesEnzymatic + SEPARATOR);
                                             }
                                             if (!onlyValidated) {
                                                 if (proteinPSParameter.isValidated()) {
