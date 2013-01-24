@@ -184,10 +184,9 @@ public class PeptideShakerCLI implements Callable {
         IdentificationFeaturesGenerator identificationFeaturesGenerator =
                 new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
-        projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
-
         waitingHandler.setWaitingText("Saving Data. Please Wait...");
         if (waitingHandler instanceof WaitingDialog) {
+            projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
             ((WaitingDialog) waitingHandler).setRunNotFinished();
             ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(true, false);
         }
