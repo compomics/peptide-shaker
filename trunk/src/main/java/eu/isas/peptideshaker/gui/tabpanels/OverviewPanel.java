@@ -4545,10 +4545,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             try {
-
                 String proteinMatchKey = proteinKeys.get(proteinIndex);
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
                 String accession = proteinMatch.getMainMatch();
+
                 try {
                     peptideKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedPeptideKeys(proteinMatchKey);
                 } catch (Exception e) {

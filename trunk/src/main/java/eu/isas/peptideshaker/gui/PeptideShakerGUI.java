@@ -2782,6 +2782,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         new GettingStartedDialog(this, false);
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
 
+    /**
+     * Open the ProcessingPreferencesDialog.
+     * 
+     * @param evt 
+     */
     private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
         new ProcessingPreferencesDialog(this, false, processingPreferences, ptmScoringPreferences);
     }//GEN-LAST:event_processingParametersMenuItemActionPerformed
