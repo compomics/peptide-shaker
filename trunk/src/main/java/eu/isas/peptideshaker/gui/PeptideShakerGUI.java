@@ -543,7 +543,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Add icons to the tab componets.
+     * Add icons to the tab components.
      */
     private void setupTabComponents() {
         // @TODO: implement me? requires the creation of icons for each tab...
