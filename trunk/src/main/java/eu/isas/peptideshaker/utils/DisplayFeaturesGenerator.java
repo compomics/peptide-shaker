@@ -243,14 +243,14 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the peptide with modification sites tagged (color coded or with
-     * ptm tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
+     * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
      * inference results. Shall be used for peptides, not PSMs, for PSM use the 
      * one taking in a Peptide object instead.
      *
      * @param peptideKey the peptide key
-     * @param useHtmlColorCoding if true, color coded html is used, otherwise
-     * ptm tags, e.g, &lt;mox&gt;, are used
-     * @param includeHtmlStartEndTags if true, html start and end tags are added
+     * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
+     * PTM tags, e.g, &lt;mox&gt;, are used
+     * @param includeHtmlStartEndTags if true, HTML start and end tags are added
      * @param useShortName if true the short names are used in the tags
      * @return the tagged peptide sequence
      */
@@ -281,15 +281,15 @@ public class DisplayFeaturesGenerator {
 
     /**
      * Returns the modified sequence as an tagged string with potential
-     * modification sites color coded or with ptm tags, e.g, &lt;mox&gt;. /!\
-     * This method will work only if the ptm found in the peptide are in the
+     * modification sites color coded or with PTM tags, e.g, &lt;mox&gt;. /!\
+     * This method will work only if the PTM found in the peptide are in the
      * PTMFactory. /!\ This method uses the modifications as set in the
      * modification matches of this peptide and displays all of them.
      *
      * @param peptide the peptide
-     * @param useHtmlColorCoding if true, color coded html is used, otherwise
-     * ptm tags, e.g, &lt;mox&gt;, are used
-     * @param includeHtmlStartEndTag if true, start and end html tags are added
+     * @param useHtmlColorCoding if true, color coded HTML is used, otherwise
+     * PTM tags, e.g, &lt;mox&gt;, are used
+     * @param includeHtmlStartEndTag if true, start and end HTML tags are added
      * @param useShortName if true the short names are used in the tags
      * @return the tagged sequence as a string
      */
@@ -340,7 +340,7 @@ public class DisplayFeaturesGenerator {
      * Filters the modification map according to the user's display preferences.
      *
      * @param modificationMap the map of modifications to filter (amino acid ->
-     * list of modifications, 1 is the first aa)
+     * list of modifications, 1 is the first amino acid)
      * @param displayPreferences the display preferences
      * @return a map of filtered modifications based on the user display
      * preferences

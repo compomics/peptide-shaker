@@ -145,6 +145,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         fractionsDeselectAllLabel = new javax.swing.JLabel();
         slashLabel5 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        fractionMwRange = new javax.swing.JCheckBox();
+        nonEnzymaticPeptides = new javax.swing.JCheckBox();
         projectPanel = new javax.swing.JPanel();
         exportAll = new javax.swing.JButton();
         exportAllLabel = new javax.swing.JLabel();
@@ -972,6 +974,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("<html>\n<i>\nNote: While these values provide an idea of how the data distributes<br>\nacross the fractions, further analysis is however required to be able<br>\nto claim that this is indeed the case.\n</i>\n</html>");
 
+        fractionMwRange.setSelected(true);
+        fractionMwRange.setText("Fraction MW Range");
+        fractionMwRange.setToolTipText("Show the molecular weight ranges for each protein.");
+        fractionMwRange.setIconTextGap(10);
+        fractionMwRange.setOpaque(false);
+
+        nonEnzymaticPeptides.setSelected(true);
+        nonEnzymaticPeptides.setText("Non Enzymatic Peptides");
+        nonEnzymaticPeptides.setToolTipText("Do the proteins have non enzymatic peptides?");
+        nonEnzymaticPeptides.setIconTextGap(10);
+        nonEnzymaticPeptides.setOpaque(false);
+
         javax.swing.GroupLayout fractionsPanelLayout = new javax.swing.GroupLayout(fractionsPanel);
         fractionsPanel.setLayout(fractionsPanelLayout);
         fractionsPanelLayout.setHorizontalGroup(
@@ -990,9 +1004,15 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(fractionsExport))
                     .addGroup(fractionsPanelLayout.createSequentialGroup()
                         .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(spectraPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(peptidesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(precursorIntensitiesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(precursorIntensitiesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(fractionsPanelLayout.createSequentialGroup()
+                                .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(spectraPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(peptidesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(75, 75, 75)
+                                .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(nonEnzymaticPeptides, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(fractionMwRange, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1000,14 +1020,20 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fractionsPanelLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(peptidesPerFraction)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectraPerFraction)
+                .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(fractionsPanelLayout.createSequentialGroup()
+                        .addComponent(peptidesPerFraction)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spectraPerFraction))
+                    .addGroup(fractionsPanelLayout.createSequentialGroup()
+                        .addComponent(fractionMwRange, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nonEnzymaticPeptides, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(precursorIntensitiesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(46, 46, 46)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(fractionsSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(slashLabel5)
@@ -1653,10 +1679,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void fractionsExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fractionsExportActionPerformed
-        // @TODO: this export can be extended with more options
         outputGenerator.getFractionsOutput(this, null, false, true, true, true, true, true, true, true, 
                 true, true, peptidesPerFraction.isSelected(), spectraPerFraction.isSelected(), precursorIntensitiesPerFraction.isSelected(), 
-                true, true, false, true, false, true);
+                fractionMwRange.isSelected(), true, false, true, false, nonEnzymaticPeptides.isSelected());
     }//GEN-LAST:event_fractionsExportActionPerformed
 
     /**
@@ -1668,6 +1693,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptidesPerFraction.setSelected(true);
         spectraPerFraction.setSelected(true);
         precursorIntensitiesPerFraction.setSelected(true);
+        fractionMwRange.setSelected(true);
+        nonEnzymaticPeptides.setSelected(true);
     }//GEN-LAST:event_fractionsSelectAllLabelMouseClicked
 
     /**
@@ -1697,6 +1724,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptidesPerFraction.setSelected(false);
         spectraPerFraction.setSelected(false);
         precursorIntensitiesPerFraction.setSelected(false);
+        fractionMwRange.setSelected(false);
+        nonEnzymaticPeptides.setSelected(false);
     }//GEN-LAST:event_fractionsDeselectAllLabelMouseClicked
 
     /**
@@ -1744,6 +1773,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel exportPhosphLabel;
     private javax.swing.JButton exportPhospoJButton;
     private javax.swing.JPanel featuresPanel;
+    private javax.swing.JCheckBox fractionMwRange;
     private javax.swing.JLabel fractionsDeselectAllLabel;
     private javax.swing.JButton fractionsExport;
     private javax.swing.JPanel fractionsPanel;
@@ -1752,6 +1782,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox maximalProteinSetCheckBox;
     private javax.swing.JCheckBox molecularWeight;
+    private javax.swing.JCheckBox nonEnzymaticPeptides;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
     private javax.swing.JLabel peptideDeselectAllLabel;
