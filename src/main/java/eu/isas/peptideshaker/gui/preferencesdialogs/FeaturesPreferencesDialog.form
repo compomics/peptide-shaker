@@ -1158,9 +1158,18 @@
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="spectraPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="peptidesPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="precursorIntensitiesPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="precursorIntensitiesPerFraction" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="spectraPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="peptidesPerFraction" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="nonEnzymaticPeptides" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="fractionMwRange" min="-2" pref="150" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
@@ -1173,14 +1182,23 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                              <Component id="peptidesPerFraction" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spectraPerFraction" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="peptidesPerFraction" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="spectraPerFraction" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="fractionMwRange" min="-2" pref="23" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="nonEnzymaticPeptides" min="-2" pref="23" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="precursorIntensitiesPerFraction" min="-2" pref="23" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                              <EmptySpace pref="53" max="32767" attributes="0"/>
                               <Component id="jLabel1" min="-2" pref="58" max="-2" attributes="0"/>
-                              <EmptySpace pref="13" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="2" attributes="0">
                                   <Component id="fractionsSelectAllLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="slashLabel5" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1257,6 +1275,24 @@
                     <Component class="javax.swing.JLabel" name="jLabel1">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;i&gt;&#xa;Note: While these values provide an idea of how the data distributes&lt;br&gt;&#xa;across the fractions, further analysis is however required to be able&lt;br&gt;&#xa;to claim that this is indeed the case.&#xa;&lt;/i&gt;&#xa;&lt;/html&gt;"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="fractionMwRange">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Fraction MW Range"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Show the molecular weight ranges for each protein."/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="nonEnzymaticPeptides">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Non Enzymatic Peptides"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Do the proteins have non enzymatic peptides?"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
