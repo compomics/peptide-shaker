@@ -416,8 +416,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         for (String arg : args) {
             if (cps) {
                 cpsFile = new File(arg);
-                    cps = false;
-                }
+                cps = false;
+            }
             if (arg.equals(ToolFactory.peptideShakerFileOption)) {
                 cps = true;
             }
@@ -1871,7 +1871,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
-
                 public void run() {
                     overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
                     overviewPanel.updateSeparators();
@@ -2046,7 +2045,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
-
                     public void run() {
                         updateSpectrumAnnotations();
                     }
@@ -2484,7 +2482,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     progressDialog.setTitle("Exporting Project. Please Wait...");
 
                     new Thread(new Runnable() {
-
                         public void run() {
 
                             try {
@@ -2496,7 +2493,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }, "ProgressDialog").start();
 
                     new Thread("ExportThread") {
-
                         @Override
                         public void run() {
 
@@ -2788,8 +2784,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Open the ProcessingPreferencesDialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void processingParametersMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processingParametersMenuItemActionPerformed
         new ProcessingPreferencesDialog(this, false, processingPreferences, ptmScoringPreferences);
@@ -2837,7 +2833,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final PeptideShakerGUI finalRef = this;
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     ToolFactory.startReporter(finalRef);
@@ -4116,7 +4111,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 overviewPanel.updateSeparators();
                 overviewJPanel.revalidate();
@@ -4514,7 +4508,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final PeptideShakerGUI finalRef = this;
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -4525,7 +4518,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }, "ProgressDialog").start();
 
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 try {
@@ -4598,7 +4590,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         progressDialog.setTitle("Closing. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -4609,7 +4600,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }, "ProgressDialog").start();
 
         new Thread("RestartThread") {
-
             @Override
             public void run() {
                 try {
@@ -4737,7 +4727,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 JCheckBoxMenuItem lossMenuItem = new JCheckBoxMenuItem(names.get(i));
                 lossMenuItem.setSelected(selected);
                 lossMenuItem.addActionListener(new java.awt.event.ActionListener() {
-
                     public void actionPerformed(java.awt.event.ActionEvent evt) {
                         annotationPreferences.useAutomaticAnnotation(false);
                         annotationPreferences.setNeutralLossesSequenceDependant(false);
@@ -4783,7 +4772,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
 
             chargeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     annotationPreferences.useAutomaticAnnotation(false);
                     updateAnnotationPreferences();
@@ -4940,7 +4928,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             final PeptideShakerGUI temp = this;
 
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
 
                     boolean open = true;
@@ -5007,7 +4994,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             final PeptideShakerGUI temp = this;
 
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
 
                     if (!new File(filePath).exists()) {
@@ -5078,7 +5064,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -5089,7 +5074,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }, "ProgressDialog").start();
 
         new Thread("ImportThread") {
-
             @Override
             public void run() {
 
@@ -5386,7 +5370,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     fileChooser.setDialogTitle("Open Spectrum File");
 
                                     FileFilter filter = new FileFilter() {
-
                                         @Override
                                         public boolean accept(File myFile) {
                                             return myFile.getName().toLowerCase().endsWith("mgf")
@@ -5508,7 +5491,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
                                     FileFilter filter = new FileFilter() {
-
                                         @Override
                                         public boolean accept(File myFile) {
                                             return myFile.isDirectory();
@@ -5667,7 +5649,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         fileChooser.setDialogTitle("Open FASTA File");
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("fasta")
@@ -5879,7 +5860,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -5890,7 +5870,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }, "ProgressDialog").start();
 
         new Thread("SaveThread") {
-
             @Override
             public void run() {
                 try {
@@ -6315,7 +6294,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         final boolean fragments = ms2;
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -6326,7 +6304,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }, "ProgressDialog").start();
 
         new Thread("SaveThread") {
-
             @Override
             public void run() {
 
@@ -6523,7 +6500,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void startNewsFeed() {
 
         new Thread("NewsFeedThread") {
-
             @Override
             public synchronized void run() {
 
