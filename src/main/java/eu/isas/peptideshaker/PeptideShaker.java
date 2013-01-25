@@ -1305,7 +1305,7 @@ public class PeptideShaker {
                                 Integer newLocalization = mapping.get(oldLocalization);
                                 if (modificationMatch != null && newLocalization != null) {
                                     if (newLocalization != oldLocalization) {
-                                        System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+//                                        System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
                                     }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
