@@ -35,7 +35,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
@@ -201,7 +200,6 @@ public class OutputGenerator {
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -212,7 +210,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -547,7 +544,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -558,7 +554,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1024,7 +1019,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1035,7 +1029,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1579,7 +1572,6 @@ public class OutputGenerator {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.isDirectory();
@@ -1587,7 +1579,7 @@ public class OutputGenerator {
 
             @Override
             public String getDescription() {
-                return "(2 tab separated text files) *.txt";
+                return "(Two tab separated text files) *.txt";
             }
         };
 
@@ -1617,7 +1609,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1628,14 +1619,13 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
                     try {
                         String reducedName = selectedFile.getName();
                         if (reducedName.endsWith(".txt")) {
-                        reducedName = reducedName.substring(0, reducedName.length() - 4);
+                            reducedName = reducedName.substring(0, reducedName.length() - 4);
                         }
                         try {
                             File outputFile = new File(selectedFile.getParent(), reducedName + "_PSMs_phospho.txt");
@@ -2126,7 +2116,6 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2137,7 +2126,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -2399,7 +2387,7 @@ public class OutputGenerator {
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
-     * @param aShowEnzymaticPeptidesColumn if true, a column indicating if the 
+     * @param aShowEnzymaticPeptidesColumn if true, a column indicating if the
      * protein has one or more non enzymatic peptides will be included
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
@@ -2474,7 +2462,6 @@ public class OutputGenerator {
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2485,7 +2472,6 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -2545,7 +2531,7 @@ public class OutputGenerator {
                                 writer.write("Peptide Fraction Spread (lower range (kDa))" + SEPARATOR);
                                 writer.write("Peptide Fraction Spread (upper range (kDa))" + SEPARATOR);
                                 writer.write("Spectrum Fraction Spread (lower range (kDa))" + SEPARATOR);
-                                writer.write("Spectrum Fraction Spread (upper range (kDa))" + SEPARATOR); 
+                                writer.write("Spectrum Fraction Spread (upper range (kDa))" + SEPARATOR);
                             }
                             if (showEnzymaticPeptidesColumn) {
                                 writer.write("Non Enzymatic Peptides" + SEPARATOR);
@@ -2743,7 +2729,7 @@ public class OutputGenerator {
                                                 }
                                             }
                                             if (showEnzymaticPeptidesColumn) {
-                                                
+
                                                 ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                                                 boolean allPeptidesEnzymatic = true;

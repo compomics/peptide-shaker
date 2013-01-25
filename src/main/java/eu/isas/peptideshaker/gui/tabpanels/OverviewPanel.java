@@ -129,7 +129,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private ArrayList<String> peptideKeys = new ArrayList<String>();
     /**
-     * A list of PSMs in the psm table.
+     * A list of PSMs in the PSM table.
      */
     private ArrayList<String> psmKeys = new ArrayList<String>();
     /**
@@ -157,7 +157,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private ChartPanel coverageChart;
     /**
-     * The sequence ptm chart.
+     * The sequence PTM chart.
      */
     private ChartPanel ptmChart;
     /**
