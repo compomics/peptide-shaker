@@ -122,11 +122,21 @@ public class IdFilter implements Serializable {
                 || searchEngine == Advocate.XTANDEM && eValue > xtandemMaxEvalue) {
             return false;
         }
-        if (assumption.getPeptide().getParentProteins().size() > 1) {
+        return true;
+    }
+    
+    /**
+     * Validates a peptide depending on its protein inference status
+     * 
+     * @param peptide the peptide
+     * @return a boolean indicating whether the peptide passed the test
+     */
+    public boolean validateProteins(Peptide peptide) {
+        
+        if (peptide.getParentProteins().size() > 1) {
             boolean target = false;
             boolean decoy = false;
-            ArrayList<String> parentProteins = assumption.getPeptide().getParentProteins();
-            for (String protein : parentProteins) {
+            for (String protein : peptide.getParentProteins()) {
                 if (SequenceFactory.isDecoy(protein)) {
                     decoy = true;
                 } else {

@@ -9,6 +9,24 @@
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
     </Component>
+    <Component class="javax.swing.JButton" name="exportPhospoJButton1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Export Phosphorylation Summary"/>
+        <Property name="toolTipText" type="java.lang.String" value="Export phosphorylation summary to a text file"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPhospoJButton1ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="exportPhosphLabel1">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="11" style="2"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Beta version."/>
+        <Property name="toolTipText" type="java.lang.String" value="Export all the identification results as four tab separated text files."/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" value="Export Features"/>
@@ -1305,8 +1323,8 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                      <JTabbedPaneConstraints tabName="Project">
-                        <Property name="tabTitle" type="java.lang.String" value="Project"/>
+                      <JTabbedPaneConstraints tabName="Advanced">
+                        <Property name="tabTitle" type="java.lang.String" value="Advanced"/>
                       </JTabbedPaneConstraints>
                     </Constraint>
                   </Constraints>
@@ -1314,25 +1332,27 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="exportAll" max="32767" attributes="0"/>
                                   <Component id="exportPhospoJButton" max="32767" attributes="0"/>
+                                  <Component id="exportPhospoJButton2" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="exportPhosphLabel2" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportPhosphLabel" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportAllLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="43" max="32767" attributes="0"/>
+                              <EmptySpace pref="54" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="106" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="exportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportAllLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -1342,7 +1362,12 @@
                                   <Component id="exportPhospoJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportPhosphLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="77" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="exportPhospoJButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="exportPhosphLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="79" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1381,6 +1406,25 @@
                           <Font name="Tahoma" size="11" style="2"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Beta version."/>
+                        <Property name="toolTipText" type="java.lang.String" value="Export all the identification results as four tab separated text files."/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="exportPhospoJButton2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Export Methods Summary"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Export phosphorylation summary to a text file"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPhospoJButton2ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="exportPhosphLabel2">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="11" style="2"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Under construction."/>
                         <Property name="toolTipText" type="java.lang.String" value="Export all the identification results as four tab separated text files."/>
                       </Properties>
                     </Component>

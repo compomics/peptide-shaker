@@ -35,6 +35,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
@@ -200,6 +201,7 @@ public class OutputGenerator {
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -210,6 +212,7 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
+
                 @Override
                 public void run() {
 
@@ -544,6 +547,7 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -554,6 +558,7 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
+
                 @Override
                 public void run() {
 
@@ -1019,6 +1024,7 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1029,6 +1035,7 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
+
                 @Override
                 public void run() {
 
@@ -1567,11 +1574,12 @@ public class OutputGenerator {
     public void getPhosphoOutput(JDialog parentDialog) {
 
         final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Result Folder");
+        fileChooser.setDialogTitle("Select Result File");
         fileChooser.setMultiSelectionEnabled(false);
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         FileFilter filter = new FileFilter() {
+
             @Override
             public boolean accept(File myFile) {
                 return myFile.isDirectory();
@@ -1579,7 +1587,7 @@ public class OutputGenerator {
 
             @Override
             public String getDescription() {
-                return "(Tab separated text file) *.txt";
+                return "(2 tab separated text files) *.txt";
             }
         };
 
@@ -1609,6 +1617,7 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1619,12 +1628,18 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
+
                 @Override
                 public void run() {
 
                     try {
+                        String reducedName = selectedFile.getName();
+                        if (reducedName.endsWith(".txt")) {
+                        reducedName = reducedName.substring(0, reducedName.length() - 4);
+                        }
                         try {
-                            writer = new BufferedWriter(new FileWriter(new File(selectedFile, "PSMs_phospho.txt")));
+                            File outputFile = new File(selectedFile.getParent(), reducedName + "_PSMs_phospho.txt");
+                            writer = new BufferedWriter(new FileWriter(outputFile));
                         } catch (IOException e) {
                             JOptionPane.showMessageDialog(null, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
@@ -1641,7 +1656,7 @@ public class OutputGenerator {
                         writer.write("Protein(s)" + SEPARATOR);
                         writer.write("Protein(s) Descriptions" + SEPARATOR);
                         writer.write("Sequence" + SEPARATOR);
-                        writer.write("Variable Modification(s)" + SEPARATOR);
+                        writer.write("Phosphorylation(s)" + SEPARATOR);
                         writer.write("A-score localization" + SEPARATOR);
                         writer.write("D-score localization" + SEPARATOR);
                         writer.write("A-score" + SEPARATOR);
@@ -1842,7 +1857,8 @@ public class OutputGenerator {
                         }
                         writer.close();
                         try {
-                            writer = new BufferedWriter(new FileWriter(new File(selectedFile, "Proteins_phospho.txt")));
+                            File outputFile = new File(selectedFile.getParent(), reducedName + "_Proteins_phospho.txt");
+                            writer = new BufferedWriter(new FileWriter(outputFile));
                         } catch (IOException e) {
                             JOptionPane.showMessageDialog(null, "An error occured when saving the protein details.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             e.printStackTrace();
@@ -1900,15 +1916,18 @@ public class OutputGenerator {
                             writer.write(++proteinCounter + SEPARATOR);
 
                             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                            writer.write(proteinMatch.getMainMatch() + SEPARATOR);
+                            String accession = proteinMatch.getMainMatch();
+                            writer.write(accession + SEPARATOR);
                             boolean first = true;
                             for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    writer.write(", ");
+                                if (!otherProtein.equals(accession)) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        writer.write(", ");
+                                    }
+                                    writer.write(otherProtein);
                                 }
-                                writer.write(otherProtein);
                             }
                             writer.write(SEPARATOR);
                             writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
@@ -1919,41 +1938,49 @@ public class OutputGenerator {
                             }
 
                             try {
-                                writer.write(SEPARATOR + SEPARATOR);
                                 writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
+                            try {
                                 writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey) * 100 + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             try {
                                 writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey, targetedPtms) + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
+                            try {
                                 writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey, targetedPtms) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             try {
-                                writer.write(SEPARATOR);
-                                //        writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                                 writer.write(Double.NaN + SEPARATOR);
                             }
                             try {
-                                writer.write(SEPARATOR);
                                 writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
                             } catch (Exception e) {
                                 peptideShakerGUI.catchException(e);
                                 writer.write(Double.NaN + SEPARATOR);
                             }
                             try {
-                                writer.write(SEPARATOR);
                                 writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey,
                                         SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
-                            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
-                            writer.write(proteinMW + SEPARATOR);
+                            try {
+                                Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+                                writer.write(proteinMW + SEPARATOR);
+                            } catch (Exception e) {
+                                writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                            }
                             writer.write(proteinPSParameter.getProteinConfidence() + SEPARATOR);
                             if (proteinPSParameter.isValidated()) {
                                 writer.write(1 + SEPARATOR);
@@ -1965,7 +1992,7 @@ public class OutputGenerator {
                             } else {
                                 writer.write(0 + SEPARATOR);
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            writer.newLine();
                             progressDialog.increaseProgressValue();
                         }
 
@@ -2099,6 +2126,7 @@ public class OutputGenerator {
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2109,6 +2137,7 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
+
                 @Override
                 public void run() {
 
@@ -2445,6 +2474,7 @@ public class OutputGenerator {
             progressDialog.setIndeterminate(true);
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2455,6 +2485,7 @@ public class OutputGenerator {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
+
                 @Override
                 public void run() {
 

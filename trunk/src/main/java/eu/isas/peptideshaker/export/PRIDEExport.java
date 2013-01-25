@@ -362,8 +362,8 @@ public class PRIDEExport {
                             break;
                         }
 
-                        psmProbabilities = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(spectrumKey, psmProbabilities);
-                        SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                        psmProbabilities = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psmProbabilities);
+                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                         Peptide tempPeptide = bestAssumption.getPeptide();
 

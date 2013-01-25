@@ -688,7 +688,7 @@ public class FileImporter {
                     }
 
                     for (PeptideAssumption assumption : match.getAllAssumptions()) {
-                        if (!idFilter.validatePeptideAssumption(assumption)) {
+                        if (!idFilter.validatePeptideAssumption(assumption) || !idFilter.validateProteins(assumption.getPeptide())) {
                             match.removeAssumption(assumption);
                         }
                     }
@@ -712,6 +712,9 @@ public class FileImporter {
                                         }
                                     }
                                     peptide.setParentProteins(parentProteins);
+                                    if (!idFilter.validateProteins(assumption.getPeptide())) {
+                                        match.removeAssumption(assumption);
+                                    }
                                 }
                             }
 
