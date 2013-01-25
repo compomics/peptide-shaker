@@ -309,7 +309,7 @@
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
         
         <dependency>
