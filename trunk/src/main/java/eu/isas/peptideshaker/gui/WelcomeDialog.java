@@ -630,7 +630,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void gettingStartedJButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedJButton1ActionPerformed
-        new GettingStartedDialog(peptideShakerGUI, true);
+        new GettingStartedDialog(peptideShakerGUI, this, true);
     }//GEN-LAST:event_gettingStartedJButton1ActionPerformed
 
     /**
@@ -643,7 +643,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         setVisible(false);
         peptideShakerGUI.setVisible(true);
         dispose();
-        peptideShakerGUI.importPeptideShakerFile(new File(peptideShakerGUI.getJarFilePath() + "/resources/example_dataset/peptideshaker_HeLa-phospho-enriched_example.cps"));
+        peptideShakerGUI.openExampleFile();
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_openExampleDatasetJButtonActionPerformed
 

@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.gettingStarted;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.WelcomeDialog;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -19,6 +20,10 @@ public class GettingStartedDialog extends javax.swing.JDialog {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
+     * A reference to the WelcomeDialog, can be null.
+     */
+    private WelcomeDialog welcomeDialog;
+    /**
      * The panels containing the getting started information.
      */
     private ArrayList<ImageIconPanel> displayPanels;
@@ -30,12 +35,14 @@ public class GettingStartedDialog extends javax.swing.JDialog {
     /**
      * Creates a new GettingStartedDialog.
      *
-     * @param peptideShakerGUI
+     * @param peptideShakerGUI a reference to PeptideShakerGUI
+     * @param welcomeDialog a reference to the WelcomeDialog, can be null
      * @param modal
      */
-    public GettingStartedDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
+    public GettingStartedDialog(PeptideShakerGUI peptideShakerGUI, WelcomeDialog welcomeDialog, boolean modal) {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
+        this.welcomeDialog = welcomeDialog;
         initComponents();
         setUpDisplayPanels();
         displayPanel.add(displayPanels.get(currentDisplayPanelIndex));
@@ -59,6 +66,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/specific_tabs.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/pride_export.png"))));
         displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/searchgui.png"))));
+        displayPanels.add(new ImageIconPanel(new ImageIcon(getClass().getResource("/helpFiles/images/example_dataset.png"))));
     }
 
     /**
@@ -365,12 +373,15 @@ public class GettingStartedDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_backButtonActionPerformed
 
     /**
-     * Change the cursor to a hand cursor.
+     * Change the cursor to a hand cursor and show link tooltips.
      *
      * @param evt
      */
     private void displayPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayPanelMouseEntered
         if (currentDisplayPanelIndex == displayPanels.size() - 1) {
+            setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            displayPanel.setToolTipText("Click to open example dataset.");
+        } else if (currentDisplayPanelIndex == displayPanels.size() - 2) {
             setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             displayPanel.setToolTipText("Click to open the SearchGUI home page.");
         } else {
@@ -384,20 +395,27 @@ public class GettingStartedDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void displayPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayPanelMouseExited
-        if (currentDisplayPanelIndex == displayPanels.size() - 1) {
-            setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
-
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         displayPanel.setToolTipText(null);
     }//GEN-LAST:event_displayPanelMouseExited
 
     /**
-     * Open the SearchGUI home page.
+     * Carry out actions upon user clicks.
      *
      * @param evt
      */
     private void displayPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayPanelMouseClicked
         if (currentDisplayPanelIndex == displayPanels.size() - 1) {
+            setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            setVisible(false);
+            if (welcomeDialog != null) {
+                welcomeDialog.setVisible(false);
+            }
+            peptideShakerGUI.setVisible(true);
+            dispose();
+            peptideShakerGUI.openExampleFile();
+            setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        } else if (currentDisplayPanelIndex == displayPanels.size() - 2) {
             setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             BareBonesBrowserLaunch.openURL("http://searchgui.googlecode.com");
             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -429,7 +447,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         /**
          * Create a new ImageIconPanel.
          *
-         * @param imageIcon the iamge icon to display
+         * @param imageIcon the image icon to display
          */
         public ImageIconPanel(ImageIcon imageIcon) {
             this.imageIcon = imageIcon;

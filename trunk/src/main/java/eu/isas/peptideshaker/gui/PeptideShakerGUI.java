@@ -109,6 +109,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private File currentPSFile = null;
     /**
+     * The path to the example dataset.
+     */
+    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/peptideshaker_HeLa-phospho-enriched_example.cps";
+    /**
      * Convenience static string indicating that no selection was done by the
      * user.
      */
@@ -2328,7 +2332,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 } catch (IOException e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this, "An error occured while saving " + selectedFile.getPath() + ".\n"
-                            + "See resources/conf/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
+                            + "See resources/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
@@ -2779,7 +2783,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void gettingStartedMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gettingStartedMenuItemActionPerformed
-        new GettingStartedDialog(this, false);
+        new GettingStartedDialog(this, null, false);
     }//GEN-LAST:event_gettingStartedMenuItemActionPerformed
 
     /**
@@ -3047,7 +3051,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
             catchException(e);
             JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\n"
-                    + "See /resources/conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
+                    + "See /resources/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -6577,5 +6581,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     @Override
     public String getDefaultExportFolder() {
         return lastSelectedFolder;
+    }
+
+    /**
+     * Open the PeptideShaker example dataset.
+     */
+    public void openExampleFile() {
+
+        boolean open = true; 
+        
+        if (!dataSaved && experiment != null) {
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Do you want to save the changes to " + experiment.getReference() + "?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (value == JOptionPane.YES_OPTION) {
+                saveMenuItemActionPerformed(null);
+                open = false;
+            } else if (value == JOptionPane.CANCEL_OPTION) {
+                open = false;
+            }
+        }
+
+        if (open) {
+            
+            String filePath = getJarFilePath() + EXAMPLE_DATASET_PATH;
+            
+            if (!new File(filePath).exists()) {
+                JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                clearData(true);
+                clearPreferences();
+
+                importPeptideShakerFile(new File(filePath));
+                userPreferences.addRecentProject(filePath);
+                lastSelectedFolder = new File(filePath).getAbsolutePath();
+            }
+            updateRecentProjectsList();
+        }
     }
 }
