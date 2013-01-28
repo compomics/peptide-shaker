@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -1990,7 +1991,7 @@ public class OutputGenerator {
                         writer.close();
 //
 //                        try {
-//                            writer = new BufferedWriter(new FileWriter(new File(selectedFile, "reduced.mgf")));
+//                            writer = new BufferedWriter(new FileWriter(new File(selectedFile.getParent(), "reduced.mgf")));
 //                        } catch (IOException e) {
 //                            JOptionPane.showMessageDialog(null, "An error occured when saving the mgf file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
 //                            e.printStackTrace();
@@ -1999,6 +2000,10 @@ public class OutputGenerator {
 //
 //                        ArrayList<String> taken = new ArrayList<String>();
 //
+//                        progressDialog.setIndeterminate(false);
+//                        progressDialog.setMaxProgressValue(identification.getPeptideIdentification().size() + 2*identification.getSpectrumIdentificationSize());
+//                        progressDialog.setValue(0);
+//                        progressDialog.setTitle("Copying Protein Phospho Details to File. Please Wait...");
 //                        for (String peptideKey : identification.getPeptideIdentification()) {
 //                            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 //                            String title = null;
@@ -2013,9 +2018,10 @@ public class OutputGenerator {
 //                                taken.add(title);
 //                            }
 //                            if (title != null) {
-//                                    MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(title);
-//                                    writer.write(spectrum.asMgf());
+//                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(title);
+//                                writer.write(spectrum.asMgf());
 //                            }
+//                            progressDialog.increaseProgressValue();
 //                        }
 //                        int ratio = 10;
 //                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
@@ -2028,10 +2034,34 @@ public class OutputGenerator {
 //                                    }
 //                                    cpt++;
 //                                }
+//                            progressDialog.increaseProgressValue();
 //                            }
 //                        }
-//                        
+//
 //                        writer.close();
+//
+//
+//                        writer = new BufferedWriter(new FileWriter(new File(selectedFile.getParent(), "reduced.fasta")));
+//                        taken = new ArrayList<String>();
+//                        for (String spectrumFile : identification.getOrderedSpectrumFileNames()) {
+//                            for (String spectrumTitle : identification.getSpectrumIdentification(spectrumFile)) {
+//                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumTitle);
+//                                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+//                                    for (String accession : peptideAssumption.getPeptide().getParentProteins()) {
+//                                        if (!taken.contains(accession)) {
+//                                        writer.write(sequenceFactory.getHeader(accession).toString() + System.getProperty("line.separator"));
+//                                        writer.write(sequenceFactory.getProtein(accession).getSequence() + System.getProperty("line.separator"));
+//                                        taken.add(accession);
+//                                        }
+//                                    }
+//                                }
+//                            progressDialog.increaseProgressValue();
+//                            }
+//                        }
+//
+//                        writer.close();
+
+
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
