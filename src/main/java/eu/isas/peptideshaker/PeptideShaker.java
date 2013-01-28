@@ -1282,7 +1282,8 @@ public class PeptideShaker {
                                             ref += tempIndex;
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = localization - ref;
-                                                if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length() &&
+                                                        !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
                                                     newLocalizationCandidates.add(shiftedLocalization);
                                                 }
                                             }
@@ -1304,8 +1305,9 @@ public class PeptideShaker {
                                 ModificationMatch modificationMatch = nonConfidentMatches.get(oldLocalization);
                                 Integer newLocalization = mapping.get(oldLocalization);
                                 if (modificationMatch != null && newLocalization != null) {
-                                    if (newLocalization != oldLocalization) {
-//                                        System.out.println("newLocalization != oldLocalization: " + spectrumKey + ": " + spectrumMatch.getBestAssumption().getPeptide().getKey());
+                                    PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                                    if (!peptide.getPotentialModificationSites(ptm).contains(newLocalization)) {
+                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm() + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
                                     }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);
