@@ -337,8 +337,8 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
      * Lets the user select the folder to find the missing files in.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
         JFileChooser fileChooser = new JFileChooser();
@@ -373,8 +373,8 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
      * Cancels the selection, closes the dialog and then cancels the import.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         waitingDialog.setRunCanceled();
@@ -383,8 +383,8 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
      * Saves the mgf files and closes the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
@@ -397,8 +397,8 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
      * Add an mgf file.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         int row = fileTable.getSelectedRow();
@@ -412,7 +412,9 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         }
         String newFile = (String) fileList.getSelectedValue();
         String mgfFile = missingFiles.get(idFiles.get(row));
-        newFiles.put(mgfFile, new File(lastSelectedFolder, newFile));
+        if (mgfFile != null && newFile != null) {
+            newFiles.put(mgfFile, new File(lastSelectedFolder, newFile));
+        }
         DefaultTableModel dm = (DefaultTableModel) fileTable.getModel();
         dm.fireTableDataChanged();
         updateFileList();
@@ -420,8 +422,8 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     /**
      * Remove an mgf file from the list.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         int row = fileTable.getSelectedRow();

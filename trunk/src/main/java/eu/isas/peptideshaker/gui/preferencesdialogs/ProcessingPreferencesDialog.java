@@ -149,12 +149,12 @@ public class ProcessingPreferencesDialog extends javax.swing.JDialog {
         }
         
         if (ascoreCmb.getSelectedIndex() == 1) {
-            JOptionPane.showMessageDialog(this, "Disabling the A-score dramatically reduces the identification performance of PeptideShaker.",
-                    "Warining", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Disabling the A-score will impair PTM localization and thus distinction between peptides.",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
         }
         if (neutralLossesCmb.getSelectedIndex() == 0) {
             JOptionPane.showMessageDialog(this, "In our experience the A-score performs very poorely when accounting for neutral losses.",
-                    "Warining", JOptionPane.WARNING_MESSAGE);
+                    "Warning", JOptionPane.WARNING_MESSAGE);
         }
         return true;
     }
