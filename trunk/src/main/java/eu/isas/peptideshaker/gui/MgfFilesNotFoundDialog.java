@@ -54,18 +54,23 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         super(waitingDialog, true);
 
         this.waitingDialog = waitingDialog;
-        setLocationRelativeTo(waitingDialog);
         this.missingFiles = missingFiles;
 
         idFiles = new ArrayList<File>(missingFiles.keySet());
         lastSelectedFolder = idFiles.get(0).getParentFile();
 
         initComponents();
+        
+        fileTable.getTableHeader().setReorderingAllowed(false);
+        
+        // make sure that the scroll panes are see-through
+        fileTableScrollPane.getViewport().setOpaque(false);
 
         newFolderLoaded();
         fileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         fileTable.getColumn(" ").setMaxWidth(30);
 
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -205,26 +210,36 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        backgroundPanel = new javax.swing.JPanel();
+        helpTextLabel = new javax.swing.JLabel();
+        fileTableScrollPane = new javax.swing.JScrollPane();
+        fileTable = new javax.swing.JTable();
+        fileTableScrollPane = new javax.swing.JScrollPane();
         fileTable = new javax.swing.JTable();
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        filessScrollPane = new javax.swing.JScrollPane();
         fileList = new javax.swing.JList();
-        jLabel2 = new javax.swing.JLabel();
+        filessScrollPane = new javax.swing.JScrollPane();
+        fileList = new javax.swing.JList();
+        folderLabel = new javax.swing.JLabel();
         browseButton = new javax.swing.JButton();
         folderTxt = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setResizable(false);
+        setTitle("Spectrum Files Missing");
 
-        jLabel1.setText("Spectrum files needed for identification processing were missing. Select them manually:");
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        helpTextLabel.setText("Spectrum files missing. Please select them manually:");
 
         fileTable.setModel(new FileTable());
-        jScrollPane1.setViewportView(fileTable);
+        fileTableScrollPane.setViewportView(fileTable);
+
+        fileTable.setModel(new FileTable());
+        fileTableScrollPane.setViewportView(fileTable);
 
         addButton.setText("<<");
         addButton.addActionListener(new java.awt.event.ActionListener() {
@@ -241,9 +256,12 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         });
 
         fileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(fileList);
+        filessScrollPane.setViewportView(fileList);
 
-        jLabel2.setText("Folder:");
+        fileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        filessScrollPane.setViewportView(fileList);
+
+        folderLabel.setText("Folder:");
 
         browseButton.setText("Browse");
         browseButton.addActionListener(new java.awt.event.ActionListener() {
@@ -268,72 +286,100 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
             }
         });
 
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(fileTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addButton)
+                            .addComponent(removeButton)))
+                    .addComponent(helpTextLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(folderLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(folderTxt)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(filessScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(folderLabel)
+                    .addComponent(browseButton)
+                    .addComponent(folderTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(helpTextLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(removeButton))
+                    .addComponent(filessScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                    .addComponent(fileTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addButton)
-                            .addComponent(removeButton))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(folderTxt)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(browseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(593, 593, 593)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(89, 89, 89)
-                        .addComponent(addButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(removeButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(browseButton)
-                                    .addComponent(folderTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane2))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Saves the mgf files and closes the dialog.
+     *
+     * @param evt
+     */
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        if (validateInput()) {
+            for (String idName : newFiles.keySet()) {
+                spectrumFactory.addIdNameMapping(idName, newFiles.get(idName));
+            }
+            dispose();
+        }
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    /**
+     * Cancels the selection, closes the dialog and then cancels the import.
+     *
+     * @param evt
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        waitingDialog.setRunCanceled();
+        dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * Lets the user select the folder to find the missing files in.
@@ -345,11 +391,10 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         fileChooser.setDialogTitle("Change Folder");
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("mgf")
-                        || myFile.isDirectory();
+                || myFile.isDirectory();
             }
 
             @Override
@@ -372,28 +417,19 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_browseButtonActionPerformed
 
     /**
-     * Cancels the selection, closes the dialog and then cancels the import.
+     * Remove an mgf file from the list.
      *
      * @param evt
      */
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        waitingDialog.setRunCanceled();
-        dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    /**
-     * Saves the mgf files and closes the dialog.
-     *
-     * @param evt
-     */
-    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (validateInput()) {
-            for (String idName : newFiles.keySet()) {
-                spectrumFactory.addIdNameMapping(idName, newFiles.get(idName));
-            }
-            dispose();
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        int row = fileTable.getSelectedRow();
+        if (row >= 0) {
+            newFiles.remove(missingFiles.get(idFiles.get(row)));
+            DefaultTableModel dm = (DefaultTableModel) fileTable.getModel();
+            dm.fireTableDataChanged();
+            updateFileList();
         }
-    }//GEN-LAST:event_okButtonActionPerformed
+    }//GEN-LAST:event_removeButtonActionPerformed
 
     /**
      * Add an mgf file.
@@ -420,31 +456,18 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         updateFileList();
     }//GEN-LAST:event_addButtonActionPerformed
 
-    /**
-     * Remove an mgf file from the list.
-     *
-     * @param evt
-     */
-    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        int row = fileTable.getSelectedRow();
-        if (row >= 0) {
-            newFiles.remove(missingFiles.get(idFiles.get(row)));
-            DefaultTableModel dm = (DefaultTableModel) fileTable.getModel();
-            dm.fireTableDataChanged();
-            updateFileList();
-        }
-    }//GEN-LAST:event_removeButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton browseButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JList fileList;
     private javax.swing.JTable fileTable;
+    private javax.swing.JScrollPane fileTableScrollPane;
+    private javax.swing.JScrollPane filessScrollPane;
+    private javax.swing.JLabel folderLabel;
     private javax.swing.JTextField folderTxt;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel helpTextLabel;
     private javax.swing.JButton okButton;
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
