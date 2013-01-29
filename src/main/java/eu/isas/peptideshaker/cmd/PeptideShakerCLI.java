@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.CompomicsWrapper;
+import com.compomics.util.Util;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -10,6 +12,8 @@ import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
@@ -17,6 +21,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
+import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.gui.DummyFrame;
@@ -33,6 +38,7 @@ import java.awt.Toolkit;
 import org.apache.commons.cli.*;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -106,6 +112,7 @@ public class PeptideShakerCLI implements Callable {
             ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
 
             new Thread(new Runnable() {
+
                 public void run() {
                     try {
                         ((WaitingDialog) waitingHandler).setVisible(true);
@@ -228,6 +235,12 @@ public class PeptideShakerCLI implements Callable {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setWaitingText("PeptideShaker Processing - Completed!");
         waitingHandler.appendReportEndLine();
+        try {
+            closePeptideShaker(identification);
+        } catch (Exception e) {
+            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+            e.printStackTrace();
+        }
         waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
         if (waitingHandler instanceof WaitingDialog) {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
@@ -237,6 +250,22 @@ public class PeptideShakerCLI implements Callable {
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
         return null;
+    }
+
+    private void closePeptideShaker(Identification identification) throws IOException, SQLException {
+
+        SpectrumFactory.getInstance().closeFiles();
+        SequenceFactory.getInstance().closeFile();
+        identification.close();
+
+        File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
+        File[] tempFiles = matchFolder.listFiles();
+
+        if (tempFiles != null) {
+            for (File currentFile : tempFiles) {
+                Util.deleteDir(currentFile);
+            }
+        }
     }
 
     /**
@@ -269,12 +298,21 @@ public class PeptideShakerCLI implements Callable {
      */
     private void loadEnzymes() {
         try {
-            File lEnzymeFile = new File(new PeptideShakerGUI().getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
+            File lEnzymeFile = new File(getJarFilePath() + File.separator + PeptideShaker.ENZYME_FILE);
             enzymeFactory.importEnzymes(lEnzymeFile);
         } catch (Exception e) {
             System.err.println("Not able to load the enzyme file.");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Returns the path to the jar file.
+     *
+     * @return the path to the jar file
+     */
+    public String getJarFilePath() {
+        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerCLI.class").getPath(), "PeptideShaker");
     }
 
     /**
@@ -482,14 +520,7 @@ public class PeptideShakerCLI implements Callable {
                 userPreferences = new UserPreferences();
                 saveUserPreferences();
             } else {
-                FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                ObjectInputStream in = new ObjectInputStream(bis);
-                Object inObject = in.readObject();
-                fis.close();
-                bis.close();
-                in.close();
-                userPreferences = (UserPreferences) inObject;
+                userPreferences = (UserPreferences) SerializationUtils.readObject(file);
                 checkVersionCompatibility();
             }
         } catch (Exception e) {
@@ -517,13 +548,7 @@ public class PeptideShakerCLI implements Callable {
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdir();
             }
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(userPreferences);
-            oos.close();
-            bos.close();
-            fos.close();
+            SerializationUtils.writeObject(userPreferences, file);
         } catch (Exception e) {
             e.printStackTrace();
         }

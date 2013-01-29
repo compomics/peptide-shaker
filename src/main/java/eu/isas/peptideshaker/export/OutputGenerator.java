@@ -1083,6 +1083,7 @@ public class OutputGenerator {
                                 } else {
                                     writer.write("Mass Error [Da]" + SEPARATOR);
                                 }
+                                writer.write("Isotope number" + SEPARATOR);
                             }
                             if (score) {
                                 writer.write("Score" + SEPARATOR);
@@ -1353,6 +1354,7 @@ public class OutputGenerator {
                                                     writer.write(prec.getRt() + SEPARATOR);
                                                     writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
                                                     writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                                    writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                 }
                                                 if (score) {
                                                     writer.write(psParameter.getPsmScore() + SEPARATOR);
@@ -1831,6 +1833,7 @@ public class OutputGenerator {
                                 writer.write(prec.getRt() + SEPARATOR);
                                 writer.write(bestAssumption.getPeptide().getMass() + SEPARATOR);
                                 writer.write(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) + SEPARATOR);
+                                writer.write(bestAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                 writer.write(psParameter.getPsmConfidence() + SEPARATOR);
                                 if (psParameter.isValidated()) {
                                     writer.write(1 + SEPARATOR);
@@ -2192,7 +2195,8 @@ public class OutputGenerator {
                                 } else {
                                     writer.write("Mass Error [Da]" + SEPARATOR);
                                 }
-
+                                
+                                writer.write("Isotope number" + SEPARATOR);
                             }
                             if (scores) {
                                 writer.write("Mascot e-value" + SEPARATOR);
@@ -2317,6 +2321,7 @@ public class OutputGenerator {
                                                     writer.write(peptideAssumption.getPeptide().getMass() + SEPARATOR);
                                                     writer.write(Math.abs(peptideAssumption.getDeltaMass(prec.getMz(),
                                                             peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR);
+                                                    writer.write(peptideAssumption.getIsotopeNumber(prec.getMz()) + SEPARATOR);
                                                 }
                                                 if (scores) {
                                                     if (se == Advocate.MASCOT) {

@@ -193,7 +193,7 @@ public class CsvExporter {
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "D-score" + SEPARATOR + "A-score" + SEPARATOR + "PTM location confidence" + SEPARATOR
                     + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-                    + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR
+                    + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR
                     + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             spectrumWriter.write(content);
@@ -226,7 +226,7 @@ public class CsvExporter {
 //            Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 //            content = "Search Engine" + SEPARATOR + "Rank" + SEPARATOR + "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
 //                    + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-//                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
+//                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
 //                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
 //            assumptionWriter.write(content);
 
@@ -698,7 +698,8 @@ public class CsvExporter {
         line += precursor.getRt() + SEPARATOR;
         line += precursor.getMz() + SEPARATOR;
         line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
-        line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
+        line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true, true)) + SEPARATOR;
+        line += Math.abs(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
         Double mascotEValue = null;
         Double omssaEValue = null;
         Double xtandemEValue = null;
@@ -832,6 +833,7 @@ public class CsvExporter {
                     line += assumption.getFile() + SEPARATOR;
                     line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
                     line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
+                    line += Math.abs(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
 
                     if (se == Advocate.MASCOT) {
                         MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));

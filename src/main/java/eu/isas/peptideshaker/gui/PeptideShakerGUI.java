@@ -32,6 +32,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
+import com.compomics.util.io.SerializationUtils;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -3276,14 +3277,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 userPreferences = new UserPreferences();
                 saveUserPreferences();
             } else {
-                FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                ObjectInputStream in = new ObjectInputStream(bis);
-                Object inObject = in.readObject();
-                fis.close();
-                bis.close();
-                in.close();
-                userPreferences = (UserPreferences) inObject;
+                userPreferences = (UserPreferences) SerializationUtils.readObject(file);
                 checkVersionCompatibility();
             }
         } catch (Exception e) {
@@ -3307,13 +3301,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdir();
             }
-            FileOutputStream fos = new FileOutputStream(file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(userPreferences);
-            oos.close();
-            bos.close();
-            fos.close();
+            SerializationUtils.writeObject(userPreferences, file);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -3949,9 +3937,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         spectrumFactory.clearFactory();
-        spectrumFactory = SpectrumFactory.getInstance(100);
         sequenceFactory.clearFactory();
-        sequenceFactory = SequenceFactory.getInstance(100000);
 
         exceptionHandler = new ExceptionHandler(this);
 
