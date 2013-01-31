@@ -36,10 +36,20 @@ The following parameters are mandatory:
 The following parameters are optional:
 
 {{{
--out_csv                   Output folder for csv summary
+-search_params             The search parameters as a serialized
+                           file of com.compomics.util.experiment.
+                           identification.SearchParameters. This file 
+                           is automatically saved by SearchGUI along 
+                           with the identification files. If not 
+                           provided default settings will be tried. If 
+                           the default settings do not work the import 
+                           will crash - hopefully decently.
 
--out_pride                 PeptideShaker PRIDE xml output file (not
-                           implemented yet)
+-protein_FDR               FDR at the protein level in percent 
+                           (default 1% FDR: '1')
+
+-peptide_FDR               FDR at the peptide level in percent 
+                           (default 1% FDR: '1')
 
 -psm_FDR                   FDR at the PSM level in percent (default 1%
                            FDR: '1')
@@ -49,20 +59,14 @@ The following parameters are optional:
                            modification sites and one variable
                            modification (default 1% FLR: '1')
 
--peptide_FDR               FDR at the peptide level in percent 
-                           (default 1% FDR: '1')
+-out_txt_1                 Output folder for text summary - format 1 
+                           (three files: proteins, peptides and psms).
 
--protein_FDR               FDR at the protein level in percent 
-                           (default 1% FDR: '1')
+-out_txt_2                 Output folder for text summary - format 2 
+                           (one file: proteins and peptides).
 
--search_params             The search parameters as a serialized
-                           file of com.compomics.util.experiment.
-                           identification.SearchParameters. This file 
-                           is automatically saved by SearchGUI along 
-                           with the identification files. If not 
-                           provided default settings will be tried. If 
-                           the default settings do not work the import 
-                           will crash - hopefully decently.
+-out_pride                 PeptideShaker PRIDE xml output file (not
+                           implemented yet)
 }}}
 
 ==Example==
