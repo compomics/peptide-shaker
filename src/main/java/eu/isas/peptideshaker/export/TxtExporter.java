@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Advocate;
@@ -18,7 +17,6 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -34,14 +32,14 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * Contains methods for exporting the search engine results to csv files.
+ * Contains methods for exporting the search engine results to text files.
  *
  * @author Marc Vaudel
  */
-public class CsvExporter {
+public class TxtExporter {
 
     /**
-     * Separator for csv export. Hard coded for now, could be user setting.
+     * Separator for text export. Hard coded for now, could be user setting.
      */
     private static final String SEPARATOR = "\t";
     /**
@@ -94,14 +92,14 @@ public class CsvExporter {
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
 
     /**
-     * Creates a CsvExporter object.
+     * Creates a TxtExporter object.
      *
      * @param experiment the ms experiment
      * @param sample the sample
      * @param replicateNumber the replicate number
      * @param identificationFeaturesGenerator
      */
-    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
+    public TxtExporter(MsExperiment experiment, Sample sample, int replicateNumber, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
@@ -114,7 +112,7 @@ public class CsvExporter {
     }
 
     /**
-     * Exports the results to csv files.
+     * Exports the results to text files.
      *
      * @param waitingHandler a waitingHandler displaying progress to the user,
      * can be null
@@ -131,8 +129,9 @@ public class CsvExporter {
 
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
-                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" + SEPARATOR + "Observable coverage" + SEPARATOR + "p score"
-                    + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + System.getProperty("line.separator");
+                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" 
+                    + SEPARATOR + "Observable coverage" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR 
+                    + "Description" + System.getProperty("line.separator");
             proteinWriter.write(content);
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -166,7 +165,8 @@ public class CsvExporter {
             }
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
+                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR 
+                    + "Validated" + System.getProperty("line.separator");
             peptideWriter.write(content);
 
             for (String peptideKey : identification.getPeptideIdentification()) {
@@ -191,11 +191,12 @@ public class CsvExporter {
             }
 
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "D-score" + SEPARATOR + "A-score" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-                    + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR
-                    + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
-                    + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "D-score" + SEPARATOR + "A-score" 
+                    + SEPARATOR + "PTM location confidence" + SEPARATOR + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" 
+                    + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)" + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" 
+                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR + "Mascot Score" + SEPARATOR 
+                    + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value" + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" 
+                    + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             spectrumWriter.write(content);
 
             for (String spectrumFile : identification.getSpectrumFiles()) {

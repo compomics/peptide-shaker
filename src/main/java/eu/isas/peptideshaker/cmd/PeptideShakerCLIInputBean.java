@@ -43,9 +43,13 @@ public class PeptideShakerCLIInputBean {
      */
     private File output = null;
     /**
-     * CSV output directory.
+     * Text summary format 1 output directory. Three files: proteins, peptides and PSMs.
      */
-    private File csvDirectory = null;
+    private File textSummaryDirectoryFormat1 = null;
+    /**
+     * Text summary format 2 output directory. One file: proteins and peptides.
+     */
+    private File textSummaryDirectoryFormat2 = null;
     /**
      * PeptideShaker pride output file.
      */
@@ -100,12 +104,21 @@ public class PeptideShakerCLIInputBean {
 
         output = new File(aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_OUTPUT.id));
 
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id)) {
-            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id).trim();
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_1.id)) {
+            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_1.id).trim();
             File testFile = new File(filesTxt);
             if (testFile.exists()) {
-                csvDirectory = testFile;
-
+                textSummaryDirectoryFormat1 = testFile;
+            } else {
+                throw new FileNotFoundException(filesTxt + " not found.");
+            }
+        }
+        
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
+            filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
+            File testFile = new File(filesTxt);
+            if (testFile.exists()) {
+                textSummaryDirectoryFormat2 = testFile;
             } else {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
@@ -158,21 +171,39 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the directory for csv output. Null if not set.
+     * Returns the directory for text summary output format 1. Null if not set.
      *
-     * @return the directory for csv output
+     * @return the directory for text summary output format 1
      */
-    public File getCsvDirectory() {
-        return csvDirectory;
+    public File getTextFormat1Directory() {
+        return textSummaryDirectoryFormat1;
     }
 
     /**
-     * Sets the directory for csv output.
+     * Sets the directory for text summary output format 1.
      *
-     * @param csvDirectory the directory for csv output
+     * @param csvDirectory the directory for text summary output format 1
      */
-    public void setCsvDirectory(File csvDirectory) {
-        this.csvDirectory = csvDirectory;
+    public void setTextFormat1Directory(File csvDirectory) {
+        this.textSummaryDirectoryFormat1 = csvDirectory;
+    }
+    
+    /**
+     * Returns the directory for text summary output format 2. Null if not set.
+     *
+     * @return the directory for text summary output format 2
+     */
+    public File getTextFormat2Directory() {
+        return textSummaryDirectoryFormat2;
+    }
+
+    /**
+     * Sets the directory for text summary output format 2.
+     *
+     * @param csvDirectory the directory for text summary output format 2
+     */
+    public void setTextFormat2Directory(File csvDirectory) {
+        this.textSummaryDirectoryFormat2 = csvDirectory;
     }
 
     /**

@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import eu.isas.peptideshaker.export.CsvExporter;
+import eu.isas.peptideshaker.export.TxtExporter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
@@ -1319,7 +1319,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
 
-                    CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
+                    TxtExporter exporter = new TxtExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getIdentificationFeaturesGenerator());
                     boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
 
