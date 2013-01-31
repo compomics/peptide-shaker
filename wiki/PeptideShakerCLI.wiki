@@ -63,7 +63,8 @@ The following parameters are optional:
                            (three files: proteins, peptides and psms).
 
 -out_txt_2                 Output folder for text summary - format 2 
-                           (one file: proteins and peptides).
+                           (one file: proteins and peptides). (not
+                           implemented yet)
 
 -out_pride                 PeptideShaker PRIDE xml output file (not
                            implemented yet)
