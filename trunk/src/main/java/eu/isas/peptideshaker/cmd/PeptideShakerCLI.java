@@ -16,7 +16,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.CsvExporter;
+import eu.isas.peptideshaker.export.TxtExporter;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -112,7 +112,6 @@ public class PeptideShakerCLI implements Callable {
             ((WaitingDialog) waitingHandler).setLocation((int) tempLocation.getX() + 30, (int) tempLocation.getY() + 30);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         ((WaitingDialog) waitingHandler).setVisible(true);
@@ -215,12 +214,24 @@ public class PeptideShakerCLI implements Callable {
             e.printStackTrace();
         }
 
-        // CSV output required?
-        if (cliInputBean.getCsvDirectory() != null) {
-            waitingHandler.appendReport("Exporting results as csv file. Please wait...", true, true);
-            CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
-            exporter.exportResults(waitingHandler, cliInputBean.getCsvDirectory());
-            waitingHandler.appendReport("Results saved as csv in " + cliInputBean.getCsvDirectory().getAbsolutePath() + ".", true, true);
+        // text summary output required? - format 1
+        if (cliInputBean.getTextFormat1Directory() != null) {
+            waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
+            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+            exporter.exportResults(waitingHandler, cliInputBean.getTextFormat1Directory());
+            waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat1Directory().getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReportEndLine();
+        }
+        
+        // text summary output required? - format 2
+        if (cliInputBean.getTextFormat2Directory() != null) {
+            waitingHandler.appendReport("Exporting results as text file. Please wait...", true, true);
+            
+            // @TODO: implement text summary export format 2
+            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+            exporter.exportResults(waitingHandler, cliInputBean.getTextFormat2Directory());
+            
+            waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat2Directory().getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
         }
 
@@ -235,23 +246,34 @@ public class PeptideShakerCLI implements Callable {
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setWaitingText("PeptideShaker Processing - Completed!");
         waitingHandler.appendReportEndLine();
-        try {
-            closePeptideShaker(identification);
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
-            e.printStackTrace();
+
+        if (!cliInputBean.isGUI()) {
+            try {
+                closePeptideShaker(identification);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                e.printStackTrace();
+            }
         }
+
         waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
         if (waitingHandler instanceof WaitingDialog) {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
         }
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+                   // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
         return null;
     }
 
+    /**
+     * Close the PeptideShaker instance by clearing up factories and cache.
+     *
+     * @param identification the identification to close
+     * @throws IOException
+     * @throws SQLException
+     */
     private void closePeptideShaker(Identification identification) throws IOException, SQLException {
 
         SpectrumFactory.getInstance().closeFiles();
@@ -373,16 +395,25 @@ public class PeptideShakerCLI implements Callable {
             File testFile = new File(filesTxt.trim());
             File parentFolder = testFile.getParentFile();
             if (!parentFolder.exists()) {
-                System.out.println("\nDestination folder " + parentFolder.getPath() + " not found.\n");
+                System.out.println("\nDestination folder \'" + parentFolder.getPath() + "\' not found.\n");
                 return false;
             }
         }
 
-        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id)) {
-            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_CSV.id).trim();
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_1.id)) {
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_1.id).trim();
             File testFile = new File(filesTxt);
             if (!testFile.exists()) {
-                System.out.println("\nDestination folder for CSV " + filesTxt + " not found.\n");
+                System.out.println("\nDestination folder for text summary \'" + filesTxt + "\' not found.\n");
+                return false;
+            }
+        }
+        
+        if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
+            String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
+            File testFile = new File(filesTxt);
+            if (!testFile.exists()) {
+                System.out.println("\nDestination folder for text summary \'" + filesTxt + "\' not found.\n");
                 return false;
             }
         }
@@ -392,7 +423,7 @@ public class PeptideShakerCLI implements Callable {
             File testFile = new File(filesTxt.trim());
             File parentFolder = testFile.getParentFile();
             if (!parentFolder.exists()) {
-                System.out.println("\nDestination folder for Pride file " + parentFolder.getPath() + " not found.\n");
+                System.out.println("\nDestination folder for PRIDE file \'" + parentFolder.getPath() + "\' not found.\n");
                 return false;
             }
         }
@@ -402,7 +433,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("\nCould not parse " + input + " as PSM FDR threshold.\n");
+                System.out.println("\nCould not parse \'" + input + "\' as PSM FDR threshold.\n");
                 return false;
             }
         }
@@ -412,7 +443,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("\nCould not parse " + input + " as PSM FLR threshold.\n");
+                System.out.println("\nCould not parse \'" + input + "\' as PSM FLR threshold.\n");
                 return false;
             }
         }
@@ -422,7 +453,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("\nCould not parse " + input + " as peptide FDR threshold.\n");
+                System.out.println("\nCould not parse \'" + input + "\' as peptide FDR threshold.\n");
                 return false;
             }
         }
@@ -432,7 +463,7 @@ public class PeptideShakerCLI implements Callable {
             try {
                 Double.parseDouble(input);
             } catch (Exception e) {
-                System.out.println("\nCould not parse " + input + " as protein FDR threshold.\n");
+                System.out.println("\nCould not parse \'" + input + "\' as protein FDR threshold.\n");
                 return false;
             }
         }
@@ -445,11 +476,11 @@ public class PeptideShakerCLI implements Callable {
                 try {
                     SearchParameters.getIdentificationParameters(testFile);
                 } catch (Exception e) {
-                    System.out.println("\nAn error occurred while parsing " + filesTxt + ".\n");
+                    System.out.println("\nAn error occurred while parsing \'" + filesTxt + "\'.\n");
                     e.printStackTrace();
                 }
             } else {
-                System.out.println("\nSearch parameters file " + filesTxt + " not found.\n");
+                System.out.println("\nSearch parameters file \'" + filesTxt + "\' not found.\n");
                 return false;
             }
         }
