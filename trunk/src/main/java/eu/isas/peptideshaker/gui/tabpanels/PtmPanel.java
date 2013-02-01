@@ -4687,11 +4687,11 @@ public class PtmPanel extends javax.swing.JPanel {
                         if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
                             outputGenerator.getPeptidesOutput(
                                     null, displayedPeptides, null, true, false, true, true, true, true, true,
-                                    true, true, true, true, true, true, true, true, false, false, false, null);
+                                    true, true, true, true, true, true, true, true, false, false, false, null, true);
                         } else if (tableIndex == TableIndex.RELATED_PEPTIDES_TABLE) {
                             outputGenerator.getPeptidesOutput(
                                     null, relatedPeptides, null, true, false, true, true, true, true, true,
-                                    true, true, true, true, true, true, true, true, false, false, false, null);
+                                    true, true, true, true, true, true, true, true, false, false, false, null, true);
                         } else if (tableIndex == TableIndex.MODIFIED_PSMS_TABLE) {
                             outputGenerator.getPSMsOutput(
                                     null, identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches(),

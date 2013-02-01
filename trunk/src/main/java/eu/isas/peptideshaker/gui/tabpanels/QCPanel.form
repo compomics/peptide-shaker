@@ -123,7 +123,7 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="446" max="32767" attributes="0"/>
+                          <EmptySpace pref="450" max="32767" attributes="0"/>
                           <Component id="psmPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -316,7 +316,7 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="446" max="32767" attributes="0"/>
+                          <EmptySpace pref="450" max="32767" attributes="0"/>
                           <Component id="peptidesPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -522,7 +522,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="proteinsPlotLayeredPane" pref="431" max="32767" attributes="0"/>
+                          <Component id="proteinsPlotLayeredPane" pref="435" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Component id="proteinPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
