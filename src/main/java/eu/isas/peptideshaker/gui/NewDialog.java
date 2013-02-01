@@ -615,6 +615,18 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+        
+        // check if default search parameters are used
+        if (searchTxt.getText().equalsIgnoreCase("Default")) {
+            int value = JOptionPane.showConfirmDialog(this, 
+                    "It seems like you are using the default search parameters without any PTMs.\nContinue anyway?", 
+                    "Default Search Parameters?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            
+            if (value != JOptionPane.YES_NO_OPTION) {
+                return;
+            }
+        }
+        
         if (validateUserInput()) {
 
             this.setVisible(false);
@@ -714,7 +726,7 @@ public class NewDialog extends javax.swing.JDialog {
 }//GEN-LAST:event_clearDbButtonActionPerformed
 
     /**
-     * Opens a file chooser where the user can select the database FATA file to
+     * Opens a file chooser where the user can select the database FASTA file to
      * use.
      *
      * @param evt
@@ -723,7 +735,7 @@ public class NewDialog extends javax.swing.JDialog {
 
         JFileChooser fileChooser;
 
-        if (searchParameters != null && searchParameters.getFastaFile() != null) {
+        if (searchParameters != null && searchParameters.getFastaFile() != null && searchParameters.getFastaFile().exists()) {
             fileChooser = new JFileChooser(searchParameters.getFastaFile());
         } else {
             fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
@@ -757,9 +769,9 @@ public class NewDialog extends javax.swing.JDialog {
             checkFastaFile(fastaFile);
             if (searchParameters == null) {
                 searchParameters = new SearchParameters();
+                searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             }
             searchParameters.setFastaFile(fastaFile);
-            searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         }
 
         validateInput();
@@ -1538,7 +1550,7 @@ public class NewDialog extends javax.swing.JDialog {
      * Checks the FASTA file: 1) if it's a UniProt database, and 2) that it's a
      * target-decoy database. Shows warnings if one of these is false.
      *
-     * @param fastaFile the fasta file to test
+     * @param fastaFile the FASTA file to test
      */
     private void checkFastaFile(File file) {
 
@@ -1584,27 +1596,32 @@ public class NewDialog extends javax.swing.JDialog {
                                 JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (FileNotFoundException e) {
+                    progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, "File " + fastaFile + " was not found. Please select a different FASTA file.", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     fastaFileTxt.setText("");
                     validateInput();
                 } catch (IOException e) {
+                    progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, "An error occured while loading " + fastaFile + ".", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     fastaFileTxt.setText("");
                     validateInput();
                 } catch (InterruptedException e) {
+                    progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, "An error occured while loading " + fastaFile + ".", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     fastaFileTxt.setText("");
                     validateInput();
                 } catch (IllegalArgumentException e) {
+                    progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
                             "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     fastaFileTxt.setText("");
                     validateInput();
                 } catch (ClassNotFoundException e) {
+                    progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(finalRef, "Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
                             + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", "File Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();

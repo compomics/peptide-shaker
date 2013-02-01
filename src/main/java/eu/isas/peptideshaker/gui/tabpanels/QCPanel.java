@@ -25,13 +25,14 @@ import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- * This panel will display QC statistics for the current project
+ * This panel will display QC statistics for the current project.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -39,7 +40,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class QCPanel extends javax.swing.JPanel {
 
     /**
-     * The main peptide shaker gui.
+     * The main PeptideShaker GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
@@ -72,7 +73,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     public ArrayList<Double> nonValidatedDecoyValues;
     /**
-     * The current maxium value to be plotted.
+     * The current maximum value to be plotted.
      */
     private double maxValue = Double.MAX_VALUE;
 
@@ -94,7 +95,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private PlotType currentPeptidePlotType = PlotType.None;
     /**
-     * The currently shown psm plot type.
+     * The currently shown PSM plot type.
      */
     private PlotType currentPsmPlotType = PlotType.None;
 
@@ -642,7 +643,7 @@ public class QCPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Update the protein qc plot.
+     * Update the protein QC plot.
      *
      * @param evt
      */
@@ -654,7 +655,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_proteinNumberValidatedPeptidesJRadioButtonActionPerformed
 
     /**
-     * Update the protein qc plot.
+     * Update the protein QC plot.
      *
      * @param evt
      */
@@ -663,7 +664,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_proteinSpectrumCountingScoreJRadioButtonActionPerformed
 
     /**
-     * Update the protein qc plot.
+     * Update the protein QC plot.
      *
      * @param evt
      */
@@ -672,7 +673,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_proteinSequenceCoverageJRadioButtonActionPerformed
 
     /**
-     * Update the peptide qc plot.
+     * Update the peptide QC plot.
      *
      * @param evt
      */
@@ -684,7 +685,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideMissedCleavagesJRadioButtonActionPerformed
 
     /**
-     * Update the peptide qc plot.
+     * Update the peptide QC plot.
      *
      * @param evt
      */
@@ -693,7 +694,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideValidatedPsmsJRadioButtonActionPerformed
 
     /**
-     * Update the psm qc plot.
+     * Update the PSM QC plot.
      *
      * @param evt
      */
@@ -705,7 +706,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_psmPrecursorMassErrorJRadioButtonActionPerformed
 
     /**
-     * Update the psm qc plot.
+     * Update the PSM QC plot.
      *
      * @param evt
      */
@@ -714,7 +715,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_psmPrecursorChargeJRadioButtonActionPerformed
 
     /**
-     * Resize the psm plot area.
+     * Resize the PSM plot area.
      *
      * @param evt
      */
@@ -722,7 +723,6 @@ public class QCPanel extends javax.swing.JPanel {
 
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -873,7 +873,6 @@ public class QCPanel extends javax.swing.JPanel {
     private void peptidesPlotLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_peptidesPlotLayeredPaneComponentResized
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -964,7 +963,6 @@ public class QCPanel extends javax.swing.JPanel {
     private void proteinsPlotLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_proteinsPlotLayeredPaneComponentResized
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -989,7 +987,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_proteinsPlotLayeredPaneComponentResized
 
     /**
-     * Update the peptide qc plot.
+     * Update the peptide QC plot.
      *
      * @param evt
      */
@@ -998,7 +996,7 @@ public class QCPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideLengthJRadioButtonActionPerformed
 
     /**
-     * Update the protein qc plot.
+     * Update the protein QC plot.
      *
      * @param evt
      */
@@ -1105,7 +1103,6 @@ public class QCPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1117,7 +1114,6 @@ public class QCPanel extends javax.swing.JPanel {
             }, "ProgressDialog").start();
 
             new Thread("UpdatePlotThread") {
-
                 @Override
                 public void run() {
 
@@ -1258,6 +1254,9 @@ public class QCPanel extends javax.swing.JPanel {
                         // remove space before/after the domain axis
                         proteinChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                         proteinChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+                        
+                        // rotate the x-axis labels to make sure that they are readable
+                        //proteinChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
 
                         // hide the outline
                         proteinChart.getPlot().setOutlineVisible(false);
@@ -1292,7 +1291,6 @@ public class QCPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1303,7 +1301,6 @@ public class QCPanel extends javax.swing.JPanel {
             }, "ProgressDialog").start();
 
             new Thread("UpdatePlotThread") {
-
                 @Override
                 public void run() {
 
@@ -1402,6 +1399,9 @@ public class QCPanel extends javax.swing.JPanel {
                         // remove space before/after the domain axis
                         peptideChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                         peptideChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+                        
+                        // rotate the x-axis labels to make sure that they are readable
+                        //peptideChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
 
                         // hide the outline
                         peptideChart.getPlot().setOutlineVisible(false);
@@ -1435,7 +1435,6 @@ public class QCPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1446,7 +1445,6 @@ public class QCPanel extends javax.swing.JPanel {
             }, "ProgressDialog").start();
 
             new Thread("UpdatePlotThread") {
-
                 @Override
                 public void run() {
 
@@ -1522,6 +1520,11 @@ public class QCPanel extends javax.swing.JPanel {
                         // remove space before/after the domain axis
                         psmChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
                         psmChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+                        
+                        // rotate the x-axis labels to make sure that they are readable
+                        if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+                            psmChart.getCategoryPlot().getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+                        }
 
                         // hide the outline
                         psmChart.getPlot().setOutlineVisible(false);

@@ -1218,9 +1218,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void peptideExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportActionPerformed
         outputGenerator.getPeptidesOutput(this, null, null, false, peptideValidated.isSelected(),
-                peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), !proteinStarred.isSelected(), peptidePosition.isSelected(), peptideSurroundingAA.isSelected(), peptideSequence.isSelected(),
-                peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
-                peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null);
+                peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), !proteinStarred.isSelected(), peptidePosition.isSelected(), 
+                peptideSurroundingAA.isSelected(), peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), 
+                precursorCharges.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(), peptideConfidence.isSelected(), true, 
+                peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null, peptideSurroundingAA.isSelected()); // @TODO: the last boolean can be replaced by a new checkbox
     }//GEN-LAST:event_peptideExportActionPerformed
 
     /**

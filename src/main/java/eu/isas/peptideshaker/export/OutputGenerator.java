@@ -13,7 +13,6 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -478,12 +477,13 @@ public class OutputGenerator {
      * @param aIncludeHidden
      * @param aUniqueOnly
      * @param aProteinKey
+     * @param aEnzymatic
      */
     public void getPeptidesOutput(JDialog parentDialog, ArrayList<String> aPeptideKeys,
             ArrayList<String> aPeptidePdbArray, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aProteinDescription,
             boolean aProteinInferenceType, boolean aLocation, boolean aSurroundings, boolean aSequence, boolean aModifications, boolean aPtmLocations, boolean aCharges,
             boolean aNSpectra, boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred,
-            boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey) {
+            boolean aIncludeHidden, boolean aUniqueOnly, String aProteinKey, boolean aEnzymatic) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> peptideKeys;
@@ -507,6 +507,7 @@ public class OutputGenerator {
         final boolean includeHidden = aIncludeHidden;
         final boolean uniqueOnly = aUniqueOnly;
         final String proteinKey = aProteinKey;
+        final boolean enzymatic = aEnzymatic;
 
         // get the file to send the output to
         File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
@@ -569,13 +570,13 @@ public class OutputGenerator {
                                 writer.write("Other Protein(s)" + SEPARATOR);
                                 writer.write("Peptide Protein(s)" + SEPARATOR);
                             }
-                            if (proteinInferenceType) {
-                                writer.write("Protein Inference" + SEPARATOR);
-                            }
                             if (proteinDescription) {
                                 writer.write("Protein Description" + SEPARATOR);
                                 writer.write("Other Protein Description(s)" + SEPARATOR);
                                 writer.write("Peptide Proteins Description(s)" + SEPARATOR);
+                            }
+                            if (proteinInferenceType) {
+                                writer.write("Protein Inference" + SEPARATOR);
                             }
                             if (surroundings) {
                                 writer.write("AA Before" + SEPARATOR);
@@ -586,6 +587,9 @@ public class OutputGenerator {
                             }
                             if (surroundings) {
                                 writer.write("AA After" + SEPARATOR);
+                            }
+                            if (enzymatic) {
+                                writer.write("Enzymatic" + SEPARATOR);
                             }
                             if (location) {
                                 writer.write("Peptide Start" + SEPARATOR);
@@ -829,6 +833,16 @@ public class OutputGenerator {
                                                     subSequence = subSequence.substring(0, subSequence.length() - 1);
 
                                                     writer.write(subSequence + SEPARATOR);
+                                                }
+
+                                                if (enzymatic) {
+                                                    boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
+                                                            peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                            peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
+                                                            peptideShakerGUI.getIdFilter().getMinPepLength(),
+                                                            peptideShakerGUI.getIdFilter().getMaxPepLength());
+
+                                                    writer.write(isEnzymatic + SEPARATOR);
                                                 }
 
                                                 if (location) {
@@ -2195,7 +2209,7 @@ public class OutputGenerator {
                                 } else {
                                     writer.write("Mass Error [Da]" + SEPARATOR);
                                 }
-                                
+
                                 writer.write("Isotope number" + SEPARATOR);
                             }
                             if (scores) {
@@ -2422,13 +2436,13 @@ public class OutputGenerator {
      * indicated in a separate column
      * @param aIncludeHidden boolean indicating whether hidden hits shall be
      * output
-     * @param aShowEnzymaticPeptidesColumn if true, a column indicating if the
-     * protein has one or more non enzymatic peptides will be included
+     * @param aShowNonEnzymaticPeptidesColumn if true, a column indicating if
+     * the protein has one or more non enzymatic peptides will be included
      */
     public void getFractionsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession,
             boolean aOtherAccessions, boolean aPiDetails, boolean aDescription, boolean aMW, boolean aNPeptides, boolean aNSpectra, boolean aSequenceCoverage,
             boolean aNPeptidesPerFraction, boolean aNSpectraPerFraction, boolean aPrecursorIntensities, boolean aFractionSpread, boolean aIncludeHeader, boolean aOnlyStarred,
-            boolean aShowStar, boolean aIncludeHidden, boolean aShowEnzymaticPeptidesColumn) {
+            boolean aShowStar, boolean aIncludeHidden, boolean aShowNonEnzymaticPeptidesColumn) {
 
         // @TODO: add the non enzymatic peptides detected information!!
 
@@ -2452,7 +2466,7 @@ public class OutputGenerator {
         final boolean onlyStarred = aOnlyStarred;
         final boolean showStar = aShowStar;
         final boolean includeHidden = aIncludeHidden;
-        final boolean showEnzymaticPeptidesColumn = aShowEnzymaticPeptidesColumn;
+        final boolean showNonEnzymaticPeptidesColumn = aShowNonEnzymaticPeptidesColumn;
 
         final JDialog parentDialog = aParentDialog;
 
@@ -2568,7 +2582,7 @@ public class OutputGenerator {
                                 writer.write("Spectrum Fraction Spread (lower range (kDa))" + SEPARATOR);
                                 writer.write("Spectrum Fraction Spread (upper range (kDa))" + SEPARATOR);
                             }
-                            if (showEnzymaticPeptidesColumn) {
+                            if (showNonEnzymaticPeptidesColumn) {
                                 writer.write("Non Enzymatic Peptides" + SEPARATOR);
                             }
                             if (includeHidden) {
@@ -2763,7 +2777,7 @@ public class OutputGenerator {
                                                     writer.write("N/A" + SEPARATOR + "N/A" + SEPARATOR);
                                                 }
                                             }
-                                            if (showEnzymaticPeptidesColumn) {
+                                            if (showNonEnzymaticPeptidesColumn) {
 
                                                 ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
                                                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
