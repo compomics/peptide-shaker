@@ -127,7 +127,7 @@ Remember that big datasets will require more than the default memory provided to
 java -Xmx2048M -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
 
-==Open a PeptideShaker Project==
+==Opening PeptideShaker Projects==
 
 To open a PeptideShaker project (a cps file) from the command line use the following command:
 
