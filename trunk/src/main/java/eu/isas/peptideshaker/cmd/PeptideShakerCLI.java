@@ -148,18 +148,29 @@ public class PeptideShakerCLI implements Callable {
         ArrayList<File> spectrumFiles = cliInputBean.getSpectrumFiles();
         ArrayList<File> identificationFiles = cliInputBean.getIdFiles();
 
-        // Set default filtering import settings
+        // set the filtering import settings
         IdFilter idFilter = new IdFilter();
+        idFilter.setOmssaMaxEvalue(cliInputBean.getOmssaMaxEvalue());
+        idFilter.setXtandemMaxEvalue(cliInputBean.getXtandemMaxEvalue());
+        idFilter.setMascotMaxEvalue(cliInputBean.getMascotMaxEvalue());
+        idFilter.setMinPepLength(cliInputBean.getMinPepLength());
+        idFilter.setMaxPepLength(cliInputBean.getMaxPepLength());
+        idFilter.setMaxMzDeviation(cliInputBean.getMaxMzDeviation());
+        idFilter.setIsPpm(cliInputBean.isMaxMassDeviationPpm());
+        idFilter.setRemoveUnknownPTMs(cliInputBean.excludeUnknownPTMs());
 
         // set the processing settings
         ProcessingPreferences processingPreferences = new ProcessingPreferences();
         processingPreferences.setPsmFDR(cliInputBean.getPsmFDR());
         processingPreferences.setPeptideFDR(cliInputBean.getPeptideFDR());
         processingPreferences.setProteinFDR(cliInputBean.getProteinFDR());
+        processingPreferences.setProteinConfidenceMwPlots(cliInputBean.getProteinConfidenceMwPlots());
 
         // set the PTM scoring preferences
         PTMScoringPreferences ptmScoringPreferences = new PTMScoringPreferences();
         ptmScoringPreferences.setFlrThreshold(cliInputBean.getiPsmFLR());
+        ptmScoringPreferences.setaScoreCalculation(cliInputBean.aScoreCalculation());
+        ptmScoringPreferences.setaScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
 
         // set the spectrum counting prefrences
         SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();

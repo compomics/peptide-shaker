@@ -124,15 +124,15 @@ public class IdFilter implements Serializable {
         }
         return true;
     }
-    
+
     /**
      * Validates a peptide depending on its protein inference status
-     * 
+     *
      * @param peptide the peptide
      * @return a boolean indicating whether the peptide passed the test
      */
     public boolean validateProteins(Peptide peptide) {
-        
+
         if (peptide.getParentProteins().size() > 1) {
             boolean target = false;
             boolean decoy = false;
@@ -228,12 +228,21 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns a boolean indicating whether unkown PTMs shall be removed.
+     * Returns a boolean indicating whether unknown PTMs shall be removed.
      *
-     * @return a boolean indicating whether unkown PTMs shall be removed
+     * @return a boolean indicating whether unknown PTMs shall be removed
      */
     public boolean removeUnknownPTMs() {
         return unknownPtm;
+    }
+
+    /**
+     * Set whether unknown PTMs shall be removed.
+     *
+     * @param unknownPtm whether unknown PTMs shall be removed
+     */
+    public void setRemoveUnknownPTMs(boolean unknownPtm) {
+        this.unknownPtm = unknownPtm;
     }
 
     /**

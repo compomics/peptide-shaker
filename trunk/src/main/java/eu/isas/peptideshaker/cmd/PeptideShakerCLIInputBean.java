@@ -43,7 +43,8 @@ public class PeptideShakerCLIInputBean {
      */
     private File output = null;
     /**
-     * Text summary format 1 output directory. Three files: proteins, peptides and PSMs.
+     * Text summary format 1 output directory. Three files: proteins, peptides
+     * and PSMs.
      */
     private File textSummaryDirectoryFormat1 = null;
     /**
@@ -70,6 +71,54 @@ public class PeptideShakerCLIInputBean {
      * Protein FDR used for validation.
      */
     private double proteinFDR = 1.0;
+    /**
+     * The minimum confidence required for a protein to be included in the
+     * average molecular weight analysis in the Fractions tab.
+     */
+    private Double proteinConfidenceMwPlots = 95.0;
+    /**
+     * Boolean indicating whether the A-score should be calculated.
+     */
+    private boolean aScoreCalculation = true;
+    /**
+     * Boolean indicating whether neutral losses shall be accounted in the
+     * calculation of the A-score.
+     */
+    private boolean aScoreNeutralLosses = false;
+    /**
+     * The minimal peptide length allowed.
+     */
+    private int minPepLength;
+    /**
+     * The maximal peptide length allowed.
+     */
+    private int maxPepLength;
+    /**
+     * Mascot maximal e-value allowed.
+     */
+    private double mascotMaxEvalue;
+    /**
+     * OMSSA maximal e-value allowed.
+     */
+    private double omssaMaxEvalue;
+    /**
+     * X!Tandem maximal e-value allowed.
+     */
+    private double xtandemMaxEvalue;
+    /**
+     * The maximal m/z deviation allowed.
+     */
+    private double maxMassDeviation;
+    /**
+     * Boolean indicating the unit of the allowed m/z deviation (true: ppm,
+     * false: Da).
+     */
+    private boolean maxMassDeviationIsPpm;
+    /**
+     * Boolean indicating whether peptides presenting unknown PTMs should be
+     * ignored.
+     */
+    private boolean excludeUnknownPtm;
     /**
      * The identification parameters used for the search.
      */
@@ -113,7 +162,7 @@ public class PeptideShakerCLIInputBean {
                 throw new FileNotFoundException(filesTxt + " not found.");
             }
         }
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
             filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
             File testFile = new File(filesTxt);
@@ -144,6 +193,78 @@ public class PeptideShakerCLIInputBean {
 
         if (aLine.hasOption(PeptideShakerCLIParams.PROTEIN_FDR.id)) {
             proteinFDR = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PROTEIN_FDR.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.ESTIMATE_A_SCORE.id)) {
+            String aScoreOption = aLine.getOptionValue(PeptideShakerCLIParams.ESTIMATE_A_SCORE.id);
+            if (aScoreOption.trim().equals("0")) {
+                aScoreCalculation = false;
+            } else if (aScoreOption.trim().equals("1")) {
+                aScoreCalculation = true;
+            } else {
+                throw new IllegalArgumentException("Unkown value \'" + aScoreOption + "\' for " + PeptideShakerCLIParams.ESTIMATE_A_SCORE.id + ".");
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.A_SCORE_NEUTRAL_LOSSES.id)) {
+            String aScoreNeutralLossesOption = aLine.getOptionValue(PeptideShakerCLIParams.A_SCORE_NEUTRAL_LOSSES.id);
+            if (aScoreNeutralLossesOption.trim().equals("0")) {
+                aScoreNeutralLosses = false;
+            } else if (aScoreNeutralLossesOption.trim().equals("1")) {
+                aScoreNeutralLosses = true;
+            } else {
+                throw new IllegalArgumentException("Unkown value \'" + aScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.A_SCORE_NEUTRAL_LOSSES.id + ".");
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id)) {
+            proteinConfidenceMwPlots = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.PROTEIN_FRACTION_MW_CONFIDENCE.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.MIN_PEPTIDE_LENGTH.id)) {
+            minPepLength = Integer.parseInt(aLine.getOptionValue(PeptideShakerCLIParams.MIN_PEPTIDE_LENGTH.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.MAX_PEPTIDE_LENGTH.id)) {
+            maxPepLength = Integer.parseInt(aLine.getOptionValue(PeptideShakerCLIParams.MAX_PEPTIDE_LENGTH.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.MASCOT_E_VALUE_MAX.id)) {
+            mascotMaxEvalue = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.MASCOT_E_VALUE_MAX.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.OMSSA_E_VALUE_MAX.id)) {
+            omssaMaxEvalue = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.OMSSA_E_VALUE_MAX.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.XTANDEM_E_VALUE_MAX.id)) {
+            xtandemMaxEvalue = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.XTANDEM_E_VALUE_MAX.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.MAX_PRECURSOR_ERROR.id)) {
+            maxMassDeviation = Double.parseDouble(aLine.getOptionValue(PeptideShakerCLIParams.MAX_PRECURSOR_ERROR.id));
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.MAX_PRECURSOR_ERROR_TYPE.id)) {
+            String tempMaxPrecursorErrorType = aLine.getOptionValue(PeptideShakerCLIParams.MAX_PRECURSOR_ERROR_TYPE.id);
+            if (tempMaxPrecursorErrorType.trim().equals("0")) {
+                maxMassDeviationIsPpm = true;
+            } else if (tempMaxPrecursorErrorType.trim().equals("1")) {
+                maxMassDeviationIsPpm = false;
+            } else {
+                throw new IllegalArgumentException("Unkown value \'" + maxMassDeviationIsPpm + "\' for " + PeptideShakerCLIParams.MAX_PRECURSOR_ERROR_TYPE.id + ".");
+            }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id)) {
+            String tempExcludeUnknownPtms = aLine.getOptionValue(PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id);
+            if (tempExcludeUnknownPtms.trim().equals("0")) {
+                excludeUnknownPtm = true;
+            } else if (tempExcludeUnknownPtms.trim().equals("1")) {
+                excludeUnknownPtm = false;
+            } else {
+                throw new IllegalArgumentException("Unkown value \'" + aScoreNeutralLosses + "\' for " + PeptideShakerCLIParams.EXCLUDE_UNKNOWN_PTMS.id + ".");
+            }
         }
 
         if (aLine.hasOption(PeptideShakerCLIParams.SEARCH_PARAMETERS.id)) {
@@ -187,7 +308,7 @@ public class PeptideShakerCLIInputBean {
     public void setTextFormat1Directory(File csvDirectory) {
         this.textSummaryDirectoryFormat1 = csvDirectory;
     }
-    
+
     /**
      * Returns the directory for text summary output format 2. Null if not set.
      *
@@ -312,6 +433,216 @@ public class PeptideShakerCLIInputBean {
      */
     public void setProteinFDR(double proteinFDR) {
         this.proteinFDR = proteinFDR;
+    }
+
+    /**
+     * Returns the minimum confidence required for a protein to be included in
+     * the average molecular weight analysis in the Fractions tab.
+     *
+     * @return the minimum confidence
+     */
+    public Double getProteinConfidenceMwPlots() {
+        if (proteinConfidenceMwPlots == null) {
+            return 95.0;
+        }
+        return proteinConfidenceMwPlots;
+    }
+
+    /**
+     * Sets the minimum confidence required for a protein to be included in the
+     * average molecular weight analysis in the Fractions tab..
+     *
+     * @param proteinConfidenceMwPlots minimum confidence
+     */
+    public void setProteinConfidenceMwPlots(Double proteinConfidenceMwPlots) {
+        this.proteinConfidenceMwPlots = proteinConfidenceMwPlots;
+    }
+
+    /**
+     * Returns a boolean indicating whether the A-score should be calculated.
+     *
+     * @return a boolean indicating whether the A-score should be calculated
+     */
+    public boolean aScoreCalculation() {
+        return aScoreCalculation;
+    }
+
+    /**
+     * Sets whether the A-score should be calculated.
+     *
+     * @param aScoreCalculation a boolean indicating whether the A-score should
+     * be calculated
+     */
+    public void setaScoreCalculation(boolean aScoreCalculation) {
+        this.aScoreCalculation = aScoreCalculation;
+    }
+
+    /**
+     * Indicates whether the A-score calculation should take neutral losses into
+     * account.
+     *
+     * @return a boolean indicating whether the A-score calculation should take
+     * neutral losses into account
+     */
+    public boolean isaScoreNeutralLosses() {
+        return aScoreNeutralLosses;
+    }
+
+    /**
+     * Sets whether the A-score calculation should take neutral losses into
+     * account.
+     *
+     * @param aScoreNeutralLosses a boolean indicating whether the A-score
+     * calculation should take neutral losses into account
+     */
+    public void setaScoreNeutralLosses(boolean aScoreNeutralLosses) {
+        this.aScoreNeutralLosses = aScoreNeutralLosses;
+    }
+
+    /**
+     * Returns a boolean indicating whether unknown PTMs shall be excluded.
+     *
+     * @return a boolean indicating whether unknown PTMs shall be excluded
+     */
+    public boolean excludeUnknownPTMs() {
+        return excludeUnknownPtm;
+    }
+
+    /**
+     * Set whether unknown PTMs shall be excluded.
+     *
+     * @param unknownPtm whether unknown PTMs shall be excluded
+     */
+    public void setExcludeUnknownPTMs(boolean unknownPtm) {
+        this.excludeUnknownPtm = unknownPtm;
+    }
+
+    /**
+     * Indicates whether the mass tolerance is in ppm (true) or Dalton (false).
+     *
+     * @return a boolean indicating whether the mass tolerance is in ppm (true)
+     * or Dalton (false)
+     */
+    public boolean isMaxMassDeviationPpm() {
+        return maxMassDeviationIsPpm;
+    }
+
+    /**
+     * Sets whether the mass tolerance is in ppm (true) or Dalton (false).
+     *
+     * @param isPpm a boolean indicating whether the mass tolerance is in ppm
+     * (true) or Dalton (false)
+     */
+    public void setMaxMassDeviationIsPpm(boolean isPpm) {
+        this.maxMassDeviationIsPpm = isPpm;
+    }
+
+    /**
+     * Returns the maximal Mascot e-value allowed.
+     *
+     * @return the maximal Mascot e-value allowed
+     */
+    public double getMascotMaxEvalue() {
+        return mascotMaxEvalue;
+    }
+
+    /**
+     * Sets the maximal Mascot e-value allowed.
+     *
+     * @param mascotMaxEvalue the maximal Mascot e-value allowed
+     */
+    public void setMascotMaxEvalue(double mascotMaxEvalue) {
+        this.mascotMaxEvalue = mascotMaxEvalue;
+    }
+
+    /**
+     * Returns the maximal m/z deviation allowed.
+     *
+     * @return the maximal mass deviation allowed
+     */
+    public double getMaxMzDeviation() {
+        return maxMassDeviation;
+    }
+
+    /**
+     * Sets the maximal m/z deviation allowed.
+     *
+     * @param maxMzDeviation the maximal mass deviation allowed
+     */
+    public void setMaxMzDeviation(double maxMzDeviation) {
+        this.maxMassDeviation = maxMzDeviation;
+    }
+
+    /**
+     * Returns the maximal peptide length allowed.
+     *
+     * @return the maximal peptide length allowed
+     */
+    public int getMaxPepLength() {
+        return maxPepLength;
+    }
+
+    /**
+     * Sets the maximal peptide length allowed.
+     *
+     * @param maxPepLength the maximal peptide length allowed
+     */
+    public void setMaxPepLength(int maxPepLength) {
+        this.maxPepLength = maxPepLength;
+    }
+
+    /**
+     * Returns the maximal peptide length allowed.
+     *
+     * @return the maximal peptide length allowed
+     */
+    public int getMinPepLength() {
+        return minPepLength;
+    }
+
+    /**
+     * Sets the maximal peptide length allowed.
+     *
+     * @param minPepLength the maximal peptide length allowed
+     */
+    public void setMinPepLength(int minPepLength) {
+        this.minPepLength = minPepLength;
+    }
+
+    /**
+     * Returns the OMSSA maximal e-value allowed.
+     *
+     * @return the OMSSA maximal e-value allowed
+     */
+    public double getOmssaMaxEvalue() {
+        return omssaMaxEvalue;
+    }
+
+    /**
+     * Sets the OMSSA maximal e-value allowed.
+     *
+     * @param omssaMaxEvalue the OMSSA maximal e-value allowed
+     */
+    public void setOmssaMaxEvalue(double omssaMaxEvalue) {
+        this.omssaMaxEvalue = omssaMaxEvalue;
+    }
+
+    /**
+     * Returns the maximal X!Tandem e-value allowed.
+     *
+     * @return the OMSSA maximal e-value allowed
+     */
+    public double getXtandemMaxEvalue() {
+        return xtandemMaxEvalue;
+    }
+
+    /**
+     * Sets the OMSSA maximal e-value allowed.
+     *
+     * @param xtandemMaxEvalue the OMSSA maximal e-value allowed
+     */
+    public void setXtandemMaxEvalue(double xtandemMaxEvalue) {
+        this.xtandemMaxEvalue = xtandemMaxEvalue;
     }
 
     /**
