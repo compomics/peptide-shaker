@@ -32,9 +32,8 @@ public class ProcessingPreferences implements Serializable {
      */
     private double psmFDR = 1.0;
     /**
-     * The minimum confidence required for a protein to be included in a protein
-     * to be included in the average molecular weight analysis in the Fractions
-     * tab.
+     * The minimum confidence required for a protein to be included in the
+     * average molecular weight analysis in the Fractions tab.
      */
     private Double proteinConfidenceMwPlots = 95.0;
 
@@ -119,9 +118,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * Returns the minimum confidence required for a protein to be included in a protein 
-     * to be included in the average molecular weight analysis in the Fractions 
-     * tab.
+     * Returns the minimum confidence required for a protein to be included in
+     * the average molecular weight analysis in the Fractions tab.
      *
      * @return the minimum confidence
      */
@@ -133,9 +131,8 @@ public class ProcessingPreferences implements Serializable {
     }
 
     /**
-     * Sets the minimum confidence required for a protein to be included in a
-     * protein to be included in the average molecular weight analysis in the
-     * Fractions tab..
+     * Sets the minimum confidence required for a protein to be included in the
+     * average molecular weight analysis in the Fractions tab.
      *
      * @param proteinConfidenceMwPlots minimum confidence
      */
