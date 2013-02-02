@@ -2,21 +2,23 @@
 
 =PeptideShaker Command Line Interface=
 
-The command line interface can be used to process identification files and output identification results in various formats.
+The command line interface can be used to process identification files and output identification results in various formats. 
+
+*Standard command line:*
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
 
 
-The following parameters are mandatory:
+*Mandatory parameters:*
 
 {{{
--experiment                Specifies the experiment name
+-experiment                Specifies the experiment name.
 
--sample                    Specifies the sample name
+-sample                    Specifies the sample name.
 
--replicate                 The replicate number
+-replicate                 The replicate number.
 
 -spectrum_files            The spectrum files (mgf format) in a comma
                            separated list or an entire folder.
@@ -30,44 +32,78 @@ The following parameters are mandatory:
 -out                       PeptideShaker output file. If the file 
                            already exists it will be silently 
                            overwritten.
-}}}
 
-
-The following parameters are optional:
-
-{{{
 -search_params             The search parameters as a serialized
                            file of com.compomics.util.experiment.
                            identification.SearchParameters. This file 
                            is automatically saved by SearchGUI along 
-                           with the identification files. If not 
-                           provided default settings will be tried. If 
-                           the default settings do not work the import 
-                           will crash - hopefully decently.
+                           with the identification files.
+}}}
 
--protein_FDR               FDR at the protein level in percent 
-                           (default 1% FDR: '1')
+_Note that the search parameters are not strictly mandatory, as a default set of search parameters can be used. But in most case one will provide the search parameters as part of the command line._
 
--peptide_FDR               FDR at the peptide level in percent 
-                           (default 1% FDR: '1')
+*Optional output parameters:*
 
--psm_FDR                   FDR at the PSM level in percent (default 1%
-                           FDR: '1')
-
--psm_FLR                   FLR at the PSM level in percent for 
-                           peptides with different potential 
-                           modification sites and one variable
-                           modification (default 1% FLR: '1')
-
+{{{
 -out_txt_1                 Output folder for text summary - format 1 
                            (three files: proteins, peptides and psms).
 
 -out_txt_2                 Output folder for text summary - format 2 
-                           (one file: proteins and peptides). (not
-                           implemented yet)
+                           (one file: proteins and peptides). (Not
+                           yet implemented.)
 
--out_pride                 PeptideShaker PRIDE xml output file (not
-                           implemented yet)
+-out_pride                 PeptideShaker PRIDE XML output file. (Not
+                           yet implemented.)
+}}}
+
+*Optional processing parameters:*
+
+{{{
+-protein_FDR               FDR at the protein level in percent 
+                           (default 1% FDR: '1').
+
+-peptide_FDR               FDR at the peptide level in percent 
+                           (default 1% FDR: '1').
+
+-psm_FDR                   FDR at the PSM level in percent (default 1%
+                           FDR: '1').
+
+-psm_FLR                   FLR at the PSM level in percent for 
+                           peptides with different potential 
+                           modification sites and one variable
+                           modification (default 1% FLR: '1').
+
+-a_score                   Calculate the A score (1: true, 0: false, 
+                           default is '1').
+
+-a_score_neutral_losses    Include neutral losses in A score (1: true,
+                           0: false, default is '0').
+
+-protein_fraction_mw_confidence     
+                           Minimum confidence required for a protein in
+                           the fraction MW plot (default 95%: '95.0').
+}}}
+
+*Optional filtering parameters:*
+
+{{{
+-min_peptide_length        Minimim peptide length filter (default is '6').
+
+-max_peptide_length        Maximum peptide length filter (default is '30').
+
+-max_mascot_e              Maximum Mascot E-value filter (default '100').
+
+-max_omssa_e               Maximum OMSSA E-value filter (default '100').
+
+-max_xtandem_e             Maximum X!Tandem E-value filter (default '100').
+
+-max_precursor_error       Maximum precursor error filter (default '10'). 
+                           See also max_precursor_error_type.
+
+-max_precursor_error_type  Maximum precursor error type (0: ppm, 1: Da, default is '0'). 
+                           See also max_precursor_error.
+
+-exclude_unknown_ptms      Exclude unknown PTMs (1: true, 0: false, default is '1').
 }}}
 
 ==Example==
@@ -76,10 +112,12 @@ Here is an example for Windows where _X_, _Y_ and _Z_ have to be replaced by the
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 -experiment myExperiment -sample mySample -replicate 1 
--identification_files "C:\my folder" -spectrum_files 
-"C:\my folder" -search_params "C:\my folder\my_search_params.parameters" 
+-identification_files "C:\my folder" -spectrum_files "C:\my folder" 
+-search_params "C:\my folder\my_search_params.parameters" 
 -out "C:\my folder\myCpsFile.cps"
 }}}
+
+_Note that for readability the command is here split over multiple lines. When used the command should of course be a single line._
 
 ==Memory Settings==
 
