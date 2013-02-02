@@ -10,11 +10,13 @@
  * NEW FEATURE: Reimplemented the PeptideShaker command line support from scratch. (http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI) 
  * NEW FEATURE: Added an open example dataset option to the WelcomeDialog.
  * NEW FEATURE: Added a settings pop up menu to the WelcomeDialog.
+ * NEW FEATURE: Added an example dataset.
  * NEW FEATURE: Implemented False LocationRate (FLR) for modifications.
  * NEW FEATURE: Modification patterns defined as part of a SearchGUI search are now supported.
  * NEW FEATURE: Added precursor intensity to the spectrum table in the Spectrum IDs tab.
  * NEW FEATURE: Added neXtProt and PDB links to the Annotation tab.
  * NEW FEATURE: Added an option for exporting the maximal protein set (the accession numbers) to a file.
+ * NEW FEATURE: The precursor mass error now takes into account wrong isotope selection.
 
  * FEATURE IMPROVEMENT: Simplified the way the user selected parameters are applied when moving away from the Validation tab. 
  * FEATURE IMPROVEMENT: Changed the precursor intensity shown in the Fractions tab from average to sum.
@@ -28,13 +30,15 @@
  * FEATURE IMPROVEMENT: PeptideShaker can now be run from paths containing special characters.
  * FEATURE IMPROVEMENT: Mgf files with spectrum titles encoded in unicode are now supported.
  * FEATURE IMPROVEMENT: The modal progress dialog is now closed if an error occurs during the saving of a project.
- * FEATURE IMPROVEMENT: Added protein inference type, star property, tagged peptide sequence, the surrounding peptide information for shared peptides and fixed modification details to the peptide exports.
- * FEATURE IMPROVEMENT: Added total number of peptides and spectra, overall sequence coverage, MW and peptide and spectrum spread to the fractions export.
+ * FEATURE IMPROVEMENT: Added protein inference type, star property, tagged peptide sequence, is enzymatic, the surrounding peptide information for shared peptides and fixed modification details to the peptide exports.
+ * FEATURE IMPROVEMENT: Added total number of peptides and spectra, overall sequence coverage, has non-enzymatic peptides, MW and peptide and spectrum spread to the fractions export.
  * FEATURE IMPROVEMENT: The filters in the FindDialog are now previewed in the tables only after the user stops typing. And the previewing of the filters in the FindDialog can now be turned on or off by the user.
  * FEATURE IMPROVEMENT: Improved the tooltips in the molecular weight box plot in the Fractions tab.
  * FEATURE IMPROVEMENT: Sped up the PRIDE export.
  * FEATURE IMPROVEMENT: Generalized the "show tryptic/non tryptic peptides" to "show enzymatic/non enzymatic peptides".
+ * FEATURE IMPROVEMENT: Added a check for duplicate entries when loading a FASTA file.
 
+ * BUG FIX: Fixed a bug in the mass of the glutamic acid amino acid.
  * BUG FIX: Fixed a bug where the masses of user defined PTMs in the PRIDE export where set to null if a CV term mapping was added.
  * BUG FIX: Fixed a bug that occurred if the user clicked the SE column for a PSM in the Overview tab before loading the Spectrum IDs tab.
  * BUG FIX: Fixed a bug with multiple fixed modifications on the same peptide, e.g., when using iTRAQ or TMT labeling.
@@ -49,7 +53,12 @@
  * BUG FIX: Fixed an inconsistency in the sequence coverage output in the exports, as both 0-100 and 0-1 was used for percent values.
  * BUG FIX: Fixed a bug i the restart after changing the memory setting, it crashed if a project was currently open.
  * BUG FIX: Made a minor change to the pom file to handle a recursive issues that can occur when opening the project in NetBeans 7.2.
- * Fixed a bug resulting in the filters having to be applied twice. Also added the option of deleting filters.
+ * BUG FIX: Fixed a bug resulting in the filters having to be applied twice. Also added the option of deleting filters.
+ * BUG FIX: Fixed a bug in the protein export where two columns had gotten mixed up.
+ * BUG FIX: Fixed a bug in the New Project dialog where opening the FASTA file didn't display the last selected folder.
+ * BUG FIX:  Fixed a bug where the enzyme was reset when manually loading a FASTA file in the New Project dialog.
+ * BUG FIX: Fixed a bug where the progress bar was not closed in the New Project dialog if an error occurred when checking the FASTA file.
+ * BUG FIX: Fixed a bug with the use of "whole protein" as the enzyme.
 
  * LIBRARY UPDATE: Removed unitprotjapi as a dependency.
  * LIBRARY UPDATE: Added twitter4j as a dependency.
@@ -68,9 +77,9 @@
  * FEATURE IMPROVEMENT: The PRIDE settings are now stored in the PeptideShaker Project.
  * FEATURE IMPROVEMENT: Re-enabled the improved (but slower) ptm location code.
  * LIBRARY UPDATE: Updated ols-dialog to version 3.4.0, containing many GUI improvements.
- * LIBRARY UPDATE: Updated utilities to version 3.8.12.
+ * LIBRARY UPDATE: Updated utilities to version 3.10.67.
 
-Download Count: 323
+Download Count: 337
 
 ----
 
