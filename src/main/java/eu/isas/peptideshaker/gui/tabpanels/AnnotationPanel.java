@@ -1131,7 +1131,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                         outputGenerator.getProteinsOutput(
                                 null, null, false, true, true, false, false, false,
                                 false, false, false, false, false, false,
-                                false, false, false, false, false, false, false, false);
+                                false, false, false, false, false, false, false, false, false);
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(this, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();

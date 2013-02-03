@@ -1741,7 +1741,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
     /**
      * Provides to the PeptideShakerGUI instance the currently selected protein,
-     * peptide and psm.
+     * peptide and PSM.
      */
     public void newItemSelection() {
 
@@ -1792,7 +1792,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 outputGenerator.getProteinsOutput(
                         null, selectedProteins, true, false, true, true, true,
                         true, true, true, true, false, true,
-                        true, true, true, true, true, false, true, false, false);
+                        true, true, true, true, true, false, true, false, false, false);
             }
         }
     }
