@@ -129,10 +129,13 @@ public class OutputGenerator {
      * output
      * @param aMaximalProteinSet if true an additional file with the maximal
      * protein set is created
+     * @param aShowNonEnzymaticPeptidesColumn if true, a column indicating if
+     * the protein has one or more non enzymatic peptides will be included
      */
     public void getProteinsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
-            boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden, boolean aMaximalProteinSet) {
+            boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden, boolean aMaximalProteinSet,
+            boolean aShowNonEnzymaticPeptidesColumn) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -156,6 +159,7 @@ public class OutputGenerator {
         final boolean showStar = aShowStar;
         final boolean includeHidden = aIncludeHidden;
         final boolean createMaximalProteinSet = aMaximalProteinSet;
+        final boolean showNonEnzymaticPeptidesColumn = aShowNonEnzymaticPeptidesColumn;
 
         final JDialog parentDialog = aParentDialog;
 
@@ -234,6 +238,9 @@ public class OutputGenerator {
                                 writer.write("Sequence Coverage (%)" + SEPARATOR);
                                 writer.write("Observable Coverage (%)" + SEPARATOR);
                             }
+                            if (showNonEnzymaticPeptidesColumn) {
+                                writer.write("Non Enzymatic Peptides" + SEPARATOR);
+                            }
                             if (ptmSummary) {
                                 writer.write("Confident PTM Sites" + SEPARATOR);
                                 writer.write("# Confident" + SEPARATOR);
@@ -274,6 +281,7 @@ public class OutputGenerator {
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
+                        PSParameter peptidePSParameter = new PSParameter();
                         int proteinCounter = 0;
 
                         progressDialog.setTitle("Loading Protein Matches. Please Wait...");
@@ -349,6 +357,38 @@ public class OutputGenerator {
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
+                                            }
+                                            if (showNonEnzymaticPeptidesColumn) {
+
+                                                ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
+                                                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                                                boolean allPeptidesEnzymatic = true;
+
+                                                identification.loadPeptideMatches(peptideKeys, null);
+                                                identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null);
+
+                                                // see if we have non-tryptic peptides
+                                                for (String peptideKey : peptideKeys) {
+
+                                                    String peptideSequence = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getSequence();
+                                                    peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
+
+                                                    if (peptidePSParameter.isValidated()) {
+
+                                                        boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
+                                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
+                                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+
+                                                        if (!isEnzymatic) {
+                                                            allPeptidesEnzymatic = false;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
+                                                writer.write(!allPeptidesEnzymatic + SEPARATOR);
                                             }
                                             if (ptmSummary) {
                                                 try {
@@ -707,12 +747,11 @@ public class OutputGenerator {
                                                 if (accession || proteinDescription) {
                                                     String mainMatch, secondaryProteins = "", peptideProteins = "";
                                                     String mainMatchDescription, secondaryProteinsDescriptions = "", peptideProteinDescriptions = "";
-                                                    boolean first;
                                                     ArrayList<String> accessions = new ArrayList<String>();
 
                                                     mainMatch = proteinMatch.getMainMatch();
                                                     mainMatchDescription = sequenceFactory.getHeader(mainMatch).getDescription();
-                                                    first = true;
+                                                    boolean first = true;
 
                                                     if (!shared) {
                                                         orderedProteinsKeys.add(mainMatch);
@@ -769,7 +808,7 @@ public class OutputGenerator {
                                                 }
 
                                                 if (proteinInferenceType) {
-                                                    writer.write(peptidePSParameter.getGroupClass() + SEPARATOR);
+                                                    writer.write(peptidePSParameter.getGroupName() + SEPARATOR);
                                                 }
 
                                                 if (location || surroundings) {

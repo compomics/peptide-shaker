@@ -813,7 +813,7 @@
           <SubComponents>
             <Component class="javax.swing.JEditorPane" name="helpEditorPane">
               <Properties>
-                <Property name="contentType" type="java.lang.String" value="text/html"/>
+                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;b&gt;Single Protein&lt;/b&gt;&lt;br&gt;&#xa;To access the annotations for the currently selected protein, simply click the button corresponding to the &#xa;wanted resource.&#xa;&lt;br&gt;&lt;br&gt;&lt;br&gt;&#xa;&lt;b&gt;Multiple Proteins&lt;/b&gt;&lt;br&gt;&#xa;To get the list of all validated proteins in your project click &lt;a href=&quot;validated_proteins&quot;&gt;here&lt;/a&gt;.&lt;br&gt;&#xa;Advanced export options: &lt;i&gt;Export&lt;/i&gt; &gt; &lt;i&gt;Identification Features&lt;/i&gt;. &#xa;&lt;br&gt;&lt;br&gt;&#xa;To querry using multiple proteins, click the &lt;a href=&quot;dummy_link&quot;&gt;web&lt;/a&gt; link next to the resource and &#xa;follow the instructions provided at the resource web page.&#xa;&lt;/html&gt;"/>
               </Properties>
