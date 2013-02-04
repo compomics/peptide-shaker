@@ -2,8 +2,8 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;

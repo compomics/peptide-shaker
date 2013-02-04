@@ -3,9 +3,11 @@ package eu.isas.peptideshaker.preferences;
 import java.io.Serializable;
 
 /**
- * This class groups the user preferences for the initial processing.
+ * This class groups the user preferences for the initial PeptideShaker
+ * processing.
  *
  * @author Marc Vaudel
+ * @deprecated use com.compomics.util.preferences.ProcessingPreferences instead
  */
 public class ProcessingPreferences implements Serializable {
 

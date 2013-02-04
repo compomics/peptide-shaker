@@ -31,6 +31,7 @@ import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
+import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.ChartPanelTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
@@ -300,7 +301,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         progressDialog.setUnstoppable(true);
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -311,7 +311,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         });
 
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
 
@@ -420,7 +419,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 // get the current protein and protein sequence
                 Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 String currentProteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-                
+
                 int[][] coverage = new int[fileNames.size()][currentProteinSequence.length() + 1];
 
                 // get the chart data
@@ -449,15 +448,15 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                     if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, 
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(), 
+                                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
                                                 peptideShakerGUI.getIdFilter().getMinPepLength(),
                                                 peptideShakerGUI.getIdFilter().getMaxPepLength());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, 
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(), 
+                                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
+                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
                                                 peptideShakerGUI.getIdFilter().getMinPepLength(),
                                                 peptideShakerGUI.getIdFilter().getMaxPepLength());
                                     }
@@ -586,7 +585,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // molecular mass plot
             DefaultBoxAndWhiskerCategoryDataset mwPlotDataset = new DefaultBoxAndWhiskerCategoryDataset();
 
-            HashMap<String, Double> molecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeights();
+            HashMap<String, XYDataPoint> molecularWeights = peptideShakerGUI.getSearchParameters().getFractionMolecularWeightRanges();
             ArrayList<String> spectrumFiles = peptideShakerGUI.getIdentification().getOrderedSpectrumFileNames();
 
             for (int i = 0; i < spectrumFiles.size(); i++) {
@@ -1424,7 +1423,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -1683,7 +1681,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private void plotsTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_plotsTabbedPaneStateChanged
         exportPeptidesJButton.setEnabled(plotsTabbedPane.getSelectedIndex() != 1);
     }//GEN-LAST:event_plotsTabbedPaneStateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuProteinsBackgroundPanel;

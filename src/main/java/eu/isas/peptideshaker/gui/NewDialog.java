@@ -17,15 +17,17 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.ProcessingPreferencesDialog;
+import com.compomics.util.preferences.gui.ImportSettingsDialog;
+import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
-import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
-import eu.isas.peptideshaker.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
+import com.compomics.util.preferences.gui.ImportSettingsDialogParent;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -44,7 +46,7 @@ import java.util.Properties;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class NewDialog extends javax.swing.JDialog {
+public class NewDialog extends javax.swing.JDialog implements ImportSettingsDialogParent {
 
     /**
      * The compomics PTM factory.
@@ -615,18 +617,18 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-        
+
         // check if default search parameters are used
         if (searchTxt.getText().equalsIgnoreCase("Default")) {
-            int value = JOptionPane.showConfirmDialog(this, 
-                    "It seems like you are using the default search parameters without any PTMs.\nContinue anyway?", 
+            int value = JOptionPane.showConfirmDialog(this,
+                    "It seems like you are using the default search parameters without any PTMs.\nContinue anyway?",
                     "Default Search Parameters?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-            
+
             if (value != JOptionPane.YES_NO_OPTION) {
                 return;
             }
         }
-        
+
         if (validateUserInput()) {
 
             this.setVisible(false);
@@ -1003,8 +1005,13 @@ public class NewDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 
+    /**
+     * Open the ImportSettingsDialog.
+     * 
+     * @param evt 
+     */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        new ImportSettingsDialog(peptideShakerGUI, this, true);
+        new ImportSettingsDialog(this, this, peptideShakerGUI.getIdFilter(), true);
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
 
     /**
@@ -1141,15 +1148,6 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JLabel spectrumFilesLabel;
     private javax.swing.JTextField spectrumFilesTxt;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Sets the filter settings field to the given text.
-     *
-     * @param text
-     */
-    public void updateFilterSettingsField(String text) {
-        importFilterTxt.setText(text);
-    }
 
     /**
      * Sets the search parameters field to the given text.
@@ -1662,5 +1660,14 @@ public class NewDialog extends javax.swing.JDialog {
         ep.setEditable(false);
 
         progressDialog.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void updateFilterSettingsField(String text) {
+        importFilterTxt.setText(text);
+    }
+
+    @Override
+    public void setIdFilter(IdFilter idFilter) {
+        peptideShakerGUI.setIdFilter(idFilter);
     }
 }
