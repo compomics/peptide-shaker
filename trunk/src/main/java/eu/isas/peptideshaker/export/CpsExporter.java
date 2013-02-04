@@ -8,6 +8,7 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.io.TarUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
@@ -44,10 +45,11 @@ public class CpsExporter {
      * @param metrics the dataset metrics
      * @param processingPreferences the processing preferences
      * @param identificationFeaturesCache the identification features cache
-     * @param ptmScoringPreferences the ptm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
+     * @param idFilter the identifications filter
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
@@ -56,9 +58,9 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            ObjectsCache objectsCache, boolean emptyCache) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+            ObjectsCache objectsCache, boolean emptyCache, IdFilter idFilter) throws IOException, SQLException, FileNotFoundException, ArchiveException {
                 saveAs(destinationFile, waitingHandler, experiment, identification, searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails,
-                    null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, objectsCache, emptyCache, null);
+                    null, metrics, processingPreferences, identificationFeaturesCache, ptmScoringPreferences, objectsCache, emptyCache, null, idFilter);
     }
 
     /**
@@ -77,10 +79,11 @@ public class CpsExporter {
      * @param metrics the dataset metrics
      * @param processingPreferences the processing preferences
      * @param identificationFeaturesCache the identification features cache
-     * @param ptmScoringPreferences the ptm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @param objectsCache the object cache
      * @param emptyCache a boolean indicating whether the object cache should be
      * emptied
+     * @param idFilter the identifications filter
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
@@ -89,12 +92,12 @@ public class CpsExporter {
     public static void saveAs(File destinationFile, WaitingHandler waitingHandler, MsExperiment experiment, Identification identification, SearchParameters searchParameters, 
             AnnotationPreferences annotationPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails, FilterPreferences filterPreferences,
             Metrics metrics, ProcessingPreferences processingPreferences, IdentificationFeaturesCache identificationFeaturesCache, PTMScoringPreferences ptmScoringPreferences,
-            ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences) throws IOException, SQLException, FileNotFoundException, ArchiveException {
+            ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences, IdFilter idFilter) throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
         // set the experiment parameters
         experiment.addUrParam(new PeptideShakerSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
-                identificationFeaturesCache, ptmScoringPreferences));
+                identificationFeaturesCache, ptmScoringPreferences, idFilter));
 
         objectsCache.saveCache(waitingHandler, emptyCache);
         identification.close();

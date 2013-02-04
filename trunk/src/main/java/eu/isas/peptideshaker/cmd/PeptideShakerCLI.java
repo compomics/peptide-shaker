@@ -215,7 +215,7 @@ public class PeptideShakerCLI implements Callable {
             CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
                     annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                     processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                    ptmScoringPreferences, objectsCache, true);
+                    ptmScoringPreferences, objectsCache, true, idFilter);
             waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
             loadUserPreferences();
@@ -225,7 +225,7 @@ public class PeptideShakerCLI implements Callable {
             e.printStackTrace();
         }
 
-        // text summary output required? - format 1
+        // text summary output - format 1
         if (cliInputBean.getTextFormat1Directory() != null) {
             waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
             TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
@@ -233,24 +233,24 @@ public class PeptideShakerCLI implements Callable {
             waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat1Directory().getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
         }
-        
-        // text summary output required? - format 2
+
+        // text summary output - format 2
         if (cliInputBean.getTextFormat2Directory() != null) {
             waitingHandler.appendReport("Exporting results as text file. Please wait...", true, true);
-            
+
             // @TODO: implement text summary export format 2
             TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
             exporter.exportResults(waitingHandler, cliInputBean.getTextFormat2Directory());
-            
+
             waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat2Directory().getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
         }
 
         // PRIDE output required?
-        //@TODO!
+        // @TODO: implement me
 
-        //Export entire project?
-        //@TODO!
+        // Export entire project?
+        // @TODO: not yet implemented
 
         // Finished
         waitingHandler.setIndeterminate(false);
@@ -273,7 +273,7 @@ public class PeptideShakerCLI implements Callable {
         }
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-                   // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
         return null;
     }
@@ -419,7 +419,7 @@ public class PeptideShakerCLI implements Callable {
                 return false;
             }
         }
-        
+
         if (aLine.hasOption(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id)) {
             String filesTxt = aLine.getOptionValue(PeptideShakerCLIParams.PEPTIDESHAKER_TXT_2.id).trim();
             File testFile = new File(filesTxt);

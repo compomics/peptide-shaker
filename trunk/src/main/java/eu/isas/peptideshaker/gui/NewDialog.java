@@ -1662,6 +1662,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         progressDialog.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    @Override
     public void updateFilterSettingsField(String text) {
         importFilterTxt.setText(text);
     }
@@ -1669,5 +1670,10 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
     @Override
     public void setIdFilter(IdFilter idFilter) {
         peptideShakerGUI.setIdFilter(idFilter);
+    }
+
+    @Override
+    public IdFilter getIdFilter() {
+        return peptideShakerGUI.getIdFilter();
     }
 }

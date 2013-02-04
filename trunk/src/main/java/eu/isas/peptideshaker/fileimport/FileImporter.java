@@ -845,7 +845,7 @@ public class FileImporter {
                             if (idFilter.validateModifications(peptide)) {
                                 // Estimate the theoretic mass with the new modifications
                                 peptide.estimateTheoreticMass();
-                                if (!idFilter.validatePrecursor(assumption, spectrumKey)) {
+                                if (!idFilter.validatePrecursor(assumption, spectrumKey, spectrumFactory)) {
                                     match.removeAssumption(assumption);
                                 }
                             } else {
