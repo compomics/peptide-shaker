@@ -14,7 +14,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
-import eu.isas.peptideshaker.fileimport.IdFilter;
+import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;

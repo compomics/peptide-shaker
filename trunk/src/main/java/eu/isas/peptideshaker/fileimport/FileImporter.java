@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
+import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
@@ -22,8 +23,8 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
-import eu.isas.peptideshaker.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;

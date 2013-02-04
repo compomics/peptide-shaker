@@ -9,11 +9,11 @@ import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.io.TarUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
-import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
-import eu.isas.peptideshaker.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
@@ -92,7 +92,7 @@ public class CpsExporter {
             ObjectsCache objectsCache, boolean emptyCache, DisplayPreferences displayPreferences) throws IOException, SQLException, FileNotFoundException, ArchiveException {
 
         // set the experiment parameters
-        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
+        experiment.addUrParam(new PeptideShakerSettings(searchParameters, annotationPreferences, spectrumCountingPreferences,
                 projectDetails, filterPreferences, displayPreferences, metrics, processingPreferences,
                 identificationFeaturesCache, ptmScoringPreferences));
 

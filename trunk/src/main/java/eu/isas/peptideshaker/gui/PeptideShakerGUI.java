@@ -1,5 +1,8 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.preferences.gui.ImportSettingsDialog;
+import com.compomics.util.preferences.gui.ImportSettingsDialogParent;
+import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import com.compomics.software.CompomicsWrapper;
@@ -34,7 +37,7 @@ import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
 import com.compomics.util.io.SerializationUtils;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.fileimport.IdFilter;
+import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.*;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
@@ -62,8 +65,9 @@ import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.preferences.PTMScoringPreferences;
-import eu.isas.peptideshaker.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
 import eu.isas.peptideshaker.recalibration.FractionError;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
@@ -103,7 +107,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent {
+public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, ImportSettingsDialogParent {
 
     /**
      * The current PeptideShaker cps file.
@@ -2451,7 +2455,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
-        new ImportSettingsDialog(this, null, false);
+        new ImportSettingsDialog(this, this, idFilter, false);
     }//GEN-LAST:event_importFilterMenuActionPerformed
 
     /**
@@ -5160,8 +5164,35 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     MsExperiment tempExperiment = ExperimentIO.loadExperiment(experimentFile);
                     Sample tempSample = null;
-                    PSSettings experimentSettings = new PSSettings();
-                    experimentSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
+                    PeptideShakerSettings experimentSettings = new PeptideShakerSettings();
+
+                    if (tempExperiment.getUrParam(experimentSettings) instanceof PSSettings) {
+
+                        // convert old settings files using utilities version 3.10.68 or older
+                        
+                        // convert the old ProcessingPreferences object
+                        PSSettings tempSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
+                        ProcessingPreferences tempProcessingPreferences = new ProcessingPreferences();
+                        tempProcessingPreferences.setProteinFDR(tempSettings.getProcessingPreferences().getProteinFDR());
+                        tempProcessingPreferences.setPeptideFDR(tempSettings.getProcessingPreferences().getPeptideFDR());
+                        tempProcessingPreferences.setPsmFDR(tempSettings.getProcessingPreferences().getPsmFDR());
+
+                        // convert the old PTMScoringPreferences object
+                        PTMScoringPreferences tempPTMScoringPreferences = new PTMScoringPreferences();
+                        tempPTMScoringPreferences.setaScoreCalculation(tempSettings.getPTMScoringPreferences().aScoreCalculation());
+                        tempPTMScoringPreferences.setaScoreNeutralLosses(tempSettings.getPTMScoringPreferences().isaScoreNeutralLosses());
+                        tempPTMScoringPreferences.setFlrThreshold(tempSettings.getPTMScoringPreferences().getFlrThreshold());
+
+                        experimentSettings = new PeptideShakerSettings(tempSettings.getSearchParameters(), tempSettings.getAnnotationPreferences(),
+                                tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
+                                tempSettings.getDisplayPreferences(),
+                                tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache(),
+                                tempPTMScoringPreferences);
+
+                    } else {
+                        experimentSettings = (PeptideShakerSettings) tempExperiment.getUrParam(experimentSettings);
+                    }
+
                     setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
                     setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
                     setPtmScoringPreferences(experimentSettings.getPTMScoringPreferences());
@@ -5630,7 +5661,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Allows the user to locate the FASTA file manually
+     * Allows the user to locate the FASTA file manually.
      *
      * @return the selected FASTA file or null if the operation was canceled
      */
@@ -5746,11 +5777,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         return idFilter;
     }
 
-    /**
-     * Sets the identification filter used.
-     *
-     * @param idFilter the identification filter used
-     */
     public void setIdFilter(IdFilter idFilter) {
         this.idFilter = idFilter;
     }
@@ -6574,8 +6600,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public void openExampleFile() {
 
-        boolean open = true; 
-        
+        boolean open = true;
+
         if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
@@ -6592,9 +6618,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         if (open) {
-            
+
             String filePath = getJarFilePath() + EXAMPLE_DATASET_PATH;
-            
+
             if (!new File(filePath).exists()) {
                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -6607,5 +6633,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
             updateRecentProjectsList();
         }
+    }
+
+    public void updateFilterSettingsField(String text) {
+        // interface method: not implemented in this class as it is not needed
     }
 }

@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.myparameters;
 
+import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -11,10 +13,8 @@ import eu.isas.peptideshaker.utils.Metrics;
  * This class will be used to save all settings needed in PeptideShaker.
  *
  * @author Marc Vaudel
- * @deprecated use eu.isas.peptideshaker.myparameter.PeptideShakerSettings
- * instead
  */
-public class PSSettings implements UrParameter {
+public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Serial version UID for post-serialization compatibility.
@@ -71,7 +71,7 @@ public class PSSettings implements UrParameter {
     /**
      * Blank constructor.
      */
-    public PSSettings() {
+    public PeptideShakerSettings() {
     }
 
     /**
@@ -88,7 +88,7 @@ public class PSSettings implements UrParameter {
      * @param identificationFeaturesCache The identification features cache
      * @param ptmScoringPreferences The PTM scoring preferences
      */
-    public PSSettings(SearchParameters searchParameters,
+    public PeptideShakerSettings(SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences,
             ProjectDetails projectDetails,
