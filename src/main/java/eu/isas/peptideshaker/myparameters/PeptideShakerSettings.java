@@ -5,6 +5,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.preferences.*;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -67,6 +68,10 @@ public class PeptideShakerSettings implements UrParameter {
      * The PTM scoring preferences.
      */
     private PTMScoringPreferences ptmScoringPreferences;
+    /**
+     * The identification filters.
+     */
+    private IdFilter idFilter;
 
     /**
      * Blank constructor.
@@ -87,6 +92,7 @@ public class PeptideShakerSettings implements UrParameter {
      * @param processingPreferences The processing preferences
      * @param identificationFeaturesCache The identification features cache
      * @param ptmScoringPreferences The PTM scoring preferences
+     * @param idFilter the identification filters
      */
     public PeptideShakerSettings(SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences,
@@ -97,7 +103,8 @@ public class PeptideShakerSettings implements UrParameter {
             Metrics metrics,
             ProcessingPreferences processingPreferences,
             IdentificationFeaturesCache identificationFeaturesCache,
-            PTMScoringPreferences ptmScoringPreferences) {
+            PTMScoringPreferences ptmScoringPreferences,
+            IdFilter idFilter) {
         this.utiltiesSearchParameters = searchParameters;
         this.utilitiesAnnotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
@@ -108,6 +115,7 @@ public class PeptideShakerSettings implements UrParameter {
         this.processingPreferences = processingPreferences;
         this.identificationFeaturesCache = identificationFeaturesCache;
         this.ptmScoringPreferences = ptmScoringPreferences;
+        this.idFilter = idFilter;
     }
 
     /**
@@ -243,5 +251,23 @@ public class PeptideShakerSettings implements UrParameter {
     @Override
     public int getIndex() {
         return 2;
+    }
+
+    /**
+     * Returns the ID filters.
+     * 
+     * @return the idFilter
+     */
+    public IdFilter getIdFilter() {
+        return idFilter;
+    }
+
+    /**
+     * Sets the ID filter.
+     * 
+     * @param idFilter the idFilter to set
+     */
+    public void setIdFilter(IdFilter idFilter) {
+        this.idFilter = idFilter;
     }
 }

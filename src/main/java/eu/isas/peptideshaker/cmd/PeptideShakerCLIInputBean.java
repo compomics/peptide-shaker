@@ -88,37 +88,37 @@ public class PeptideShakerCLIInputBean {
     /**
      * The minimal peptide length allowed.
      */
-    private int minPepLength;
+    private int minPepLength = 6;
     /**
      * The maximal peptide length allowed.
      */
-    private int maxPepLength;
+    private int maxPepLength = 30;
     /**
      * Mascot maximal e-value allowed.
      */
-    private double mascotMaxEvalue;
+    private double mascotMaxEvalue = 100;
     /**
      * OMSSA maximal e-value allowed.
      */
-    private double omssaMaxEvalue;
+    private double omssaMaxEvalue = 100;
     /**
      * X!Tandem maximal e-value allowed.
      */
-    private double xtandemMaxEvalue;
+    private double xtandemMaxEvalue = 100;
     /**
      * The maximal m/z deviation allowed.
      */
-    private double maxMassDeviation;
+    private double maxMassDeviation = 10;
     /**
      * Boolean indicating the unit of the allowed m/z deviation (true: ppm,
      * false: Da).
      */
-    private boolean maxMassDeviationIsPpm;
+    private boolean maxMassDeviationIsPpm = true;
     /**
      * Boolean indicating whether peptides presenting unknown PTMs should be
      * ignored.
      */
-    private boolean excludeUnknownPtm;
+    private boolean excludeUnknownPtm = true;
     /**
      * The identification parameters used for the search.
      */

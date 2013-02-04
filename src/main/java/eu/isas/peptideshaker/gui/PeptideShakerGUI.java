@@ -5169,7 +5169,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     if (tempExperiment.getUrParam(experimentSettings) instanceof PSSettings) {
 
                         // convert old settings files using utilities version 3.10.68 or older
-                        
+
                         // convert the old ProcessingPreferences object
                         PSSettings tempSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
                         ProcessingPreferences tempProcessingPreferences = new ProcessingPreferences();
@@ -5187,12 +5187,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
                                 tempSettings.getDisplayPreferences(),
                                 tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache(),
-                                tempPTMScoringPreferences);
+                                tempPTMScoringPreferences, new IdFilter());
 
                     } else {
                         experimentSettings = (PeptideShakerSettings) tempExperiment.getUrParam(experimentSettings);
                     }
 
+                    idFilter = experimentSettings.getIdFilter();
                     setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
                     setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
                     setPtmScoringPreferences(experimentSettings.getPTMScoringPreferences());
@@ -5768,11 +5769,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         overviewPanel.updateSeparators();
     }
 
-    /**
-     * Returns the identification filter used.
-     *
-     * @return the identification filter used
-     */
     public IdFilter getIdFilter() {
         return idFilter;
     }
@@ -6136,7 +6132,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache, displayPreferences);
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache, displayPreferences, idFilter);
     }
 
     /**
