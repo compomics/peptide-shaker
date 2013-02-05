@@ -6,11 +6,10 @@
 *Changes in PeptideShaker 0.19.0 (January ??. 2013): coming soon...*
  * NEW FEATURE: Added a new ID Rate column, and added a separate row for the total PeptideShaker results in the Spectrum IDs tab.
  * NEW FEATURE: Made it possible to show/hide the fixed modifications in most tabs.
- * NEW FEATURE: Added a new Plotting dialog, opend by right clicking in most tables.
+ * NEW FEATURE: Added a new Plotting dialog, opened by right clicking in most tables.
  * NEW FEATURE: Reimplemented the PeptideShaker command line support from scratch. (http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI) 
  * NEW FEATURE: Added an open example dataset option to the WelcomeDialog.
  * NEW FEATURE: Added a settings pop up menu to the WelcomeDialog.
- * NEW FEATURE: Added an example dataset.
  * NEW FEATURE: Implemented False LocationRate (FLR) for modifications.
  * NEW FEATURE: Modification patterns defined as part of a SearchGUI search are now supported.
  * NEW FEATURE: Added precursor intensity to the spectrum table in the Spectrum IDs tab.
