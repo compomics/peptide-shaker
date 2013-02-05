@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.19.0 (January ??. 2013): coming soon...*
+*Changes in PeptideShaker 0.19.0 (February 6. 2013):*
  * NEW FEATURE: Added a new ID Rate column, and added a separate row for the total PeptideShaker results in the Spectrum IDs tab.
  * NEW FEATURE: Made it possible to show/hide the fixed modifications in most tabs.
  * NEW FEATURE: Added a new Plotting dialog, opened by right clicking in most tables.
@@ -67,7 +67,7 @@
  * LIBRARY UPDATE: Updated omssa parser to version 1.5.8.
  * LIBRARY UPDATE: Updated xtandem parser to version 1.5.12.
  * LIBRARY UPDATE: Updated mascot dat file parser to version 3.4.7.
- * LIBRARY UPDATE: Updated utilities to version 3.10.57.
+ * LIBRARY UPDATE: Updated utilities to version 3.11.2.
 ----
 
 *Changes in PeptideShaker 0.18.3 (September 15. 2012):*
@@ -78,7 +78,7 @@
  * LIBRARY UPDATE: Updated ols-dialog to version 3.4.0, containing many GUI improvements.
  * LIBRARY UPDATE: Updated utilities to version 3.10.67.
 
-Download Count: 337
+Download Count: 346
 
 ----
 
@@ -87,7 +87,7 @@ Download Count: 337
  * LIBRARY UPDATE: Updated mascotdatfile to version 3.4.2, such that the Mascot search results can be loaded again.
  * LIBRARY UPDATE: Updated utilities to version 3.8.9, fixing an issues with the EBI proxy settings. 
 
-Download Count: 35
+Download Count: 37
 
 ----
 
@@ -98,7 +98,7 @@ Download Count: 35
  * LIBRARY UPDATE: Updated utilities to version 3.8.8.
  * LIBRARY UPDATE: Updated jmzml to version 1.6.8.
 
-Download Count: 4
+Download Count: 5
 
 ----
 
@@ -150,7 +150,7 @@ Download Count: 4
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.40.
  * LIBRARY UPDATE: Updated utilities to version 3.8.6.
 
-Download Count: 12
+Download Count: 14
 
 ----
 
@@ -166,7 +166,7 @@ Download Count: 12
  * BUG FIX: Fixed some bugs with the contextual export options for the spectrum panel in the PTM tab.
  * BUG FIX: Fixed a bug in the GO tab that could result in issues if switching between rows in the GO table too fast.
 
-Download Count: 288
+Download Count: 290
 
 ----
 
@@ -181,7 +181,7 @@ Download Count: 288
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.23.
 
-Download Count: 16
+Download Count: 18
 
 ----
 
@@ -197,7 +197,7 @@ Download Count: 16
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.22.
 
-Download Count: 19
+Download Count: 20
 
 ----
 
@@ -214,7 +214,7 @@ Download Count: 19
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.19.
 
-Download Count: 49
+Download Count: 50
 
 ----
 
@@ -236,14 +236,14 @@ Download Count: 49
 
  * LIBRARY UPDATE: Updated utilities to version 3.4.12.
 
-Download Count: 28
+Download Count: 30
 
 ----
 
 *Changes in PeptideShaker 0.16.2 (April 18. 2012):*
  * BUG FIX: Fixed an issue with spaces in the splash screen graphics path on Windows.
 
-Download Count: 55
+Download Count: 57
 
 ----
 
@@ -253,7 +253,7 @@ Download Count: 55
  * FEATURE IMPROVEMENT: Cleaned up the folder structure in the zip file.
  * BUG FIX: Fixed a bug in the method for setting the path for the icon and target in the desktop shortcut that occurred when running PeptideShaker from network drives.
 
-Download Count: 4
+Download Count: 6
 
 ----
 
@@ -299,7 +299,7 @@ Download Count: 4
  * LIBRARY UPDATE: Added jshortcut as a dependency.
  * LIBRARY UPDATE: Removed swingx as a dependency.
 
-Download Count: 44
+Download Count: 45
 
 ----
 
