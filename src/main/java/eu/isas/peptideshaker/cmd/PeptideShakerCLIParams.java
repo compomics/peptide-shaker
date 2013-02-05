@@ -14,12 +14,12 @@ public enum PeptideShakerCLIParams {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // IMPORTANT: Any change here must be reported in the wiki: http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    EXPERIMENT("experiment", "Mandatory: Specifies the experiment name.", true),
-    SAMPLE("sample", "Mandatory: Specifies the sample name.", true),
+    EXPERIMENT("experiment", "Specifies the experiment name.", true),
+    SAMPLE("sample", "Specifies the sample name.", true),
     REPLICATE("replicate", "The replicate number.", true),
-    SPECTRUM_FILES("spectrum_files", "Mandatory: Spectrum files (mgf format), comma separated list or an entire folder.", true),
-    IDENTIFICATION_FILES("identification_files", "Mandatory: Identification files (.dat, .omx or .t.xml), comma separated list or an entire folder.", true),
-    PEPTIDESHAKER_OUTPUT("out", "Mandatory: PeptideShaker output file. Note: if file exists it will be overwritten.", true),
+    SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", true),
+    IDENTIFICATION_FILES("identification_files", "Identification files (.dat, .omx or .t.xml), comma separated list or an entire folder.", true),
+    PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
     PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms).", false),
     PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented.)", false),
     PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented.)", false),
@@ -75,8 +75,6 @@ public enum PeptideShakerCLIParams {
      */
     public static void createOptionsCLI(Options aOptions) {
         
-        // @TODO: the formatting of the options should be improved by using the setRequired method for the options, but couldn't get it to work...
-        
         aOptions.addOption(EXPERIMENT.id, true, EXPERIMENT.description);
         aOptions.addOption(SAMPLE.id, true, SAMPLE.description);
         aOptions.addOption(REPLICATE.id, true, REPLICATE.description);
@@ -103,5 +101,53 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(MAX_PRECURSOR_ERROR.id, true, MAX_PRECURSOR_ERROR.description);
         aOptions.addOption(MAX_PRECURSOR_ERROR_TYPE.id, true, MAX_PRECURSOR_ERROR_TYPE.description);
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
+        
+        // note: remember to add new parameters to the getOptionsAsString below as well
     }
+    
+    /**
+     * Returns the options as a string.
+     * 
+     * @return the options as a string
+     */
+    public static String getOptionsAsString () {
+        
+        String output = "";
+        String formatter = "%-35s";
+        
+        output += "Mandatory parameters:\n\n";
+        output += "-" + String.format(formatter, EXPERIMENT.id) + EXPERIMENT.description + "\n";
+        output += "-" + String.format(formatter, SAMPLE.id)  + SAMPLE.description + "\n";
+        output += "-" + String.format(formatter, REPLICATE.id)  + REPLICATE.description + "\n";
+        output += "-" + String.format(formatter, SPECTRUM_FILES.id) + SPECTRUM_FILES.description + "\n";
+        output += "-" + String.format(formatter, IDENTIFICATION_FILES.id)  + IDENTIFICATION_FILES.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id)  + PEPTIDESHAKER_OUTPUT.description + "\n";
+        output += "-" + String.format(formatter, SEARCH_PARAMETERS.id)  + SEARCH_PARAMETERS.description + "\n";
+        
+        output += "\n\nOptional output parameters:\n\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
+        
+        output += "\n\nOptional processing parameters:\n\n";
+        output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDE_FDR.id) + PEPTIDE_FDR.description + "\n";
+        output += "-" + String.format(formatter, PSM_FDR.id) + PSM_FDR.description + "\n";
+        output += "-" + String.format(formatter, PSM_FLR.id) + PSM_FLR.description + "\n";
+        output += "-" + String.format(formatter, ESTIMATE_A_SCORE.id) + ESTIMATE_A_SCORE.description + "\n";
+        output += "-" + String.format(formatter, A_SCORE_NEUTRAL_LOSSES.id) + A_SCORE_NEUTRAL_LOSSES.description + "\n";
+        output += "-" + String.format(formatter, PROTEIN_FRACTION_MW_CONFIDENCE.id) + PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
+        
+        output += "\n\nOptional filtering parameters:\n\n";
+        output += "-" + String.format(formatter, MIN_PEPTIDE_LENGTH.id) + MIN_PEPTIDE_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, MAX_PEPTIDE_LENGTH.id) + MAX_PEPTIDE_LENGTH.description + "\n";
+        output += "-" + String.format(formatter, MASCOT_E_VALUE_MAX.id) + MASCOT_E_VALUE_MAX.description + "\n";
+        output += "-" + String.format(formatter, OMSSA_E_VALUE_MAX.id) + OMSSA_E_VALUE_MAX.description + "\n";
+        output += "-" + String.format(formatter, XTANDEM_E_VALUE_MAX.id) + XTANDEM_E_VALUE_MAX.description + "\n";
+        output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
+        output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
+        output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n\n";
+        
+        return output;
+    } 
 }

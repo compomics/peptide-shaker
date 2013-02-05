@@ -305,13 +305,7 @@ public class PeptideShakerCLI implements Callable {
      * PeptideShaker CLI header message when printing the usage.
      */
     private static String getHeader() {
-        return "\n"
-                + "----------------------"
-                + System.getProperty("line.separator")
-                + "INFO"
-                + System.getProperty("line.separator")
-                + "----------------------" + System.getProperty("line.separator")
-                + System.getProperty("line.separator")
+        return System.getProperty("line.separator")
                 + "The PeptideShaker command line takes identification files from Mascot, OMSSA and X!Tandem and generates various types of output files." + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + "For further help see http://peptide-shaker.googlecode.com and http://code.google.com/p/peptide-shaker/wiki/PeptideShakerCLI." + System.getProperty("line.separator")
@@ -513,14 +507,12 @@ public class PeptideShakerCLI implements Callable {
             CommandLine line = parser.parse(lOptions, args);
 
             if (!isValidStartup(line)) {
-                HelpFormatter formatter = new HelpFormatter();
-
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
                 lPrintWriter.print("\n==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print("PeptideShaker - Command Line" + System.getProperty("line.separator"));
                 lPrintWriter.print("==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
-                formatter.printOptions(lPrintWriter, 200, lOptions, 0, 5);
+                lPrintWriter.print(PeptideShakerCLIParams.getOptionsAsString());
                 lPrintWriter.flush();
                 lPrintWriter.close();
 
