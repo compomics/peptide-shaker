@@ -451,7 +451,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public PeptideShakerGUI(File cpsFile, boolean showWelcomeDialog) {
 
         // check for new version
-        CompomicsWrapper.checkForNewVersion(getVersion(), "PeptideShaker", "peptide-shaker", true);
+        CompomicsWrapper.checkForNewVersion(getVersion(), "PeptideShaker", "peptide-shaker");
 
         // set up the ErrorLog
         setUpLogFile();
