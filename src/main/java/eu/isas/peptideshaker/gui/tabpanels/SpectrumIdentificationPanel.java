@@ -96,9 +96,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public static final int PARTIALLY_MISSING = 2;
     /**
      * Static index for the search engine agreement: the search engines all have
-     * the same top ranking peptide.
+     * the same top ranking peptide without accounting for modification
+     * localization.
      */
     public static final int AGREEMENT = 3;
+    /**
+     * Static index for the search engine agreement: the search engines all have
+     * the same top ranking peptide.
+     */
+    public static final int AGREEMENT_WITH_MODS = 4;
     /**
      * The peptide sequence tooltips for the OMSSA table.
      */
@@ -247,7 +253,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         // make sure that the user is made aware that the tool is doing something during sorting of the spectrum table
         spectrumTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
             @Override
             public void sorterChanged(RowSorterEvent e) {
 
@@ -302,13 +307,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         // set up the psm color map
         HashMap<Integer, java.awt.Color> searchEngineColorMap = new HashMap<Integer, java.awt.Color>();
-        searchEngineColorMap.put(AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
+        searchEngineColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
+        searchEngineColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree
         searchEngineColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
         searchEngineColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
 
         // set up the psm tooltip map
         HashMap<Integer, String> searchEngineTooltipMap = new HashMap<Integer, String>();
-        searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree");
+        searchEngineTooltipMap.put(AGREEMENT_WITH_MODS, "Search Engines Agree");
+        searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree, without PTM localization certainty");
         searchEngineTooltipMap.put(CONFLICT, "Search Engines Disagree");
         searchEngineTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
 
@@ -361,14 +368,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         // set up the psm color map
         HashMap<Integer, java.awt.Color> searchEngineSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
-        searchEngineSpectrumLevelColorMap.put(AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
+        searchEngineSpectrumLevelColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
+        searchEngineSpectrumLevelColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree
         searchEngineSpectrumLevelColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
         searchEngineSpectrumLevelColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
         searchEngineSpectrumLevelColorMap.put(NO_ID, java.awt.Color.lightGray); // no psm
 
         // set up the psm tooltip map
         HashMap<Integer, String> searchEngineSpectrumLevelTooltipMap = new HashMap<Integer, String>();
-        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT, "Search Engines Agree");
+        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT_WITH_MODS, "Search Engines Agree");
+        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT, "Search Engines Agree, without PTM localization certainty");
         searchEngineSpectrumLevelTooltipMap.put(CONFLICT, "Search Engines Disagree");
         searchEngineSpectrumLevelTooltipMap.put(PARTIALLY_MISSING, "Search Engine(s) Missing");
         searchEngineSpectrumLevelTooltipMap.put(NO_ID, "(No PSM)");
@@ -1550,7 +1559,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 spectrumJSplitPane.setDividerLocation(spectrumJSplitPane.getWidth() / 2);
 
@@ -1655,7 +1663,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 spectrumLayeredPane.repaint();
 
                 SwingUtilities.invokeLater(new Runnable() {
-
                     public void run() {
                         // set the sliders split pane divider location
                         if (peptideShakerGUI.getUserPreferences().showSliders()) {
@@ -2333,7 +2340,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         JMenuItem menuItem = new JMenuItem("Table to File");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyTableContentToClipboardOrFile(TableIndex.SEARCH_ENGINE_PERFORMANCE);
             }
@@ -2343,7 +2349,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         menuItem = new JMenuItem("Venn Diagram");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, vennDiagramButton);
             }
@@ -2364,7 +2369,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsFigure();
             }
@@ -2374,7 +2378,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         menuItem = new JMenuItem("Spectrum As MGF");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsMgf();
             }
@@ -2396,7 +2399,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -2477,14 +2479,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Loading Data. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
 
         new Thread("DisplayThread") {
-
             @Override
             public void run() {
 
@@ -2574,17 +2574,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 totalPeptideShakerIds++;
 
                                 if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
-                                    if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                    if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestAssumption().getPeptide())) {
                                         mascot = true;
                                     }
                                 }
                                 if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
-                                    if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                    if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestAssumption().getPeptide())) {
                                         omssa = true;
                                     }
                                 }
                                 if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
-                                    if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                    if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestAssumption().getPeptide())) {
                                         xTandem = true;
                                     }
                                 }
@@ -2883,7 +2883,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 progressDialog.setVisible(true);
             }
@@ -2891,7 +2890,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
 
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
 
@@ -3160,7 +3158,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
-
                     public void run() {
                         //update the spectrum
                         updateSpectrum();
@@ -3484,7 +3481,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     progressDialog.setTitle("Copying to File. Please Wait...");
 
                     new Thread(new Runnable() {
-
                         public void run() {
                             try {
                                 progressDialog.setVisible(true);
@@ -3495,7 +3491,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }, "ProgressDialog").start();
 
                     new Thread("ExportThread") {
-
                         @Override
                         public void run() {
 
@@ -3600,7 +3595,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (spectrumMatch.getAllAssumptions(advocate) != null) {
 
             ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocate).keySet());
-                                        ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+            ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
             Collections.sort(eValues);
             int rank = 0;
             for (double eValue : eValues) {
@@ -3667,8 +3662,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns true if all the used search engines agree on the top PSM without accounting for modification localization, false
-     * otherwise.
+     * Returns true if all the used search engines agree on the top PSM without
+     * accounting for modification localization, false otherwise.
      *
      * @param spectrumMatch the PSM to check
      * @return true if all the used search engines agree on the top PSM
@@ -3722,18 +3717,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
 
         if (omssaMatch != null && xtandemMatch != null && mascotMatch != null) {
-            if ((omssaMatch.isSameAs(xtandemMatch) && 
-                    omssaMatch.isSameAs(mascotMatch))
+            if ((omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch)
+                    && omssaMatch.isSameSequenceAndModificationStatus(mascotMatch))
                     && (omssaCharge == xtandemCharge && omssaCharge == mascotCharge)) {
-                return AGREEMENT;
+                if (omssaMatch.isSameAs(xtandemMatch)
+                        && omssaMatch.isSameAs(mascotMatch)) {
+                    return AGREEMENT_WITH_MODS;
+                } else {
+                    return AGREEMENT;
+                }
             } else {
                 return CONFLICT;
             }
         } else if (omssaMatch != null && xtandemMatch != null) {
             if (!mascotUsed) {
-                if (omssaMatch.isSameAs(xtandemMatch)
+                if (omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch)
                         && omssaCharge == xtandemCharge) {
-                    return AGREEMENT;
+                    if (omssaMatch.isSameAs(xtandemMatch)
+                            && omssaCharge == xtandemCharge) {
+                        return AGREEMENT_WITH_MODS;
+                    } else {
+                        return AGREEMENT;
+                    }
                 } else {
                     return CONFLICT;
                 }
@@ -3742,9 +3747,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         } else if (omssaMatch != null && mascotMatch != null) {
             if (!xtandemUsed) {
-                if (omssaMatch.isSameAs(mascotMatch)
+                if (omssaMatch.isSameSequenceAndModificationStatus(mascotMatch)
                         && omssaCharge == mascotCharge) {
-                    return AGREEMENT;
+                    if (omssaMatch.isSameAs(mascotMatch)
+                            && omssaCharge == mascotCharge) {
+                        return AGREEMENT_WITH_MODS;
+                    } else {
+                        return AGREEMENT;
+                    }
                 } else {
                     return CONFLICT;
                 }
@@ -3753,9 +3763,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         } else if (xtandemMatch != null && mascotMatch != null) {
             if (!omssaUsed) {
-                if (xtandemMatch.isSameAs(mascotMatch)
+                if (xtandemMatch.isSameSequenceAndModificationStatus(mascotMatch)
                         && xtandemCharge == mascotCharge) {
-                    return AGREEMENT;
+                    if (xtandemMatch.isSameAs(mascotMatch)
+                            && xtandemCharge == mascotCharge) {
+                        return AGREEMENT_WITH_MODS;
+                    } else {
+                        return AGREEMENT;
+                    }
                 } else {
                     return CONFLICT;
                 }
@@ -3915,7 +3930,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void updateVennDiagram(final Integer nOMSSA, final Integer nXTandem, final Integer nMascot, final Integer ox, final Integer mo, final Integer mx, final Integer omx) {
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 if (omssaUsed && xtandemUsed && mascotUsed) {
