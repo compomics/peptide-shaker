@@ -613,9 +613,10 @@ public class FileImporter {
             try {
                 tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while loading spectrum matches from " + Util.getFileName(idFile)
-                        + ". This file will be ignored. This is most likely due to memory issues, you can increase the memory "
-                        + "settings in Edit -> Java Options. You will find more help on our website: http://peptide-shaker.googlecode.com.", true, true);
+                waitingHandler.appendReport("An error occurred while loading spectrum matches from \'" 
+                        + Util.getFileName(idFile)
+                        + "\'. This file will be ignored. Error: " + e.getMessage()
+                        + " See resources/PeptideShaker.log for details.", true, true);
                 e.printStackTrace();
             }
             fileReader.close();

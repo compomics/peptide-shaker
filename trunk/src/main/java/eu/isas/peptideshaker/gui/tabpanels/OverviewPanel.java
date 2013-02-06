@@ -527,14 +527,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         psmTable.getColumn("SE").setMinWidth(37);
 
         // set up the psm color map
-        HashMap<Integer, Color> psmColorMap = new HashMap<Integer, Color>();
-        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
-        psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, Color.YELLOW); // search engines don't agree
+        HashMap<Integer, java.awt.Color> psmColorMap = new HashMap<Integer, java.awt.Color>();
+        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
+        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, java.awt.Color.CYAN); // search engines agree on peptide but not ptm certainty
+        psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
         psmColorMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
 
         // set up the psm tooltip map
         HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
-        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "Search Engines Agree");
+        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT_WITH_MODS, "Search Engines Agree");
+        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "Search Engines Agree - PTM Certainty Issues");
         psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "Search Engines Disagree");
         psmTooltipMap.put(SpectrumIdentificationPanel.PARTIALLY_MISSING, "First Hit(s) Missing");
 
