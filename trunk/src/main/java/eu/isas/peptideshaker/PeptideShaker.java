@@ -966,8 +966,16 @@ public class PeptideShaker {
                     }
                 }
 
-                spectrumMatch.setFirstHit(bestAssumption.getAdvocate(), bestAssumption);
-                spectrumMatch.setBestAssumption(bestAssumption);
+                // create a PeptideShaker match based on the best search engine match
+                Peptide sePeptide = bestAssumption.getPeptide();
+                ArrayList<String> psProteins = new ArrayList<String>(sePeptide.getParentProteins());
+                ArrayList<ModificationMatch> psModificationMatches = new ArrayList<ModificationMatch>();
+                for (ModificationMatch seModMatch : sePeptide.getModificationMatches()) {
+                    psModificationMatches.add(new ModificationMatch(seModMatch.getTheoreticPtm(), seModMatch.isVariable(), seModMatch.getModificationSite()));
+                }
+                Peptide psPeptide = new Peptide(sePeptide.getSequence(), psProteins, psModificationMatches);
+                PeptideAssumption psAssumption = new PeptideAssumption(psPeptide, 1, Advocate.PEPTIDE_SHAKER, bestAssumption.getIdentificationCharge(), p);
+                spectrumMatch.setBestAssumption(psAssumption);
                 psParameter = new PSParameter();
                 psParameter.setSpectrumProbabilityScore(p);
                 psmMap.addPoint(p, spectrumMatch);
@@ -1282,8 +1290,8 @@ public class PeptideShaker {
                                             ref += tempIndex;
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = localization - ref;
-                                                if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length() &&
-                                                        !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
+                                                        && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
                                                     newLocalizationCandidates.add(shiftedLocalization);
                                                 }
                                             }
@@ -1802,14 +1810,23 @@ public class PeptideShaker {
         }
 
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
-        double p1 = psParameter.getSearchEngineProbability();
+        double p1 = 1;
+        Peptide psPeptide = spectrumMatch.getBestAssumption().getPeptide();
+        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+            Peptide sePeptide = peptideAssumption.getPeptide();
+            if (psPeptide.isSameSequence(sePeptide) && psPeptide.sameModificationsAs(sePeptide)) {
+                psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                double ptemp = psParameter.getSearchEngineProbability();
+                if (ptemp < p1) {
+                    p1 = ptemp;
+                }
+            }
+        }
 
-        String mainSequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
-        double p2 = 1;
+        String mainSequence = psPeptide.getSequence();
         ArrayList<String> modifications = new ArrayList<String>();
 
-        for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
+        for (ModificationMatch modificationMatch : psPeptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
                 PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                 if (ptm.getType() == PTM.MODAA) {
@@ -1825,6 +1842,7 @@ public class PeptideShaker {
 
         if (!modifications.isEmpty()) {
             for (String mod : modifications) {
+                double p2 = 1;
                 for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
                     if (peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
                         boolean newLocation = false;
@@ -1870,7 +1888,7 @@ public class PeptideShaker {
      * computing the A-score
      */
     private void attachAScore(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences scoringPreferences) throws Exception {
-                
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         ModificationProfile ptmProfile = searchParameters.getModificationProfile();
 
