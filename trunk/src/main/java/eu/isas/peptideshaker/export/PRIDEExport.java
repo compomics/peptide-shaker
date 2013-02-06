@@ -396,7 +396,7 @@ public class PRIDEExport {
                         for (int se : spectrumMatch.getAdvocates()) {
                             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                                 for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-                                    if (assumption.getPeptide().isSameAs(bestAssumption.getPeptide())) {
+                                    if (assumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption.getPeptide())) {
                                         if (!scores.containsKey(se) || scores.get(se) > eValue) {
                                             scores.put(se, eValue);
                                             if (se == Advocate.MASCOT) {

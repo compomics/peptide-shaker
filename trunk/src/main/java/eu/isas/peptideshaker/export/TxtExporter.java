@@ -682,7 +682,7 @@ public class TxtExporter {
         ArrayList<String> fileNames = new ArrayList<String>();
 
         for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions()) {
-            if (assumption.getPeptide().isSameAs(bestAssumption)) {
+            if (assumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
                 if (!fileNames.contains(assumption.getFile())) {
                     fileNames.add(assumption.getFile());
                 }
@@ -709,7 +709,7 @@ public class TxtExporter {
         for (int se : spectrumMatch.getAdvocates()) {
             for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
                 for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
-                    if (assumption.getPeptide().isSameAs(bestAssumption)) {
+                    if (assumption.getPeptide().isSameSequenceAndModificationStatus(bestAssumption)) {
                         if (se == Advocate.MASCOT) {
                             if (mascotEValue == null || mascotEValue > eValue) {
                                 mascotEValue = eValue;

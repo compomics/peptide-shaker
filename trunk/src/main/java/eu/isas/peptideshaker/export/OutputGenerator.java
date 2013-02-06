@@ -2394,7 +2394,7 @@ public class OutputGenerator {
                                                     psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
                                                     writer.write(psParameter.getSearchEngineConfidence() + SEPARATOR);
                                                 }
-                                                if (peptideAssumption.getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                                if (peptideAssumption.getPeptide().isSameSequenceAndModificationStatus(spectrumMatch.getBestAssumption().getPeptide())) {
                                                     writer.write(1 + SEPARATOR);
                                                 } else {
                                                     writer.write(0 + SEPARATOR);
