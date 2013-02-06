@@ -3720,8 +3720,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if ((omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch)
                     && omssaMatch.isSameSequenceAndModificationStatus(mascotMatch))
                     && (omssaCharge == xtandemCharge && omssaCharge == mascotCharge)) {
-                if (omssaMatch.isSameAs(xtandemMatch)
-                        && omssaMatch.isSameAs(mascotMatch)) {
+                if (omssaMatch.sameModificationsAs(xtandemMatch)
+                        && omssaMatch.sameModificationsAs(mascotMatch)) {
                     return AGREEMENT_WITH_MODS;
                 } else {
                     return AGREEMENT;
@@ -3733,7 +3733,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (!mascotUsed) {
                 if (omssaMatch.isSameSequenceAndModificationStatus(xtandemMatch)
                         && omssaCharge == xtandemCharge) {
-                    if (omssaMatch.isSameAs(xtandemMatch)
+                    if (omssaMatch.sameModificationsAs(xtandemMatch)
                             && omssaCharge == xtandemCharge) {
                         return AGREEMENT_WITH_MODS;
                     } else {
@@ -3749,7 +3749,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (!xtandemUsed) {
                 if (omssaMatch.isSameSequenceAndModificationStatus(mascotMatch)
                         && omssaCharge == mascotCharge) {
-                    if (omssaMatch.isSameAs(mascotMatch)
+                    if (omssaMatch.sameModificationsAs(mascotMatch)
                             && omssaCharge == mascotCharge) {
                         return AGREEMENT_WITH_MODS;
                     } else {
@@ -3781,21 +3781,21 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (xtandemUsed || mascotUsed) {
                 return PARTIALLY_MISSING;
             } else {
-                return AGREEMENT;
+                return AGREEMENT_WITH_MODS;
             }
 
         } else if (xtandemMatch != null) {
             if (omssaUsed || mascotUsed) {
                 return PARTIALLY_MISSING;
             } else {
-                return AGREEMENT;
+                return AGREEMENT_WITH_MODS;
             }
 
         } else if (mascotMatch != null) {
             if (omssaUsed || xtandemUsed) {
                 return PARTIALLY_MISSING;
             } else {
-                return AGREEMENT;
+                return AGREEMENT_WITH_MODS;
             }
 
         } else {
