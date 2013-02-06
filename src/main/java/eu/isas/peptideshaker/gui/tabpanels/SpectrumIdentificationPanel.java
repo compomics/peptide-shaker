@@ -308,14 +308,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // set up the psm color map
         HashMap<Integer, java.awt.Color> searchEngineColorMap = new HashMap<Integer, java.awt.Color>();
         searchEngineColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
-        searchEngineColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree
+        searchEngineColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree on peptide but not ptm certainty
         searchEngineColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
         searchEngineColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
 
         // set up the psm tooltip map
         HashMap<Integer, String> searchEngineTooltipMap = new HashMap<Integer, String>();
         searchEngineTooltipMap.put(AGREEMENT_WITH_MODS, "Search Engines Agree");
-        searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree, without PTM localization certainty");
+        searchEngineTooltipMap.put(AGREEMENT, "Search Engines Agree - PTM Certainty Issues");
         searchEngineTooltipMap.put(CONFLICT, "Search Engines Disagree");
         searchEngineTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
 
@@ -369,7 +369,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // set up the psm color map
         HashMap<Integer, java.awt.Color> searchEngineSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
         searchEngineSpectrumLevelColorMap.put(AGREEMENT_WITH_MODS, peptideShakerGUI.getSparklineColor()); // search engines agree with PTM certainty
-        searchEngineSpectrumLevelColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree
+        searchEngineSpectrumLevelColorMap.put(AGREEMENT, java.awt.Color.CYAN); // search engines agree on peptide but not ptm certainty
         searchEngineSpectrumLevelColorMap.put(CONFLICT, java.awt.Color.YELLOW); // search engines don't agree
         searchEngineSpectrumLevelColorMap.put(PARTIALLY_MISSING, java.awt.Color.ORANGE); // some search engines id'ed some didn't
         searchEngineSpectrumLevelColorMap.put(NO_ID, java.awt.Color.lightGray); // no psm
@@ -377,7 +377,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         // set up the psm tooltip map
         HashMap<Integer, String> searchEngineSpectrumLevelTooltipMap = new HashMap<Integer, String>();
         searchEngineSpectrumLevelTooltipMap.put(AGREEMENT_WITH_MODS, "Search Engines Agree");
-        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT, "Search Engines Agree, without PTM localization certainty");
+        searchEngineSpectrumLevelTooltipMap.put(AGREEMENT, "Search Engines Agree - PTM Certainty Issues");
         searchEngineSpectrumLevelTooltipMap.put(CONFLICT, "Search Engines Disagree");
         searchEngineSpectrumLevelTooltipMap.put(PARTIALLY_MISSING, "Search Engine(s) Missing");
         searchEngineSpectrumLevelTooltipMap.put(NO_ID, "(No PSM)");
