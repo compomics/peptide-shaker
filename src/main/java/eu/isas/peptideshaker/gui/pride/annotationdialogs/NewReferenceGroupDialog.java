@@ -118,6 +118,7 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
         deleteGroupButton = new javax.swing.JButton();
         okJButton = new javax.swing.JButton();
         groupNameNoteLabel = new javax.swing.JLabel();
+        cancelButton = new javax.swing.JButton();
 
         editJMenuItem.setMnemonic('E');
         editJMenuItem.setText("Edit");
@@ -279,6 +280,13 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
         groupNameNoteLabel.setFont(groupNameNoteLabel.getFont().deriveFont((groupNameNoteLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
         groupNameNoteLabel.setText("Note that Group Name is only for internal reference and is not included in the PRIDE XML.");
 
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -290,10 +298,15 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(groupNameNoteLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
-                        .addComponent(okJButton)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                        .addComponent(okJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okJButton});
+
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
@@ -302,7 +315,8 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okJButton)
-                    .addComponent(groupNameNoteLabel))
+                    .addComponent(groupNameNoteLabel)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
@@ -487,9 +501,19 @@ public class NewReferenceGroupDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_deleteGroupButtonMouseExited
 
+     /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteGroupButton;
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
     private javax.swing.JMenuItem editJMenuItem;

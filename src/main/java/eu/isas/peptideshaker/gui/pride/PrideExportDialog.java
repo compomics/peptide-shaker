@@ -19,6 +19,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.renderers.ToolTipComboBoxRenderer;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.prideobjects.*;
+import com.compomics.util.pride.validation.PrideXmlValidator;
 import eu.isas.peptideshaker.export.PRIDEExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
@@ -52,14 +53,19 @@ public class PrideExportDialog extends javax.swing.JDialog {
      */
     private Vector referenceTableColumnToolTips;
     /**
-     * The ptm to pride map.
+     * The PTM to pride map.
      */
     private PrideObjectsFactory prideObjectsFactory = null;
+    /**
+     * If true, the created PRIDE XML file will be validated against the PRIDE
+     * schema.
+     */
+    private boolean validatePrideXml = true;
 
     /**
      * Create a new PrideExportDialog.
      *
-     * @param peptideShakerGUI a refereence to the main GUI frame
+     * @param peptideShakerGUI a reference to the main GUI frame
      * @param modal
      */
     public PrideExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
@@ -119,7 +125,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Insert the protcol options in the combo box.
+     * Insert the protocol options in the combo box.
      */
     private void insertProtocolOptions() {
         insertOptions(new ArrayList<String>(prideObjectsFactory.getProtocols().keySet()),
@@ -152,7 +158,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Update the ptm map.
+     * Update the PTM map.
      */
     private void updatePtmMap() {
 
@@ -847,8 +853,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_sampleJComboBoxActionPerformed
 
     /**
-     * Enable/disable the edit protcol button and open the new protcol dialog if
-     * the user selected to add a new protcol.
+     * Enable/disable the edit protocol button and open the new protocol dialog
+     * if the user selected to add a new protocol.
      *
      * @param evt
      */
@@ -990,11 +996,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
     private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
 
         // check if the xml file already exists
-        String[] splittedName = titleJTextField.getText().split(" ");
-        String fileName = "";
-        for (String part : splittedName) {
-            fileName += part;
-        }
+        String fileName = titleJTextField.getText().trim().replaceAll(" ", "_"); // @TODO: not sure why this is needed?
+
         File prideFile = new File(outputFolderJTextField.getText(), fileName + ".xml");
         if (prideFile.exists()) {
             int selection = JOptionPane.showConfirmDialog(this, "The file \'"
@@ -1018,7 +1021,6 @@ public class PrideExportDialog extends javax.swing.JDialog {
         progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -1029,7 +1031,6 @@ public class PrideExportDialog extends javax.swing.JDialog {
         }, "ProgressDialog").start();
 
         new Thread("ConvertThread") {
-
             @Override
             public void run() {
 
@@ -1073,7 +1074,22 @@ public class PrideExportDialog extends javax.swing.JDialog {
                             labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
                             referenceGroup, contactGroup, sample, protocol, instrument, new File(outputFolderJTextField.getText()), prideFileName);
                     prideExport.createPrideXmlFile(progressDialog);
-                    conversionCompleted = true;
+
+                    // validate the pride xml file
+                    if (validatePrideXml && !prideExportDialog.progressCancelled()) {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Validating PRIDE XML. Please Wait...");
+                        PrideXmlValidator validator = new PrideXmlValidator();
+                        conversionCompleted = validator.validate(new File(outputFolderJTextField.getText(), prideFileName + ".xml"));
+
+                        // see if any errors were found, and display them to the user
+                        if (!conversionCompleted) {
+                            JOptionPane.showMessageDialog(null, validator.getErrorsAsString(), "PRIDE XML Errors", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        conversionCompleted = true;
+                    }
+
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     progressDialog.setRunCanceled();
@@ -1095,14 +1111,13 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     // html content 
                     JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
                             + "PRIDE XML file \'"
-                            + new File(outputFolderJTextField.getText(), titleJTextField.getText() + ".xml").getAbsolutePath() + "\' created.<br><br>"
+                            + new File(outputFolderJTextField.getText(), prideFileName + ".xml").getAbsolutePath() + "\' created.<br><br>"
                             + "Please see <a href=\"http://www.ebi.ac.uk/pride\">www.ebi.ac.uk/pride</a> for how to submit data to PRIDE.<br><br>"
                             + "We recommend checking the file in <a href=\"http://code.google.com/p/pride-toolsuite/wiki/PRIDEInspector\">PRIDE Inspector</a> before uploading."
                             + "</body></html>");
 
                     // handle link events 
                     ep.addHyperlinkListener(new HyperlinkListener() {
-
                         @Override
                         public void hyperlinkUpdate(HyperlinkEvent e) {
                             if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
@@ -1419,10 +1434,10 @@ public class PrideExportDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Tries to extract the ontology from the given cv term. For example
+     * Tries to extract the ontology from the given CV term. For example
      * BTO:0000763 returns BTO.
      *
-     * @param cvTerm the cv term to extract the ontology from, e.g., BTO:0000763
+     * @param cvTerm the CV term to extract the ontology from, e.g., BTO:0000763
      * @return the extracted ontology
      */
     public static String getOntologyFromCvTerm(String cvTerm) {
