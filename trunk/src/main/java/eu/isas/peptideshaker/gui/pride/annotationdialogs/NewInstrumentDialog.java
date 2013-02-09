@@ -153,6 +153,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         nameJTextField = new javax.swing.JTextField();
         deleteButton = new javax.swing.JButton();
         okJButton = new javax.swing.JButton();
+        cancelJButton = new javax.swing.JButton();
 
         editJMenuItem.setMnemonic('E');
         editJMenuItem.setText("Edit");
@@ -315,7 +316,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             .addGroup(instrumentPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
+                    .addComponent(analyzerCvScrollPane)
                     .addGroup(instrumentPanelLayout.createSequentialGroup()
                         .addGroup(instrumentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(sourceLabel)
@@ -337,7 +338,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
                                     .addComponent(instrumentSourceJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, instrumentPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 439, Short.MAX_VALUE)
                         .addComponent(addAnalyzerJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -383,26 +384,40 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             }
         });
 
+        cancelJButton.setText("Cancel");
+        cancelJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(instrumentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(instrumentPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(okJButton)))
+                        .addComponent(okJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelJButton)))
                 .addContainerGap())
         );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelJButton, okJButton});
+
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(instrumentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(okJButton)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(okJButton)
+                    .addComponent(cancelJButton))
                 .addContainerGap())
         );
 
@@ -689,12 +704,23 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         dispose();
         prideExportDialog.deleteInstrument(new Instrument(nameJTextField.getText(), null, null, new ArrayList<CvTerm>()));
     }//GEN-LAST:event_deleteButtonActionPerformed
+
+     /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
+    private void cancelJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelJButtonActionPerformed
+        dispose();
+    }//GEN-LAST:event_cancelJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addAnalyzerJButton;
     private javax.swing.JScrollPane analyzerCvScrollPane;
     private javax.swing.JTable analyzerCvTermsJTable;
     private javax.swing.JLabel analyzerLabel;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JButton cancelJButton;
     private javax.swing.JButton deleteButton;
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
     private javax.swing.JLabel detectorLabel;
