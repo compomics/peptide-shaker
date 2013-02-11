@@ -23,7 +23,7 @@ public class PSMaps implements UrParameter {
      */
     private ProteinMap proteinMap;
     /**
-     * The Psm map
+     * The PSM map
      */
     private PsmSpecificMap PsmSpecificMap;
     /**
@@ -33,7 +33,7 @@ public class PSMaps implements UrParameter {
     /**
      * The fractions map
      */
-    private FractionsMap fractionsMap;
+    private FractionsMap fractionsMap; // @TODO: this object should be made serializable
 
     /**
      * constructor
@@ -45,7 +45,7 @@ public class PSMaps implements UrParameter {
      * Constructor for the PSMaps.
      *
      * @param proteinMap The protein map
-     * @param PsmSpecificMap The psm map
+     * @param PsmSpecificMap The PSM map
      * @param PeptideSpecificMap the peptide map
      */
     public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap) {

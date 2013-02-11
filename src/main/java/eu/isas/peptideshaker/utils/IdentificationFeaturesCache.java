@@ -55,7 +55,7 @@ public class IdentificationFeaturesCache implements Serializable {
          */
         number_of_validated_peptides,
         /**
-         * The max mx value for all the psms for a given peptide stored as small
+         * The max mz value for all the PSMs for a given peptide stored as small
          * object..
          */
         max_psm_mz_for_peptides
@@ -557,11 +557,11 @@ public class IdentificationFeaturesCache implements Serializable {
      * @return the object key
      */
     private String getObjectKey(String cacheKey) {
-        String result = "";
+        StringBuilder buf = new StringBuilder();
         String[] splittedKey = cacheKey.split(cacheKey);
         for (int i = 1; i < splittedKey.length; i++) {
-            result += splittedKey[i];
+            buf.append(splittedKey[i]);
         }
-        return result;
+        return buf.toString();
     }
 }

@@ -1,12 +1,11 @@
 package eu.isas.peptideshaker.gui.gettingStarted;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import eu.isas.peptideshaker.gui.ImageIconPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
-import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 /**
  * A dialog containing basic information on how to use PeptideShaker.
@@ -433,30 +432,4 @@ public class GettingStartedDialog extends javax.swing.JDialog {
     private javax.swing.JButton nextButton;
     private javax.swing.JButton probeButton;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * This class extends JPanel to be able to display an ImageIcon object
-     * inside a JPanel.
-     */
-    public class ImageIconPanel extends JPanel {
-
-        /**
-         * The image icon to display.
-         */
-        private ImageIcon imageIcon;
-
-        /**
-         * Create a new ImageIconPanel.
-         *
-         * @param imageIcon the image icon to display
-         */
-        public ImageIconPanel(ImageIcon imageIcon) {
-            this.imageIcon = imageIcon;
-        }
-
-        @Override
-        public void paint(Graphics g) {
-            g.drawImage(imageIcon.getImage(), 0, 0, imageIcon.getIconWidth(), imageIcon.getIconHeight(), null);
-        }
-    }
 }

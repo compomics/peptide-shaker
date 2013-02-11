@@ -177,7 +177,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         JTableHeader header = goMappingsTable.getTableHeader();
         header.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -304,7 +303,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         // make sure that the user is made aware that the tool is doing something during sorting of the protein table
         proteinTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
             @Override
             public void sorterChanged(RowSorterEvent e) {
 
@@ -454,7 +452,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 progressDialog.setIndeterminate(true);
 
                 new Thread(new Runnable() {
-
                     public void run() {
                         try {
                             progressDialog.setVisible(true);
@@ -465,7 +462,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 }, "ProgressDialog").start();
 
                 new Thread("GoThread") {
-
                     @Override
                     public void run() {
 
@@ -956,7 +952,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         // add mouse listener
         distributionChartPanel.addChartMouseListener(new ChartMouseListener() {
-
             @Override
             public void chartMouseClicked(ChartMouseEvent cme) {
 
@@ -1013,7 +1008,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         // add mouse listener
         signChartPanel.addChartMouseListener(new ChartMouseListener() {
-
             @Override
             public void chartMouseClicked(ChartMouseEvent cme) {
 
@@ -1759,7 +1753,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -1879,14 +1872,12 @@ public class GOEAPanel extends javax.swing.JPanel {
         progressDialog.setTitle("Copying to Clipboard. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
 
         new Thread("ExportThread") {
-
             @Override
             public void run() {
                 try {
@@ -2000,7 +1991,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 progressDialog.setTitle("Exporting to File. Please Wait...");
 
                 new Thread(new Runnable() {
-
                     public void run() {
                         try {
                             progressDialog.setVisible(true);
@@ -2011,7 +2001,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 }, "ProgressDialog").start();
 
                 new Thread("ExportThread") {
-
                     @Override
                     public void run() {
 
@@ -2053,14 +2042,12 @@ public class GOEAPanel extends javax.swing.JPanel {
 
 
         new Thread(new Runnable() {
-
             public void run() {
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
 
         new Thread("GoThread") {
-
             @Override
             public void run() {
 
@@ -2085,6 +2072,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         }
                     }
 
+                    in.close();
 
                     String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
                     selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
@@ -2121,46 +2109,52 @@ public class GOEAPanel extends javax.swing.JPanel {
                             int counter = 0;
 
                             File tempFile = new File(mappingsFolderPath + selectedSpecies);
-                            tempFile.createNewFile();
+                            boolean fileCreated = tempFile.createNewFile();
 
-                            FileWriter w = new FileWriter(tempFile);
-                            BufferedWriter bw = new BufferedWriter(w);
+                            if (fileCreated) {
 
-                            String rowLine = br.readLine();
+                                FileWriter w = new FileWriter(tempFile);
+                                BufferedWriter bw = new BufferedWriter(w);
 
-                            if (rowLine != null && rowLine.startsWith("Query ERROR")) {
-                                JOptionPane.showMessageDialog(peptideShakerGUI, rowLine, "Query Error", JOptionPane.ERROR_MESSAGE);
-                            } else {
+                                String rowLine = br.readLine();
 
-                                while (rowLine != null && !progressDialog.isRunCanceled()) {
-                                    progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
-                                    bw.write(rowLine + System.getProperty("line.separator"));
-                                    rowLine = br.readLine();
-                                }
-                            }
+                                if (rowLine != null && rowLine.startsWith("Query ERROR")) {
+                                    JOptionPane.showMessageDialog(peptideShakerGUI, rowLine, "Query Error", JOptionPane.ERROR_MESSAGE);
+                                } else {
 
-                            bw.close();
-                            w.close();
-                            wr.close();
-                            br.close();
-
-                            if (!progressDialog.isRunCanceled()) {
-
-                                // update the Ensembl species versions
-                                w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
-                                bw = new BufferedWriter(w);
-
-                                ensemblVersionsMap.put(selectedSpecies, "Ensembl " + ensemblVersion);
-
-                                Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
-
-                                while (iterator.hasNext() && !progressDialog.isRunCanceled()) {
-                                    String key = iterator.next();
-                                    bw.write(key + "\t" + ensemblVersionsMap.get(key) + System.getProperty("line.separator"));
+                                    while (rowLine != null && !progressDialog.isRunCanceled()) {
+                                        progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
+                                        bw.write(rowLine + System.getProperty("line.separator"));
+                                        rowLine = br.readLine();
+                                    }
                                 }
 
                                 bw.close();
                                 w.close();
+                                wr.close();
+                                br.close();
+
+                                if (!progressDialog.isRunCanceled()) {
+
+                                    // update the Ensembl species versions
+                                    w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
+                                    bw = new BufferedWriter(w);
+
+                                    ensemblVersionsMap.put(selectedSpecies, "Ensembl " + ensemblVersion);
+
+                                    Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
+
+                                    while (iterator.hasNext() && !progressDialog.isRunCanceled()) {
+                                        String key = iterator.next();
+                                        bw.write(key + "\t" + ensemblVersionsMap.get(key) + System.getProperty("line.separator"));
+                                    }
+
+                                    bw.close();
+                                    w.close();
+                                }
+                            } else {
+                                progressDialog.setRunCanceled();
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "The mapping file could not be created.", "File Error", JOptionPane.ERROR_MESSAGE);
                             }
 
                             boolean processCancelled = progressDialog.isRunCanceled();
@@ -2171,6 +2165,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 loadSpeciesAndGoDomains();
                                 speciesJComboBox.setSelectedIndex(0);
                             }
+                        } else {
+                            wr.close();
                         }
                     }
 
@@ -2396,18 +2392,18 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Open the XY plotting dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void statisticsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_statisticsMenuItemActionPerformed
-        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, mappingsTableToolTips, 
+        new XYPlottingDialog(peptideShakerGUI, goMappingsTable, mappingsTableToolTips,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
     }//GEN-LAST:event_statisticsMenuItemActionPerformed
 
     /**
      * Make sure that a go term is selected.
-     * 
+     *
      * @param evt
      */
     private void goPlotsTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_goPlotsTabbedPaneStateChanged
@@ -2421,8 +2417,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Show the statisics popup menu.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
@@ -2430,9 +2426,8 @@ public class GOEAPanel extends javax.swing.JPanel {
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips, 
+                    new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true);
                 }
@@ -2441,7 +2436,6 @@ public class GOEAPanel extends javax.swing.JPanel {
             popupMenu.show(proteinTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_proteinTableMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel biasWarningLabel;
     private javax.swing.JPanel contextMenuMappingsBackgroundPanel;
@@ -2660,7 +2654,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 //                    }
 //                });
                 final Thread displayThread = new Thread("DisplayThread") {
-
                     @Override
                     public void run() {
                         displayResults();
@@ -2668,7 +2661,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 };
 
                 Thread appThread = new Thread() {
-
                     public void run() {
                         try {
                             SwingUtilities.invokeAndWait(displayThread);
@@ -2776,7 +2768,6 @@ public class GOEAPanel extends javax.swing.JPanel {
             progressDialog.setTitle("Loading Protein Data. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -2787,7 +2778,6 @@ public class GOEAPanel extends javax.swing.JPanel {
             }, "ProgressDialog").start();
 
             new Thread("DisplayThread") {
-
                 @Override
                 public void run() {
                     // clear the old data

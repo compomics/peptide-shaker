@@ -13,7 +13,7 @@ public class FractionsMap {
     /**
      * The target/decoy information.
      */
-    private HashMap<String, TargetDecoyMap> targetDecoyMaps = new HashMap<String, TargetDecoyMap>();
+    private HashMap<String, TargetDecoyMap> targetDecoyMaps = new HashMap<String, TargetDecoyMap>(); // @TODO: never used. remove?
 
     /**
      * Constructor.

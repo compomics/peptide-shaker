@@ -303,6 +303,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                 line = br.readLine();
             }
+            
+            br.close();
+            r.close();
 
             totalNumberOfPrideProjects = projectsTable.getRowCount();
 
@@ -1283,7 +1286,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                         long length = currentZippedPrideXmlFile.length();
 
                                         if (currentUrlContentLength != -1) {
-                                            progressDialog.setValue(new Long(length).intValue());
+                                            progressDialog.setValue((int) length);
                                         }
 
                                         if (selectedProjects.size() > 1) {

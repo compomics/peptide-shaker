@@ -941,7 +941,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }//GEN-LAST:event_expectedModificationsTableMouseExited
 
     /**
-     * Opens a file chooser where the color for the ptm can be changed.
+     * Opens a file chooser where the color for the PTM can be changed.
      *
      * @param evt
      */
@@ -961,7 +961,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 }
             } else if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex()) {
                 // open protein link in web browser
-                if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                if (column == expectedModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1) {
                     if (((String) expectedModificationsTable.getValueAt(ptmIndex, column)).lastIndexOf("<html>") != -1) {
                         String link = (String) expectedModificationsTable.getValueAt(ptmIndex, column);
                         link = link.substring(link.indexOf("\"") + 1);
@@ -1017,7 +1017,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }//GEN-LAST:event_availableModificationsTableMouseExited
 
     /**
-     * Opens a file chooser where the color for the ptm can be changed.
+     * Opens a file chooser where the color for the PTM can be changed.
      *
      * @param evt
      */
@@ -1033,7 +1033,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 String modificationName = modificationList.get(ptmIndex);
 
                 // open protein link in web browser
-                if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                if (column == availableModificationsTable.getColumn("PSI-MOD").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
                         && ((String) availableModificationsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
                     if (((String) availableModificationsTable.getValueAt(ptmIndex, column)).lastIndexOf("<html>") != -1) {
                         String link = (String) availableModificationsTable.getValueAt(ptmIndex, column);

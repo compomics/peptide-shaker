@@ -855,11 +855,11 @@ public class StarHider {
                                 return false;
                             }
                         } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
-                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) != proteinFilter.getProteinNSpectra()) {
+                            if (identificationFeaturesGenerator.getNSpectra(proteinKey).intValue() != proteinFilter.getProteinNSpectra().intValue()) {
                                 return false;
                             }
                         } else if (proteinFilter.getnSpectraComparison() == ComparisonType.NOT_EQUAL) {
-                            if (identificationFeaturesGenerator.getNSpectra(proteinKey) == proteinFilter.getProteinNSpectra()) {
+                            if (identificationFeaturesGenerator.getNSpectra(proteinKey).intValue() == proteinFilter.getProteinNSpectra().intValue()) {
                                 return false;
                             }
                         }

@@ -78,6 +78,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
     private void setUpTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
+        fileNames = new ArrayList<String>();
 
         if (identification != null) {
             try {
@@ -89,12 +90,10 @@ public class ProteinFractionTableModel extends DefaultTableModel {
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
-        }
 
-        fileNames = new ArrayList<String>();
-
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
-            fileNames.add(spectrumFileName);
+            for (String spectrumFileName : identification.getSpectrumFiles()) {
+                fileNames.add(spectrumFileName);
+            }
         }
     }
 

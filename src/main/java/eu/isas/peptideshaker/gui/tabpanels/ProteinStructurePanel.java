@@ -3394,13 +3394,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                                 writer.write(pdbChainsJTable.getValueAt(i, 3) + System.getProperty("line.separator"));
                             }
 
-                            writer.close();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         } else if (tableIndex == TableIndex.PDB_MATCHES) {
                             Util.tableToFile(pdbMatchesJTable, "\t", null, true, writer);
-                            writer.close();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + selectedFile.getPath(), "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
                         }
+                        
+                        writer.close();
                     }
                 }
             } catch (Exception e) {

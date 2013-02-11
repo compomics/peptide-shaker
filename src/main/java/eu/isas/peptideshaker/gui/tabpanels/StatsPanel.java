@@ -56,7 +56,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private ProgressDialogX progressDialog;
     /**
-     * If true the data has been (re-)loaded with the current thresold setting.
+     * If true the data has been (re-)loaded with the current threshold setting.
      */
     private boolean dataValidated = true;
     /**
@@ -64,7 +64,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private boolean pepWindowApplied = true;
     /**
-     * The main peptide shaker gui.
+     * The main peptide shaker GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
@@ -80,7 +80,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private TargetDecoySeries targetDecoySeries;
     /**
-     * The psms map: # in the list -> map key.
+     * The PSMs map: # in the list -> map key.
      */
     private HashMap<Integer, Integer> psmMap = new HashMap<Integer, Integer>();
     /**

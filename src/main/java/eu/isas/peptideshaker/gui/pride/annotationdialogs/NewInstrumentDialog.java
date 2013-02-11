@@ -785,11 +785,11 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     }
 
     /**
-     * Fixes the indices so that they are in accending order starting from one.
+     * Fixes the indices so that they are in acceding order starting from one.
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) analyzerCvTermsJTable.getModel()).getRowCount(); row++) {
-            ((DefaultTableModel) analyzerCvTermsJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
+            ((DefaultTableModel) analyzerCvTermsJTable.getModel()).setValueAt(Integer.valueOf(row + 1), row, 0);
         }
     }
 
@@ -871,7 +871,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
             ((DefaultTableModel) this.analyzerCvTermsJTable.getModel()).addRow(
                     new Object[]{
-                        new Integer(analyzerCvTermsJTable.getRowCount() + 1),
+                        Integer.valueOf(analyzerCvTermsJTable.getRowCount() + 1),
                         ontology,
                         accession,
                         name,

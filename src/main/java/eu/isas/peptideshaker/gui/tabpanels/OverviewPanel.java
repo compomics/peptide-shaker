@@ -3857,8 +3857,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         selectedIndexes,
                         allAnnotations, annotationPreferences.getFragmentIonTypes(), allSpectra, annotationPreferences.getFragmentIonAccuracy(),
                         bubbleScale,
-                        annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
-                        annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
+                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)), annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2)),
+                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(3)) || annotationPreferences.getValidatedCharges().contains(Integer.valueOf(4)),
                         selectedIndexes.size() == 1, annotationPreferences.showBars(),
                         peptideShakerGUI.useRelativeError());
 
@@ -4022,7 +4022,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             i++;
 
                             // we need to start a new peptide in order to be able to highlight a given peptide
-                            if (selectedPeptideEnd.contains(new Integer(i + 1)) || selectedPeptideStart.contains(new Integer(i + 1))) {
+                            if (selectedPeptideEnd.contains(Integer.valueOf(i + 1)) || selectedPeptideStart.contains(Integer.valueOf(i + 1))) {
                                 break;
                             }
                         }
@@ -4050,7 +4050,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (covered) {
                         proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i, false));
 
-                        if (selectedPeptideEnd.contains(new Integer(i + 1))) {
+                        if (selectedPeptideEnd.contains(Integer.valueOf(i + 1))) {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getPeptideSelected(), null);
                         } else {
                             // sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
@@ -4359,13 +4359,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             if (!peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
-                                        annotationPreferences.getValidatedCharges().contains(new Integer(1)),
-                                        annotationPreferences.getValidatedCharges().contains(new Integer(2))));
+                                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)),
+                                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2))));
                             } else {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getFragmentIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
-                                        annotationPreferences.getValidatedCharges().contains(new Integer(1)),
-                                        annotationPreferences.getValidatedCharges().contains(new Integer(2))));
+                                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)),
+                                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2))));
                             }
 
                             // create the sequence fragment ion view
@@ -4383,8 +4383,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
                                     annotations, annotationPreferences.getFragmentIonTypes(), currentSpectrum,
                                     peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit(),
-                                    annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
-                                    annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4))));
+                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)), annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2)),
+                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(3)) || annotationPreferences.getValidatedCharges().contains(Integer.valueOf(4))));
 
                             // @TODO: rewrite the charge selection above and below when the new ion selection gui has been implemented!
 
@@ -4392,8 +4392,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
                                     annotations, annotationPreferences.getFragmentIonTypes(), currentSpectrum,
                                     annotationPreferences.getFragmentIonAccuracy(),
-                                    annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
-                                    annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
+                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)), annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2)),
+                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(3)) || annotationPreferences.getValidatedCharges().contains(Integer.valueOf(4)),
                                     peptideShakerGUI.useRelativeError());
 
                             if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
@@ -4931,16 +4931,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (selectedRows.length > 0) {
 
-            String spectraAsMgf = "";
+            StringBuilder spectraAsMgf = new StringBuilder();
 
             for (int row = 0; row < selectedRows.length; row++) {
                 int psmIndex = psmTable.convertRowIndexToModel(selectedRows[row]);
                 String spectrumKey = psmKeys.get(psmIndex);
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                spectraAsMgf += currentSpectrum.asMgf();
+                spectraAsMgf.append(currentSpectrum.asMgf());
             }
 
-            return spectraAsMgf;
+            return spectraAsMgf.toString();
         }
 
         return null;

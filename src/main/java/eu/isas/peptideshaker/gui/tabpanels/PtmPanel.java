@@ -196,9 +196,9 @@ public class PtmPanel extends javax.swing.JPanel {
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
                 GradientPaint gp = new GradientPaint(
-                        0, getHeight() / 2,
+                        0, ((float) getHeight()) / 2,
                         startColor,
-                        getWidth(), getHeight() / 2,
+                        getWidth(), ((float) getHeight()) / 2,
                         endColor);
 
                 g2d.setPaint(gp);
@@ -219,11 +219,10 @@ public class PtmPanel extends javax.swing.JPanel {
                         RenderingHints.VALUE_ANTIALIAS_ON);
 
                 GradientPaint gp = new GradientPaint(
-                        0, getHeight() / 2,
+                        0, ((float) getHeight()) / 2,
                         startColor,
-                        getWidth(), getHeight() / 2,
+                        getWidth(), ((float) getHeight()) / 2,
                         endColor);
-
 
                 g2d.setPaint(gp);
                 g2d.fillRect(0, 0, getWidth(), getHeight());

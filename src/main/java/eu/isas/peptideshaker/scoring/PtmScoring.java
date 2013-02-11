@@ -270,11 +270,12 @@ public class PtmScoring implements Serializable {
      */
     public static String getKey(ArrayList<Integer> locations) {
         Collections.sort(locations);
-        String result = "";
+        StringBuilder buf = new StringBuilder();
         for (int loc : locations) {
-            result += loc + separator;
+            buf.append(loc);
+            buf.append(separator);
         }
-        return result;
+        return buf.toString();
     }
 
     /**

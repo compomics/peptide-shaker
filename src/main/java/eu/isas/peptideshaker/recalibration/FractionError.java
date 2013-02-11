@@ -28,11 +28,16 @@ public class FractionError {
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The name of the spectrum file.
+     * The precursor grades.
      */
-    private String fileName;
     private HashMap<Double, Double> precursorGrades = new HashMap<Double, Double>();
+    /**
+     * The precursor offsets.
+     */
     private HashMap<Double, Double> precursorOffsets = new HashMap<Double, Double>();
+    /**
+     * The precursor RT list.
+     */
     private ArrayList<Double> precursorRTList;
     /**
      * The fragments errors binned by mz and rt. error = experimental value -
@@ -212,7 +217,6 @@ public class FractionError {
      */
     public FractionError(PeptideShakerGUI peptideShakerGUI, String fileName, ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
 
-        this.fileName = fileName;
         Identification identification = peptideShakerGUI.getIdentification();
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
