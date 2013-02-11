@@ -21,11 +21,10 @@ public class SaveDialog extends javax.swing.JDialog {
      * @param modal modal or not modal
      */
     public SaveDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
-        super(new DummyFrame(peptideShakerGUI.getTitle()), modal);
+        super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
@@ -48,7 +47,6 @@ public class SaveDialog extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Save & Export");
         setResizable(false);
 
@@ -86,7 +84,7 @@ public class SaveDialog extends javax.swing.JDialog {
         exportPrideJButton.setToolTipText("Export the PeptideShaker project as PRIDE XML.");
         exportPrideJButton.setFocusPainted(false);
         exportPrideJButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        exportPrideJButton.setIconTextGap(20);
+        exportPrideJButton.setIconTextGap(25);
         exportPrideJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportPrideJButtonActionPerformed(evt);
@@ -130,12 +128,12 @@ public class SaveDialog extends javax.swing.JDialog {
                     .addComponent(exportJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exportPrideJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(45, 45, 45)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING))
-                .addGap(45, 45, 45))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
