@@ -47,7 +47,7 @@ public class QCPanel extends javax.swing.JPanel {
      * color for the plots (validated targets, validated decoy, non validated
      * target, non validated decoy).
      */
-    public static Color[] histogramColors;
+    private Color[] histogramColors;
     /**
      * The sequence factory.
      */

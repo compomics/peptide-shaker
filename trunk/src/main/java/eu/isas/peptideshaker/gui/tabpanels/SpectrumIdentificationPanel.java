@@ -2493,7 +2493,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     // now we have data and can update the jsparklines depending on this
                     spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
-                            new Integer(((PSMaps) identification.getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge()).doubleValue(), peptideShakerGUI.getSparklineColor()));
+                            (double) ((PSMaps) identification.getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
                     spectrumTable.getColumn("Int").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                             SpectrumFactory.getInstance().getMaxIntensity(), peptideShakerGUI.getSparklineColor()));
                     spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
@@ -3580,17 +3580,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Returns the contents of the given search engine psm table as a string.
+     * Returns the contents of the given search engine PSM table as a string.
      *
      * @param spectrumMatch the current spectrum match
      * @param probabilities the current probabilities
      * @param advocate the type, OMSSA, XTandem or Mascot, as coded in the
      * Advocate class
-     * @return the contents of the given search engine psm table as a string
+     * @return the contents of the given search engine PSM table as a string
      */
     private String getSearchEnginePsmTableAsString(SpectrumMatch spectrumMatch, PSParameter probabilities, int advocate) {
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         if (spectrumMatch.getAllAssumptions(advocate) != null) {
 
@@ -3602,34 +3602,42 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(advocate).get(eValue)) {
                     probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
 
-                    result += ++rank + "\t";
+                    result.append(++rank);
+                    result.append("\t");
 
                     ArrayList<String> parentProteins = currentAssumption.getPeptide().getParentProteins();
-                    result += parentProteins.get(0);
+                    result.append(parentProteins.get(0));
 
                     for (int i = 1; i < parentProteins.size(); i++) {
-                        result += ", " + parentProteins.get(i);
+                        result.append(", ");
+                        result.append(parentProteins.get(i));
                     }
 
-                    result += "\t";
-                    result += peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentAssumption.getPeptide(), false, false, true) + "\t";
-                    result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), false) + "\t";
-                    result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), true) + "\t";
+                    result.append("\t");
+                    result.append(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(currentAssumption.getPeptide(), false, false, true));
+                    result.append("\t");
+                    result.append(OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), false));
+                    result.append("\t");
+                    result.append(OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), true));
+                    result.append("\t");
                     try {
-                        result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
-                                identification.getPeptideMatch(currentAssumption.getPeptide().getKey()), modificationProfile) + "\t";
+                        result.append(OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
+                                identification.getPeptideMatch(currentAssumption.getPeptide().getKey()), modificationProfile));
+                        result.append("\t");
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
-                        result += "error\t";
+                        result.append("error\t");
                     }
 
-                    result += currentAssumption.getEValue() + "\t";
-                    result += probabilities.getSearchEngineConfidence() + "\t";
+                    result.append(currentAssumption.getEValue());
+                    result.append("\t");
+                    result.append(probabilities.getSearchEngineConfidence());
+                    result.append("\t");
                 }
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     /**

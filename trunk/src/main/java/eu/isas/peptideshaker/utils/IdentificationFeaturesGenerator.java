@@ -777,7 +777,7 @@ public class IdentificationFeaturesGenerator {
      * SEQVEM&lt;mox&gt;CEM&lt;mox&gt;K returns 6, 9.
      *
      * @param proteinKey the key of the protein match of interest
-     * @param targetedPtms the ptms to include in the summary
+     * @param targetedPtms the PTMs to include in the summary
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -808,7 +808,7 @@ public class IdentificationFeaturesGenerator {
             }
         }
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
         boolean firstPtm = true;
         ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
         Collections.sort(ptms);
@@ -818,35 +818,36 @@ public class IdentificationFeaturesGenerator {
                 if (firstPtm) {
                     firstPtm = false;
                 } else {
-                    result += "; ";
+                    result.append("; ");
                 }
-                result += ptm + "(";
+                result.append(ptm);
+                result.append("(");
                 boolean firstSite = true;
                 for (String site : locations.get(ptm)) {
                     if (!firstSite) {
-                        result += ", ";
+                        result.append(", ");
                     } else {
                         firstSite = false;
                     }
-                    result += site;
+                    result.append(site);
                 }
-                result += ")";
+                result.append(")");
             }
         } else {
             Collections.sort(targetedPtms);
             for (String ptm : targetedPtms) {
                 if (locations.containsKey(ptm)) {
                     for (String site : locations.get(ptm)) {
-                        if (!result.equals("")) {
-                            result += ", ";
+                        if (result.length() > 0) {
+                            result.append(", ");
                         }
-                        result += site;
+                        result.append(site);
                     }
                 }
             }
         }
 
-        result += OutputGenerator.SEPARATOR;
+        result.append(OutputGenerator.SEPARATOR);
         firstPtm = true;
 
         if (targetedPtms == null) {
@@ -854,9 +855,12 @@ public class IdentificationFeaturesGenerator {
                 if (firstPtm) {
                     firstPtm = false;
                 } else {
-                    result += "; ";
+                    result.append("; ");
                 }
-                result += ptm + "(" + locations.get(ptm).size() + ")";
+                result.append(ptm);
+                result.append("(");
+                result.append(locations.get(ptm).size());
+                result.append(")");
             }
         } else {
             int n = 0;
@@ -865,9 +869,9 @@ public class IdentificationFeaturesGenerator {
                     n += locations.get(ptm).size();
                 }
             }
-            result += n;
+            result.append(n);
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -924,7 +928,7 @@ public class IdentificationFeaturesGenerator {
             }
         }
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
         boolean firstPtm = true;
         ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
         Collections.sort(ptms);
@@ -934,35 +938,36 @@ public class IdentificationFeaturesGenerator {
                 if (firstPtm) {
                     firstPtm = false;
                 } else {
-                    result += "; ";
+                    result.append("; ");
                 }
-                result += ptm + "(";
+                result.append(ptm);
+                result.append("(");
                 boolean firstSite = true;
                 for (String site : locations.get(ptm)) {
                     if (!firstSite) {
-                        result += ", ";
+                        result.append(", ");
                     } else {
                         firstSite = false;
                     }
-                    result += site;
+                    result.append(site);
                 }
-                result += ")";
+                result.append(")");
             }
         } else {
             Collections.sort(targetedPtms);
             for (String ptm : targetedPtms) {
                 if (locations.containsKey(ptm)) {
                     for (String site : locations.get(ptm)) {
-                        if (!result.equals("")) {
-                            result += ", ";
+                        if (result.length() > 0) {
+                            result.append(", ");
                         }
-                        result += site;
+                        result.append(site);
                     }
                 }
             }
         }
 
-        result += OutputGenerator.SEPARATOR;
+        result.append(OutputGenerator.SEPARATOR);
         firstPtm = true;
 
         if (targetedPtms == null) {
@@ -970,9 +975,12 @@ public class IdentificationFeaturesGenerator {
                 if (firstPtm) {
                     firstPtm = false;
                 } else {
-                    result += "; ";
+                    result.append("; ");
                 }
-                result += ptm + "(" + locations.get(ptm).size() + ")";
+                result.append(ptm);
+                result.append("(");
+                result.append(locations.get(ptm).size());
+                result.append(")");
             }
         } else {
             int n = 0;
@@ -981,9 +989,9 @@ public class IdentificationFeaturesGenerator {
                     n += locations.get(ptm).size();
                 }
             }
-            result += n;
+            result.append(n);
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -1000,28 +1008,28 @@ public class IdentificationFeaturesGenerator {
     public String getModifiedSequence(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-        String result = "";
         PSPtmScores psPtmScores = new PSPtmScores();
         psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+        StringBuilder result = new StringBuilder();
 
         for (int aa = 0; aa < sequence.length(); aa++) {
-            result += sequence.charAt(aa);
+            result.append(sequence.charAt(aa));
             if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
                 boolean first = true;
-                result += "<";
+                result.append("<");
                 for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
                     if (first) {
                         first = false;
                     } else {
-                        result += ", ";
+                        result.append(", ");
                     }
-                    result += ptmFactory.getShortName(ptm);
+                    result.append(ptmFactory.getShortName(ptm));
                 }
-                result += ">";
+                result.append(">");
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     /**

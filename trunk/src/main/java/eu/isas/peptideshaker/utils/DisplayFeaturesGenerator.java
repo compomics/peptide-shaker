@@ -104,7 +104,8 @@ public class DisplayFeaturesGenerator {
             return "";
         }
 
-        String accessionNumberWithLink = "<html>";
+        StringBuilder accessionNumberWithLink = new StringBuilder();
+        accessionNumberWithLink.append("<html>");
 
         for (int i = 0; i < proteins.size(); i++) {
 
@@ -122,31 +123,43 @@ public class DisplayFeaturesGenerator {
                         // @TODO: support more databases
 
                         if (database == DatabaseType.IPI || database == DatabaseType.UniProt) {
-                            accessionNumberWithLink += "<a href=\"" + getUniProtAccessionLink(proteinAccession)
-                                    + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                                    + proteinAccession + "</font></a>, ";
+                            accessionNumberWithLink.append("<a href=\"");
+                            accessionNumberWithLink.append(getUniProtAccessionLink(proteinAccession));
+                            accessionNumberWithLink.append("\"><font color=\"");
+                            accessionNumberWithLink.append(peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+                            accessionNumberWithLink.append("\">");
+                            accessionNumberWithLink.append(proteinAccession);
+                            accessionNumberWithLink.append("</font></a>, ");
                         } else if (database == DatabaseType.NCBI) {
-                            accessionNumberWithLink += "<a href=\"" + getNcbiAccessionLink(proteinAccession)
-                                    + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                                    + proteinAccession + "</font></a>, ";
+                            accessionNumberWithLink.append("<a href=\"");
+                            accessionNumberWithLink.append(getNcbiAccessionLink(proteinAccession));
+                            accessionNumberWithLink.append("\"><font color=\"");
+                            accessionNumberWithLink.append(peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+                            accessionNumberWithLink.append("\">");
+                            accessionNumberWithLink.append(proteinAccession);
+                            accessionNumberWithLink.append("</font></a>, ");
                         } else {
                             // unknown database!
-                            accessionNumberWithLink += proteinAccession + ", ";
+                            accessionNumberWithLink.append(proteinAccession);
+                            accessionNumberWithLink.append(", ");
                         }
                     }
                 } else {
-                    accessionNumberWithLink += proteinAccession + ", ";
+                    accessionNumberWithLink.append(proteinAccession);
+                    accessionNumberWithLink.append(", ");
                 }
             } catch (Exception e) {
-                accessionNumberWithLink += proteinAccession + ", ";
+                accessionNumberWithLink.append(proteinAccession);
+                accessionNumberWithLink.append(", ");
             }
         }
 
         // remove the last ', '
-        accessionNumberWithLink = accessionNumberWithLink.substring(0, accessionNumberWithLink.length() - 2);
-        accessionNumberWithLink += "</html>";
+        String accessionNumberWithLinkAsString = accessionNumberWithLink.toString();
+        accessionNumberWithLinkAsString = accessionNumberWithLinkAsString.substring(0, accessionNumberWithLinkAsString.length() - 2);
+        accessionNumberWithLinkAsString += "</html>";
 
-        return accessionNumberWithLink;
+        return accessionNumberWithLinkAsString;
     }
 
     /**
@@ -244,7 +257,7 @@ public class DisplayFeaturesGenerator {
     /**
      * Returns the peptide with modification sites tagged (color coded or with
      * PTM tags, e.g, &lt;mox&gt;) in the sequence based on PeptideShaker site
-     * inference results. Shall be used for peptides, not PSMs, for PSM use the 
+     * inference results. Shall be used for peptides, not PSMs, for PSM use the
      * one taking in a Peptide object instead.
      *
      * @param peptideKey the peptide key

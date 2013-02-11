@@ -579,10 +579,18 @@ public class PeptideShakerCLI implements Callable {
 
         try {
             File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
+            boolean parentExists = true;
+            
             if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdir();
+                parentExists = file.getParentFile().mkdir();
             }
-            SerializationUtils.writeObject(userPreferences, file);
+            
+            if (parentExists) {
+                SerializationUtils.writeObject(userPreferences, file);
+            } else {
+                System.out.println("Parent folder does not exist: \'" + file.getParentFile() + "\'. User preferences not saved.");
+            }
+  
         } catch (Exception e) {
             e.printStackTrace();
         }

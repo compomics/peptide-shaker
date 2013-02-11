@@ -196,15 +196,14 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         try {
             DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-            Peptide peptide = peptideMatch.getTheoreticPeptide();
             PSPtmScores ptmScores = new PSPtmScores();
             ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-            HashMap<Integer, ArrayList<String>> mainLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences),
-                    secondaryLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences),
-                    fixedModifications = DisplayFeaturesGenerator.getFilteredModifications(peptide.getIndexedFixedModifications(), displayPreferences);
+            HashMap<Integer, ArrayList<String>> mainLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getMainModificationSites(), displayPreferences);
+            HashMap<Integer, ArrayList<String>> secondaryLocations = DisplayFeaturesGenerator.getFilteredModifications(ptmScores.getSecondaryModificationSites(), displayPreferences);
 
             String modName = ptm.getName();
             int aa;
+
             for (int i = 0; i < mainSelection.length; i++) {
                 aa = i + 1;
                 if (mainSelection[i]) {
@@ -241,7 +240,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Table model for the ptm site selection table.
+     * Table model for the PTM site selection table.
      */
     private class SiteSelectionTable extends DefaultTableModel {
 

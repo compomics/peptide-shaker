@@ -1511,12 +1511,12 @@ public class PeptideShaker {
      * @param searchParameters the search preferences containing the m/z
      * tolerances
      * @param annotationPreferences the spectrum annotation preferences
-     * @param ptmScoringPreferences the prm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
      * @throws Exception exception thrown whenever a problem occurred while
      * deserializing a match
      */
     public void scoreProteinPtms(WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, PTMScoringPreferences ptmScoringPreferences) throws Exception {
-        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, null, null);
+        scoreProteinPtms(waitingHandler, searchParameters, annotationPreferences, ptmScoringPreferences, new IdFilter(), null);
     }
 
     /**

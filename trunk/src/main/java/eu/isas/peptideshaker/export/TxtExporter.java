@@ -129,8 +129,8 @@ public class TxtExporter {
 
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
-                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" 
-                    + SEPARATOR + "Observable coverage" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR 
+                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage"
+                    + SEPARATOR + "Observable coverage" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR
                     + "Description" + System.getProperty("line.separator");
             proteinWriter.write(content);
 
@@ -165,7 +165,7 @@ public class TxtExporter {
             }
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
-                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR 
+                    + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR
                     + "Validated" + System.getProperty("line.separator");
             peptideWriter.write(content);
 
@@ -191,11 +191,11 @@ public class TxtExporter {
             }
 
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "D-score" + SEPARATOR + "A-score" 
-                    + SEPARATOR + "PTM location confidence" + SEPARATOR + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum" 
-                    + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)" + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz" 
-                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR + "Mascot Score" + SEPARATOR 
-                    + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value" + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" 
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "D-score" + SEPARATOR + "A-score"
+                    + SEPARATOR + "PTM location confidence" + SEPARATOR + "Spectrum Charge" + SEPARATOR + "Identification Charge" + SEPARATOR + "Spectrum"
+                    + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)" + SEPARATOR + "Precursor RT" + SEPARATOR + "Precursor mz"
+                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Isotope" + SEPARATOR + "Mascot Score" + SEPARATOR
+                    + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value" + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p"
                     + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + System.getProperty("line.separator");
             spectrumWriter.write(content);
 
@@ -266,16 +266,18 @@ public class TxtExporter {
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-        String line = proteinMatch.getMainMatch() + SEPARATOR;
+        StringBuilder line = new StringBuilder();
+        line.append(proteinMatch.getMainMatch()).append(SEPARATOR);
 
         for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
             if (!otherAccession.equals(proteinMatch.getMainMatch())) {
-                line += otherAccession + " ";
+                line.append(otherAccession).append(" ");
             }
         }
 
-        line += SEPARATOR + probabilities.getGroupClass() + SEPARATOR;
-        line += proteinMatch.getPeptideCount() + SEPARATOR;
+        line.append(SEPARATOR).append(probabilities.getGroupClass()).append(SEPARATOR);
+        line.append(proteinMatch.getPeptideCount()).append(SEPARATOR);
+
         int nSpectra = 0;
         int nValidatedPeptides = 0;
         int nValidatedPsms = 0;
@@ -283,6 +285,7 @@ public class TxtExporter {
 
         identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
 
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -305,46 +308,44 @@ public class TxtExporter {
             }
         }
 
-        line += nSpectra + SEPARATOR;
-        line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
+        line.append(nSpectra).append(SEPARATOR).append(nValidatedPeptides).append(SEPARATOR).append(nValidatedPsms).append(SEPARATOR);
 
         try {
-            line += sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch()) + SEPARATOR;
-            line += identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + SEPARATOR;
-            line += identificationFeaturesGenerator.getSequenceCoverage(proteinKey) * 100 + SEPARATOR;
-            line += identificationFeaturesGenerator.getObservableCoverage(proteinKey) + SEPARATOR;
+            line.append(sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch())).append(SEPARATOR);
+            line.append(identificationFeaturesGenerator.getSpectrumCounting(proteinKey)).append(SEPARATOR);
+            line.append(identificationFeaturesGenerator.getSequenceCoverage(proteinKey) * 100).append(SEPARATOR);
+            line.append(identificationFeaturesGenerator.getObservableCoverage(proteinKey)).append(SEPARATOR);
         } catch (Exception e) {
-            line += "protein not found " + SEPARATOR + SEPARATOR;
+            line.append("protein not found ").append(SEPARATOR).append(SEPARATOR);
         }
 
         try {
-            line += probabilities.getProteinProbabilityScore() + SEPARATOR
-                    + probabilities.getProteinProbability() + SEPARATOR;
+            line.append(probabilities.getProteinProbabilityScore()).append(SEPARATOR).append(probabilities.getProteinProbability()).append(SEPARATOR);
         } catch (Exception e) {
-            line += SEPARATOR + SEPARATOR;
+            line.append(SEPARATOR).append(SEPARATOR);
         }
 
         if (proteinMatch.isDecoy()) {
-            line += "1" + SEPARATOR;
+            line.append("1").append(SEPARATOR);
         } else {
-            line += "0" + SEPARATOR;
+            line.append("0").append(SEPARATOR);
         }
 
         if (probabilities.isValidated()) {
-            line += "1" + SEPARATOR;
+            line.append("1").append(SEPARATOR);
         } else {
-            line += "0" + SEPARATOR;
+            line.append("0").append(SEPARATOR);
         }
 
         try {
-            line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+            line.append(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription());
         } catch (Exception e) {
-            line += "Protein not found";
+            line.append("Protein not found");
         }
 
-        line += System.getProperty("line.separator");
+        line.append(System.getProperty("line.separator"));
 
-        return line;
+        return line.toString();
     }
 
     /**
@@ -357,15 +358,14 @@ public class TxtExporter {
 
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
-        String line = "";
+        StringBuilder line = new StringBuilder();
         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
 
         for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-            line += protein + " ";
+            line.append(protein).append(" ");
         }
 
-        line += SEPARATOR;
-        line += peptideMatch.getTheoreticPeptide().getSequence() + SEPARATOR;
+        line.append(SEPARATOR).append(peptideMatch.getTheoreticPeptide().getSequence()).append(SEPARATOR);
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
 
@@ -386,25 +386,25 @@ public class TxtExporter {
             if (first) {
                 first = false;
             } else {
-                line += ", ";
+                line.append(", ");
             }
 
             boolean first2 = true;
-            line += mod + "(";
+            line.append(mod).append("(");
 
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;
                 } else {
-                    line += ", ";
+                    line.append(", ");
                 }
-                line += aa;
+                line.append(aa);
             }
 
-            line += ")";
+            line.append(")");
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
         first = true;
 
         for (String mod : modifications) {
@@ -412,37 +412,36 @@ public class TxtExporter {
             if (first) {
                 first = false;
             } else {
-                line += ", ";
+                line.append(", ");
             }
 
             PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
-            line += mod + " (";
+            line.append(mod).append(" (");
 
             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
 
                 int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
 
                 if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                    line += "Not Scored"; // Well this should not happen
+                    line.append("Not Scored"); // Well this should not happen
                 } else if (ptmConfidence == PtmScoring.RANDOM) {
-                    line += "Random";
+                    line.append("Random");
                 } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                    line += "Doubtfull";
+                    line.append("Doubtfull");
                 } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                    line += "Confident";
+                    line.append("Confident");
                 } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                    line += "Very Confident";
+                    line.append("Very Confident");
                 }
             } else {
-                line += "Not Scored";
+                line.append("Not Scored");
             }
 
-            line += ")";
+            line.append(")");
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR).append(peptideMatch.getSpectrumCount()).append(SEPARATOR);
 
-        line += peptideMatch.getSpectrumCount() + SEPARATOR;
         PSParameter probabilities = new PSParameter();
         int nSpectraValidated = 0;
 
@@ -454,27 +453,26 @@ public class TxtExporter {
             }
         }
 
-        line += nSpectraValidated + SEPARATOR;
+        line.append(nSpectraValidated).append(SEPARATOR);
         probabilities = (PSParameter) identification.getPeptideMatchParameter(peptideKey, probabilities);
 
-        line += probabilities.getPeptideProbabilityScore() + SEPARATOR
-                + probabilities.getPeptideProbability() + SEPARATOR;
+        line.append(probabilities.getPeptideProbabilityScore()).append(SEPARATOR).append(probabilities.getPeptideProbability()).append(SEPARATOR);
 
         if (peptideMatch.isDecoy()) {
-            line += "1" + SEPARATOR;
+            line.append("1").append(SEPARATOR);
         } else {
-            line += "0" + SEPARATOR;
+            line.append("o").append(SEPARATOR);
         }
 
         if (probabilities.isValidated()) {
-            line += "1";
+            line.append("1").append(SEPARATOR);
         } else {
-            line += "0";
+            line.append("0").append(SEPARATOR);
         }
 
-        line += System.getProperty("line.separator");
+        line.append(System.getProperty("line.separator"));
 
-        return line;
+        return line.toString();
     }
 
     /**
@@ -490,14 +488,13 @@ public class TxtExporter {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
 
-        String line = "";
+        StringBuffer line = new StringBuffer();
 
         for (String protein : bestAssumption.getParentProteins()) {
-            line += protein + " ";
+            line.append(protein).append(" ");
         }
 
-        line += SEPARATOR;
-        line += bestAssumption.getSequence() + SEPARATOR;
+        line.append(SEPARATOR).append(bestAssumption.getSequence()).append(SEPARATOR);
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
 
@@ -518,25 +515,25 @@ public class TxtExporter {
             if (first) {
                 first = false;
             } else {
-                line += ", ";
+                line.append(", ");
             }
 
             boolean first2 = true;
-            line += mod + "(";
+            line.append(mod).append("(");
 
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;
                 } else {
-                    line += ", ";
+                    line.append(", ");
                 }
-                line += aa;
+                line.append(aa);
             }
 
-            line += ")";
+            line.append(")");
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
 
         PSPtmScores ptmScores = new PSPtmScores();
 
@@ -549,11 +546,11 @@ public class TxtExporter {
                 if (first) {
                     first = false;
                 } else {
-                    line += ", ";
+                    line.append(", ");
                 }
 
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                line += mod + " (";
+                line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                     String location = ptmScores.getPtmScoring(mod).getBestDeltaScoreLocations();
@@ -570,20 +567,20 @@ public class TxtExporter {
                             }
                             commaSeparated += aa;
                         }
-                        line += commaSeparated + ": ";
+                        line.append(commaSeparated).append(": ");
                         double dScore = ptmScores.getPtmScoring(mod).getDeltaScore(location);
-                        line += dScore + "";
+                        line.append(dScore);
                     } else {
-                        line += "Not Scored";
+                        line.append("Not Scored");
                     }
                 } else {
-                    line += "Not Scored";
+                    line.append("Not Scored");
                 }
 
-                line += ")";
+                line.append(")");
             }
         }
-        line += SEPARATOR;
+        line.append(SEPARATOR);
 
         first = true;
 
@@ -595,10 +592,10 @@ public class TxtExporter {
                 if (first) {
                     first = false;
                 } else {
-                    line += ", ";
+                    line.append(", ");
                 }
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                line += mod + " (";
+                line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
 
@@ -617,20 +614,20 @@ public class TxtExporter {
                             }
                             commaSeparated += aa;
                         }
-                        line += commaSeparated + ": ";
+                        line.append(commaSeparated).append(": ");
                         Double aScore = ptmScores.getPtmScoring(mod).getAScore(location);
-                        line += aScore + "";
+                        line.append(aScore).append("");
                     } else {
-                        line += "Not Scored";
+                        line.append("Not Scored");
                     }
                 } else {
-                    line += "Not Scored";
+                    line.append("Not Scored");
                 }
 
-                line += ")";
+                line.append(")");
             }
         }
-        line += SEPARATOR;
+        line.append(SEPARATOR);
 
         first = true;
 
@@ -641,43 +638,43 @@ public class TxtExporter {
                 if (first) {
                     first = false;
                 } else {
-                    line += ", ";
+                    line.append(", ");
                 }
 
                 ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
-                line += mod + " (";
+                line.append(mod).append(" (");
 
                 if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
 
                     int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
 
                     if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                        line += "Not Scored"; // Well this should not happen
+                        line.append("Not Scored"); // Well this should not happen
                     } else if (ptmConfidence == PtmScoring.RANDOM) {
-                        line += "Random";
+                        line.append("Random");
                     } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                        line += "Doubtfull";
+                        line.append("Doubtfull");
                     } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                        line += "Confident";
+                        line.append("Confident");
                     } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                        line += "Very Confident";
+                        line.append("Very Confident");
                     }
                 } else {
-                    line += "Not Scored";
+                    line.append("Not Scored");
                 }
 
-                line += ")";
+                line.append(")");
             }
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
         Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
-        line += precursor.getPossibleChargesAsString() + SEPARATOR;
-        line += spectrumMatch.getBestAssumption().getIdentificationCharge().value + SEPARATOR;
-        line += fileName + SEPARATOR;
-        line += spectrumTitle + SEPARATOR;
+        line.append(precursor.getPossibleChargesAsString()).append(SEPARATOR);
+        line.append(spectrumMatch.getBestAssumption().getIdentificationCharge().value).append(SEPARATOR);
+        line.append(fileName).append(SEPARATOR);
+        line.append(spectrumTitle).append(SEPARATOR);
 
         ArrayList<String> fileNames = new ArrayList<String>();
 
@@ -692,18 +689,16 @@ public class TxtExporter {
         Collections.sort(fileNames);
 
         for (String name : fileNames) {
-            line += name + " ";
+            line.append(name).append(" ");
         }
 
-        line += SEPARATOR;
-        line += precursor.getRt() + SEPARATOR;
-        line += precursor.getMz() + SEPARATOR;
-        line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
-        line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true, true)) + SEPARATOR;
-        line += Math.abs(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz())) + SEPARATOR;
-        Double mascotEValue = null;
-        Double omssaEValue = null;
-        Double xtandemEValue = null;
+        line.append(SEPARATOR);
+        line.append(precursor.getRt()).append(SEPARATOR);
+        line.append(precursor.getMz()).append(SEPARATOR);
+        line.append(spectrumMatch.getBestAssumption().getPeptide().getMass()).append(SEPARATOR);
+        line.append(Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true, true))).append(SEPARATOR);
+        line.append(Math.abs(spectrumMatch.getBestAssumption().getIsotopeNumber(precursor.getMz()))).append(SEPARATOR);
+        Double mascotEValue = null, omssaEValue = null, xtandemEValue = null;
         double mascotScore = 0;
 
         for (int se : spectrumMatch.getAdvocates()) {
@@ -730,49 +725,48 @@ public class TxtExporter {
         }
 
         if (mascotEValue != null) {
-            line += mascotScore;
+            line.append(mascotScore);
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
 
         if (mascotEValue != null) {
-            line += mascotEValue;
+            line.append(mascotEValue);
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
 
         if (omssaEValue != null) {
-            line += omssaEValue;
+            line.append(omssaEValue);
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
 
         if (xtandemEValue != null) {
-            line += xtandemEValue;
+            line.append(xtandemEValue);
         }
 
-        line += SEPARATOR;
+        line.append(SEPARATOR);
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) identification.getSpectrumMatchParameter(psmKey, probabilities);
 
-        line += probabilities.getPsmProbabilityScore() + SEPARATOR
-                + probabilities.getPsmProbability() + SEPARATOR;
+        line.append(probabilities.getPsmProbabilityScore()).append(SEPARATOR).append(probabilities.getPsmProbability()).append(SEPARATOR);
 
         if (spectrumMatch.getBestAssumption().isDecoy()) {
-            line += "1" + SEPARATOR;
+            line.append("1").append(SEPARATOR);
         } else {
-            line += "0" + SEPARATOR;
+            line.append("0").append(SEPARATOR);
         }
 
         if (probabilities.isValidated()) {
-            line += "1";
+            line.append("1").append(SEPARATOR);
         } else {
-            line += "0";
+            line.append("0").append(SEPARATOR);
         }
 
-        line += System.getProperty("line.separator");
+        line.append(System.getProperty("line.separator"));
 
-        return line;
+        return line.toString();
     }
 
     /**
@@ -787,7 +781,7 @@ public class TxtExporter {
 
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
-        String line = "";
+        String line = ""; // @TODO: replace by StringBuilder
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         ArrayList<Integer> searchEngines = spectrumMatch.getAdvocates();
         Collections.sort(searchEngines);

@@ -1561,7 +1561,7 @@ public class OutputGenerator {
 
                                     String tempMod = mods.get(k);
 
-                                    if (modMap.get(tempMod).contains(new Integer(i))) {
+                                    if (modMap.get(tempMod).contains(Integer.valueOf(i))) {
 
                                         if (allMods.length() > 0) {
                                             allMods += ", ";
@@ -1600,7 +1600,7 @@ public class OutputGenerator {
                         }
                     }
 
-                    if (progressDialog != null && progressDialog != null) {
+                    if (progressDialog != null) {
                         progressDialog.setValue(++progress);
                     }
 
@@ -2899,7 +2899,7 @@ public class OutputGenerator {
      */
     public String getPeptidePrecursorChargesAsString(PeptideMatch peptideMatch) {
 
-        String result = "";
+        StringBuilder results = new StringBuilder();
 
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
         ArrayList<Integer> charges = new ArrayList<Integer>(5);
@@ -2930,13 +2930,13 @@ public class OutputGenerator {
         // add the charges to the output
         for (int i = 0; i < charges.size(); i++) {
             if (i > 0) {
-                result += ", ";
+                results.append(", ");
             }
 
-            result += charges.get(i);
+            results.append(charges.get(i));
         }
 
-        return result;
+        return results.toString();
     }
 
     /**
@@ -2949,7 +2949,7 @@ public class OutputGenerator {
      */
     public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -2967,22 +2967,23 @@ public class OutputGenerator {
             if (first) {
                 first = false;
             } else {
-                result += ", ";
+                result.append(", ");
             }
             first2 = true;
-            result += mod + " (";
+            result.append(mod);
+            result.append(" (");
             for (int aa : modMap.get(mod)) {
                 if (first2) {
                     first2 = false;
                 } else {
-                    result += ", ";
+                    result.append(", ");
                 }
-                result += aa;
+                result.append(aa);
             }
-            result += ")";
+            result.append(")");
         }
 
-        return result;
+        return result.toString();
     }
 
     /**

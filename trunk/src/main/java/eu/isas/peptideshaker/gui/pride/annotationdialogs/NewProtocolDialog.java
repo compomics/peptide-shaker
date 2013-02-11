@@ -590,11 +590,11 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Fixes the indices so that they are in accending order starting from one.
+     * Fixes the indices so that they are in acceding order starting from one.
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) protocolCvTermsJTable.getModel()).getRowCount(); row++) {
-            ((DefaultTableModel) protocolCvTermsJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
+            ((DefaultTableModel) protocolCvTermsJTable.getModel()).setValueAt(Integer.valueOf(row + 1), row, 0);
         }
     }
 
@@ -671,7 +671,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
             ((DefaultTableModel) this.protocolCvTermsJTable.getModel()).addRow(
                     new Object[]{
-                        new Integer(protocolCvTermsJTable.getRowCount() + 1),
+                        Integer.valueOf(protocolCvTermsJTable.getRowCount() + 1),
                         ontology,
                         accession,
                         name,

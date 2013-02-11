@@ -564,6 +564,9 @@ public class FractionDetailsDialog extends javax.swing.JDialog {
                     line = br.readLine();
                 }
 
+                br.close();
+                r.close();
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Could not find the file \'" + selectedFile.getAbsolutePath() + "\'.", "File Not Found", JOptionPane.ERROR_MESSAGE);

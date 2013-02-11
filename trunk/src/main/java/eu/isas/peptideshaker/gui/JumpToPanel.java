@@ -299,7 +299,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                     if (event.getKeyCode() == KeyEvent.VK_UP && previousButton.isEnabled()) {
                         previousButtonActionPerformed(null);
-                    } else if (event.getKeyCode() == KeyEvent.VK_DOWN & nextButton.isEnabled()) {
+                    } else if (event.getKeyCode() == KeyEvent.VK_DOWN && nextButton.isEnabled()) {
                         nextButtonActionPerformed(null);
                     } else {
                         if (!possibilities.containsKey(jumpType)) {

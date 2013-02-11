@@ -170,6 +170,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 }
             }
 
+            b.close();
+            streamReader.close();
+            stream.close();
+            
             species.add(comboboxSeparator);
             species.add("Other (Please Add Below)");
             speciesJComboBox.setModel(new DefaultComboBoxModel(species));
@@ -194,6 +198,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 tissue.add(temp[1]);
                 tissueMap.put(temp[1], temp[0]);
             }
+            
+            b.close();
+            streamReader.close();
+            stream.close();
 
             tissue.add(comboboxSeparator);
             tissue.add("Other (Please Add Below)");
@@ -828,7 +836,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) sampleCvTermsJTable.getModel()).getRowCount(); row++) {
-            ((DefaultTableModel) sampleCvTermsJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
+            ((DefaultTableModel) sampleCvTermsJTable.getModel()).setValueAt(Integer.valueOf(row + 1), row, 0);
         }
     }
 
@@ -911,7 +919,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
 
             ((DefaultTableModel) this.sampleCvTermsJTable.getModel()).addRow(
                     new Object[]{
-                        new Integer(sampleCvTermsJTable.getRowCount() + 1),
+                        Integer.valueOf(sampleCvTermsJTable.getRowCount() + 1),
                         ontology,
                         accession,
                         name,

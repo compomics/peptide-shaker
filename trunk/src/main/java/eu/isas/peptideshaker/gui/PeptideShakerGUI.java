@@ -465,7 +465,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             // @TODO: add support for desktop icons in mac and linux??
 
             // delete the firstRun file such that the user is not asked the next time around
-            new File(getJarFilePath() + "/resources/conf/firstRun").delete();
+            boolean fileDeleted = new File(getJarFilePath() + "/resources/conf/firstRun").delete();
+
+            if (!fileDeleted) {
+                JOptionPane.showMessageDialog(this, "Failed to delete the file /resources/conf/firstRun.\n"
+                        + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
+            }
 
             int value = JOptionPane.showConfirmDialog(this,
                     "Create a shortcut to PeptideShaker on the desktop?",
@@ -2988,12 +2993,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 // creates a new log file if it does not exist
                 if (!file.exists()) {
-                    file.createNewFile();
+                    boolean fileCreated = file.createNewFile();
 
-                    FileWriter w = new FileWriter(file);
-                    BufferedWriter bw = new BufferedWriter(w);
-                    bw.close();
-                    w.close();
+                    if (fileCreated) {
+                        FileWriter w = new FileWriter(file);
+                        BufferedWriter bw = new BufferedWriter(w);
+                        bw.close();
+                        w.close();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to create the file log file.\n"
+                                + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
+                    }
                 }
                 System.out.println("\n\n" + new Date() + ": PeptideShaker version " + getVersion() + ".\n");
             } catch (Exception e) {
@@ -3060,10 +3070,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void saveUserPreferences() {
         try {
             File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
+            boolean parentExists = true;
             if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdir();
+                parentExists = file.getParentFile().mkdir();
             }
-            SerializationUtils.writeObject(userPreferences, file);
+
+            if (parentExists) {
+                SerializationUtils.writeObject(userPreferences, file);
+            } else {
+                System.out.println("Parent folder does not exist: \'" + file.getParentFile() + "\'. User preferences not saved.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -4884,23 +4900,28 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         while ((archiveEntry = tarInput.getNextEntry()) != null) {
                             File destinationFile = new File(archiveEntry.getName());
                             File destinationFolder = destinationFile.getParentFile();
+                            boolean destFolderExists = true;
 
                             if (!destinationFolder.exists()) {
-                                destinationFolder.mkdirs();
+                                destFolderExists = destinationFolder.mkdirs();
                             }
 
-                            FileOutputStream fos = new FileOutputStream(destinationFile);
-                            BufferedOutputStream bos = new BufferedOutputStream(fos);
-                            int count;
+                            if (destFolderExists) {
+                                FileOutputStream fos = new FileOutputStream(destinationFile);
+                                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                                int count;
 
-                            while ((count = tarInput.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
-                                bos.write(data, 0, count);
+                                while ((count = tarInput.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
+                                    bos.write(data, 0, count);
+                                }
+
+                                bos.close();
+                                fos.close();
+                                int progress = (int) (100 * tarInput.getBytesRead() / fileLength);
+                                progressDialog.setValue(progress);
+                            } else {
+                                System.out.println("Folder does not exist: \'" + destinationFolder.getAbsolutePath() + "\'. User preferences not saved.");
                             }
-
-                            bos.close();
-                            fos.close();
-                            int progress = (int) (100 * tarInput.getBytesRead() / fileLength);
-                            progressDialog.setValue(progress);
 
                             if (progressDialog.isRunCanceled()) {
                                 progressDialog.setRunFinished();
@@ -5587,11 +5608,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // iterate the modifications list and add the non-terminal modifications
         for (String modification : modificationList) {
             PTM ptm = ptmFactory.getPTM(modification);
-            String shortName = ptmFactory.getShortName(modification);
-            AminoAcidPattern ptmPattern = ptm.getPattern();
 
             if (ptm != null) {
 
+                String shortName = ptmFactory.getShortName(modification);
+                AminoAcidPattern ptmPattern = ptm.getPattern();
                 double mass = ptm.getMass();
 
                 if (ptm.getType() == PTM.MODAA) {
@@ -5861,7 +5882,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Save the project to the currentPSFile location.
-     * 
+     *
      * @param closeWhenDone if true, PeptideShaker closes when done saving
      */
     public void saveProjectAs(boolean closeWhenDone) {
@@ -6258,6 +6279,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             while ((line = b.readLine()) != null) {
                 tips.add(line);
             }
+
+            b.close();
         } catch (Exception e) {
             catchException(e);
             tips = new ArrayList<String>();
@@ -6394,12 +6417,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void updateFilterSettingsField(String text) {
         // interface method: not implemented in this class as it is not needed
     }
-    
+
     /**
      * Export the project as a zip file.
      */
-    public void exportProjectAsZip () {
-        
+    public void exportProjectAsZip() {
+
         if (!dataSaved) {
             JOptionPane.showMessageDialog(this, "You first need to save the data.", "Unsaved Data", JOptionPane.INFORMATION_MESSAGE);
 
