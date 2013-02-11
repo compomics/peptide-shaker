@@ -62,7 +62,6 @@ import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
-import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -736,9 +735,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
-        jSeparator10 = new javax.swing.JPopupMenu.Separator();
-        exportProjectMenuItem = new javax.swing.JMenuItem();
-        exportPrideXmlMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1478,29 +1474,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         exportJMenu.add(followUpAnalysisMenu);
-        exportJMenu.add(jSeparator10);
-
-        exportProjectMenuItem.setMnemonic('P');
-        exportProjectMenuItem.setText("PeptideShaker Project");
-        exportProjectMenuItem.setToolTipText("Export a PeptideShaker project as a single zip file");
-        exportProjectMenuItem.setEnabled(false);
-        exportProjectMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportProjectMenuItemActionPerformed(evt);
-            }
-        });
-        exportJMenu.add(exportProjectMenuItem);
-
-        exportPrideXmlMenuItem.setMnemonic('X');
-        exportPrideXmlMenuItem.setText("PRIDE XML");
-        exportPrideXmlMenuItem.setToolTipText("Export a PeptideShaker project as a PRIDE XML file");
-        exportPrideXmlMenuItem.setEnabled(false);
-        exportPrideXmlMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportPrideXmlMenuItemActionPerformed(evt);
-            }
-        });
-        exportJMenu.add(exportPrideXmlMenuItem);
 
         menuBar.add(exportJMenu);
 
@@ -2459,24 +2432,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_importFilterMenuActionPerformed
 
     /**
-     * Export the current PeptideShaker project as a single zip file.
-     *
-     * @param evt
-     */
-    private void exportProjectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProjectMenuItemActionPerformed
-        exportProjectAsZip();
-    }//GEN-LAST:event_exportProjectMenuItemActionPerformed
-
-    /**
-     * Open the PRIDE Export dialog.
-     *
-     * @param evt
-     */
-    private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
-        new PrideExportDialog(this, true);
-    }//GEN-LAST:event_exportPrideXmlMenuItemActionPerformed
-
-    /**
      * Save the current project.
      *
      * @param evt
@@ -2835,8 +2790,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             saveAsMenuItem.setEnabled(true);
             identificationFeaturesMenu.setEnabled(true);
             followUpAnalysisMenu.setEnabled(true);
-            exportProjectMenuItem.setEnabled(true);
-            exportPrideXmlMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
             fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
@@ -2922,8 +2875,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem exportIntensityHistogramGraphicsJMenuItem;
     private javax.swing.JMenu exportJMenu;
     private javax.swing.JMenuItem exportMassErrorPlotGraphicsJMenuItem;
-    private javax.swing.JMenuItem exportPrideXmlMenuItem;
-    private javax.swing.JMenuItem exportProjectMenuItem;
     private javax.swing.JMenuItem exportSequenceFragmentationGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSpectrumGraphicsJMenuItem;
     private javax.swing.JMenu exportSpectrumMenu;
@@ -2948,7 +2899,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
