@@ -465,9 +465,9 @@ public class TxtExporter {
         }
 
         if (probabilities.isValidated()) {
-            line.append("1").append(SEPARATOR);
+            line.append("1");
         } else {
-            line.append("0").append(SEPARATOR);
+            line.append("0");
         }
 
         line.append(System.getProperty("line.separator"));
@@ -488,7 +488,7 @@ public class TxtExporter {
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
 
-        StringBuffer line = new StringBuffer();
+        StringBuilder line = new StringBuilder();
 
         for (String protein : bestAssumption.getParentProteins()) {
             line.append(protein).append(" ");
@@ -759,9 +759,9 @@ public class TxtExporter {
         }
 
         if (probabilities.isValidated()) {
-            line.append("1").append(SEPARATOR);
+            line.append("1");
         } else {
-            line.append("0").append(SEPARATOR);
+            line.append("0");
         }
 
         line.append(System.getProperty("line.separator"));
