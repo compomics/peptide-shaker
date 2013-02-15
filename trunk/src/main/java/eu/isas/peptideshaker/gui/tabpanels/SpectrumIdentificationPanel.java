@@ -2367,7 +2367,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private void exportSpectrumJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+        JMenuItem menuItem = new JMenuItem("Spectrum");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsFigure();

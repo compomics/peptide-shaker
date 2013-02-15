@@ -16,6 +16,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -201,7 +202,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // make sure that the user is made aware that the tool is doing something during sorting of the protein table
         proteinTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
             @Override
             public void sorterChanged(RowSorterEvent e) {
 
@@ -223,7 +223,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // make sure that the user is made aware that the tool is doing something during sorting of the peptide table
         peptideTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
             @Override
             public void sorterChanged(RowSorterEvent e) {
 
@@ -245,7 +244,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // make sure that the user is made aware that the tool is doing something during sorting of the psm table
         psmTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-
             @Override
             public void sorterChanged(RowSorterEvent e) {
 
@@ -1583,11 +1581,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         spectrumAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(spectrumAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
         spectrumJToolBar.add(spectrumAnnotationMenuPanel);
 
+        spectrumSplitPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumSplitPane.setBorder(null);
         spectrumSplitPane.setDividerLocation(80);
         spectrumSplitPane.setDividerSize(0);
         spectrumSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        spectrumSplitPane.setOpaque(false);
 
         secondarySpectrumPlotsJPanel.setOpaque(false);
         secondarySpectrumPlotsJPanel.setLayout(new javax.swing.BoxLayout(secondarySpectrumPlotsJPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -1595,7 +1593,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         spectrumOuterJPanel.setOpaque(false);
 
-        spectrumPaddingPanel.setOpaque(false);
+        spectrumPaddingPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout spectrumPaddingPanelLayout = new javax.swing.GroupLayout(spectrumPaddingPanel);
         spectrumPaddingPanel.setLayout(spectrumPaddingPanelLayout);
@@ -1622,8 +1620,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             spectrumOuterJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumOuterJPanelLayout.createSequentialGroup()
                 .addComponent(spectrumPaddingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(spectrumJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE))
         );
 
         spectrumSplitPane.setRightComponent(spectrumOuterJPanel);
@@ -1759,14 +1757,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         exportSpectrumJButton.setEnabled(false);
         exportSpectrumJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSpectrumJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exportSpectrumJButtonMouseReleased(evt);
             }
         });
         exportSpectrumJButton.setBounds(450, 0, 10, 19);
@@ -1995,7 +1993,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
-
                     public void run() {
                         int row = psmTable.getSelectedRow();
                         updateSpectrum(row, true);
@@ -2023,7 +2020,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
-
                     public void run() {
                         newItemSelection();
                         updateSpectrum(row, false);
@@ -2205,7 +2201,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
-
                 public void run() {
 
                     // remember the selection
@@ -2487,7 +2482,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
 
                 // move the icons
@@ -3222,7 +3216,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (index == 0) { // fragment ion
             JMenuItem menuItem = new JMenuItem("Spectrum As MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportSpectrumAsMgf();
                 }
@@ -3230,9 +3223,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             popupMenu.add(menuItem);
         } else if (index == 1) { // bubble plot
-            JMenuItem menuItem = new JMenuItem("Bubble Plot As Figure");
+            JMenuItem menuItem = new JMenuItem("Bubble Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportBubblePlotAsFigure();
                 }
@@ -3242,7 +3234,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             menuItem = new JMenuItem("Spectrum As MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportSpectrumAsMgf();
                 }
@@ -3250,9 +3241,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             popupMenu.add(menuItem);
         } else if (index == 2) { // spectrum
-            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+            JMenuItem menuItem = new JMenuItem("Spectrum");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportSpectrumAsFigure();
                 }
@@ -3260,9 +3250,19 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             popupMenu.add(menuItem);
 
+            menuItem = new JMenuItem("Spectrum & Plots");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, spectrumSplitPane);
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            popupMenu.add(new JSeparator());
+
             menuItem = new JMenuItem("Sequence Fragmentation");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportSequenceFragmentationAsFigure();
                 }
@@ -3272,7 +3272,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             menuItem = new JMenuItem("Intensity Histogram");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportIntensityHistogramAsFigure();
                 }
@@ -3282,7 +3281,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             menuItem = new JMenuItem("Mass Error Plot");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportMassErrorPlotAsFigure();
                 }
@@ -3294,7 +3292,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             menuItem = new JMenuItem("Spectrum As MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     peptideShakerGUI.exportSpectrumAsMgf();
                 }
@@ -3427,7 +3424,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -3449,7 +3445,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -3471,7 +3466,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             JPopupMenu popupMenu = new JPopupMenu();
             JMenuItem menuItem = new JMenuItem("Statistics");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -3669,7 +3663,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 updateSequenceCoverageSeparator();
                 peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
@@ -3694,7 +3687,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 updateSequenceCoverageSeparator();
                 peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
@@ -3726,7 +3718,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
                 formComponentResized(null);
@@ -3748,7 +3739,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 updateSequenceCoverageSeparator();
                 updateProteinTableSeparator();
@@ -3957,17 +3947,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                             includePeptide = true;
                         } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                            includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, 
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(), 
-                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+                            includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
+                                    peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                    peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
+                                    peptideShakerGUI.getIdFilter().getMinPepLength(),
+                                    peptideShakerGUI.getIdFilter().getMaxPepLength());
                         } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                            includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, 
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(), 
-                                                peptideShakerGUI.getIdFilter().getMinPepLength(), 
-                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+                            includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
+                                    peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                    peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
+                                    peptideShakerGUI.getIdFilter().getMinPepLength(),
+                                    peptideShakerGUI.getIdFilter().getMaxPepLength());
                         }
 
                         if (includePeptide) {
@@ -4090,7 +4080,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // make sure that the range is the same for both charts (coverage and ptm)
                 coverageChart.getChart().addChangeListener(new ChartChangeListener() {
-
                     @Override
                     public void chartChanged(ChartChangeEvent cce) {
                         if (ptmChart != null) {
@@ -4635,7 +4624,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         progressDialog.setTitle("Loading Overview. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -4646,7 +4634,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }, "ProgressDialog").start();
 
         new Thread("DisplayThread") {
-
             @Override
             public void run() {
 
@@ -4719,9 +4706,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
-                        
                         // @TODO: this is not optimal as the progress bar does not move...
-
                         public void run() {
                             DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
                             dm.fireTableDataChanged();
@@ -4864,6 +4849,22 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         if (spectrumJTabbedPane.isEnabledAt(2)) {
             spectrumJTabbedPane.setSelectedIndex(2);
             return (Component) spectrumJPanel.getComponent(0);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the extended spectrum panel.
+     *
+     * @return the extended spectrum panel, or null if the spectrum tab is not
+     * enabled
+     */
+    public Component getSpectrumAndPlots() {
+
+        if (spectrumJTabbedPane.isEnabledAt(2)) {
+            spectrumJTabbedPane.setSelectedIndex(2);
+            return spectrumSplitPane;
         }
 
         return null;
@@ -5283,7 +5284,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            
+
             for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) { // @TODO: batch selection??
                 try {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
@@ -5319,7 +5320,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
 
@@ -5532,7 +5532,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
             // reset the range
             SwingUtilities.invokeLater(new Runnable() {
-
                 public void run() {
                     ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
                     coverageChart.revalidate();
@@ -5553,7 +5552,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     JMenuItem menuItem = new JMenuItem(text);
                     menuItem.addActionListener(new java.awt.event.ActionListener() {
-
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
 
                             peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
@@ -5562,7 +5560,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             // reset the range
                             // invoke later to give time for components to update
                             SwingUtilities.invokeLater(new Runnable() {
-
                                 public void run() {
                                     ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().setRange(oldRange);
                                     coverageChart.revalidate();

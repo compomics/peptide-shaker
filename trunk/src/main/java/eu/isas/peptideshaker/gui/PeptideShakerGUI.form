@@ -346,6 +346,16 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSpectrumGraphicsJMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="exportSpectrumAndPlotsGraphicsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum &amp; Plots"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="exportSpectrumGraphicsSeparator">
+                </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="exportSequenceFragmentationGraphicsJMenuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Sequence Fragmentation"/>

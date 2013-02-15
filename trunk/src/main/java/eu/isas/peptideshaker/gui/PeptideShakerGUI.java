@@ -678,6 +678,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         exportGraphicsMenu = new javax.swing.JMenu();
         exportSpectrumMenu = new javax.swing.JMenu();
         exportSpectrumGraphicsJMenuItem = new javax.swing.JMenuItem();
+        exportSpectrumAndPlotsGraphicsJMenuItem = new javax.swing.JMenuItem();
+        exportSpectrumGraphicsSeparator = new javax.swing.JPopupMenu.Separator();
         exportSequenceFragmentationGraphicsJMenuItem = new javax.swing.JMenuItem();
         exportIntensityHistogramGraphicsJMenuItem = new javax.swing.JMenuItem();
         exportMassErrorPlotGraphicsJMenuItem = new javax.swing.JMenuItem();
@@ -1039,6 +1041,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         exportSpectrumMenu.add(exportSpectrumGraphicsJMenuItem);
+
+        exportSpectrumAndPlotsGraphicsJMenuItem.setText("Spectrum & Plots");
+        exportSpectrumAndPlotsGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed(evt);
+            }
+        });
+        exportSpectrumMenu.add(exportSpectrumAndPlotsGraphicsJMenuItem);
+        exportSpectrumMenu.add(exportSpectrumGraphicsSeparator);
 
         exportSequenceFragmentationGraphicsJMenuItem.setText("Sequence Fragmentation");
         exportSequenceFragmentationGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -2745,6 +2756,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_validatedProteinsOnlyJCheckBoxMenuItemActionPerformed
 
     /**
+     * Export the spectrum and plots. Only for the Overview tab.
+     * 
+     * @param evt 
+     */
+    private void exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, this, true, (Component) overviewPanel.getSpectrumAndPlots());
+        }
+    }//GEN-LAST:event_exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2881,7 +2905,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenu exportJMenu;
     private javax.swing.JMenuItem exportMassErrorPlotGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSequenceFragmentationGraphicsJMenuItem;
+    private javax.swing.JMenuItem exportSpectrumAndPlotsGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSpectrumGraphicsJMenuItem;
+    private javax.swing.JPopupMenu.Separator exportSpectrumGraphicsSeparator;
     private javax.swing.JMenu exportSpectrumMenu;
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
@@ -4664,9 +4690,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         exportSpectrumMenu.setVisible(showSpectrumOptions);
 
         // @TODO: remove this when the other tabs also use the extended spectrum panel!
+        exportSpectrumAndPlotsGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
         exportSequenceFragmentationGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
         exportIntensityHistogramGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
         exportMassErrorPlotGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportSpectrumGraphicsSeparator.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
 
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
         bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
