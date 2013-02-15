@@ -2870,7 +2870,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+        JMenuItem menuItem = new JMenuItem("Spectrum");
         menuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideShakerGUI.exportSpectrumAsFigure();

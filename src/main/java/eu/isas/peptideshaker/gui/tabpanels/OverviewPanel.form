@@ -1525,13 +1525,15 @@
                                                 </Container>
                                                 <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
                                                   <Properties>
+                                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                                    </Property>
                                                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                                       <Border info="null"/>
                                                     </Property>
                                                     <Property name="dividerLocation" type="int" value="80"/>
                                                     <Property name="dividerSize" type="int" value="0"/>
                                                     <Property name="orientation" type="int" value="0"/>
-                                                    <Property name="opaque" type="boolean" value="false"/>
                                                   </Properties>
 
                                                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
@@ -1569,8 +1571,8 @@
                                                           <Group type="103" groupAlignment="0" attributes="0">
                                                               <Group type="102" attributes="0">
                                                                   <Component id="spectrumPaddingPanel" min="-2" max="-2" attributes="0"/>
-                                                                  <EmptySpace max="-2" attributes="0"/>
-                                                                  <Component id="spectrumJPanel" pref="179" max="32767" attributes="0"/>
+                                                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                                                                  <Component id="spectrumJPanel" pref="185" max="32767" attributes="0"/>
                                                               </Group>
                                                           </Group>
                                                         </DimensionLayout>
@@ -1578,7 +1580,9 @@
                                                       <SubComponents>
                                                         <Container class="javax.swing.JPanel" name="spectrumPaddingPanel">
                                                           <Properties>
-                                                            <Property name="opaque" type="boolean" value="false"/>
+                                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                                            </Property>
                                                           </Properties>
 
                                                           <Layout>
@@ -1723,9 +1727,9 @@
                                     </Property>
                                   </Properties>
                                   <Events>
+                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSpectrumJButtonMouseReleased"/>
                                     <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSpectrumJButtonMouseEntered"/>
                                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSpectrumJButtonMouseExited"/>
-                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportSpectrumJButtonMouseReleased"/>
                                   </Events>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
