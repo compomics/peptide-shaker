@@ -432,7 +432,7 @@ public class PSParameter implements UrParameter {
 
     /**
      * Returns the protein inference class as a string for the given
-     * integer-based class
+     * integer-based class.
      *
      * @param matchClass the protein inference class as integer (see static
      * fields)

@@ -1,68 +1,68 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class allows creating a standard output scheme
+ * This class allows creating a standard output scheme.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ExportScheme {
-    
+
     /**
-     * The name of the scheme
+     * The name of the scheme.
      */
     private String name;
     /**
-     * A boolean indicating whether the scheme can be modified
+     * A boolean indicating whether the scheme can be modified.
      */
     private boolean editable;
     /**
-     * The title of the report
+     * The title of the report.
      */
     private String mainTitle = null;
     /**
-     * Map of the features to export indexed by feature type
+     * Map of the features to export indexed by feature type.
      */
     private HashMap<String, ArrayList<ExportFeature>> exportFeaturesMap = new HashMap<String, ArrayList<ExportFeature>>();
     /**
-     * The separator used to separate columns 
+     * The separator used to separate columns.
      */
     private String separator = "\t";
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes = true;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header = true;
     /**
-     * indicates how many lines shall be used to separate sections
+     * indicates how many lines shall be used to separate sections.
      */
     private int separationLines = 3;
     /**
-     * Indicates whether the title of every section shall be included
+     * Indicates whether the title of every section shall be included.
      */
     private boolean includeSectionTitles = true;
-    
+
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
+     * @param name 
+     * @param editable 
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
      * @param indexes indicates whether lines shall be indexed
      * @param header indicates whether column headers shall be included
      * @param separationLines the number of lines to use for section separation
-     * @param includeSectionTitles indicates whether section titles shall be used
+     * @param includeSectionTitles indicates whether section titles shall be
+     * used
      * @param mainTitle the title of the report
      */
-    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
+    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator,
+            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
         for (ExportFeature exportFeature : exportFeatures) {
             String key = exportFeature.getFeatureFamily();
             if (!exportFeaturesMap.containsKey(key)) {
@@ -79,23 +79,28 @@ public class ExportScheme {
         this.name = name;
         this.editable = editable;
     }
-    
+
     /**
-     * Constructor
-     * 
+     * Constructor.
+     *
+     * @param name 
+     * @param editable 
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
      * @param indexes indicates whether lines shall be indexed
      * @param header indicates whether column headers shall be included
      * @param separationLines the number of lines to use for section separation
-     * @param includeSectionTitles indicates whether section titles shall be used
+     * @param includeSectionTitles indicates whether section titles shall be
+     * used
      */
-    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
+    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator, 
+            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
         this(name, editable, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
     }
 
     /**
-     * Returns the column separator
+     * Returns the column separator.
+     *
      * @return the column separator
      */
     public String getSeparator() {
@@ -103,7 +108,8 @@ public class ExportScheme {
     }
 
     /**
-     * Indicates whether lines shall be indexed
+     * Indicates whether lines shall be indexed.
+     *
      * @return a boolean indicating whether lines shall be indexed
      */
     public boolean isIndexes() {
@@ -111,7 +117,8 @@ public class ExportScheme {
     }
 
     /**
-     * Indicates whether column header shall be used
+     * Indicates whether column header shall be used.
+     *
      * @return a boolean indicating whether column header shall be used
      */
     public boolean isHeader() {
@@ -119,7 +126,8 @@ public class ExportScheme {
     }
 
     /**
-     * Returns the number of lines to be used to separate the sections
+     * Returns the number of lines to be used to separate the sections.
+     *
      * @return the number of lines to be used to separate the sections
      */
     public int getSeparationLines() {
@@ -127,32 +135,36 @@ public class ExportScheme {
     }
 
     /**
-     * Indicates whether section titles shall be used
+     * Indicates whether section titles shall be used.
+     *
      * @return a boolean indicating whether section titles shall be used
      */
     public boolean isIncludeSectionTitles() {
         return includeSectionTitles;
     }
-    
+
     /**
-     * returns the list of sections to be included in the scheme
+     * returns the list of sections to be included in the scheme.
+     *
      * @return the list of sections to be included in the scheme
      */
     public ArrayList<String> getSections() {
         return new ArrayList<String>(exportFeaturesMap.keySet());
     }
-    
+
     /**
-     * Returns the export features to be included in the given section
+     * Returns the export features to be included in the given section.
+     *
      * @param section the section of interest
      * @return the list of export features to export in this section
      */
     public ArrayList<ExportFeature> getExportFeatures(String section) {
         return exportFeaturesMap.get(section);
     }
-    
+
     /**
      * Returns the main title of the report. Null if none.
+     *
      * @return the main title of the report.
      */
     public String getMainTitle() {
@@ -160,7 +172,8 @@ public class ExportScheme {
     }
 
     /**
-     * Returns the name of the scheme
+     * Returns the name of the scheme.
+     *
      * @return the name of the scheme
      */
     public String getName() {
@@ -168,7 +181,8 @@ public class ExportScheme {
     }
 
     /**
-     * Sets the name of the scheme
+     * Sets the name of the scheme.
+     *
      * @param name the name of the scheme
      */
     public void setName(String name) {
@@ -176,7 +190,8 @@ public class ExportScheme {
     }
 
     /**
-     * Indicates whether the scheme is editable
+     * Indicates whether the scheme is editable.
+     *
      * @return a boolean indicating whether the scheme is editable
      */
     public boolean isEditable() {
@@ -184,7 +199,8 @@ public class ExportScheme {
     }
 
     /**
-     * Sets whether the scheme is editable
+     * Sets whether the scheme is editable.
+     *
      * @param editable a boolean indicating whether the scheme shall be editable
      */
     public void setEditable(boolean editable) {

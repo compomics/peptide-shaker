@@ -1,17 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * This class lists the protein identification features
+ * This class lists the protein identification features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum ProteinFeatures implements ExportFeature {
 
@@ -39,22 +34,21 @@ public enum ProteinFeatures implements ExportFeature {
     validated("Validated", "Indicates whether the protein group passed the validation process (1: yes, 0: no)."),
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no)."),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).");
-    
     /**
-     * The title of the feature which will be used for column heading
+     * The title of the feature which will be used for column heading.
      */
     public String title;
     /**
-     * The description of the feature
+     * The description of the feature.
      */
     public String description;
     /**
-     * The type of export feature
+     * The type of export feature.
      */
     public final static String type = "Protein Identification Summary";
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature

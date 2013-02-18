@@ -32,7 +32,7 @@ public class ProjectDetails implements Serializable {
      */
     private Date creationDate;
     /**
-     * The report created during the loading of the tool 
+     * The report created during the loading of the tool
      */
     private String report;
     /**
@@ -60,7 +60,7 @@ public class ProjectDetails implements Serializable {
      */
     private ContactGroup prideContactGroup;
     /**
-     * The  PRIDE sample details.
+     * The PRIDE sample details.
      */
     private Sample prideSample;
     /**
@@ -76,14 +76,12 @@ public class ProjectDetails implements Serializable {
      */
     private String prideOutputFolder;
     /**
-     * The PeptideShaker version used to create the project
+     * The PeptideShaker version used to create the project.
      */
     private String peptideShakerVersion;
-    
-    
 
     /**
-     * Constructor
+     * Constructor.
      */
     public ProjectDetails() {
     }
@@ -105,19 +103,21 @@ public class ProjectDetails implements Serializable {
     public void addIdentificationFiles(File identificationFile) {
         identificationFiles.add(identificationFile);
     }
-    
+
     /**
-     * Attaches a spectrum file to the project.
-     * Warning: any previous file with the same name will be silently ignored.
+     * Attaches a spectrum file to the project. Warning: any previous file with
+     * the same name will be silently ignored.
+     *
      * @param spectrumFile the spectrum file to add
      */
     public void addSpectrumFile(File spectrumFile) {
         String fileName = Util.getFileName(spectrumFile.getAbsolutePath());
         spectrumFiles.put(fileName, spectrumFile);
     }
-    
+
     /**
-     * Returns the file corresponding to the given name
+     * Returns the file corresponding to the given name.
+     *
      * @param fileName the name of the desired file
      * @return the corresponding file, null if not found.
      */
@@ -148,7 +148,8 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Returns the PeptideShaker version used to create the project
+     * Returns the PeptideShaker version used to create the project.
+     *
      * @return the PeptideShaker version used to create the project
      */
     public String getPeptideShakerVersion() {
@@ -159,8 +160,10 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Sets the PeptideShaker version used to create the project
-     * @param peptideShakerVersion the PeptideShaker version used to create the project
+     * Sets the PeptideShaker version used to create the project.
+     *
+     * @param peptideShakerVersion the PeptideShaker version used to create the
+     * project
      */
     public void setPeptideShakerVersion(String peptideShakerVersion) {
         this.peptideShakerVersion = peptideShakerVersion;
@@ -168,30 +171,30 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the report created during the loading of the project.
-     * 
+     *
      * @return the report created during the loading of the project
      */
     public String getReport() {
-        
+
         if (report == null) {
             return "(report not saved)";
         }
-        
+
         return report;
     }
 
     /**
      * Set the report created during the loading of the project.
-     * 
+     *
      * @param report the report to set
      */
     public void setReport(String report) {
         this.report = report;
     }
-    
+
     /**
      * Returns the PRIDE experiment title.
-     * 
+     *
      * @return the prideExperimenttitle
      */
     public String getPrideExperimentTitle() {
@@ -200,7 +203,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Sets the PRIDE experiment title.
-     * 
+     *
      * @param prideExperimentTitle the prideExperimentTitle to set
      */
     public void setPrideExperimentTitle(String prideExperimentTitle) {
@@ -209,7 +212,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE experiment label.
-     * 
+     *
      * @return the prideExperimentLabel
      */
     public String getPrideExperimentLabel() {
@@ -218,7 +221,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Sets the PRIDE experiment label.
-     * 
+     *
      * @param prideExperimentLabel the prideExperimentLabel to set
      */
     public void setPrideExperimentLabel(String prideExperimentLabel) {
@@ -227,7 +230,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE experiment project title.
-     * 
+     *
      * @return the prideExperimentProjectTitle
      */
     public String getPrideExperimentProjectTitle() {
@@ -236,7 +239,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE experiment project title.
-     * 
+     *
      * @param prideExperimentProjectTitle the prideExperimentProjectTitle to set
      */
     public void setPrideExperimentProjectTitle(String prideExperimentProjectTitle) {
@@ -245,7 +248,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE experiment project description.
-     * 
+     *
      * @return the prideExperimentDescription
      */
     public String getPrideExperimentDescription() {
@@ -254,16 +257,16 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE experiment project description.
-     * 
+     *
      * @param prideExperimentDescription the prideExperimentDescription to set
      */
     public void setPrideExperimentDescription(String prideExperimentDescription) {
         this.prideExperimentDescription = prideExperimentDescription;
     }
-    
+
     /**
      * Returns the PRIDE reference group.
-     * 
+     *
      * @return the prideReferenceGroup
      */
     public ReferenceGroup getPrideReferenceGroup() {
@@ -272,7 +275,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE reference group.
-     * 
+     *
      * @param prideReferenceGroup the prideReferenceGroup to set
      */
     public void setPrideReferenceGroup(ReferenceGroup prideReferenceGroup) {
@@ -281,7 +284,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE contact group.
-     * 
+     *
      * @return the prideContactGroup
      */
     public ContactGroup getPrideContactGroup() {
@@ -290,7 +293,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE contact group.
-     * 
+     *
      * @param prideContactGroup the prideContactGroup to set
      */
     public void setPrideContactGroup(ContactGroup prideContactGroup) {
@@ -299,7 +302,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE sample.
-     * 
+     *
      * @return the prideSample
      */
     public Sample getPrideSample() {
@@ -308,7 +311,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE sample.
-     * 
+     *
      * @param prideSample the prideSample to set
      */
     public void setPrideSample(Sample prideSample) {
@@ -317,7 +320,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE protocol.
-     * 
+     *
      * @return the prideProtocol
      */
     public Protocol getPrideProtocol() {
@@ -326,7 +329,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE protocol.
-     * 
+     *
      * @param prideProtocol the prideProtocol to set
      */
     public void setPrideProtocol(Protocol prideProtocol) {
@@ -335,7 +338,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE instrument.
-     * 
+     *
      * @return the prideInstrument
      */
     public Instrument getPrideInstrument() {
@@ -344,7 +347,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the the PRIDE instrument.
-     * 
+     *
      * @param prideInstrument the prideInstrument to set
      */
     public void setPrideInstrument(Instrument prideInstrument) {
@@ -353,7 +356,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Returns the PRIDE output folder.
-     * 
+     *
      * @return the prideOutputFolder
      */
     public String getPrideOutputFolder() {
@@ -362,7 +365,7 @@ public class ProjectDetails implements Serializable {
 
     /**
      * Set the PRIDE output folder.
-     * 
+     *
      * @param prideOutputFolder the prideOutputFolder to set
      */
     public void setPrideOutputFolder(String prideOutputFolder) {

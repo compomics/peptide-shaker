@@ -1,20 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * This enum lists the export features related to the import features
+ * This enum lists the export features related to the import features.
  *
  * @author Marc
  */
 public enum InputFilterFeatures implements ExportFeature {
-    
+
     min_peptide_length("Minimal Peptide Length", "The minimal peptide length."),
     max_peptide_length("Maximal Peptide Length", "The maximal peptide length."),
     mascot_max_evalue("Mascot Maximal E-value", "The maximal e-value allowed for Mascot Peptide Spectrum Matches (PSMs)."),
@@ -23,22 +18,21 @@ public enum InputFilterFeatures implements ExportFeature {
     max_mz_deviation("Precursor m/z Tolerance", "The maximal precursor m/z error tolerance allowed."),
     max_mz_deviation_unit("Precursor m/z Tolerance Unit", "The unit of the maximal precursor m/z error tolerance allowed."),
     unkown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting posstranslational which do not match the search parameters were discarded.");
-  
     /**
-     * The title of the feature which will be used for column heading
+     * The title of the feature which will be used for column heading.
      */
     public String title;
     /**
-     * The description of the feature
+     * The description of the feature.
      */
     public String description;
     /**
-     * The type of export feature
+     * The type of export feature.
      */
     public final static String type = "Input Filters";
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature

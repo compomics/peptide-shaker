@@ -1,38 +1,32 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * This class lists all the export features related to the spectrum counting.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum SpectrumCountingFeatures implements ExportFeature {
-    
+
     method("Method", "The method used to establish the spectrum counting index."),
     validated("Validated Matches Only", "Indicates whether only validated matches were used to establis the spectrum counting metric.");
-    
     /**
-     * The title of the feature which will be used for column heading
+     * The title of the feature which will be used for column heading.
      */
     public String title;
     /**
-     * The description of the feature
+     * The description of the feature.
      */
     public String description;
     /**
-     * The type of export feature
+     * The type of export feature.
      */
     public final static String type = "Spectrum Counting Parameters";
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
@@ -64,5 +58,4 @@ public enum SpectrumCountingFeatures implements ExportFeature {
     public String getFeatureFamily() {
         return type;
     }
-    
 }

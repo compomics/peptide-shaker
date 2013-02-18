@@ -1,20 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * This class lists the peptide identification features
+ * This class lists the peptide identification features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum PeptideFeatures implements ExportFeature {
-    
+
     accessions("Protein(s)", "Protein(s) to which this peptide can be attached."),
     unique("Unique", "Indicates whether the peptide is found uniquely in the protein match of interest."),
     pi("PI", "The protein inference status of this peptide."),
@@ -35,20 +30,20 @@ public enum PeptideFeatures implements ExportFeature {
     starred("Starred", "Indicates whether the match was starred in the interface (1: yes, 0: no)."),
     hidden("Hidden", "Indicates whether the match was hidden in the interface (1: yes, 0: no).");
     /**
-     * The title of the feature which will be used for column heading
+     * The title of the feature which will be used for column heading.
      */
     public String title;
     /**
-     * The description of the feature
+     * The description of the feature.
      */
     public String description;
     /**
-     * The type of export feature
+     * The type of export feature.
      */
     public final static String type = "Peptide Identification Summary";
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
