@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCou
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -213,6 +214,74 @@ public class IdentificationFeaturesGenerator {
         if (result == null) {
             result = estimateSequenceCoverage(proteinMatchKey);
             identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
+        }
+        return result;
+    }
+
+    /**
+     * Returns a list of non-enzymatic peptides for a given protein match
+     * 
+     * @param proteinMatchKey the key of the protein match
+     * @param enzyme the enzyme used
+     * @return a list of non-enzymatic peptides for a given protein match
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException 
+     */
+    public ArrayList<String> getNonEnzymatic(String proteinMatchKey, Enzyme enzyme) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        ArrayList<String> result = (ArrayList<String>) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNonEnzymatic(proteinMatchKey, enzyme);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.tryptic_protein, proteinMatchKey, result);
+        }
+        return result;
+    }
+
+    /**
+     * Returns a list of non-enzymatic peptides for a given protein match
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @param enzyme the enzyme used
+     * @return a list of non-enzymatic peptides for a given protein match
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    private ArrayList<String> estimateNonEnzymatic(String proteinMatchKey, Enzyme enzyme) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        ArrayList<String> peptideKeys = proteinMatch.getPeptideMatches();
+        PSParameter peptidePSParameter = new PSParameter();
+
+        identification.loadPeptideMatchParameters(peptideKeys, peptidePSParameter, null);
+        
+        ArrayList<String> result = new ArrayList<String>();
+
+        // see if we have non-tryptic peptides
+        for (String peptideKey : peptideKeys) {
+
+            peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
+
+            if (peptidePSParameter.isValidated()) {
+
+                String peptideSequence = Peptide.getSequence(peptideKey);
+                boolean enzymatic = false;
+                for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
+                    Protein currentProtein = sequenceFactory.getProtein(accession);
+                    if (currentProtein.isEnzymaticPeptide(peptideSequence, enzyme)) {
+                        enzymatic = true;
+                        break;
+                    }
+                }
+
+                if (!enzymatic) {
+                    result.add(peptideKey);
+                }
+            }
         }
         return result;
     }
@@ -553,7 +622,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public int estimateNValidatedPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private int estimateNValidatedPeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         int cpt = 0;
 
@@ -571,6 +640,76 @@ public class IdentificationFeaturesGenerator {
         return cpt;
     }
 
+    /**
+     * Returns the number of unique peptides for this protein match.
+     * Note, this is independent of the validation status.
+     * 
+     * @param proteinMatchKey the key of the match
+     * @return the number of unique peptides
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    public int getNUniquePeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
+    Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
+
+        if (result == null) {
+            result = estimateNUniquePeptides(proteinMatchKey);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
+        }
+        return result;
+    }
+    
+    /**
+     * Indicates whether a peptide is unique to a protein match
+     * 
+     * @param proteinMatchKey the key of the protein match
+     * @param peptide the peptide of interest
+     * @return a boolean indicating whether a peptide is unique to a protein match
+     */
+    public boolean isUnique(String proteinMatchKey, Peptide peptide) {
+        String[] accessions = ProteinMatch.getAccessions(proteinMatchKey);
+            ArrayList<String> peptideAccessions = peptide.getParentProteins();
+        if (peptideAccessions.size() == accessions.length) {
+                boolean same = true;
+                for (String accession : accessions) {
+                    if (!peptideAccessions.contains(accession)) {
+                        same = false;
+                        break;
+                    }
+                }
+                if (same) {
+                    return true;
+                }
+        }
+        return false;
+    }
+    
+    /**
+     * Estimates the number of peptides unique to a protein match
+     * @param proteinMatchKey the key of the protein match
+     * @return the number of peptides unique to a protein match
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    private int estimateNUniquePeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
+        
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        int cpt = 0;
+        
+        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            if (isUnique(proteinMatchKey, peptideMatch.getTheoreticPeptide())) {
+                cpt++;
+            }
+        }
+        return cpt;
+    }
+    
     /**
      * Returns the number of validated peptides for a given protein match.
      *

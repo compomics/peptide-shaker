@@ -2723,7 +2723,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             peptideShakerGUI.catchException(e);
                             e.printStackTrace();
                         }
-                        int proteinInferenceType = probabilities.getGroupClass();
+                        int proteinInferenceType = probabilities.getProteinInferenceClass();
 
                         // @TODO: should be replaced by a table model!!!
 

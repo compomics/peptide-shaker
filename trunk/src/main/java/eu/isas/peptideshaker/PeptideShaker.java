@@ -2395,7 +2395,7 @@ public class PeptideShaker {
                     }
                 }
                 if (!similarityFound) {
-                    psParameter.setGroupClass(PSParameter.UNRELATED);
+                    psParameter.setProteinInferenceClass(PSParameter.UNRELATED);
                     nGroups++;
                     nLeft++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -2403,12 +2403,12 @@ public class PeptideShaker {
                     identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                        psParameter.setGroupClass(PSParameter.UNRELATED);
+                        psParameter.setProteinInferenceClass(PSParameter.UNRELATED);
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
 
                 } else if (!allSimilar) {
-                    psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                    psParameter.setProteinInferenceClass(PSParameter.ISOFORMS_UNRELATED);
                     nGroups++;
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -2416,12 +2416,12 @@ public class PeptideShaker {
                     identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                        psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                        psParameter.setProteinInferenceClass(PSParameter.ISOFORMS_UNRELATED);
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
 
                 } else {
-                    psParameter.setGroupClass(PSParameter.ISOFORMS);
+                    psParameter.setProteinInferenceClass(PSParameter.ISOFORMS);
                     nGroups++;
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -2444,9 +2444,9 @@ public class PeptideShaker {
                             }
                         }
                         if (unrelated) {
-                            psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                            psParameter.setProteinInferenceClass(PSParameter.ISOFORMS_UNRELATED);
                         } else {
-                            psParameter.setGroupClass(PSParameter.ISOFORMS);
+                            psParameter.setProteinInferenceClass(PSParameter.ISOFORMS);
                         }
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
@@ -2472,10 +2472,10 @@ public class PeptideShaker {
                         }
                     }
                     if (otherProtein) {
-                        psParameter.setGroupClass(PSParameter.ISOFORMS);
+                        psParameter.setProteinInferenceClass(PSParameter.ISOFORMS);
                     }
                     if (unrelated) {
-                        psParameter.setGroupClass(PSParameter.UNRELATED);
+                        psParameter.setProteinInferenceClass(PSParameter.UNRELATED);
                     }
                     identification.updatePeptideMatchParameter(peptideKey, psParameter);
                 }

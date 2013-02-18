@@ -1538,13 +1538,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 peptideShakerGUI.catchException(e);
                 return false;
             }
-            if (isoformsCheck.isSelected() && pSParameter.getGroupClass() == PSParameter.ISOFORMS) {
+            if (isoformsCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.ISOFORMS) {
                 return true;
             }
-            if (isoformsUnrelatedCheck.isSelected() && pSParameter.getGroupClass() == PSParameter.ISOFORMS_UNRELATED) {
+            if (isoformsUnrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.ISOFORMS_UNRELATED) {
                 return true;
             }
-            if (unrelatedCheck.isSelected() && pSParameter.getGroupClass() == PSParameter.UNRELATED) {
+            if (unrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.UNRELATED) {
                 return true;
             }
         }

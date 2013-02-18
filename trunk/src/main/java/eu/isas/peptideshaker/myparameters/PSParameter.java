@@ -412,21 +412,34 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein group class.
+     * Returns the protein inference class of the protein match.
      *
-     * @return the protein group class
+     * @return the protein inference class of the protein match.
      */
-    public int getGroupClass() {
+    public int getProteinInferenceClass() {
         return groupClass;
     }
 
     /**
-     * Returns the group class description.
+     * Returns the protein inference class as a string for the given
+     * integer-based class
      *
      * @return the group class description
      */
-    public String getGroupName() {
-        switch (groupClass) {
+    public String getProteinInferenceClassAsString() {
+        return getProteinInferenceClassAsString(groupClass);
+    }
+
+    /**
+     * Returns the protein inference class as a string for the given
+     * integer-based class
+     *
+     * @param matchClass the protein inference class as integer (see static
+     * fields)
+     * @return the group class description
+     */
+    public static String getProteinInferenceClassAsString(int matchClass) {
+        switch (matchClass) {
             case NOT_GROUP:
                 return "Single Protein";
             case ISOFORMS:
@@ -445,7 +458,7 @@ public class PSParameter implements UrParameter {
      *
      * @param groupClass the protein group class
      */
-    public void setGroupClass(int groupClass) {
+    public void setProteinInferenceClass(int groupClass) {
         this.groupClass = groupClass;
     }
 
@@ -468,7 +481,7 @@ public class PSParameter implements UrParameter {
     public void setSecificMapKey(String specificMapKey) {
         setSpecificMapKey(specificMapKey);
     }
-    
+
     /**
      * Returns the match key in the corresponding specific map.
      *
@@ -477,7 +490,7 @@ public class PSParameter implements UrParameter {
     public String getSpecificMapKey() {
         return secificMapKey;
     }
-    
+
     /**
      * Sets the match key in the corresponding specific map.
      *
@@ -549,10 +562,10 @@ public class PSParameter implements UrParameter {
     public double getFractionConfidence(String fraction) {
         return 100 * (1 - fractionPEP.get(fraction));
     }
-    
+
     /**
      * Get the number of validated peptides in the given fraction.
-     * 
+     *
      * @param fraction the fraction
      * @return the number of validated peptides in the given fraction
      */
@@ -561,21 +574,21 @@ public class PSParameter implements UrParameter {
             return validatedPeptidesPerFraction.get(fraction);
         } else {
             return 0;
-        }   
+        }
     }
-    
+
     /**
      * Get the number of validated peptides in the given fraction.
-     * 
-     * @param validatedPeptidesPerFraction 
+     *
+     * @param validatedPeptidesPerFraction
      */
     public void setFractionValidatedPeptides(HashMap<String, Integer> validatedPeptidesPerFraction) {
         this.validatedPeptidesPerFraction = validatedPeptidesPerFraction;
     }
-    
+
     /**
      * Get the number of validated spectra in the given fraction.
-     * 
+     *
      * @param fraction the fraction
      * @return the number of validated spectra in the given fraction
      */
@@ -584,21 +597,21 @@ public class PSParameter implements UrParameter {
             return validatedSpectraPerFraction.get(fraction);
         } else {
             return 0;
-        }   
+        }
     }
-    
+
     /**
      * Get the number of validated spectra in the given fraction.
-     * 
-     * @param validatedSpectraPerFraction 
+     *
+     * @param validatedSpectraPerFraction
      */
     public void setFractionValidatedSpectra(HashMap<String, Integer> validatedSpectraPerFraction) {
         this.validatedSpectraPerFraction = validatedSpectraPerFraction;
     }
-    
+
     /**
      * Get the precursor intensity in the given fraction.
-     * 
+     *
      * @param fraction the fraction
      * @return the precursor intensity in the given fraction
      */
@@ -607,41 +620,41 @@ public class PSParameter implements UrParameter {
             return precursorIntensityPerFraction.get(fraction);
         } else {
             return new ArrayList<Double>();
-        }   
+        }
     }
-    
+
     /**
      * Get the precursor intensity in the given fraction.
-     * 
-     * @param precursorIntensityPerFraction 
+     *
+     * @param precursorIntensityPerFraction
      */
     public void setPrecursorIntensityPerFraction(HashMap<String, ArrayList<Double>> precursorIntensityPerFraction) {
         this.precursorIntensityPerFraction = precursorIntensityPerFraction;
-        
+
         // calculate the average precursor intensities
         for (String fraction : precursorIntensityPerFraction.keySet()) {
-            
+
             Double sum = 0.0;
-            
+
             for (Double intensity : precursorIntensityPerFraction.get(fraction)) {
                 sum += intensity;
             }
-            
+
             if (precursorIntensitySummedPerFraction != null) {
                 precursorIntensitySummedPerFraction.put(fraction, sum);
             }
-            
+
             if (sum > 0) {
                 precursorIntensityAveragePerFraction.put(fraction, sum / precursorIntensityPerFraction.get(fraction).size());
             } else {
                 precursorIntensityAveragePerFraction.put(fraction, null);
-            }   
+            }
         }
     }
-    
+
     /**
      * Get the average precursor intensity in the given fraction.
-     * 
+     *
      * @param fraction the fraction
      * @return the average precursor intensity in the given fraction
      */
@@ -650,12 +663,12 @@ public class PSParameter implements UrParameter {
             return precursorIntensityAveragePerFraction.get(fraction);
         } else {
             return null;
-        }  
+        }
     }
-    
+
     /**
      * Get the summed precursor intensity in the given fraction.
-     * 
+     *
      * @param fraction the fraction
      * @return the summed precursor intensity in the given fraction
      */
@@ -664,7 +677,7 @@ public class PSParameter implements UrParameter {
             return precursorIntensitySummedPerFraction.get(fraction);
         } else {
             return null;
-        }  
+        }
     }
 
     @Override

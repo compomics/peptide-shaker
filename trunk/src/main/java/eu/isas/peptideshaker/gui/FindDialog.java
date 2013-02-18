@@ -1091,7 +1091,7 @@ public class FindDialog extends javax.swing.JDialog {
                         return psParameter.isHidden();
                     case 3:
                         psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                        return psParameter.getGroupClass();
+                        return psParameter.getProteinInferenceClass();
                     case 4:
                         proteinMatch = identification.getProteinMatch(proteinKey);
                         return proteinMatch.getMainMatch();
@@ -1401,7 +1401,7 @@ public class FindDialog extends javax.swing.JDialog {
                         return psParameter.isHidden();
                     case 3:
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
-                        return psParameter.getGroupClass();
+                        return psParameter.getProteinInferenceClass();
                     case 4:
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String accessions = "";

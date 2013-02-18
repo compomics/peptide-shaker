@@ -3947,17 +3947,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
                             includePeptide = true;
                         } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                            includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                    peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                    peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                    peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                    peptideShakerGUI.getIdFilter().getMaxPepLength());
+                            includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, 
+                                                peptideShakerGUI.getSearchParameters().getEnzyme());
                         } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                            includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
-                                    peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                    peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                    peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                    peptideShakerGUI.getIdFilter().getMaxPepLength());
+                            includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, 
+                                                peptideShakerGUI.getSearchParameters().getEnzyme());
                         }
 
                         if (includePeptide) {

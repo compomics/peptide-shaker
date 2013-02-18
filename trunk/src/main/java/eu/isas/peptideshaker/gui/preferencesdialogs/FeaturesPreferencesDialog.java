@@ -1,15 +1,23 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import eu.isas.peptideshaker.export.ExportFactory;
+import eu.isas.peptideshaker.export.ExportScheme;
 import eu.isas.peptideshaker.export.TxtExporter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.Toolkit;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * Dialog for exporting protein, peptide, PSMs and search engine features.
@@ -31,6 +39,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
+    /**
+     * The export factory
+     */
+    private ExportFactory exportFactory = ExportFactory.getInstance();
 
     /**
      * Creates a new ExportPreferencesDialog.
@@ -155,11 +167,15 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         exportPhosphLabel = new javax.swing.JLabel();
         exportMethodsSummaryJButton = new javax.swing.JButton();
         exportMethodsSummaryLabel = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        reportsTable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
         setTitle("Export Features");
-        setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
@@ -361,7 +377,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(proteinStarred)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinHidden)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(proteinSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(slashLabel1)
@@ -549,7 +565,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(uniqueOnlyHelpLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(enzymaticPeptide, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                         .addComponent(peptideValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideStarred))
@@ -573,7 +589,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(peptideSurroundingAA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(peptideHidden, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(peptideSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(slashLabel2)
@@ -745,7 +761,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmScore))
                     .addGroup(psmPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(psmValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmStarred)))
@@ -753,7 +768,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(psmConfidence, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(psmHidden, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(psmSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(slashLabel3)
@@ -913,7 +928,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(assumptionConfidence)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assumptionPrecursor)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(searchEnginesSelectAllLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(slashLabel4)
@@ -1004,12 +1019,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGap(20, 20, 20)
                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fractionsPanelLayout.createSequentialGroup()
-                        .addComponent(nonEnzymaticPeptidesFractionTab, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(fractionsPanelLayout.createSequentialGroup()
-                        .addComponent(fractionMwRange, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(fractionsPanelLayout.createSequentialGroup()
                         .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
                             .addGroup(fractionsPanelLayout.createSequentialGroup()
@@ -1021,14 +1030,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(fractionsExport))
                             .addGroup(fractionsPanelLayout.createSequentialGroup()
-                                .addComponent(precursorIntensitiesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(fractionsPanelLayout.createSequentialGroup()
                                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(precursorIntensitiesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(spectraPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(peptidesPerFraction, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(fractionsPanelLayout.createSequentialGroup()
+                        .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nonEnzymaticPeptidesFractionTab, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fractionMwRange, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         fractionsPanelLayout.setVerticalGroup(
             fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1043,7 +1055,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(fractionMwRange, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nonEnzymaticPeptidesFractionTab, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(fractionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -1129,10 +1141,52 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportMethodsSummaryJButton)
                     .addComponent(exportMethodsSummaryLabel))
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Advanced", projectPanel);
+
+        jLabel2.setText("Select a report:");
+
+        reportsTable.setModel(new ReportsTableModel());
+        jScrollPane1.setViewportView(reportsTable);
+
+        jButton1.setText("Export");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Test", jPanel1);
 
         javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
         featuresPanel.setLayout(featuresPanelLayout);
@@ -1140,7 +1194,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         featuresPanelLayout.setVerticalGroup(
@@ -1235,9 +1289,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void peptideExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportActionPerformed
         outputGenerator.getPeptidesOutput(this, null, null, false, peptideValidated.isSelected(),
-                peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), !proteinStarred.isSelected(), peptidePosition.isSelected(), 
-                peptideSurroundingAA.isSelected(), peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), 
-                precursorCharges.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(), peptideConfidence.isSelected(), true, 
+                peptideAccession.isSelected(), proteinDescriptionPeptideTab.isSelected(), !proteinStarred.isSelected(), peptidePosition.isSelected(),
+                peptideSurroundingAA.isSelected(), peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(),
+                precursorCharges.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(), peptideConfidence.isSelected(), true,
                 peptideStarred.isSelected(), peptideHidden.isSelected(), peptideUniqueOnly.isSelected(), null, enzymaticPeptide.isSelected());
     }//GEN-LAST:event_peptideExportActionPerformed
 
@@ -1800,6 +1854,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void exportMethodsSummaryJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMethodsSummaryJButtonActionPerformed
         // @TODO: implement me!
     }//GEN-LAST:event_exportMethodsSummaryJButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        writeSelectedReport();
+    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
     private javax.swing.JCheckBox assumptionConfidence;
@@ -1827,7 +1885,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel fractionsPanel;
     private javax.swing.JLabel fractionsSelectAllLabel;
     private javax.swing.JButton helpJButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox maximalProteinSetCheckBox;
     private javax.swing.JCheckBox molecularWeight;
     private javax.swing.JCheckBox nonEnzymaticPeptidesFractionTab;
@@ -1890,6 +1952,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox psmTitle;
     private javax.swing.JCheckBox psmValidated;
     private javax.swing.JCheckBox ptmSummary;
+    private javax.swing.JTable reportsTable;
     private javax.swing.JPanel searchEnginePanel;
     private javax.swing.JLabel searchEnginesDeselectAllLabel;
     private javax.swing.JLabel searchEnginesSelectAllLabel;
@@ -1902,4 +1965,115 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JLabel uniqueOnlyHelpLabel;
     // End of variables declaration//GEN-END:variables
+
+    private void writeSelectedReport() {
+
+        // get the file to send the output to
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+
+
+        if (selectedFile != null) {
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
+                    try {
+                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
+                        ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
+                        PSMaps pSMaps = new PSMaps();
+                        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                        ExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(), peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(), null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getIdFilter(), peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), pSMaps);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                    progressDialog.setRunFinished();
+                    progressDialog.dispose();
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Table model for the reports table.
+     */
+    private class ReportsTableModel extends DefaultTableModel {
+
+        private ArrayList<String> exportSchemesNames;
+
+        public ReportsTableModel() {
+            exportSchemesNames = new ArrayList<String>();
+            exportSchemesNames.addAll(exportFactory.getDefaultExportSchemesNames());
+            exportSchemesNames.addAll(exportFactory.getUserSchemesNames());
+        }
+
+        @Override
+        public int getRowCount() {
+            if (exportSchemesNames == null) {
+                return 0;
+            }
+            return exportSchemesNames.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return " ";
+                case 1:
+                    return "Name";
+                case 2:
+                    return "User Report";
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            switch (column) {
+                case 0:
+                    return row + 1;
+                case 1:
+                    return exportSchemesNames.get(row);
+                case 2:
+                    return !exportFactory.getExportScheme(exportSchemesNames.get(row)).isEditable();
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            for (int i = 0; i < getRowCount(); i++) {
+                if (getValueAt(i, columnIndex) != null) {
+                    return getValueAt(i, columnIndex).getClass();
+                }
+            }
+            return String.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+    }
 }

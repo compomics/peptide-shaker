@@ -56,18 +56,26 @@ public class IdentificationFeaturesCache implements Serializable {
         number_of_validated_peptides,
         /**
          * The max mz value for all the PSMs for a given peptide stored as small
-         * object..
+         * object.
          */
-        max_psm_mz_for_peptides
+        max_psm_mz_for_peptides,
+        /**
+         * The non-tryptic peptides. Stored as a big object.
+         */
+        tryptic_protein,
+        /**
+         * The number of unique peptides. Stored as a small object. @TODO: do we need the list of them?
+         */
+        unique_peptides
     }
     /**
      * The number of values kept in memory for small objects.
      */
-    private final int smallObjectsCacheSize = 10000; // @TODO: should perhaps be made bigger now that number_of_validated_peptides and max_psm_mz_for_peptides have been added??
+    private final int smallObjectsCacheSize = 100000; 
     /**
      * The number of values kept in memory for big objects.
      */
-    private final int bigObjectsCacheSize = 10;
+    private final int bigObjectsCacheSize = 100;
     /**
      * Separator used to concatenate strings.
      */
@@ -143,6 +151,7 @@ public class IdentificationFeaturesCache implements Serializable {
 
         switch (type) {
             case coverable_AA:
+            case tryptic_protein:
                 bigObjectsCache.remove(type);
                 for (String key : bigObjectsInCache) {
                     if (key.contains(typeKey)) {
@@ -160,6 +169,7 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_validated_spectra:
             case number_of_validated_peptides:
             case max_psm_mz_for_peptides:
+            case unique_peptides:
                 smallObjectsCache.remove(type);
                 for (String key : smallObjectsInCache) {
                     if (key.contains(typeKey)) {
@@ -183,6 +193,7 @@ public class IdentificationFeaturesCache implements Serializable {
     public void addObject(ObjectType type, String objectKey, Object object) {
         switch (type) {
             case coverable_AA:
+            case tryptic_protein:
                 if (!bigObjectsCache.containsKey(type)) {
                     bigObjectsCache.put(type, new HashMap<String, Object>());
                 }
@@ -215,6 +226,7 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_validated_spectra:
             case number_of_validated_peptides:
             case max_psm_mz_for_peptides:
+            case unique_peptides:
                 if (!smallObjectsCache.containsKey(type)) {
                     smallObjectsCache.put(type, new HashMap<String, Object>());
                 }
@@ -254,6 +266,7 @@ public class IdentificationFeaturesCache implements Serializable {
         Object result = null;
         switch (type) {
             case coverable_AA:
+            case tryptic_protein:
                 if (bigObjectsCache.containsKey(type)) {
                     result = bigObjectsCache.get(type).get(objectKey);
                 }
@@ -275,6 +288,7 @@ public class IdentificationFeaturesCache implements Serializable {
             case number_of_validated_spectra:
             case number_of_validated_peptides:
             case max_psm_mz_for_peptides:
+            case unique_peptides:
                 if (smallObjectsCache.containsKey(type)) {
                     result = smallObjectsCache.get(type).get(objectKey);
                 }
@@ -515,6 +529,10 @@ public class IdentificationFeaturesCache implements Serializable {
                 return "#validated_peptides";
             case max_psm_mz_for_peptides:
                 return "max_psm_mz_for_peptides";
+            case tryptic_protein:
+                return "tryptic_protein";
+            case unique_peptides:
+                return "unique_peptides";
             default:
                 return "default";
         }
@@ -545,6 +563,10 @@ public class IdentificationFeaturesCache implements Serializable {
             return ObjectType.number_of_validated_peptides;
         } else if (objectTypeAsString.equals("max_psm_mz_for_peptides")) {
             return ObjectType.max_psm_mz_for_peptides;
+        } else if (objectTypeAsString.equals("tryptic_protein")) {
+            return ObjectType.tryptic_protein;
+        } else if (objectTypeAsString.equals("unique_peptides")) {
+            return ObjectType.unique_peptides;
         } else {
             return null;
         }

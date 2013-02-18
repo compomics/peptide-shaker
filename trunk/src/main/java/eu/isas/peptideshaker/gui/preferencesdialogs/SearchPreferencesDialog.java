@@ -707,10 +707,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
                 // html content 
                 JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                        + "The cleavage site of the selected enzyme is not configured.<br><br>"
-                        + "PeptideShaker functionalities will be limited.<br><br>"
-                        + "Edit enzyme configuration in:<br>"
-                        + "<i>peptideshaker_enzymes.xml</i> located in the conf folder.<br><br>"
+                        + "The cleavage site of the selected enzyme is not compatible with all PeptideShaker functionalities.<br><br>"
                         + "For more information on enzymes, contact us via:<br>"
                         + "<a href=\"http://groups.google.com/group/peptide-shaker\">http://groups.google.com/group/peptide-shaker</a>."
                         + "</body></html>");
@@ -753,6 +750,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private void addModificationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addModificationsActionPerformed
 
+        Double fragmentIonAccuracy = null;
+        try {
+            fragmentIonAccuracy = new Double(fragmentIonAccuracyTxt.getText().trim());
+        } catch (Exception e) {
+            
+        }
+        if (fragmentIonAccuracy == null) {
+                JOptionPane.showMessageDialog(this, "Please set the fragment ion accuracy.", "Missing Fragment Accuracy", JOptionPane.WARNING_MESSAGE);
+                return;
+        }
         int[] selectedRows = availableModificationsTable.getSelectedRows();
 
         for (int i = selectedRows.length - 1; i >= 0; i--) {
@@ -771,7 +778,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
             ArrayList<String> conflicts = new ArrayList<String>();
             for (String oldName : notFixedModifications) {
                 PTM oldPTM = ptmFactory.getPTM(oldName);
-                if (Math.abs(oldPTM.getMass() - ptm.getMass()) < searchParameters.getFragmentIonAccuracy()
+                if (Math.abs(oldPTM.getMass() - ptm.getMass()) < fragmentIonAccuracy
                         && oldPTM.getPattern().isSameAs(ptm.getPattern())) {
                     conflicts.add(oldName);
                 }

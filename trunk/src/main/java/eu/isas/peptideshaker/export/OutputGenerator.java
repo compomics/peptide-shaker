@@ -340,7 +340,7 @@ public class OutputGenerator {
                                                 }
                                             }
                                             if (piDetails) {
-                                                writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
+                                                writer.write(proteinPSParameter.getProteinInferenceClassAsString() + SEPARATOR);
                                             }
                                             if (description) {
                                                 try {
@@ -376,10 +376,7 @@ public class OutputGenerator {
                                                     if (peptidePSParameter.isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+                                                                peptideShakerGUI.getSearchParameters().getEnzyme());
 
                                                         if (!isEnzymatic) {
                                                             allPeptidesEnzymatic = false;
@@ -808,7 +805,7 @@ public class OutputGenerator {
                                                 }
 
                                                 if (proteinInferenceType) {
-                                                    writer.write(peptidePSParameter.getGroupName() + SEPARATOR);
+                                                    writer.write(peptidePSParameter.getProteinInferenceClassAsString() + SEPARATOR);
                                                 }
 
                                                 if (location || surroundings) {
@@ -876,10 +873,7 @@ public class OutputGenerator {
 
                                                 if (enzymatic) {
                                                     boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
-                                                            peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                            peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                                            peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                                            peptideShakerGUI.getIdFilter().getMaxPepLength());
+                                                            peptideShakerGUI.getSearchParameters().getEnzyme());
 
                                                     writer.write(isEnzymatic + SEPARATOR);
                                                 }
@@ -1977,7 +1971,7 @@ public class OutputGenerator {
                                 }
                             }
                             writer.write(SEPARATOR);
-                            writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
+                            writer.write(proteinPSParameter.getProteinInferenceClassAsString() + SEPARATOR);
                             try {
                                 writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
                             } catch (Exception e) {
@@ -2682,7 +2676,7 @@ public class OutputGenerator {
                                                 writer.write(SEPARATOR);
                                             }
                                             if (piDetails) {
-                                                writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
+                                                writer.write(proteinPSParameter.getProteinInferenceClassAsString() + SEPARATOR);
                                             }
                                             if (description) {
                                                 try {
@@ -2834,10 +2828,7 @@ public class OutputGenerator {
                                                     if (peptidePSParameter.isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+                                                                peptideShakerGUI.getSearchParameters().getEnzyme());
 
                                                         if (!isEnzymatic) {
                                                             allPeptidesEnzymatic = false;

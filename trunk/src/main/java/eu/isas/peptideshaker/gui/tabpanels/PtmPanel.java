@@ -4106,7 +4106,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 2:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(displayedPeptides.get(row), probabilities);
-                        return probabilities.getGroupClass();
+                        return probabilities.getProteinInferenceClass();
                     case 3:
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(displayedPeptides.get(row), true, true, true);
                     case 4:
@@ -4202,7 +4202,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     case 2:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getPeptideMatchParameter(relatedPeptides.get(row), probabilities);
-                        return probabilities.getGroupClass();
+                        return probabilities.getProteinInferenceClass();
                     case 3:
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(relatedPeptides.get(row), true, true, true);
                     case 4:

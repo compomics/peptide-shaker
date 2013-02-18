@@ -33,6 +33,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
+import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Point;
 import java.awt.Toolkit;
 import org.apache.commons.cli.*;
@@ -136,6 +137,7 @@ public class PeptideShakerCLI implements Callable {
         // Set the project details
         ProjectDetails projectDetails = new ProjectDetails();
         projectDetails.setCreationDate(new Date());
+        projectDetails.setPeptideShakerVersion(new Properties().getVersion());
 
         // Get the search parameters
         SearchParameters searchParameters = cliInputBean.getIdentificationParameters();

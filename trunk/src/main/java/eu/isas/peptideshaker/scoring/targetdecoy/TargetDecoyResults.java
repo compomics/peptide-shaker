@@ -34,15 +34,15 @@ public class TargetDecoyResults implements Serializable {
      */
     private double fnrLimit;
     /**
-     * The estimated amount of false positives
+     * The estimated number of false positives
      */
     private double nFP;
     /**
-     * The estimated amount of true positives
+     * The estimated number of true positives
      */
     private double n;
     /**
-     * The estimated amount of true positives reachable
+     * The estimated number of true positives reachable
      */
     private double nTPTotal;
     /**
@@ -197,8 +197,8 @@ public class TargetDecoyResults implements Serializable {
     }
 
     /**
-     * Returns the amount of retained hits
-     * @return the amount of retained hits
+     * Returns the number of retained hits
+     * @return the number of retained hits
      */
     public double getN() {
         return n;

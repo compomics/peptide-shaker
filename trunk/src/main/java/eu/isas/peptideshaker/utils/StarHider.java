@@ -770,10 +770,10 @@ public class StarHider {
 
             if (proteinFilter.getPi() != 5) {
                 if (proteinFilter.getPiComparison() == ComparisonType.NOT_EQUAL
-                        && psParameter.getGroupClass() == proteinFilter.getPi()) {
+                        && psParameter.getProteinInferenceClass() == proteinFilter.getPi()) {
                     return false;
                 } else if (proteinFilter.getPiComparison() == ComparisonType.EQUAL
-                        && psParameter.getGroupClass() != proteinFilter.getPi()) {
+                        && psParameter.getProteinInferenceClass() != proteinFilter.getPi()) {
                     return false;
                 }
             }
@@ -976,10 +976,10 @@ public class StarHider {
 
             if (peptideFilter.getPi() != 5) {
                 if (peptideFilter.getPiComparison() == ComparisonType.NOT_EQUAL
-                        && psParameter.getGroupClass() == peptideFilter.getPi()) {
+                        && psParameter.getProteinInferenceClass() == peptideFilter.getPi()) {
                     return false;
                 } else if (peptideFilter.getPiComparison() == ComparisonType.EQUAL
-                        && psParameter.getGroupClass() != peptideFilter.getPi()) {
+                        && psParameter.getProteinInferenceClass() != peptideFilter.getPi()) {
                     return false;
                 }
             }

@@ -1541,6 +1541,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
     private ProjectDetails getProjectDetails() {
         ProjectDetails projectDetails = new ProjectDetails();
         projectDetails.setCreationDate(new Date());
+        projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
         return projectDetails;
     }
 
