@@ -154,7 +154,7 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 2:
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
-                    return pSParameter.getGroupClass();
+                    return pSParameter.getProteinInferenceClass();
                 case 3:
                     proteinKey = proteinKeys.get(row);
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);

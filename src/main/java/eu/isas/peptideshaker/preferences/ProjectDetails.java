@@ -75,6 +75,11 @@ public class ProjectDetails implements Serializable {
      * The PRIDE output folder.
      */
     private String prideOutputFolder;
+    /**
+     * The PeptideShaker version used to create the project
+     */
+    private String peptideShakerVersion;
+    
     
 
     /**
@@ -140,6 +145,25 @@ public class ProjectDetails implements Serializable {
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    /**
+     * Returns the PeptideShaker version used to create the project
+     * @return the PeptideShaker version used to create the project
+     */
+    public String getPeptideShakerVersion() {
+        if (peptideShakerVersion == null) {
+            peptideShakerVersion = "unknown";
+        }
+        return peptideShakerVersion;
+    }
+
+    /**
+     * Sets the PeptideShaker version used to create the project
+     * @param peptideShakerVersion the PeptideShaker version used to create the project
+     */
+    public void setPeptideShakerVersion(String peptideShakerVersion) {
+        this.peptideShakerVersion = peptideShakerVersion;
     }
 
     /**

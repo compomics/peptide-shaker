@@ -144,7 +144,7 @@ public class PeptideTableModel extends DefaultTableModel {
                 case 2:
                     peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
-                    return pSParameter.getGroupClass();
+                    return pSParameter.getProteinInferenceClass();
                 case 3:
                     peptideKey = peptideKeys.get(row);
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);

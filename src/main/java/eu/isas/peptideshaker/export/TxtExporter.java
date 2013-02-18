@@ -33,7 +33,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Contains methods for exporting the search engine results to text files.
- *
+ * @deprecated use the standard reports instead
  * @author Marc Vaudel
  */
 public class TxtExporter {
@@ -275,7 +275,7 @@ public class TxtExporter {
             }
         }
 
-        line.append(SEPARATOR).append(probabilities.getGroupClass()).append(SEPARATOR);
+        line.append(SEPARATOR).append(probabilities.getProteinInferenceClass()).append(SEPARATOR);
         line.append(proteinMatch.getPeptideCount()).append(SEPARATOR);
 
         int nSpectra = 0;
@@ -461,7 +461,7 @@ public class TxtExporter {
         if (peptideMatch.isDecoy()) {
             line.append("1").append(SEPARATOR);
         } else {
-            line.append("o").append(SEPARATOR);
+            line.append("0").append(SEPARATOR);
         }
 
         if (probabilities.isValidated()) {

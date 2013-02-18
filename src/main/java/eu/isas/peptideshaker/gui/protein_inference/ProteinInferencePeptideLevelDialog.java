@@ -70,7 +70,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
-        protInferenceTypeCmb.setSelectedIndex(psParameter.getGroupClass());
+        protInferenceTypeCmb.setSelectedIndex(psParameter.getProteinInferenceClass());
 
         protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
@@ -622,8 +622,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         PSParameter psParameter = new PSParameter();
         try {
             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideMatch, psParameter);
-            if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
-                psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
+            if (psParameter.getProteinInferenceClass() != protInferenceTypeCmb.getSelectedIndex()) {
+                psParameter.setProteinInferenceClass(protInferenceTypeCmb.getSelectedIndex());
                 peptideShakerGUI.getIdentification().updatePeptideMatchParameter(peptideMatch, psParameter);
                 peptideShakerGUI.setDataSaved(false);
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);

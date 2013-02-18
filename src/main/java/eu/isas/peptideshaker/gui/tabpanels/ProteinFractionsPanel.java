@@ -449,16 +449,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+                                                peptideShakerGUI.getSearchParameters().getEnzyme());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
-                                                peptideShakerGUI.getSearchParameters().getnMissedCleavages(),
-                                                peptideShakerGUI.getIdFilter().getMinPepLength(),
-                                                peptideShakerGUI.getIdFilter().getMaxPepLength());
+                                                peptideShakerGUI.getSearchParameters().getEnzyme());
                                     }
 
                                     if (includePeptide && selectedRows.length == 1) {
