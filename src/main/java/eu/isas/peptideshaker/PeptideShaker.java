@@ -1274,6 +1274,10 @@ public class PeptideShaker {
                                                 int shiftedLocalization = ref + localization;
                                                 if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
                                                     newLocalizationCandidates.add(shiftedLocalization);
+                                                    PTM ptm = ptmFactory.getPTM(modification);
+                                                    if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
+                                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                                    }
                                                 }
                                             }
                                         }
@@ -1293,6 +1297,10 @@ public class PeptideShaker {
                                                 if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
                                                         && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
                                                     newLocalizationCandidates.add(shiftedLocalization);
+                                                    PTM ptm = ptmFactory.getPTM(modification);
+                                                    if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
+                                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                                    }
                                                 }
                                             }
                                         }
