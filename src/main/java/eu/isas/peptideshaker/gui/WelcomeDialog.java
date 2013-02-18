@@ -7,6 +7,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
+import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import java.awt.Toolkit;
 import java.io.File;
 import javax.swing.*;
@@ -616,12 +617,12 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void reshakeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
-//        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-//        dispose();
-//        new PrideReshakeGui(peptideShakerGUI, true);
-//        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-//        peptideShakerGUI.close();
+        //JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        dispose();
+        new PrideReshakeGui(peptideShakerGUI, true);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        peptideShakerGUI.close();
     }//GEN-LAST:event_reshakeJButtonActionPerformed
 
     /**

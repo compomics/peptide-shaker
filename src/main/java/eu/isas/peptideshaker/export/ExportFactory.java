@@ -1,13 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -36,8 +30,6 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.awt.Frame;
-import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -47,35 +39,34 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import javax.swing.JDialog;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This factory is used to manage and generate reports
+ * This factory is used to manage and generate reports-
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ExportFactory implements Serializable {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
     static final long serialVersionUID = 1979509878742026942L;
     /**
-     * The instance of the factory
+     * The instance of the factory.
      */
     private static ExportFactory instance = null;
     /**
-     * Userdefined factory containing the user schemes.
+     * User defined factory containing the user schemes.
      */
     private static final String SERIALIZATION_FILE = System.getProperty("user.home") + "/.peptideshaker/exportFactory.cus";
     /**
-     * The user export schemes
+     * The user export schemes.
      */
     private HashMap<String, ExportScheme> userSchemes = new HashMap<String, ExportScheme>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     private ExportFactory() {
     }
@@ -118,7 +109,7 @@ public class ExportFactory implements Serializable {
     }
 
     /**
-     * Returns a list of the name of the available user schemes
+     * Returns a list of the name of the available user schemes.
      *
      * @return a list of the implemented user schemes
      */
@@ -127,7 +118,7 @@ public class ExportFactory implements Serializable {
     }
 
     /**
-     * Returns the export scheme indexed by the given name
+     * Returns the export scheme indexed by the given name.
      *
      * @param schemeName the name of the desired export scheme
      * @return the desired export scheme
@@ -141,7 +132,7 @@ public class ExportFactory implements Serializable {
     }
 
     /**
-     * Returns a list of the default export schemes
+     * Returns a list of the default export schemes.
      *
      * @return a list of the default export schemes
      */
@@ -151,7 +142,7 @@ public class ExportFactory implements Serializable {
 
     /**
      * Writes the desired export in text format. If an argument is not needed,
-     * provide null (at your own risks)
+     * provide null (at your own risks).
      *
      * @TODO: implement other formats, put sometimes text instead of tables
      *
@@ -192,8 +183,18 @@ public class ExportFactory implements Serializable {
      * @param psMaps the PeptideShaker validation maps (mandatory for the
      * Validation section)
      * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws SQLException 
+     * @throws ClassNotFoundException 
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException  
      */
-    public static void writeExport(ExportScheme exportScheme, File destinationFile, String experiment, String sample, int replicateNumber, ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys, String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter, PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+    public static void writeExport(ExportScheme exportScheme, File destinationFile, String experiment, String sample, int replicateNumber, 
+            ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
+            SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys, 
+            String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter, 
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps) 
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
 
         String mainTitle = exportScheme.getMainTitle();
@@ -245,7 +246,7 @@ public class ExportFactory implements Serializable {
     }
 
     /**
-     * Writes section separation lines using the given writer
+     * Writes section separation lines using the given writer.
      *
      * @param writer the writer
      * @param nSeparationLines the number of separation lines to write
@@ -258,7 +259,7 @@ public class ExportFactory implements Serializable {
     }
 
     /**
-     * Returns the default schemes available
+     * Returns the default schemes available.
      *
      * @return a list containing the default schemes
      */

@@ -1315,7 +1315,8 @@ public class PeptideShaker {
                                 if (modificationMatch != null && newLocalization != null) {
                                     PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                                     if (!peptide.getPotentialModificationSites(ptm).contains(newLocalization)) {
-                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm() + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
+                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm() 
+                                                + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
                                     }
                                     modificationMatch.setInferred(true);
                                     modificationMatch.setModificationSite(newLocalization);

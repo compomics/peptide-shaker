@@ -1,21 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
-import com.lowagie.text.pdf.PRTokeniser;
 import eu.isas.peptideshaker.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * This enum lists the export features linked to the validation process
+ * This enum lists the export features linked to the validation process.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum ValidationFeatures implements ExportFeature {
-    
+
     validated_protein("Proteins Validated", "The number of validated proteins."),
     total_protein("Proteins Total", "The estimated total number of proteins."),
     protein_fdr("Proteins FDR Limit", "The estimated protein False Discovery Rate (FDR)."),
@@ -37,22 +31,21 @@ public enum ValidationFeatures implements ExportFeature {
     psm_confidence("PSM Confidence Limit", "The lowest confidence among validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%."),
     psm_pep("PSM PEP Limit", "The highest Posterior Error Probability (PEP) among validated Peptide Spectrum Matches (PSMs). Note that PSMs are grouped by identified charge when statistical significance is ensured, i.e. \"Confidence accuracy\" < 1%."),
     psm_accuracy("PSM Confidence Accuracy", "The estimated Peptide Spectrum Match (PSM) Posterior Error Probability (PEP) and confidence estimation accuracy. Note that PSMs are grouped by identified charge when statistical significance is ensured based on this parameter: \"Confidence accuracy\" < 1%.");
-    
     /**
-     * The title of the feature which will be used for column heading
+     * The title of the feature which will be used for column heading.
      */
     public String title;
     /**
-     * The description of the feature
+     * The description of the feature.
      */
     public String description;
     /**
-     * The type of export feature
+     * The type of export feature.
      */
     public final static String type = "Target/Decoy Validation Summary";
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
@@ -82,5 +75,4 @@ public enum ValidationFeatures implements ExportFeature {
     public String getFeatureFamily() {
         return type;
     }
-    
 }

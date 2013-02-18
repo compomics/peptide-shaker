@@ -1,20 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * This class lists the export features linked to the spectrum identification
+ * This class lists the export features linked to the spectrum identification.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum SearchFeatures implements ExportFeature {
-    
+
     precursor_accuracy_unit("Precursor Accuracy Unit", "Unit of the precursor accuracy: ppm or Da"),
     precursor_tolerance("Precursor Ion m/z Tolerance", "Precursor ion m/z tolerance used for the search"),
     fragment_tolerance("Fragment Ion m/z Tolerance", "Fragment ion m/z tolerance used for the search."),
@@ -34,24 +29,21 @@ public enum SearchFeatures implements ExportFeature {
     fixed_modifications("Fixed Modifications", "The fixed posttranslational modifications used for the search."),
     variable_modifications("Variable Modifications", "The variable posttranslational modifications used for the search."),
     refinement_modifications("Refinement Modifications", "The refinement posttranslational modifications used for the search, typically a second pass search.");
-    
-    
-    
     /**
-     * The title of the feature which will be used for column heading
+     * The title of the feature which will be used for column heading.
      */
     public String title;
     /**
-     * The description of the feature
+     * The description of the feature.
      */
     public String description;
     /**
-     * The type of export feature
+     * The type of export feature.
      */
     public final static String type = "Database Search Parameters";
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param title title of the feature
      * @param description description of the feature
@@ -100,5 +92,4 @@ public enum SearchFeatures implements ExportFeature {
     public String getFeatureFamily() {
         return type;
     }
-    
 }
