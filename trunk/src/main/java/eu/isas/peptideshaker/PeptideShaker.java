@@ -1268,7 +1268,6 @@ public class PeptideShaker {
                                         int tempIndex, ref = 0;
                                         String tempSequence = sequence;
                                         while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
-                                            tempSequence = tempSequence.substring(tempIndex + 1);
                                             ref += tempIndex;
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = ref + localization;
@@ -1280,6 +1279,8 @@ public class PeptideShaker {
                                                     }
                                                 }
                                             }
+                                            tempSequence = tempSequence.substring(tempIndex + 1);
+                                            ref++;
                                         }
                                     }
                                 } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
@@ -1290,7 +1291,6 @@ public class PeptideShaker {
                                         int tempIndex, ref = 0;
                                         String tempSequence = otherSequence;
                                         while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
-                                            tempSequence = tempSequence.substring(tempIndex + 1);
                                             ref += tempIndex;
                                             for (int localization : tempLocalizations) {
                                                 int shiftedLocalization = localization - ref;
@@ -1303,6 +1303,8 @@ public class PeptideShaker {
                                                     }
                                                 }
                                             }
+                                            tempSequence = tempSequence.substring(tempIndex + 1);
+                                            ref++;
                                         }
                                     }
                                 }
