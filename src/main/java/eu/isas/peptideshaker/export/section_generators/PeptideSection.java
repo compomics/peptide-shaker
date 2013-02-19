@@ -101,6 +101,14 @@ public class PeptideSection {
                 writer.write(exportFeature.getTitle());
             }
             writer.newLine();
+        } 
+        if (keys == null) {
+            if (proteinMatchKey != null) {
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+                keys = proteinMatch.getPeptideMatches();
+            } else {
+                keys = identification.getPeptideIdentification();
+            }
         }
         PSParameter psParameter = new PSParameter();
         PeptideMatch peptideMatch = null;
@@ -128,12 +136,14 @@ public class PeptideSection {
                             proteins += accession;
                         }
                         writer.write(proteins + separator);
+                        break;
                     case confidence:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             parameterKey = peptideKey;
                         }
                         writer.write(psParameter.getPeptideConfidence() + separator);
+                        break;
                     case decoy:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -144,6 +154,7 @@ public class PeptideSection {
                         } else {
                             writer.write(0 + separator);
                         }
+                        break;
                     case hidden:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -154,6 +165,7 @@ public class PeptideSection {
                         } else {
                             writer.write(0 + separator);
                         }
+                        break;
                     case localization_confidence:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -199,6 +211,7 @@ public class PeptideSection {
                             parameterKey = peptideKey;
                         }
                         writer.write(psParameter.getProteinInferenceClassAsString());
+                        break;
                     case position:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -227,12 +240,14 @@ public class PeptideSection {
                             start += "; ";
                         }
                         writer.write(start + separator);
+                        break;
                     case psms:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             matchKey = peptideKey;
                         }
                         writer.write(peptideMatch.getSpectrumCount() + separator);
+                        break;
                     case ptms:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -259,14 +274,17 @@ public class PeptideSection {
                             }
                         }
                         writer.write(ptms + separator);
+                        break;
                     case score:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             parameterKey = peptideKey;
                         }
                         writer.write(psParameter.getPsmScore() + separator);
+                        break;
                     case sequence:
                         writer.write(Peptide.getSequence(peptideKey) + separator);
+                        break;
                     case starred:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -277,6 +295,7 @@ public class PeptideSection {
                         } else {
                             writer.write(0 + separator);
                         }
+                        break;
                     case aaBefore:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -306,6 +325,7 @@ public class PeptideSection {
                             }
                         }
                         writer.write(subSequence + separator);
+                        break;
                     case aaAfter:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -335,6 +355,7 @@ public class PeptideSection {
                             }
                         }
                         writer.write(subSequence + separator);
+                        break;
                     case unique:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -345,6 +366,7 @@ public class PeptideSection {
                         } else {
                             writer.write(0 + separator);
                         }
+                        break;
                     case validated:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -355,9 +377,10 @@ public class PeptideSection {
                         } else {
                             writer.write(0 + separator);
                         }
+                        break;
                     case validated_psms:
                         writer.write(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey) + separator);
-
+                        break;
                     default:
                         writer.write("Not implemented");
                 }

@@ -652,11 +652,11 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public int getNUniquePeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
-        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey);
 
         if (result == null) {
             result = estimateNUniquePeptides(proteinMatchKey);
-            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey, result);
+            identificationFeaturesCache.addObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey, result);
         }
         return result;
     }

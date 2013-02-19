@@ -100,6 +100,9 @@ public class ProteinSection {
             }
             writer.newLine();
         }
+        if (keys == null) {
+            keys = identification.getProteinIdentification();
+        }
         PSParameter psParameter = new PSParameter();
         ProteinMatch proteinMatch = null;
         String matchKey = "", parameterKey = "";
