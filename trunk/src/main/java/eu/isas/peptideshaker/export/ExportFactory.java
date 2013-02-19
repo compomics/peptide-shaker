@@ -130,6 +130,22 @@ public class ExportFactory implements Serializable {
         }
         return exportScheme;
     }
+    
+    /**
+     * Removes a user scheme
+     * @param schemeName the name of the scheme to remove
+     */
+    public void removeExportScheme(String schemeName) {
+        userSchemes.remove(schemeName);
+    }
+    
+    /**
+     * Adds an export scheme to the map of user schemes
+     * @param exportScheme the new export scheme, will be accessible via its name
+     */
+    public void addExportScheme(ExportScheme exportScheme) {
+        userSchemes.put(exportScheme.getName(), exportScheme);
+    }
 
     /**
      * Returns a list of the default export schemes.
@@ -258,6 +274,21 @@ public class ExportFactory implements Serializable {
         }
     }
 
+    public static ArrayList<String> getImplementedSections() {
+        ArrayList<String> result = new ArrayList<String>();
+        result.add(AnnotationFeatures.type);
+        result.add(InputFilterFeatures.type);
+        result.add(PeptideFeatures.type);
+        result.add(PsmFeatures.type);
+        result.add(ProjectFeatures.type);
+        result.add(ProteinFeatures.type);
+        result.add(PtmScoringFeatures.type);
+        result.add(SearchFeatures.type);
+        result.add(SpectrumCountingFeatures.type);
+        result.add(ValidationFeatures.type);
+        return result;
+    }
+    
     /**
      * Returns the default schemes available.
      *
@@ -329,19 +360,27 @@ public class ExportFactory implements Serializable {
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 0, false);
 
         // Certificate of analysis
+        ArrayList<String> sectionsList = new ArrayList<String>();
         exportFeatures = new ArrayList<ExportFeature>();
+        sectionsList.add(ProjectFeatures.type);
         exportFeatures.add(ProjectFeatures.peptide_shaker);
         exportFeatures.add(ProjectFeatures.date);
         exportFeatures.add(ProjectFeatures.experiment);
         exportFeatures.add(ProjectFeatures.sample);
         exportFeatures.add(ProjectFeatures.replicate);
+        sectionsList.add(SearchFeatures.type);
         exportFeatures.addAll(Arrays.asList(SearchFeatures.values()));
+        sectionsList.add(InputFilterFeatures.type);
         exportFeatures.addAll(Arrays.asList(InputFilterFeatures.values()));
+        sectionsList.add(ValidationFeatures.type);
         exportFeatures.addAll(Arrays.asList(ValidationFeatures.values()));
+        sectionsList.add(PtmScoringFeatures.type);
         exportFeatures.addAll(Arrays.asList(PtmScoringFeatures.values()));
+        sectionsList.add(SpectrumCountingFeatures.type);
         exportFeatures.addAll(Arrays.asList(SpectrumCountingFeatures.values()));
+        sectionsList.add(AnnotationFeatures.type);
         exportFeatures.addAll(Arrays.asList(AnnotationFeatures.values()));
-        ExportScheme coa = new ExportScheme("Certificate of Analysis", false, exportFeatures, "\t", true, true, 3, true, "Certificate of Analysis");
+        ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, "\t", true, true, 3, true, "Certificate of Analysis");
 
         HashMap<String, ExportScheme> defaultSchemes = new HashMap<String, ExportScheme>();
         defaultSchemes.put(proteinReport.getName(), proteinReport);

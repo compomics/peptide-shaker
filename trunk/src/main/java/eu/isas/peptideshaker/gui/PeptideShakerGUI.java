@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
+import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
+import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ImportSettingsDialogParent;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;

@@ -105,11 +105,24 @@ public class PsmSection {
             }
             writer.newLine();
         }
+        HashMap<String, ArrayList<String>> psmMap = new HashMap<String, ArrayList<String>>();
+        if (keys == null) {
+            psmMap = identification.getSpectrumIdentificationMap();
+        } else {
+            for (String key : keys) {
+                String fileName = Spectrum.getSpectrumFile(key);
+                if (!psmMap.containsKey(fileName)) {
+                    psmMap.put(fileName, new ArrayList<String>());
+                }
+                psmMap.get(fileName).add(key);
+            }
+        }
         PSParameter psParameter = new PSParameter();
         SpectrumMatch spectrumMatch = null;
         String matchKey = "", parameterKey = "";
         int line = 1;
-        for (String spectrumKey : keys) {
+        for (String spectrumFile : psmMap.keySet()) {
+        for (String spectrumKey : psmMap.get(spectrumFile)) {
             if (indexes) {
                 writer.write(line + separator);
             }
@@ -235,7 +248,7 @@ public class PsmSection {
                         break;
                     case confidence:
                         if (!parameterKey.equals(spectrumKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                             parameterKey = spectrumKey;
                         }
                         writer.write(psParameter.getPsmConfidence() + separator);
@@ -253,7 +266,7 @@ public class PsmSection {
                         break;
                     case hidden:
                         if (!parameterKey.equals(spectrumKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                             parameterKey = spectrumKey;
                         }
                         if (psParameter.isHidden()) {
@@ -337,7 +350,7 @@ public class PsmSection {
                         break;
                     case score:
                         if (!parameterKey.equals(spectrumKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                             parameterKey = spectrumKey;
                         }
                         writer.write(psParameter.getPsmProbabilityScore() + separator);
@@ -347,14 +360,14 @@ public class PsmSection {
                             spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                             matchKey = spectrumKey;
                         }
-                        writer.write(spectrumMatch.getBestAssumption().getPeptide().getSequence());
+                        writer.write(spectrumMatch.getBestAssumption().getPeptide().getSequence() + separator);
                         break;
                     case spectrum_charge:
                         precursor = spectrumFactory.getPrecursor(spectrumKey);
                         writer.write(precursor.getPossibleChargesAsString() + separator);
                         break;
                     case spectrum_file:
-                        writer.write(Spectrum.getSpectrumFile(spectrumKey) + separator);
+                        writer.write(spectrumFile + separator);
                         break;
                     case spectrum_number:
                         writer.write(spectrumFactory.getSpectrum(spectrumKey).getScanNumber() + separator);
@@ -364,7 +377,7 @@ public class PsmSection {
                         break;
                     case starred:
                         if (!parameterKey.equals(spectrumKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                             parameterKey = spectrumKey;
                         }
                         if (psParameter.isStarred()) {
@@ -382,7 +395,7 @@ public class PsmSection {
                         break;
                     case validated:
                         if (!parameterKey.equals(spectrumKey)) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(spectrumKey, psParameter);
+                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                             parameterKey = spectrumKey;
                         }
                         if (psParameter.isValidated()) {
@@ -397,6 +410,7 @@ public class PsmSection {
             }
             writer.newLine();
             line++;
+        }
         }
     }
 

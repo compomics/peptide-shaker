@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.gui.preferencesdialogs;
+package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;

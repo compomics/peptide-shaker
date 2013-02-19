@@ -18,6 +18,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class outputs the validation related export features
@@ -85,11 +86,16 @@ public class ValidationSection {
             switch (validationFeatures) {
                 case peptide_accuracy:
                     PeptideSpecificMap peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    ArrayList<String> peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double pmin = 0;
                         int nMax = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getnMax();
                         if (nMax != 0) {
@@ -102,11 +108,16 @@ public class ValidationSection {
                     break;
                 case peptide_confidence:
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -115,11 +126,16 @@ public class ValidationSection {
                     break;
                 case peptide_fdr:
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFdrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -128,11 +144,16 @@ public class ValidationSection {
                     break;
                 case peptide_fnr:
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getFnrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -141,11 +162,16 @@ public class ValidationSection {
                     break;
                 case peptide_pep:
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double result = 100 - peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -154,11 +180,16 @@ public class ValidationSection {
                     break;
                 case total_peptide:
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getnTPTotal();
                         writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
@@ -167,11 +198,16 @@ public class ValidationSection {
                     break;
                 case validated_peptide:
                     peptideTargetDecoyMap = psMaps.getPeptideSpecificMap();
-                    for (String peptideKey : peptideTargetDecoyMap.getKeys()) {
+                    peptideKeys = peptideTargetDecoyMap.getKeys();
+                    for (String peptideKey : peptideKeys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write(peptideKey + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (peptideKeys.size() > 1) {
+                            title = peptideKey + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         double result = peptideTargetDecoyMap.getTargetDecoyMap(peptideKey).getTargetDecoyResults().getN();
                         writer.write(Util.roundDouble(result, 0) + "");
                         writer.newLine();
@@ -262,11 +298,16 @@ public class ValidationSection {
                 case psm_accuracy:
                     PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     HashMap<Integer, String> psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    Set<Integer> keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         pmin = 0;
                         nMax = psmTargetDecoyMap.getTargetDecoyMap(charge).getnMax();
                         if (nMax != 0) {
@@ -280,11 +321,16 @@ public class ValidationSection {
                 case psm_confidence:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -294,11 +340,16 @@ public class ValidationSection {
                 case psm_fdr:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge).getTargetDecoyResults().getFdrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -308,11 +359,16 @@ public class ValidationSection {
                 case psm_fnr:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge).getTargetDecoyResults().getFnrLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -322,11 +378,16 @@ public class ValidationSection {
                 case psm_pep:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         result = 100 - psmTargetDecoyMap.getTargetDecoyMap(charge).getTargetDecoyResults().getConfidenceLimit();
                         writer.write(Util.roundDouble(result, 2) + " %");
                         writer.newLine();
@@ -336,11 +397,16 @@ public class ValidationSection {
                 case total_psm:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge).getTargetDecoyResults().getnTPTotal();
                         writer.write(Util.roundDouble(result, 2) + "");
                         writer.newLine();
@@ -350,11 +416,16 @@ public class ValidationSection {
                 case validated_psm:
                     psmTargetDecoyMap = psMaps.getPsmSpecificMap();
                     psmKeys = psmTargetDecoyMap.getKeys();
-                    for (int charge : psmKeys.keySet()) {
+                    keys = psmKeys.keySet();
+                    for (int charge : keys) {
                         if (indexes) {
                             writer.write(line + separator);
                         }
-                        writer.write("Charge " + psmKeys.get(charge) + " " + validationFeatures.getTitle() + separator);
+                        String title = "";
+                        if (keys.size() > 1) {
+                            title = "Charge " + psmKeys.get(charge) + " ";
+                        }
+                        writer.write(title + validationFeatures.getTitle() + separator);
                         result = psmTargetDecoyMap.getTargetDecoyMap(charge).getTargetDecoyResults().getN();
                         writer.write(Util.roundDouble(result, 0) + "");
                         writer.newLine();

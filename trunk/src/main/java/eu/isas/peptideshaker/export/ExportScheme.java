@@ -23,6 +23,10 @@ public class ExportScheme {
      */
     private String mainTitle = null;
     /**
+     * Ordered list of the features in that scheme
+     */
+    private ArrayList<String> sectionList = new ArrayList<String>();
+    /**
      * Map of the features to export indexed by feature type.
      */
     private HashMap<String, ArrayList<ExportFeature>> exportFeaturesMap = new HashMap<String, ArrayList<ExportFeature>>();
@@ -50,8 +54,48 @@ public class ExportScheme {
     /**
      * Constructor.
      *
-     * @param name 
-     * @param editable 
+     * @param name the name of the scheme
+     * @param editable a boolean indicating whether the scheme can be edited by the user
+     * @param sectionList ordered list of the sections included in the report
+     * @param exportFeatures list of features to be included in the report
+     * @param separator the column separator to be used
+     * @param indexes indicates whether lines shall be indexed
+     * @param header indicates whether column headers shall be included
+     * @param separationLines the number of lines to use for section separation
+     * @param includeSectionTitles indicates whether section titles shall be
+     * used
+     * @param mainTitle the title of the report
+     */
+    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator,
+            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
+        this.sectionList = sectionList;
+        for (ExportFeature exportFeature : exportFeatures) {
+            String key = exportFeature.getFeatureFamily();
+            if (!exportFeaturesMap.containsKey(key)) {
+                exportFeaturesMap.put(key, new ArrayList<ExportFeature>());
+            }
+            exportFeaturesMap.get(key).add(exportFeature);
+            if (!sectionList.contains(key)) {
+                sectionList.add(key);
+            }
+        }
+        this.separator = separator;
+        this.indexes = indexes;
+        this.separationLines = separationLines;
+        this.header = header;
+        this.includeSectionTitles = includeSectionTitles;
+        this.mainTitle = mainTitle;
+        this.name = name;
+        this.editable = editable;
+    }
+    
+
+    /**
+     * Constructor.
+     * Here sections will appear in a random order.
+     *
+     * @param name the name of the scheme
+     * @param editable a boolean indicating whether the scheme can be edited by the user
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
      * @param indexes indicates whether lines shall be indexed
@@ -63,28 +107,35 @@ public class ExportScheme {
      */
     public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
-        for (ExportFeature exportFeature : exportFeatures) {
-            String key = exportFeature.getFeatureFamily();
-            if (!exportFeaturesMap.containsKey(key)) {
-                exportFeaturesMap.put(key, new ArrayList<ExportFeature>());
-            }
-            exportFeaturesMap.get(key).add(exportFeature);
-        }
-        this.separator = separator;
-        this.indexes = indexes;
-        this.separationLines = separationLines;
-        this.header = header;
-        this.includeSectionTitles = includeSectionTitles;
-        this.mainTitle = mainTitle;
-        this.name = name;
-        this.editable = editable;
+        this(name, editable, new ArrayList<String>(), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, mainTitle);
     }
 
     /**
      * Constructor.
+     * This report will not contain any title.
      *
-     * @param name 
-     * @param editable 
+     * @param name the name of the scheme
+     * @param editable a boolean indicating whether the scheme can be edited by the user
+     * @param sectionList ordered list of the sections included in the report
+     * @param exportFeatures list of features to be included in the report
+     * @param separator the column separator to be used
+     * @param indexes indicates whether lines shall be indexed
+     * @param header indicates whether column headers shall be included
+     * @param separationLines the number of lines to use for section separation
+     * @param includeSectionTitles indicates whether section titles shall be
+     * used
+     */
+    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator, 
+            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
+        this(name, editable, sectionList, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
+    }
+
+    /**
+     * Constructor.
+     * This report will not contain any title and sections will appear in a random order.
+     *
+     * @param name the name of the scheme
+     * @param editable a boolean indicating whether the scheme can be edited by the user
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
      * @param indexes indicates whether lines shall be indexed
@@ -95,7 +146,7 @@ public class ExportScheme {
      */
     public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator, 
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
-        this(name, editable, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
+        this(name, editable, new ArrayList<String>(), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
     }
 
     /**
@@ -149,7 +200,7 @@ public class ExportScheme {
      * @return the list of sections to be included in the scheme
      */
     public ArrayList<String> getSections() {
-        return new ArrayList<String>(exportFeaturesMap.keySet());
+        return sectionList;
     }
 
     /**

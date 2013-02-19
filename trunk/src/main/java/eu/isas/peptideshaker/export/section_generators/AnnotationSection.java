@@ -131,6 +131,7 @@ public class AnnotationSection {
                         ions += PeptideFragmentIon.getSubTypeAsString(fragmentType);
                     }
                     writer.write(ions);
+                    break;
                 default:
                     writer.write("Not implemented");
             }
