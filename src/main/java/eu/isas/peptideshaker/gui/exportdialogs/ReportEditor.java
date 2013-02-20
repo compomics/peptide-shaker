@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import eu.isas.peptideshaker.export.ExportFactory;
@@ -23,40 +19,43 @@ import java.util.HashMap;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
- * @author Marc
+ * Dialog for editing reports.
+ * 
+ * @author Marc Vaudel
  */
 public class ReportEditor extends javax.swing.JDialog {
 
     /**
-     * The export factory
+     * The export factory.
      */
     private ExportFactory exportFactory = ExportFactory.getInstance();
     /**
-     * The original name of the report
+     * The original name of the report.
      */
     private String oldName;
     /**
-     * A boolean indicating whether the report can be edited
+     * A boolean indicating whether the report can be edited.
      */
     private boolean editable = true;
     /**
-     * The original selection
+     * The original selection.
      */
     private HashMap<String, ArrayList<ExportFeature>> selection = new HashMap<String, ArrayList<ExportFeature>>();
-        /**
-         * The selected section name
-         */
-        private String sectionName = null;
-        /**
-         * The list of implemented features for the selected section
-         */
-        private ArrayList<ExportFeature> featuresList;
     /**
-     * Constructor
+     * The selected section name.
+     */
+    private String sectionName = null;
+    /**
+     * The list of implemented features for the selected section.
+     */
+    private ArrayList<ExportFeature> featuresList;
+
+    /**
+     * Constructor.
      *
      * @param parent the parent frame
      * @param exportSchemeName the name of the export scheme to edit
+     * @param editable  
      */
     public ReportEditor(java.awt.Frame parent, String exportSchemeName, boolean editable) {
         super(parent, true);
@@ -77,7 +76,7 @@ public class ReportEditor extends javax.swing.JDialog {
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param parent the parent frame
      */
@@ -116,8 +115,8 @@ public class ReportEditor extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         lineNumberCheckBox = new javax.swing.JCheckBox();
         headerCheckBox = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -235,17 +234,17 @@ public class ReportEditor extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("Cancel");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                cancelButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                okButtonActionPerformed(evt);
             }
         });
 
@@ -263,9 +262,9 @@ public class ReportEditor extends javax.swing.JDialog {
                         .addComponent(nameTxt))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -279,23 +278,38 @@ public class ReportEditor extends javax.swing.JDialog {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * @TODO; add JavaDoc.
+     * 
+     * @param evt 
+     */
     private void sectionTitleCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sectionTitleCheckBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_sectionTitleCheckBoxActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    /**
+     * Save the export scheme and close the dialog.
+     * 
+     * @param evt 
+     */
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (editable) {
             String newName = nameTxt.getText().trim();
             if (oldName != null && !oldName.contains(newName)) {
@@ -306,30 +320,42 @@ public class ReportEditor extends javax.swing.JDialog {
                 features.addAll(exportFeatures);
             }
             if (maintTitleCheckBox.isSelected()) {
-                ExportScheme exportScheme = new ExportScheme(newName, true, features, separatorTxt.getText(), lineNumberCheckBox.isSelected(), headerCheckBox.isSelected(), (Integer) separationLinesSpinner.getValue(), sectionTitleCheckBox.isSelected(), mainTitleTxt.getText().trim());
+                ExportScheme exportScheme = new ExportScheme(newName, true, features, separatorTxt.getText(), 
+                        lineNumberCheckBox.isSelected(), headerCheckBox.isSelected(), (Integer) separationLinesSpinner.getValue(), 
+                        sectionTitleCheckBox.isSelected(), mainTitleTxt.getText().trim());
                 exportFactory.addExportScheme(exportScheme);
             } else {
-                ExportScheme exportScheme = new ExportScheme(newName, true, features, separatorTxt.getText(), lineNumberCheckBox.isSelected(), headerCheckBox.isSelected(), (Integer) separationLinesSpinner.getValue(), sectionTitleCheckBox.isSelected());
+                ExportScheme exportScheme = new ExportScheme(newName, true, features, separatorTxt.getText(), 
+                        lineNumberCheckBox.isSelected(), headerCheckBox.isSelected(), (Integer) separationLinesSpinner.getValue(), 
+                        sectionTitleCheckBox.isSelected());
                 exportFactory.addExportScheme(exportScheme);
             }
         }
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * @TODO; add JavaDoc.
+     * 
+     * @param evt 
+     */
     private void maintTitleCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maintTitleCheckBoxActionPerformed
         mainTitleTxt.setEnabled(maintTitleCheckBox.isSelected());
     }//GEN-LAST:event_maintTitleCheckBoxActionPerformed
 
+    /**
+     * @TODO; add JavaDoc.
+     * 
+     * @param evt 
+     */
     private void sectionsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sectionsTableMouseReleased
         sectionName = (String) sectionsTable.getValueAt(sectionsTable.getSelectedRow(), 1);
         updateFeatureTableContent();
     }//GEN-LAST:event_sectionsTableMouseReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
     private javax.swing.JTable featuresTable;
     private javax.swing.JCheckBox headerCheckBox;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -342,6 +368,7 @@ public class ReportEditor extends javax.swing.JDialog {
     private javax.swing.JTextField mainTitleTxt;
     private javax.swing.JCheckBox maintTitleCheckBox;
     private javax.swing.JTextField nameTxt;
+    private javax.swing.JButton okButton;
     private javax.swing.JCheckBox sectionTitleCheckBox;
     private javax.swing.JTable sectionsTable;
     private javax.swing.JSpinner separationLinesSpinner;
@@ -349,7 +376,7 @@ public class ReportEditor extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Sets up the gui components
+     * Sets up the GUI components.
      */
     private void setUpGUI() {
 
@@ -379,7 +406,7 @@ public class ReportEditor extends javax.swing.JDialog {
     }
 
     /**
-     * Indicates whether a feature has been selected in the given section
+     * Indicates whether a feature has been selected in the given section.
      *
      * @param section the section of interest
      * @param exportFeature the export feature of interest
@@ -395,7 +422,7 @@ public class ReportEditor extends javax.swing.JDialog {
     }
 
     /**
-     * Sets whether a feature is selected in the given section
+     * Sets whether a feature is selected in the given section.
      *
      * @param section the section of interest
      * @param exportFeature the feature of interest
@@ -419,35 +446,35 @@ public class ReportEditor extends javax.swing.JDialog {
             }
         }
     }
-    
+
     /**
-     * Updates the feature table content based on the section name
+     * Updates the feature table content based on the section name.
      */
     private void updateFeatureTableContent() {
         featuresList = new ArrayList<ExportFeature>();
-            if (sectionName != null) {
-                if (sectionName.equals(AnnotationFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(AnnotationFeatures.values()));
-                } else if (sectionName.equals(InputFilterFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(InputFilterFeatures.values()));
-                } else if (sectionName.equals(PeptideFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(PeptideFeatures.values()));
-                } else if (sectionName.equals(ProjectFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(ProjectFeatures.values()));
-                } else if (sectionName.equals(ProteinFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(ProteinFeatures.values()));
-                } else if (sectionName.equals(PsmFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(PsmFeatures.values()));
-                } else if (sectionName.equals(PtmScoringFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(PtmScoringFeatures.values()));
-                } else if (sectionName.equals(SearchFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(SearchFeatures.values()));
-                } else if (sectionName.equals(SpectrumCountingFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(SpectrumCountingFeatures.values()));
-                } else if (sectionName.equals(ValidationFeatures.type)) {
-                    featuresList.addAll(Arrays.asList(ValidationFeatures.values()));
-                }
+        if (sectionName != null) {
+            if (sectionName.equals(AnnotationFeatures.type)) {
+                featuresList.addAll(Arrays.asList(AnnotationFeatures.values()));
+            } else if (sectionName.equals(InputFilterFeatures.type)) {
+                featuresList.addAll(Arrays.asList(InputFilterFeatures.values()));
+            } else if (sectionName.equals(PeptideFeatures.type)) {
+                featuresList.addAll(Arrays.asList(PeptideFeatures.values()));
+            } else if (sectionName.equals(ProjectFeatures.type)) {
+                featuresList.addAll(Arrays.asList(ProjectFeatures.values()));
+            } else if (sectionName.equals(ProteinFeatures.type)) {
+                featuresList.addAll(Arrays.asList(ProteinFeatures.values()));
+            } else if (sectionName.equals(PsmFeatures.type)) {
+                featuresList.addAll(Arrays.asList(PsmFeatures.values()));
+            } else if (sectionName.equals(PtmScoringFeatures.type)) {
+                featuresList.addAll(Arrays.asList(PtmScoringFeatures.values()));
+            } else if (sectionName.equals(SearchFeatures.type)) {
+                featuresList.addAll(Arrays.asList(SearchFeatures.values()));
+            } else if (sectionName.equals(SpectrumCountingFeatures.type)) {
+                featuresList.addAll(Arrays.asList(SpectrumCountingFeatures.values()));
+            } else if (sectionName.equals(ValidationFeatures.type)) {
+                featuresList.addAll(Arrays.asList(ValidationFeatures.values()));
             }
+        }
         ((DefaultTableModel) featuresTable.getModel()).fireTableDataChanged();
     }
 
@@ -457,12 +484,12 @@ public class ReportEditor extends javax.swing.JDialog {
     private class SectionsTableModel extends DefaultTableModel {
 
         /**
-         * The list of implemented sections
+         * The list of implemented sections.
          */
         private ArrayList<String> sectionList;
 
         /**
-         * Constructor
+         * Constructor.
          */
         public SectionsTableModel() {
             sectionList = new ArrayList<String>();
@@ -526,11 +553,11 @@ public class ReportEditor extends javax.swing.JDialog {
      * Table model for the reports table.
      */
     private class FeaturesTableModel extends DefaultTableModel {
+
         /**
          * Constructor
          */
         public FeaturesTableModel() {
-            
         }
 
         @Override

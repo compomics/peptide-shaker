@@ -23,7 +23,7 @@ public class ExportScheme {
      */
     private String mainTitle = null;
     /**
-     * Ordered list of the features in that scheme
+     * Ordered list of the features in that scheme.
      */
     private ArrayList<String> sectionList = new ArrayList<String>();
     /**
@@ -55,7 +55,8 @@ public class ExportScheme {
      * Constructor.
      *
      * @param name the name of the scheme
-     * @param editable a boolean indicating whether the scheme can be edited by the user
+     * @param editable a boolean indicating whether the scheme can be edited by
+     * the user
      * @param sectionList ordered list of the sections included in the report
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
@@ -88,14 +89,13 @@ public class ExportScheme {
         this.name = name;
         this.editable = editable;
     }
-    
 
     /**
-     * Constructor.
-     * Here sections will appear in a random order.
+     * Constructor. Here sections will appear in a random order.
      *
      * @param name the name of the scheme
-     * @param editable a boolean indicating whether the scheme can be edited by the user
+     * @param editable a boolean indicating whether the scheme can be edited by
+     * the user
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
      * @param indexes indicates whether lines shall be indexed
@@ -111,11 +111,11 @@ public class ExportScheme {
     }
 
     /**
-     * Constructor.
-     * This report will not contain any title.
+     * Constructor. This report will not contain any title.
      *
      * @param name the name of the scheme
-     * @param editable a boolean indicating whether the scheme can be edited by the user
+     * @param editable a boolean indicating whether the scheme can be edited by
+     * the user
      * @param sectionList ordered list of the sections included in the report
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
@@ -125,17 +125,18 @@ public class ExportScheme {
      * @param includeSectionTitles indicates whether section titles shall be
      * used
      */
-    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator, 
+    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
         this(name, editable, sectionList, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
     }
 
     /**
-     * Constructor.
-     * This report will not contain any title and sections will appear in a random order.
+     * Constructor. This report will not contain any title and sections will
+     * appear in a random order.
      *
      * @param name the name of the scheme
-     * @param editable a boolean indicating whether the scheme can be edited by the user
+     * @param editable a boolean indicating whether the scheme can be edited by
+     * the user
      * @param exportFeatures list of features to be included in the report
      * @param separator the column separator to be used
      * @param indexes indicates whether lines shall be indexed
@@ -144,7 +145,7 @@ public class ExportScheme {
      * @param includeSectionTitles indicates whether section titles shall be
      * used
      */
-    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator, 
+    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
         this(name, editable, new ArrayList<String>(), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
     }

@@ -130,18 +130,21 @@ public class ExportFactory implements Serializable {
         }
         return exportScheme;
     }
-    
+
     /**
-     * Removes a user scheme
+     * Removes a user scheme.
+     *
      * @param schemeName the name of the scheme to remove
      */
     public void removeExportScheme(String schemeName) {
         userSchemes.remove(schemeName);
     }
-    
+
     /**
-     * Adds an export scheme to the map of user schemes
-     * @param exportScheme the new export scheme, will be accessible via its name
+     * Adds an export scheme to the map of user schemes.
+     *
+     * @param exportScheme the new export scheme, will be accessible via its
+     * name
      */
     public void addExportScheme(ExportScheme exportScheme) {
         userSchemes.put(exportScheme.getName(), exportScheme);
@@ -200,16 +203,16 @@ public class ExportFactory implements Serializable {
      * Validation section)
      * @throws IOException
      * @throws IllegalArgumentException
-     * @throws SQLException 
-     * @throws ClassNotFoundException 
+     * @throws SQLException
+     * @throws ClassNotFoundException
      * @throws InterruptedException
-     * @throws MzMLUnmarshallerException  
+     * @throws MzMLUnmarshallerException
      */
-    public static void writeExport(ExportScheme exportScheme, File destinationFile, String experiment, String sample, int replicateNumber, 
-            ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
-            SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys, 
-            String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter, 
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps) 
+    public static void writeExport(ExportScheme exportScheme, File destinationFile, String experiment, String sample, int replicateNumber,
+            ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
+            String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter,
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
 
@@ -274,6 +277,11 @@ public class ExportFactory implements Serializable {
         }
     }
 
+    /**
+     * Returns the implemented sections.
+     * 
+     * @return the implemented sections
+     */
     public static ArrayList<String> getImplementedSections() {
         ArrayList<String> result = new ArrayList<String>();
         result.add(AnnotationFeatures.type);
@@ -288,7 +296,7 @@ public class ExportFactory implements Serializable {
         result.add(ValidationFeatures.type);
         return result;
     }
-    
+
     /**
      * Returns the default schemes available.
      *
