@@ -4355,7 +4355,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Closes and restarts PeptideShaker. Does not work inside the IDE of course
+     * Closes and restarts PeptideShaker. Does not work inside the IDE of course.
      */
     public void restart() {
 

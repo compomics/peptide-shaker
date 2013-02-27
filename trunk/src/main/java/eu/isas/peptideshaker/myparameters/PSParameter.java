@@ -445,9 +445,9 @@ public class PSParameter implements UrParameter {
             case ISOFORMS:
                 return "Isoforms";
             case ISOFORMS_UNRELATED:
-                return "Isoforms and Unrelated protein(s)";
+                return "Unrelated Isoforms";
             case UNRELATED:
-                return "Unrelated proteins";
+                return "Unrelated Proteins";
             default:
                 return "";
         }
