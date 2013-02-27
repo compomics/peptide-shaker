@@ -17,7 +17,7 @@ public enum InputFilterFeatures implements ExportFeature {
     xtandem_max_evalue("X!Tandem Maximal E-value", "The maximal e-value allowed for X!Tandem Peptide Spectrum Matches (PSMs)."),
     max_mz_deviation("Precursor m/z Tolerance", "The maximal precursor m/z error tolerance allowed."),
     max_mz_deviation_unit("Precursor m/z Tolerance Unit", "The unit of the maximal precursor m/z error tolerance allowed."),
-    unkown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting posstranslational which do not match the search parameters were discarded.");
+    unkown_PTM("Unrecognized Modifications Discarded", "Indicates whether the Peptide Spectrum Matches (PSMs) presenting PTMs which do not match the search parameters were discarded.");
     /**
      * The title of the feature which will be used for column heading.
      */

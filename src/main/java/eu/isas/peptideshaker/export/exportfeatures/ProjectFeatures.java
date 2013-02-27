@@ -15,7 +15,7 @@ public enum ProjectFeatures implements ExportFeature, Serializable {
     date("Date", "Date of project creation."),
     experiment("Experiment", "Experiment name."),
     sample("Sample", "Sample name."),
-    replicate("Replicate number", "Replicate number.");
+    replicate("Replicate Number", "Replicate number.");
     /**
      * The title of the feature which will be used for column heading.
      */

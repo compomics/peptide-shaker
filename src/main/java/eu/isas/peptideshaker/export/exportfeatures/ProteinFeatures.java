@@ -14,7 +14,7 @@ public enum ProteinFeatures implements ExportFeature {
     protein_description("Description", "Description of the protein designed by the main accession."),
     mw("MW", "Molecular weight."),
     coverage("Coverage", "Sequence coverage in percent of the protein designed by the main accession."),
-    possible_coverage("Possible Coverage", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings"),
+    possible_coverage("Possible Coverage", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings."),
     non_enzymatic("Non-Enzymatic", "Indicates how many non-enzymatic peptides were found for this protein match."),
     spectrum_counting("Spectrum Counting", "Spectrum counting index"),
     confident_PTMs("Confident Modification Sites", "List of the sites where a variable modification was confidently localized."),
