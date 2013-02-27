@@ -10,16 +10,16 @@ import java.util.ArrayList;
  */
 public enum SearchFeatures implements ExportFeature {
 
-    precursor_accuracy_unit("Precursor Accuracy Unit", "Unit of the precursor accuracy: ppm or Da"),
-    precursor_tolerance("Precursor Ion m/z Tolerance", "Precursor ion m/z tolerance used for the search"),
+    precursor_accuracy_unit("Precursor Accuracy Unit", "Unit of the precursor accuracy: ppm or Da."),
+    precursor_tolerance("Precursor Ion m/z Tolerance", "Precursor ion m/z tolerance used for the search."),
     fragment_tolerance("Fragment Ion m/z Tolerance", "Fragment ion m/z tolerance used for the search."),
     enzyme("Enzyme", "Enzyme used for the search."),
-    mc("Number of Missed Cleavages", "The number of missed cleavages"),
+    mc("Number of Missed Cleavages", "The number of missed cleavages."),
     database("Database", "The protein sequence database."),
     forward_ion("Forward Ion", "The forward ion type searched for."),
     rewind_ion("Rewind Ion", "The rewind ion type searched for."),
     max_Evalue("Maximal E-value", "The maximal e-value allowed for the search engines."),
-    hitlist_length("Hitlist length", "The maximal hitlist length allowed for the search engines."),
+    hitlist_length("Hitlist Length", "The maximal hitlist length allowed for the search engines."),
     minimalChargeForMultipleChargedFragments("Minimal Charge to Consider Multiple Charged Fragments", "The minimal charge needed to consider multiple charged fragments."),
     min_pep_length("Minimal Peptide Length", "The minimal peptide length."),
     max_pep_length("Maximal Peptide Length", "The maximal peptide length."),
