@@ -355,7 +355,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 ((TitledBorder) proteinPanel.getBorder()).setTitle(title);
                 proteinPanel.repaint();
 
-                plotsTabbedPane.setSelectedIndex(4);
+                plotsTabbedPane.setSelectedIndex(5);
 
                 // enable the contextual export options
                 exportProteinsJButton.setEnabled(true);
@@ -389,10 +389,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             int[] selectedRows = proteinTable.getSelectedRows();
 
             // disable the coverage tab if more than one protein is selected
-            plotsTabbedPane.setEnabledAt(1, selectedRows.length == 1);
+            plotsTabbedPane.setEnabledAt(2, selectedRows.length == 1);
 
-            if (selectedRows.length > 1 && plotsTabbedPane.getSelectedIndex() == 1) {
-                plotsTabbedPane.setSelectedIndex(4);
+            if (selectedRows.length > 1 && plotsTabbedPane.getSelectedIndex() == 2) {
+                plotsTabbedPane.setSelectedIndex(5);
             }
 
             for (int row = 0; row < selectedRows.length; row++) {
@@ -603,6 +603,21 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 }
             }
 
+            // total peptides per fraction plot
+            DefaultCategoryDataset totalPeptidesPerFractionPlotDataset = new DefaultCategoryDataset();
+            HashMap<String, Integer> totalPeptidesPerFraction = peptideShakerGUI.getMetrics().getTotalPeptidesPerFraction();
+
+            for (int i = 0; i < spectrumFiles.size(); i++) {
+
+                String spectrumKey = spectrumFiles.get(i);
+
+                if (totalPeptidesPerFraction != null && totalPeptidesPerFraction.containsKey(spectrumKey)) {
+                    totalPeptidesPerFractionPlotDataset.addValue(totalPeptidesPerFraction.get(spectrumKey), "Total Peptide Count", "" + (i + 1));
+                } else {
+                    totalPeptidesPerFractionPlotDataset.addValue(0, "Total Peptide Count", "" + (i + 1));
+                }
+            }
+
             // create the peptide chart
             JFreeChart chart = ChartFactory.createBarChart(null, "Fraction", "#Peptides", peptidePlotDataset, PlotOrientation.VERTICAL, false, true, true);
             ChartPanel chartPanel = new ChartPanel(chart);
@@ -731,6 +746,29 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             // add the new plot
             mwPlotPanel.add(chartPanel);
 
+            // create the total peptides count chart
+            chart = ChartFactory.createBarChart(null, "Fraction", "Total Peptide Count", totalPeptidesPerFractionPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+            chartPanel = new ChartPanel(chart);
+            renderer = new BarRenderer();
+            ((BarRenderer) renderer).setShadowVisible(false);
+            renderer.setSeriesPaint(0, peptideShakerGUI.getSparklineColor());
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            chart.getCategoryPlot().setRenderer(renderer);
+
+            // set background color
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // hide the outline
+            chart.getPlot().setOutlineVisible(false);
+
+            // clear the peptide plot
+            fractionsPlotPanel.removeAll();
+
+            // add the new plot
+            fractionsPlotPanel.add(chartPanel);
+
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
@@ -854,6 +892,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         plotsTabbedPane = new javax.swing.JTabbedPane();
         mwPanel = new javax.swing.JPanel();
         mwPlotPanel = new javax.swing.JPanel();
+        totalPeptidesPerFractionPlotOuterPanel = new javax.swing.JPanel();
+        fractionsPlotPanel = new javax.swing.JPanel();
         coverageTablePanel = new javax.swing.JPanel();
         coverageTableScrollPane = new javax.swing.JScrollPane();
         coverageTable =         new JTable() {
@@ -973,6 +1013,26 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         );
 
         plotsTabbedPane.addTab("Molecular Weight", mwPanel);
+
+        totalPeptidesPerFractionPlotOuterPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        fractionsPlotPanel.setOpaque(false);
+        fractionsPlotPanel.setLayout(new javax.swing.BoxLayout(fractionsPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout totalPeptidesPerFractionPlotOuterPanelLayout = new javax.swing.GroupLayout(totalPeptidesPerFractionPlotOuterPanel);
+        totalPeptidesPerFractionPlotOuterPanel.setLayout(totalPeptidesPerFractionPlotOuterPanelLayout);
+        totalPeptidesPerFractionPlotOuterPanelLayout.setHorizontalGroup(
+            totalPeptidesPerFractionPlotOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(fractionsPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 903, Short.MAX_VALUE)
+        );
+        totalPeptidesPerFractionPlotOuterPanelLayout.setVerticalGroup(
+            totalPeptidesPerFractionPlotOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(totalPeptidesPerFractionPlotOuterPanelLayout.createSequentialGroup()
+                .addComponent(fractionsPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        plotsTabbedPane.addTab("Fractions", totalPeptidesPerFractionPlotOuterPanel);
 
         coverageTablePanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1599,10 +1659,12 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         } else if (plotsTabbedPane.getSelectedIndex() == 1) {
             // not supported
         } else if (plotsTabbedPane.getSelectedIndex() == 2) {
-            chartPanel = (ChartPanel) intensityPlotPanel.getComponent(0);
+            chartPanel = (ChartPanel) fractionsPlotPanel.getComponent(0);
         } else if (plotsTabbedPane.getSelectedIndex() == 3) {
-            chartPanel = (ChartPanel) spectraPlotPanel.getComponent(0);
+            chartPanel = (ChartPanel) intensityPlotPanel.getComponent(0);
         } else if (plotsTabbedPane.getSelectedIndex() == 4) {
+            chartPanel = (ChartPanel) spectraPlotPanel.getComponent(0);
+        } else if (plotsTabbedPane.getSelectedIndex() == 5) {
             chartPanel = (ChartPanel) peptidePlotPanel.getComponent(0);
         }
 
@@ -1673,7 +1735,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * @param evt
      */
     private void plotsTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_plotsTabbedPaneStateChanged
-        exportPeptidesJButton.setEnabled(plotsTabbedPane.getSelectedIndex() != 1);
+        exportPeptidesJButton.setEnabled(plotsTabbedPane.getSelectedIndex() != 2);
     }//GEN-LAST:event_plotsTabbedPaneStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
@@ -1687,6 +1749,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private javax.swing.JScrollPane coverageTableScrollPane;
     private javax.swing.JButton exportPeptidesJButton;
     private javax.swing.JButton exportProteinsJButton;
+    private javax.swing.JPanel fractionsPlotPanel;
     private javax.swing.JPanel intensityPlotOuterPanel;
     private javax.swing.JPanel intensityPlotPanel;
     private javax.swing.JPanel mwPanel;
@@ -1707,6 +1770,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     private javax.swing.JButton sequenceCoverageOptionsJButton;
     private javax.swing.JPanel spectraPlotOuterPanel;
     private javax.swing.JPanel spectraPlotPanel;
+    private javax.swing.JPanel totalPeptidesPerFractionPlotOuterPanel;
     // End of variables declaration//GEN-END:variables
 
     /**

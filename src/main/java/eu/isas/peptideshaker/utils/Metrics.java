@@ -29,7 +29,7 @@ public class Metrics implements Serializable {
      */
     private double maxPrecursorErrorPpm = 0;
     /**
-     * The chares found in all PSMs (only the best hit per spectrum).
+     * The charges found in all PSMs (only the best hit per spectrum).
      */
     private ArrayList<Integer> foundCharges = new ArrayList<Integer>();
     /**
@@ -65,10 +65,14 @@ public class Metrics implements Serializable {
      */
     private ArrayList<String> foundModifications = null;
     /**
-     * The psm matches for each fraction for each peptide. Key: 'fraction
+     * The PSM matches for each fraction for each peptide. Key: 'fraction
      * name'_'peptide key'. Values: arraylist of spectrum keys.
      */
     private HashMap<String, ArrayList<String>> fractionPsmMatches;
+    /**
+     * The total number of peptides per fraction.
+     */
+    private HashMap<String, Integer> totalPeptidesPerFractions;
     /**
      * The observed average molecular masses in kDa for each fraction.
      */
@@ -209,18 +213,18 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the the maximal amount of psms in the proteins of the dataset.
+     * Returns the the maximal amount of PSMs in the proteins of the dataset.
      *
-     * @return the the maximal amount of psms in the proteins of the dataset
+     * @return the the maximal amount of PSMs in the proteins of the dataset
      */
     public Integer getMaxNSpectra() {
         return maxNSpectra;
     }
 
     /**
-     * Sets the the maximal amount of psms in the proteins of the dataset.
+     * Sets the the maximal amount of PSMs in the proteins of the dataset.
      *
-     * @param maxNSpectra the the maximal amount of psms in the proteins of the
+     * @param maxNSpectra the the maximal amount of PSMs in the proteins of the
      * dataset
      */
     public void setMaxNSpectra(Integer maxNSpectra) {
@@ -318,27 +322,28 @@ public class Metrics implements Serializable {
     /**
      * Sets the list of variable modifications found in the dataset.
      *
-     * @param foundModifications the list of variable modifications found in the dataset
+     * @param foundModifications the list of variable modifications found in the
+     * dataset
      */
     public void setFoundModifications(ArrayList<String> foundModifications) {
         this.foundModifications = foundModifications;
     }
 
     /**
-     * Set the fraction psm matches. Key: 'fraction name'_'peptide key'. Values:
+     * Set the fraction PSM matches. Key: 'fraction name'_'peptide key'. Values:
      * arraylist of spectrum keys.
      *
-     * @param fractionPsmMatches the fraction psm matches
+     * @param fractionPsmMatches the fraction PSM matches
      */
     public void setFractionPsmMatches(HashMap<String, ArrayList<String>> fractionPsmMatches) {
         this.fractionPsmMatches = fractionPsmMatches;
     }
 
     /**
-     * Returns the list of fraction psm matches. Key: 'fraction name'_'peptide
+     * Returns the list of fraction PSM matches. Key: 'fraction name'_'peptide
      * key'. Values: arraylist of spectrum keys.
      *
-     * @return he list of fraction psm matches
+     * @return he list of fraction PSM matches
      */
     public HashMap<String, ArrayList<String>> getFractionPsmMatches() {
         if (fractionPsmMatches != null) {
@@ -349,9 +354,29 @@ public class Metrics implements Serializable {
     }
 
     /**
-     * Returns the observed average molecular masses in kDa for each fraction. The key 
-     * is the file path of the fraction.
-     * 
+     * Set the total number of peptides per fraction.
+     *
+     * @param totalPeptidesPerFractions
+     */
+    public void setTotalPeptidesPerFraction(HashMap<String, Integer> totalPeptidesPerFractions) {
+        this.totalPeptidesPerFractions = totalPeptidesPerFractions;
+    }
+
+    /**
+     * Returns the total number of peptides per fraction. Null if the values
+     * have not been set.
+     *
+     * @return the total number of peptides per fraction, null if the values
+     * have not been set
+     */
+    public HashMap<String, Integer> getTotalPeptidesPerFraction() {
+        return totalPeptidesPerFractions;
+    }
+
+    /**
+     * Returns the observed average molecular masses in kDa for each fraction.
+     * The key is the file path of the fraction.
+     *
      * @return the observed average molecular masses for each fraction
      */
     public HashMap<String, Double> getObservedFractionalMasses() {
@@ -359,23 +384,23 @@ public class Metrics implements Serializable {
             return observedFractionalMasses;
         } else {
             return new HashMap<String, Double>();
-        }  
+        }
     }
 
     /**
-     * Set the observed average molecular masses for each fraction in kDa. The key 
-     * is the file path of the fraction.
-     * 
+     * Set the observed average molecular masses for each fraction in kDa. The
+     * key is the file path of the fraction.
+     *
      * @param observedFractionalMasses the observedFractionalMasses to set
      */
     public void setObservedFractionalMasses(HashMap<String, Double> observedFractionalMasses) {
         this.observedFractionalMasses = observedFractionalMasses;
     }
-    
+
     /**
-     * Returns the observed molecular masses in kDa for each fraction. The key 
+     * Returns the observed molecular masses in kDa for each fraction. The key
      * is the file path of the fraction.
-     * 
+     *
      * @return the observed average molecular masses for each fraction
      */
     public HashMap<String, ArrayList<Double>> getObservedFractionalMassesAll() {
@@ -383,13 +408,13 @@ public class Metrics implements Serializable {
             return observedFractionalMassesAll;
         } else {
             return new HashMap<String, ArrayList<Double>>();
-        }  
+        }
     }
 
     /**
-     * Set the observed molecular masses for each fraction in kDa. The key 
-     * is the file path of the fraction.
-     * 
+     * Set the observed molecular masses for each fraction in kDa. The key is
+     * the file path of the fraction.
+     *
      * @param observedFractionalMassesAll the observedFractionalMasses to set
      */
     public void setObservedFractionalMassesAll(HashMap<String, ArrayList<Double>> observedFractionalMassesAll) {
@@ -398,7 +423,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the maximum validated peptides at the fraction level.
-     * 
+     *
      * @return the maxValidatedPeptidesPerFraction
      */
     public Integer getMaxValidatedPeptidesPerFraction() {
@@ -407,8 +432,9 @@ public class Metrics implements Serializable {
 
     /**
      * Set the maximum validated peptides at the fraction level.
-     * 
-     * @param maxValidatedPeptidesPerFraction the maxValidatedPeptidesPerFraction to set
+     *
+     * @param maxValidatedPeptidesPerFraction the
+     * maxValidatedPeptidesPerFraction to set
      */
     public void setMaxValidatedPeptidesPerFraction(Integer maxValidatedPeptidesPerFraction) {
         this.maxValidatedPeptidesPerFraction = maxValidatedPeptidesPerFraction;
@@ -416,7 +442,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the maximum validated spectra at the fraction level.
-     * 
+     *
      * @return the maxValidatedSpectraPerFraction
      */
     public Integer getMaxValidatedSpectraPerFraction() {
@@ -425,8 +451,9 @@ public class Metrics implements Serializable {
 
     /**
      * Set the maximum validated spectra at the fraction level.
-     * 
-     * @param maxValidatedSpectraPerFraction the maxValidatedSpectraPerFraction to set
+     *
+     * @param maxValidatedSpectraPerFraction the maxValidatedSpectraPerFraction
+     * to set
      */
     public void setMaxValidatedSpectraPerFraction(Integer maxValidatedSpectraPerFraction) {
         this.maxValidatedSpectraPerFraction = maxValidatedSpectraPerFraction;
@@ -434,7 +461,7 @@ public class Metrics implements Serializable {
 
     /**
      * Returns the maximum protein average precursor intensity.
-     * 
+     *
      * @return the maxProteinAveragePrecursorIntensity
      */
     public Double getMaxProteinAveragePrecursorIntensity() {
@@ -443,16 +470,17 @@ public class Metrics implements Serializable {
 
     /**
      * Set the maximum protein average precursor intensity.
-     * 
-     * @param maxProteinAveragePrecursorIntensity the maxProteinAveragePrecursorIntensity to set
+     *
+     * @param maxProteinAveragePrecursorIntensity the
+     * maxProteinAveragePrecursorIntensity to set
      */
     public void setMaxProteinAveragePrecursorIntensity(Double maxProteinAveragePrecursorIntensity) {
         this.maxProteinAveragePrecursorIntensity = maxProteinAveragePrecursorIntensity;
     }
-    
+
     /**
      * Returns the maximum summed protein precursor intensity.
-     * 
+     *
      * @return the maxProteinSummedPrecursorIntensity
      */
     public Double getMaxProteinSummedPrecursorIntensity() {
@@ -461,8 +489,9 @@ public class Metrics implements Serializable {
 
     /**
      * Set the maximum summed protein precursor intensity.
-     * 
-     * @param maxProteinSummedPrecursorIntensity the maxProteinSummedPrecursorIntensity to set
+     *
+     * @param maxProteinSummedPrecursorIntensity the
+     * maxProteinSummedPrecursorIntensity to set
      */
     public void setMaxProteinSummedPrecursorIntensity(Double maxProteinSummedPrecursorIntensity) {
         this.maxProteinSummedPrecursorIntensity = maxProteinSummedPrecursorIntensity;

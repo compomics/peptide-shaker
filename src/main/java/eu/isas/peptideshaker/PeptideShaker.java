@@ -643,6 +643,7 @@ public class PeptideShaker {
             }
         }
 
+        HashMap<String, Integer> validatedTotalPeptidesPerFraction = new HashMap<String, Integer>();
 
         // validate the peptides
         for (String peptideKey : identification.getPeptideIdentification()) {
@@ -696,6 +697,16 @@ public class PeptideShaker {
                 }
 
                 precursorIntensitesPerFractionPeptideLevel.put(fraction, precursorIntensities);
+
+                // save the total number of peptides per fraction
+                if (psParameter.isValidated()) {
+                    if (validatedTotalPeptidesPerFraction.containsKey(fraction)) {
+                        Integer value = validatedTotalPeptidesPerFraction.get(fraction);
+                        validatedTotalPeptidesPerFraction.put(fraction, value + 1);
+                    } else {
+                        validatedTotalPeptidesPerFraction.put(fraction, 1);
+                    }
+                }
             }
 
             // set the number of validated spectra per fraction for each peptide
@@ -822,6 +833,7 @@ public class PeptideShaker {
         metrics.setMaxValidatedSpectraPerFraction(maxValidatedSpectraFractionLevel);
         metrics.setMaxProteinAveragePrecursorIntensity(maxProteinAveragePrecursorIntensity);
         metrics.setMaxProteinSummedPrecursorIntensity(maxProteinSummedPrecursorIntensity);
+        metrics.setTotalPeptidesPerFraction(validatedTotalPeptidesPerFraction);
     }
 
     /**
@@ -1325,7 +1337,7 @@ public class PeptideShaker {
                                 if (modificationMatch != null && newLocalization != null) {
                                     PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
                                     if (!peptide.getPotentialModificationSites(ptm).contains(newLocalization)) {
-                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm() 
+                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm()
                                                 + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
                                     }
                                     modificationMatch.setInferred(true);
