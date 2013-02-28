@@ -263,12 +263,14 @@ public class ExportFactory implements Serializable {
         }
         writer.close();
     }
-    
+
     /**
-     * Writes the documentation related to a report
-     * @param exportScheme the exort scheme of the report
-     * @param destinationFile the destination file where to write the documentation
-     * @throws IOException 
+     * Writes the documentation related to a report.
+     *
+     * @param exportScheme the export scheme of the report
+     * @param destinationFile the destination file where to write the
+     * documentation
+     * @throws IOException
      */
     public static void writeDocumentation(ExportScheme exportScheme, File destinationFile) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
@@ -307,7 +309,7 @@ public class ExportFactory implements Serializable {
 
     /**
      * Returns the implemented sections.
-     * 
+     *
      * @return the implemented sections
      */
     public static ArrayList<String> getImplementedSections() {

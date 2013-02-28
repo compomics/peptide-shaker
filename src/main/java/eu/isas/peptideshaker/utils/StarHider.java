@@ -18,6 +18,8 @@ import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.RowFilter.ComparisonType;
@@ -90,6 +92,8 @@ public class StarHider {
 
                     // @TODO: implement better database batch interaction!!
 
+                    HashMap<String, ArrayList<Double>> fractionMW = new HashMap<String, ArrayList<Double>>();
+
                     for (String proteinKey : identification.getProteinIdentification()) {
 
                         if (progressDialog.isRunCanceled()) {
@@ -159,8 +163,33 @@ public class StarHider {
                         psParameter.setStarred(isProteinStarred(proteinKey));
 
                         identification.updateProteinMatchParameter(proteinKey, psParameter);
+
+
+                        // update the observed fractional molecular weights per fraction
+                        if (!psParameter.isHidden() && psParameter.isValidated() && !proteinMatch.isDecoy()) {
+
+                            Double proteinMW = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
+
+                            for (String fraction : psParameter.getFractions()) {
+
+                                // set the fraction molecular weights
+                                if (psParameter.getFractionConfidence(fraction) > peptideShakerGUI.getProcessingPreferences().getProteinConfidenceMwPlots()) {
+                                    if (fractionMW.containsKey(fraction)) {
+                                        fractionMW.get(fraction).add(proteinMW);
+                                    } else {
+                                        ArrayList<Double> mw = new ArrayList<Double>();
+                                        mw.add(proteinMW);
+                                        fractionMW.put(fraction, mw);
+                                    }
+                                }
+                            }
+                        }
+
                         progressDialog.increaseProgressValue();
                     }
+
+                    // set the observed fractional molecular weights per fraction
+                    peptideShakerGUI.getMetrics().setObservedFractionalMassesAll(fractionMW);
 
                     progressDialog.setRunFinished();
                     peptideShakerGUI.updateTabbedPanes();
