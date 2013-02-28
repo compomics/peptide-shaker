@@ -3065,7 +3065,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             proteins,
                                             displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
-                                            currentAssumption.getEValue(),
+                                            currentAssumption.getScore(),
                                             probabilities.getSearchEngineConfidence()
                                         });
 
@@ -3092,7 +3092,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             proteins,
                                             displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
-                                            currentAssumption.getEValue(),
+                                            currentAssumption.getScore(),
                                             probabilities.getSearchEngineConfidence()
                                         });
 
@@ -3119,7 +3119,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                             proteins,
                                             displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
-                                            currentAssumption.getEValue(),
+                                            currentAssumption.getScore(),
                                             probabilities.getSearchEngineConfidence()
                                         });
 
@@ -3629,7 +3629,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         result.append("error\t");
                     }
 
-                    result.append(currentAssumption.getEValue());
+                    result.append(currentAssumption.getScore());
                     result.append("\t");
                     result.append(probabilities.getSearchEngineConfidence());
                     result.append("\t");

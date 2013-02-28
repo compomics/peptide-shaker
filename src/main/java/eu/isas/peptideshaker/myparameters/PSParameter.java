@@ -18,7 +18,7 @@ public class PSParameter implements UrParameter {
     /**
      * Serial version UID for post-serialization compatibility.
      */
-    static final long serialVersionUID = 2846587135366515967L; // @TODO: has to be updated??
+    static final long serialVersionUID = 2846587135366515967L;
     /**
      * Posterior error probability estimated for the search engine results.
      */

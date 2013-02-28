@@ -1971,6 +1971,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void reportsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_reportsTableKeyReleased
         reportsTableMouseClicked(null);
     }//GEN-LAST:event_reportsTableKeyReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        writeDocumentationOfSelectedReport();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReportButton;
     private javax.swing.JCheckBox assumptionAccession;
@@ -2131,6 +2136,48 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                 null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
                                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getIdFilter(),
                                 peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), pSMaps);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                    progressDialog.setRunFinished();
+                    progressDialog.dispose();
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Writes the documentation related to the selected report into a file
+     */
+    private void writeDocumentationOfSelectedReport() {
+
+        // get the file to send the output to
+        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
+
+
+        if (selectedFile != null) {
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
+                    try {
+                        String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
+                        ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
+                        ExportFactory.writeDocumentation(exportScheme, selectedFile);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }
