@@ -625,8 +625,13 @@ public class FileImporter {
             if (tempSet != null) {
                 Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
-                int numberOfMatches = tempSet.size();
-                int progress = 0;
+                int numberOfMatches = tempSet.size(),
+                        progress = 0, 
+                        rejected = 0,
+                        proteinIssue = 0,
+                        peptideIssue = 0,
+                        precursorIssue = 0,
+                        ptmIssue = 0;
                 waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
                 idReport = false;
                 ArrayList<Integer> charges = new ArrayList<Integer>();
@@ -692,13 +697,19 @@ public class FileImporter {
                     }
 
                     for (PeptideAssumption assumption : match.getAllAssumptions()) {
-                        if (!idFilter.validatePeptideAssumption(assumption) || !idFilter.validateProteins(assumption.getPeptide())) {
+                        if (!idFilter.validatePeptideAssumption(assumption)) {
                             match.removeAssumption(assumption);
+                            peptideIssue++;
+                        }
+                        if (!idFilter.validateProteins(assumption.getPeptide())) {
+                            match.removeAssumption(assumption);
+                            proteinIssue++;
                         }
                     }
 
                     if (!match.hasAssumption(searchEngine)) {
                         matchIt.remove();
+                        rejected++;
                     } else {
                         for (PeptideAssumption assumption : match.getAllAssumptions()) {
 
@@ -718,6 +729,7 @@ public class FileImporter {
                                     peptide.setParentProteins(parentProteins);
                                     if (!idFilter.validateProteins(assumption.getPeptide())) {
                                         match.removeAssumption(assumption);
+                                        proteinIssue++;
                                     }
                                 }
                             }
@@ -858,9 +870,11 @@ public class FileImporter {
                                 peptide.estimateTheoreticMass();
                                 if (!idFilter.validatePrecursor(assumption, spectrumKey, spectrumFactory)) {
                                     match.removeAssumption(assumption);
+                                    precursorIssue++;
                                 }
                             } else {
                                 match.removeAssumption(assumption);
+                                ptmIssue++;
                             }
                         }
 
@@ -914,6 +928,8 @@ public class FileImporter {
                                     break;
                                 }
                             }
+                        } else {
+                            rejected++;
                         }
                     }
 
@@ -947,6 +963,32 @@ public class FileImporter {
                     }
                 }
                 projectDetails.addIdentificationFiles(idFile);
+                
+                // inform the user in case more than 75% of the hits were rejected by the filters
+                if (100 * rejected > 75 * numberOfMatches) {
+                    String report = "Warning: more than 75% of the matches were rejected by the loading filters when importing the matches.";
+                    double meanRejected = (proteinIssue + peptideIssue + ptmIssue + precursorIssue) / 4;
+                    if (proteinIssue > meanRejected) {
+                        report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
+                        if (searchEngine == SearchEngine.MASCOT) {
+                            report +=  " and make sure that you use Mascot with the 'decoy' option disabled";
+                        }
+                        report += ".";
+                    }
+                    if (peptideIssue > meanRejected) {
+                        report += " Please verify that your peptide selection criteria are not too restrictive.";
+                    }
+                    if (precursorIssue > meanRejected) {
+                        report += " Please verify that your precursor selection criteria are not too restrictive.";
+                    }
+                    if (ptmIssue > meanRejected) {
+                        report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project.";
+                        if (searchEngine == SearchEngine.MASCOT) {
+                            report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible :)";
+                        }
+                    }
+                    waitingHandler.appendReport(report, true, true);
+                }
             }
             waitingHandler.increaseProgressValue();
         }
