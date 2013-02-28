@@ -1256,7 +1256,7 @@ public class PeptideShaker {
                                 }
                             }
                             if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
-                                // we cannot merge this peptide, see whether we can explain the remainging modifications using peptides with the same sequence but other modification profile
+                                // we cannot merge this peptide, see whether we can explain the remaining modifications using peptides with the same sequence but other modification profile
                                 for (String tempKey : keys) {
                                     SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
                                     String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
