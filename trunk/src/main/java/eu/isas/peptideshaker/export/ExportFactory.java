@@ -263,6 +263,34 @@ public class ExportFactory implements Serializable {
         }
         writer.close();
     }
+    
+    /**
+     * Writes the documentation related to a report
+     * @param exportScheme the exort scheme of the report
+     * @param destinationFile the destination file where to write the documentation
+     * @throws IOException 
+     */
+    public static void writeDocumentation(ExportScheme exportScheme, File destinationFile) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
+
+        String mainTitle = exportScheme.getMainTitle();
+        if (mainTitle != null) {
+            writer.write(mainTitle);
+            writeSeparationLines(writer, exportScheme.getSeparationLines());
+        }
+        for (String sectionName : exportScheme.getSections()) {
+            if (exportScheme.isIncludeSectionTitles()) {
+                writer.write(sectionName);
+                writer.newLine();
+            }
+            for (ExportFeature exportFeature : exportScheme.getExportFeatures(sectionName)) {
+                writer.write(exportFeature.getTitle() + exportScheme.getSeparator() + exportFeature.getDescription());
+                writer.newLine();
+            }
+            writeSeparationLines(writer, exportScheme.getSeparationLines());
+        }
+        writer.close();
+    }
 
     /**
      * Writes section separation lines using the given writer.

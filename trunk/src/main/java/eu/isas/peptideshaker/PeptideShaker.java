@@ -873,7 +873,7 @@ public class PeptideShaker {
                             if (multiSE) {
                                 p = psParameter.getSearchEngineProbability();
                             } else {
-                                p = peptideAssumption1.getEValue();
+                                p = peptideAssumption1.getScore();
                             }
                             int nSE = 1;
                             int proteinMax = 1;

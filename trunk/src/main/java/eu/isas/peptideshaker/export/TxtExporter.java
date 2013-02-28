@@ -833,19 +833,19 @@ public class TxtExporter {
                     if (se == Advocate.MASCOT) {
                         MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
                         line += score.getScore() + SEPARATOR;
-                        line += assumption.getEValue() + SEPARATOR;
+                        line += assumption.getScore() + SEPARATOR;
                     } else {
                         line += SEPARATOR + SEPARATOR;
                     }
 
                     if (se == Advocate.OMSSA) {
-                        line += assumption.getEValue() + "";
+                        line += assumption.getScore() + "";
                     }
 
                     line += SEPARATOR;
 
                     if (se == Advocate.XTANDEM) {
-                        line += assumption.getEValue() + "";
+                        line += assumption.getScore() + "";
                     }
 
                     line += SEPARATOR;
@@ -854,7 +854,7 @@ public class TxtExporter {
                     probabilities = (PSParameter) assumption.getUrParam(probabilities);
 
                     try {
-                        line += assumption.getEValue() + SEPARATOR
+                        line += assumption.getScore() + SEPARATOR
                                 + probabilities.getSearchEngineProbability() + SEPARATOR;
                     } catch (Exception e) {
                         line += SEPARATOR + SEPARATOR;

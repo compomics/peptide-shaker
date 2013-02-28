@@ -594,11 +594,13 @@ public class FileImporter {
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
 
+            
             boolean idReport;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
             IdfileReader fileReader;
+            ArrayList<Integer> ignoredOMSSAModifications = new ArrayList<Integer>();
 
             int searchEngine = readerFactory.getSearchEngine(idFile);
 
@@ -613,7 +615,7 @@ public class FileImporter {
             try {
                 tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while loading spectrum matches from \'" 
+                waitingHandler.appendReport("An error occurred while loading spectrum matches from \'"
                         + Util.getFileName(idFile)
                         + "\'. This file will be ignored. Error: " + e.getMessage()
                         + " See resources/PeptideShaker.log for details.", true, true);
@@ -739,7 +741,15 @@ public class FileImporter {
                                             waitingHandler.appendReport("Impossible to parse OMSSA modification " + sePTM + ".", true, true);
                                         }
                                         if (omssaIndex != null) {
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, modificationProfile.getModification(omssaIndex));
+                                            String omssaName = modificationProfile.getModification(omssaIndex);
+                                            if (omssaName == null) {
+                                                if (!ignoredOMSSAModifications.contains(omssaIndex)) {
+                                                    waitingHandler.appendReport("Impossible to find OMSSA modification of index " + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
+                                                    ignoredOMSSAModifications.add(omssaIndex);
+                                                }
+                                                omssaName = PTMFactory.unknownPTM.getName();
+                                            }
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName);
                                         }
                                     } else if (searchEngine == Advocate.MASCOT || searchEngine == Advocate.XTANDEM) {
                                         String[] parsedName = sePTM.split("@");
@@ -895,7 +905,7 @@ public class FileImporter {
                                             }
                                         }
                                     }
-                                    inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                                    inputMap.addEntry(searchEngine, firstHit.getScore(), firstHit.isDecoy());
                                     identification.addSpectrumMatch(match);
                                     nRetained++;
                                     break;
