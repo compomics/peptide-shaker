@@ -159,6 +159,9 @@ public class DisplayPreferences implements Serializable {
      * @param modificationProfile the modification profile
      */
     public void setDefaultSelection(com.compomics.util.preferences.ModificationProfile modificationProfile) {
+        if (modificationProfile.getAllNotFixedModifications() == null) {
+            modificationProfile.repair();
+        }
         for (String ptm : modificationProfile.getAllNotFixedModifications()) {
             setDisplayedPTM(ptm, true);
         }
