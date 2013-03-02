@@ -3181,19 +3181,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @return the reporter ions possibly found in this project
      */
     public ArrayList<Integer> getReporterIons() {
+
         ArrayList<String> modifications = getFoundModifications();
         ArrayList<Integer> reporterIonsSubtypes = new ArrayList<Integer>();
-        PTM ptm;
-        int subType;
+
         for (String mod : modifications) {
-            ptm = ptmFactory.getPTM(mod);
+            PTM ptm = ptmFactory.getPTM(mod);
             for (ReporterIon reporterIon : ptm.getReporterIons()) {
-                subType = reporterIon.getSubType();
+                int subType = reporterIon.getSubType();
                 if (!reporterIonsSubtypes.contains(subType)) {
                     reporterIonsSubtypes.add(subType);
                 }
             }
         }
+
         return reporterIonsSubtypes;
     }
 
@@ -5193,9 +5194,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                     projectDetails.addSpectrumFile(fileInLastSelectedFolder);
                                 } else {
                                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                                            "An error occured while reading:\n" + spectrumFileName + "."
-                                            + "\n\nPlease select the spectrum file or the folder containing it manually.",
-                                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                            "Spectrum file not found: \'" + spectrumFileName + "\'."
+                                            + "\nPlease select the spectrum file or the folder containing it manually.",
+                                            "File Not Found", JOptionPane.ERROR_MESSAGE);
 
                                     JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
                                     fileChooser.setDialogTitle("Open Spectrum File");
@@ -5769,14 +5770,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public ArrayList<String> getFoundModifications() {
         if (identifiedModifications == null) {
-            boolean modified;
             identifiedModifications = new ArrayList<String>();
             for (String peptideKey : identification.getPeptideIdentification()) {
 
-                modified = false;
+                boolean modified = false;
 
                 for (String modificationName : Peptide.getModificationFamily(peptideKey)) {
-
                     if (!identifiedModifications.contains(modificationName)) {
                         identifiedModifications.add(modificationName);
                         modified = true;

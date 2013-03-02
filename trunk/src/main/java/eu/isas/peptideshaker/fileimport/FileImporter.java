@@ -971,7 +971,7 @@ public class FileImporter {
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
                         if (searchEngine == SearchEngine.MASCOT) {
-                            report +=  " and make sure that you use Mascot with the 'decoy' option disabled";
+                            report +=  " and make sure that you use Mascot with the 'decoy' option disabled.";
                         }
                         report += ".";
                     }
@@ -984,7 +984,7 @@ public class FileImporter {
                     if (ptmIssue > meanRejected) {
                         report += " Apparently your data contains modifications which are not recognized by PeptideShaker. Please verify the search parameters provided when creating the project.";
                         if (searchEngine == SearchEngine.MASCOT) {
-                            report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible :)";
+                            report += " When using Mascot alone, you need to specify the search parameters manually when creating the project. We recommend the complementary use of SearchGUI when possible.";
                         }
                     }
                     waitingHandler.appendReport(report, true, true);
