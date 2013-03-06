@@ -2949,14 +2949,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Provides to the PeptideShakerGUI instance the currently selected psm.
+     * Provides to the PeptideShakerGUI instance the currently selected PSM.
      */
     private void newItemSelection() {
         peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, getSelectedSpectrumKey());
     }
 
     /**
-     * Clears the currently selected psm.
+     * Clears the currently selected PSM.
      */
     private void clearItemSelection() {
         peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
