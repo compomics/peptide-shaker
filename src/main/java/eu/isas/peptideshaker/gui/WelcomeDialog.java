@@ -29,6 +29,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * A reference to the open dialog.
      */
     private NewDialog openDialog;
+    /**
+     * A dummy parent frame to be able to show an icon in the task bar.
+     */
+    static private DummyFrame dummyParentFrame = new DummyFrame("");
 
     /**
      * Create a new WelcomeDialog.
@@ -37,7 +41,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param modal modal or not modal
      */
     public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
-        super(new DummyFrame(peptideShakerGUI.getTitle()), modal);
+        super(dummyParentFrame.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
@@ -620,7 +624,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         //JOptionPane.showMessageDialog(this, "In development. Coming soon...", "In Development", JOptionPane.INFORMATION_MESSAGE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         dispose();
-        new PrideReshakeGui(peptideShakerGUI, true);
+        new PrideReshakeGui(peptideShakerGUI, dummyParentFrame, true);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         peptideShakerGUI.close();
     }//GEN-LAST:event_reshakeJButtonActionPerformed

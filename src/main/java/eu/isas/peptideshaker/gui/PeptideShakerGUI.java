@@ -2610,7 +2610,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void reshakeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeMenuItemActionPerformed
-        new PrideReshakeGui(this, true);
+        new PrideReshakeGui(this, null, true);
     }//GEN-LAST:event_reshakeMenuItemActionPerformed
 
     /**
@@ -4681,7 +4681,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param showSpectrumOptions if true, the spectrum options are shown
      * @param showBubblePlotOptions if true, the bubble plot options are shown
      * @param showIonTableOptions if true, the ion table options are shown
-     * @param showPtmPlotOptions if true, the ptm plot option are shown
+     * @param showPtmPlotOptions if true, the PTM plot option are shown
      */
     public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions,
             boolean showIonTableOptions, boolean showPtmPlotOptions) {

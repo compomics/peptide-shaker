@@ -11,8 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.PatternSyntaxException;
 import java.util.zip.GZIPInputStream;
 import javax.swing.*;
@@ -24,7 +22,12 @@ import org.jfree.chart.plot.PlotOrientation;
 import no.uib.jsparklines.renderers.*;
 import org.apache.commons.io.FileUtils;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.preferences.ModificationProfile;
+import eu.isas.peptideshaker.gui.DummyFrame;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import javax.swing.filechooser.FileFilter;
@@ -56,7 +59,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private HashMap<Integer, String> speciesForProject;
     /**
-     * The list of ptms for a given PRIDE project accession number.
+     * The list of PTMs for a given PRIDE project accession number.
      */
     private HashMap<Integer, String> ptmsForProject;
     /**
@@ -88,7 +91,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private File currentMgfFile;
     /**
-     * The current URL contect length.
+     * The current URL content length.
      */
     private int currentUrlContentLength;
     /**
@@ -102,26 +105,35 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     /**
      * The maximum precursor charge detected in the PRIDE XML files.
      */
-    private int maxPrecursorCharge = 0;
+    private Integer maxPrecursorCharge = 0;
     /**
-     * The minmim precursor charge detected in the PRIDE XML files.
+     * The minimum precursor charge detected in the PRIDE XML files.
      */
-    private int minPrecursorCharge = 1000;
+    private Integer minPrecursorCharge = 1000;
+    /**
+     * A dummy parent frame to be able to show an icon in the task bar.
+     */
+    private DummyFrame dummyParentFrame;
 
     /**
      * Creates a new PrideReshakeGui dialog.
      *
      * @param peptideShakerGUI
+     * @param dummyParentFrame dummy parent frame to be able to show an icon in
+     * the task bar, can be null
      * @param modal
      */
-    public PrideReshakeGui(PeptideShakerGUI peptideShakerGUI, boolean modal) {
+    public PrideReshakeGui(PeptideShakerGUI peptideShakerGUI, DummyFrame dummyParentFrame, boolean modal) {
         super(peptideShakerGUI, modal);
         initComponents();
         this.peptideShakerGUI = peptideShakerGUI;
+        this.dummyParentFrame = dummyParentFrame;
         setUpGui();
         insertData();
 
-        this.setSize(peptideShakerGUI.getWidth() - 200, peptideShakerGUI.getHeight() - 200);
+        if (peptideShakerGUI.isVisible()) {
+            this.setSize(peptideShakerGUI.getWidth() - 200, peptideShakerGUI.getHeight() - 200);
+        }
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -136,8 +148,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         projectsTable.getColumn("Accession").setMinWidth(80);
         projectsTable.getColumn(" ").setMaxWidth(30);
         projectsTable.getColumn(" ").setMinWidth(30);
-        projectsTable.getColumn("  ").setMaxWidth(30);
-        projectsTable.getColumn("  ").setMinWidth(30);
         searchTable.getColumn("Accession").setMaxWidth(80);
         searchTable.getColumn("Accession").setMinWidth(80);
 
@@ -146,7 +156,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         searchScrollPane.getViewport().setOpaque(false);
 
         projectsTable.setAutoCreateRowSorter(true);
-        searchTable.setAutoCreateRowSorter(true);
 
         projectsTable.getTableHeader().setReorderingAllowed(false);
         searchTable.getTableHeader().setReorderingAllowed(false);
@@ -164,11 +173,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         projectsTable.getColumn("Title").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
-        projectsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
-                null,
-                "Online", "Local"));
-
         projectsTableToolTips = new ArrayList<String>();
         projectsTableToolTips.add("PRIDE Accession Number");
         projectsTableToolTips.add("Project Title");
@@ -180,7 +184,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         projectsTableToolTips.add("Number of Peptides");
         projectsTableToolTips.add("Number of Proteins");
         projectsTableToolTips.add("References");
-        projectsTableToolTips.add("Online Project");
         projectsTableToolTips.add("Reanalyze PRIDE Project");
     }
 
@@ -188,6 +191,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * Insert the PRIDE project data.
      */
     private void insertData() {
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         DefaultTableModel projectsTableModel = (DefaultTableModel) projectsTable.getModel();
         projectsTableModel.getDataVector().removeAllElements();
@@ -229,7 +234,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         null,
                         null,
                         "",
-                        false,
                         false
                     });
         }
@@ -284,26 +288,28 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 speciesForProject.put(accession, species);
                 ptmsForProject.put(accession, ptms);
 
-                ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
-                            accession,
-                            "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
-                            + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                            + title + "</font></a><html>",
-                            project,
-                            species,
-                            tissue,
-                            ptms,
-                            numSpectra,
-                            numPeptides, // note that the order of peptides and proteins is different in the tsv file!
-                            numProteins,
-                            references,
-                            true,
-                            false
-                        });
+                if (!hideNonValidProjectsCheckBox.isSelected() || (hideNonValidProjectsCheckBox.isSelected() && numSpectra > 0)) {
+
+                    ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                                accession,
+                                "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
+                                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + title + "</font></a><html>",
+                                project,
+                                species,
+                                tissue,
+                                ptms,
+                                numSpectra,
+                                numPeptides, // note that the order of peptides and proteins is different in the tsv file!
+                                numProteins,
+                                references,
+                                false
+                            });
+                }
 
                 line = br.readLine();
             }
-            
+
             br.close();
             r.close();
 
@@ -330,10 +336,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).setMinimumChartValue(2.0);
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(PrideReshakeGui.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         } catch (IOException ex) {
-            Logger.getLogger(PrideReshakeGui.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -362,6 +370,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         };
         localProjectsFolderLabel = new javax.swing.JLabel();
         projectNotFoundLabel = new javax.swing.JLabel();
+        hideNonValidProjectsCheckBox = new javax.swing.JCheckBox();
         selectedProjectPanel = new javax.swing.JPanel();
         projectTitlePanel = new javax.swing.JPanel();
         accessionLabel = new javax.swing.JLabel();
@@ -405,9 +414,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         };
         reshakeButton = new javax.swing.JButton();
+        searchFiltersLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PRIDE - Public Projects");
+        setMinimumSize(new java.awt.Dimension(1280, 750));
+        setPreferredSize(new java.awt.Dimension(1280, 750));
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -419,14 +431,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", "  ", " "
+                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", " "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -460,27 +472,37 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         localProjectsFolderLabel.setText("<html><a href>Edit Local Projects Folder</html>");
         localProjectsFolderLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                localProjectsFolderLabelMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 localProjectsFolderLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 localProjectsFolderLabelMouseExited(evt);
             }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                localProjectsFolderLabelMouseReleased(evt);
-            }
         });
 
         projectNotFoundLabel.setText("<html><a href>Project not found?</html>");
         projectNotFoundLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                projectNotFoundLabelMouseReleased(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 projectNotFoundLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 projectNotFoundLabelMouseExited(evt);
             }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                projectNotFoundLabelMouseReleased(evt);
+        });
+
+        hideNonValidProjectsCheckBox.setSelected(true);
+        hideNonValidProjectsCheckBox.setText("Hide projects without spectra");
+        hideNonValidProjectsCheckBox.setIconTextGap(10);
+        hideNonValidProjectsCheckBox.setOpaque(false);
+        hideNonValidProjectsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hideNonValidProjectsCheckBoxActionPerformed(evt);
             }
         });
 
@@ -492,11 +514,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(allProjectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(allProjectsPanelLayout.createSequentialGroup()
-                        .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1097, Short.MAX_VALUE)
+                        .addComponent(projectsScrollPane)
                         .addContainerGap())
                     .addGroup(allProjectsPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(projectNotFoundLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(hideNonValidProjectsCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(localProjectsFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18))))
@@ -505,11 +529,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             allProjectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(allProjectsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(allProjectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(localProjectsFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(projectNotFoundLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(projectNotFoundLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(hideNonValidProjectsCheckBox))
                 .addGap(4, 4, 4))
         );
 
@@ -530,15 +555,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         accessionTextField.setEditable(false);
         accessionTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        titleTextArea.setColumns(20);
         titleTextArea.setEditable(false);
+        titleTextArea.setColumns(20);
         titleTextArea.setLineWrap(true);
         titleTextArea.setRows(2);
         titleTextArea.setWrapStyleWord(true);
         titleScrollPane.setViewportView(titleTextArea);
 
-        projectTextArea.setColumns(20);
         projectTextArea.setEditable(false);
+        projectTextArea.setColumns(20);
         projectTextArea.setLineWrap(true);
         projectTextArea.setRows(2);
         projectTextArea.setWrapStyleWord(true);
@@ -567,7 +592,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(projectTitlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(projectScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                            .addComponent(projectScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                             .addComponent(titleScrollPane))))
                 .addContainerGap())
         );
@@ -595,8 +620,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(projectTitlePanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(projectScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)))
-                .addContainerGap(0, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(projectScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         speciesTissueAndPtmsPanel.setOpaque(false);
@@ -614,8 +639,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         ptmsLabel.setFont(ptmsLabel.getFont().deriveFont(ptmsLabel.getFont().getStyle() | java.awt.Font.BOLD));
         ptmsLabel.setText("PTMs");
 
-        ptmsTextArea.setColumns(20);
         ptmsTextArea.setEditable(false);
+        ptmsTextArea.setColumns(20);
         ptmsTextArea.setLineWrap(true);
         ptmsTextArea.setRows(2);
         ptmsTextArea.setWrapStyleWord(true);
@@ -633,7 +658,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     .addComponent(ptmsLabel))
                 .addGap(18, 18, 18)
                 .addGroup(speciesTissueAndPtmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ptmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                    .addComponent(ptmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                     .addComponent(tissueTextField)
                     .addComponent(speciesTextField))
                 .addContainerGap())
@@ -668,15 +693,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         pumMedLabel.setFont(pumMedLabel.getFont().deriveFont(pumMedLabel.getFont().getStyle() | java.awt.Font.BOLD));
         pumMedLabel.setText("PumMed");
 
-        referencesTextArea.setColumns(20);
         referencesTextArea.setEditable(false);
+        referencesTextArea.setColumns(20);
         referencesTextArea.setLineWrap(true);
         referencesTextArea.setRows(2);
         referencesTextArea.setWrapStyleWord(true);
         referencesScrollPane.setViewportView(referencesTextArea);
 
-        pubMedEditorPane.setContentType("text/html");
         pubMedEditorPane.setEditable(false);
+        pubMedEditorPane.setContentType("text/html"); // NOI18N
         pubMedEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
             public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
                 pubMedEditorPaneHyperlinkUpdate(evt);
@@ -695,7 +720,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     .addComponent(pumMedLabel))
                 .addGap(18, 18, 18)
                 .addGroup(referencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(referencesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                    .addComponent(referencesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                     .addComponent(pumMedScrollPane))
                 .addContainerGap())
         );
@@ -816,19 +841,24 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         });
 
+        searchFiltersLabel.setFont(searchFiltersLabel.getFont().deriveFont((searchFiltersLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        searchFiltersLabel.setText("Supported filter options: partial (case sensitive) text; and number, >number and <number for the spectra, peptides and proteins columns.");
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(selectedProjectPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(allProjectsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(reshakeButton)))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(searchFiltersLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(reshakeButton))
+                    .addComponent(selectedProjectPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(allProjectsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -840,8 +870,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 .addComponent(allProjectsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(selectedProjectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(reshakeButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(reshakeButton)
+                    .addComponent(searchFiltersLabel))
                 .addContainerGap())
         );
 
@@ -978,7 +1010,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.isDirectory();
@@ -1062,7 +1093,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File myFile) {
                 return myFile.isDirectory();
@@ -1139,11 +1169,21 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_projectNotFoundLabelMouseReleased
+
+    /**
+     * Show/hide the non-validated projects.
+     *
+     * @param evt
+     */
+    private void hideNonValidProjectsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideNonValidProjectsCheckBoxActionPerformed
+        insertData();
+    }//GEN-LAST:event_hideNonValidProjectsCheckBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel accessionLabel;
     private javax.swing.JTextField accessionTextField;
     private javax.swing.JPanel allProjectsPanel;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JCheckBox hideNonValidProjectsCheckBox;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel localProjectsFolderLabel;
@@ -1166,6 +1206,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private javax.swing.JScrollPane referencesScrollPane;
     private javax.swing.JTextArea referencesTextArea;
     private javax.swing.JButton reshakeButton;
+    private javax.swing.JLabel searchFiltersLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JScrollPane searchScrollPane;
     private javax.swing.JTable searchTable;
@@ -1197,12 +1238,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
 
+        dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
         progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
         progressDialog.setUnstoppable(true); // @TODO: can this be removed??
         isFileBeingDownloaded = true;
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -1214,167 +1256,197 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
 
         new Thread("DownloadThread") {
-
             @Override
             public void run() {
 
-                // set up the identification parameters
-                SearchParameters prideSearchParameters = new SearchParameters();
+                try {
+                    // set up the identification parameters
+                    SearchParameters prideSearchParameters = new SearchParameters();
+                    String prideSearchParametersReport = null;
+                    ArrayList<File> mgfFiles = new ArrayList<File>();
 
-                for (int i = 0; i < selectedProjects.size(); i++) {
+                    for (int i = 0; i < selectedProjects.size(); i++) {
 
-                    if (progressDialog.isRunCanceled()) {
-                        progressDialog.setRunFinished();
-                        return;
-                    }
-
-                    final Integer prideAccession = selectedProjects.get(i);
-                    final int counter = i;
-
-                    if (selectedProjects.size() > 1) {
-                        progressDialog.setTitle("Downloading PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
-                    } else {
-                        progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
-                    }
-
-                    try {
-                        currentPrideProjectUrl = new URL("ftp://ftp.ebi.ac.uk/pub/databases/pride/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
-                        currentZippedPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
-                        currentPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
-                        currentMgfFile = new File(outputFolder, "PRIDE_Exp_Complete_Ac_" + prideAccession + ".mgf");
-                        URLConnection conn = currentPrideProjectUrl.openConnection();
-                        currentUrlContentLength = conn.getContentLength();
-                        // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
-
-                    } catch (MalformedURLException ex) {
-                        ex.printStackTrace();
-                        currentPrideProjectUrl = null;
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                        currentPrideProjectUrl = null;
-                    }
-
-                    if (currentPrideProjectUrl != null) {
-                        if (currentUrlContentLength != -1) {
-                            progressDialog.setIndeterminate(false);
-                            progressDialog.setValue(0);
-                            progressDialog.setMaxProgressValue(currentUrlContentLength);
-                        } else {
-                            progressDialog.setIndeterminate(true);
+                        if (progressDialog.isRunCanceled()) {
+                            progressDialog.setRunFinished();
+                            return;
                         }
 
-                        isFileBeingDownloaded = true;
+                        final Integer prideAccession = selectedProjects.get(i);
+                        final int counter = i;
 
-                        new Thread("DownloadMonitorThread") {
+                        if (selectedProjects.size() > 1) {
+                            progressDialog.setTitle("Downloading PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                        } else {
+                            progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
+                        }
 
-                            @Override
-                            public void run() {
+                        try {
+                            currentPrideProjectUrl = new URL("ftp://ftp.ebi.ac.uk/pub/databases/pride/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
+                            currentZippedPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml.gz");
+                            currentPrideXmlFile = new File(outputFolder, "temp/PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
+                            currentMgfFile = new File(outputFolder, "PRIDE_Exp_Complete_Ac_" + prideAccession + ".mgf");
+                            mgfFiles.add(currentMgfFile);
+                            URLConnection conn = currentPrideProjectUrl.openConnection();
+                            currentUrlContentLength = conn.getContentLength();
+                            // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
 
-                                long start = System.currentTimeMillis();
+                        } catch (MalformedURLException ex) {
+                            ex.printStackTrace();
+                            currentPrideProjectUrl = null;
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                            currentPrideProjectUrl = null;
+                        }
 
-                                while (isFileBeingDownloaded) {
+                        if (currentPrideProjectUrl != null) {
+                            if (currentUrlContentLength != -1) {
+                                progressDialog.setIndeterminate(false);
+                                progressDialog.setValue(0);
+                                progressDialog.setMaxProgressValue(currentUrlContentLength);
+                            } else {
+                                progressDialog.setIndeterminate(true);
+                            }
 
-                                    if (progressDialog.isRunCanceled()) {
-                                        progressDialog.setRunFinished();
-                                        return;
-                                    }
+                            isFileBeingDownloaded = true;
 
-                                    long now = System.currentTimeMillis();
+                            new Thread("DownloadMonitorThread") {
+                                @Override
+                                public void run() {
 
-                                    // update the progress dialog every 100 millisecond or so
-                                    if ((now - start) > 100 && progressDialog != null) {
-                                        long length = currentZippedPrideXmlFile.length();
+                                    long start = System.currentTimeMillis();
 
-                                        if (currentUrlContentLength != -1) {
-                                            progressDialog.setValue((int) length);
+                                    while (isFileBeingDownloaded) {
+
+                                        if (progressDialog.isRunCanceled()) {
+                                            progressDialog.setRunFinished();
+                                            return;
                                         }
 
-                                        if (selectedProjects.size() > 1) {
-                                            progressDialog.setTitle("Downloading PRIDE Project (" + (counter + 1) + "/" + selectedProjects.size()
-                                                    + "). Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
-                                        } else {
-                                            progressDialog.setTitle("Downloading PRIDE Project. Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
-                                        }
+                                        long now = System.currentTimeMillis();
 
-                                        start = System.currentTimeMillis();
+                                        // update the progress dialog every 100 millisecond or so
+                                        if ((now - start) > 100 && progressDialog != null) {
+                                            long length = currentZippedPrideXmlFile.length();
+
+                                            if (currentUrlContentLength != -1) {
+                                                progressDialog.setValue((int) length);
+                                            }
+
+                                            if (selectedProjects.size() > 1) {
+                                                progressDialog.setTitle("Downloading PRIDE Project (" + (counter + 1) + "/" + selectedProjects.size()
+                                                        + "). Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
+                                            } else {
+                                                progressDialog.setTitle("Downloading PRIDE Project. Please Wait... (" + (length / (1024L * 1024L)) + " MB)");
+                                            }
+
+                                            start = System.currentTimeMillis();
+                                        }
                                     }
                                 }
-                            }
-                        }.start();
+                            }.start();
 
 
-                        if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
-                                "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml").exists()) {
+                            if (!new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
+                                    "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml").exists()) {
 
-                            // download the pride xml file
-                            try {
-                                FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedPrideXmlFile);
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
+                                // download the pride xml file
+                                try {
+                                    FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedPrideXmlFile);
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
 
-                            isFileBeingDownloaded = false;
+                                isFileBeingDownloaded = false;
 
-                            // file downloaded, unzip file
-                            if (selectedProjects.size() > 1) {
-                                progressDialog.setTitle("Unzipping PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                                // file downloaded, unzip file
+                                if (selectedProjects.size() > 1) {
+                                    progressDialog.setTitle("Unzipping PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                                } else {
+                                    progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
+                                }
+                                progressDialog.setIndeterminate(true);
+                                unzipProject();
                             } else {
-                                progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
+                                isFileBeingDownloaded = false;
+                                currentPrideXmlFile = new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
+                                        "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
                             }
-                            progressDialog.setIndeterminate(true);
-                            unzipProject();
-                        } else {
-                            isFileBeingDownloaded = false;
-                            currentPrideXmlFile = new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder(),
-                                    "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
-                        }
 
-                        // file unzipped, time to start the conversion to mgf
-                        if (selectedProjects.size() > 1) {
-                            progressDialog.setTitle("Converting PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
-                        } else {
-                            progressDialog.setTitle("Converting PRIDE Project. Please Wait...");
-                        }
-                        convertPrideXmlToMgf();
+                            // file unzipped, time to start the conversion to mgf
+                            if (selectedProjects.size() > 1) {
+                                progressDialog.setTitle("Converting PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                            } else {
+                                progressDialog.setTitle("Converting PRIDE Project. Please Wait...");
+                            }
+                            convertPrideXmlToMgf();
 
-                        // get the search params from the pride xml file
-                        if (selectedProjects.size() > 1) {
-                            progressDialog.setTitle("Getting Search Settings (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
-                        } else {
-                            progressDialog.setTitle("Getting Search Settings. Please Wait...");
+                            // get the search params from the pride xml file
+                            if (selectedProjects.size() > 1) {
+                                progressDialog.setTitle("Getting Search Settings (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                            } else {
+                                progressDialog.setTitle("Getting Search Settings. Please Wait...");
+                            }
+                            prideSearchParametersReport = getSearchParams(prideAccession, prideSearchParameters);
                         }
-                        getSearchParams(prideAccession);
                     }
-                }
 
-                // save the search params
-                try {
-                    SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
-                } catch (ClassNotFoundException e) {
+                    // save the search params
+                    try {
+                        prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
+                        SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    // clear the temp folder
+                    progressDialog.setTitle("Clearing Temp Files. Please Wait...");
+                    progressDialog.setIndeterminate(true);
+                    Util.deleteDir(currentZippedPrideXmlFile.getParentFile());
+
+                    progressDialog.setRunFinished();
+
+                    if (dummyParentFrame != null) {
+                        dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    }
+
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE project(s) downloaded, converted to mgf and stored here:\n"
+                            + outputFolder, "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+
+
+                    // display the detected search parameters to the user
+                    new PrideSearchParametersDialog(peptideShakerGUI, new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, true);
+
+                } catch (Exception e) {
+                    if (dummyParentFrame != null) {
+                        dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    }
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured when trying to convert the PRIDE project.\n"
+                            + "See resources/PeptideShaker.log for details.",
+                            "PRIDE Conversion Error", JOptionPane.INFORMATION_MESSAGE);
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
                 }
-
-                // clear the temp folder
-                progressDialog.setTitle("Clearing Temp Files. Please Wait...");
-                progressDialog.setIndeterminate(true);
-                Util.deleteDir(currentZippedPrideXmlFile.getParentFile());
-
-                progressDialog.setRunFinished();
-
-                JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE project(s) downloaded, converted to mgf and stored here:\n"
-                        + outputFolder, "Download Complete", JOptionPane.INFORMATION_MESSAGE);
             }
         }.start();
     }
 
     /**
-     * Get the search params from the PRIDE project.
+     * Get the search parameters from the PRIDE project. Returns the PRIDE
+     * search parameters as a string.
+     *
+     * @param prideAccession the pride accession number
+     * @param prideSearchParameters the search parameters object to add the
+     * search settings to
+     * @return the PRIDE search parameters report
+     * @throws Exception
      */
-    private void getSearchParams(Integer prideAccession) {
+    private String getSearchParams(Integer prideAccession, SearchParameters prideSearchParameters) throws Exception {
 
         progressDialog.setIndeterminate(true);
 
@@ -1400,14 +1472,17 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         }
 
-        List<Param> protocolStepDescription = prideXmlReader.getProtocol().getProtocolSteps().getStepDescription();
+        if (prideXmlReader.getProtocol() != null && prideXmlReader.getProtocol().getProtocolSteps() != null) {
 
-        for (Param stepDescription : protocolStepDescription) {
-            List<CvParam> stepCvParams = stepDescription.getCvParam();
+            List<Param> protocolStepDescription = prideXmlReader.getProtocol().getProtocolSteps().getStepDescription();
 
-            for (CvParam stepCvParam : stepCvParams) {
-                if (stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000160") || stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000024")) { // enzyme
-                    enzyme = stepCvParam.getValue();
+            for (Param stepDescription : protocolStepDescription) {
+                List<CvParam> stepCvParams = stepDescription.getCvParam();
+
+                for (CvParam stepCvParam : stepCvParams) {
+                    if (stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000160") || stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000024")) { // enzyme
+                        enzyme = stepCvParam.getValue();
+                    }
                 }
             }
         }
@@ -1423,7 +1498,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         progressDialog.setIndeterminate(false);
         progressDialog.setMaxProgressValue(ids.size());
         progressDialog.setValue(0);
-        
+
         for (String id : ids) {
 
             progressDialog.increaseProgressValue();
@@ -1488,9 +1563,129 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         }
 
-        // @TODO: map the ptms to our own utilities ptms!
 
 
+        String prideParametersReport = "";
+        prideParametersReport += "<html><br><b><u>Extracted search parameters</u></b><br>";
+
+
+        // set the fragment ion accuracy
+        if (fragmentIonMassTolerance != null) {
+            prideSearchParameters.setFragmentIonAccuracy(fragmentIonMassTolerance);
+            prideParametersReport += "<br><b>Fragment ion mass tolerance:</b> " + fragmentIonMassTolerance;
+        } else {
+            prideParametersReport += "<br><b>Fragment ion mass tolerance:</b> unknown";
+        }
+
+        // set the precuros ion accuracy
+        if (peptideIonMassTolerance != null) {
+            prideSearchParameters.setPrecursorAccuracy(peptideIonMassTolerance); // @TODO: ppm assumed?
+            prideParametersReport += "<br><b>Precursor ion mass tolerance:</b> " + peptideIonMassTolerance;
+        } else {
+            prideParametersReport += "<br><b>Precursor ion mass tolerance:</b> unknown";
+        }
+
+        // set the max missed cleavages
+        if (maxMissedCleavages != null) {
+            prideSearchParameters.setnMissedCleavages(maxMissedCleavages);
+            prideParametersReport += "<br><b>Maximum number of missed cleavages:</b> " + maxMissedCleavages;
+        } else {
+            prideParametersReport += "<br><b>Maximum number of missed cleavages:</b> unknown";
+        }
+
+        // taxonomy and species
+        prideParametersReport += "<br><br><b>Species:</b> " + speciesForProject.get(prideAccession);
+        prideParametersReport += "<br><b>Taxonomy:</b> " + taxonomyForProject.get(prideAccession);
+
+
+        // map the ptms to utilities ptms
+        String allPtms = ptmsForProject.get(prideAccession);
+        ArrayList<String> unmappablePtms = new ArrayList<String>();
+
+        ModificationProfile modProfile = new ModificationProfile();
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+
+        prideParametersReport += "<br><br><b>Post-translational modifications:</b>";
+
+        if (allPtms != null) {
+
+            if (allPtms.trim().length() > 0) {
+
+                String[] tempPtms = allPtms.split(";");
+
+                for (String pridePtmName : tempPtms) {
+
+                    String utilitiesPtmName = convertPridePtmToUtilitiesPtm(pridePtmName);
+
+                    if (utilitiesPtmName != null) {
+                        if (!modProfile.contains(utilitiesPtmName)) {
+                            // guess fixed/variable
+                            if (utilitiesPtmName.equalsIgnoreCase("carbamidomethyl c")) { // @TODO: improve/extend guess!
+                                modProfile.addFixedModification(ptmFactory.getPTM(utilitiesPtmName));
+                                prideParametersReport += "<br>" + utilitiesPtmName + " (assumed fixed)";
+                            } else {
+                                modProfile.addVariableModification(ptmFactory.getPTM(utilitiesPtmName));
+                                prideParametersReport += "<br>" + utilitiesPtmName + " (assumed variable)";
+                            }
+                        }
+                    } else {
+                        if (!unmappablePtms.contains(pridePtmName)) {
+                            unmappablePtms.add(pridePtmName);
+                            prideParametersReport += "<br>" + pridePtmName + " (unknown ptm)";
+                        }
+                    }
+                }
+            } else {
+                prideParametersReport += "<br>(none detected)";
+            }
+        } else {
+            prideParametersReport += "<br>(none detected)";
+        }
+
+        // set the modification profile
+        prideSearchParameters.setModificationProfile(modProfile);
+
+        prideParametersReport += "<br>";
+
+        // set the enzyme
+        if (enzyme != null) {
+            
+            //prideSearchParameters.setEnzyme(prideEnzyme);  // @TODO: add an enzyme mapping
+            prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+            prideParametersReport += "<br><b>Enzyme:</b> " + enzyme;
+
+        } else {
+            // try to guess enzyme from the ion types and peptide endings?
+            // @TODO: implement me!
+            //for (String ionType : ionTypes.keySet()) {
+            //}
+            //
+            //for (String residues : peptideLastResidues.keySet()) {
+            //}
+
+            prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+            prideParametersReport += "<br><b>Enzyme:</b> unknown (trypsin assumed)"; // @TODO: improve!
+        }
+
+        // set the min/max precursor charge
+        if (minPrecursorCharge != null) {
+            prideSearchParameters.setMinChargeSearched(new Charge(Charge.PLUS, minPrecursorCharge));
+            prideParametersReport += "<br><br><b>Min precusor charge:</b> " + minPrecursorCharge;
+        }
+        if (maxPrecursorCharge != null) {
+            prideSearchParameters.setMaxChargeSearched(new Charge(Charge.PLUS, maxPrecursorCharge));
+            prideParametersReport += "<br><b>Max precusor charge:</b> " + maxPrecursorCharge;
+        }
+
+
+        
+        prideParametersReport += "<br></html>";
+
+
+
+
+
+        // debug output
         System.out.println("\nfragmentIonMassTolerance: " + fragmentIonMassTolerance);
         System.out.println("peptideIonMassTolerance: " + peptideIonMassTolerance);
         System.out.println("maxMissedCleavages: " + maxMissedCleavages);
@@ -1508,12 +1703,37 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             System.out.print(ionType + ": " + ionTypes.get(ionType) + ", ");
         }
         System.out.println();
-        
+
         System.out.print("peptide endings: ");
         for (String residues : peptideLastResidues.keySet()) {
             System.out.print(residues + ": " + peptideLastResidues.get(residues) + ", ");
         }
         System.out.println();
+
+
+
+        return prideParametersReport;
+    }
+
+    /**
+     * Tries to convert a PRIDE PTM name to utilities PTM name.
+     *
+     * @param pridePtmName the PRIDE PTM name
+     * @return the utilities PTM name, or null if there is no mapping
+     */
+    private String convertPridePtmToUtilitiesPtm(String pridePtmName) {
+
+        // @TODO: implement properly!!
+
+        if (pridePtmName.equalsIgnoreCase("Carbamidomethyl")) {
+            return "carbamidomethyl c";
+        } else if (pridePtmName.equalsIgnoreCase("Oxidation")) {
+            return "oxidation of m";
+        } else if (pridePtmName.equalsIgnoreCase("Acetylation")) {
+            return "acetylation of k";
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1834,8 +2054,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * Writes the given spectrum to the buffered writer.
      *
      * @param spectrum
-     * @param bw 
-     * @throws IOException  
+     * @param bw
+     * @throws IOException
      */
     public void asMgf(Spectrum spectrum, BufferedWriter bw) throws IOException {
 
