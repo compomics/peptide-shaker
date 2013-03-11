@@ -2581,8 +2581,8 @@ public class PeptideShaker {
     }
 
     /**
-     * Checks whether a protein (newAccession) is better defined than an other
-     * one (oldAccession)
+     * Checks whether a protein (newAccession) is better defined than another
+     * one (oldAccession).
      *
      * @param oldAccession the accession of the old protein
      * @param newAccession the accession of the new protein
@@ -2592,6 +2592,12 @@ public class PeptideShaker {
     private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException {
         String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
         String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
+        
+        // note: this most likely means that we have a problem with the parsing of the db, but better than a null pointer...
+        if (oldDescription == null) {
+            return false;
+        }
+        
         String[] keyWords = {"Uncharacterized", "putative", "like"};
         for (String keyWord : keyWords) {
             if (newDescription.toLowerCase().contains(keyWord)) {
