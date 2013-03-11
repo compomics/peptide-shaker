@@ -314,7 +314,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         importFilterTxt.setEditable(false);
         importFilterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         importFilterTxt.setText("Default");
-        importFilterTxt.setToolTipText("Minimum Peptide Length");
 
         importFiltersLabel.setText("Import Filters");
 
@@ -343,7 +342,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         preferencesTxt.setEditable(false);
         preferencesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         preferencesTxt.setText("Default");
-        preferencesTxt.setToolTipText("Minimum Peptide Length");
 
         editPreferencesButton.setText("Edit");
         editPreferencesButton.addActionListener(new java.awt.event.ActionListener() {

@@ -295,7 +295,6 @@
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Default"/>
-                <Property name="toolTipText" type="java.lang.String" value="Minimum Peptide Length"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="importFiltersLabel">
@@ -341,7 +340,6 @@
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Default"/>
-                <Property name="toolTipText" type="java.lang.String" value="Minimum Peptide Length"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="editPreferencesButton">

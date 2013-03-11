@@ -78,7 +78,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     };
     /**
      * A list of the panels that where visible when the spectrum was maximized.
-     * The order is: protein, peptides and psms, coverage.
+     * The order is: protein, peptides and PSMs, coverage.
      */
     private ArrayList<Boolean> panelsShownUponMaximze;
     /**

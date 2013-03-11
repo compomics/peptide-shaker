@@ -29,7 +29,6 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.DummyFrame;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
-import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import javax.swing.filechooser.FileFilter;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import uk.ac.ebi.pride.jaxb.model.*;
