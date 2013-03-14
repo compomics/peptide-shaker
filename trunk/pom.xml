@@ -315,7 +315,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.9</version>
+            <version>3.4.10</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.lowagie</groupId>
