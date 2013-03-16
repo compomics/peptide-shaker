@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.software.ToolFactory;
-import com.compomics.util.experiment.identification.SearchParameters;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.File;
 import java.util.ArrayList;

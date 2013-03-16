@@ -2340,7 +2340,7 @@ public class PeptideShaker {
                 try {
                     currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                 } catch (Exception e) {
-                    waitingHandler.appendReport("Protein not found: " + proteinMatch.getMainMatch() + ".", true, true); // This error is likely to be caught at an earlier stage
+                    waitingHandler.appendReport("Protein not found: " + proteinMatch.getMainMatch() + ". Please see http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true); // This error is likely to be caught at an earlier stage
                 }
 
                 if (currentProtein != null) {
@@ -2588,8 +2588,11 @@ public class PeptideShaker {
      * @param newAccession the accession of the new protein
      * @return a boolean indicating whether the new accession is better
      * described
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws IllegalArgumentException 
      */
-    private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException {
+    private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException {
         String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
         String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
         
