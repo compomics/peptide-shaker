@@ -17,6 +17,7 @@ import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.general.ExceptionHandler;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
@@ -556,10 +557,18 @@ public class FileImporter {
                     if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
                         waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
                         waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
+                    } else if (ExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
+                        waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                        waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+                        waitingHandler.appendReport("Please see the Database help page: http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
                     } else {
                         waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
                         waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                     }
+
+                    waitingHandler.appendReportNewLineNoDate();
+                    waitingHandler.appendReport("File import canceled.", true, true);
+
                 } catch (OutOfMemoryError error) {
                     System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                     Runtime.getRuntime().gc();
@@ -594,7 +603,7 @@ public class FileImporter {
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
 
-            
+
             boolean idReport;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
@@ -626,7 +635,7 @@ public class FileImporter {
                 Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
                 int numberOfMatches = tempSet.size(),
-                        progress = 0, 
+                        progress = 0,
                         rejected = 0,
                         proteinIssue = 0,
                         peptideIssue = 0,
@@ -963,7 +972,7 @@ public class FileImporter {
                     }
                 }
                 projectDetails.addIdentificationFiles(idFile);
-                
+
                 // inform the user in case more than 75% of the hits were rejected by the filters
                 if (100 * rejected > 75 * numberOfMatches) {
                     String report = "Warning: more than 75% of the matches were rejected by the loading filters when importing the matches.";
@@ -971,7 +980,7 @@ public class FileImporter {
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
                         if (searchEngine == SearchEngine.MASCOT) {
-                            report +=  " and make sure that you use Mascot with the 'decoy' option disabled.";
+                            report += " and make sure that you use Mascot with the 'decoy' option disabled.";
                         }
                         report += ".";
                     }
