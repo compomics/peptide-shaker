@@ -2337,11 +2337,7 @@ public class PeptideShaker {
                 int nPeptides = -proteinMatch.getPeptideMatches().size();
                 int nSpectra = 0;
 
-                try {
-                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                } catch (Exception e) {
-                    waitingHandler.appendReport("Protein not found: " + proteinMatch.getMainMatch() + ". Please see http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true); // This error is likely to be caught at an earlier stage
-                }
+                currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
 
                 if (currentProtein != null) {
                     double mw = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
