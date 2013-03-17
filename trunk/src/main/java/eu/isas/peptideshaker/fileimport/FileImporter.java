@@ -565,10 +565,6 @@ public class FileImporter {
                         waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
                         waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                     }
-
-                    waitingHandler.appendReportNewLineNoDate();
-                    waitingHandler.appendReport("File import canceled.", true, true);
-
                 } catch (OutOfMemoryError error) {
                     System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                     Runtime.getRuntime().gc();
