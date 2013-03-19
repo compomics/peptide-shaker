@@ -36,6 +36,7 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -1373,7 +1374,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) throws IOException, IllegalArgumentException, InterruptedException {
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
 
         Peptide psPeptide = spectrumMatch.getBestAssumption().getPeptide();
 

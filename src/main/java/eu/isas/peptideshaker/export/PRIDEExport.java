@@ -646,7 +646,7 @@ public class PRIDEExport {
      * @throws MzMLUnmarshallerException exception thrown whenever a problem
      * occurred while reading the mzML file
      */
-    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException {
+    private void writeFragmentIons(SpectrumMatch spectrumMatch) throws IOException, MzMLUnmarshallerException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
 
         Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
         SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
