@@ -104,15 +104,23 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     /**
      * The maximum precursor charge detected in the PRIDE XML files.
      */
-    private Integer maxPrecursorCharge = 0;
+    private Integer maxPrecursorCharge = null;
     /**
      * The minimum precursor charge detected in the PRIDE XML files.
      */
-    private Integer minPrecursorCharge = 1000;
+    private Integer minPrecursorCharge = null;
     /**
      * A dummy parent frame to be able to show an icon in the task bar.
      */
     private DummyFrame dummyParentFrame;
+    /**
+     * The PTM factory.
+     */
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * The PRIDE search parameters report.
+     */
+    private String prideParametersReport = "";
 
     /**
      * Creates a new PrideReshakeGui dialog.
@@ -1229,8 +1237,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         final ArrayList<Integer> selectedProjects = aSelectedProjects;
         final PrideReshakeGui finalRef = this;
-        maxPrecursorCharge = 0;
-        minPrecursorCharge = 1000;
+        maxPrecursorCharge = null;
+        minPrecursorCharge = null;
 
         progressDialog = new ProgressDialogX(peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -1263,8 +1271,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     SearchParameters prideSearchParameters = new SearchParameters();
                     String prideSearchParametersReport = null;
                     ArrayList<File> mgfFiles = new ArrayList<File>();
+                    boolean mgfConversionOk = true;
 
-                    for (int i = 0; i < selectedProjects.size(); i++) {
+                    for (int i = 0; i < selectedProjects.size() && mgfConversionOk; i++) {
 
                         if (progressDialog.isRunCanceled()) {
                             progressDialog.setRunFinished();
@@ -1378,28 +1387,34 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             } else {
                                 progressDialog.setTitle("Converting PRIDE Project. Please Wait...");
                             }
-                            convertPrideXmlToMgf();
 
-                            // get the search params from the pride xml file
-                            if (selectedProjects.size() > 1) {
-                                progressDialog.setTitle("Getting Search Settings (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
-                            } else {
-                                progressDialog.setTitle("Getting Search Settings. Please Wait...");
+                            mgfConversionOk = convertPrideXmlToMgf();
+
+                            if (mgfConversionOk) {
+                                // get the search params from the pride xml file
+                                if (selectedProjects.size() > 1) {
+                                    progressDialog.setTitle("Getting Search Settings (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
+                                } else {
+                                    progressDialog.setTitle("Getting Search Settings. Please Wait...");
+                                }
+                                prideSearchParametersReport = getSearchParams(prideAccession, prideSearchParameters);
                             }
-                            prideSearchParametersReport = getSearchParams(prideAccession, prideSearchParameters);
                         }
                     }
 
-                    // save the search params
-                    try {
-                        prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
-                        SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                    if (mgfConversionOk) {
+
+                        // save the search params
+                        try {
+                            prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
+                            SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
 
                     // clear the temp folder
@@ -1413,12 +1428,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     }
 
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE project(s) downloaded, converted to mgf and stored here:\n"
-                            + outputFolder, "Download Complete", JOptionPane.INFORMATION_MESSAGE);
+                    if (mgfConversionOk) {
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE project(s) downloaded, converted to mgf and stored here:\n"
+                                + outputFolder, "Download Complete", JOptionPane.INFORMATION_MESSAGE);
 
-
-                    // display the detected search parameters to the user
-                    new PrideSearchParametersDialog(peptideShakerGUI, new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, true);
+                        // display the detected search parameters to the user
+                        new PrideSearchParametersDialog(peptideShakerGUI, new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, true);
+                    }
 
                 } catch (Exception e) {
                     if (dummyParentFrame != null) {
@@ -1446,6 +1462,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * @throws Exception
      */
     private String getSearchParams(Integer prideAccession, SearchParameters prideSearchParameters) throws Exception {
+
+        String species = "unknown";
+        String taxonomy = "unknown";
 
         progressDialog.setIndeterminate(true);
 
@@ -1563,8 +1582,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         }
 
 
-
-        String prideParametersReport = "";
+        prideParametersReport = "";
         prideParametersReport += "<html><br><b><u>Extracted search parameters</u></b><br>";
 
 
@@ -1595,14 +1613,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         // taxonomy and species
         prideParametersReport += "<br><br><b>Species:</b> " + speciesForProject.get(prideAccession);
         prideParametersReport += "<br><b>Taxonomy:</b> " + taxonomyForProject.get(prideAccession);
+        species = speciesForProject.get(prideAccession);
+        taxonomy = taxonomyForProject.get(prideAccession);
 
 
         // map the ptms to utilities ptms
         String allPtms = ptmsForProject.get(prideAccession);
-        ArrayList<String> unmappablePtms = new ArrayList<String>();
+        ArrayList<String> unknownPtms = new ArrayList<String>();
 
         ModificationProfile modProfile = new ModificationProfile();
-        PTMFactory ptmFactory = PTMFactory.getInstance();
 
         prideParametersReport += "<br><br><b>Post-translational modifications:</b>";
 
@@ -1613,26 +1632,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 String[] tempPtms = allPtms.split(";");
 
                 for (String pridePtmName : tempPtms) {
-
-                    String utilitiesPtmName = convertPridePtmToUtilitiesPtm(pridePtmName);
-
-                    if (utilitiesPtmName != null) {
-                        if (!modProfile.contains(utilitiesPtmName)) {
-                            // guess fixed/variable
-                            if (utilitiesPtmName.equalsIgnoreCase("carbamidomethyl c")) { // @TODO: improve/extend guess!
-                                modProfile.addFixedModification(ptmFactory.getPTM(utilitiesPtmName));
-                                prideParametersReport += "<br>" + utilitiesPtmName + " (assumed fixed)";
-                            } else {
-                                modProfile.addVariableModification(ptmFactory.getPTM(utilitiesPtmName));
-                                prideParametersReport += "<br>" + utilitiesPtmName + " (assumed variable)";
-                            }
-                        }
-                    } else {
-                        if (!unmappablePtms.contains(pridePtmName)) {
-                            unmappablePtms.add(pridePtmName);
-                            prideParametersReport += "<br>" + pridePtmName + " (unknown ptm)";
-                        }
-                    }
+                    convertPridePtm(pridePtmName, modProfile, unknownPtms);
                 }
             } else {
                 prideParametersReport += "<br>(none detected)";
@@ -1641,6 +1641,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             prideParametersReport += "<br>(none detected)";
         }
 
+
+        // @TODO: handle unknown PTMs???
+
+
         // set the modification profile
         prideSearchParameters.setModificationProfile(modProfile);
 
@@ -1648,7 +1652,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         // set the enzyme
         if (enzyme != null) {
-            
+
             //prideSearchParameters.setEnzyme(prideEnzyme);  // @TODO: add an enzyme mapping
             prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             prideParametersReport += "<br><b>Enzyme:</b> " + enzyme;
@@ -1670,48 +1674,151 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         if (minPrecursorCharge != null) {
             prideSearchParameters.setMinChargeSearched(new Charge(Charge.PLUS, minPrecursorCharge));
             prideParametersReport += "<br><br><b>Min precusor charge:</b> " + minPrecursorCharge;
+        } else {
+            prideParametersReport += "<br><br><b>Min precusor charge:</b> unknown";
         }
         if (maxPrecursorCharge != null) {
             prideSearchParameters.setMaxChargeSearched(new Charge(Charge.PLUS, maxPrecursorCharge));
             prideParametersReport += "<br><b>Max precusor charge:</b> " + maxPrecursorCharge;
+        } else {
+            prideParametersReport += "<br><br><b>Max precusor charge:</b> unknown";
         }
 
-
-        
         prideParametersReport += "<br></html>";
 
 
-
-
+        boolean debugOutput = true;
 
         // debug output
-        System.out.println("\nfragmentIonMassTolerance: " + fragmentIonMassTolerance);
-        System.out.println("peptideIonMassTolerance: " + peptideIonMassTolerance);
-        System.out.println("maxMissedCleavages: " + maxMissedCleavages);
+        if (debugOutput) {
+            System.out.println("\nfragmentIonMassTolerance: " + fragmentIonMassTolerance);
+            System.out.println("peptideIonMassTolerance: " + peptideIonMassTolerance);
+            System.out.println("maxMissedCleavages: " + maxMissedCleavages);
 
-        System.out.println("taxonomy: " + taxonomyForProject.get(prideAccession));
-        System.out.println("species: " + speciesForProject.get(prideAccession));
-        System.out.println("ptms: " + ptmsForProject.get(prideAccession));
+            System.out.println("taxonomy: " + taxonomyForProject.get(prideAccession));
+            System.out.println("species: " + speciesForProject.get(prideAccession));
+            System.out.println("ptms: " + ptmsForProject.get(prideAccession));
 
-        System.out.println("enzyme: " + enzyme);
-        System.out.println("minPrecursorCharge: " + minPrecursorCharge);
-        System.out.println("maxPrecursorCharge: " + maxPrecursorCharge);
+            System.out.println("enzyme: " + enzyme);
+            System.out.println("minPrecursorCharge: " + minPrecursorCharge);
+            System.out.println("maxPrecursorCharge: " + maxPrecursorCharge);
 
-        System.out.print("ion types: ");
-        for (String ionType : ionTypes.keySet()) {
-            System.out.print(ionType + ": " + ionTypes.get(ionType) + ", ");
+            System.out.print("ion types: ");
+            for (String ionType : ionTypes.keySet()) {
+                System.out.print(ionType + ": " + ionTypes.get(ionType) + ", ");
+            }
+            System.out.println();
+
+            System.out.print("peptide endings: ");
+            for (String residues : peptideLastResidues.keySet()) {
+                System.out.print(residues + ": " + peptideLastResidues.get(residues) + ", ");
+            }
+            System.out.println();
         }
-        System.out.println();
-
-        System.out.print("peptide endings: ");
-        for (String residues : peptideLastResidues.keySet()) {
-            System.out.print(residues + ": " + peptideLastResidues.get(residues) + ", ");
-        }
-        System.out.println();
-
-
 
         return prideParametersReport;
+    }
+
+    /**
+     * Tries to convert a PRIDE PTM to utilities PTM name, and add it to the
+     * modification profile. Unknown PTMs are added to the unknown PTMs
+     * arraylist.
+     *
+     * @param pridePtmName the PRIDE PTM name
+     * @param modProfile the modification profile to add the PTMs to
+     * @param unknownPtms the list of unknown PTMS, updated during this method
+     */
+    private void convertPridePtm(String pridePtmName, ModificationProfile modProfile, ArrayList<String> unknownPtms) {
+
+        // @TODO: add more mappings
+
+        // special cases for when multiple ptms are needed
+        if (pridePtmName.equalsIgnoreCase("iTRAQ4plex")) {
+
+            modProfile.addFixedModification(ptmFactory.getPTM("itraq114 on k"));
+            prideParametersReport += "<br>" + "itraq114 on k" + " (assumed fixed)";
+            modProfile.addFixedModification(ptmFactory.getPTM("itraq114 on nterm"));
+            prideParametersReport += "<br>" + "itraq114 on nterm" + " (assumed fixed)";
+
+            modProfile.addVariableModification(ptmFactory.getPTM("itraq114 on y"));
+            prideParametersReport += "<br>" + "itraq114 on y" + " (assumed variable)";
+
+        } else if (pridePtmName.equalsIgnoreCase("iTRAQ8plex")) {
+
+            modProfile.addFixedModification(ptmFactory.getPTM("itraq8plex:13c(6)15n(2) on k"));
+            prideParametersReport += "<br>" + "itraq8plex:13c(6)15n(2) on k" + " (assumed fixed)";
+            modProfile.addFixedModification(ptmFactory.getPTM("itraq8plex:13c(6)15n(2) on nterm"));
+            prideParametersReport += "<br>" + "itraq8plex:13c(6)15n(2) on nterm" + " (assumed fixed)";
+
+            modProfile.addVariableModification(ptmFactory.getPTM("itraq8plex:13c(6)15n(2) on y"));
+            prideParametersReport += "<br>" + "itraq8plex:13c(6)15n(2) on y" + " (assumed variable)";
+
+        } else if (pridePtmName.equalsIgnoreCase("TMT6plex")) {
+
+            modProfile.addFixedModification(ptmFactory.getPTM("tmt 6-plex on k"));
+            prideParametersReport += "<br>" + "tmt 6-plex on k" + " (assumed fixed)";
+            modProfile.addFixedModification(ptmFactory.getPTM("tmt 6-plex on n-term peptide"));
+            prideParametersReport += "<br>" + "tmt 6-plex on n-term peptide" + " (assumed fixed)";
+
+        } else if (pridePtmName.equalsIgnoreCase("Phosphorylation")) {
+
+            modProfile.addVariableModification(ptmFactory.getPTM("phosphorylation of s"));
+            prideParametersReport += "<br>" + "phosphorylation of s" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("phosphorylation of t"));
+            prideParametersReport += "<br>" + "phosphorylation of t" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("phosphorylation of y"));
+            prideParametersReport += "<br>" + "phosphorylation of y" + " (assumed variable)";
+
+        } else if (pridePtmName.equalsIgnoreCase("Palmitoylation")) {
+
+            modProfile.addVariableModification(ptmFactory.getPTM("palmitoylation of c"));
+            prideParametersReport += "<br>" + "palmitoylation of c" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("palmitoylation of k"));
+            prideParametersReport += "<br>" + "palmitoylation of k" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("palmitoylation of s"));
+            prideParametersReport += "<br>" + "palmitoylation of s" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("palmitoylation of t"));
+            prideParametersReport += "<br>" + "palmitoylation of t" + " (assumed variable)";
+
+        } else if (pridePtmName.equalsIgnoreCase("Formylation")) {
+
+            modProfile.addVariableModification(ptmFactory.getPTM("formylation of k"));
+            prideParametersReport += "<br>" + "formylation of k" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("formylation of peptide n-term"));
+            prideParametersReport += "<br>" + "formylation of peptide n-term" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("formylation of protein c-term"));
+            prideParametersReport += "<br>" + "formylation of protein c-term" + " (assumed variable)";
+
+        } else if (pridePtmName.equalsIgnoreCase("Carbamylation")) {
+
+            modProfile.addVariableModification(ptmFactory.getPTM("carbamylation of k"));
+            prideParametersReport += "<br>" + "carbamylation of k" + " (assumed variable)";
+            modProfile.addVariableModification(ptmFactory.getPTM("carbamylation of n-term peptide"));
+            prideParametersReport += "<br>" + "carbamylation of n-term peptide" + " (assumed variable)";
+
+        } else {
+
+            // single ptm mapping
+
+            String utilitiesPtmName = convertPridePtmToUtilitiesPtm(pridePtmName);
+
+            if (utilitiesPtmName != null) {
+                if (!modProfile.contains(utilitiesPtmName)) {
+                    if (isFixedPtm(utilitiesPtmName)) {
+                        modProfile.addFixedModification(ptmFactory.getPTM(utilitiesPtmName));
+                        prideParametersReport += "<br>" + utilitiesPtmName + " (assumed fixed)";
+                    } else {
+                        modProfile.addVariableModification(ptmFactory.getPTM(utilitiesPtmName));
+                        prideParametersReport += "<br>" + utilitiesPtmName + " (assumed variable)";
+                    }
+                }
+            } else {
+                if (!unknownPtms.contains(pridePtmName)) {
+                    unknownPtms.add(pridePtmName);
+                    prideParametersReport += "<br>" + pridePtmName + " (unknown ptm)";
+                }
+            }
+        }
     }
 
     /**
@@ -1722,17 +1829,75 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private String convertPridePtmToUtilitiesPtm(String pridePtmName) {
 
-        // @TODO: implement properly!!
-
         if (pridePtmName.equalsIgnoreCase("Carbamidomethyl")) {
             return "carbamidomethyl c";
         } else if (pridePtmName.equalsIgnoreCase("Oxidation")) {
             return "oxidation of m";
         } else if (pridePtmName.equalsIgnoreCase("Acetylation")) {
             return "acetylation of k";
+        } else if (pridePtmName.equalsIgnoreCase("Amidation")) {
+            return "amidation of peptide c-term";
+        } else if (pridePtmName.equalsIgnoreCase("Carboxymethyl")) {
+            return "carboxymethyl c";
+        } else if (pridePtmName.equalsIgnoreCase("Farnesylation")) {
+            return "farnesylation of c";
+        } else if (pridePtmName.equalsIgnoreCase("Geranyl-geranyl")) {
+            return "geranyl-geranyl";
+        } else if (pridePtmName.equalsIgnoreCase("Guanidination")) {
+            return "guanidination of k";
+        } else if (pridePtmName.equalsIgnoreCase("Homoserine")) {
+            return "homoserine";
+        } else if (pridePtmName.equalsIgnoreCase("Homoserine lactone")) {
+            return "homoserine lactone";
+        } else if (pridePtmName.equalsIgnoreCase("ICAT-C")) {
+            return "icat light";
+        } else if (pridePtmName.equalsIgnoreCase("ICAT-C:13C(9)")) {
+            return "icat heavy";
+        } else if (pridePtmName.equalsIgnoreCase("Lipoyl")) {
+            return "lipoyl k";
+        } else if (pridePtmName.equalsIgnoreCase("Methylthio")) {
+            return "beta-methylthiolation of d (duplicate of 13)";
+        } else if (pridePtmName.equalsIgnoreCase("NIPCAM(C)")) {
+            return "nipcam";
+        } else if (pridePtmName.equalsIgnoreCase("Phosphopantetheine")) {
+            return "phosphopantetheine s";
+        } else if (pridePtmName.equalsIgnoreCase("Propionamide(C)")) {
+            return "propionamide c";
+        } else if (pridePtmName.equalsIgnoreCase("Pyridylethyl")) {
+            return "s-pyridylethylation of c";
+        } else if (pridePtmName.equalsIgnoreCase("Pyridylethyl")) {
+            return "s-pyridylethylation of c";
+        } else if (pridePtmName.equalsIgnoreCase("Sulfo")) {
+            return "sulfation of y"; // not completely sure about this one...
+        } else if (pridePtmName.equalsIgnoreCase("Dehydratation")) {
+            return "dehydro of s and t";
+        } else if (pridePtmName.equalsIgnoreCase("Deamination")) {
+            return "deamidation of n and q"; // not that this does not separate between deamidation on only n and deamidation on n and q
+        } else if (pridePtmName.equalsIgnoreCase("Dioxidation")) {
+            return "sulphone of m";
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns true if the PTM is assumed to be fixed, false otherwise.
+     *
+     * @param utilitiesPtmName the PTM to check
+     * @return true if the PTM is assumed to be fixed, false otherwise.
+     */
+    private boolean isFixedPtm(String utilitiesPtmName) {
+
+        boolean fixedPtm = false;
+
+        // @TODO: improve/extend guess!
+
+        // guess fixed/variable
+        if (utilitiesPtmName.equalsIgnoreCase("carbamidomethyl c")) {
+            fixedPtm = true;
+        }
+
+        return fixedPtm;
     }
 
     /**
@@ -2017,7 +2182,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     /**
      * Convert the PRIDE XML file to mgf.
      */
-    private void convertPrideXmlToMgf() {
+    private boolean convertPrideXmlToMgf() {
+
+        boolean conversionOk = true;
+
         try {
             progressDialog.setIndeterminate(true);
             PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
@@ -2026,6 +2194,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             List<String> spectra = prideXmlReader.getSpectrumIds();
             int spectraCount = spectra.size();
 
+            if (spectraCount == 0) {
+                // @TODO: close the PrideXmlReader
+                bw.close();
+                w.close();
+                progressDialog.setRunFinished();
+                JOptionPane.showMessageDialog(this, "The project contains no spectra! Conversion canceled.", "No Spectra Found", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+
             progressDialog.setIndeterminate(false);
             progressDialog.setMaxProgressValue(spectraCount);
             progressDialog.setValue(0);
@@ -2033,8 +2210,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             for (String spectrumId : spectra) {
 
                 if (progressDialog.isRunCanceled()) {
+                    // @TODO: close the PrideXmlReader
+                    bw.close();
+                    w.close();
                     progressDialog.setRunFinished();
-                    return;
+                    return false;
                 }
 
                 Spectrum spectrum = prideXmlReader.getSpectrumById(spectrumId);
@@ -2042,11 +2222,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 progressDialog.increaseProgressValue();
             }
 
+            // @TODO: close the PrideXmlReader
             bw.close();
             w.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
+        return conversionOk;
     }
 
     /**
@@ -2109,10 +2292,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 if (precursorCharge != null) {
                     bw.write("CHARGE=" + precursorCharge + System.getProperty("line.separator"));
 
-                    if (precursorCharge > maxPrecursorCharge) {
+                    if (maxPrecursorCharge == null || precursorCharge > maxPrecursorCharge) {
                         maxPrecursorCharge = precursorCharge;
                     }
-                    if (precursorCharge < minPrecursorCharge) {
+                    if (minPrecursorCharge == null || precursorCharge < minPrecursorCharge) {
                         minPrecursorCharge = precursorCharge;
                     }
                 } else {

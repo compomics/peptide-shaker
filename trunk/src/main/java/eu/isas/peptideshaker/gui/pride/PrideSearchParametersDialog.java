@@ -82,7 +82,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
         });
 
         infoLabel.setFont(infoLabel.getFont().deriveFont((infoLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        infoLabel.setText("Click OK to open the parameters in SearchGUI to re-analyze the data.");
+        infoLabel.setText("Click OK to open the parameters in SearchGUI and re-analyze the data.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -95,7 +95,7 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(infoLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -136,20 +136,18 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         this.setVisible(false);
-        //peptideShakerGUI.setVisible(false);
-        
-        // @TODO: figure out how to close PeptideShaker without also closing/not starting SearchGUI...
 
         new Thread(new Runnable() {
             public void run() {
                 try {
                     ToolFactory.startSearchGUI(peptideShakerGUI, mgfFiles, prideSearchParametersFile, null);
-                    //peptideShakerGUI.close();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
             }
         }, "StartSearchGUI").start();
+
+        peptideShakerGUI.close();
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
