@@ -1505,7 +1505,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             }
         }
 
-        // @TODO: get the fragment ion types??
 
         HashMap<String, Integer> ionTypes = new HashMap<String, Integer>();
         HashMap<String, Integer> peptideLastResidues = new HashMap<String, Integer>();
@@ -1669,6 +1668,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             prideParametersReport += "<br><b>Enzyme:</b> unknown (trypsin assumed)"; // @TODO: improve!
         }
+
+        // set the ion types
+        // @TODO: implement me!
 
         // set the min/max precursor charge
         if (minPrecursorCharge != null) {
