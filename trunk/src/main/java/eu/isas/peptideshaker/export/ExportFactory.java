@@ -42,7 +42,7 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This factory is used to manage and generate reports-
+ * This factory is used to manage and generate reports.
  *
  * @author Marc Vaudel
  */

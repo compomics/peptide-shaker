@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ExportScheme implements Serializable {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
     static final long serialVersionUID = -4712918049667194600L;
     /**
