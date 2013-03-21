@@ -2561,7 +2561,7 @@ public class PeptideShaker {
      * @param proteinAccession the accession of the inspected protein
      * @return description words longer than 3 characters
      */
-    private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException, InterruptedException {
+    private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException {
         String description = sequenceFactory.getHeader(proteinAccession).getDescription();
 
         if (description == null) {
@@ -2589,7 +2589,7 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws IllegalArgumentException 
      */
-    private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException {
+    private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
         String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
         String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
         

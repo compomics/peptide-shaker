@@ -1366,6 +1366,9 @@ public class AnnotationPanel extends javax.swing.JPanel {
             } catch (InterruptedException e) {
                 JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(peptideShakerGUI, e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
                         "File Error", JOptionPane.ERROR_MESSAGE);

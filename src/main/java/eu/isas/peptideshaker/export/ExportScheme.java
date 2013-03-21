@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,8 +9,12 @@ import java.util.HashMap;
  *
  * @author Marc Vaudel
  */
-public class ExportScheme {
+public class ExportScheme implements Serializable {
 
+    /**
+     * Serial number for backward compatibility
+     */
+    static final long serialVersionUID = -4712918049667194600L;
     /**
      * The name of the scheme.
      */
