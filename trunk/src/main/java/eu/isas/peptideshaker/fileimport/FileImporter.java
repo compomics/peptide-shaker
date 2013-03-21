@@ -302,6 +302,11 @@ public class FileImporter {
                                 + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
+                    } catch (ClassNotFoundException e) {
+                        waitingHandler.appendReport("An error occured while accessing the FASTA file."
+                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
+                        e.printStackTrace();
+                        waitingHandler.setRunCanceled();
                     } catch (IllegalArgumentException e) {
                         waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
                                 + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);

@@ -1398,7 +1398,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         }
 
         File fastaFile = searchParameters.getFastaFile();
-        if (fastaFile.exists()) {
+        if (fastaFile != null && fastaFile.exists()) {
             fastaFileTxt.setText(fastaFile.getName());
             checkFastaFile(fastaFile);
         } else {

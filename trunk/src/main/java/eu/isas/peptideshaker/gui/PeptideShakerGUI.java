@@ -2759,8 +2759,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Export the spectrum and plots. Only for the Overview tab.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
@@ -3737,14 +3737,30 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         try {
             spectrumFactory.closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
+        try {
             sequenceFactory.closeFile();
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
         }
 
-        spectrumFactory.clearFactory();
-        sequenceFactory.clearFactory();
+        try {
+            spectrumFactory.clearFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
+
+        try {
+            sequenceFactory.clearFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
 
         exceptionHandler = new ExceptionHandler(this);
 
@@ -4356,7 +4372,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Closes and restarts PeptideShaker. Does not work inside the IDE of course.
+     * Closes and restarts PeptideShaker. Does not work inside the IDE of
+     * course.
      */
     public void restart() {
 
