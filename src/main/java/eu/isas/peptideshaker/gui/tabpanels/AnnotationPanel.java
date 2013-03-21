@@ -1280,7 +1280,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private void webPdbLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webPdbLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webPdbLabelMouseExited
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
     private javax.swing.JLabel accessionNumberLabel;
@@ -1361,16 +1360,17 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 taxonomyJTextField.setText(sequenceFactory.getHeader(aAccessionNumber).getTaxonomy());
                 databaseJTextField.setText("" + sequenceFactory.getProtein(aAccessionNumber).getDatabaseType());
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             } catch (InterruptedException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein informaition.", "File Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured while loading the protein information.", "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
-                JOptionPane.showMessageDialog(peptideShakerGUI, e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
+                JOptionPane.showMessageDialog(peptideShakerGUI, e.getLocalizedMessage()
+                        + "\nPlease refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
                         "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }

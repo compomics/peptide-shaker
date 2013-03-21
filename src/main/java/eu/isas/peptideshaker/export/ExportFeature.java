@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public interface ExportFeature extends Serializable {
 
     /**
-     * Serial number for backward compatibility
+     * Serial number for backward compatibility.
      */
     static final long serialVersionUID = -4158077697265471589L;
 

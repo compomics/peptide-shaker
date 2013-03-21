@@ -293,22 +293,29 @@ public class FileImporter {
                             }
                         }
                     } catch (IOException e) {
-                        waitingHandler.appendReport("An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
+                        waitingHandler.appendReport(
+                                "An error occured while accessing the FASTA file."
+                                + "\nProtein to peptide link will be incomplete."
+                                + "\nPlease restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     } catch (InterruptedException e) {
-                        waitingHandler.appendReport("An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
+                        waitingHandler.appendReport(
+                                "An error occured while accessing the FASTA file."
+                                + "\nProtein to peptide link will be incomplete."
+                                + "\nPlease restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     } catch (ClassNotFoundException e) {
-                        waitingHandler.appendReport("An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
+                        waitingHandler.appendReport(
+                                "An error occured while accessing the FASTA file."
+                                + "\nProtein to peptide link will be incomplete."
+                                + "\nPlease restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
                     } catch (IllegalArgumentException e) {
-                        waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
+                        waitingHandler.appendReport(e.getLocalizedMessage() + ""
+                                + "\nPlease refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
                                 + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
                         e.printStackTrace();
                         waitingHandler.setRunCanceled();
