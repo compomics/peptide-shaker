@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.section_generators;
 
-import com.compomics.util.preferences.PTMScoringPreferences;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeatures;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.io.BufferedWriter;
@@ -14,26 +9,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class outputs the spectrum counting related export features
+ * This class outputs the spectrum counting related export features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class SpectrumCountingSection {
 
     /**
-     * The features to export
+     * The features to export.
      */
     private ArrayList<ExportFeature> exportFeatures;
     /**
-     * The separator used to separate columns
+     * The separator used to separate columns.
      */
     private String separator;
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header;
     /**
@@ -42,7 +37,7 @@ public class SpectrumCountingSection {
     private BufferedWriter writer;
 
     /**
-     * constructor
+     * Constructor.
      *
      * @param exportFeatures the features to export in this section
      * @param separator
@@ -59,14 +54,19 @@ public class SpectrumCountingSection {
     }
 
     /**
-     * Writes the desired section
+     * Writes the desired section.
      *
-     * @param spectrumCountingPreferences the spectrum countinge preferences of
+     * @param spectrumCountingPreferences the spectrum counting preferences of
      * this project
+     * @param progressDialog the progress dialog
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(SpectrumCountingPreferences spectrumCountingPreferences) throws IOException {
+    public void writeSection(SpectrumCountingPreferences spectrumCountingPreferences, ProgressDialogX progressDialog) throws IOException {
+        
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Exporting Spectrum Counting Details. Please Wait...");
+        
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -74,7 +74,9 @@ public class SpectrumCountingSection {
             writer.write("Parameter" + separator + "Value");
             writer.newLine();
         }
+        
         int line = 1;
+        
         for (ExportFeature exportFeature : exportFeatures) {
             if (indexes) {
                 writer.write(line + separator);

@@ -12,9 +12,9 @@ public enum ProteinFeatures implements ExportFeature {
 
     accession("Main Accession", "Main accession of the protein group."),
     protein_description("Description", "Description of the protein designed by the main accession."),
-    mw("MW", "Molecular weight."),
-    coverage("Coverage", "Sequence coverage in percent of the protein designed by the main accession."),
-    possible_coverage("Possible Coverage", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings."),
+    mw("MW (kDa)", "Molecular Weight."),
+    coverage("Coverage (%)", "Sequence coverage in percent of the protein designed by the main accession."),
+    possible_coverage("Possible Coverage (%)", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings."),
     non_enzymatic("Non-Enzymatic", "Indicates how many non-enzymatic peptides were found for this protein match."),
     spectrum_counting("Spectrum Counting", "Spectrum counting index"),
     confident_PTMs("Confident Modification Sites", "List of the sites where a variable modification was confidently localized."),
@@ -22,12 +22,13 @@ public enum ProteinFeatures implements ExportFeature {
     confident_phosphosites("Confident Phosphosites", "List of the sites where a phosphorylation was confidently localized."),
     other_phosphosites("Other Phosphosites", "List of the non-confident sites where a phosphorylation was localized."),
     pi("PI", "Protein Inference status of the protein group."),
-    other_proteins("Secondary accessions", "Other accessions in the protein group."),
-    validated_peptides("# Validated Peptides", "Number of validated peptides."),
-    peptides("# Peptides", "Total number of peptides."),
-    unique_peptides("# Unique", "Total number of peptides unique to this protein group."),
-    validated_psms("# Validated PSMs", "Number of validated PSMs"),
-    psms("# PSMs", "Number of PSMs"),
+    other_proteins("Secondary Accessions", "Other accessions in the protein group (alphabetical order)."),
+    protein_group("Protein Group", "The complete protein group (alphabetical order)."),
+    validated_peptides("#Validated Peptides", "Number of validated peptides."),
+    peptides("#Peptides", "Total number of peptides."),
+    unique_peptides("#Unique", "Total number of peptides unique to this protein group."),
+    validated_psms("#Validated PSMs", "Number of validated PSMs"),
+    psms("#PSMs", "Number of PSMs"),
     score("Score", "Score of the protein group."),
     confidence("Confidence", "Confidence in percent associated to the protein group."),
     decoy("Decoy", "Indicates whether the protein group is a decoy (1: yes, 0: no)."),
@@ -73,6 +74,7 @@ public enum ProteinFeatures implements ExportFeature {
         result.add(other_phosphosites);
         result.add(pi);
         result.add(other_proteins);
+        result.add(protein_group);
         result.add(validated_peptides);
         result.add(peptides);
         result.add(validated_psms);

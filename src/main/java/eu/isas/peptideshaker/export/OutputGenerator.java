@@ -226,7 +226,8 @@ public class OutputGenerator {
                                 writer.write("Accession" + SEPARATOR);
                             }
                             if (otherAccessions) {
-                                writer.write("Other Protein(s)" + SEPARATOR);
+                                writer.write("Other Protein(s) (alphabetical order)" + SEPARATOR);
+                                writer.write("Complete Protein Group (alphabetical order)" + SEPARATOR);
                             }
                             if (piDetails) {
                                 writer.write("Protein Inference Class" + SEPARATOR);
@@ -322,8 +323,14 @@ public class OutputGenerator {
                                             }
                                             if (createMaximalProteinSet || otherAccessions) {
                                                 boolean first = true;
-                                                for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
-                                                    if (otherAccessions && !otherProtein.equals(proteinMatch.getMainMatch())) {
+
+                                                // sort so that the protein accessions always come in the same order
+                                                ArrayList<String> allProteins = proteinMatch.getTheoreticProteinsAccessions();
+                                                Collections.sort(allProteins);
+                                                StringBuilder completeProteinGroup = new StringBuilder();
+
+                                                for (String otherProtein : allProteins) {
+                                                    if (otherAccessions && !otherProtein.equalsIgnoreCase(proteinMatch.getMainMatch())) {
                                                         if (first) {
                                                             first = false;
                                                         } else {
@@ -334,8 +341,17 @@ public class OutputGenerator {
                                                     if (createMaximalProteinSet && !maximalProteinSet.contains(otherProtein)) {
                                                         maximalProteinSet.add(otherProtein);
                                                     }
+
+                                                    if (completeProteinGroup.length() > 0) {
+                                                        completeProteinGroup.append(", ");
+                                                    }
+
+                                                    completeProteinGroup.append(otherProtein);
                                                 }
+
                                                 if (otherAccessions) {
+                                                    writer.write(SEPARATOR);
+                                                    writer.write(completeProteinGroup.toString());
                                                     writer.write(SEPARATOR);
                                                 }
                                             }

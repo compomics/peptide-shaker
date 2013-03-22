@@ -1,41 +1,34 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.section_generators;
 
-import com.compomics.util.experiment.biology.NeutralLoss;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeatures;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class outputs the annotation related export features
+ * This class outputs the annotation related export features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class InputFilterSection {
 
     /**
-     * The features to export
+     * The features to export.
      */
     private ArrayList<ExportFeature> exportFeatures;
     /**
-     * The separator used to separate columns
+     * The separator used to separate columns.
      */
     private String separator;
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header;
     /**
@@ -44,7 +37,7 @@ public class InputFilterSection {
     private BufferedWriter writer;
 
     /**
-     * constructor
+     * Constructor.
      *
      * @param exportFeatures the features to export in this section
      * @param separator
@@ -61,13 +54,18 @@ public class InputFilterSection {
     }
 
     /**
-     * Writes the desired section
+     * Writes the desired section.
      *
      * @param idFilter the identification used for this project
+     * @param progressDialog the progress dialog
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(IdFilter idFilter) throws IOException {
+    public void writeSection(IdFilter idFilter, ProgressDialogX progressDialog) throws IOException {
+        
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Exporting Input Filters. Please Wait...");
+        
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -75,7 +73,9 @@ public class InputFilterSection {
             writer.write("Parameter" + separator + "Value");
             writer.newLine();
         }
+        
         int line = 1;
+        
         for (ExportFeature exportFeature : exportFeatures) {
             if (indexes) {
                 writer.write(line + separator);

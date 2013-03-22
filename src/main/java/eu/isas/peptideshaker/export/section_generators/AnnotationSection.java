@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.section_generators;
 
-import com.compomics.util.experiment.biology.Ion;
-import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
@@ -16,26 +11,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class outputs the annotation related export features
+ * This class outputs the annotation related export features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class AnnotationSection {
 
     /**
-     * The features to export
+     * The features to export.
      */
     private ArrayList<ExportFeature> exportFeatures;
     /**
-     * The separator used to separate columns
+     * The separator used to separate columns.
      */
     private String separator;
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header;
     /**
@@ -44,7 +39,7 @@ public class AnnotationSection {
     private BufferedWriter writer;
 
     /**
-     * constructor
+     * Constructor.
      *
      * @param exportFeatures the features to export in this section
      * @param separator
@@ -61,12 +56,18 @@ public class AnnotationSection {
     }
 
     /**
-     * Writes the desired section
-     * 
+     * Writes the desired section.
+     *
      * @param annotationPreferences the annotation preferences of the project
-     * @throws IOException exception thrown whenever an error occurred while writing the file.
+     * @param progressDialog the progress dialog
+     * @throws IOException exception thrown whenever an error occurred while
+     * writing the file.
      */
-    public void writeSection(AnnotationPreferences annotationPreferences) throws IOException {
+    public void writeSection(AnnotationPreferences annotationPreferences, ProgressDialogX progressDialog) throws IOException {
+        
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Exporting Annotation Preferences. Please Wait...");
+        
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -75,12 +76,16 @@ public class AnnotationSection {
             writer.newLine();
         }
         int line = 1;
+        
         for (ExportFeature exportFeature : exportFeatures) {
+            
             if (indexes) {
                 writer.write(line + separator);
             }
+            
             writer.write(exportFeature.getTitle() + separator);
             AnnotationFeatures annotationFeature = (AnnotationFeatures) exportFeature;
+            
             switch (annotationFeature) {
                 case automatic_annotation:
                     if (annotationPreferences.useAutomaticAnnotation()) {

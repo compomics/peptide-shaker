@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -201,6 +202,7 @@ public class ExportFactory implements Serializable {
      * (mandatory for the spectrum counting section)
      * @param psMaps the PeptideShaker validation maps (mandatory for the
      * Validation section)
+     * @param progressDialog the progress dialog
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws SQLException
@@ -212,8 +214,10 @@ public class ExportFactory implements Serializable {
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps,
+            ProgressDialogX progressDialog) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
+            InterruptedException, MzMLUnmarshallerException {
+
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
 
         String mainTitle = exportScheme.getMainTitle();
@@ -221,6 +225,7 @@ public class ExportFactory implements Serializable {
             writer.write(mainTitle);
             writeSeparationLines(writer, exportScheme.getSeparationLines());
         }
+
         for (String sectionName : exportScheme.getSections()) {
             if (exportScheme.isIncludeSectionTitles()) {
                 writer.write(sectionName);
@@ -228,39 +233,41 @@ public class ExportFactory implements Serializable {
             }
             if (sectionName.equals(AnnotationFeatures.type)) {
                 AnnotationSection section = new AnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(annotationPreferences);
+                section.writeSection(annotationPreferences, progressDialog);
             } else if (sectionName.equals(InputFilterFeatures.type)) {
                 InputFilterSection section = new InputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(idFilter);
+                section.writeSection(idFilter, progressDialog);
             } else if (sectionName.equals(PeptideFeatures.type)) {
                 PeptideSection section = new PeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, proteinMatchKey, nSurroundingAA);
+                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, proteinMatchKey, nSurroundingAA, progressDialog);
             } else if (sectionName.equals(ProjectFeatures.type)) {
                 ProjectSection section = new ProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(experiment, sample, replicateNumber, projectDetails);
+                section.writeSection(experiment, sample, replicateNumber, projectDetails, progressDialog);
             } else if (sectionName.equals(ProteinFeatures.type)) {
                 ProteinSection section = new ProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys);
+                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, progressDialog);
             } else if (sectionName.equals(PsmFeatures.type)) {
                 PsmSection section = new PsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys);
+                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, progressDialog);
             } else if (sectionName.equals(PtmScoringFeatures.type)) {
                 PtmScoringSection section = new PtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(ptmcoringPreferences);
+                section.writeSection(ptmcoringPreferences, progressDialog);
             } else if (sectionName.equals(SearchFeatures.type)) {
                 SearchParametersSection section = new SearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(searchParameters);
+                section.writeSection(searchParameters, progressDialog);
             } else if (sectionName.equals(SpectrumCountingFeatures.type)) {
                 SpectrumCountingSection section = new SpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(spectrumCountingPreferences);
+                section.writeSection(spectrumCountingPreferences, progressDialog);
             } else if (sectionName.equals(ValidationFeatures.type)) {
                 ValidationSection section = new ValidationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(psMaps);
+                section.writeSection(psMaps, progressDialog);
             } else {
-                writer.write("Section " + sectionName + " not implemented in the ExortFactory.");
+                writer.write("Section " + sectionName + " not implemented in the ExportFactory.");
             }
+
             writeSeparationLines(writer, exportScheme.getSeparationLines());
         }
+
         writer.close();
     }
 
@@ -336,7 +343,7 @@ public class ExportFactory implements Serializable {
 
         // Default protein report
         ArrayList<ExportFeature> exportFeatures = new ArrayList<ExportFeature>();
-        exportFeatures.add(ProteinFeatures.accession);
+        exportFeatures.add(ProteinFeatures.accession); // @TODO: change the order??
         exportFeatures.add(ProteinFeatures.mw);
         exportFeatures.add(ProteinFeatures.spectrum_counting);
         exportFeatures.add(ProteinFeatures.protein_description);
@@ -344,6 +351,7 @@ public class ExportFactory implements Serializable {
         exportFeatures.add(ProteinFeatures.possible_coverage);
         exportFeatures.add(ProteinFeatures.pi);
         exportFeatures.add(ProteinFeatures.other_proteins);
+        exportFeatures.add(ProteinFeatures.protein_group);
         exportFeatures.add(ProteinFeatures.peptides);
         exportFeatures.add(ProteinFeatures.validated_peptides);
         exportFeatures.add(ProteinFeatures.unique_peptides);
@@ -359,7 +367,7 @@ public class ExportFactory implements Serializable {
 
         // Default peptide report
         exportFeatures = new ArrayList<ExportFeature>();
-        exportFeatures.add(PeptideFeatures.accessions);
+        exportFeatures.add(PeptideFeatures.accessions); // @TODO: change the order?? and add more fields??
         exportFeatures.add(PeptideFeatures.aaBefore);
         exportFeatures.add(PeptideFeatures.sequence);
         exportFeatures.add(PeptideFeatures.aaAfter);

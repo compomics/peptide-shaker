@@ -1269,7 +1269,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        tabbedPane.addTab("Custom", customReportsPanel);
+        tabbedPane.addTab("Custom (beta)", customReportsPanel);
 
         javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
         featuresPanel.setLayout(featuresPanelLayout);
@@ -1379,7 +1379,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_peptideExportActionPerformed
 
     /**
-     * Export all psm features to file.
+     * Export all PSM features to file.
      *
      * @param evt
      */
@@ -1994,8 +1994,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Edit the selected report.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReportMenuItemActionPerformed
         new ReportEditor(peptideShakerGUI, (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1), true);
@@ -2006,8 +2006,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Add a new report type.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void addReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReportMenuItemActionPerformed
         new ReportEditor(peptideShakerGUI);
@@ -2028,7 +2028,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         ((DefaultTableModel) reportsTable.getModel()).fireTableDataChanged();
         reportsTableMouseClicked(null);
     }//GEN-LAST:event_removeReportMenuItemActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addReportMenuItem;
     private javax.swing.JCheckBox assumptionAccession;
@@ -2162,12 +2161,14 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         // get the file to send the output to
         final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Tab separated text file (.txt)", "Export...", false);
 
-
         if (selectedFile != null) {
             progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
+            progressDialog.setTitle("Exporting Report. Please Wait...");
+
+            final String filePath = selectedFile.getPath();
 
             new Thread(new Runnable() {
                 public void run() {
@@ -2182,6 +2183,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             new Thread("ExportThread") {
                 @Override
                 public void run() {
+
                     try {
                         String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
@@ -2193,12 +2195,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                 peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getSearchParameters(),
                                 null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
                                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getIdFilter(),
-                                peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), pSMaps);
+                                peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), pSMaps, progressDialog);
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Data copied to file:\n" + filePath, "Data Exported.", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
+                        progressDialog.setRunFinished();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
                     }
-                    progressDialog.setRunFinished();
-                    progressDialog.dispose();
                 }
             }.start();
         }
@@ -2241,7 +2250,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         peptideShakerGUI.catchException(e);
                     }
                     progressDialog.setRunFinished();
-                    progressDialog.dispose();
 
                     if (!error) {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Documentation saved to \'" + selectedFile.getAbsolutePath() + "\'.",
