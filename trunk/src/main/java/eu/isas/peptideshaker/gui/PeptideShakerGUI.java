@@ -457,12 +457,28 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // set up the ErrorLog
         setUpLogFile();
 
+        // load the utilities user preferences
         loadUserPreferences();
+
+        // set this version as the default PeptideShaker version
+        if (!getJarFilePath().equalsIgnoreCase(".")) {
+
+            utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
+
+            try {
+                UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "An error occured when saving the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
 
         // add desktop shortcut?
         if (!getJarFilePath().equalsIgnoreCase(".")
                 && System.getProperty("os.name").lastIndexOf("Windows") != -1
                 && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
+
+
 
             // @TODO: add support for desktop icons in mac and linux??
 
@@ -2507,6 +2523,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void javaOptionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaOptionsJMenuItemActionPerformed
+
+        // reload the user preferences as these may have been changed by other tools
+        try {
+            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
         new JavaOptionsDialog(this, this, null, "PeptideShaker");
     }//GEN-LAST:event_javaOptionsJMenuItemActionPerformed
 
@@ -2525,6 +2550,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void annotationColorsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationColorsJMenuItemActionPerformed
+
+        // reload the user preferences as these may have been changed by other tools
+        try {
+            utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
         new SpectrumColorsDialog(this);
     }//GEN-LAST:event_annotationColorsJMenuItemActionPerformed
 
@@ -3062,6 +3096,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
+     * Set the utilities user preferences.
+     *
+     * @param utilitiesUserPreferences
+     */
+    public void setUtilitiesUserPreferences(UtilitiesUserPreferences utilitiesUserPreferences) {
+        this.utilitiesUserPreferences = utilitiesUserPreferences;
+    }
+
+    /**
      * Loads the user preferences.
      */
     public void loadUserPreferences() {
@@ -3108,11 +3151,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             } else {
                 System.out.println("Parent folder does not exist: \'" + file.getParentFile() + "\'. User preferences not saved.");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -6286,8 +6324,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             if (jarFilePath.startsWith("\\") && !jarFilePath.startsWith("\\\\")) {
                 jarFilePath = jarFilePath.substring(1);
             }
-
-            utilitiesUserPreferences.setPeptideShakerPath(jarFilePath);
 
             String iconFileLocation = jarFilePath + "\\resources\\peptide-shaker.ico";
             String jarFileLocation = jarFilePath + "\\PeptideShaker-" + getVersion() + ".jar";

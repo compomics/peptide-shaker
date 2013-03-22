@@ -27,6 +27,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.DummyFrame;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import javax.swing.filechooser.FileFilter;
@@ -1140,6 +1141,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         }
 
         if (selectedFolder != null) {
+
+            // reload the user preferences as these may have been changed by other tools
+            try {
+                peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+
             peptideShakerGUI.getUtilitiesUserPreferences().setLocalPrideFolder(selectedFolder.getAbsolutePath());
             insertData();
         }
@@ -1616,6 +1626,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         taxonomy = taxonomyForProject.get(prideAccession);
 
 
+        // help the user getting the correct database
+        // @TODO: implement me!!
+
+
         // map the ptms to utilities ptms
         String allPtms = ptmsForProject.get(prideAccession);
         ArrayList<String> unknownPtms = new ArrayList<String>();
@@ -1641,7 +1655,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         }
 
 
-        // @TODO: handle unknown PTMs???
+        // handle the unknown ptms
+        if (!unknownPtms.isEmpty()) {
+            for (String unknownPtm : unknownPtms) {
+                // @TODO: handle unknown PTMs???
+
+
+                prideParametersReport += "<br>" + unknownPtm + " (unknown ptm)";
+            }
+        }
 
 
         // set the modification profile
@@ -1817,7 +1839,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             } else {
                 if (!unknownPtms.contains(pridePtmName)) {
                     unknownPtms.add(pridePtmName);
-                    prideParametersReport += "<br>" + pridePtmName + " (unknown ptm)";
                 }
             }
         }
