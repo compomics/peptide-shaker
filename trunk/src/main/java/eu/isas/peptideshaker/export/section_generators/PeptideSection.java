@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.section_generators;
 
-import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -12,9 +7,9 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
-import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -27,9 +22,9 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class outputs the peptide related export features
+ * This class outputs the peptide related export features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PeptideSection {
 
@@ -38,19 +33,19 @@ public class PeptideSection {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The features to export
+     * The features to export.
      */
     private ArrayList<ExportFeature> exportFeatures;
     /**
-     * The separator used to separate columns
+     * The separator used to separate columns.
      */
     private String separator;
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header;
     /**
@@ -59,7 +54,7 @@ public class PeptideSection {
     private BufferedWriter writer;
 
     /**
-     * constructor
+     * Constructor.
      *
      * @param exportFeatures the features to export in this section
      * @param separator
@@ -76,17 +71,30 @@ public class PeptideSection {
     }
 
     /**
-     * Writes the desired section
+     * Writes the desired section.
      *
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param keys the keys of the protein matches to output
+     * @param proteinMatchKey
+     * @param nSurroundingAA
+     * @param progressDialog the progress dialog
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
-    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, ArrayList<String> keys, String proteinMatchKey, int nSurroundingAA) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, ArrayList<String> keys, String proteinMatchKey, int nSurroundingAA, ProgressDialogX progressDialog)
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+
+        progressDialog.setTitle("Exporting Peptide Details. Please Wait...");
+        progressDialog.setIndeterminate(true);
+        
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -101,7 +109,8 @@ public class PeptideSection {
                 writer.write(exportFeature.getTitle());
             }
             writer.newLine();
-        } 
+        }
+
         if (keys == null) {
             if (proteinMatchKey != null) {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
@@ -110,11 +119,20 @@ public class PeptideSection {
                 keys = identification.getPeptideIdentification();
             }
         }
+
         PSParameter psParameter = new PSParameter();
         PeptideMatch peptideMatch = null;
         String matchKey = "", parameterKey = "";
         int line = 1;
+        
+        progressDialog.setIndeterminate(false);
+        progressDialog.setValue(0);
+        progressDialog.setMaxProgressValue(keys.size());
+
         for (String peptideKey : keys) {
+            
+            progressDialog.increaseProgressValue();
+            
             if (indexes) {
                 writer.write(line + separator);
             }
@@ -204,13 +222,15 @@ public class PeptideSection {
 
                             summary += ")";
                         }
+                        
+                        writer.write(separator);
                         break;
                     case pi:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             parameterKey = peptideKey;
                         }
-                        writer.write(psParameter.getProteinInferenceClassAsString());
+                        writer.write(psParameter.getProteinInferenceClassAsString() + separator);
                         break;
                     case position:
                         if (!matchKey.equals(peptideKey)) {
@@ -382,7 +402,7 @@ public class PeptideSection {
                         writer.write(identificationFeaturesGenerator.getNValidatedSpectraForPeptide(peptideKey) + separator);
                         break;
                     default:
-                        writer.write("Not implemented");
+                        writer.write("Not implemented" + separator);
                 }
             }
             writer.newLine();
@@ -392,7 +412,7 @@ public class PeptideSection {
 
     /**
      * Returns a map of the modifications in a peptide. Modification name ->
-     * sites
+     * sites.
      *
      * @param peptide
      * @return the map of the modifications on a peptide sequence

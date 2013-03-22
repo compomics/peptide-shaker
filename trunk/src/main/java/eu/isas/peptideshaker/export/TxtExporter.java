@@ -33,6 +33,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Contains methods for exporting the search engine results to text files.
+ *
  * @deprecated use the standard reports instead
  * @author Marc Vaudel
  */
@@ -65,7 +66,7 @@ public class TxtExporter {
      */
     private String peptideFile;
     /**
-     * Name of the file containing the identification information at the psm
+     * Name of the file containing the identification information at the PSM
      * level.
      */
     private String psmFile;

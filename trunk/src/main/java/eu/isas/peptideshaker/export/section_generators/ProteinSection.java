@@ -1,20 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.section_generators;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
-import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,9 +19,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class outputs the protein related export features
+ * This class outputs the protein related export features.
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProteinSection {
 
@@ -36,19 +31,19 @@ public class ProteinSection {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The features to export
+     * The features to export.
      */
     private ArrayList<ExportFeature> exportFeatures;
     /**
-     * The separator used to separate columns
+     * The separator used to separate columns.
      */
     private String separator;
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header;
     /**
@@ -57,7 +52,7 @@ public class ProteinSection {
     private BufferedWriter writer;
 
     /**
-     * constructor
+     * Constructor.
      *
      * @param exportFeatures the features to export in this section
      * @param separator
@@ -74,17 +69,28 @@ public class ProteinSection {
     }
 
     /**
-     * Writes the desired section
+     * Writes the desired section.
      *
      * @param identification the identification of the project
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param keys the keys of the protein matches to output
+     * @param progressDialog the progress dialog
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
-    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, ArrayList<String> keys) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+    public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            SearchParameters searchParameters, ArrayList<String> keys, ProgressDialogX progressDialog) throws IOException, IllegalArgumentException, SQLException,
+            ClassNotFoundException, InterruptedException {
+
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Exporting Protein Details. Please Wait...");
+        
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -100,14 +106,25 @@ public class ProteinSection {
             }
             writer.newLine();
         }
+
         if (keys == null) {
             keys = identification.getProteinIdentification();
         }
+
         PSParameter psParameter = new PSParameter();
         ProteinMatch proteinMatch = null;
         String matchKey = "", parameterKey = "";
         int line = 1;
+        
+        progressDialog.setTitle("Exporting Protein Details. Please Wait...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setValue(0);
+        progressDialog.setMaxProgressValue(keys.size());
+
         for (String proteinKey : keys) {
+            
+            progressDialog.increaseProgressValue();
+            
             if (indexes) {
                 writer.write(line + separator);
             }
@@ -130,18 +147,36 @@ public class ProteinSection {
                             matchKey = proteinKey;
                         }
                         String mainAccession = proteinMatch.getMainMatch();
-                        String proteins = "";
-                        List<String> accessions = Arrays.asList(ProteinMatch.getAccessions(matchKey));
-                        Collections.sort(accessions);
-                        for (String accession : accessions) {
+                        StringBuilder otherProteins = new StringBuilder();
+                        List<String> otherAccessions = Arrays.asList(ProteinMatch.getAccessions(matchKey));
+                        Collections.sort(otherAccessions);
+                        for (String accession : otherAccessions) {
                             if (!accession.equals(mainAccession)) {
-                                if (!proteins.equals("")) {
-                                    proteins += ", ";
+                                if (otherProteins.length() > 0) {
+                                    otherProteins.append(", ");
                                 }
-                                proteins += accession;
+                                otherProteins.append(accession);
                             }
                         }
-                        writer.write(proteins + separator);
+
+                        writer.write(otherProteins.toString() + separator);
+                        break;
+                    case protein_group:
+                        if (!matchKey.equals(proteinKey)) {
+                            proteinMatch = identification.getProteinMatch(proteinKey);
+                            matchKey = proteinKey;
+                        }
+                        StringBuilder completeProteinGroup = new StringBuilder();
+                        List<String> allAccessions = Arrays.asList(ProteinMatch.getAccessions(matchKey));
+                        Collections.sort(allAccessions);
+                        for (String accession : allAccessions) {
+                            if (completeProteinGroup.length() > 0) {
+                                completeProteinGroup.append(", ");
+                            }
+                            completeProteinGroup.append(accession);
+                        }
+
+                        writer.write(completeProteinGroup.toString() + separator);
                         break;
                     case confidence:
                         if (!parameterKey.equals(proteinKey)) {
@@ -213,7 +248,7 @@ public class ProteinSection {
                             psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                             parameterKey = proteinKey;
                         }
-                        writer.write(psParameter.getProteinInferenceClassAsString());
+                        writer.write(psParameter.getProteinInferenceClassAsString() + separator);
                         break;
                     case peptides:
                         if (!matchKey.equals(proteinKey)) {

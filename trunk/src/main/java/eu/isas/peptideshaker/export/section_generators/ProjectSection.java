@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.section_generators;
 
-import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.ProjectFeatures;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.BufferedWriter;
@@ -14,26 +9,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class outputs the project related export features
+ * This class outputs the project related export features.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ProjectSection {
 
     /**
-     * The features to export
+     * The features to export.
      */
     private ArrayList<ExportFeature> exportFeatures;
     /**
-     * The separator used to separate columns
+     * The separator used to separate columns.
      */
     private String separator;
     /**
-     * Boolean indicating whether the line shall be indexed
+     * Boolean indicating whether the line shall be indexed.
      */
     private boolean indexes;
     /**
-     * Boolean indicating whether column headers shall be included
+     * Boolean indicating whether column headers shall be included.
      */
     private boolean header;
     /**
@@ -42,7 +37,7 @@ public class ProjectSection {
     private BufferedWriter writer;
 
     /**
-     * constructor
+     * Constructor
      *
      * @param exportFeatures the features to export in this section
      * @param separator
@@ -59,16 +54,21 @@ public class ProjectSection {
     }
 
     /**
-     * Writes the desired section
+     * Writes the desired section.
      *
      * @param experiment the experiment name
      * @param sample the sample name
      * @param replicateNumber the replicate number
      * @param projectDetails the details of this project
+     * @param progressDialog the progress dialog
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(String experiment, String sample, int replicateNumber, ProjectDetails projectDetails) throws IOException {
+    public void writeSection(String experiment, String sample, int replicateNumber, ProjectDetails projectDetails, ProgressDialogX progressDialog) throws IOException {
+        
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Exporting Project Details. Please Wait...");
+        
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -76,7 +76,9 @@ public class ProjectSection {
             writer.write("Parameter" + separator + "Value");
             writer.newLine();
         }
+        
         int line = 1;
+        
         for (ExportFeature exportFeature : exportFeatures) {
             if (indexes) {
                 writer.write(line + separator);
