@@ -5,12 +5,15 @@ import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.spectrum.IonLabelColorTableModel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 
 /**
@@ -158,9 +161,9 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
         peakColorsPanel.setOpaque(false);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Annotated Peak Color:");
+        jLabel1.setText("Annotated Peak Color");
 
-        jLabel2.setText("Backgrond Peak Color:");
+        jLabel2.setText("Backgrond Peak Color");
 
         annotatedPeakColorPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         annotatedPeakColorPanel.setForeground(new java.awt.Color(255, 255, 255));
@@ -212,9 +215,9 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
             .addGap(0, 20, Short.MAX_VALUE)
         );
 
-        jLabel3.setText("Annotated Peak Width:");
+        jLabel3.setText("Annotated Peak Width");
 
-        jLabel4.setText("Background Peak Width:");
+        jLabel4.setText("Background Peak Width");
 
         annotatedPeakWidthSpinner.setModel(new javax.swing.SpinnerNumberModel(Float.valueOf(1.0f), Float.valueOf(1.0f), null, Float.valueOf(1.0f)));
         annotatedPeakWidthSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -255,8 +258,11 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
                         .addComponent(backgroungPeakWidthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
+
+        peakColorsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3, jLabel4});
+
         peakColorsPanelLayout.setVerticalGroup(
             peakColorsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peakColorsPanelLayout.createSequentialGroup()
@@ -346,6 +352,12 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        try {
+            UtilitiesUserPreferences.saveUserPreferences(peptideShakerGUI.getUtilitiesUserPreferences());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "An error occured when saving the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 

@@ -6,6 +6,7 @@ import com.compomics.software.dialogs.SearchGuiSetupDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.gui.error_handlers.BugReport;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
 import java.awt.Toolkit;
@@ -709,6 +710,15 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void javaSettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaSettingsMenuItemActionPerformed
+        
+        // reload the user preferences as these may have been changed by other tools
+        try {
+            peptideShakerGUI.setUtilitiesUserPreferences(UtilitiesUserPreferences.loadUserPreferences());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "An error occured when reading the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+        
         new JavaOptionsDialog(peptideShakerGUI, peptideShakerGUI, this, "PeptideShaker");
     }//GEN-LAST:event_javaSettingsMenuItemActionPerformed
 
