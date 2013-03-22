@@ -164,7 +164,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
         for (File file : files) {
             fileName = file.getName();
             found = false;
-            if (fileName.endsWith(".mgf")) {
+            if (fileName.toLowerCase().endsWith(".mgf")) {
                 for (File newFile : newFiles.values()) {
                     if (newFile.getName().equals(fileName)) {
                         found = true;

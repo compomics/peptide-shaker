@@ -806,7 +806,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("mgf")
+                return myFile.getName().toLowerCase().endsWith(".mgf")
                         || myFile.isDirectory();
             }
 
@@ -823,7 +823,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
                 if (newFile.isDirectory()) {
                     File[] tempFiles = newFile.listFiles();
                     for (File file : tempFiles) {
-                        if (file.getName().endsWith("mgf")) {
+                        if (file.getName().toLowerCase().endsWith(".mgf")) {
                             spectrumFiles.add(file);
                         }
                     }
