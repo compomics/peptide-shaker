@@ -10,6 +10,7 @@
  * NEW FEATURE: Added simple data filters for the Plotting Dialog.
  * NEW FEATURE: Added a new total peptide count per fraction plot to the fraction tab.
  * NEW FEATURE: Added an option for exporting the extended spectrum panel (the spectrum and the corresponding plots) in the Overview tab as a single figure.
+ * NEW FEATURE: A new custom report export option (beta).
 
  * FEATURE IMPROVEMENT: Search engines assumptions are now compared without accounting for PTM localization.
  * FEATURE IMPROVEMENT: The observed molecular weights are now recalculated if the user hides proteins via the FiltersDialog.
@@ -17,6 +18,8 @@
  * FEATURE IMPROVEMENT: Updated the Getting Started slides.
  * FEATURE IMPROVEMENT: Added a warning in case too many hits are kicked out by the filter.
  * FEATURE IMPROVEMENT: Cleaned up the error given if a protein cannot be found in the FASTA file.
+ * FEATURE IMPROVEMENT: Added complete protein group (in alphabetical order) as an export option.
+ * FEATURE IMPROVEMENT: The parsing of mgf (and mzml) files now support both upper and lower case file extensions.
 
  * BUG FIX: Removed some incorrect tooltips in the new project dialog.
  * BUG FIX: Fixed an inconsistency in the protein inference class descriptions used.
@@ -26,7 +29,7 @@
 
  * LIBRARY UPDATE: Updated MascotDatFile to version 3.4.10.
  * LIBRARY UPDATE: Updated pride-jaxb to version 1.0.9.
- * LIBRARY UPDATE: Updated utilities to version 3.11.23.
+ * LIBRARY UPDATE: Updated utilities to version 3.11.24.
 
 ----
 
