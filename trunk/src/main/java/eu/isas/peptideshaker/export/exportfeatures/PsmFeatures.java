@@ -12,13 +12,14 @@ public enum PsmFeatures implements ExportFeature {
 
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached."),
     sequence("Sequence", "Sequence of the peptide."),
-    ptms("Variable Modifications", "The variable modifications."),
+    variable_ptms("Variable Modifications", "The variable modifications."),
+    fixed_ptms("Fixed Modifications", "The fixed modifications."),
     localization_confidence("Localization Confidence", "The confidence in PTMs localization."),
     a_score("A-score", "A-score for PTM localization."),
     d_score("D-score", "D-score for PTM localization."),
     spectrum_file("Spectrum File", "The spectrum file."),
     spectrum_title("Spectrum Title", "The title of the spectrum."),
-    spectrum_number("Spectrum Number", "The spectrum number."),
+    spectrum_scan_number("Spectrum Scan Number", "The spectrum scan number."),
     rt("RT", "Retention time"),
     mz("m/z", "Measured m/z"),
     spectrum_charge("Measured Charge", "The charge as given in the spectrum file."),
@@ -61,13 +62,14 @@ public enum PsmFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accessions);
         result.add(sequence);
-        result.add(ptms);
+        result.add(variable_ptms);
+        result.add(fixed_ptms);
         result.add(localization_confidence);
         result.add(a_score);
         result.add(d_score);
         result.add(spectrum_file);
         result.add(spectrum_title);
-        result.add(spectrum_number);
+        result.add(spectrum_scan_number);
         result.add(rt);
         result.add(mz);
         result.add(spectrum_charge);

@@ -9,6 +9,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class ProteinSection {
 
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Exporting Protein Details. Please Wait...");
-        
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -115,16 +116,16 @@ public class ProteinSection {
         ProteinMatch proteinMatch = null;
         String matchKey = "", parameterKey = "";
         int line = 1;
-        
+
         progressDialog.setTitle("Exporting Protein Details. Please Wait...");
         progressDialog.setIndeterminate(false);
         progressDialog.setValue(0);
         progressDialog.setMaxProgressValue(keys.size());
 
         for (String proteinKey : keys) {
-            
+
             progressDialog.increaseProgressValue();
-            
+
             if (indexes) {
                 writer.write(line + separator);
             }
@@ -280,9 +281,21 @@ public class ProteinSection {
                         }
                         writer.write(psParameter.getProteinProbabilityScore() + separator);
                         break;
-                    case spectrum_counting:
-                        result = identificationFeaturesGenerator.getSpectrumCounting(proteinKey);
-                        writer.write(result + separator);
+                    case spectrum_counting_nsaf:
+                        try {
+                            writer.write(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                                    SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + separator);
+                        } catch (Exception e) {
+                            writer.write("error: " + e.getLocalizedMessage() + separator);
+                        }
+                        break;
+                    case spectrum_counting_empai:
+                        try {
+                            writer.write(identificationFeaturesGenerator.getSpectrumCounting(proteinKey,
+                                    SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + separator);
+                        } catch (Exception e) {
+                            writer.write("error: " + e.getLocalizedMessage() + separator);
+                        }
                         break;
                     case starred:
                         if (!parameterKey.equals(proteinKey)) {

@@ -95,7 +95,7 @@ public class PsmSection {
 
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Exporting PSM Details. Please Wait...");
-        
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -111,9 +111,9 @@ public class PsmSection {
             }
             writer.newLine();
         }
-        
+
         HashMap<String, ArrayList<String>> psmMap = new HashMap<String, ArrayList<String>>();
-        
+
         if (keys == null) {
             psmMap = identification.getSpectrumIdentificationMap();
         } else {
@@ -125,52 +125,97 @@ public class PsmSection {
                 psmMap.get(fileName).add(key);
             }
         }
-        
+
         PSParameter psParameter = new PSParameter();
         SpectrumMatch spectrumMatch = null;
         String matchKey = "", parameterKey = "";
         int line = 1;
-        
+
         int totalSize = 0;
-        
+
         for (String spectrumFile : psmMap.keySet()) {
             totalSize += psmMap.get(spectrumFile).size();
         }
-        
+
         progressDialog.setIndeterminate(false);
         progressDialog.setValue(0);
         progressDialog.setMaxProgressValue(totalSize);
-        
+
         for (String spectrumFile : psmMap.keySet()) {
 
             for (String spectrumKey : psmMap.get(spectrumFile)) {
-                
+
                 progressDialog.increaseProgressValue();
-                
+
                 if (indexes) {
                     writer.write(line + separator);
                 }
                 for (ExportFeature exportFeature : exportFeatures) {
                     PsmFeatures psmFeature = (PsmFeatures) exportFeature;
                     switch (psmFeature) {
-                        case ptms:
+                        case variable_ptms:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestAssumption().getPeptide());
+                            HashMap<String, ArrayList<Integer>> modMap = getModMap(spectrumMatch.getBestAssumption().getPeptide(), true);
                             ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
-                            String output = "";
+
+                            boolean first = true, first2;
+
                             for (String mod : modList) {
-                                if (!output.equals("")) {
-                                    output += ", ";
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    writer.write(", ");
                                 }
-                                output += mod;
-                                if (modMap.get(mod).size() > 1) {
-                                    output += " (" + modMap.get(mod).size() + ")";
+                                first2 = true;
+                                writer.write(mod + "(");
+                                for (int aa : modMap.get(mod)) {
+                                    if (first2) {
+                                        first2 = false;
+                                    } else {
+                                        writer.write(", ");
+                                    }
+                                    writer.write(aa + "");
                                 }
+                                writer.write(")");
                             }
+
+                            writer.write(separator);
+                            break;
+                        case fixed_ptms:
+
+                            if (!matchKey.equals(spectrumKey)) {
+                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                                matchKey = spectrumKey;
+                            }
+                            modMap = getModMap(spectrumMatch.getBestAssumption().getPeptide(), false);
+                            modList = new ArrayList<String>(modMap.keySet());
+                            Collections.sort(modList);
+
+                            first = true;
+
+                            for (String mod : modList) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    writer.write(", ");
+                                }
+                                first2 = true;
+                                writer.write(mod + "(");
+                                for (int aa : modMap.get(mod)) {
+                                    if (first2) {
+                                        first2 = false;
+                                    } else {
+                                        writer.write(", ");
+                                    }
+                                    writer.write(aa + "");
+                                }
+                                writer.write(")");
+                            }
+
                             writer.write(separator);
                             break;
                         case a_score:
@@ -178,10 +223,10 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide()).keySet());
+                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             PSPtmScores ptmScores = new PSPtmScores();
-                            output = "";
+                            String output = "";
                             for (String mod : modList) {
                                 if (spectrumMatch.getUrParam(ptmScores) != null) {
                                     if (!output.equals("")) {
@@ -220,7 +265,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide()).keySet());
+                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             ptmScores = new PSPtmScores();
                             output = "";
@@ -320,7 +365,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide()).keySet());
+                            modList = new ArrayList<String>(getModMap(spectrumMatch.getBestAssumption().getPeptide(), true).keySet());
                             Collections.sort(modList);
                             ptmScores = new PSPtmScores();
                             output = "";
@@ -394,7 +439,7 @@ public class PsmSection {
                         case spectrum_file:
                             writer.write(spectrumFile + separator);
                             break;
-                        case spectrum_number:
+                        case spectrum_scan_number:
                             writer.write(spectrumFactory.getSpectrum(spectrumKey).getScanNumber() + separator);
                             break;
                         case spectrum_title:
@@ -444,13 +489,15 @@ public class PsmSection {
      * sites.
      *
      * @param peptide
+     * @param variablePtms if true, only variable PTMs are shown, false return
+     * only the fixed PTMs
      * @return the map of the modifications on a peptide sequence
      */
-    private HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide) {
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+    private HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide, boolean variablePtms) {
 
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (modificationMatch.isVariable()) {
+            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                     modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                 }
