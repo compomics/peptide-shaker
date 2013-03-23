@@ -62,10 +62,10 @@ public class InputFilterSection {
      * writing the file.
      */
     public void writeSection(IdFilter idFilter, ProgressDialogX progressDialog) throws IOException {
-        
+
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Exporting Input Filters. Please Wait...");
-        
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -73,15 +73,17 @@ public class InputFilterSection {
             writer.write("Parameter" + separator + "Value");
             writer.newLine();
         }
-        
+
         int line = 1;
-        
+
         for (ExportFeature exportFeature : exportFeatures) {
+
             if (indexes) {
                 writer.write(line + separator);
             }
             writer.write(exportFeature.getTitle() + separator);
             InputFilterFeatures inputFilterFeatures = (InputFilterFeatures) exportFeature;
+
             switch (inputFilterFeatures) {
                 case mascot_max_evalue:
                     writer.write(idFilter.getMascotMaxEvalue() + "");
@@ -104,7 +106,8 @@ public class InputFilterSection {
                     break;
                 case omssa_max_evalue:
                     writer.write(idFilter.getOmssaMaxEvalue() + "");
-                case unkown_PTM:
+                    break;
+                case unknown_PTM:
                     if (idFilter.removeUnknownPTMs()) {
                         writer.write("Yes");
                     } else {
@@ -117,6 +120,7 @@ public class InputFilterSection {
                 default:
                     writer.write("Not implemented");
             }
+
             writer.newLine();
             line++;
         }

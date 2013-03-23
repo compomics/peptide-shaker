@@ -138,7 +138,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="tabbedPane" max="32767" attributes="0"/>
+                      <Component id="tabbedPane" pref="548" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -215,7 +215,7 @@
                                               <Component id="proteinEmpai" min="-2" pref="138" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace min="0" pref="111" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="138" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -496,7 +496,7 @@
                                               <Component id="uniqueOnlyHelpLabel" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace min="0" pref="69" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="96" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -772,7 +772,7 @@
                                           <Component id="psmValidated" linkSize="3" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="psmPrecursor" min="-2" pref="179" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="0" pref="82" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="109" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -991,7 +991,7 @@
                                               <Component id="slashLabel4" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="searchEnginesDeselectAllLabel" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="307" max="32767" attributes="0"/>
+                                              <EmptySpace pref="334" max="32767" attributes="0"/>
                                               <Component id="assumptionExport" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
@@ -1193,7 +1193,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="fractionsWarningLabel" pref="486" max="32767" attributes="0"/>
+                                          <Component id="fractionsWarningLabel" pref="513" max="32767" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="fractionsSelectAllLabel" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
@@ -1369,7 +1369,7 @@
                                   <Component id="exportPhosphLabel" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportAllLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="109" max="32767" attributes="0"/>
+                              <EmptySpace pref="136" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1474,7 +1474,7 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="reportsTableScrollPane" alignment="1" pref="496" max="32767" attributes="0"/>
+                                  <Component id="reportsTableScrollPane" alignment="1" pref="523" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                                       <Component id="helpLabel" min="-2" max="-2" attributes="0"/>

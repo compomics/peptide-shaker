@@ -6,6 +6,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
+import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeatures;
@@ -203,6 +204,7 @@ public class ExportFactory implements Serializable {
      * @param psMaps the PeptideShaker validation maps (mandatory for the
      * Validation section)
      * @param progressDialog the progress dialog
+     * @param modificationProfile the current modification profile
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws SQLException
@@ -215,7 +217,7 @@ public class ExportFactory implements Serializable {
             SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter,
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps,
-            ProgressDialogX progressDialog) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
+            ProgressDialogX progressDialog, ModificationProfile modificationProfile) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
@@ -238,7 +240,7 @@ public class ExportFactory implements Serializable {
                 InputFilterSection section = new InputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
                 section.writeSection(idFilter, progressDialog);
             } else if (sectionName.equals(PeptideFeatures.type)) {
-                PeptideSection section = new PeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
+                PeptideSection section = new PeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer, modificationProfile);
                 section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, proteinMatchKey, nSurroundingAA, progressDialog);
             } else if (sectionName.equals(ProjectFeatures.type)) {
                 ProjectSection section = new ProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
@@ -341,57 +343,100 @@ public class ExportFactory implements Serializable {
      */
     private static HashMap<String, ExportScheme> getDefaultExportSchemes() {
 
+        ///////////////////////////
         // Default protein report
+        ///////////////////////////
         ArrayList<ExportFeature> exportFeatures = new ArrayList<ExportFeature>();
-        exportFeatures.add(ProteinFeatures.accession); // @TODO: change the order??
-        exportFeatures.add(ProteinFeatures.mw);
-        exportFeatures.add(ProteinFeatures.spectrum_counting);
+
+        // protein accessions and protein inferences 
+        exportFeatures.add(ProteinFeatures.accession);
         exportFeatures.add(ProteinFeatures.protein_description);
-        exportFeatures.add(ProteinFeatures.coverage);
-        exportFeatures.add(ProteinFeatures.possible_coverage);
         exportFeatures.add(ProteinFeatures.pi);
         exportFeatures.add(ProteinFeatures.other_proteins);
         exportFeatures.add(ProteinFeatures.protein_group);
+
+        // peptide and spectrum counts
         exportFeatures.add(ProteinFeatures.peptides);
         exportFeatures.add(ProteinFeatures.validated_peptides);
         exportFeatures.add(ProteinFeatures.unique_peptides);
         exportFeatures.add(ProteinFeatures.psms);
         exportFeatures.add(ProteinFeatures.validated_psms);
+
+        // protein coverage
+        exportFeatures.add(ProteinFeatures.coverage);
+        exportFeatures.add(ProteinFeatures.possible_coverage);
+
+        // molecular weight and spectrum counting
+        exportFeatures.add(ProteinFeatures.mw);
+        exportFeatures.add(ProteinFeatures.spectrum_counting_nsaf);
+        exportFeatures.add(ProteinFeatures.spectrum_counting_empai);
+
+        // variable_ptms
         exportFeatures.add(ProteinFeatures.confident_PTMs);
         exportFeatures.add(ProteinFeatures.other_PTMs);
+
+        // protein scores
         exportFeatures.add(ProteinFeatures.score);
         exportFeatures.add(ProteinFeatures.confidence);
         exportFeatures.add(ProteinFeatures.decoy);
         exportFeatures.add(ProteinFeatures.validated);
+
         ExportScheme proteinReport = new ExportScheme("Default Protein Report", false, exportFeatures, "\t", true, true, 0, false);
 
+
+        ///////////////////////////
         // Default peptide report
+        ///////////////////////////
         exportFeatures = new ArrayList<ExportFeature>();
-        exportFeatures.add(PeptideFeatures.accessions); // @TODO: change the order?? and add more fields??
+
+        // accessions
+        exportFeatures.add(PeptideFeatures.accessions);
+
+        // peptide sequence
         exportFeatures.add(PeptideFeatures.aaBefore);
         exportFeatures.add(PeptideFeatures.sequence);
         exportFeatures.add(PeptideFeatures.aaAfter);
-        exportFeatures.add(PeptideFeatures.ptms);
+
+        // variable_ptms
+        exportFeatures.add(PeptideFeatures.variable_ptms);
         exportFeatures.add(PeptideFeatures.localization_confidence);
+        exportFeatures.add(PeptideFeatures.fixed_ptms);
+
+        // psms
         exportFeatures.add(PeptideFeatures.validated_psms);
         exportFeatures.add(PeptideFeatures.psms);
+
+        // peptide scores
         exportFeatures.add(PeptideFeatures.score);
         exportFeatures.add(PeptideFeatures.confidence);
         exportFeatures.add(PeptideFeatures.decoy);
         exportFeatures.add(PeptideFeatures.validated);
+
         ExportScheme peptideReport = new ExportScheme("Default Peptide Report", false, exportFeatures, "\t", true, true, 0, false);
 
+
+        ///////////////////////////
         // Default PSM report
+        ///////////////////////////
         exportFeatures = new ArrayList<ExportFeature>();
+
+        // protein accessions
         exportFeatures.add(PsmFeatures.accessions);
         exportFeatures.add(PsmFeatures.sequence);
-        exportFeatures.add(PsmFeatures.ptms);
+
+        // ptms
+        exportFeatures.add(PsmFeatures.variable_ptms);
         exportFeatures.add(PsmFeatures.d_score);
         exportFeatures.add(PsmFeatures.a_score);
         exportFeatures.add(PsmFeatures.localization_confidence);
+        exportFeatures.add(PsmFeatures.fixed_ptms);
+
+        // spectrum file
         exportFeatures.add(PsmFeatures.spectrum_file);
         exportFeatures.add(PsmFeatures.spectrum_title);
-        exportFeatures.add(PsmFeatures.spectrum_number);
+        exportFeatures.add(PsmFeatures.spectrum_scan_number);
+
+        // spectrum details
         exportFeatures.add(PsmFeatures.rt);
         exportFeatures.add(PsmFeatures.mz);
         exportFeatures.add(PsmFeatures.spectrum_charge);
@@ -399,34 +444,54 @@ public class ExportFactory implements Serializable {
         exportFeatures.add(PsmFeatures.theoretical_mass);
         exportFeatures.add(PsmFeatures.isotope);
         exportFeatures.add(PsmFeatures.mz_error);
+
+        // psm scores
         exportFeatures.add(PsmFeatures.score);
         exportFeatures.add(PsmFeatures.confidence);
         exportFeatures.add(PsmFeatures.decoy);
         exportFeatures.add(PsmFeatures.validated);
+
         ExportScheme psmReport = new ExportScheme("Default PSM Report", false, exportFeatures, "\t", true, true, 0, false);
 
+
+        ///////////////////////////
         // Certificate of analysis
+        ///////////////////////////
         ArrayList<String> sectionsList = new ArrayList<String>();
         exportFeatures = new ArrayList<ExportFeature>();
+        
+        // project details
         sectionsList.add(ProjectFeatures.type);
         exportFeatures.add(ProjectFeatures.peptide_shaker);
         exportFeatures.add(ProjectFeatures.date);
         exportFeatures.add(ProjectFeatures.experiment);
         exportFeatures.add(ProjectFeatures.sample);
         exportFeatures.add(ProjectFeatures.replicate);
+        
+        // search parameters
         sectionsList.add(SearchFeatures.type);
         exportFeatures.addAll(Arrays.asList(SearchFeatures.values()));
+        
+        // input filters
         sectionsList.add(InputFilterFeatures.type);
         exportFeatures.addAll(Arrays.asList(InputFilterFeatures.values()));
+        
+        // validation details
         sectionsList.add(ValidationFeatures.type);
         exportFeatures.addAll(Arrays.asList(ValidationFeatures.values()));
+        
+        // ptms
         sectionsList.add(PtmScoringFeatures.type);
         exportFeatures.addAll(Arrays.asList(PtmScoringFeatures.values()));
+        
+        // spectrum counting details
         sectionsList.add(SpectrumCountingFeatures.type);
         exportFeatures.addAll(Arrays.asList(SpectrumCountingFeatures.values()));
+        
+        // annotation settings
         sectionsList.add(AnnotationFeatures.type);
         exportFeatures.addAll(Arrays.asList(AnnotationFeatures.values()));
-        ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, "\t", true, true, 3, true, "Certificate of Analysis");
+        ExportScheme coa = new ExportScheme("Certificate of Analysis", false, sectionsList, exportFeatures, ": ", true, false, 2, true, "Certificate of Analysis");
 
         HashMap<String, ExportScheme> defaultSchemes = new HashMap<String, ExportScheme>();
         defaultSchemes.put(proteinReport.getName(), proteinReport);

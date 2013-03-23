@@ -53,6 +53,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
+import eu.isas.peptideshaker.export.section_generators.PeptideSection;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 
 /**
@@ -3528,7 +3529,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                         writer.write(peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(spectrumMatch.getBestAssumption().getPeptide(), false, false, true) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide(), false) + "\t");
                                         writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide(), true) + "\t");
-                                        writer.write(OutputGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
+                                        writer.write(PeptideSection.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
                                                 identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey()), modificationProfile) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
@@ -3621,7 +3622,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     result.append(OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide(), true));
                     result.append("\t");
                     try {
-                        result.append(OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
+                        result.append(PeptideSection.getPeptideModificationLocations(currentAssumption.getPeptide(),
                                 identification.getPeptideMatch(currentAssumption.getPeptide().getKey()), modificationProfile));
                         result.append("\t");
                     } catch (Exception e) {

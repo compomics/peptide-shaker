@@ -17,12 +17,13 @@ public enum PeptideFeatures implements ExportFeature {
     position("Position", "Position of the peptide in the protein sequence."),
     aaBefore("AAs Before", "The amino-acids before the sequence."),
     aaAfter("AAs After", "The amino-acids after the sequence."),
-    ptms("Variable Modifications", "The variable modifications."),
+    variable_ptms("Variable Modifications", "The variable modifications."),
+    fixed_ptms("Fixed Modifications", "The fixed modifications."),
     localization_confidence("Localization Confidence", "The confidence in PTMs localization."),
     confident_phosphosites("Confident Phosphosites", "The confidently localized phosphorylation sites."),
     other_phosphosites("Other Phosphosites", "The other phosphorylation sites."),
-    validated_psms("# validated PSMs", "Number of validated PSMs."),
-    psms("# PSMs", "Number of PSMs."),
+    validated_psms("#Validated PSMs", "Number of validated PSMs."),
+    psms("#PSMs", "Number of PSMs."),
     score("Score", "Score of the peptide."),
     confidence("Confidence", "Confidence in percent associated to the peptide."),
     decoy("Decoy", "Indicates whether the peptide is a decoy (1: yes, 0: no)."),
@@ -61,7 +62,8 @@ public enum PeptideFeatures implements ExportFeature {
         result.add(position);
         result.add(aaBefore);
         result.add(aaAfter);
-        result.add(ptms);
+        result.add(variable_ptms);
+        result.add(fixed_ptms);
         result.add(localization_confidence);
         result.add(confident_phosphosites);
         result.add(other_phosphosites);

@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.export.section_generators;
 
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -8,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -52,6 +55,10 @@ public class PeptideSection {
      * The writer used to send the output to file.
      */
     private BufferedWriter writer;
+    /**
+     * The current modification profile.
+     */
+    private ModificationProfile modificationProfile;
 
     /**
      * Constructor.
@@ -61,13 +68,15 @@ public class PeptideSection {
      * @param indexes
      * @param header
      * @param writer
+     * @param modificationProfile the current modification profile
      */
-    public PeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer, ModificationProfile modificationProfile) {
         this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
+        this.modificationProfile = modificationProfile;
     }
 
     /**
@@ -94,7 +103,7 @@ public class PeptideSection {
 
         progressDialog.setTitle("Exporting Peptide Details. Please Wait...");
         progressDialog.setIndeterminate(true);
-        
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -124,15 +133,15 @@ public class PeptideSection {
         PeptideMatch peptideMatch = null;
         String matchKey = "", parameterKey = "";
         int line = 1;
-        
+
         progressDialog.setIndeterminate(false);
         progressDialog.setValue(0);
         progressDialog.setMaxProgressValue(keys.size());
 
         for (String peptideKey : keys) {
-            
+
             progressDialog.increaseProgressValue();
-            
+
             if (indexes) {
                 writer.write(line + separator);
             }
@@ -189,41 +198,7 @@ public class PeptideSection {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             matchKey = peptideKey;
                         }
-                        HashMap<String, ArrayList<Integer>> modMap = getModMap(peptideMatch.getTheoreticPeptide());
-                        ArrayList<String> modifications = new ArrayList<String>(modMap.keySet());
-                        Collections.sort(modifications);
-                        String summary = "";
-                        PSPtmScores ptmScores = new PSPtmScores();
-                        for (String mod : modifications) {
-                            if (!summary.equals("")) {
-                                summary += ", ";
-                            }
-                            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-                            summary += " (";
-
-                            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-
-                                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
-
-                                if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                    summary += "Not Scored"; // Well this should not happen
-                                } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                    summary += "Random";
-                                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                    summary += "Doubtfull";
-                                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                    summary += "Confident";
-                                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                    summary += "Very Confident";
-                                }
-                            } else {
-                                summary += "Not Scored";
-                            }
-
-                            summary += ")";
-                        }
-                        
-                        writer.write(separator);
+                        writer.write(getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, modificationProfile) + separator);
                         break;
                     case pi:
                         if (!parameterKey.equals(peptideKey)) {
@@ -268,32 +243,19 @@ public class PeptideSection {
                         }
                         writer.write(peptideMatch.getSpectrumCount() + separator);
                         break;
-                    case ptms:
+                    case variable_ptms:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             matchKey = peptideKey;
                         }
-                        modMap = getModMap(peptideMatch.getTheoreticPeptide());
-                        boolean firstLocation;
-                        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
-                        Collections.sort(mods);
-                        String ptms = "";
-                        for (String mod : mods) {
-                            if (!ptms.equals("")) {
-                                firstLocation = true;
-                                ptms += mod + " (";
-                                for (int aa : modMap.get(mod)) {
-                                    if (firstLocation) {
-                                        firstLocation = false;
-                                    } else {
-                                        ptms += ", ";
-                                    }
-                                    ptms += aa;
-                                }
-                                ptms += ")";
-                            }
+                        writer.write(getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), true) + separator);
+                        break;
+                    case fixed_ptms:
+                        if (!matchKey.equals(peptideKey)) {
+                            peptideMatch = identification.getPeptideMatch(peptideKey);
+                            matchKey = peptideKey;
                         }
-                        writer.write(ptms + separator);
+                        writer.write(getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false) + separator);
                         break;
                     case score:
                         if (!parameterKey.equals(peptideKey)) {
@@ -411,24 +373,110 @@ public class PeptideSection {
     }
 
     /**
-     * Returns a map of the modifications in a peptide. Modification name ->
-     * sites.
+     * Returns the peptide modifications as a string.
      *
-     * @param peptide
-     * @return the map of the modifications on a peptide sequence
+     * @param peptide the peptide
+     * @param variablePtms if true, only variable PTMs are shown, false return
+     * only the fixed PTMs
+     * @return the peptide modifications as a string
      */
-    private HashMap<String, ArrayList<Integer>> getModMap(Peptide peptide) {
-        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+    public static String getPeptideModificationsAsString(Peptide peptide, boolean variablePtms) {
 
+        StringBuilder result = new StringBuilder();
+
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-            if (modificationMatch.isVariable()) {
+            if ((variablePtms && modificationMatch.isVariable()) || (!variablePtms && !modificationMatch.isVariable())) {
                 if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
                     modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                 }
                 modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
+        
+        boolean first = true, first2;
+        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+        
+        Collections.sort(mods);
+        for (String mod : mods) {
+            if (first) {
+                first = false;
+            } else {
+                result.append(", ");
+            }
+            first2 = true;
+            result.append(mod);
+            result.append(" (");
+            for (int aa : modMap.get(mod)) {
+                if (first2) {
+                    first2 = false;
+                } else {
+                    result.append(", ");
+                }
+                result.append(aa);
+            }
+            result.append(")");
+        }
 
-        return modMap;
+        return result.toString();
+    }
+
+    /**
+     * Returns the peptide modification location confidence as a string.
+     *
+     * @param peptide the peptide
+     * @param peptideMatch the peptide match
+     * @param ptmProfile the PTM profile
+     * @return the peptide modification location confidence as a string.
+     */
+    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch, ModificationProfile ptmProfile) {
+
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+
+        String result = "";
+        ArrayList<String> modList = new ArrayList<String>();
+
+        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+            if (modificationMatch.isVariable()) {
+                PTM refPtm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                for (String equivalentPtm : ptmProfile.getSimilarNotFixedModifications(refPtm.getMass())) {
+                    if (!modList.contains(equivalentPtm)) {
+                        modList.add(equivalentPtm);
+                    }
+                }
+            }
+        }
+
+        Collections.sort(modList);
+        boolean first = true;
+
+        for (String mod : modList) {
+            if (first) {
+                first = false;
+            } else {
+                result += ", ";
+            }
+            PSPtmScores ptmScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+            result += mod + " (";
+            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                    result += "Not Scored"; // Well this should not happen
+                } else if (ptmConfidence == PtmScoring.RANDOM) {
+                    result += "Random";
+                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                    result += "Doubtfull";
+                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                    result += "Confident";
+                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                    result += "Very Confident";
+                }
+            } else {
+                result += "Not Scored";
+            }
+            result += ")";
+        }
+
+        return result;
     }
 }

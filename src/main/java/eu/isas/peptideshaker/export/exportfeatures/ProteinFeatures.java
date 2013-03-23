@@ -16,7 +16,8 @@ public enum ProteinFeatures implements ExportFeature {
     coverage("Coverage (%)", "Sequence coverage in percent of the protein designed by the main accession."),
     possible_coverage("Possible Coverage (%)", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings."),
     non_enzymatic("Non-Enzymatic", "Indicates how many non-enzymatic peptides were found for this protein match."),
-    spectrum_counting("Spectrum Counting", "Spectrum counting index"),
+    spectrum_counting_nsaf("Spectrum Counting NSAF ", "Normalized Spectrum Abundance Factor (NSAF)"),
+    spectrum_counting_empai("Spectrum Counting emPAI", "exponentially modified Protein Abundance Index (emPAI)"),
     confident_PTMs("Confident Modification Sites", "List of the sites where a variable modification was confidently localized."),
     other_PTMs("Other Modification Sites", "List of the non-confident sites where a variable modification was localized."),
     confident_phosphosites("Confident Phosphosites", "List of the sites where a phosphorylation was confidently localized."),
@@ -67,7 +68,8 @@ public enum ProteinFeatures implements ExportFeature {
         result.add(mw);
         result.add(coverage);
         result.add(possible_coverage);
-        result.add(spectrum_counting);
+        result.add(spectrum_counting_nsaf);
+        result.add(spectrum_counting_empai);
         result.add(confident_PTMs);
         result.add(other_PTMs);
         result.add(confident_phosphosites);

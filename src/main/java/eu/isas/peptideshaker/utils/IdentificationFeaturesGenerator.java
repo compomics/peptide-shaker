@@ -13,7 +13,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
-import eu.isas.peptideshaker.export.OutputGenerator;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -24,7 +23,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCou
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -988,7 +986,9 @@ public class IdentificationFeaturesGenerator {
             }
         }
 
-        result.append(OutputGenerator.SEPARATOR);
+        //result.append(OutputGenerator.SEPARATOR); // @TODO: why is this here???
+        result.append("|");
+
         firstPtm = true;
 
         if (targetedPtms == null) {
@@ -1012,7 +1012,14 @@ public class IdentificationFeaturesGenerator {
             }
             result.append(n);
         }
-        return result.toString();
+
+        String resultsAsString = result.toString();
+
+        if (resultsAsString.equalsIgnoreCase("|")) {
+            resultsAsString = "";
+        }
+
+        return resultsAsString;
     }
 
     /**
@@ -1108,7 +1115,9 @@ public class IdentificationFeaturesGenerator {
             }
         }
 
-        result.append(OutputGenerator.SEPARATOR);
+        //result.append(OutputGenerator.SEPARATOR); // @TODO: why is this here??
+        result.append("|");
+
         firstPtm = true;
 
         if (targetedPtms == null) {
@@ -1132,7 +1141,14 @@ public class IdentificationFeaturesGenerator {
             }
             result.append(n);
         }
-        return result.toString();
+
+        String resultsAsString = result.toString();
+
+        if (resultsAsString.equalsIgnoreCase("|")) {
+            resultsAsString = "";
+        }
+
+        return resultsAsString;
     }
 
     /**
