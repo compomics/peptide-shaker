@@ -429,6 +429,12 @@
             <groupId>uk.ac.ebi.pride.jaxb</groupId>   
             <artifactId>pride-jaxb</artifactId>   
             <version>1.0.9</version> 
+            <exclusions>
+                <exclusion>
+                    <artifactId>fastutil</artifactId>
+                    <groupId>it.unimi.dsi</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
