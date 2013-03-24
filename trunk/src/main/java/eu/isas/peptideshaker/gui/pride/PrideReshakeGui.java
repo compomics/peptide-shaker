@@ -427,7 +427,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PRIDE - Public Projects");
         setMinimumSize(new java.awt.Dimension(1280, 750));
-        setPreferredSize(new java.awt.Dimension(1280, 750));
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -793,7 +792,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     .addComponent(speciesTissueAndPtmsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search PRIDE"));
+        searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search PRIDE *"));
         searchPanel.setOpaque(false);
 
         searchTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -850,7 +849,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         });
 
         searchFiltersLabel.setFont(searchFiltersLabel.getFont().deriveFont((searchFiltersLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        searchFiltersLabel.setText("Supported filter options: partial (case sensitive) text; and number, >number and <number for the spectra, peptides and proteins columns.");
+        searchFiltersLabel.setText("* Supported filter options: partial (case sensitive) text; and number, >number and <number for the spectra, peptides and proteins columns.");
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
@@ -1067,6 +1066,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 }
             }
 
+            // check if multiple projects are selected
+            if (selectedProjects.size() > 1) {
+                JOptionPane.showMessageDialog(this,
+                        "Note that if multiple projects are selected the search\n"
+                        + "parameters from the first project in the list is used.",
+                        "Search Parameters", JOptionPane.INFORMATION_MESSAGE);
+            }
+
             downloadPrideDatasets(selectedProjects);
         }
     }//GEN-LAST:event_reshakeButtonActionPerformed
@@ -1180,7 +1187,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private void projectNotFoundLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_projectNotFoundLabelMouseReleased
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PRIDE_Project_Not_Found.html"),
+        new HelpDialog(this, getClass().getResource("/helpFiles/PrideReshakeDialog.html"),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "PeptideShaker - Help");
@@ -1402,12 +1409,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                             if (mgfConversionOk) {
                                 // get the search params from the pride xml file
-                                if (selectedProjects.size() > 1) {
-                                    progressDialog.setTitle("Getting Search Settings (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
-                                } else {
+                                if (i == 0) {
                                     progressDialog.setTitle("Getting Search Settings. Please Wait...");
+                                    prideSearchParametersReport = getSearchParams(prideAccession, prideSearchParameters);
                                 }
-                                prideSearchParametersReport = getSearchParams(prideAccession, prideSearchParameters);
                             }
                         }
                     }
@@ -1473,9 +1478,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private String getSearchParams(Integer prideAccession, SearchParameters prideSearchParameters) throws Exception {
 
-        String species = "unknown";
-        String taxonomy = "unknown";
-
         progressDialog.setIndeterminate(true);
 
         Double fragmentIonMassTolerance = null;
@@ -1488,15 +1490,17 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         Description description = prideXmlReader.getDescription();
         DataProcessing dataProcessing = description.getDataProcessing();
 
-        List<CvParam> processingMethods = dataProcessing.getProcessingMethod().getCvParam();
+        if (dataProcessing != null && dataProcessing.getProcessingMethod() != null) {
+            List<CvParam> processingMethods = dataProcessing.getProcessingMethod().getCvParam();
 
-        for (CvParam cvParam : processingMethods) {
-            if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000161")) { // fragment mass tolerance
-                fragmentIonMassTolerance = new Double(cvParam.getValue());
-            } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000078")) { // peptide mass tolerance
-                peptideIonMassTolerance = new Double(cvParam.getValue());
-            } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000162")) { // allowed missed cleavages
-                maxMissedCleavages = new Integer(cvParam.getValue());
+            for (CvParam cvParam : processingMethods) {
+                if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000161")) { // fragment mass tolerance
+                    fragmentIonMassTolerance = new Double(cvParam.getValue());
+                } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000078")) { // peptide mass tolerance
+                    peptideIonMassTolerance = new Double(cvParam.getValue());
+                } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000162")) { // allowed missed cleavages
+                    maxMissedCleavages = new Integer(cvParam.getValue());
+                }
             }
         }
 
@@ -1620,15 +1624,23 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         }
 
         // taxonomy and species
-        prideParametersReport += "<br><br><b>Species:</b> " + speciesForProject.get(prideAccession);
-        prideParametersReport += "<br><b>Taxonomy:</b> " + taxonomyForProject.get(prideAccession);
-        species = speciesForProject.get(prideAccession);
-        taxonomy = taxonomyForProject.get(prideAccession);
+        if (speciesForProject.get(prideAccession) == null || speciesForProject.get(prideAccession).length() == 0) {
+            prideParametersReport += "<br><br><b>Species:</b> unknown";
+        } else {
+            prideParametersReport += "<br><br><b>Species:</b> " + speciesForProject.get(prideAccession);
+        }
+        if (taxonomyForProject.get(prideAccession) == null || taxonomyForProject.get(prideAccession).length() == 0) {
+            prideParametersReport += "<br><br><b>Taxonomy:</b> unknown";
+        } else {
+            prideParametersReport += "<br><b>Taxonomy:</b> " + taxonomyForProject.get(prideAccession);
+        }
 
-
-        // help the user getting the correct database
-        // @TODO: implement me!!
-
+        // help the user get the correct database
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+        dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+        new DatabaseHelpDialog(peptideShakerGUI, prideSearchParameters, true, speciesForProject.get(prideAccession), taxonomyForProject.get(prideAccession));
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+        dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         // map the ptms to utilities ptms
         String allPtms = ptmsForProject.get(prideAccession);
@@ -1657,12 +1669,25 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         // handle the unknown ptms
         if (!unknownPtms.isEmpty()) {
+
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+            String unknownPtmLine = "The following PTMs could not be mapped to SearchGUI PTMs:";
+
             for (String unknownPtm : unknownPtms) {
-                // @TODO: handle unknown PTMs???
-
-
+                unknownPtmLine += "\n" + unknownPtm;
                 prideParametersReport += "<br>" + unknownPtm + " (unknown ptm)";
             }
+
+            unknownPtmLine += ".\n\nPlease add them manually in SearchGUI.";
+
+            // @TODO: better handling of unknown PTMs???
+
+            JOptionPane.showMessageDialog(this, unknownPtmLine, "Unknown PTMs", JOptionPane.INFORMATION_MESSAGE);
+
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
         }
 
 
@@ -1705,13 +1730,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             prideSearchParameters.setMaxChargeSearched(new Charge(Charge.PLUS, maxPrecursorCharge));
             prideParametersReport += "<br><b>Max precusor charge:</b> " + maxPrecursorCharge;
         } else {
-            prideParametersReport += "<br><br><b>Max precusor charge:</b> unknown";
+            prideParametersReport += "<br><b>Max precusor charge:</b> unknown";
         }
 
         prideParametersReport += "<br></html>";
 
 
-        boolean debugOutput = true;
+        boolean debugOutput = false;
 
         // debug output
         if (debugOutput) {
@@ -2218,7 +2243,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             int spectraCount = spectra.size();
 
             if (spectraCount == 0) {
-                // @TODO: close the PrideXmlReader
                 bw.close();
                 w.close();
                 progressDialog.setRunFinished();
@@ -2230,10 +2254,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             progressDialog.setMaxProgressValue(spectraCount);
             progressDialog.setValue(0);
 
+            int validSpectrumCount = 0;
+
             for (String spectrumId : spectra) {
 
                 if (progressDialog.isRunCanceled()) {
-                    // @TODO: close the PrideXmlReader
                     bw.close();
                     w.close();
                     progressDialog.setRunFinished();
@@ -2241,11 +2266,21 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 }
 
                 Spectrum spectrum = prideXmlReader.getSpectrumById(spectrumId);
-                asMgf(spectrum, bw);
+                boolean valid = asMgf(spectrum, bw);
+
+                if (valid) {
+                    validSpectrumCount++;
+                }
+
                 progressDialog.increaseProgressValue();
             }
 
-            // @TODO: close the PrideXmlReader
+            if (validSpectrumCount == 0) {
+                progressDialog.setRunFinished();
+                JOptionPane.showMessageDialog(this, "The project contains no valid spectra! Conversion canceled.", "No Spectra Found", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+
             bw.close();
             w.close();
         } catch (IOException ex) {
@@ -2260,14 +2295,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      *
      * @param spectrum
      * @param bw
+     * @return true of the spectrum could be converted to mgf
      * @throws IOException
      */
-    public void asMgf(Spectrum spectrum, BufferedWriter bw) throws IOException {
+    public boolean asMgf(Spectrum spectrum, BufferedWriter bw) throws IOException {
 
-        bw.write("BEGIN IONS" + System.getProperty("line.separator"));
-        bw.write("TITLE=" + spectrum.getId() + System.getProperty("line.separator"));
-
-        // @TODO: what to do if precursor details are missing???
+        boolean valid = true;
 
         int msLevel = spectrum.getSpectrumDesc().getSpectrumSettings().getSpectrumInstrument().getMsLevel();
 
@@ -2275,11 +2308,17 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         if (msLevel == 2) {
 
             // add precursor details
-            if (spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().size() > 0) {
+            if (spectrum.getSpectrumDesc().getPrecursorList() != null
+                    && spectrum.getSpectrumDesc().getPrecursorList().getPrecursor() != null
+                    && spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().size() > 0) {
+
+                bw.write("BEGIN IONS" + System.getProperty("line.separator"));
+                bw.write("TITLE=" + spectrum.getId() + System.getProperty("line.separator"));
 
                 Precursor precursor = spectrum.getSpectrumDesc().getPrecursorList().getPrecursor().get(0); // get the first precursor
                 List<CvParam> precursorCvParams = precursor.getIonSelection().getCvParam();
                 Double precursorMz = null, precursorIntensity = null;
+                String precursorRt = null;
                 Integer precursorCharge = null;
 
                 for (CvParam cvParam : precursorCvParams) {
@@ -2289,13 +2328,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         precursorIntensity = new Double(cvParam.getValue());
                     } else if (cvParam.getAccession().equalsIgnoreCase("MS:1000041") || cvParam.getAccession().equalsIgnoreCase("PSI:1000041")) { // precursor charge
                         precursorCharge = new Integer(cvParam.getValue());
+                    } else if (cvParam.getAccession().equalsIgnoreCase("PRIDE:0000203") || cvParam.getAccession().equalsIgnoreCase("MS:1000894")) { // precursor retention time
+                        precursorRt = cvParam.getValue();
                     }
                 }
 
                 if (precursorMz != null) {
                     bw.write("PEPMASS=" + precursorMz);
                 } else {
-                    // @TODO: cancel conversion??
+                    valid = false; // @TODO: cancel conversion??
                 }
 
                 if (precursorIntensity != null) {
@@ -2304,13 +2345,9 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                 bw.write(System.getProperty("line.separator"));
 
-                // @TODO: add retention time!!
-                //result += "RTINSECONDS="; 
-//        if (precursor.hasRTWindow()) {
-//            result += "RTINSECONDS=" + precursor.getRtWindow()[0] + "-" + precursor.getRtWindow()[1] + System.getProperty("line.separator");
-//        } else if (precursor.getRt() != -1) {
-//            result += "RTINSECONDS=" + precursor.getRt() + System.getProperty("line.separator");
-//        }
+                if (precursorRt != null) {
+                    bw.write("RTINSECONDS=" + precursorRt + System.getProperty("line.separator")); // @TODO: improve the retention time mapping, e.g., support rt windows
+                }
 
                 if (precursorCharge != null) {
                     bw.write("CHARGE=" + precursorCharge + System.getProperty("line.separator"));
@@ -2322,7 +2359,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         minPrecursorCharge = precursorCharge;
                     }
                 } else {
-                    // @TODO: cancel conversion??
+                    //valid = false; // @TODO: can we use spectra without precursor charge??
                 }
 
                 // process all peaks by iterating over the m/z values
@@ -2338,9 +2375,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 bw.write("END IONS" + System.getProperty("line.separator") + System.getProperty("line.separator"));
 
             } else {
-                // @TODO: cancel conversion??
+                valid = false;
             }
+        } else {
+            valid = false;
         }
+
+        return valid;
     }
 
     /**

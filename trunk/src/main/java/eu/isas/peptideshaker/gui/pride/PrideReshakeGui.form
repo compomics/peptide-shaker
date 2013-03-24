@@ -656,7 +656,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Search PRIDE"/>
+                <TitledBorder title="Search PRIDE *"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -751,7 +751,7 @@
                 <Font component="searchFiltersLabel" italic="true" property="font" relativeSize="true" size="0"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Supported filter options: partial (case sensitive) text; and number, &gt;number and &lt;number for the spectra, peptides and proteins columns."/>
+            <Property name="text" type="java.lang.String" value="* Supported filter options: partial (case sensitive) text; and number, &gt;number and &lt;number for the spectra, peptides and proteins columns."/>
           </Properties>
         </Component>
       </SubComponents>
