@@ -896,6 +896,21 @@ public class PRIDEExport {
                     + spectrum.getPrecursor().getIntensity() + "\" />" + System.getProperty("line.separator"));
         }
 
+        // precursor retention time
+        if (spectrum.getPrecursor().hasRTWindow()) {
+
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
+                    + spectrum.getPrecursor().getRtWindow()[0] + "\" />" + System.getProperty("line.separator"));
+
+            // @TODO: figure out how to annotate retention time windows properly...
+
+            //spectrum.getPrecursor().getRtWindow()[0] + "-" + spectrum.getPrecursor().getRtWindow()[1]
+
+        } else if (spectrum.getPrecursor().getRt() != -1) {
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000894\" name=\"retention time\" value=\""
+                    + spectrum.getPrecursor().getRt() + "\" />" + System.getProperty("line.separator"));
+        }
+
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ionSelection>" + System.getProperty("line.separator"));
 
