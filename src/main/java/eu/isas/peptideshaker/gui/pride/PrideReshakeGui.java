@@ -36,7 +36,7 @@ import uk.ac.ebi.pride.jaxb.model.*;
 import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
 
 /**
- * A simple GUI for getting the mgf and search params for a PRIDE dataset.
+ * A simple GUI for getting the mgf and search parameters for a PRIDE dataset.
  *
  * @author Harald Barsnes
  */
@@ -158,6 +158,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         projectsTable.getColumn(" ").setMinWidth(30);
         searchTable.getColumn("Accession").setMaxWidth(80);
         searchTable.getColumn("Accession").setMinWidth(80);
+        searchTable.getColumn(" ").setMaxWidth(30);
+        searchTable.getColumn(" ").setMinWidth(30);
 
         // make sure that the scroll panes are see-through
         projectsScrollPane.getViewport().setOpaque(false);
@@ -797,14 +799,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         searchTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null,  new Boolean(false)}
             },
             new String [] {
-                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References"
+                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", " "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -813,6 +815,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         });
         searchTable.setSelectionBackground(new java.awt.Color(255, 255, 255));
         searchTable.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        searchTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchTableMouseClicked(evt);
+            }
+        });
         searchTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 searchTableKeyReleased(evt);
@@ -1066,15 +1073,23 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 }
             }
 
+            boolean download = true;
+
             // check if multiple projects are selected
             if (selectedProjects.size() > 1) {
-                JOptionPane.showMessageDialog(this,
+                int value = JOptionPane.showConfirmDialog(this,
                         "Note that if multiple projects are selected the search\n"
                         + "parameters from the first project in the list is used.",
-                        "Search Parameters", JOptionPane.INFORMATION_MESSAGE);
+                        "Search Parameters", JOptionPane.OK_CANCEL_OPTION);
+
+                if (value == JOptionPane.CANCEL_OPTION) {
+                    download = false;
+                }
             }
 
-            downloadPrideDatasets(selectedProjects);
+            if (download) {
+                downloadPrideDatasets(selectedProjects);
+            }
         }
     }//GEN-LAST:event_reshakeButtonActionPerformed
 
@@ -1202,6 +1217,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
     private void hideNonValidProjectsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideNonValidProjectsCheckBoxActionPerformed
         insertData();
     }//GEN-LAST:event_hideNonValidProjectsCheckBoxActionPerformed
+
+    /**
+     * Filter the projects.
+     *
+     * @param evt
+     */
+    private void searchTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchTableMouseClicked
+        filter();
+    }//GEN-LAST:event_searchTableMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel accessionLabel;
     private javax.swing.JTextField accessionTextField;
@@ -1444,9 +1468,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     }
 
                     if (mgfConversionOk) {
-                        JOptionPane.showMessageDialog(peptideShakerGUI, "PRIDE project(s) downloaded, converted to mgf and stored here:\n"
-                                + outputFolder, "Download Complete", JOptionPane.INFORMATION_MESSAGE);
-
                         // display the detected search parameters to the user
                         new PrideSearchParametersDialog(peptideShakerGUI, new File(outputFolder, "pride.parameters"), prideSearchParametersReport, mgfFiles, true);
                     }
@@ -1670,21 +1691,21 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         // handle the unknown ptms
         if (!unknownPtms.isEmpty()) {
 
-            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-            String unknownPtmLine = "The following PTMs could not be mapped to SearchGUI PTMs:";
-
-            for (String unknownPtm : unknownPtms) {
-                unknownPtmLine += "\n" + unknownPtm;
-                prideParametersReport += "<br>" + unknownPtm + " (unknown ptm)";
-            }
-
-            unknownPtmLine += ".\n\nPlease add them manually in SearchGUI.";
-
             // @TODO: better handling of unknown PTMs???
 
-            JOptionPane.showMessageDialog(this, unknownPtmLine, "Unknown PTMs", JOptionPane.INFORMATION_MESSAGE);
+//            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+//            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+//
+//            String unknownPtmLine = "The following PTMs could not be mapped to SearchGUI PTMs:";
+
+            for (String unknownPtm : unknownPtms) {
+//                unknownPtmLine += "\n" + unknownPtm;
+                prideParametersReport += "<br>" + unknownPtm + " (unknown ptm) *";
+            }
+
+//            unknownPtmLine += ".\n\nPlease add them manually in SearchGUI.";
+//
+//            JOptionPane.showMessageDialog(this, unknownPtmLine, "Unknown PTMs", JOptionPane.INFORMATION_MESSAGE);
 
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
@@ -1731,6 +1752,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             prideParametersReport += "<br><b>Max precusor charge:</b> " + maxPrecursorCharge;
         } else {
             prideParametersReport += "<br><b>Max precusor charge:</b> unknown";
+        }
+        
+        prideParametersReport += "<br><br><b>MGF file location:</b> " + new File(outputFolder).getAbsolutePath();
+        
+        if (!unknownPtms.isEmpty()) {
+            prideParametersReport += "<br><br>* Please add these PTMs manually in SearchGUI.";
         }
 
         prideParametersReport += "<br></html>";
@@ -2114,6 +2141,23 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 //JOptionPane.showMessageDialog(this, "Bad regex pattern for references!", "Filter Error", JOptionPane.ERROR_MESSAGE);
                 //pse.printStackTrace();
             }
+        }
+
+        // selected for analysis filter
+        boolean selected = (Boolean) searchTable.getValueAt(0, searchTable.getColumn(" ").getModelIndex());
+
+        if (selected) {
+            RowFilter<Object, Object> selectedFilter = new RowFilter<Object, Object>() {
+                public boolean include(Entry<? extends Object, ? extends Object> entry) {
+                    if (entry.getValue(projectsTable.getColumn(" ").getModelIndex()).equals(true)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            };
+
+            filters.add(selectedFilter);
         }
 
         RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
