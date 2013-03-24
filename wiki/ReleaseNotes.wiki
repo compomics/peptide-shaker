@@ -3,8 +3,9 @@
 
 ----
 
-*Changes in PeptideShaker 0.19.1 (March ??. 2013):*
+*Changes in PeptideShaker 0.19.1 (March 24. 2013):*
 
+ * NEW FEATURE: PRIDE Reshake feature added for re-analyzing data in PRIDE. (beta)
  * NEW FEATURE: Created PRIDE XML files are now schema validated with user feedback if the validation fails.
  * NEW FEATURE: Added a new Save & Export dialog.
  * NEW FEATURE: Added simple data filters for the Plotting Dialog.
@@ -20,6 +21,7 @@
  * FEATURE IMPROVEMENT: Cleaned up the error given if a protein cannot be found in the FASTA file.
  * FEATURE IMPROVEMENT: Added complete protein group (in alphabetical order) as an export option.
  * FEATURE IMPROVEMENT: The parsing of mgf (and mzml) files now support both upper and lower case file extensions.
+ * FEATURE IMPROVEMENT: Added retention time to the PRIDE export.
 
  * BUG FIX: Removed some incorrect tooltips in the new project dialog.
  * BUG FIX: Fixed an inconsistency in the protein inference class descriptions used.
@@ -29,7 +31,7 @@
 
  * LIBRARY UPDATE: Updated MascotDatFile to version 3.4.10.
  * LIBRARY UPDATE: Updated pride-jaxb to version 1.0.9.
- * LIBRARY UPDATE: Updated utilities to version 3.11.24.
+ * LIBRARY UPDATE: Updated utilities to version 3.11.25.
 
 ----
 
@@ -99,7 +101,7 @@
  * LIBRARY UPDATE: Updated mascot dat file parser to version 3.4.7.
  * LIBRARY UPDATE: Updated utilities to version 3.11.2.
 
-Download Count: 218
+Download Count: 227
 
 ----
 
