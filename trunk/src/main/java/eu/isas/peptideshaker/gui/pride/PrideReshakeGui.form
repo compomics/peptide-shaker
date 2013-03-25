@@ -593,7 +593,7 @@
                         <Font bold="true" component="pumMedLabel" property="font" relativeSize="true" size="0"/>
                       </FontInfo>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="PumMed"/>
+                    <Property name="text" type="java.lang.String" value="PubMed"/>
                   </Properties>
                 </Component>
                 <Container class="javax.swing.JScrollPane" name="referencesScrollPane">
