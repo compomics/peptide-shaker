@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.19.2 (March 25. 2013):*
+ * BUG FIX: Fixed a bug that made it impossible to change the memory settings.
+ * BUG FIX: Fixed a typo in the PRIDE Reshake dialog, PumMed > PubMed.
+ 
+ * LIBRARY UPDATE: Updated utilities to version 3.11.27.
+
+----
+
 *Changes in PeptideShaker 0.19.1 (March 24. 2013):*
 
  * NEW FEATURE: PRIDE Reshake feature added for re-analyzing data in PRIDE. (beta)
@@ -32,6 +40,8 @@
  * LIBRARY UPDATE: Updated MascotDatFile to version 3.4.10.
  * LIBRARY UPDATE: Updated pride-jaxb to version 1.0.9.
  * LIBRARY UPDATE: Updated utilities to version 3.11.25.
+
+Download Count: 13
 
 ----
 
