@@ -700,7 +700,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         referencesLabel.setText("References");
 
         pumMedLabel.setFont(pumMedLabel.getFont().deriveFont(pumMedLabel.getFont().getStyle() | java.awt.Font.BOLD));
-        pumMedLabel.setText("PumMed");
+        pumMedLabel.setText("PubMed");
 
         referencesTextArea.setEditable(false);
         referencesTextArea.setColumns(20);
