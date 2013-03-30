@@ -39,6 +39,7 @@ import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * This class will generate the output as requested by the user.
+ * //@TODO: this class shall evolve to something gui independent or will disappear
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
