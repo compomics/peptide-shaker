@@ -68,6 +68,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
+        
         setVisible(true);
     }
 
@@ -598,7 +599,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -609,7 +609,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }, "ProgressDialog").start();
 
             new Thread("SaveThread") {
-
                 @Override
                 public void run() {
 
@@ -676,7 +675,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             fileChooser.setMultiSelectionEnabled(false);
 
             FileFilter filter = new FileFilter() {
-
                 @Override
                 public boolean accept(File myFile) {
                     if (vendorCmb.getSelectedIndex() == 2) {
@@ -742,14 +740,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     final FollowupPreferencesDialog tempRef = this;
 
                     new Thread(new Runnable() {
-
                         public void run() {
                             progressDialog.setVisible(true);
                         }
                     }, "ProgressDialog").start();
 
                     new Thread("SaveThread") {
-
                         @Override
                         public void run() {
 
@@ -869,65 +865,72 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
 
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+        try {
+            ProgenesisOptionsDialog progenesisOptionsDialog = new ProgenesisOptionsDialog(peptideShakerGUI, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getFilterPreferences(), peptideShakerGUI.getSearchParameters());
+            final ArrayList<String> psms = progenesisOptionsDialog.getSelectedPsms();
 
-        if (finalOutputFile != null) {
+            if (psms != null) {
+                final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
 
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+                if (finalOutputFile != null) {
 
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Exporting. Please Wait...");
+                    final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+
+                    progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Exporting. Please Wait...");
 
 
-            new Thread(new Runnable() {
-
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExoportThread") {
-
-                @Override
-                public void run() {
-
-                    try {
-
-                        FileWriter f = new FileWriter(finalOutputFile);
-                        BufferedWriter b = new BufferedWriter(f);
-
-                        OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-                        outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
-
-                        b.close();
-                        f.close();
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                progressDialog.setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
                         }
+                    }, "ProgressDialog").start();
 
-                    } catch (IOException e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    }
+                    new Thread("ExoportThread") {
+                        @Override
+                        public void run() {
+
+                            try {
+
+                                FileWriter f = new FileWriter(finalOutputFile);
+                                BufferedWriter b = new BufferedWriter(f);
+
+                                OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
+                                outputGenerator.getPSMsProgenesisExport(progressDialog, psms, b);
+
+                                b.close();
+                                f.close();
+
+                                boolean processCancelled = progressDialog.isRunCanceled();
+                                progressDialog.setRunFinished();
+
+                                if (!processCancelled) {
+                                    JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                                }
+
+                            } catch (IOException e) {
+                                progressDialog.setRunFinished();
+                                JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                progressDialog.setRunFinished();
+                                JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
                 }
-            }.start();
+            }
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
     }//GEN-LAST:event_exportProgenesisButtonActionPerformed
 
@@ -953,7 +956,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
 
                     try {
@@ -965,7 +967,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1047,7 +1048,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1058,7 +1058,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1137,7 +1136,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1148,7 +1146,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1229,7 +1226,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             progressDialog.setTitle("Exporting. Please Wait...");
 
             new Thread(new Runnable() {
-
                 public void run() {
 
                     try {
@@ -1241,7 +1237,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }, "ProgressDialog").start();
 
             new Thread("ExportThread") {
-
                 @Override
                 public void run() {
 
@@ -1351,7 +1346,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         // handle link events 
         ep.addHyperlinkListener(new HyperlinkListener() {
-
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
@@ -1386,8 +1380,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Open the Progenesis home page.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportToProgenesisLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1415,8 +1409,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Open the export to Progenesis help.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportToProgenesisHelpLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabelMouseReleased
         // create an empty label to put the message in
@@ -1433,7 +1427,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         // handle link events 
         ep.addHyperlinkListener(new HyperlinkListener() {
-
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
