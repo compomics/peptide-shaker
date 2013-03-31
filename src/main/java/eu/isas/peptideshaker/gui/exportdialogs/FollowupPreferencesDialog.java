@@ -866,7 +866,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
 
         try {
-            ProgenesisOptionsDialog progenesisOptionsDialog = new ProgenesisOptionsDialog(peptideShakerGUI, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getFilterPreferences(), peptideShakerGUI.getSearchParameters());
+            ProgenesisOptionsDialog progenesisOptionsDialog = new ProgenesisOptionsDialog(peptideShakerGUI, peptideShakerGUI.getIdentification(), 
+                    peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getFilterPreferences(), peptideShakerGUI.getSearchParameters());
             final ArrayList<String> psms = progenesisOptionsDialog.getSelectedPsms();
 
             if (psms != null) {
@@ -883,7 +884,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
 
-
                     new Thread(new Runnable() {
                         public void run() {
                             try {
@@ -894,12 +894,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         }
                     }, "ProgressDialog").start();
 
-                    new Thread("ExoportThread") {
+                    new Thread("ExportThread") {
                         @Override
                         public void run() {
 
                             try {
-
                                 FileWriter f = new FileWriter(finalOutputFile);
                                 BufferedWriter b = new BufferedWriter(f);
 
