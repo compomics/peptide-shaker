@@ -1,62 +1,83 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.exportdialogs;
 
-import com.compomics.util.preferences.ModificationProfile;
-import eu.isas.peptideshaker.preferences.UserPreferences;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 
 /**
+ * PTM location dialog for the Progenesis export.
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PtmSelectionDialog extends javax.swing.JDialog {
 
     /**
-     * The modification profile used for the search
+     * The modification profile used for the search.
      */
     private ArrayList<String> searchedModifications = null;
     /**
-     * The selected modifications
+     * The selected modifications.
      */
     private ArrayList<String> selectedModifications;
     /**
-     * Boolean indicating whether the user canceled the input
+     * Boolean indicating whether the user canceled the input.
      */
     private boolean canceled = false;
-    
+
     /**
-     * Creates new form PtmSelectionDialog
+     * Creates a new PtmSelectionDialog.
+     *
+     * @param parent
+     * @param searchedModifications
      */
     public PtmSelectionDialog(java.awt.Frame parent, ArrayList<String> searchedModifications) {
         super(parent, true);
         this.searchedModifications = searchedModifications;
         selectedModifications = new ArrayList<String>();
-        //Let's try to find the modifications of interest
+
+        // let's try to find the modifications of interest
         for (String ptm : searchedModifications) {
             if (ptm.contains("phospho") || ptm.contains("glyco")) {
                 selectedModifications.add(ptm);
             }
         }
+
         initComponents();
+        setUpGUI();
         this.setLocationRelativeTo(parent);
         setVisible(true);
     }
     
     /**
-     * Indicates whether only the confident modifications sites are of interest
-     * @return 
+     * Set up the GUI.
+     */
+    private void setUpGUI() {
+        modificationTable.getTableHeader().setReorderingAllowed(false);
+        modificationTableScrollPane.getViewport().setOpaque(false);
+        
+        modificationTable.getColumn(" ").setMaxWidth(50);
+        modificationTable.getColumn(" ").setMinWidth(50);
+        modificationTable.getColumn("  ").setMaxWidth(30);
+        modificationTable.getColumn("  ").setMinWidth(30);
+        
+        modificationTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
+    }
+
+    /**
+     * Indicates whether only the confident modifications sites are of interest.
+     *
+     * @return
      */
     public boolean confidentOnly() {
         return confidentCheck.isSelected();
     }
-    
+
     /**
-     * Returns a list of selected modifications. Null if the user pressed cancel
-     * @return 
+     * Returns a list of selected modifications. Null if the user pressed
+     * cancel.
+     *
+     * @return a list of selected modification
      */
     public ArrayList<String> selectedModifications() {
         if (!canceled) {
@@ -74,153 +95,205 @@ public class PtmSelectionDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        backgroundPanel = new javax.swing.JPanel();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         confidentCheck = new javax.swing.JCheckBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        modificationList = new javax.swing.JTable();
+        modificationTableScrollPane = new javax.swing.JScrollPane();
+        modificationTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jButton1.setText("Cancel");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        setTitle("PTM Selection");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
 
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                okButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
             }
         });
 
         confidentCheck.setText("Confidently localized only");
+        confidentCheck.setIconTextGap(10);
+        confidentCheck.setOpaque(false);
 
-        modificationList.setModel(new PTMTableModel());
-        jScrollPane1.setViewportView(modificationList);
+        modificationTable.setModel(new PTMTableModel());
+        modificationTableScrollPane.setViewportView(modificationTable);
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(confidentCheck)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton))
+                    .addComponent(modificationTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(modificationTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton)
+                    .addComponent(confidentCheck))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(confidentCheck)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(confidentCheck))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    /**
+     * Save the setting and then close the dialog.
+     *
+     * @param evt
+     */
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    /**
+     * Close the dialog without saving.
+     *
+     * @param evt
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        selectedModifications = null;
         canceled = true;
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        selectedModifications = null;
+        canceled = true;
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox confidentCheck;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable modificationList;
+    private javax.swing.JTable modificationTable;
+    private javax.swing.JScrollPane modificationTableScrollPane;
+    private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 
+    private class PTMTableModel extends DefaultTableModel {
 
-private class PTMTableModel extends DefaultTableModel {
-    /**
-     * Constructor
-     */
-    public PTMTableModel() {
-    }
-
-    @Override
-    public int getRowCount() {
-        if (searchedModifications == null) {
-            return 0;
+        /**
+         * Constructor.
+         */
+        public PTMTableModel() {
         }
-        return searchedModifications.size();
-    }
 
-    @Override
-    public int getColumnCount() {
-        return 2;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        switch (column) {
-            case 0: return " ";
-            case 1: return "Modification";
-                default: return "";
+        @Override
+        public int getRowCount() {
+            if (searchedModifications == null) {
+                return 0;
+            }
+            return searchedModifications.size();
         }
-    }
 
-    @Override
-    public Object getValueAt(int row, int column) {
-        String ptm = searchedModifications.get(row);
-        if (ptm == null) {
-            return "";
+        @Override
+        public int getColumnCount() {
+            return 3;
         }
-        switch (column) {
-            case 0: return selectedModifications.contains(ptm);
-            case 1: return ptm;
-            default: return "";
-        }
-    }
 
-    @Override
-    public Class getColumnClass(int columnIndex) {
-        for (int i = 0; i < getRowCount(); i++) {
-            if (getValueAt(i, columnIndex) != null) {
-                return getValueAt(i, columnIndex).getClass();
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return " ";
+                case 1:
+                    return "Modification";
+                case 2:
+                    return "  ";
+                default:
+                    return "";
             }
         }
-        return String.class;
-    }
 
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
+        @Override
+        public Object getValueAt(int row, int column) {
+            String ptm = searchedModifications.get(row);
+            if (ptm == null) {
+                return "";
+            }
+            switch (column) {
+                case 0:
+                    return (row + 1);
+                case 1:
+                    return ptm;
+                case 2:
+                    return selectedModifications.contains(ptm);
+                default:
+                    return "";
+            }
+        }
 
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            String ptm = searchedModifications.get(rowIndex);
-            if (ptm != null) {
-                if (selectedModifications.contains(ptm)) {
-                    selectedModifications.remove(ptm);
-                } else {
-                    selectedModifications.add(ptm);
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            for (int i = 0; i < getRowCount(); i++) {
+                if (getValueAt(i, columnIndex) != null) {
+                    return getValueAt(i, columnIndex).getClass();
+                }
+            }
+            return String.class;
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex == 2;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            if (columnIndex == 2) {
+                String ptm = searchedModifications.get(rowIndex);
+                if (ptm != null) {
+                    if (selectedModifications.contains(ptm)) {
+                        selectedModifications.remove(ptm);
+                    } else {
+                        selectedModifications.add(ptm);
+                    }
                 }
             }
         }
     }
-}
-
 }

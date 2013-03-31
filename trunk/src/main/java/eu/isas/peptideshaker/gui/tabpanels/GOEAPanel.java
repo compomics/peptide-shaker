@@ -2416,7 +2416,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_goPlotsTabbedPaneStateChanged
 
     /**
-     * Show the statisics popup menu.
+     * Show the statistics popup menu.
      *
      * @param evt
      */

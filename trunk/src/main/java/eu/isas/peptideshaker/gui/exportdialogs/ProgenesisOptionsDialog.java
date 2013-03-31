@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.exportdialogs;
 
 import com.compomics.util.experiment.identification.Identification;
@@ -17,45 +13,52 @@ import java.awt.Frame;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import uk.ac.ebi.das.jdas.schema.features.PARENT;
 
 /**
- * This dialog allows the user to choose beteen the different progenesis export
+ * This dialog allows the user to choose between the different Progenesis export
  * options
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProgenesisOptionsDialog extends javax.swing.JDialog {
 
     /**
-     * Boolean indicating whether the user canceled the process
+     * Boolean indicating whether the user canceled the process.
      */
     private boolean canceled = false;
     /**
-     * The identification of the project
+     * The identification of the project.
      */
     private Identification identification;
     /**
-     * The identification features generator
+     * The identification features generator.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * The filter prefereneces
+     * The filter preferences.
      */
     private FilterPreferences filterPreferences;
     /**
-     * The parent frame
+     * The parent frame.
      */
     private Frame parent;
     /**
-     * The search parameters
+     * The search parameters.
      */
     private SearchParameters searchParameters;
 
     /**
-     * Creates new form ProgenesisOptionsDialog
+     * Creates a new ProgenesisOptionsDialog.
+     * 
+     * @param parent
+     * @param identification
+     * @param identificationFeaturesGenerator
+     * @param filterPreferences
+     * @param searchParameters 
      */
-    public ProgenesisOptionsDialog(java.awt.Frame parent, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, FilterPreferences filterPreferences, SearchParameters searchParameters) {
+    public ProgenesisOptionsDialog(java.awt.Frame parent, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, 
+            FilterPreferences filterPreferences, SearchParameters searchParameters) {
         super(parent, true);
         this.identification = identification;
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
@@ -68,18 +71,19 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Returns a list of the selected psms
-     * @return
+     * Returns a list of the selected PSMs.
+     *
+     * @return a list of the selected PSMs
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public ArrayList<String> getSelectedPsms() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (!canceled) {
             ArrayList<String> result = new ArrayList<String>();
             PSParameter psParameter = new PSParameter();
-            if (choiceComboBox.getSelectedIndex() == 0) {
+            if (psmSelectionComboBox.getSelectedIndex() == 0) {
                 identification.loadProteinMatches(null);
                 identification.loadProteinMatchParameters(psParameter, null);
                 for (String proteinKey : identificationFeaturesGenerator.getProteinKeys(null, filterPreferences)) {
@@ -103,7 +107,7 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
                         }
                     }
                 }
-            } else if (choiceComboBox.getSelectedIndex() == 1) {
+            } else if (psmSelectionComboBox.getSelectedIndex() == 1) {
                 identification.loadPeptideMatches(null);
                 identification.loadPeptideMatchParameters(psParameter, null);
                 for (String peptideKey : identification.getPeptideIdentification()) {
@@ -119,7 +123,7 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
                         }
                     }
                 }
-            } else if (choiceComboBox.getSelectedIndex() == 2) {
+            } else if (psmSelectionComboBox.getSelectedIndex() == 2) {
                 for (String spectrumFile : identification.getSpectrumFiles()) {
                     identification.loadSpectrumMatchParameters(spectrumFile, psParameter, null);
                     for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
@@ -129,7 +133,7 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
                         }
                     }
                 }
-            } else if (choiceComboBox.getSelectedIndex() == 3) {
+            } else if (psmSelectionComboBox.getSelectedIndex() == 3) {
                 PtmSelectionDialog ptmSelectionDialog = new PtmSelectionDialog(parent, searchParameters.getModificationProfile().getAllNotFixedModifications());
                 ArrayList<String> ptms = ptmSelectionDialog.selectedModifications();
                 if (ptms != null && !ptms.isEmpty()) {
@@ -160,6 +164,8 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
                             }
                         }
                     }
+                } else {
+                    return null;
                 }
             }
             return result;
@@ -176,90 +182,135 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        choiceComboBox = new javax.swing.JComboBox();
+        backgroundPanel = new javax.swing.JPanel();
+        cancelButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
+        selectionPanel = new javax.swing.JPanel();
+        psmSelectionComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jButton1.setText("Cancel");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        setTitle("Progenesis Export");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
 
-        jButton2.setText("OK");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                cancelButtonActionPerformed(evt);
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("PSMs to export"));
+        okButton.setText("OK");
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
 
-        choiceComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Protein", "Peptide", "PSM", "Confidently localized PTMs" }));
+        selectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PSMs Selection"));
+        selectionPanel.setOpaque(false);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        psmSelectionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<html>&emsp;Protein - <i>validated PSMs of the validated peptides of the validated proteins</i></html>", "<html>&emsp;Peptide - <i>validated PSMs of the validated peptides</i></html>", "<html>&emsp;PSM - <i>validated PSMs</i></html>", "<html>&emsp;Confidently Localized PTMs - <i>validated PSMs containing a confidently localized PTM</i></html>" }));
+
+        javax.swing.GroupLayout selectionPanelLayout = new javax.swing.GroupLayout(selectionPanel);
+        selectionPanel.setLayout(selectionPanelLayout);
+        selectionPanelLayout.setHorizontalGroup(
+            selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(choiceComboBox, 0, 348, Short.MAX_VALUE)
+                .addComponent(psmSelectionComboBox, 0, 581, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        selectionPanelLayout.setVerticalGroup(
+            selectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(selectionPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(choiceComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(psmSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton))
+                    .addComponent(selectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(selectionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         canceled = true;
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    /**
+     * Save the setting and then close the dialog.
+     * 
+     * @param evt 
+     */
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
+
+    /**
+     * Close the dialog without saving.
+     * 
+     * @param evt 
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        canceled = true;
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox choiceComboBox;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton okButton;
+    private javax.swing.JComboBox psmSelectionComboBox;
+    private javax.swing.JPanel selectionPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -209,7 +209,7 @@
                                   </Group>
                                   <Component id="formatLabel" alignment="0" min="-2" pref="116" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -242,7 +242,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="vendorCmb" max="32767" attributes="0"/>
-                                  <Component id="idSelectionCmb" alignment="1" pref="362" max="32767" attributes="1"/>
+                                  <Component id="idSelectionCmb" alignment="1" pref="364" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
