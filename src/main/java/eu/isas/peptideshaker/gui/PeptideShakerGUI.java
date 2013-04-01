@@ -6698,4 +6698,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         }
     }
+
+    @Override
+    public Image getNormalIcon() {
+        return Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif"));
+    }
+
+    @Override
+    public Image getWaitingIcon() {
+        return Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif"));
+    }
 }
