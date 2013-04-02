@@ -685,8 +685,7 @@ public class FileImporter {
                         spectrumTitle = match.getSpectrumNumber() + "";
                         spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
                         match.setKey(spectrumKey);
-                        if (spectrumFactory.fileLoaded(fileName)
-                                && !spectrumFactory.spectrumLoaded(spectrumKey)) {
+                        if (spectrumFactory.fileLoaded(fileName) && !spectrumFactory.spectrumLoaded(spectrumKey)) {
                             waitingHandler.appendReport("Spectrum \'" + oldTitle + "\' number " + spectrumTitle + " not found in file " + fileName + ".", true, true);
                             waitingHandler.setRunCanceled();
                             return;
