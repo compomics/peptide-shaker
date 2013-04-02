@@ -3,11 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.19.3 (April 2. 2013):*
+ * FEATURE IMPROVEMENT: Further developed the Progenesis export with more options.
+ * LIBRARY UPDATE: Updated xtandem-parser to version 1.5.14, fixing a problem with the parsing of spectrum titles with retention time in them.
+ * LIBRARY UPDATE: Updated utilities to version 3.11.29.
+ 
+----
+
 *Changes in PeptideShaker 0.19.2 (March 25. 2013):*
  * BUG FIX: Fixed a bug that made it impossible to change the memory settings.
  * BUG FIX: Fixed a typo in the PRIDE Reshake dialog, PumMed > PubMed.
- 
  * LIBRARY UPDATE: Updated utilities to version 3.11.27.
+
+Download Count: 33
 
 ----
 
