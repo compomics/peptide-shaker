@@ -3846,17 +3846,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         // empty the matches folder
         if (databaseClosed) {
             File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
-            File[] tempFiles = matchFolder.listFiles();
 
-            if (tempFiles != null) {
-                for (File currentFile : tempFiles) {
-                    Util.deleteDir(currentFile);
+            if (matchFolder.exists()) {
+
+                File[] tempFiles = matchFolder.listFiles();
+
+                if (tempFiles != null) {
+                    for (File currentFile : tempFiles) {
+                        Util.deleteDir(currentFile);
+                    }
                 }
-            }
 
-            if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
-                JOptionPane.showMessageDialog(null, "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
-                        "Database Cleanup Failed", JOptionPane.WARNING_MESSAGE);
+                if (matchFolder.listFiles() != null && matchFolder.listFiles().length > 0) {
+                    JOptionPane.showMessageDialog(null, "Failed to empty the database folder:\n" + matchFolder.getPath() + ".",
+                            "Database Cleanup Failed", JOptionPane.WARNING_MESSAGE);
+                }
+
             }
         }
     }
@@ -4373,11 +4378,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             public void run() {
                 try {
                     File serializationFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
-                    String[] files = serializationFolder.list();
 
-                    if (files != null) {
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(files.length);
+                    if (serializationFolder.exists()) {
+                        String[] files = serializationFolder.list();
+
+                        if (files != null) {
+                            progressDialog.setIndeterminate(false);
+                            progressDialog.setMaxProgressValue(files.length);
+                        }
                     }
 
                     // close the files and save the user preferences
