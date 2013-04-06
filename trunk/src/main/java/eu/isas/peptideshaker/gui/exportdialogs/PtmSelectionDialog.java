@@ -67,7 +67,7 @@ public class PtmSelectionDialog extends javax.swing.JDialog {
     /**
      * Indicates whether only the confident modifications sites are of interest.
      *
-     * @return
+     * @return true if only the confident modifications sites are of interest
      */
     public boolean confidentOnly() {
         return confidentCheck.isSelected();
