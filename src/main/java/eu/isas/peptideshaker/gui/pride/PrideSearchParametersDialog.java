@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.gui.pride;
 
 import com.compomics.software.ToolFactory;
+import com.compomics.software.dialogs.SearchGuiSetupDialog;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.File;
 import java.util.ArrayList;
@@ -136,18 +138,34 @@ public class PrideSearchParametersDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         this.setVisible(false);
+        peptideShakerGUI.setVisible(false);
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    ToolFactory.startSearchGUI(peptideShakerGUI, mgfFiles, prideSearchParametersFile, null);
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
+        boolean openSearchGUI = true;
+
+        // check if we have a valid SearchGUI location.
+        try {
+            UtilitiesUserPreferences utilitiesUserPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            if (utilitiesUserPreferences.getSearchGuiPath() == null || !(new File(utilitiesUserPreferences.getSearchGuiPath()).exists())) {
+                SearchGuiSetupDialog searchGuiSetupDialog = new SearchGuiSetupDialog(peptideShakerGUI, true);
+                openSearchGUI = !searchGuiSetupDialog.isDialogCanceled();
             }
-        }, "StartSearchGUI").start();
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
 
-        peptideShakerGUI.close();
+        if (openSearchGUI) {
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        ToolFactory.startSearchGUI(peptideShakerGUI, mgfFiles, prideSearchParametersFile, null);
+                        peptideShakerGUI.close();
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
+            }, "StartSearchGUI").start();
+        }
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
