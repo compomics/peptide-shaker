@@ -45,6 +45,14 @@ public class PeptideTableModel extends DefaultTableModel {
      * attached.
      */
     private String proteinAccession;
+    /**
+     * Indicates that some data is missing
+     */
+    private boolean dataMissing = false;
+    /**
+     * Indicates whether data in DB shall be used
+     */
+    private boolean useDB = false;
 
     /**
      * Constructor which sets a new table.
@@ -140,22 +148,25 @@ public class PeptideTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String peptideKey = peptideKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    PSParameter pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
+                        dataMissing = true;
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isStarred();
                 case 2:
                     peptideKey = peptideKeys.get(row);
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
+                        dataMissing = true;
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.getProteinInferenceClass();
                 case 3:
                     peptideKey = peptideKeys.get(row);
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, false);
-                    if (peptideMatch == null) {
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
+                    if (!useDB && peptideMatch == null) {
+                        dataMissing = true;
                         return Peptide.getSequence(peptideKey);
                     }
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
@@ -173,8 +184,9 @@ public class PeptideTableModel extends DefaultTableModel {
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort on the first index if multiple indexes
                 case 5:
                     peptideKey = peptideKeys.get(row);
-                    peptideMatch = identification.getPeptideMatch(peptideKey, false);
-                    if (peptideMatch == null) {
+                    peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
+                    if (!useDB && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
+                        dataMissing = true;
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
@@ -182,8 +194,9 @@ public class PeptideTableModel extends DefaultTableModel {
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 6:
                     peptideKey = peptideKeys.get(row);
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
+                        dataMissing = true;
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
@@ -193,8 +206,9 @@ public class PeptideTableModel extends DefaultTableModel {
                     }
                 case 7:
                     peptideKey = peptideKeys.get(row);
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
+                        dataMissing = true;
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isValidated();
@@ -223,5 +237,29 @@ public class PeptideTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
+    }
+    
+    /**
+     * Resets whether data is missing
+     * @param dataMissing 
+     */
+    public void setDataMissing(boolean dataMissing) {
+        this.dataMissing = dataMissing;
+    }
+    
+    /**
+     * indicates whether data is missing
+     * @return 
+     */
+    public boolean isDataMissing() {
+        return dataMissing;
+    }
+    
+    /**
+     * Sets whether or not data shall be looked for in the database. If false only the cache will be used
+     * @param useDB 
+     */
+    public void useDB(boolean useDB) {
+        this.useDB = useDB;
     }
 }
