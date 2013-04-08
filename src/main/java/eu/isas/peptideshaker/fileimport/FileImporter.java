@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
+import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
@@ -23,7 +24,6 @@ import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -478,7 +478,7 @@ public class FileImporter {
             identification.setIsDB(true);
 
             try {
-                String dbFolder = new File(new PeptideShakerGUI().getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
+                String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
                 identification.establishConnection(dbFolder, true, peptideShaker.getCache());
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -1032,5 +1032,14 @@ public class FileImporter {
                 e.printStackTrace();
             }
         }
+    }
+    
+    /**
+     * Returns the path to the jar file.
+     *
+     * @return the path to the jar file
+     */
+    public String getJarFilePath() {
+        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("FileImporter.class").getPath(), "PeptideShaker");
     }
 }

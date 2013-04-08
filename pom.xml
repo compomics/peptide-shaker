@@ -252,7 +252,7 @@
             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
             <layout>default</layout>
         </repository>
-   
+        
     </repositories>
 
 
@@ -339,7 +339,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
-            <version>0.5.45</version>
+            <version>0.6.0-beta</version>
         </dependency>
 
         <dependency>
