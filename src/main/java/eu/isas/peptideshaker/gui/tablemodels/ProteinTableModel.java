@@ -36,6 +36,14 @@ public class ProteinTableModel extends DefaultTableModel {
      * A list of ordered protein keys.
      */
     private ArrayList<String> proteinKeys = null;
+    /**
+     *
+     */
+    private int startPosition = -1;
+    /**
+     *
+     */
+    private int endPosition = -1;
 
     /**
      * Constructor which sets a new table.
@@ -145,6 +153,88 @@ public class ProteinTableModel extends DefaultTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
+            int rowCachingSize = 30;
+
+            // preload data if the row interval has changed
+//            if (startPosition == -1 || (row < startPosition || row > startPosition + rowCachingSize)) {
+//
+//                if (row != 0 && column != 4) {
+//
+//                    int max = Math.min(getRowCount() - 1, startPosition + rowCachingSize);
+//
+//                    startPosition = row;
+//                    endPosition = max;
+//
+//                    System.out.println("preload data: " + startPosition + " - " + endPosition);
+//
+//                    ArrayList<String> tempProteinKeys = new ArrayList<String>(rowCachingSize);
+//
+//                    for (int i = row; i < max; i++) {
+//                        tempProteinKeys.add(proteinKeys.get(i));
+//                    }
+//
+//                    // preload the protein matches
+//                    identification.loadProteinMatches(tempProteinKeys, null);
+//                    
+//                    System.out.println("protein matches loaded " + tempProteinKeys.size());
+//
+//                    // preload the protein match parameters
+//                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKeys.get(row), new PSParameter());
+//                    identification.loadProteinMatchParameters(tempProteinKeys, pSParameter, null);
+//                    
+//                    System.out.println("protein match paramaters loaded " + tempProteinKeys.size());
+//
+//                    // preload the peptide matches and peptide match parameters
+//                    ArrayList<String> tempPeptideKeys = new ArrayList<String>();
+//
+//                    for (String currentProteinKey : tempProteinKeys) {
+//                        ArrayList<String> tempPeptideMatches = identification.getProteinMatch(currentProteinKey).getPeptideMatches();
+//
+//                        for (String currentPeptideMatch : tempPeptideMatches) {
+//                            if (!tempPeptideKeys.contains(currentPeptideMatch)) {
+//                                tempPeptideKeys.add(currentPeptideMatch);
+//                            }
+//                        }
+//                    }
+//
+//                    PSParameter peptidePSParameter = new PSParameter();
+//                    identification.loadPeptideMatches(tempPeptideKeys, null);
+//                    
+//                    System.out.println("peptide matches loaded " + tempPeptideKeys.size());
+//                    
+//                    identification.loadPeptideMatchParameters(tempPeptideKeys, peptidePSParameter, null);
+//                    
+//                    System.out.println("peptide match parameters loaded " + tempPeptideKeys.size());
+//
+//                    // preload the spectrum matches and spectrum match parameters
+//                    ArrayList<String> tempSpectrumKeys = new ArrayList<String>();
+//
+//                    for (String currentPepideKey : tempPeptideKeys) {
+//
+//                        ArrayList<String> tempSpectrumMatches = identification.getPeptideMatch(currentPepideKey).getSpectrumMatches();
+//
+//                        for (String currentSpectrumMatch : tempSpectrumMatches) {
+//                            if (!tempSpectrumKeys.contains(currentSpectrumMatch)) {
+//                                tempSpectrumKeys.add(currentSpectrumMatch);
+//                            }
+//                        }
+//                    }
+//
+//                    PSParameter spectrumPSParameter = new PSParameter();
+//                    identification.loadSpectrumMatches(tempSpectrumKeys, null);
+//                    
+//                    System.out.println("spectrum matches loaded " + tempSpectrumKeys.size());
+//                    
+//                    identification.loadSpectrumMatchParameters(tempSpectrumKeys, spectrumPSParameter, null);
+//                    
+//                     System.out.println("spectrum match parameters loaded " + tempSpectrumKeys.size());
+//
+//                    startPosition = row;
+//                    
+//                    System.out.println("done preload data: " + startPosition + " - " + endPosition);
+//                }
+//            }
+
             switch (column) {
                 case 0:
                     return row + 1;
@@ -185,48 +275,53 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 5:
                     proteinKey = proteinKeys.get(row);
                     
-                    proteinMatch = identification.getProteinMatch(proteinKey, false);
-                    if (proteinMatch == null) {
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    double sequenceCoverage;
-                    try {
-                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return Double.NaN;
-                    }
-                    double possibleCoverage = 100;
-                    try {
-                        possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                    return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
+                    return "test";
+                    
+//                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+//                    if (proteinMatch == null) {
+//                        return DisplayPreferences.LOADING_MESSAGE;
+//                    }
+//                    double sequenceCoverage;
+//                    try {
+//                        sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+//                    } catch (Exception e) {
+//                        peptideShakerGUI.catchException(e);
+//                        return Double.NaN;
+//                    }
+//                    double possibleCoverage = 100;
+//                    try {
+//                        possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+//                    } catch (Exception e) {
+//                        peptideShakerGUI.catchException(e);
+//                    }
+//                    return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 6:
-                    proteinKey = proteinKeys.get(row);
-                    proteinMatch = identification.getProteinMatch(proteinKey, false);
-                    if (proteinMatch == null) {
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                    return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
+                    return "test";
+//                    proteinKey = proteinKeys.get(row);
+//                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+//                    if (proteinMatch == null) {
+//                        return DisplayPreferences.LOADING_MESSAGE;
+//                    }
+//                    int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+//                    return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
                 case 7:
-                    proteinKey = proteinKeys.get(row);
-                    proteinMatch = identification.getProteinMatch(proteinKey, false);
-                    if (proteinMatch == null) {
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
-                    int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
+                    return "test";
+//                    proteinKey = proteinKeys.get(row);
+//                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+//                    if (proteinMatch == null) {
+//                        return DisplayPreferences.LOADING_MESSAGE;
+//                    }
+//                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+//                    int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+//                    return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 8:
-                    proteinKey = proteinKeys.get(row);
-                    proteinMatch = identification.getProteinMatch(proteinKey, false);
-                    if (proteinMatch == null) {
-                        return DisplayPreferences.LOADING_MESSAGE;
-                    }
-                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                    return "test";
+//                    proteinKey = proteinKeys.get(row);
+//                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+//                    if (proteinMatch == null) {
+//                        return DisplayPreferences.LOADING_MESSAGE;
+//                    }
+//                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                 case 9:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, false);

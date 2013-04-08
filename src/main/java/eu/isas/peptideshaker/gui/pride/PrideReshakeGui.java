@@ -1617,43 +1617,48 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
 
         prideParametersReport = "";
-        prideParametersReport += "<html><br><b><u>Extracted search parameters</u></b><br>";
+        prideParametersReport += "<html><br><b><u>Extracted Search Parameters</u></b><br>";
 
 
         // set the fragment ion accuracy
+        prideParametersReport += "<br><b>Fragment Ion Mass Tolerance:</b> ";
         if (fragmentIonMassTolerance != null) {
             prideSearchParameters.setFragmentIonAccuracy(fragmentIonMassTolerance);
-            prideParametersReport += "<br><b>Fragment ion mass tolerance:</b> " + fragmentIonMassTolerance;
+            prideParametersReport += fragmentIonMassTolerance + " Da";
         } else {
-            prideParametersReport += "<br><b>Fragment ion mass tolerance:</b> unknown";
+            prideParametersReport += prideSearchParameters.getFragmentIonAccuracy() + " Da (default)";
         }
 
         // set the precuros ion accuracy
+        prideParametersReport += "<br><b>Precursor Ion Mass Tolerance:</b> ";
         if (peptideIonMassTolerance != null) {
             prideSearchParameters.setPrecursorAccuracy(peptideIonMassTolerance); // @TODO: ppm assumed?
-            prideParametersReport += "<br><b>Precursor ion mass tolerance:</b> " + peptideIonMassTolerance;
+            prideParametersReport += peptideIonMassTolerance + " ppm";
         } else {
-            prideParametersReport += "<br><b>Precursor ion mass tolerance:</b> unknown";
+            prideParametersReport += prideSearchParameters.getPrecursorAccuracy() + " ppm (default)";
         }
 
         // set the max missed cleavages
+        prideParametersReport += "<br><b>Maximum Missed Cleavages:</b> ";
         if (maxMissedCleavages != null) {
             prideSearchParameters.setnMissedCleavages(maxMissedCleavages);
-            prideParametersReport += "<br><b>Maximum number of missed cleavages:</b> " + maxMissedCleavages;
+            prideParametersReport += maxMissedCleavages;
         } else {
-            prideParametersReport += "<br><b>Maximum number of missed cleavages:</b> unknown";
+            prideParametersReport += prideSearchParameters.getnMissedCleavages() + " (default)";
         }
 
         // taxonomy and species
+        prideParametersReport += "<br><br><b>Species:</b> ";
         if (speciesForProject.get(prideAccession) == null || speciesForProject.get(prideAccession).length() == 0) {
-            prideParametersReport += "<br><br><b>Species:</b> unknown";
+            prideParametersReport += "unknown";
         } else {
-            prideParametersReport += "<br><br><b>Species:</b> " + speciesForProject.get(prideAccession);
+            prideParametersReport += speciesForProject.get(prideAccession);
         }
+        prideParametersReport += "<br><b>Taxonomy:</b> ";
         if (taxonomyForProject.get(prideAccession) == null || taxonomyForProject.get(prideAccession).length() == 0) {
-            prideParametersReport += "<br><br><b>Taxonomy:</b> unknown";
+            prideParametersReport += "unknown";
         } else {
-            prideParametersReport += "<br><b>Taxonomy:</b> " + taxonomyForProject.get(prideAccession);
+            prideParametersReport += taxonomyForProject.get(prideAccession);
         }
 
         // help the user get the correct database
@@ -1669,7 +1674,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         ModificationProfile modProfile = new ModificationProfile();
 
-        prideParametersReport += "<br><br><b>Post-translational modifications:</b>";
+        prideParametersReport += "<br><br><b>Post-Translational Modifications:</b>";
 
         if (allPtms != null) {
 
@@ -1718,11 +1723,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         prideParametersReport += "<br>";
 
         // set the enzyme
+        prideParametersReport += "<br><b>Enzyme:</b> ";
         if (enzyme != null) {
 
             //prideSearchParameters.setEnzyme(prideEnzyme);  // @TODO: add an enzyme mapping
             prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-            prideParametersReport += "<br><b>Enzyme:</b> " + enzyme;
+            prideParametersReport += enzyme;
 
         } else {
             // try to guess enzyme from the ion types and peptide endings?
@@ -1734,30 +1740,32 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             //}
 
             prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-            prideParametersReport += "<br><b>Enzyme:</b> unknown (trypsin assumed)"; // @TODO: improve!
+            prideParametersReport += "Trypsin (default)"; // @TODO: improve!
         }
 
         // set the ion types
         // @TODO: implement me!
 
         // set the min/max precursor charge
+        prideParametersReport += "<br><br><b>Min Precusor Charge:</b> ";
         if (minPrecursorCharge != null) {
             prideSearchParameters.setMinChargeSearched(new Charge(Charge.PLUS, minPrecursorCharge));
-            prideParametersReport += "<br><br><b>Min precusor charge:</b> " + minPrecursorCharge;
+            prideParametersReport += minPrecursorCharge;
         } else {
-            prideParametersReport += "<br><br><b>Min precusor charge:</b> unknown";
+            prideParametersReport += prideSearchParameters.getMinChargeSearched().value + " (default)";
         }
+        prideParametersReport += "<br><b>Max Precusor Charge:</b> ";
         if (maxPrecursorCharge != null) {
             prideSearchParameters.setMaxChargeSearched(new Charge(Charge.PLUS, maxPrecursorCharge));
-            prideParametersReport += "<br><b>Max precusor charge:</b> " + maxPrecursorCharge;
+            prideParametersReport += maxPrecursorCharge;
         } else {
-            prideParametersReport += "<br><b>Max precusor charge:</b> unknown";
+            prideParametersReport += prideSearchParameters.getMaxChargeSearched().value + " (default)";
         }
-        
-        prideParametersReport += "<br><br><b>MGF file location:</b> " + new File(outputFolder).getAbsolutePath();
-        
+
+        prideParametersReport += "<br><br><b>MGF File Location:</b> " + new File(outputFolder).getAbsolutePath();
+
         if (!unknownPtms.isEmpty()) {
-            prideParametersReport += "<br><br>* Please add these PTMs manually in SearchGUI.";
+            prideParametersReport += "<br><br>* Remember to add these PTMs manually in SearchGUI.";
         }
 
         prideParametersReport += "<br></html>";
