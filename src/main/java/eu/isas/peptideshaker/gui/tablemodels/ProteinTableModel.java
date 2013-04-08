@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -149,19 +150,31 @@ public class ProteinTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String proteinKey = proteinKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                    PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.isStarred();
                 case 2:
                     proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.getProteinInferenceClass();
                 case 3:
                     proteinKey = proteinKeys.get(row);
-                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
                 case 4:
                     proteinKey = proteinKeys.get(row);
-                    proteinMatch = identification.getProteinMatch(proteinKey);
+                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     String description = "";
                     try {
                         description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
@@ -171,6 +184,11 @@ public class ProteinTableModel extends DefaultTableModel {
                     return description;
                 case 5:
                     proteinKey = proteinKeys.get(row);
+                    
+                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     double sequenceCoverage;
                     try {
                         sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
@@ -187,20 +205,34 @@ public class ProteinTableModel extends DefaultTableModel {
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 6:
                     proteinKey = proteinKeys.get(row);
+                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                    proteinMatch = identification.getProteinMatch(proteinKey);
                     return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
                 case 7:
                     proteinKey = proteinKeys.get(row);
+                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
                     int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 8:
                     proteinKey = proteinKeys.get(row);
+                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                 case 9:
                     proteinKey = proteinKeys.get(row);
-                    proteinMatch = identification.getProteinMatch(proteinKey);
+                    proteinMatch = identification.getProteinMatch(proteinKey, false);
+                    if (proteinMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     String mainMatch = proteinMatch.getMainMatch();
                     Protein currentProtein = sequenceFactory.getProtein(mainMatch);
                     if (currentProtein != null) {
@@ -210,7 +242,10 @@ public class ProteinTableModel extends DefaultTableModel {
                     }
                 case 10:
                     proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     if (pSParameter != null) {
                         if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                             return pSParameter.getProteinScore();
@@ -222,7 +257,10 @@ public class ProteinTableModel extends DefaultTableModel {
                     }
                 case 11:
                     proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     if (pSParameter != null) {
                         return pSParameter.isValidated();
                     } else {

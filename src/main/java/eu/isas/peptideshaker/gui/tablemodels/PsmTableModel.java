@@ -7,6 +7,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -128,35 +129,48 @@ public class PsmTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String psmKey = psmKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
+                    PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.isStarred();
                 case 2:
                     psmKey = psmKeys.get(row);
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, false);
+                    if (spectrumMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch);
                 case 3:
                     psmKey = psmKeys.get(row);
-                    spectrumMatch = identification.getSpectrumMatch(psmKey);
-
-                    if (spectrumMatch != null) {
+                    spectrumMatch = identification.getSpectrumMatch(psmKey, false);
+                    if (spectrumMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                         PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
-                    } else {
-                        return null;
-                    }
                 case 4:
                     psmKey = psmKeys.get(row);
-                    spectrumMatch = identification.getSpectrumMatch(psmKey);
+                    spectrumMatch = identification.getSpectrumMatch(psmKey, false);
+                    if (spectrumMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                 case 5:
                     psmKey = psmKeys.get(row);
-                    spectrumMatch = identification.getSpectrumMatch(psmKey);
-                    PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                    spectrumMatch = identification.getSpectrumMatch(psmKey, false);
+                    if (spectrumMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
+                    bestAssumption = spectrumMatch.getBestAssumption();
                     Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
                     return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 case 6:
                     psmKey = psmKeys.get(row);
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getPsmScore();
                     } else {
@@ -164,7 +178,10 @@ public class PsmTableModel extends DefaultTableModel {
                     }
                 case 7:
                     psmKey = psmKeys.get(row);
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.isValidated();
                 default:
                     return "";

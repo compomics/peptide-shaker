@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.io.IOException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
@@ -139,14 +140,24 @@ public class PeptideTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String peptideKey = peptideKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
+                    PSParameter pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.isStarred();
                 case 2:
                     peptideKey = peptideKeys.get(row);
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.getProteinInferenceClass();
                 case 3:
                     peptideKey = peptideKeys.get(row);
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, false);
+                    if (peptideMatch == null) {
+                        return Peptide.getSequence(peptideKey);
+                    }
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
                 case 4:
                     peptideKey = peptideKeys.get(row);
@@ -162,13 +173,19 @@ public class PeptideTableModel extends DefaultTableModel {
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort on the first index if multiple indexes
                 case 5:
                     peptideKey = peptideKeys.get(row);
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    peptideMatch = identification.getPeptideMatch(peptideKey, false);
+                    if (peptideMatch == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 6:
                     peptideKey = peptideKeys.get(row);
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                         return pSParameter.getPeptideScore();
                     } else {
@@ -176,7 +193,10 @@ public class PeptideTableModel extends DefaultTableModel {
                     }
                 case 7:
                     peptideKey = peptideKeys.get(row);
-                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter());
+                    pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), false);
+                    if (pSParameter == null) {
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
                     return pSParameter.isValidated();
                 default:
                     return "";
