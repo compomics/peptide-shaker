@@ -35,6 +35,10 @@ public class DisplayPreferences implements Serializable {
      * The displayed PTMs.
      */
     private HashMap<String, Boolean> displayedPTMs = new HashMap<String, Boolean>();
+    /**
+     * The text displayed in the cell of a table in case the data is not loaded
+     */
+    public static final String LOADING_MESSAGE = "Loading...";
 
     /**
      * Constructor.
