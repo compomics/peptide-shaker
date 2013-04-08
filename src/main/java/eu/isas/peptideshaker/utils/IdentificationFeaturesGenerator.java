@@ -217,6 +217,17 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Indicates whether the sequence coverage is in cache
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @return true if the sequence coverage is in cache
+     */
+    public boolean sequenceCoverageInCache(String proteinMatchKey) {
+        Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.sequence_coverage, proteinMatchKey);
+        return result != null;
+    }
+
+    /**
      * Returns a list of non-enzymatic peptides for a given protein match.
      *
      * @param proteinMatchKey the key of the protein match
@@ -386,6 +397,16 @@ public class IdentificationFeaturesGenerator {
             return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey, tempPreferences,
                     searchParameters.getEnzyme(), idFilter.getMaxPepLength());
         }
+    }
+    
+    /**
+     * Indicates whether the default spectrum couting value is in cache for a protein match
+     * @param proteinMatchKey the key of the protein match of interest
+     * @return true if the data is cached
+     */
+    public boolean spectrumCountingInCache(String proteinMatchKey) {
+        Double result = (Double) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.spectrum_counting, proteinMatchKey);
+        return result != null;
     }
 
     /**
@@ -733,6 +754,18 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
+     * Indicates whether the number of validated peptides is in cache for a
+     * given protein match
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @return true if the information is in cache
+     */
+    public boolean nValidatedPeptidesInCache(String proteinMatchKey) {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
+        return result != null;
+    }
+
+    /**
      * Estimates the number of spectra for the given protein match.
      *
      * @param proteinMatchKey the key of the given protein match
@@ -810,6 +843,18 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+    }
+
+    /**
+     * Indicates whether the number of validated spectra is in cache for the
+     * given protein match
+     *
+     * @param proteinMatchKey the key of the protein match
+     * @return true if the data is in cache
+     */
+    public boolean nValidatedSpectraInCache(String proteinMatchKey) {
+        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, proteinMatchKey);
+        return result != null;
     }
 
     /**

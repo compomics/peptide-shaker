@@ -31,6 +31,14 @@ public class PsmTableModel extends DefaultTableModel {
      * A list of ordered PSM keys.
      */
     private ArrayList<String> psmKeys = null;
+    /**
+     * Indicates that some data is missing
+     */
+    private boolean dataMissing = false;
+    /**
+     * Indicates whether data in DB shall be used
+     */
+    private boolean useDB = false;
 
     /**
      * Constructor which sets a new table.
@@ -129,37 +137,37 @@ public class PsmTableModel extends DefaultTableModel {
                     return row + 1;
                 case 1:
                     String psmKey = psmKeys.get(row);
-                    PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isStarred();
                 case 2:
                     psmKey = psmKeys.get(row);
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, false);
-                    if (spectrumMatch == null) {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                    if (!useDB && spectrumMatch == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch);
                 case 3:
                     psmKey = psmKeys.get(row);
-                    spectrumMatch = identification.getSpectrumMatch(psmKey, false);
-                    if (spectrumMatch == null) {
+                    spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                    if (!useDB && spectrumMatch == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                         PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                         return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
                 case 4:
                     psmKey = psmKeys.get(row);
-                    spectrumMatch = identification.getSpectrumMatch(psmKey, false);
-                    if (spectrumMatch == null) {
+                    spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                    if (!useDB && spectrumMatch == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                 case 5:
                     psmKey = psmKeys.get(row);
-                    spectrumMatch = identification.getSpectrumMatch(psmKey, false);
-                    if (spectrumMatch == null) {
+                    spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
+                    if (!useDB && spectrumMatch == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     bestAssumption = spectrumMatch.getBestAssumption();
@@ -167,8 +175,8 @@ public class PsmTableModel extends DefaultTableModel {
                     return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 case 6:
                     psmKey = psmKeys.get(row);
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
@@ -178,8 +186,8 @@ public class PsmTableModel extends DefaultTableModel {
                     }
                 case 7:
                     psmKey = psmKeys.get(row);
-                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), false);
-                    if (pSParameter == null) {
+                    pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
+                    if (!useDB && pSParameter == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isValidated();
@@ -205,5 +213,29 @@ public class PsmTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
+    }
+    
+    /**
+     * Resets whether data is missing
+     * @param dataMissing 
+     */
+    public void setDataMissing(boolean dataMissing) {
+        this.dataMissing = dataMissing;
+    }
+    
+    /**
+     * indicates whether data is missing
+     * @return 
+     */
+    public boolean isDataMissing() {
+        return dataMissing;
+    }
+    
+    /**
+     * Sets whether or not data shall be looked for in the database. If false only the cache will be used
+     * @param useDB 
+     */
+    public void useDB(boolean useDB) {
+        this.useDB = useDB;
     }
 }
