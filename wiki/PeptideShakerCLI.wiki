@@ -23,12 +23,12 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 -spectrum_files            The spectrum files (mgf format) in a comma
                            separated list or an entire folder.
-                           Example: 'file1.mgf, file2.mgf'.
+                           Example: "file1.mgf, file2.mgf".
 
 -identification_files      The identification files (Mascot .dat,
                            OMSSA .omx and X!Tandem .t.xml formats) in
                            a comma separated list or an entire folder.
-                           Example: 'file1.omx, file1.dat, file1.t.xml'.
+                           Example: "file1.omx, file1.dat, file1.t.xml".
 
 -out                       PeptideShaker output file. If the file 
                            already exists it will be silently 
@@ -105,6 +105,14 @@ _Note that the search parameters are not strictly mandatory, as a default set of
                            See also max_precursor_error.
 
 -exclude_unknown_ptms      Exclude unknown PTMs (1: true, 0: false, default is '1').
+}}}
+
+==Comma Separated List==
+
+When using comma separated lists as input for the mgf or identification files, please pay attention to the quotes required. Surround the full content of the option in quotes and not the individual items:
+
+{{{
+-spectrum_files "C:\..\file_1.mgf, C:\..\file_2.mgf"
 }}}
 
 ==Example==
