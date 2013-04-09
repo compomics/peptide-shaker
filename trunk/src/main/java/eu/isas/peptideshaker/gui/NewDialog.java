@@ -648,6 +648,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true, peptideShakerGUI.getTips(), "Importing Data", "PeptideShaker", peptideShakerGUI.getVersion(), true);
+            waitingDialog.setCloseDialogWhenImportCompletes(true, true);
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
 
