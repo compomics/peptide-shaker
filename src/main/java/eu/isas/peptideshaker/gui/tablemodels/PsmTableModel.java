@@ -32,11 +32,11 @@ public class PsmTableModel extends DefaultTableModel {
      */
     private ArrayList<String> psmKeys = null;
     /**
-     * Indicates that some data is missing
+     * Indicates that some data is missing.
      */
     private boolean dataMissing = false;
     /**
-     * Indicates whether data in DB shall be used
+     * Indicates whether data in DB shall be used.
      */
     private boolean useDB = false;
 
@@ -155,8 +155,8 @@ public class PsmTableModel extends DefaultTableModel {
                     if (!useDB && spectrumMatch == null) {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
-                        PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
-                        return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
+                    PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
                 case 4:
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
@@ -214,26 +214,30 @@ public class PsmTableModel extends DefaultTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-    
+
     /**
-     * Resets whether data is missing
-     * @param dataMissing 
+     * Resets whether data is missing.
+     *
+     * @param dataMissing
      */
     public void setDataMissing(boolean dataMissing) {
         this.dataMissing = dataMissing;
     }
-    
+
     /**
-     * indicates whether data is missing
-     * @return 
+     * Indicates whether data is missing.
+     *
+     * @return true if data is missing
      */
     public boolean isDataMissing() {
         return dataMissing;
     }
-    
+
     /**
-     * Sets whether or not data shall be looked for in the database. If false only the cache will be used
-     * @param useDB 
+     * Sets whether or not data shall be looked for in the database. If false
+     * only the cache will be used.
+     *
+     * @param useDB
      */
     public void useDB(boolean useDB) {
         this.useDB = useDB;

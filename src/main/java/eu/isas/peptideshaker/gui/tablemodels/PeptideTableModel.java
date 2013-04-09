@@ -46,11 +46,11 @@ public class PeptideTableModel extends DefaultTableModel {
      */
     private String proteinAccession;
     /**
-     * Indicates that some data is missing
+     * Indicates that some data is missing.
      */
     private boolean dataMissing = false;
     /**
-     * Indicates whether data in DB shall be used
+     * Indicates whether data in DB shall be used.
      */
     private boolean useDB = false;
 
@@ -238,26 +238,30 @@ public class PeptideTableModel extends DefaultTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-    
+
     /**
-     * Resets whether data is missing
-     * @param dataMissing 
+     * Resets whether data is missing.
+     *
+     * @param dataMissing
      */
     public void setDataMissing(boolean dataMissing) {
         this.dataMissing = dataMissing;
     }
-    
+
     /**
-     * indicates whether data is missing
-     * @return 
+     * Indicates whether data is missing.
+     *
+     * @return true of data is missing
      */
     public boolean isDataMissing() {
         return dataMissing;
     }
-    
+
     /**
-     * Sets whether or not data shall be looked for in the database. If false only the cache will be used
-     * @param useDB 
+     * Sets whether or not data shall be looked for in the database. If false
+     * only the cache will be used.
+     *
+     * @param useDB
      */
     public void useDB(boolean useDB) {
         this.useDB = useDB;
