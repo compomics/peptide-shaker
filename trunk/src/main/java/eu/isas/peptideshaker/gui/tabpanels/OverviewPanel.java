@@ -4479,7 +4479,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 Identification identification = peptideShakerGUI.getIdentification();
-                identification.loadSpectrumMatches(psmKeys, null);
+                identification.loadSpectrumMatches(psmKeys, null); // @TODO: use progress bar if more then a certain number of values??
                 identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), null);
 
                 // update the table model
@@ -4555,7 +4555,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // update the table model
                 Identification identification = peptideShakerGUI.getIdentification();
-                identification.loadPeptideMatches(peptideKeys, null);
+                identification.loadPeptideMatches(peptideKeys, null); // @TODO: use progress bar if more then a certain number of values??
                 identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), null);
 
                 if (peptideTable.getModel() instanceof PeptideTableModel) {
@@ -4621,7 +4621,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      *
      * @param nTries the number of tries already done, after 100 the table will
      * be loaded old fashion
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public synchronized void checkProteinTableModel(int nTries) throws InterruptedException {
         final ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
@@ -4677,7 +4677,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * @param accession the protein accession
      * @param nTries the number of tries already done, after 100 the table will
      * be loaded old fashion
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public synchronized void checkPeptideTableModel(String accession, int nTries) throws InterruptedException {
         final PeptideTableModel peptideTableModel = (PeptideTableModel) peptideTable.getModel();
@@ -4726,12 +4726,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Checks whether the peptide table is filled properly and updates it later
-     * on if not.
+     * Checks whether the PSM table is filled properly and updates it later on
+     * if not.
      *
      * @param nTries the number of tries already done, after 100 the table will
      * be loaded old fashion
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public synchronized void checkPsmTableModel(int nTries) throws InterruptedException {
         final PsmTableModel psmTableModel = (PsmTableModel) psmTable.getModel();
@@ -4870,11 +4870,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     SwingUtilities.invokeLater(new Runnable() {
                         // @TODO: this is not optimal as the progress bar does not move...
                         public void run() {
-                            DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-                            dm.fireTableDataChanged();
-                            updateSelection();
+                            updateProteinTable();
                             proteinTable.requestFocus();
-
                             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                             progressDialog.setRunFinished();
                         }
