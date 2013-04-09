@@ -217,7 +217,7 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Indicates whether the sequence coverage is in cache
+     * Indicates whether the sequence coverage is in cache.
      *
      * @param proteinMatchKey the key of the protein match
      * @return true if the sequence coverage is in cache
@@ -398,9 +398,11 @@ public class IdentificationFeaturesGenerator {
                     searchParameters.getEnzyme(), idFilter.getMaxPepLength());
         }
     }
-    
+
     /**
-     * Indicates whether the default spectrum couting value is in cache for a protein match
+     * Indicates whether the default spectrum counting value is in cache for a
+     * protein match.
+     *
      * @param proteinMatchKey the key of the protein match of interest
      * @return true if the data is cached
      */
@@ -755,7 +757,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Indicates whether the number of validated peptides is in cache for a
-     * given protein match
+     * given protein match.
      *
      * @param proteinMatchKey the key of the protein match
      * @return true if the information is in cache
@@ -847,7 +849,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Indicates whether the number of validated spectra is in cache for the
-     * given protein match
+     * given protein match.
      *
      * @param proteinMatchKey the key of the protein match
      * @return true if the data is in cache

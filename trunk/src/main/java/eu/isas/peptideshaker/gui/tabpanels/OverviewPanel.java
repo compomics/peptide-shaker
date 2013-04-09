@@ -4617,10 +4617,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Checks whether the protein table is filled properly and updates it later
-     * on if not
+     * on if not.
      *
      * @param nTries the number of tries already done, after 100 the table will
      * be loaded old fashion
+     * @throws InterruptedException  
      */
     public synchronized void checkProteinTableModel(int nTries) throws InterruptedException {
         final ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
@@ -4671,11 +4672,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Checks whether the peptide table is filled properly and updates it later
-     * on if not
+     * on if not.
      *
      * @param accession the protein accession
      * @param nTries the number of tries already done, after 100 the table will
      * be loaded old fashion
+     * @throws InterruptedException  
      */
     public synchronized void checkPeptideTableModel(String accession, int nTries) throws InterruptedException {
         final PeptideTableModel peptideTableModel = (PeptideTableModel) peptideTable.getModel();
@@ -4725,11 +4727,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Checks whether the peptide table is filled properly and updates it later
-     * on if not
+     * on if not.
      *
-     * @param accession the protein accession
      * @param nTries the number of tries already done, after 100 the table will
      * be loaded old fashion
+     * @throws InterruptedException  
      */
     public synchronized void checkPsmTableModel(int nTries) throws InterruptedException {
         final PsmTableModel psmTableModel = (PsmTableModel) psmTable.getModel();
