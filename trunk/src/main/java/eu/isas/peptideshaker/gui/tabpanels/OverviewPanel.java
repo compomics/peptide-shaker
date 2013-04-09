@@ -4485,6 +4485,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // update the table model
                 if (psmTable.getModel() instanceof PsmTableModel) {
                     ((PsmTableModel) psmTable.getModel()).updateDataModel(peptideShakerGUI, psmKeys);
+                    ((PsmTableModel) psmTable.getModel()).useDB(false);
                 } else {
                     PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
                     psmTable.setModel(psmTableModel);
@@ -4560,6 +4561,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 if (peptideTable.getModel() instanceof PeptideTableModel) {
                     ((PeptideTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, accession, peptideKeys);
+                    ((PeptideTableModel) peptideTable.getModel()).useDB(false);
                 } else {
                     PeptideTableModel peptideTableModel = new PeptideTableModel(peptideShakerGUI, accession, peptideKeys);
                     peptideTable.setModel(peptideTableModel);
@@ -4667,6 +4669,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
             }, "identificationFeatures").start();
+        } else {
+            proteinTableModel.useDB(true);
         }
     }
 
@@ -4722,6 +4726,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
             }, "updateTable").start();
+        } else {
+            peptideTableModel.useDB(true);
         }
     }
 
@@ -4769,6 +4775,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
             }, "updateTable").start();
+        } else {
+            psmTableModel.useDB(true);
         }
     }
 
@@ -4810,6 +4818,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {
                         ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);
+                        ((ProteinTableModel) proteinTable.getModel()).useDB(false);
                     } else {
                         ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
                         proteinTable.setModel(proteinTableModel);
