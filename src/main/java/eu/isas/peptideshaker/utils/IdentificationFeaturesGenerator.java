@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class provides identification features and stores them in cache.
+ * This class provides identification features and stores them in cache. It is definitely one of my favorite ones and deserves being moved to utilities once the back-end allows it.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -559,6 +559,15 @@ public class IdentificationFeaturesGenerator {
         }
         return result;
     }
+    
+    /**
+     * Indicates whether the observable coverage of a protein match is in cache
+     * @param proteinMatchKey the key of the protein match
+     * @return true if the data is in cache
+     */
+    public boolean observableCoverageInCache(String proteinMatchKey) {
+        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.expected_coverage, proteinMatchKey) != null;
+    }
 
     /**
      * Updates the best protein coverage possible according to the given
@@ -786,6 +795,15 @@ public class IdentificationFeaturesGenerator {
         }
         return result;
     }
+    
+    /**
+     * Indicates whether the number of spectra for a given protein match is in cache
+     * @param proteinMatchKey the key of the protein match
+     * @return true if the data is in cache
+     */
+    public boolean nSpectraInCache(String proteinMatchKey) {
+        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_spectra, proteinMatchKey) != null;
+    }
 
     /**
      * Returns the number of spectra where this protein was found independently
@@ -907,6 +925,15 @@ public class IdentificationFeaturesGenerator {
         }
 
         return result;
+    }
+    
+    /**
+     * Indicates whether the number of validated spectra for a peptide match is in cache
+     * @param peptideMatchKey the key of the peptide match
+     * @return true if the data is in cache
+     */
+    public boolean nValidatedSpectraForPeptideInCache(String peptideMatchKey) {
+        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_spectra, peptideMatchKey) != null;
     }
 
     /**
