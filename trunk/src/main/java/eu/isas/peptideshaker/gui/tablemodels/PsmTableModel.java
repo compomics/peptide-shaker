@@ -4,6 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -17,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PsmTableModel extends DefaultTableModel {
+public class PsmTableModel extends SelfUpdatingTableModel {
 
     /**
      * The main GUI class.
@@ -31,10 +32,6 @@ public class PsmTableModel extends DefaultTableModel {
      * A list of ordered PSM keys.
      */
     private ArrayList<String> psmKeys = null;
-    /**
-     * Indicates that some data is missing.
-     */
-    private boolean dataMissing = false;
     /**
      * Indicates whether data in DB shall be used.
      */
@@ -139,6 +136,7 @@ public class PsmTableModel extends DefaultTableModel {
                     String psmKey = psmKeys.get(row);
                     PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isStarred();
@@ -146,6 +144,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch);
@@ -153,6 +152,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
@@ -161,6 +161,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
@@ -168,6 +169,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     bestAssumption = spectrumMatch.getBestAssumption();
@@ -177,6 +179,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     if (peptideShakerGUI.getDisplayPreferences().showScores()) {
@@ -188,6 +191,7 @@ public class PsmTableModel extends DefaultTableModel {
                     psmKey = psmKeys.get(row);
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isValidated();
@@ -216,24 +220,6 @@ public class PsmTableModel extends DefaultTableModel {
     }
 
     /**
-     * Resets whether data is missing.
-     *
-     * @param dataMissing
-     */
-    public void setDataMissing(boolean dataMissing) {
-        this.dataMissing = dataMissing;
-    }
-
-    /**
-     * Indicates whether data is missing.
-     *
-     * @return true if data is missing
-     */
-    public boolean isDataMissing() {
-        return dataMissing;
-    }
-
-    /**
      * Sets whether or not data shall be looked for in the database. If false
      * only the cache will be used.
      *
@@ -241,5 +227,33 @@ public class PsmTableModel extends DefaultTableModel {
      */
     public void useDB(boolean useDB) {
         this.useDB = useDB;
+    }
+
+    @Override
+    protected void catchException(Exception e) {
+        useDB = false;
+        catchException(e);
+    }
+
+    @Override
+    protected int loadDataForRows(int start, int end, boolean interrupted) {
+        try {
+            ArrayList<String> tempPsmKeys = new ArrayList<String>();
+            for (int i = start; i <= end; i++) {
+                    tempPsmKeys.add(psmKeys.get(i));
+            }
+            if (interrupted) {
+                return start;
+            }
+            identification.loadSpectrumMatches(tempPsmKeys, null);
+            if (interrupted) {
+                return start;
+            }
+            identification.loadSpectrumMatchParameters(tempPsmKeys, new PSParameter(), null);
+            return end;
+        } catch (Exception e) {
+            catchException(e);
+            return start;
+        }
     }
 }

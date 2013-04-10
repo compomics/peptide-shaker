@@ -5481,16 +5481,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         // 0.18 version, needs update of the spectrum mapping
                         identification.updateSpectrumMapping();
                     }
-
-                    if (!progressDialog.isRunCanceled()) {
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setTitle("Loading Proteins. Please Wait...");
-                        identification.loadProteinMatches(progressDialog);
-                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-                        identification.loadProteinMatchParameters(new PSParameter(), progressDialog);
-                        progressDialog.setTitle("Loading Peptide Details. Please Wait...");
-                        identification.loadPeptideMatchParameters(new PSParameter(), progressDialog);
-                    }
+//Should not be needed anymore with the self updating tables
+//                    if (!progressDialog.isRunCanceled()) {
+//                        progressDialog.setIndeterminate(true);
+//                        progressDialog.setTitle("Loading Proteins. Please Wait...");
+//                        identification.loadProteinMatches(progressDialog);
+//                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
+//                        identification.loadProteinMatchParameters(new PSParameter(), progressDialog);
+//                        progressDialog.setTitle("Loading Peptide Details. Please Wait...");
+//                        identification.loadPeptideMatchParameters(new PSParameter(), progressDialog);
+//                    }
 
 
                     if (progressDialog.isRunCanceled()) {

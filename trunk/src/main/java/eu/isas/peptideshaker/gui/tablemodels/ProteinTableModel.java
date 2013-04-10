@@ -4,6 +4,7 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -18,7 +19,7 @@ import no.uib.jsparklines.data.XYDataPoint;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class ProteinTableModel extends DefaultTableModel {
+public class ProteinTableModel extends SelfUpdatingTableModel {
 
     /**
      * The sequence factory.
@@ -36,10 +37,6 @@ public class ProteinTableModel extends DefaultTableModel {
      * A list of ordered protein keys.
      */
     private ArrayList<String> proteinKeys = null;
-    /**
-     * Indicates that some data is missing.
-     */
-    private boolean dataMissing = false;
     /**
      * Indicates whether data in DB shall be used.
      */
@@ -160,7 +157,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     String proteinKey = proteinKeys.get(row);
                     PSParameter pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.isStarred();
@@ -168,7 +165,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return pSParameter.getProteinInferenceClass();
@@ -176,7 +173,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinKey = proteinKeys.get(row);
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && proteinMatch == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
@@ -184,7 +181,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && proteinMatch == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     String description = "";
@@ -197,9 +194,11 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 5:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
-                    if (!useDB && !peptideShakerGUI.getIdentificationFeaturesGenerator().sequenceCoverageInCache(proteinKey)
+                    // the next four lines of code and associated classes/methods represent quite an investment in coffee and hours of sleep which will most likely never be acknowledged by the ingrate scientists using them so if you like them feel free to pay me a beer next time we meet
+                    if (!useDB && (!peptideShakerGUI.getIdentificationFeaturesGenerator().sequenceCoverageInCache(proteinKey)
+                            || !peptideShakerGUI.getIdentificationFeaturesGenerator().observableCoverageInCache(proteinKey))
                             && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     double sequenceCoverage;
@@ -219,9 +218,10 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 6:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
-                    if (!useDB && !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedPeptidesInCache(proteinKey)
-                            && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                        dataMissing = true;
+                    if (!useDB && (proteinMatch == null
+                            || !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedPeptidesInCache(proteinKey)
+                            && !identification.proteinDetailsInCache(proteinKey))) {
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
@@ -229,9 +229,11 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 7:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
-                    if (!useDB && (!peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraInCache(proteinKey))
+                    if (!useDB
+                            && (!peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraInCache(proteinKey)
+                            || !peptideShakerGUI.getIdentificationFeaturesGenerator().nSpectraInCache(proteinKey))
                             && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
@@ -242,7 +244,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && !peptideShakerGUI.getIdentificationFeaturesGenerator().spectrumCountingInCache(proteinKey)
                             && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
@@ -250,7 +252,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && proteinMatch == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     String mainMatch = proteinMatch.getMainMatch();
@@ -264,7 +266,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     if (pSParameter != null) {
@@ -280,7 +282,7 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
-                        dataMissing = true;
+                        dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     if (pSParameter != null) {
@@ -316,24 +318,6 @@ public class ProteinTableModel extends DefaultTableModel {
     }
 
     /**
-     * Resets whether data is missing.
-     *
-     * @param dataMissing
-     */
-    public void setDataMissing(boolean dataMissing) {
-        this.dataMissing = dataMissing;
-    }
-
-    /**
-     * Indicates whether data is missing.
-     *
-     * @return true of data is missing
-     */
-    public boolean isDataMissing() {
-        return dataMissing;
-    }
-
-    /**
      * Sets whether or not data shall be looked for in the database. If false
      * only the cache will be used.
      *
@@ -350,5 +334,48 @@ public class ProteinTableModel extends DefaultTableModel {
      */
     public boolean isDB() {
         return useDB;
+    }
+
+    @Override
+    protected void catchException(Exception e) {
+        useDB = true;
+        peptideShakerGUI.catchException(e);
+    }
+
+    @Override
+    protected int loadDataForRows(int start, int end, boolean interrupted) {
+        ArrayList<String> tempKeys = new ArrayList<String>();
+        for (int i = start; i <= end; i++) {
+            if (interrupted) {
+                return start;
+            }
+            String proteinKey = proteinKeys.get(i);
+            try {
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+            } catch (Exception e) {
+                catchException(e);
+                return start;
+            }
+            tempKeys.add(proteinKey);
+        }
+        try {
+            if (interrupted) {
+                return start;
+            }
+            identification.loadProteinMatches(tempKeys, null);
+            if (interrupted) {
+                return start;
+            }
+            identification.loadProteinMatchParameters(tempKeys, new PSParameter(), null);
+        } catch (Exception e) {
+            catchException(e);
+            return start;
+        }
+        return end;
     }
 }

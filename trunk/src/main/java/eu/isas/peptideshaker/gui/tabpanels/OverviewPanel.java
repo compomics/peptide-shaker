@@ -4288,7 +4288,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             spectrumPanel.setBackgroundPeakWidth(peptideShakerGUI.getUtilitiesUserPreferences().getSpectrumBackgroundPeakWidth());
 
                             // get the spectrum annotations
-                            int peptideIndex = peptideTable.convertRowIndexToModel(peptideTable.getSelectedRow());
+                            int peptideIndex, peptideRow = peptideTable.getSelectedRow();
+                            if (peptideRow != -1) {
+                                peptideIndex = peptideTable.convertRowIndexToModel(peptideRow);
+                            } else {
+                                peptideIndex = 0;
+                            }
                             String peptideKey = peptideKeys.get(peptideIndex);
                             Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
                             SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
@@ -4456,7 +4461,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             try {
 
                 // update the sequence coverage map
-                String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+                int proteinIndex, selectedProteinRow = proteinTable.getSelectedRow();
+                if (selectedProteinRow != -1) {
+                    proteinIndex = proteinTable.convertRowIndexToModel(selectedProteinRow);
+                } else {
+                    // Let's assume it is the first
+                    proteinIndex = 0;
+                }
+                String proteinKey = proteinKeys.get(proteinIndex);
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
 
                 updateSequenceCoverage(proteinMatch.getMainMatch());
@@ -4490,7 +4502,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
                     psmTable.setModel(psmTableModel);
                 }
-                checkPsmTableModel(0);
 
                 setPsmTableProperties();
                 showSparkLines(peptideShakerGUI.showSparklines());
@@ -4566,7 +4577,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     PeptideTableModel peptideTableModel = new PeptideTableModel(peptideShakerGUI, accession, peptideKeys);
                     peptideTable.setModel(peptideTableModel);
                 }
-                checkPeptideTableModel(accession, 0);
 
                 setPeptideTableProperties();
                 showSparkLines(peptideShakerGUI.showSparklines());
@@ -4618,169 +4628,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
-     * Checks whether the protein table is filled properly and updates it later
-     * on if not.
-     *
-     * @param nTries the number of tries already done, after 100 the table will
-     * be loaded old fashion
-     * @throws InterruptedException
-     */
-    public synchronized void checkProteinTableModel(int nTries) throws InterruptedException {
-        final ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
-        wait(100);
-        if (proteinTableModel.isDataMissing()) {
-            final int nTriesFinal = nTries;
-            new Thread(new Runnable() {
-                public synchronized void run() {
-                    try {
-                        if (nTriesFinal == 100) {
-                            // Give up and go back to old school
-                            proteinTableModel.useDB(true);
-                            ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
-                            proteinTable.setModel(proteinTableModel);
-                        } else {
-                            wait(100);
-                            ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
-                            proteinTable.setModel(proteinTableModel);
-                            checkProteinTableModel(nTriesFinal + 1);
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }, "tableUpdate").start();
-            new Thread(new Runnable() {
-                public synchronized void run() {
-                    try {
-                        if (nTriesFinal == 0) {
-                            for (String proteinKey : proteinKeys) {
-                                peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                                peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
-                                peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                                if (!proteinTableModel.isDataMissing() || proteinTableModel.isDB()) {
-                                    break;
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }, "identificationFeatures").start();
-        } else {
-            proteinTableModel.useDB(true);
-        }
-    }
-
-    /**
-     * Checks whether the peptide table is filled properly and updates it later
-     * on if not.
-     *
-     * @param accession the protein accession
-     * @param nTries the number of tries already done, after 100 the table will
-     * be loaded old fashion
-     * @throws InterruptedException
-     */
-    public synchronized void checkPeptideTableModel(String accession, int nTries) throws InterruptedException {
-        final PeptideTableModel peptideTableModel = (PeptideTableModel) peptideTable.getModel();
-        wait(100);
-        if (peptideTableModel.isDataMissing()) {
-            final int nTriesFinal = nTries;
-            final String accession1 = accession;
-            new Thread(new Runnable() {
-                public synchronized void run() {
-                    try {
-                        if (nTriesFinal == 100) {
-                            // Give up and go back to old school
-                            peptideTableModel.useDB(true);
-                            PeptideTableModel peptideTableModel = new PeptideTableModel(peptideShakerGUI, accession1, peptideKeys);
-                            peptideTable.setModel(peptideTableModel);
-                        } else {
-                            wait(100);
-                            ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
-                            if (proteinTableModel.isDataMissing()) {
-                                // one thing at a time, let's first wait that the proteins are ready
-                                checkPeptideTableModel(accession1, nTriesFinal);
-                                return;
-                            }
-                            Identification identification = peptideShakerGUI.getIdentification();
-                            identification.loadPeptideMatches(peptideKeys, null);
-                            for (String peptideKey : peptideKeys) {
-                                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, false);
-                                if (peptideMatch == null) {
-                                    // the db seems to be busy
-                                    checkPeptideTableModel(accession1, nTriesFinal + 1);
-                                    return;
-                                } else {
-                                    identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), new PSParameter(), null);
-                                }
-                            }
-                            PeptideTableModel peptideTableModel = new PeptideTableModel(peptideShakerGUI, accession1, peptideKeys);
-                            peptideTable.setModel(peptideTableModel);
-                            checkPeptideTableModel(accession1, nTriesFinal + 1);
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }, "updateTable").start();
-        } else {
-            peptideTableModel.useDB(true);
-        }
-    }
-
-    /**
-     * Checks whether the PSM table is filled properly and updates it later on
-     * if not.
-     *
-     * @param nTries the number of tries already done, after 100 the table will
-     * be loaded old fashion
-     * @throws InterruptedException
-     */
-    public synchronized void checkPsmTableModel(int nTries) throws InterruptedException {
-        final PsmTableModel psmTableModel = (PsmTableModel) psmTable.getModel();
-        wait(100);
-        if (psmTableModel.isDataMissing()) {
-            final int nTriesFinal = nTries;
-            new Thread(new Runnable() {
-                public synchronized void run() {
-                    try {
-                        if (nTriesFinal == 100) {
-                            // Give up and go back to old school
-                            psmTableModel.useDB(true);
-                            PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
-                            psmTable.setModel(psmTableModel);
-                        } else {
-                            wait(100);
-                            ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
-                            final PeptideTableModel peptideTableModel = (PeptideTableModel) peptideTable.getModel();
-
-                            if (proteinTableModel.isDataMissing() || peptideTableModel.isDataMissing()) {
-                                // one thing at a time, let's first wait that the proteins and peptides are ready. Would actually make more sense to fill the psms first...
-                                checkPsmTableModel(nTriesFinal);
-                                return;
-                            }
-                            Identification identification = peptideShakerGUI.getIdentification();
-                            identification.loadSpectrumMatches(psmKeys, null);
-                            identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), null);
-
-                            PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
-                            psmTable.setModel(psmTableModel);
-                            checkPsmTableModel(nTriesFinal + 1);
-                        }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    }
-                }
-            }, "updateTable").start();
-        } else {
-            psmTableModel.useDB(true);
-        }
-    }
-
-    /**
      * Displays the results in the tables.
      */
     public void displayResults() {
@@ -4818,12 +4665,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {
                         ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);
-                        ((ProteinTableModel) proteinTable.getModel()).useDB(false);
                     } else {
                         ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
                         proteinTable.setModel(proteinTableModel);
                     }
-                    checkProteinTableModel(0);
 
                     setTableProperties();
 
