@@ -511,8 +511,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         helpButton.setVisible(false);
         newsButton.setVisible(false);
 
-        quantifyMenuItem.setVisible(false); // @TODO: re-enable later!!
-        reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later!!
+        reshakeMenuItem.setVisible(false); // @TODO: re-enable later?
+        quantifyMenuItem.setVisible(false); // @TODO: re-enable later?
+        jSeparator2.setVisible(false); // @TODO: re-enable later?
+        reporterPreferencesJMenuItem.setVisible(false); // @TODO: re-enable later?
 
         // add icons to the tab componets
         //setupTabComponents(); // @TODO: implement me? requires the creation of icons for each tab...
