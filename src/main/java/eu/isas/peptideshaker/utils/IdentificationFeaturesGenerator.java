@@ -27,13 +27,14 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class provides identification features and stores them in cache. It is definitely one of my favorite ones and deserves being moved to utilities once the back-end allows it.
+ * This class provides identification features and stores them in cache.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
 public class IdentificationFeaturesGenerator {
 
+    // @TODO: moved to utilities once the back-end allows it!!!
     /**
      * The sequence factory.
      */
@@ -559,9 +560,10 @@ public class IdentificationFeaturesGenerator {
         }
         return result;
     }
-    
+
     /**
-     * Indicates whether the observable coverage of a protein match is in cache
+     * Indicates whether the observable coverage of a protein match is in cache.
+     *
      * @param proteinMatchKey the key of the protein match
      * @return true if the data is in cache
      */
@@ -795,9 +797,11 @@ public class IdentificationFeaturesGenerator {
         }
         return result;
     }
-    
+
     /**
-     * Indicates whether the number of spectra for a given protein match is in cache
+     * Indicates whether the number of spectra for a given protein match is in
+     * cache.
+     *
      * @param proteinMatchKey the key of the protein match
      * @return true if the data is in cache
      */
@@ -926,9 +930,11 @@ public class IdentificationFeaturesGenerator {
 
         return result;
     }
-    
+
     /**
-     * Indicates whether the number of validated spectra for a peptide match is in cache
+     * Indicates whether the number of validated spectra for a peptide match is
+     * in cache.
+     *
      * @param peptideMatchKey the key of the peptide match
      * @return true if the data is in cache
      */
