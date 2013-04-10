@@ -65,7 +65,6 @@ import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
-import eu.isas.peptideshaker.myparameters.PSParameter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;

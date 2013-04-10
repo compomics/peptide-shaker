@@ -2206,12 +2206,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // remember the selection
                     newItemSelection();
 
-                    int row = psmTable.getSelectedRow();
-                    updateSpectrum(row, true);
+                    int psmRow = psmTable.getSelectedRow();
+                    updateSpectrum(psmRow, true);
 
                     String peptideKey = peptideKeys.get(peptideIndex);
                     if (column == peptideTable.getColumn("  ").getModelIndex()) {
-                        if ((Boolean) peptideTable.getValueAt(row, column)) {
+                        if ((Boolean) peptideTable.getValueAt(psmRow, column)) {
                             peptideShakerGUI.getStarHider().starPeptide(peptideKey);
                         } else {
                             peptideShakerGUI.getStarHider().unStarPeptide(peptideKey);
@@ -4458,8 +4458,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            try {
 
+            try {
                 // update the sequence coverage map
                 int proteinIndex, selectedProteinRow = proteinTable.getSelectedRow();
                 if (selectedProteinRow != -1) {
@@ -4662,6 +4662,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         peptideShakerGUI.catchException(e);
                     }
 
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Preparing Overview Tab. Please Wait..."); // @TODO: not sure why the progress bar seems to be stuck here...
+
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {
                         ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);
@@ -4714,22 +4717,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
 
-                    // change the peptide shaker icon to a "waiting version" // @TODO: not really sure why we need to set this again here, but seems to be needed...
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Preparing Overview Tab. Please Wait...");
-
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(new Runnable() {
-                        // @TODO: this is not optimal as the progress bar does not move...
-                        public void run() {
-                            updateProteinTable();
-                            proteinTable.requestFocus();
-                            peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                            progressDialog.setRunFinished();
-                        }
-                    });
+                    proteinTable.requestFocus();
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    progressDialog.setRunFinished();
+                    
+                    //updateProteinTable(); // @TODO: re-add when the new table model selection issue has been fixed
 
                 } catch (Exception e) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

@@ -10,7 +10,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
-import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
