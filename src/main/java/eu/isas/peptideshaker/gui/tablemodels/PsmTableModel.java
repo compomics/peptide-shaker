@@ -10,7 +10,6 @@ import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.util.ArrayList;
-import javax.swing.table.DefaultTableModel;
 
 /**
  * Table model for a set of peptide to spectrum matches.
@@ -240,7 +239,7 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         try {
             ArrayList<String> tempPsmKeys = new ArrayList<String>();
             for (int i = start; i <= end; i++) {
-                    tempPsmKeys.add(psmKeys.get(i));
+                tempPsmKeys.add(psmKeys.get(i));
             }
             if (interrupted) {
                 return start;

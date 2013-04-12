@@ -10,10 +10,10 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.StartIndexes;
 import no.uib.jsparklines.data.XYDataPoint;
 
@@ -183,7 +183,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     peptideKey = peptideKeys.get(row);
                     peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
                     if (!useDB
-                            && !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraForPeptideInCache(peptideKey)
+                            && (peptideMatch == null || !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraForPeptideInCache(peptideKey))
                             && (peptideMatch == null || !identification.peptideDetailsInCache(peptideKey))) {
                         dataMissingAtRow(row);
                         return DisplayPreferences.LOADING_MESSAGE;
@@ -258,31 +258,38 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     protected int loadDataForRows(int start, int end, boolean interrupted) {
         ArrayList<String> tempKeys = new ArrayList<String>();
         for (int i = start; i <= end; i++) {
-            if (interrupted) {
-                return start;
-            }
             String peptideKey = peptideKeys.get(i);
             tempKeys.add(peptideKey);
-            try {
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
-            } catch (Exception e) {
-                catchException(e);
-                return start;
-            }
         }
         try {
-            if (interrupted) {
-                return start;
+            loadPeptideObjects(tempKeys);
+
+            for (String peptideKey : tempKeys) {
+                if (interrupted) {
+                    loadPeptideObjects(tempKeys);
+                    return start;
+                }
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+                loadPeptideObjects(tempKeys);
             }
-            identification.loadPeptideMatches(tempKeys, null);
-            if (interrupted) {
-                return start;
-            }
-            identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), null);
         } catch (Exception e) {
             catchException(e);
             return start;
         }
         return end;
+    }
+
+    /**
+     * Loads the peptide matches and peptide parameters in cache.
+     *
+     * @param keys the keys to load
+     * @throws SQLException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void loadPeptideObjects(ArrayList<String> keys) throws SQLException, SQLException, IOException, ClassNotFoundException {
+        identification.loadPeptideMatches(keys, null);
+        identification.loadPeptideMatchParameters(keys, new PSParameter(), null);
     }
 }

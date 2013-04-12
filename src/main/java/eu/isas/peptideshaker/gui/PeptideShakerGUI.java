@@ -1993,7 +1993,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
                     overviewPanel.displayResults();
                 } else {
-                    overviewPanel.updateSelection();
+                    overviewPanel.updateSelection(true);
                 }
             } else if (selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
                 if (updateNeeded.get(PROTEIN_FRACTIONS_TAB_INDEX)) {
@@ -3696,7 +3696,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-            overviewPanel.updateSelection();
+            overviewPanel.updateSelection(true);
         } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
             proteinStructurePanel.updateSelection();
         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
