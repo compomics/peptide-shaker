@@ -774,8 +774,7 @@ public class IdentificationFeaturesGenerator {
      * @return true if the information is in cache
      */
     public boolean nValidatedPeptidesInCache(String proteinMatchKey) {
-        Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey);
-        return result != null;
+        return identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.number_of_validated_peptides, proteinMatchKey) != null;
     }
 
     /**

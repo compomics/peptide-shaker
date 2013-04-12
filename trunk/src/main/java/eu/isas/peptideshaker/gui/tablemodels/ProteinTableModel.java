@@ -8,12 +8,14 @@ import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
- * Model for a the protein table.
+ * Model for the protein table.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -345,36 +347,64 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     protected int loadDataForRows(int start, int end, boolean interrupted) {
         ArrayList<String> tempKeys = new ArrayList<String>();
         for (int i = start; i <= end; i++) {
-            if (interrupted) {
-                return start;
-            }
             String proteinKey = proteinKeys.get(i);
-            try {
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-            } catch (Exception e) {
-                catchException(e);
-                return start;
-            }
             tempKeys.add(proteinKey);
         }
         try {
-            if (interrupted) {
-                return start;
+            loadProteins(tempKeys);
+
+            for (int i = start; i <= end; i++) {
+                String proteinKey = proteinKeys.get(i);
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                if (interrupted) {
+                    loadProteins(tempKeys);
+                    return i;
+                }
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                if (interrupted) {
+                    loadProteins(tempKeys);
+                    return i;
+                }
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                if (interrupted) {
+                    loadProteins(tempKeys);
+                    return i;
+                }
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                if (interrupted) {
+                    loadProteins(tempKeys);
+                    return i;
+                }
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                if (interrupted) {
+                    loadProteins(tempKeys);
+                    return i;
+                }
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                loadProteins(tempKeys);
+                if (interrupted) {
+                    loadProteins(tempKeys);
+                    return i;
+                }
             }
-            identification.loadProteinMatches(tempKeys, null);
-            if (interrupted) {
-                return start;
-            }
-            identification.loadProteinMatchParameters(tempKeys, new PSParameter(), null);
         } catch (Exception e) {
             catchException(e);
             return start;
         }
         return end;
+    }
+
+    /**
+     * Loads the protein matches and matches parameters in cache.
+     *
+     * @param keys the keys of the matches to load
+     * @throws SQLException
+     * @throws IOException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void loadProteins(ArrayList<String> keys) throws SQLException, IOException, IOException, ClassNotFoundException {
+        identification.loadProteinMatches(keys, null);
+        identification.loadProteinMatchParameters(keys, new PSParameter(), null);
     }
 }
