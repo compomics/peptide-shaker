@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -9,6 +10,9 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -153,6 +157,104 @@ public class JumpToPanel extends javax.swing.JPanel {
         String label = "(" + (currentSelection.get(jumpType) + 1) + " of " + possibilities.get(jumpType).size() + ")";
         indexLabel.setText(label);
         lastLabel.put(jumpType, label);
+    }
+    
+    /**
+     * Returns a list of descriptions corresponding to every item matching the search
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws IOException
+     * @throws InterruptedException 
+     */
+    public ArrayList<String> getPossibilitiesDescriptions() throws SQLException, ClassNotFoundException, IOException, InterruptedException {
+        
+        Identification identification = peptideShakerGUI.getIdentification();
+        
+        // Some necessary pre-caching
+        ArrayList<Type> typeList = types.get(jumpType);
+        ArrayList<String> keys = possibilities.get(jumpType), 
+                proteinKeys = new ArrayList<String>(),
+                peptideKeys = new ArrayList<String>();
+        for (int i = 0 ; i < keys.size() ; i++) {
+            String key = keys.get(i);
+            if (typeList.get(i) == Type.PROTEIN) {
+                proteinKeys.add(key);
+            } else if (typeList.get(i) == Type.PEPTIDE) {
+                proteinKeys.add(key);
+            }
+        }
+        if (!proteinKeys.isEmpty()) {
+            identification.loadProteinMatches(proteinKeys, null);
+        }
+        if (!peptideKeys.isEmpty()) {
+            identification.loadPeptideMatches(peptideKeys, null);
+        }
+        
+        ArrayList<String> descriptions = new ArrayList<String>();
+        for (int i = 0 ; i < keys.size() ; i++) {
+            String key = keys.get(i);
+            Type type = typeList.get(i);
+            String description = getItemDescription(key, type);
+            descriptions.add(description);
+        }
+        return descriptions;
+    }
+    
+    /**
+     * Returns the description of an item
+     * @param key the key of the item
+     * @param itemType the type of the item
+     * @return
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException 
+     */
+    private String getItemDescription(String key, Type itemType) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        Identification identification = peptideShakerGUI.getIdentification();
+        switch (itemType) {
+            case PROTEIN:
+                ProteinMatch proteinMatch = identification.getProteinMatch(key);
+                String mainMatch = proteinMatch.getMainMatch();
+                String description = sequenceFactory.getHeader(mainMatch).getDescription();
+                String result = mainMatch;
+                for (String accession : ProteinMatch.getAccessions(key)) {
+                    if (!accession.equals(mainMatch)) {
+                        if (!result.equals(mainMatch)) {
+                            result += ", ";
+                        }
+                        result += accession;
+                    }
+                }
+                result += " - " + description;
+                return result;
+            case PEPTIDE:
+                return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(key, true, true, true);
+            case SPECTRUM:
+                return Spectrum.getSpectrumTitle(key) + " (" + Spectrum.getSpectrumFile(key) + ")";
+                default:
+                    return "Unknown";
+        }
+    }
+    
+    /**
+     * Returns the index of the selected item.
+     * 
+     * @return 
+     */
+    public int getIndexOfSelectedItem() {
+        return currentSelection.get(jumpType);
+    }
+    
+    /**
+     * Sets the index of the selected item.
+     * Note: this does not update the selection in tab and the GUI (see updateSelectionInTab())
+     * @param itemIndex 
+     */
+    public void setSelectedItem(int itemIndex) {
+        currentSelection.put(jumpType, itemIndex);
     }
 
     /**
@@ -319,20 +421,10 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 inputTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                                 if (jumpType == JumpType.proteinAndPeptides) {
-                                    PSParameter psParameter = new PSParameter();
-
-                                    // pre-caching
-                                    peptideShakerGUI.getIdentification().loadProteinMatchParameters(psParameter, null);
 
                                     for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences())) {
                                         if (!ProteinMatch.isDecoy(proteinKey)) {
-                                            try {
-                                                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-                                            } catch (Exception e) {
-                                                peptideShakerGUI.catchException(e);
-                                            }
-                                            if (!psParameter.isHidden()) {
-                                                if (proteinKey.toLowerCase().contains(input)) {
+                                               if (proteinKey.toLowerCase().contains(input)) {
                                                     possibilities.get(jumpType).add(proteinKey);
                                                     types.get(jumpType).add(Type.PROTEIN);
                                                 } else {
@@ -348,13 +440,13 @@ public class JumpToPanel extends javax.swing.JPanel {
                                                         // cannot get description, ignore
                                                     }
                                                 }
-                                            }
                                         }
                                     }
 
                                     ArrayList<String> secondaryCandidates = new ArrayList<String>();
 
                                     // pre-caching
+                                    PSParameter psParameter = new PSParameter();
                                     peptideShakerGUI.getIdentification().loadPeptideMatchParameters(psParameter, null);
 
                                     for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
@@ -554,11 +646,8 @@ public class JumpToPanel extends javax.swing.JPanel {
     private javax.swing.JButton previousButton;
     // End of variables declaration//GEN-END:variables
 
-    /**
-     * Override to set the input text field enabled or not.
-     *
-     * @param enabled
-     */
+    
+    @Override
     public void setEnabled(boolean enabled) {
 
         inputTxt.setEnabled(enabled);
