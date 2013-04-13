@@ -3853,6 +3853,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         selectedIndexes.size() == 1, annotationPreferences.showBars(),
                         peptideShakerGUI.useRelativeError());
 
+                // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
+                if (selectedIndexes.size() > 20) {
+                    massErrorBubblePlot.getChartPanel().getChart().getLegend().setVisible(false);
+                }
+
                 // hide the outline
                 massErrorBubblePlot.getChartPanel().getChart().getPlot().setOutlineVisible(false);
 
@@ -3874,6 +3879,16 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void updateSequenceCoverage(String proteinAccession) {
 
         // @TODO: the code below should be extracted into a separate class!
+
+        // @TODO: this method should not re-do all the database calls if only the selected peptide changes!!
+
+
+        // clear the old values
+        sequenceCoverageInnerPanel.removeAll();
+        sequencePtmsPanel.removeAll();
+        sequenceCoverageInnerPanel.add(new JLabel("Loading..."));
+        sequenceCoverageInnerPanel.revalidate();
+        sequenceCoverageInnerPanel.repaint();
 
         ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
         ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
@@ -4072,7 +4087,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     sparkLineDataSeriesCoverage.add(sparklineDataseries);
                 }
 
-                sequenceCoverageInnerPanel.removeAll();
                 coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), proteinTooltips, true, true);
 
                 // make sure that the range is the same for both charts (coverage and ptm)
@@ -4088,6 +4102,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 });
 
+                sequenceCoverageInnerPanel.removeAll();
                 sequenceCoverageInnerPanel.add(coverageChart);
                 sequenceCoverageInnerPanel.revalidate();
                 sequenceCoverageInnerPanel.repaint();
@@ -4511,8 +4526,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(proteinIndex);
                 final ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
 
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
+                new Thread(new Runnable() {
                     public void run() {
                         try {
                             updateSequenceCoverage(proteinMatch.getMainMatch());
@@ -4520,7 +4534,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             peptideShakerGUI.catchException(e);
                         }
                     }
-                });
+                }, "CoveragePlot").start();
 
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
@@ -4643,6 +4657,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Preparing Overview Tab. Please Wait..."); // @TODO: not sure why the progress bar seems to be stuck here...
+
+                    // change the peptide shaker icon to a "waiting version" // @TODO: not really sure why we need to set this again here, but seems to be needed
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     peptideShakerGUI.resetSelectedItems();
 
