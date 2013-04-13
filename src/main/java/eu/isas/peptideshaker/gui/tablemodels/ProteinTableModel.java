@@ -403,7 +403,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void loadProteins(ArrayList<String> keys) throws SQLException, IOException, IOException, ClassNotFoundException {
+    private void loadProteins(ArrayList<String> keys) throws SQLException, IOException, IOException, ClassNotFoundException, InterruptedException {
         identification.loadProteinMatches(keys, null);
         identification.loadProteinMatchParameters(keys, new PSParameter(), null);
     }
