@@ -321,6 +321,9 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 if (jumpType == JumpType.proteinAndPeptides) {
                                     PSParameter psParameter = new PSParameter();
 
+                                    // pre-caching
+                                    peptideShakerGUI.getIdentification().loadProteinMatchParameters(psParameter, null);
+
                                     for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences())) {
                                         if (!ProteinMatch.isDecoy(proteinKey)) {
                                             try {
@@ -351,6 +354,9 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                     ArrayList<String> secondaryCandidates = new ArrayList<String>();
 
+                                    // pre-caching
+                                    peptideShakerGUI.getIdentification().loadPeptideMatchParameters(psParameter, null);
+
                                     for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                                         try {
                                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
@@ -367,6 +373,9 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             }
                                         }
                                     }
+
+                                    // pre-caching
+                                    peptideShakerGUI.getIdentification().loadPeptideMatches(null);
 
                                     for (String secondaryCandidate : secondaryCandidates) {
                                         try {
