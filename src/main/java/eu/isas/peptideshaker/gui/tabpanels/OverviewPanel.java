@@ -2134,18 +2134,22 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-                peptideShakerGUI.setSelectedItems(proteinKeys.get(proteinIndex), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+                String proteinKey = proteinKeys.get(proteinIndex);
 
-                // update the peptide selection
-                updatePeptideSelection(proteinIndex);
+                if (!peptideShakerGUI.getSelectedProteinKey().equalsIgnoreCase(proteinKey)) {
 
-                // remember the selection
-                newItemSelection();
+                    peptideShakerGUI.setSelectedItems(proteinKeys.get(proteinIndex), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+
+                    // update the peptide selection
+                    updatePeptideSelection(proteinIndex);
+
+                    // remember the selection
+                    newItemSelection();
+                }
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
-                    String proteinKey = proteinKeys.get(proteinIndex);
                     PSParameter psParameter = new PSParameter();
                     try {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, new PSParameter());
@@ -2174,7 +2178,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 // open the protein inference dialog
                 if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
-                    String proteinKey = proteinKeys.get(proteinIndex);
                     new ProteinInferenceDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getIdentification());
                 }
             }
@@ -2200,18 +2203,21 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             int peptideIndex = peptideTable.convertRowIndexToModel(row);
             String peptideKey = peptideKeys.get(peptideIndex);
 
-            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
+            if (!peptideShakerGUI.getSelectedPeptideKey().equalsIgnoreCase(peptideKey)) {
 
-            // update the psm selection
-            updatePsmSelection(row);
+                peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideKey, PeptideShakerGUI.NO_SELECTION);
 
-            // new peptide, reset spectrum boundaries
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    updateSpectrum(psmTable.convertRowIndexToModel(psmTable.getSelectedRow()), true);
-                }
-            });
+                // update the psm selection
+                updatePsmSelection(row);
+
+                // new peptide, reset spectrum boundaries
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateSpectrum(psmTable.convertRowIndexToModel(psmTable.getSelectedRow()), true);
+                    }
+                });
+            }
 
             if (column == peptideTable.getColumn("  ").getModelIndex()) {
                 if ((Boolean) peptideTable.getValueAt(row, column)) {
@@ -5313,7 +5319,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             if (scrollToVisible) {
                 proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
             }
-            newItemSelection();
             proteinTableMouseReleased(null);
             proteinSelectionChanged = true;
         }
@@ -5333,7 +5338,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (scrollToVisible) {
                     peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
                 }
-                newItemSelection();
                 peptideTableMouseReleased(null);
                 peptideSelectionChanged = true;
             }
@@ -5351,7 +5355,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     if (scrollToVisible) {
                         psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
                     }
-                    newItemSelection();
                     psmTableMouseReleased(null);
                 }
             }

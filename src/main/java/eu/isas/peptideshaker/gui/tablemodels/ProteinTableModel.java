@@ -381,7 +381,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     return i;
                 }
                 peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                loadProteins(tempKeys);
+                //loadProteins(tempKeys);
                 if (interrupted) {
                     loadProteins(tempKeys);
                     return i;
