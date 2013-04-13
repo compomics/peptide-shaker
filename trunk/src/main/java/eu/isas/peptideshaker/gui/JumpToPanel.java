@@ -10,7 +10,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -158,25 +157,27 @@ public class JumpToPanel extends javax.swing.JPanel {
         indexLabel.setText(label);
         lastLabel.put(jumpType, label);
     }
-    
+
     /**
-     * Returns a list of descriptions corresponding to every item matching the search
-     * @return
+     * Returns a list of descriptions corresponding to every item matching the
+     * search.
+     *
+     * @return a list of descriptions
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws IOException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public ArrayList<String> getPossibilitiesDescriptions() throws SQLException, ClassNotFoundException, IOException, InterruptedException {
-        
+
         Identification identification = peptideShakerGUI.getIdentification();
-        
+
         // Some necessary pre-caching
         ArrayList<Type> typeList = types.get(jumpType);
-        ArrayList<String> keys = possibilities.get(jumpType), 
+        ArrayList<String> keys = possibilities.get(jumpType),
                 proteinKeys = new ArrayList<String>(),
                 peptideKeys = new ArrayList<String>();
-        for (int i = 0 ; i < keys.size() ; i++) {
+        for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             if (typeList.get(i) == Type.PROTEIN) {
                 proteinKeys.add(key);
@@ -190,9 +191,9 @@ public class JumpToPanel extends javax.swing.JPanel {
         if (!peptideKeys.isEmpty()) {
             identification.loadPeptideMatches(peptideKeys, null);
         }
-        
+
         ArrayList<String> descriptions = new ArrayList<String>();
-        for (int i = 0 ; i < keys.size() ; i++) {
+        for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             Type type = typeList.get(i);
             String description = getItemDescription(key, type);
@@ -200,9 +201,10 @@ public class JumpToPanel extends javax.swing.JPanel {
         }
         return descriptions;
     }
-    
+
     /**
-     * Returns the description of an item
+     * Returns the description of an item.
+     *
      * @param key the key of the item
      * @param itemType the type of the item
      * @return
@@ -210,7 +212,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     private String getItemDescription(String key, Type itemType) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Identification identification = peptideShakerGUI.getIdentification();
@@ -234,24 +236,25 @@ public class JumpToPanel extends javax.swing.JPanel {
                 return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(key, true, true, true);
             case SPECTRUM:
                 return Spectrum.getSpectrumTitle(key) + " (" + Spectrum.getSpectrumFile(key) + ")";
-                default:
-                    return "Unknown";
+            default:
+                return "Unknown";
         }
     }
-    
+
     /**
      * Returns the index of the selected item.
-     * 
-     * @return 
+     *
+     * @return he index of the selected item
      */
     public int getIndexOfSelectedItem() {
         return currentSelection.get(jumpType);
     }
-    
+
     /**
-     * Sets the index of the selected item.
-     * Note: this does not update the selection in tab and the GUI (see updateSelectionInTab())
-     * @param itemIndex 
+     * Sets the index of the selected item. Note: this does not update the
+     * selection in tab and the GUI (see updateSelectionInTab()).
+     *
+     * @param itemIndex
      */
     public void setSelectedItem(int itemIndex) {
         currentSelection.put(jumpType, itemIndex);
@@ -424,22 +427,22 @@ public class JumpToPanel extends javax.swing.JPanel {
 
                                     for (String proteinKey : peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(null, peptideShakerGUI.getFilterPreferences())) {
                                         if (!ProteinMatch.isDecoy(proteinKey)) {
-                                               if (proteinKey.toLowerCase().contains(input)) {
-                                                    possibilities.get(jumpType).add(proteinKey);
-                                                    types.get(jumpType).add(Type.PROTEIN);
-                                                } else {
-                                                    try {
-                                                        for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                                                            if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
-                                                                possibilities.get(jumpType).add(proteinKey);
-                                                                types.get(jumpType).add(Type.PROTEIN);
-                                                                break;
-                                                            }
+                                            if (proteinKey.toLowerCase().contains(input)) {
+                                                possibilities.get(jumpType).add(proteinKey);
+                                                types.get(jumpType).add(Type.PROTEIN);
+                                            } else {
+                                                try {
+                                                    for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                                                        if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                                            possibilities.get(jumpType).add(proteinKey);
+                                                            types.get(jumpType).add(Type.PROTEIN);
+                                                            break;
                                                         }
-                                                    } catch (Exception e) {
-                                                        // cannot get description, ignore
                                                     }
+                                                } catch (Exception e) {
+                                                    // cannot get description, ignore
                                                 }
+                                            }
                                         }
                                     }
 
@@ -646,7 +649,6 @@ public class JumpToPanel extends javax.swing.JPanel {
     private javax.swing.JButton previousButton;
     // End of variables declaration//GEN-END:variables
 
-    
     @Override
     public void setEnabled(boolean enabled) {
 
