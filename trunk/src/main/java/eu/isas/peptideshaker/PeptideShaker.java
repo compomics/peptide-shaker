@@ -607,8 +607,9 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
+     * @throws InterruptedException  
      */
-    public void validateIdentifications(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException {
+    public void validateIdentifications(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
@@ -2098,7 +2099,7 @@ public class PeptideShaker {
      *
      * @param waitingHandler
      */
-    private void attachPeptideProbabilities(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException {
+    private void attachPeptideProbabilities(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Attaching Peptide Probabilities. Please Wait...");
 

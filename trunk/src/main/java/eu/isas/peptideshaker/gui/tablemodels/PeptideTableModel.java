@@ -288,7 +288,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void loadPeptideObjects(ArrayList<String> keys) throws SQLException, SQLException, IOException, ClassNotFoundException {
+    private void loadPeptideObjects(ArrayList<String> keys) throws SQLException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         identification.loadPeptideMatches(keys, null);
         identification.loadPeptideMatchParameters(keys, new PSParameter(), null);
     }
