@@ -55,7 +55,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
     /**
      * The experiment conducted.
      */

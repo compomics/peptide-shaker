@@ -76,7 +76,7 @@ public class FileImporter {
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
     /**
      * Peptide to protein map: peptide sequence -> protein accessions.
      */
