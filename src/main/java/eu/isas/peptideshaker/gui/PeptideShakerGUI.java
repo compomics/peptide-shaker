@@ -323,7 +323,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     /**
      * The sequence factory.
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
     /**
      * The exception handler
      */
