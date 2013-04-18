@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -291,5 +292,36 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     private void loadPeptideObjects(ArrayList<String> keys) throws SQLException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         identification.loadPeptideMatches(keys, null);
         identification.loadPeptideMatchParameters(keys, new PSParameter(), null);
+    }
+
+    @Override
+    protected void loadDataForColumn(int column, WaitingHandler waitingHandler) {
+        ArrayList<String> reversedList = new ArrayList(peptideKeys);
+        Collections.reverse(reversedList);
+        try {
+        if (column == 1
+            || column == 2
+                    || column == 6
+                    || column == 7) {
+        identification.loadPeptideMatchParameters(reversedList, new PSParameter(), null);
+        } else if (column == 3
+                || column == 4
+                || column == 5) {
+            identification.loadPeptideMatches(reversedList, null);
+        }
+        for (String peptideKey : reversedList) {
+            if (column == 5) {
+                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+            }
+            if (waitingHandler != null) {
+                waitingHandler.increaseSecondaryProgressValue();
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+            }
+        }
+        } catch (Exception e) {
+            catchException(e);
+        }
     }
 }

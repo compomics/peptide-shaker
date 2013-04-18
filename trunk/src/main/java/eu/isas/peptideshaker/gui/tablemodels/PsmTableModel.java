@@ -5,11 +5,13 @@ import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Table model for a set of peptide to spectrum matches.
@@ -253,6 +255,37 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         } catch (Exception e) {
             catchException(e);
             return start;
+        }
+    }
+
+    @Override
+    protected void loadDataForColumn(int column, WaitingHandler waitingHandler) {
+        try {
+            ArrayList<String> reversedList = new ArrayList(psmKeys);
+            Collections.reverse(reversedList);
+            if (column == 1
+                    || column == 6
+                    || column == 7) {
+                identification.loadSpectrumMatchParameters(reversedList, new PSParameter(), null);
+            } else if (column == 2
+                    || column == 3
+                    || column == 4
+                    || column == 5) {
+                identification.loadSpectrumMatches(reversedList, null);
+            }
+            for (String psmKey : reversedList) {
+                if (column == 5) {
+                    peptideShakerGUI.getPrecursor(psmKey);
+                }
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            catchException(e);
         }
     }
 }

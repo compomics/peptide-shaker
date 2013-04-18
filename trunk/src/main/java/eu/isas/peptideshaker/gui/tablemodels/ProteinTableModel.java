@@ -5,6 +5,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
+import java.util.Collections;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
@@ -405,5 +407,48 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     private void loadProteins(ArrayList<String> keys) throws SQLException, IOException, IOException, ClassNotFoundException, InterruptedException {
         identification.loadProteinMatches(keys, null);
         identification.loadProteinMatchParameters(keys, new PSParameter(), null);
+    }
+
+    @Override
+    protected void loadDataForColumn(int column, WaitingHandler waitingHandler) {
+        try {
+            ArrayList<String> reversedList = new ArrayList(proteinKeys);
+            Collections.reverse(reversedList);
+            if (column == 1
+                    || column == 2
+                    || column == 10
+                    || column == 11) {
+                identification.loadProteinMatchParameters(reversedList, new PSParameter(), null);
+            } else if (column == 3
+                    || column == 4
+                    || column == 5
+                    || column == 6
+                    || column == 7
+                    || column == 8
+                    || column == 9) {
+                identification.loadProteinMatches(reversedList, null);
+            }
+            for (String proteinKey : reversedList) {
+                if (column == 5) {
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                } else if (column == 6) {
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                } else if (column == 7) {
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                } else if (column == 8) {
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
+                }
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            catchException(e);
+        }
     }
 }
