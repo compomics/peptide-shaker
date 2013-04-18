@@ -6720,13 +6720,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Updates the ordering in a self updating table. If data is not missing a
      * progress bar will appear during the loading.
      *
-     * @param table the table to reorder
+     * @param aTable the table to reorder
      * @param tableName a string designing this table
      */
-    public void reoderSelfUpdatingTable(JTable table, String tableName) {
+    public void reoderSelfUpdatingTable(JTable aTable, String tableName) {
 
-        final SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) table.getModel();
-        final RowSorter rowSorter = table.getRowSorter();
+        final JTable table = aTable;
+        final SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) aTable.getModel();
+        final RowSorter rowSorter = aTable.getRowSorter();
         final List<? extends RowSorter.SortKey> newKeys = rowSorter.getSortKeys();
         final String finalTableName = tableName;
 
@@ -6771,11 +6772,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             orderingKeys.put(finalTableName, newKeys);
                             rowSorter.setSortKeys(newKeys);
                         }
+                        progressDialog.setRunFinished();
+                        table.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     } catch (Exception ex) {
                         progressDialog.setRunFinished();
+                        table.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                         catchException(ex);
                     } finally {
                         progressDialog.setRunFinished();
+                        table.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     }
                 }
             }.start();
