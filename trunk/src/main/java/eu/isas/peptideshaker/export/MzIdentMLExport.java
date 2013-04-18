@@ -692,27 +692,33 @@ public class MzIdentMLExport {
         
         // @TODO: annotate the protein groups
         
-//        <ProteinAmbiguityGroup id="group1">
-//					<ProteinDetectionHypothesis id="id_prot1" passThreshold="true" dBSequence_ref="prot1_IPI">
-//						<PeptideHypothesis peptideEvidence_ref="PE1_SEQ_spec1_pep1">
-//							<SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SEQ_spec1_pep1"/>
-//						</PeptideHypothesis>
-//						<PeptideHypothesis peptideEvidence_ref="PE1_SEQ_spec2a_pep1">
-//							<SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SEQ_spec2a_pep1"/>
-//						</PeptideHypothesis>
-//						<PeptideHypothesis peptideEvidence_ref="PE1_SEQ_spec3a_pep1">
-//							<SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SEQ_spec3a_pep1"/>
-//						</PeptideHypothesis>
-//						<PeptideHypothesis peptideEvidence_ref="PE1_SEQ_spec10_pep1">
-//							<SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SEQ_spec10_pep1"/>
-//						</PeptideHypothesis>
-//						<cvParam accession="MS:1001093" name="sequence coverage" cvRef="PSI-MS" value="0.13"/>
-//						<cvParam accession="MS:1001301" name="protein rank" cvRef="PSI-MS" value="1"/>
-//						<cvParam accession="MS:1001097" name="distinct peptide sequences" cvRef="PSI-MS" value="4"/>
-//						<cvParam accession="MS:1001250" name="local FDR" cvRef="PSI-MS" value="0.0" unitAccession="UO:0000187" unitName="percent" unitCvRef="UO"/>
-//						<cvParam accession="MS:1001507" name="ProteinExtractor:Score" cvRef="PSI-MS" value="200.4"/>
-//					</ProteinDetectionHypothesis>
-//				</ProteinAmbiguityGroup>
+//        <ProteinAmbiguityGroup id="PAG_hit_4" > # not always ambiguity in these groups...
+//            
+//            <ProteinDetectionHypothesis id="protein 1" passThreshold="true"> 
+//                
+//                <PeptideHypothesis peptideEvidence_ref="peptide a(1)"> #maps to protein 1
+//                    <SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SII_1" />
+//                </PeptideHypothesis>
+//
+//            </ProteinDetectionHypothesis>
+//            
+//            <ProteinDetectionHypothesis id="protein 2" passThreshold="true"> 
+//
+//                <PeptideHypothesis peptideEvidence_ref="peptide a(2)"> #maps to protein 2
+//                    <SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SII_2" />
+//                </PeptideHypothesis>
+//
+//            </ProteinDetectionHypothesis>
+//            
+//            <ProteinDetectionHypothesis id="protein 3" passThreshold="true"> ?
+//
+//                <PeptideHypothesis peptideEvidence_ref="peptide a(3)"> #maps to protein 3
+//                    <SpectrumIdentificationItemRef spectrumIdentificationItem_ref="SII_3" />
+//                </PeptideHypothesis>
+//                
+//            </ProteinDetectionHypothesis>
+//            
+//        </ProteinAmbiguityGroup>
         
 
         tabCounter--;  
