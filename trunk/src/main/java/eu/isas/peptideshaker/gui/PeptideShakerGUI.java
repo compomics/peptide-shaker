@@ -3064,11 +3064,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         bw.close();
                         w.close();
                     } else {
-                        JOptionPane.showMessageDialog(this, "Failed to create the file log file.\n"
+                        JOptionPane.showMessageDialog(this, "Failed to create the file log file." + System.getProperty("line.separator")
                                 + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
                     }
                 }
-                System.out.println("\n\n" + new Date() + ": PeptideShaker version " + getVersion() + ".\n");
+                System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator") + new Date() + ": PeptideShaker version " + getVersion() + "." + System.getProperty("line.separator"));
+                System.out.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + "." + System.getProperty("line.separator"));
+                System.out.println("Java version: " + System.getProperty("java.version") + "." + System.getProperty("line.separator"));
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(
                         null, "An error occured when trying to create the PeptideShaker log file.",

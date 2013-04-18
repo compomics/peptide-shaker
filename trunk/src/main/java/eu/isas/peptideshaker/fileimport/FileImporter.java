@@ -566,6 +566,7 @@ public class FileImporter {
                 } catch (Exception e) {
                     waitingHandler.setRunCanceled();
                     e.printStackTrace();
+                    System.err.println("Free memory: " + Runtime.getRuntime().freeMemory());
                     if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
                         waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
                         waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
