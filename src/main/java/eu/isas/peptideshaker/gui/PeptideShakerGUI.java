@@ -3068,7 +3068,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
                     }
                 }
-                System.out.println(System.getProperty("line.separator")+System.getProperty("line.separator") + new Date() + ": PeptideShaker version " + getVersion() + "." + System.getProperty("line.separator"));
+                System.out.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date() 
+                        + ": PeptideShaker version " + getVersion() + "." + System.getProperty("line.separator"));
                 System.out.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + "." + System.getProperty("line.separator"));
                 System.out.println("Java version: " + System.getProperty("java.version") + "." + System.getProperty("line.separator"));
             } catch (Exception e) {
