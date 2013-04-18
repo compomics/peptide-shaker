@@ -240,7 +240,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     tableCacher.cacheForSorting(proteinTable, "proteinTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((ProteinTableModel) proteinTable.getModel()).useDB(true);
 
-                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
+                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     ((ProteinTableModel) proteinTable.getModel()).useDB(false);
@@ -272,7 +272,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     tableCacher.cacheForSorting(peptideTable, "peptideTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((PeptideTableModel) peptideTable.getModel()).useDB(true);
 
-                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
+                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     ((ProteinTableModel) peptideTable.getModel()).useDB(false);
@@ -305,7 +305,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     tableCacher.cacheForSorting(psmTable, "psmTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((PsmTableModel) psmTable.getModel()).useDB(true);
 
-                } else if (e.getType() == RowSorterEvent.Type.SORTED) {
+                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     psmTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     ((PsmTableModel) psmTable.getModel()).useDB(false);
