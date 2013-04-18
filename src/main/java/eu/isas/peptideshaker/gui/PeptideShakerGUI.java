@@ -394,10 +394,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Boolean indicating whether the news feed shall be displayed.
      */
     private boolean showNewsFeed = false;
-    /**
-     * Back-up of the ordering keys for self updating tables.
-     */
-    private HashMap<String, List<? extends RowSorter.SortKey>> orderingKeys = new HashMap<String, List<? extends RowSorter.SortKey>>();
 
     /**
      * The main method used to start PeptideShaker.
@@ -4325,6 +4321,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void catchException(Exception e) {
         exceptionHandler.catchException(e);
     }
+    
+    /**
+     * Returns the exception handler
+     * @return the exception handler
+     */
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
 
     /**
      * Closes the frame by first checking if the project ought to be saved.
@@ -6713,77 +6717,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }.start();
                 }
             }
-        }
-    }
-
-    /**
-     * Updates the ordering in a self updating table. If data is not missing a
-     * progress bar will appear during the loading.
-     *
-     * @param aTable the table to reorder
-     * @param tableName a string designing this table
-     */
-    public void reoderSelfUpdatingTable(JTable aTable, String tableName) {
-
-        final JTable table = aTable;
-        final SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) aTable.getModel();
-        final RowSorter rowSorter = aTable.getRowSorter();
-        final List<? extends RowSorter.SortKey> newKeys = rowSorter.getSortKeys();
-        final String finalTableName = tableName;
-
-        ArrayList<Integer> columnsToUpdate = new ArrayList<Integer>();
-        for (RowSorter.SortKey key : newKeys) {
-            int column = key.getColumn();
-            if (tableModel.needsUpdate(column, DisplayPreferences.LOADING_MESSAGE)) {
-                columnsToUpdate.add(column);
-            }
-        }
-
-        if (!columnsToUpdate.isEmpty()) {
-
-            final ArrayList<Integer> finalColumnsToUpdate = columnsToUpdate;
-            rowSorter.setSortKeys(orderingKeys.get(tableName));
-
-            progressDialog = new ProgressDialogX(this,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setTitle("Sorting Table. Please Wait...");
-            progressDialog.setIndeterminate(true);
-            progressDialog.setUnstoppable(false);
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-
-            new Thread("SortThread") {
-                @Override
-                public void run() {
-                    try {
-                        tableModel.loadColumnsContent(finalColumnsToUpdate, DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                        if (!progressDialog.isRunCanceled()) {
-                            orderingKeys.put(finalTableName, newKeys);
-                            rowSorter.setSortKeys(newKeys);
-                        }
-                        progressDialog.setRunFinished();
-                        table.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    } catch (Exception ex) {
-                        progressDialog.setRunFinished();
-                        table.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                        catchException(ex);
-                    } finally {
-                        progressDialog.setRunFinished();
-                        table.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    }
-                }
-            }.start();
         }
     }
 
