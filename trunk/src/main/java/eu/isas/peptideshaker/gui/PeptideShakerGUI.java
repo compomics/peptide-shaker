@@ -37,6 +37,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
+import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.io.SerializationUtils;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
@@ -393,6 +394,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Boolean indicating whether the news feed shall be displayed
      */
     private boolean showNewsFeed = false;
+    /**
+     * Back-up of the ordering keys for self updating tables
+     */
+    private HashMap<String, List<? extends RowSorter.SortKey>> orderingKeys = new HashMap<String, List<? extends RowSorter.SortKey>>();
 
     /**
      * The main method used to start PeptideShaker.
@@ -6708,6 +6713,67 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     }.start();
                 }
             }
+        }
+    }
+
+    /**
+     * updates the ordering in a self updating table. If data is missing a progress bar will appear during the loading
+     * @param table the table to reorder
+     * @param tableName a string designing this table
+     */
+    public void reoderSelfUpdatingTable(JTable table, String tableName) {
+
+        final SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) table.getModel();
+        final RowSorter rowSorter = table.getRowSorter();
+        final List<? extends RowSorter.SortKey> newKeys = rowSorter.getSortKeys();
+        final String finalTableName = tableName;
+
+        ArrayList<Integer> columnsToUpdate = new ArrayList<Integer>();
+        for (RowSorter.SortKey key : newKeys) {
+            int column = key.getColumn();
+            if (tableModel.needsUpdate(column, DisplayPreferences.LOADING_MESSAGE)) {
+                columnsToUpdate.add(column);
+            }
+        }
+
+        if (!columnsToUpdate.isEmpty()) {
+
+            final ArrayList<Integer> finalColumnsToUpdate = columnsToUpdate;
+            rowSorter.setSortKeys(orderingKeys.get(tableName));
+
+            progressDialog = new ProgressDialogX(this,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setTitle("Sorting Table. Please Wait...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.setUnstoppable(false);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+
+            new Thread("SortThread") {
+                @Override
+                public void run() {
+                    try {
+                        tableModel.loadColumnsContent(finalColumnsToUpdate, DisplayPreferences.LOADING_MESSAGE, progressDialog);
+                        orderingKeys.put(finalTableName, newKeys);
+                        rowSorter.setSortKeys(newKeys);
+                    } catch (Exception ex) {
+                        catchException(ex);
+                    } finally {
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
         }
     }
 

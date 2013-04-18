@@ -218,76 +218,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             @Override
             public synchronized void sorterChanged(RowSorterEvent e) {
 
-
                 if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                     proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Sorting Table. Please Wait...");
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setUnstoppable(false);
-
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                progressDialog.setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
-                            }
-                        }
-                    }, "ProgressDialog").start();
-
-
-                    new Thread("SortThread") {
-                        @Override
-                        public void run() {
-
-                            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-
-                            try {
-                                tableModel.setSelfUpdating(false);
-
-                                progressDialog.setIndeterminate(false);
-                                progressDialog.setMaxProgressValue(proteinTable.getRowSorter().getSortKeys().size() * tableModel.getRowCount());
-                                progressDialog.setValue(0);
-
-                                for (RowSorter.SortKey key : proteinTable.getRowSorter().getSortKeys()) {
-                                    int column = key.getColumn();
-                                    int tempo = 50;
-                                    for (int row = 0; row < tableModel.getRowCount(); row++) {
-                                        Object cellContent = tableModel.getValueAt(row, column);
-                                        boolean first = true;
-                                        while (cellContent instanceof String && cellContent.equals(DisplayPreferences.LOADING_MESSAGE)) {
-                                            wait(tempo);
-                                            cellContent = tableModel.getValueAt(row, column);
-                                            if (progressDialog.isRunCanceled()) {
-                                                proteinTable.getRowSorter().setSortKeys(null);
-                                                return;
-                                            }
-                                            if (first) {
-                                                tempo = Math.max(20, tempo - tempo / 2);
-                                                first = false;
-                                            } else {
-                                                tempo = Math.min(1000, tempo + tempo / 2);
-                                            }
-                                        }
-                                        progressDialog.increaseProgressValue();
-                                    }
-                                }
-                            } catch (Exception ex) {
-                                peptideShakerGUI.catchException(ex);
-                            } finally {
-                                tableModel.setSelfUpdating(true);
-                                progressDialog.dispose();
-                            }
-                        }
-                    }.start();
+                    peptideShakerGUI.reoderSelfUpdatingTable(proteinTable, "OverviewProteinTable");
 
                 } else if (e.getType() == RowSorterEvent.Type.SORTED) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -311,71 +247,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Sorting Table. Please Wait...");
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setUnstoppable(false);
-
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                progressDialog.setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
-                            }
-                        }
-                    }, "ProgressDialog").start();
-
-
-
-                    new Thread("SortThread") {
-                        @Override
-                        public void run() {
-
-                            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
-
-                            try {
-                                tableModel.setSelfUpdating(false);
-
-                                progressDialog.setIndeterminate(false);
-                                progressDialog.setMaxProgressValue(peptideTable.getRowSorter().getSortKeys().size() * tableModel.getRowCount());
-                                progressDialog.setValue(0);
-
-                                for (RowSorter.SortKey key : peptideTable.getRowSorter().getSortKeys()) {
-                                    int column = key.getColumn();
-                                    int tempo = 50;
-                                    for (int row = 0; row < tableModel.getRowCount(); row++) {
-                                        Object cellContent = tableModel.getValueAt(row, column);
-                                        boolean first = true;
-                                        while (cellContent instanceof String && cellContent.equals(DisplayPreferences.LOADING_MESSAGE)) {
-                                            wait(tempo);
-                                            cellContent = tableModel.getValueAt(row, column);
-                                            if (progressDialog.isRunCanceled()) {
-                                                peptideTable.getRowSorter().setSortKeys(null);
-                                                return;
-                                            }
-                                            if (first) {
-                                                tempo = Math.max(20, tempo - tempo / 2);
-                                                first = false;
-                                            } else {
-                                                tempo = Math.min(1000, tempo + tempo / 2);
-                                            }
-                                        }
-                                        progressDialog.increaseProgressValue();
-                                    }
-                                }
-                            } catch (Exception ex) {
-                                peptideShakerGUI.catchException(ex);
-                            } finally {
-                                tableModel.setSelfUpdating(true);
-                                progressDialog.dispose();
-                            }
-                        }
-                    }.start();
+                    peptideShakerGUI.reoderSelfUpdatingTable(peptideTable, "OverviewPeptideTable");
 
                 } else if (e.getType() == RowSorterEvent.Type.SORTED) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -399,70 +271,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Sorting Table. Please Wait...");
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setUnstoppable(false);
-
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                progressDialog.setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
-                            }
-                        }
-                    }, "ProgressDialog").start();
-
-
-                    new Thread("SortThread") {
-                        @Override
-                        public void run() {
-
-                            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
-
-                            try {
-                                tableModel.setSelfUpdating(false);
-
-                                progressDialog.setIndeterminate(false);
-                                progressDialog.setMaxProgressValue(psmTable.getRowSorter().getSortKeys().size() * tableModel.getRowCount());
-                                progressDialog.setValue(0);
-
-                                for (RowSorter.SortKey key : psmTable.getRowSorter().getSortKeys()) {
-                                    int column = key.getColumn();
-                                    int tempo = 50;
-                                    for (int row = 0; row < tableModel.getRowCount(); row++) {
-                                        Object cellContent = tableModel.getValueAt(row, column);
-                                        boolean first = true;
-                                        while (cellContent instanceof String && cellContent.equals(DisplayPreferences.LOADING_MESSAGE)) {
-                                            wait(tempo);
-                                            cellContent = tableModel.getValueAt(row, column);
-                                            if (progressDialog.isRunCanceled()) {
-                                                psmTable.getRowSorter().setSortKeys(null);
-                                                return;
-                                            }
-                                            if (first) {
-                                                tempo = Math.max(20, tempo - tempo / 2);
-                                                first = false;
-                                            } else {
-                                                tempo = Math.min(1000, tempo + tempo / 2);
-                                            }
-                                        }
-                                        progressDialog.increaseProgressValue();
-                                    }
-                                }
-                            } catch (Exception ex) {
-                                peptideShakerGUI.catchException(ex);
-                            } finally {
-                                tableModel.setSelfUpdating(true);
-                                progressDialog.dispose();
-                            }
-                        }
-                    }.start();
+                    peptideShakerGUI.reoderSelfUpdatingTable(proteinTable, "OverviewPsmTable");
 
                 } else if (e.getType() == RowSorterEvent.Type.SORTED) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -5923,4 +5732,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         }
     }
+    
+    
 }
