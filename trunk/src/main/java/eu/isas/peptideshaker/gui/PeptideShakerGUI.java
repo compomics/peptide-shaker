@@ -391,11 +391,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public static String TITLED_BORDER_HORIZONTAL_PADDING = "";
     /**
-     * Boolean indicating whether the news feed shall be displayed
+     * Boolean indicating whether the news feed shall be displayed.
      */
     private boolean showNewsFeed = false;
     /**
-     * Back-up of the ordering keys for self updating tables
+     * Back-up of the ordering keys for self updating tables.
      */
     private HashMap<String, List<? extends RowSorter.SortKey>> orderingKeys = new HashMap<String, List<? extends RowSorter.SortKey>>();
 
@@ -3073,7 +3073,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
                     }
                 }
-                System.out.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date() 
+                System.out.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
                         + ": PeptideShaker version " + getVersion() + "." + System.getProperty("line.separator"));
                 System.out.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + "." + System.getProperty("line.separator"));
                 System.out.println("Java version: " + System.getProperty("java.version") + "." + System.getProperty("line.separator"));
@@ -6717,7 +6717,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * updates the ordering in a self updating table. If data is missing a progress bar will appear during the loading
+     * Updates the ordering in a self updating table. If data is not missing a
+     * progress bar will appear during the loading.
+     *
      * @param table the table to reorder
      * @param tableName a string designing this table
      */
