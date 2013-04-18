@@ -6767,12 +6767,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 public void run() {
                     try {
                         tableModel.loadColumnsContent(finalColumnsToUpdate, DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                        orderingKeys.put(finalTableName, newKeys);
-                        rowSorter.setSortKeys(newKeys);
+                        if (!progressDialog.isRunCanceled()) {
+                            orderingKeys.put(finalTableName, newKeys);
+                            rowSorter.setSortKeys(newKeys);
+                        }
                     } catch (Exception ex) {
+                        progressDialog.setRunFinished();
                         catchException(ex);
                     } finally {
-                        progressDialog.dispose();
+                        progressDialog.setRunFinished();
                     }
                 }
             }.start();
