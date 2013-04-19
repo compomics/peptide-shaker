@@ -180,7 +180,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private double lastMzMaximum = 0;
     /**
-     * A table cacher used to cache data for the self updating tables
+     * A table cacher used to cache data for the self updating tables.
      */
     private TableCacher tableCacher;
 

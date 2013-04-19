@@ -68,6 +68,7 @@ import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
 import eu.isas.peptideshaker.recalibration.FractionError;
@@ -760,8 +761,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         searchGuiPreferencesJMenuItem = new javax.swing.JMenuItem();
         reporterPreferencesJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
-        identificationFeaturesMenu = new javax.swing.JMenuItem();
-        followUpAnalysisMenu = new javax.swing.JMenuItem();
+        identificationFeaturesMenuItem = new javax.swing.JMenuItem();
+        followUpAnalysisMenuItem = new javax.swing.JMenuItem();
+        jSeparator10 = new javax.swing.JPopupMenu.Separator();
+        exportProjectMenuItem = new javax.swing.JMenuItem();
+        exportPrideMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1491,25 +1495,48 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         exportJMenu.setMnemonic('x');
         exportJMenu.setText("Export");
 
-        identificationFeaturesMenu.setMnemonic('I');
-        identificationFeaturesMenu.setText("Identification Features");
-        identificationFeaturesMenu.setEnabled(false);
-        identificationFeaturesMenu.addActionListener(new java.awt.event.ActionListener() {
+        identificationFeaturesMenuItem.setMnemonic('I');
+        identificationFeaturesMenuItem.setText("Identification Features");
+        identificationFeaturesMenuItem.setEnabled(false);
+        identificationFeaturesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                identificationFeaturesMenuActionPerformed(evt);
+                identificationFeaturesMenuItemActionPerformed(evt);
             }
         });
-        exportJMenu.add(identificationFeaturesMenu);
+        exportJMenu.add(identificationFeaturesMenuItem);
 
-        followUpAnalysisMenu.setMnemonic('F');
-        followUpAnalysisMenu.setText("Follow Up Analysis");
-        followUpAnalysisMenu.setEnabled(false);
-        followUpAnalysisMenu.addActionListener(new java.awt.event.ActionListener() {
+        followUpAnalysisMenuItem.setMnemonic('F');
+        followUpAnalysisMenuItem.setText("Follow Up Analysis");
+        followUpAnalysisMenuItem.setEnabled(false);
+        followUpAnalysisMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                followUpAnalysisMenuActionPerformed(evt);
+                followUpAnalysisMenuItemActionPerformed(evt);
             }
         });
-        exportJMenu.add(followUpAnalysisMenu);
+        exportJMenu.add(followUpAnalysisMenuItem);
+        exportJMenu.add(jSeparator10);
+
+        exportProjectMenuItem.setMnemonic('E');
+        exportProjectMenuItem.setText("PeptideShaker Project");
+        exportProjectMenuItem.setToolTipText("Export the complete project as a zip file");
+        exportProjectMenuItem.setEnabled(false);
+        exportProjectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportProjectMenuItemActionPerformed(evt);
+            }
+        });
+        exportJMenu.add(exportProjectMenuItem);
+
+        exportPrideMenuItem.setMnemonic('P');
+        exportPrideMenuItem.setText("PRIDE XML");
+        exportPrideMenuItem.setToolTipText("Export the project as PRIDE XML");
+        exportPrideMenuItem.setEnabled(false);
+        exportPrideMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPrideMenuItemActionPerformed(evt);
+            }
+        });
+        exportJMenu.add(exportPrideMenuItem);
 
         menuBar.add(exportJMenu);
 
@@ -2185,18 +2212,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      *
      * @param evt
      */
-    private void identificationFeaturesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationFeaturesMenuActionPerformed
+    private void identificationFeaturesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationFeaturesMenuItemActionPerformed
         new FeaturesPreferencesDialog(this);
-    }//GEN-LAST:event_identificationFeaturesMenuActionPerformed
+    }//GEN-LAST:event_identificationFeaturesMenuItemActionPerformed
 
     /**
      * Open the follow up export dialog.
      *
      * @param evt
      */
-    private void followUpAnalysisMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUpAnalysisMenuActionPerformed
+    private void followUpAnalysisMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUpAnalysisMenuItemActionPerformed
         new FollowupPreferencesDialog(this);
-    }//GEN-LAST:event_followUpAnalysisMenuActionPerformed
+    }//GEN-LAST:event_followUpAnalysisMenuItemActionPerformed
 
     /**
      * @see #updateAnnotationPreferences()
@@ -2807,6 +2834,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_exportSpectrumAndPlotsGraphicsJMenuItemActionPerformed
 
     /**
+     * Export project to PRIDE XML.
+     *
+     * @param evt
+     */
+    private void exportPrideMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideMenuItemActionPerformed
+        new PrideExportDialog(this, true);
+    }//GEN-LAST:event_exportPrideMenuItemActionPerformed
+
+    /**
+     * Export project as a zip file.
+     *
+     * @param evt
+     */
+    private void exportProjectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProjectMenuItemActionPerformed
+        exportProjectAsZip();
+    }//GEN-LAST:event_exportProjectMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2855,8 +2900,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             jumpToPanel.setEnabled(true);
             saveMenuItem.setEnabled(true);
             saveAsMenuItem.setEnabled(true);
-            identificationFeaturesMenu.setEnabled(true);
-            followUpAnalysisMenu.setEnabled(true);
+            identificationFeaturesMenuItem.setEnabled(true);
+            followUpAnalysisMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
             fractionDetailsJMenuItem.setEnabled(true);
             preferencesMenuItem.setEnabled(true);
@@ -2872,6 +2917,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             scoresJCheckBoxMenuItem.setEnabled(true);
             sparklinesJCheckBoxMenuItem.setEnabled(true);
             quantifyMenuItem.setEnabled(true);
+            exportPrideMenuItem.setEnabled(true);
+            exportProjectMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
             allTabsJTabbedPane.setEnabledAt(2, identification.getSpectrumFiles().size() > 1);
@@ -2942,6 +2989,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem exportIntensityHistogramGraphicsJMenuItem;
     private javax.swing.JMenu exportJMenu;
     private javax.swing.JMenuItem exportMassErrorPlotGraphicsJMenuItem;
+    private javax.swing.JMenuItem exportPrideMenuItem;
+    private javax.swing.JMenuItem exportProjectMenuItem;
     private javax.swing.JMenuItem exportSequenceFragmentationGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSpectrumAndPlotsGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSpectrumGraphicsJMenuItem;
@@ -2951,7 +3000,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JCheckBoxMenuItem fixedModsJCheckBoxMenuItem;
-    private javax.swing.JMenuItem followUpAnalysisMenu;
+    private javax.swing.JMenuItem followUpAnalysisMenuItem;
     private javax.swing.JCheckBoxMenuItem forwardIonsDeNovoCheckBoxMenuItem;
     private javax.swing.JMenuItem fractionDetailsJMenuItem;
     private javax.swing.JMenuItem gettingStartedMenuItem;
@@ -2961,13 +3010,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
-    private javax.swing.JMenuItem identificationFeaturesMenu;
+    private javax.swing.JMenuItem identificationFeaturesMenuItem;
     private javax.swing.JCheckBoxMenuItem immoniumIonsCheckMenu;
     private javax.swing.JMenuItem importFilterMenu;
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
@@ -4321,9 +4371,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     public void catchException(Exception e) {
         exceptionHandler.catchException(e);
     }
-    
+
     /**
-     * Returns the exception handler
+     * Returns the exception handler.
+     *
      * @return the exception handler
      */
     public ExceptionHandler getExceptionHandler() {

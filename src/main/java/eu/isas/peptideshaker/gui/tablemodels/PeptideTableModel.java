@@ -299,27 +299,27 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         ArrayList<String> reversedList = new ArrayList(peptideKeys);
         Collections.reverse(reversedList);
         try {
-        if (column == 1
-            || column == 2
+            if (column == 1
+                    || column == 2
                     || column == 6
                     || column == 7) {
-        identification.loadPeptideMatchParameters(reversedList, new PSParameter(), null);
-        } else if (column == 3
-                || column == 4
-                || column == 5) {
-            identification.loadPeptideMatches(reversedList, null);
-        }
-        for (String peptideKey : reversedList) {
-            if (column == 5) {
-                peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+                identification.loadPeptideMatchParameters(reversedList, new PSParameter(), null);
+            } else if (column == 3
+                    || column == 4
+                    || column == 5) {
+                identification.loadPeptideMatches(reversedList, null);
             }
-            if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressValue();
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+            for (String peptideKey : reversedList) {
+                if (column == 5) {
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
+                }
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
                 }
             }
-        }
         } catch (Exception e) {
             catchException(e);
         }
