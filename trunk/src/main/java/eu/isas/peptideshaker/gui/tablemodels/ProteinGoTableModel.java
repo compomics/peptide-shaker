@@ -41,7 +41,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
      * @param peptideShakerGUI instance of the main GUI class
      * @param proteins
      */
-    public ProteinGoTableModel(PeptideShakerGUI peptideShakerGUI, HashSet<String> proteins) {
+    public ProteinGoTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
         setUpTableModel(peptideShakerGUI, proteins);
     }
 
@@ -52,7 +52,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
      * @param peptideShakerGUI
      * @param proteins
      */
-    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, HashSet<String> proteins) {
+    public void updateDataModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
         setUpTableModel(peptideShakerGUI, proteins);
     }
 
@@ -61,11 +61,11 @@ public class ProteinGoTableModel extends DefaultTableModel {
      *
      * @param peptideShakerGUI
      */
-    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI, HashSet<String> proteins) {
+    private void setUpTableModel(PeptideShakerGUI peptideShakerGUI, ArrayList<String> proteins) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         if (identification != null) {
-            this.proteins = new ArrayList<String>(proteins);
+            this.proteins = proteins;
         }
     }
 
