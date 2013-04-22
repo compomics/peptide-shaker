@@ -528,7 +528,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                             goProteinCountLabel.setText("[GO Proteins: Ensembl: " + goFactory.getNumberOfProteins()
                                     + ", Project: " + totalNumberOfGoMappedProteinsInProject + "]");
 
-                            for (String goTerm : goFactory.getTermedMapped()) {
+                            ArrayList<String> termsMapped = goFactory.getTermsMapped();
+                            Collections.shuffle(termsMapped);
+                            for (String goTerm : termsMapped) {
 
                                 if (progressDialog.isRunCanceled()) {
                                     break;
@@ -2629,17 +2631,29 @@ public class GOEAPanel extends javax.swing.JPanel {
                         selectedGoAccession = selectedGoAccession.substring(selectedGoAccession.lastIndexOf("GTerm?id=") + "GTerm?id=".length(), selectedGoAccession.lastIndexOf("\"><font"));
 
                         // get the list of matching proteins
-                        ArrayList<String> proteins = goFactory.getAccessions(selectedGoAccession);
-
-                        if (proteins == null) {
-                            proteins = new ArrayList<String>();
+                        ArrayList<String> goProteins = goFactory.getAccessions(selectedGoAccession);
+                        ArrayList<String> proteinKeys = new ArrayList<String>();
+                        Identification identification = peptideShakerGUI.getIdentification();
+                        HashMap<String, ArrayList<String>> proteinMap = identification.getProteinMap();
+                        for (String goProtein : goProteins) {
+                            ArrayList<String> tempKeys = proteinMap.get(goProtein);
+                            if (tempKeys != null) {
+                                for (String proteinKey : tempKeys) {
+                                    if (!proteinKeys.contains(proteinKey)) {
+                                        proteinKeys.add(proteinKey);
+                                    }
+                                }
+                            }
                         }
+
+                        identification.loadProteinMatches(proteinKeys, null);
+                        identification.loadProteinMatchParameters(proteinKeys, new PSParameter(), null);
 
                         // update the table
                         if (proteinTable.getModel() instanceof ProteinGoTableModel) {
-                            ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteins);
+                            ((ProteinGoTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI, proteinKeys);
                         } else {
-                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI, proteins);
+                            ProteinGoTableModel proteinTableModel = new ProteinGoTableModel(peptideShakerGUI, proteinKeys);
                             proteinTable.setModel(proteinTableModel);
                         }
 

@@ -130,9 +130,11 @@ public class ProteinGoTableModel extends DefaultTableModel {
                 case 0:
                     return row + 1;
                 case 1:
-                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(proteinKey);
-                case 2:
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    String mainMatch = proteinMatch.getMainMatch();
+                    return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(mainMatch);
+                case 2:
+                    proteinMatch = identification.getProteinMatch(proteinKey);
                     String description = "";
                     try {
                         description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
