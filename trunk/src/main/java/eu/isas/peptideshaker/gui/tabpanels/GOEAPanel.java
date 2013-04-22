@@ -472,7 +472,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                         try {
 
-
                             progressDialog.setTitle("Importing GO (1/3). Please Wait...");
                             goFactory.initialize(goMappingsFile, progressDialog);
 
@@ -1993,7 +1992,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             }
 
                             boolean processCancelled = progressDialog.isRunCanceled();
-                            progressDialog.dispose();
+                            progressDialog.setRunFinished();
 
                             if (!processCancelled) {
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "GO mappings downloaded.\nRe-select to use.", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
@@ -2031,17 +2030,24 @@ public class GOEAPanel extends javax.swing.JPanel {
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
         selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
         selectedSpecies = speciesMap.get(selectedSpecies);
+        goFactory.clearFactory();
 
-        if (new File(mappingsFolderPath + selectedSpecies).exists()) {
-            boolean delete = new File(mappingsFolderPath + selectedSpecies).delete();
+        try {
+            goFactory.close();
 
-            if (!delete) {
-                JOptionPane.showMessageDialog(this, "Failed to delete \'" + mappingsFolderPath + selectedSpecies + "\'.\n"
-                        + "Please delete the file manually, reselect the species in the list and click the Download button instead.", "Delete Failed",
-                        JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                downloadButtonActionPerformed(null);
+            if (new File(mappingsFolderPath + selectedSpecies).exists()) {
+                boolean delete = new File(mappingsFolderPath + selectedSpecies).delete();
+
+                if (!delete) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + mappingsFolderPath + selectedSpecies + "\'.\n"
+                            + "Please delete the file manually, reselect the species in the list and click the Download button instead.", "Delete Failed",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    downloadButtonActionPerformed(null);
+                }
             }
+        } catch (IOException ex) {
+            peptideShakerGUI.catchException(ex);
         }
     }//GEN-LAST:event_updateButtonActionPerformed
 
@@ -2455,8 +2461,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
 
-        if (!selectedSpecies.equalsIgnoreCase(speciesSeparator)
-                && !selectedSpecies.equalsIgnoreCase("-- Select Species --")) {
+        if (!selectedSpecies.equalsIgnoreCase(speciesSeparator) && !selectedSpecies.equalsIgnoreCase("-- Select Species --")) {
 
             selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
             String databaseName = speciesMap.get(selectedSpecies);
