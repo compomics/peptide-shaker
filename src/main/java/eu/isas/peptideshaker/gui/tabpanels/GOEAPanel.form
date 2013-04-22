@@ -444,7 +444,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="goPlotsTabbedPane" max="32767" attributes="0"/>
+                      <Component id="goPlotsTabbedPane" pref="325" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -483,7 +483,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="proteinsScrollPane" pref="282" max="32767" attributes="0"/>
+                              <Component id="proteinsScrollPane" pref="286" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
