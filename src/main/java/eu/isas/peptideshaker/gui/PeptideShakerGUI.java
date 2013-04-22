@@ -21,6 +21,7 @@ import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.Ion.IonType;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
@@ -3840,6 +3841,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
             catchException(e);
         }
+        try {
+            GOFactory.getInstance().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
 
         try {
             spectrumFactory.clearFactory();
@@ -3850,6 +3857,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         try {
             sequenceFactory.clearFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
+
+        try {
+            GOFactory.getInstance().clearFactory();
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
@@ -4456,6 +4470,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     if (!progressDialog.isRunCanceled()) {
                         spectrumFactory.closeFiles();
                         sequenceFactory.closeFile();
+                        GOFactory.getInstance().close();
                         saveUserPreferences();
                     }
 
@@ -4529,6 +4544,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 try {
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
+                        GOFactory.getInstance().close();
                     saveUserPreferences();
                     PeptideShakerGUI.this.clearData(true);
                 } catch (Exception e) {
