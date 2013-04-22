@@ -18,7 +18,6 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
-import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -37,9 +36,7 @@ import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
@@ -67,7 +64,6 @@ import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.Layer;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * The PeptideShaker GO Enrichment Analysis tab.
@@ -714,10 +710,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, true);
                             }
 
-                        } catch (Exception e) {
-                            peptideShakerGUI.catchException(e);
-                        } finally {
                             progressDialog.setRunFinished();
+
+                        } catch (Exception e) {
+                            progressDialog.setRunFinished();
+                            peptideShakerGUI.catchException(e);
                         }
                     }
                 }.start();
@@ -2676,10 +2673,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                             peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
                         }
 
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                    } finally {
                         progressDialog.setRunFinished();
+
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        peptideShakerGUI.catchException(e);
                     }
                 }
             }.start();
