@@ -259,8 +259,10 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     protected int loadDataForRows(int start, int end, boolean interrupted) {
         ArrayList<String> tempKeys = new ArrayList<String>();
         for (int i = start; i <= end; i++) {
-            String peptideKey = peptideKeys.get(i);
-            tempKeys.add(peptideKey);
+            if (i < peptideKeys.size()) {
+                String peptideKey = peptideKeys.get(i);
+                tempKeys.add(peptideKey);
+            }
         }
         try {
             loadPeptideObjects(tempKeys);

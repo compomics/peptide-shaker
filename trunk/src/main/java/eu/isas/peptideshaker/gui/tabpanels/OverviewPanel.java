@@ -19,7 +19,6 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
-import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.gui.tablemodels.TableCacher;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -224,11 +223,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             @Override
             public synchronized void sorterChanged(RowSorterEvent e) {
 
-                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED && !tableCacher.isCaching()) {
+
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                     progressDialog = new ProgressDialogX(peptideShakerGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -237,15 +237,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setTitle("Sorting Table. Please Wait...");
                     progressDialog.setIndeterminate(true);
                     progressDialog.setUnstoppable(false);
+
                     tableCacher.cacheForSorting(proteinTable, "proteinTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((ProteinTableModel) proteinTable.getModel()).useDB(true);
 
                 } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
+
+                    // change the peptide shaker icon to the normal version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
                     ((ProteinTableModel) proteinTable.getModel()).useDB(false);
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }
         });
@@ -4213,7 +4216,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void updatePtmCoveragePlot(String proteinAccession) {
 
         try {
-            String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+            String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow())); // @TODO: can result in an IndexOutOfBoundsException
 
             // get the ptms
             ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<JSparklinesDataSeries>();
@@ -5604,7 +5607,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>();
         try {
-            int proteinIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow());
+            int proteinIndex = proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()); // @TODO: can result in an IndexOutOfBoundsException
             String proteinMatchKey = proteinKeys.get(proteinIndex);
             ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinMatchKey);
 

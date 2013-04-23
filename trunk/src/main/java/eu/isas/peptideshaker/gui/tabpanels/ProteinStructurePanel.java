@@ -1489,7 +1489,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         }
 
         int row = proteinTable.getSelectedRow();
-        int proteinIndex = proteinTable.convertRowIndexToModel(row);
+        int proteinIndex = proteinTable.convertRowIndexToModel(row); // @TODO: can result in an IndexOutOfBoundsException
         int column = proteinTable.getSelectedColumn();
 
         if (evt == null || (evt.getButton() == MouseEvent.BUTTON1 && (proteinIndex != -1 && column != -1))) {
