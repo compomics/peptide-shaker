@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.export.section_generators;
+package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
@@ -90,11 +91,12 @@ public class PsmSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, ProgressDialogX progressDialog) throws IOException, IllegalArgumentException, SQLException,
+            SearchParameters searchParameters, ArrayList<String> keys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Exporting PSM Details. Please Wait...");
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        }
 
         if (header) {
             if (indexes) {
@@ -137,15 +139,22 @@ public class PsmSection {
             totalSize += psmMap.get(spectrumFile).size();
         }
 
-        progressDialog.setIndeterminate(false);
-        progressDialog.setValue(0);
-        progressDialog.setMaxProgressValue(totalSize);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setMaxSecondaryProgressValue(totalSize);
+            waitingHandler.setSecondaryProgressValue(0);
+        }
 
         for (String spectrumFile : psmMap.keySet()) {
 
             for (String spectrumKey : psmMap.get(spectrumFile)) {
 
-                progressDialog.increaseProgressValue();
+                if (waitingHandler != null) {
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                    waitingHandler.increaseSecondaryProgressValue();
+                }
 
                 if (indexes) {
                     writer.write(line + separator);
@@ -162,7 +171,8 @@ public class PsmSection {
                             ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
 
-                            boolean first = true, first2;
+                            boolean first = true,
+                             first2;
 
                             for (String mod : modList) {
                                 if (first) {

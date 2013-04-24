@@ -4455,6 +4455,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             @Override
             public void run() {
                 try {
+
+                    overviewPanel.deactivateSelfUpdatingTableModels();
+
                     File serializationFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
 
                     if (serializationFolder.exists()) {
@@ -4474,10 +4477,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         saveUserPreferences();
                     }
 
-                    // close the progress dialog
-                    if (!progressDialog.isRunCanceled()) {
-                        progressDialog.setRunFinished();
-                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    catchException(e);
+                } finally {
+
+                    progressDialog.setRunFinished();
 
                     // hide the gui
                     finalRef.setVisible(false);
@@ -4487,10 +4493,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                     // close the jvm
                     System.exit(0);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    catchException(e);
                 }
             }
         });
@@ -4544,7 +4546,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 try {
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
-                        GOFactory.getInstance().close();
+                    GOFactory.getInstance().close();
                     saveUserPreferences();
                     PeptideShakerGUI.this.clearData(true);
                 } catch (Exception e) {

@@ -19,6 +19,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
+import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.gui.tablemodels.TableCacher;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
@@ -5767,5 +5768,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
             }
         }
+    }
+    
+    /**
+     * Deactivates the self updating tables
+     */
+    public void deactivateSelfUpdatingTableModels() {
+        ((SelfUpdatingTableModel) proteinTable.getModel()).setSelfUpdating(false);
+        ((SelfUpdatingTableModel) peptideTable.getModel()).setSelfUpdating(false);
+        ((SelfUpdatingTableModel) psmTable.getModel()).setSelfUpdating(false);
     }
 }

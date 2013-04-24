@@ -2189,6 +2189,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         PSMaps pSMaps = new PSMaps();
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                        progressDialog.setTitle("Exporting. Please wait...");
                         ExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),
@@ -2196,7 +2197,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                 null, null, null, null, peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
                                 peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getIdFilter(),
                                 peptideShakerGUI.getPtmScoringPreferences(), peptideShakerGUI.getSpectrumCountingPreferences(), pSMaps, 
-                                progressDialog, peptideShakerGUI.getSearchParameters().getModificationProfile());
+                                peptideShakerGUI.getSearchParameters().getModificationProfile(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

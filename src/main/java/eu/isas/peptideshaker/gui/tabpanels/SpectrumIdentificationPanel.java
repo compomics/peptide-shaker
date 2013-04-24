@@ -53,7 +53,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
-import eu.isas.peptideshaker.export.section_generators.PeptideSection;
+import eu.isas.peptideshaker.export.sections.PeptideSection;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 
 /**

@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.export.section_generators;
+package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -9,6 +9,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.export.ExportFeature;
@@ -98,11 +99,12 @@ public class PeptideSection {
      * @throws InterruptedException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, String proteinMatchKey, int nSurroundingAA, ProgressDialogX progressDialog)
+            SearchParameters searchParameters, ArrayList<String> keys, String proteinMatchKey, int nSurroundingAA, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
-        progressDialog.setTitle("Exporting Peptide Details. Please Wait...");
-        progressDialog.setIndeterminate(true);
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        }
 
         if (header) {
             if (indexes) {
@@ -134,13 +136,20 @@ public class PeptideSection {
         String matchKey = "", parameterKey = "";
         int line = 1;
 
-        progressDialog.setIndeterminate(false);
-        progressDialog.setValue(0);
-        progressDialog.setMaxProgressValue(keys.size());
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setMaxSecondaryProgressValue(keys.size());
+            waitingHandler.setSecondaryProgressValue(0);
+        }
 
         for (String peptideKey : keys) {
 
-            progressDialog.increaseProgressValue();
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                waitingHandler.increaseSecondaryProgressValue();
+            }
 
             if (indexes) {
                 writer.write(line + separator);
@@ -393,10 +402,10 @@ public class PeptideSection {
                 modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
-        
+
         boolean first = true, first2;
         ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
-        
+
         Collections.sort(mods);
         for (String mod : mods) {
             if (first) {

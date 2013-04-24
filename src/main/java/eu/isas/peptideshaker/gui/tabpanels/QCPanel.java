@@ -1213,7 +1213,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!progressDialog.isRunCanceled()) {
 
-                        JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Amount of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
+                        JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Number of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
 
                         StackedBarRenderer renderer = new StackedBarRenderer();
                         renderer.setShadowVisible(false);
@@ -1366,7 +1366,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!progressDialog.isRunCanceled()) {
 
-                        JFreeChart peptideChart = ChartFactory.createStackedBarChart(null, null, "Amount of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
+                        JFreeChart peptideChart = ChartFactory.createStackedBarChart(null, null, "Number of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
 
                         StackedBarRenderer renderer = new StackedBarRenderer();
                         renderer.setShadowVisible(false);
@@ -1491,7 +1491,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!progressDialog.isRunCanceled()) {
 
-                        JFreeChart psmChart = ChartFactory.createStackedBarChart(null, null, "Amount of PSMs", dataset, PlotOrientation.VERTICAL, true, true, true);
+                        JFreeChart psmChart = ChartFactory.createStackedBarChart(null, null, "Number of PSMs", dataset, PlotOrientation.VERTICAL, true, true, true);
 
                         StackedBarRenderer renderer = new StackedBarRenderer();
                         renderer.setShadowVisible(false);

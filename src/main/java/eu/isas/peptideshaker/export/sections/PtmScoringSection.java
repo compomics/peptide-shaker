@@ -1,19 +1,20 @@
-package eu.isas.peptideshaker.export.section_generators;
+package eu.isas.peptideshaker.export.sections;
 
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
-import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeatures;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeatures;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class outputs the spectrum counting related export features.
+ * This class outputs the project related export features.
  *
  * @author Marc Vaudel
  */
-public class SpectrumCountingSection {
+public class PtmScoringSection {
 
     /**
      * The features to export.
@@ -45,7 +46,7 @@ public class SpectrumCountingSection {
      * @param header
      * @param writer
      */
-    public SpectrumCountingSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+    public PtmScoringSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.exportFeatures = exportFeatures;
         this.separator = separator;
         this.indexes = indexes;
@@ -56,17 +57,17 @@ public class SpectrumCountingSection {
     /**
      * Writes the desired section.
      *
-     * @param spectrumCountingPreferences the spectrum counting preferences of
-     * this project
+     * @param ptmcoringPreferences the PTM scoring preferences of this project
      * @param progressDialog the progress dialog
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(SpectrumCountingPreferences spectrumCountingPreferences, ProgressDialogX progressDialog) throws IOException {
-        
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Exporting Spectrum Counting Details. Please Wait...");
-        
+    public void writeSection(PTMScoringPreferences ptmcoringPreferences, WaitingHandler waitingHandler) throws IOException {
+
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        }
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -74,30 +75,28 @@ public class SpectrumCountingSection {
             writer.write("Parameter" + separator + "Value");
             writer.newLine();
         }
-        
+
         int line = 1;
-        
+
         for (ExportFeature exportFeature : exportFeatures) {
             if (indexes) {
                 writer.write(line + separator);
             }
             writer.write(exportFeature.getTitle() + separator);
-            SpectrumCountingFeatures spectrumCountingFeatures = (SpectrumCountingFeatures) exportFeature;
-            switch (spectrumCountingFeatures) {
-                case method:
-                    switch (spectrumCountingPreferences.getSelectedMethod()) {
-                        case EMPAI:
-                            writer.write("emPAI");
-                            break;
-                        case NSAF:
-                            writer.write("NSAF");
-                            break;
-                        default:
-                            writer.write("unknown");
+            PtmScoringFeatures ptmScoringFeatures = (PtmScoringFeatures) exportFeature;
+            switch (ptmScoringFeatures) {
+                case aScore:
+                    if (ptmcoringPreferences.aScoreCalculation()) {
+                        writer.write("Yes");
+                    } else {
+                        writer.write("No");
                     }
                     break;
-                case validated:
-                    if (spectrumCountingPreferences.isValidatedHits()) {
+                case flr:
+                    writer.write(ptmcoringPreferences.getFlrThreshold() + "");
+                    break;
+                case neutral_losses:
+                    if (ptmcoringPreferences.isaScoreNeutralLosses()) {
                         writer.write("Yes");
                     } else {
                         writer.write("No");
