@@ -1,7 +1,8 @@
-package eu.isas.peptideshaker.export.section_generators;
+package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
@@ -63,11 +64,12 @@ public class AnnotationSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(AnnotationPreferences annotationPreferences, ProgressDialogX progressDialog) throws IOException {
-        
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Exporting Annotation Preferences. Please Wait...");
-        
+    public void writeSection(AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException {
+
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        }
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -76,16 +78,16 @@ public class AnnotationSection {
             writer.newLine();
         }
         int line = 1;
-        
+
         for (ExportFeature exportFeature : exportFeatures) {
-            
+
             if (indexes) {
                 writer.write(line + separator);
             }
-            
+
             writer.write(exportFeature.getTitle() + separator);
             AnnotationFeatures annotationFeature = (AnnotationFeatures) exportFeature;
-            
+
             switch (annotationFeature) {
                 case automatic_annotation:
                     if (annotationPreferences.useAutomaticAnnotation()) {

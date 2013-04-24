@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -18,16 +19,16 @@ import eu.isas.peptideshaker.export.exportfeatures.PtmScoringFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.SearchFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.SpectrumCountingFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures;
-import eu.isas.peptideshaker.export.section_generators.AnnotationSection;
-import eu.isas.peptideshaker.export.section_generators.InputFilterSection;
-import eu.isas.peptideshaker.export.section_generators.PeptideSection;
-import eu.isas.peptideshaker.export.section_generators.ProjectSection;
-import eu.isas.peptideshaker.export.section_generators.ProteinSection;
-import eu.isas.peptideshaker.export.section_generators.PsmSection;
-import eu.isas.peptideshaker.export.section_generators.PtmScoringSection;
-import eu.isas.peptideshaker.export.section_generators.SearchParametersSection;
-import eu.isas.peptideshaker.export.section_generators.SpectrumCountingSection;
-import eu.isas.peptideshaker.export.section_generators.ValidationSection;
+import eu.isas.peptideshaker.export.sections.AnnotationSection;
+import eu.isas.peptideshaker.export.sections.InputFilterSection;
+import eu.isas.peptideshaker.export.sections.PeptideSection;
+import eu.isas.peptideshaker.export.sections.ProjectSection;
+import eu.isas.peptideshaker.export.sections.ProteinSection;
+import eu.isas.peptideshaker.export.sections.PsmSection;
+import eu.isas.peptideshaker.export.sections.PtmScoringSection;
+import eu.isas.peptideshaker.export.sections.SearchParametersSection;
+import eu.isas.peptideshaker.export.sections.SpectrumCountingSection;
+import eu.isas.peptideshaker.export.sections.ValidationSection;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -217,7 +218,7 @@ public class ExportFactory implements Serializable {
             SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter,
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps,
-            ProgressDialogX progressDialog, ModificationProfile modificationProfile) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
+            ModificationProfile modificationProfile, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
@@ -235,34 +236,34 @@ public class ExportFactory implements Serializable {
             }
             if (sectionName.equals(AnnotationFeatures.type)) {
                 AnnotationSection section = new AnnotationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(annotationPreferences, progressDialog);
+                section.writeSection(annotationPreferences, waitingHandler);
             } else if (sectionName.equals(InputFilterFeatures.type)) {
                 InputFilterSection section = new InputFilterSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(idFilter, progressDialog);
+                section.writeSection(idFilter, waitingHandler);
             } else if (sectionName.equals(PeptideFeatures.type)) {
                 PeptideSection section = new PeptideSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer, modificationProfile);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, proteinMatchKey, nSurroundingAA, progressDialog);
+                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, proteinMatchKey, nSurroundingAA, waitingHandler);
             } else if (sectionName.equals(ProjectFeatures.type)) {
                 ProjectSection section = new ProjectSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(experiment, sample, replicateNumber, projectDetails, progressDialog);
+                section.writeSection(experiment, sample, replicateNumber, projectDetails, waitingHandler);
             } else if (sectionName.equals(ProteinFeatures.type)) {
                 ProteinSection section = new ProteinSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, progressDialog);
+                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, waitingHandler);
             } else if (sectionName.equals(PsmFeatures.type)) {
                 PsmSection section = new PsmSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, progressDialog);
+                section.writeSection(identification, identificationFeaturesGenerator, searchParameters, psmKeys, waitingHandler);
             } else if (sectionName.equals(PtmScoringFeatures.type)) {
                 PtmScoringSection section = new PtmScoringSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(ptmcoringPreferences, progressDialog);
+                section.writeSection(ptmcoringPreferences, waitingHandler);
             } else if (sectionName.equals(SearchFeatures.type)) {
                 SearchParametersSection section = new SearchParametersSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(searchParameters, progressDialog);
+                section.writeSection(searchParameters, waitingHandler);
             } else if (sectionName.equals(SpectrumCountingFeatures.type)) {
                 SpectrumCountingSection section = new SpectrumCountingSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(spectrumCountingPreferences, progressDialog);
+                section.writeSection(spectrumCountingPreferences, waitingHandler);
             } else if (sectionName.equals(ValidationFeatures.type)) {
                 ValidationSection section = new ValidationSection(exportScheme.getExportFeatures(sectionName), exportScheme.getSeparator(), exportScheme.isIndexes(), exportScheme.isHeader(), writer);
-                section.writeSection(psMaps, progressDialog);
+                section.writeSection(psMaps, waitingHandler);
             } else {
                 writer.write("Section " + sectionName + " not implemented in the ExportFactory.");
             }

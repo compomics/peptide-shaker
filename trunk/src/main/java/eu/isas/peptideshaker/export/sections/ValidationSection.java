@@ -1,6 +1,7 @@
-package eu.isas.peptideshaker.export.section_generators;
+package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ValidationFeatures;
@@ -67,11 +68,12 @@ public class ValidationSection {
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
-    public void writeSection(PSMaps psMaps, ProgressDialogX progressDialog) throws IOException {
-        
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Exporting Validation Details. Please Wait...");
-        
+    public void writeSection(PSMaps psMaps, WaitingHandler waitingHandler) throws IOException {
+
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        }
+
         if (header) {
             if (indexes) {
                 writer.write(separator);
@@ -79,9 +81,9 @@ public class ValidationSection {
             writer.write("Parameter" + separator + "Value");
             writer.newLine();
         }
-        
+
         int line = 1;
-        
+
         for (ExportFeature exportFeature : exportFeatures) {
             ValidationFeatures validationFeatures = (ValidationFeatures) exportFeature;
             switch (validationFeatures) {

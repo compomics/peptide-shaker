@@ -174,7 +174,7 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
 
             if (needPeptideMap) {
-                if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) { // @TODO: should this be overrideable by the user??
+                if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) { // @TODO: should this be overrideable by the user??
                     waitingHandler.appendReport("Creating peptide to protein map.", true, true);
 
                     Enzyme enzyme = searchParameters.getEnzyme();
