@@ -21,6 +21,7 @@ import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.Ion.IonType;
@@ -121,6 +122,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/PeptideShaker example 1.cps";
     /**
+     * The path to the gene mapping file
+     */
+    private final String GENE_MAPPING_PATH = "/resources/conf/gene_ontology/gene_details_human";
+    /**
      * Convenience static string indicating that no selection was done by the
      * user.
      */
@@ -219,6 +224,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The compomics enzyme factory.
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
+    /**
+     * The gene factory
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The compomics experiment.
      */
@@ -553,6 +562,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         this.setExtendedState(MAXIMIZED_BOTH);
 
+        loadGeneMapping();
         loadEnzymes();
         resetPtmFactory();
 
@@ -2860,6 +2870,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             enzymeFactory.importEnzymes(new File(getJarFilePath(), PeptideShaker.ENZYME_FILE));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Imports the gene mapping
+     */
+    private void loadGeneMapping() {
+        try {
+            geneFactory.initialize(new File(getJarFilePath(), GENE_MAPPING_PATH), null);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Not able to load the gene mapping file.", "Error importing gene mapping.", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
