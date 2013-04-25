@@ -301,7 +301,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-        ptmInference(waitingHandler, ptmScoringPreferences);
+        ptmInference(waitingHandler, ptmScoringPreferences, searchParameters.getEnzyme());
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -607,7 +607,7 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws MzMLUnmarshallerException
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
     public void validateIdentifications(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, MzMLUnmarshallerException, InterruptedException {
 
@@ -1156,7 +1156,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
+    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, Enzyme enzyme) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Solving peptide inference. Please Wait...");
 
@@ -1274,51 +1274,53 @@ public class PeptideShaker {
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
                             // There are still unexplained sites, let's see if we find a related peptide which can help. That is uggly but the results should be cool.
                             for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
-                                if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
-                                    for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
-                                        SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                        String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
-                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
-                                        int tempIndex, ref = 0;
-                                        String tempSequence = sequence;
-                                        while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
-                                            ref += tempIndex;
-                                            for (int localization : tempLocalizations) {
-                                                int shiftedLocalization = ref + localization;
-                                                if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
-                                                    newLocalizationCandidates.add(shiftedLocalization);
-                                                    PTM ptm = ptmFactory.getPTM(modification);
-                                                    if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
-                                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                if (!enzyme.enzymeCleaves() || enzyme.getNmissedCleavages(sequence) == enzyme.getNmissedCleavages(otherSequence)) {
+                                    if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
+                                        for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
+                                            SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                            String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
+                                            tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                            int tempIndex, ref = 0;
+                                            String tempSequence = sequence;
+                                            while ((tempIndex = tempSequence.indexOf(otherSequence)) >= 0) {
+                                                ref += tempIndex;
+                                                for (int localization : tempLocalizations) {
+                                                    int shiftedLocalization = ref + localization;
+                                                    if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                        newLocalizationCandidates.add(shiftedLocalization);
+                                                        PTM ptm = ptmFactory.getPTM(modification);
+                                                        if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
+                                                            throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                                        }
                                                     }
                                                 }
+                                                tempSequence = tempSequence.substring(tempIndex + 1);
+                                                ref++;
                                             }
-                                            tempSequence = tempSequence.substring(tempIndex + 1);
-                                            ref++;
                                         }
-                                    }
-                                } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
-                                    for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
-                                        SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
-                                        String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
-                                        tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
-                                        int tempIndex, ref = 0;
-                                        String tempSequence = otherSequence;
-                                        while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
-                                            ref += tempIndex;
-                                            for (int localization : tempLocalizations) {
-                                                int shiftedLocalization = localization - ref;
-                                                if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
-                                                        && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
-                                                    newLocalizationCandidates.add(shiftedLocalization);
-                                                    PTM ptm = ptmFactory.getPTM(modification);
-                                                    if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
-                                                        throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                    } else if (!sequence.equals(otherSequence) && otherSequence.contains(sequence)) {
+                                        for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
+                                            SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
+                                            String secondaryKey = secondaryMatch.getBestAssumption().getPeptide().getKey();
+                                            tempLocalizations = Peptide.getNModificationLocalized(secondaryKey, modification);
+                                            int tempIndex, ref = 0;
+                                            String tempSequence = otherSequence;
+                                            while ((tempIndex = tempSequence.indexOf(sequence)) >= 0) {
+                                                ref += tempIndex;
+                                                for (int localization : tempLocalizations) {
+                                                    int shiftedLocalization = localization - ref;
+                                                    if (shiftedLocalization > 0 && shiftedLocalization <= sequence.length()
+                                                            && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
+                                                        newLocalizationCandidates.add(shiftedLocalization);
+                                                        PTM ptm = ptmFactory.getPTM(modification);
+                                                        if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
+                                                            throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
+                                                        }
                                                     }
                                                 }
+                                                tempSequence = tempSequence.substring(tempIndex + 1);
+                                                ref++;
                                             }
-                                            tempSequence = tempSequence.substring(tempIndex + 1);
-                                            ref++;
                                         }
                                     }
                                 }
@@ -2588,17 +2590,17 @@ public class PeptideShaker {
      * described
      * @throws IOException
      * @throws InterruptedException
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
     private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
         String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
         String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
-        
+
         // note: this most likely means that we have a problem with the parsing of the db, but better than a null pointer...
         if (oldDescription == null) {
             return false;
         }
-        
+
         String[] keyWords = {"Uncharacterized", "putative", "like"};
         for (String keyWord : keyWords) {
             if (newDescription.toLowerCase().contains(keyWord)) {
