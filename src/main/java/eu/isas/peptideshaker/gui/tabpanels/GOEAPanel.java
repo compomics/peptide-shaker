@@ -524,7 +524,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     + ", Project: " + totalNumberOfGoMappedProteinsInProject + "]");
 
                             ArrayList<String> termsMapped = goFactory.getTermsMapped();
-                            Collections.shuffle(termsMapped);
+                            Collections.sort(termsMapped);
                             for (String goTerm : termsMapped) {
 
                                 if (progressDialog.isRunCanceled()) {
