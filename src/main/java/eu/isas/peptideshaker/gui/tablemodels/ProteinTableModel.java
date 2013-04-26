@@ -197,7 +197,6 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 case 5:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
-                    // the next four lines of code and associated classes/methods represent quite an investment in coffee and hours of sleep which will most likely never be acknowledged by the ingrate scientists using them so if you like them feel free to pay me a beer next time we meet
                     if (!useDB && (!peptideShakerGUI.getIdentificationFeaturesGenerator().sequenceCoverageInCache(proteinKey)
                             || !peptideShakerGUI.getIdentificationFeaturesGenerator().observableCoverageInCache(proteinKey))
                             && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
@@ -389,7 +388,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 }
             }
         } catch (Exception e) {
-            catchException(e);
+            if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
+                catchException(e);
+            }
             return start;
         }
         return end;
@@ -448,7 +449,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 }
             }
         } catch (Exception e) {
-            catchException(e);
+            if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
+                catchException(e);
+            }
         }
     }
 }

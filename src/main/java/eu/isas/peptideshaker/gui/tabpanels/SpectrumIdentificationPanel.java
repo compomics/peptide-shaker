@@ -3004,8 +3004,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private void spectrumSelectionChanged() {
 
         if (spectrumTable.getSelectedRow() != -1) {
-            try {
 
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+            try {
                 // empty the tables
                 DefaultTableModel dm = (DefaultTableModel) peptideShakerJTable.getModel();
                 dm.getDataVector().removeAllElements();
@@ -3154,8 +3156,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     omssaTable.repaint();
                 }
 
-
                 newItemSelection();
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
@@ -3166,6 +3169,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 });
 
             } catch (Exception e) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 peptideShakerGUI.catchException(e);
             }
         }
@@ -3177,6 +3181,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public void updateSpectrum() {
 
         if (spectrumTable.getSelectedRow() != -1) {
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             try {
                 spectrumChartPanel.removeAll();
@@ -3377,7 +3383,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 if (spectrum != null) {
                     spectrumChartPanel.add(spectrum);
                 }
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
             } catch (Exception e) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 peptideShakerGUI.catchException(e);
             }
         }

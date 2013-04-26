@@ -39,7 +39,6 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
-import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.io.SerializationUtils;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
@@ -122,7 +121,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/PeptideShaker example 1.cps";
     /**
-     * The path to the gene mapping file
+     * The path to the gene mapping file.
      */
     private final String GENE_MAPPING_PATH = "/resources/conf/gene_ontology/gene_details_human";
     /**
@@ -225,7 +224,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
-     * The gene factory
+     * The gene factory.
      */
     private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
@@ -405,6 +404,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * Boolean indicating whether the news feed shall be displayed.
      */
     private boolean showNewsFeed = false;
+    /**
+     * Boolean indicating that PeptideShaker is closing.
+     */
+    private boolean isClosing = false;
 
     /**
      * The main method used to start PeptideShaker.
@@ -2028,100 +2031,106 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 }
             }
 
-            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
-                    overviewPanel.displayResults();
-                } else {
-                    overviewPanel.updateSelection(true);
-                }
-            } else if (selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
-                if (updateNeeded.get(PROTEIN_FRACTIONS_TAB_INDEX)) {
-                    proteinFractionsPanel.displayResults();
-                } else {
-                    proteinFractionsPanel.updateSelection();
-                }
-            } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
-                if (updateNeeded.get(STRUCTURES_TAB_INDEX)) {
-                    //@TODO: here the panel is actually emptied and reloaded. The displayResults() method should ideally load results when nothing is displayed and simply update the results otherwise.
-                    resetPanel(STRUCTURES_TAB_INDEX);
-                    proteinStructurePanel.displayResults();
-                } else {
-                    proteinStructurePanel.updateSelection();
-                }
-            } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX
-                    && updateNeeded.get(GO_ANALYSIS_TAB_INDEX)) {
-                resetPanel(GO_ANALYSIS_TAB_INDEX);
-                goPanel.displayResults();
-                // @TODO: set species from cps file? 
-                // @TODO: reload GO enrichment tab if hidden selection is changed!
-            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-                if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
-                    resetPanel(SPECTRUM_ID_TAB_INDEX);
-                    spectrumIdentificationPanel.displayResults();
-                } else {
-                    spectrumIdentificationPanel.updateSelection();
-                }
-            } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-                if (updateNeeded.get(MODIFICATIONS_TAB_INDEX)) {
-                    ptmPanel.displayResults();
-                } else {
-                    ptmPanel.updateSelection();
-                }
-            } else if (selectedIndex == QC_PLOTS_TAB_INDEX
-                    && updateNeeded.get(QC_PLOTS_TAB_INDEX)) {
-                qcPanel.displayResults();
-            } else if (selectedIndex == VALIDATION_TAB_INDEX
-                    && updateNeeded.get(VALIDATION_TAB_INDEX)) {
-                statsPanel.displayResults();
-            }
+            new Thread(new Runnable() {
+                public void run() {
 
-            // update the basic protein annotation
-            if (selectedIndex == ANNOTATION_TAB_INDEX) {
-                try {
-                    if (identification.getProteinMatch(selectedProteinKey) != null) {
-                        annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
+                    if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+                        if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
+                            overviewPanel.displayResults();
+                        } else {
+                            overviewPanel.updateSelection(true);
+                        }
+                    } else if (selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
+                        if (updateNeeded.get(PROTEIN_FRACTIONS_TAB_INDEX)) {
+                            proteinFractionsPanel.displayResults();
+                        } else {
+                            proteinFractionsPanel.updateSelection();
+                        }
+                    } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
+                        if (updateNeeded.get(STRUCTURES_TAB_INDEX)) {
+                            //@TODO: here the panel is actually emptied and reloaded. The displayResults() method should ideally load results when nothing is displayed and simply update the results otherwise.
+                            resetPanel(STRUCTURES_TAB_INDEX);
+                            proteinStructurePanel.displayResults();
+                        } else {
+                            proteinStructurePanel.updateSelection(true);
+                        }
+                    } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX
+                            && updateNeeded.get(GO_ANALYSIS_TAB_INDEX)) {
+                        resetPanel(GO_ANALYSIS_TAB_INDEX);
+                        goPanel.displayResults();
+                        // @TODO: set species from cps file? 
+                        // @TODO: reload GO enrichment tab if hidden selection is changed!
+                    } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                        if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
+                            resetPanel(SPECTRUM_ID_TAB_INDEX);
+                            spectrumIdentificationPanel.displayResults();
+                        } else {
+                            spectrumIdentificationPanel.updateSelection();
+                        }
+                    } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                        if (updateNeeded.get(MODIFICATIONS_TAB_INDEX)) {
+                            ptmPanel.displayResults();
+                        } else {
+                            ptmPanel.updateSelection();
+                        }
+                    } else if (selectedIndex == QC_PLOTS_TAB_INDEX
+                            && updateNeeded.get(QC_PLOTS_TAB_INDEX)) {
+                        qcPanel.displayResults();
+                    } else if (selectedIndex == VALIDATION_TAB_INDEX
+                            && updateNeeded.get(VALIDATION_TAB_INDEX)) {
+                        statsPanel.displayResults();
                     }
-                } catch (Exception e) {
-                    catchException(e);
-                }
-            }
 
-            // move the spectrum annotation menu bar and set the intensity slider value
-            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                overviewPanel.showSpectrumAnnotationMenu();
-                overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-                spectrumIdentificationPanel.showSpectrumAnnotationMenu();
-                spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-            } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-                ptmPanel.showSpectrumAnnotationMenu();
-                ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-            }
-
-            if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
-                // invoke later to give time for components to update
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        updateSpectrumAnnotations();
+                    // update the basic protein annotation
+                    if (selectedIndex == ANNOTATION_TAB_INDEX) {
+                        try {
+                            if (identification.getProteinMatch(selectedProteinKey) != null) {
+                                annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
+                            }
+                        } catch (Exception e) {
+                            catchException(e);
+                        }
                     }
-                });
-            }
 
-            if (selectedIndex == OVER_VIEW_TAB_INDEX
-                    || selectedIndex == MODIFICATIONS_TAB_INDEX
-                    || selectedIndex == STRUCTURES_TAB_INDEX
-                    || selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
-                jumpToPanel.setEnabled(true);
-                jumpToPanel.setType(JumpToPanel.JumpType.proteinAndPeptides);
-            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-                jumpToPanel.setEnabled(true);
-                jumpToPanel.setType(JumpToPanel.JumpType.spectrum);
-            } else {
-                jumpToPanel.setEnabled(false);
-            }
+                    // move the spectrum annotation menu bar and set the intensity slider value
+                    if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+                        overviewPanel.showSpectrumAnnotationMenu();
+                        overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                    } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                        spectrumIdentificationPanel.showSpectrumAnnotationMenu();
+                        spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                    } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                        ptmPanel.showSpectrumAnnotationMenu();
+                        ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+                    }
 
-            // change jump to color
-            jumpToPanel.setColor(Color.black);
+                    if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                        // invoke later to give time for components to update
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                updateSpectrumAnnotations();
+                            }
+                        });
+                    }
+
+                    if (selectedIndex == OVER_VIEW_TAB_INDEX
+                            || selectedIndex == MODIFICATIONS_TAB_INDEX
+                            || selectedIndex == STRUCTURES_TAB_INDEX
+                            || selectedIndex == PROTEIN_FRACTIONS_TAB_INDEX) {
+                        jumpToPanel.setEnabled(true);
+                        jumpToPanel.setType(JumpToPanel.JumpType.proteinAndPeptides);
+                    } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                        jumpToPanel.setEnabled(true);
+                        jumpToPanel.setType(JumpToPanel.JumpType.spectrum);
+                    } else {
+                        jumpToPanel.setEnabled(false);
+                    }
+
+                    // change jump to color
+                    jumpToPanel.setColor(Color.black);
+
+                }
+            }, "TabThread").start();
         }
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
@@ -2873,9 +2882,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * Imports the gene mapping
+     * Imports the gene mapping.
      */
     private void loadGeneMapping() {
         try {
@@ -3775,7 +3784,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
             overviewPanel.updateSelection(true);
         } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
-            proteinStructurePanel.updateSelection();
+            proteinStructurePanel.updateSelection(true);
         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
             spectrumIdentificationPanel.updateSelection();
         } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
@@ -4453,6 +4462,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void closePeptideShaker() {
 
+        isClosing = true;
+
         progressDialog = new ProgressDialogX(this,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -4499,12 +4510,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         saveUserPreferences();
                     }
 
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     catchException(e);
                 } finally {
-
                     progressDialog.setRunFinished();
 
                     // hide the gui
@@ -6819,5 +6828,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     @Override
     public Image getWaitingIcon() {
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif"));
+    }
+
+    /**
+     * Returns true of the tool is closing.
+     *
+     * @return true of the tool is closing
+     */
+    public boolean isClosing() {
+        return isClosing;
     }
 }

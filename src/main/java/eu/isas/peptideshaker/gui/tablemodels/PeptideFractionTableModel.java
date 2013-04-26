@@ -176,7 +176,7 @@ public class PeptideFractionTableModel extends DefaultTableModel {
     }
     
     /**
-     * Returns true if the real model has been iniitated.
+     * Returns true if the real model has been initiated.
      * 
      * @return the modelInitiated
      */

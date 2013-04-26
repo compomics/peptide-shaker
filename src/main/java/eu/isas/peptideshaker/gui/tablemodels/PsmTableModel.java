@@ -253,7 +253,9 @@ public class PsmTableModel extends SelfUpdatingTableModel {
             identification.loadSpectrumMatchParameters(tempPsmKeys, new PSParameter(), null);
             return end;
         } catch (Exception e) {
-            catchException(e);
+            if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
+                catchException(e);
+            }
             return start;
         }
     }
@@ -285,7 +287,9 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                 }
             }
         } catch (Exception e) {
-            catchException(e);
+            if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
+                catchException(e);
+            }
         }
     }
 }
