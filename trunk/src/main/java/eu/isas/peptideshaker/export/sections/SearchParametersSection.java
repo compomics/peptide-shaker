@@ -4,7 +4,6 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.SearchFeatures;
 import java.io.BufferedWriter;
@@ -60,7 +59,7 @@ public class SearchParametersSection {
      * Writes the desired section.
      *
      * @param searchParameters the search parameters of this project
-     * @param progressDialog the progress dialog
+     * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */

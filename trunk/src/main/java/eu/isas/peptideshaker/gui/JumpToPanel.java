@@ -207,7 +207,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      *
      * @param key the key of the item
      * @param itemType the type of the item
-     * @return
+     * @return the description of an item
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException

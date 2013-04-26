@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.export;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -204,7 +203,7 @@ public class ExportFactory implements Serializable {
      * (mandatory for the spectrum counting section)
      * @param psMaps the PeptideShaker validation maps (mandatory for the
      * Validation section)
-     * @param progressDialog the progress dialog
+     * @param waitingHandler the waiting handler
      * @param modificationProfile the current modification profile
      * @throws IOException
      * @throws IllegalArgumentException

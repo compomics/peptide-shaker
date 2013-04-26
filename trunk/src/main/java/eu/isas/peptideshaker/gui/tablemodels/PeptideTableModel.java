@@ -276,7 +276,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 loadPeptideObjects(tempKeys);
             }
         } catch (Exception e) {
-            catchException(e);
+            if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
+                catchException(e);
+            }
             return start;
         }
         return end;
@@ -323,7 +325,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 }
             }
         } catch (Exception e) {
-            catchException(e);
+            if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
+                catchException(e);
+            }
         }
     }
 }

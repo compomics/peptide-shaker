@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -78,7 +77,7 @@ public class ProteinSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param keys the keys of the protein matches to output
-     * @param progressDialog the progress dialog
+     * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException

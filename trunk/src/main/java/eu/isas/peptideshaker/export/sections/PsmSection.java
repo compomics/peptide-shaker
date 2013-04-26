@@ -9,7 +9,6 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -81,7 +80,7 @@ public class PsmSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param keys the keys of the protein matches to output
-     * @param progressDialog the progress dialog
+     * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException

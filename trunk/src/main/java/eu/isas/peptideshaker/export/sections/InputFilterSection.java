@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeatures;
@@ -58,7 +57,7 @@ public class InputFilterSection {
      * Writes the desired section.
      *
      * @param idFilter the identification used for this project
-     * @param progressDialog the progress dialog
+     * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      */
