@@ -1518,6 +1518,8 @@ public class PeptideShaker {
         int max = identification.getPeptideIdentification().size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
+        
+        identification.loadPeptideMatches(null);
 
         for (String peptideKey : identification.getPeptideIdentification()) {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -1571,6 +1573,8 @@ public class PeptideShaker {
         int max = identification.getProteinIdentification().size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
+        identification.loadProteinMatches(null);
+        identification.loadProteinMatchParameters(new PSParameter(), null);
 
         // If needed, while we are iterating proteins, we will take the maximal spectrum counting value and number of validated proteins as well.
         int nValidatedProteins = 0;

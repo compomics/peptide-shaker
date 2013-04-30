@@ -3212,6 +3212,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("An error occurred while loading " + PeptideShaker.USER_PREFERENCES_FILE + " (see below). User preferences set back to default.");
+            e.printStackTrace();
+            userPreferences = new UserPreferences();
         }
     }
 
