@@ -479,12 +479,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
             utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
 
-            try {
                 UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "An error occured when saving the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
         }
 
         // add desktop shortcut?
