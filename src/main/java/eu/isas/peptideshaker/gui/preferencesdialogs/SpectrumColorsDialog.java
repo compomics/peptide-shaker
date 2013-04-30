@@ -352,12 +352,7 @@ public class SpectrumColorsDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        try {
             UtilitiesUserPreferences.saveUserPreferences(peptideShakerGUI.getUtilitiesUserPreferences());
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "An error occured when saving the user preferences.", "File Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
