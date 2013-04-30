@@ -562,7 +562,9 @@ public class PeptideShakerCLI implements Callable {
                 checkVersionCompatibility();
             }
         } catch (Exception e) {
+            System.err.println("An error occurred while loading " + PeptideShaker.USER_PREFERENCES_FILE + " (see below). User preferences set back to default.");
             e.printStackTrace();
+            userPreferences = new UserPreferences();
         }
     }
 
@@ -584,17 +586,17 @@ public class PeptideShakerCLI implements Callable {
         try {
             File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
             boolean parentExists = true;
-            
+
             if (!file.getParentFile().exists()) {
                 parentExists = file.getParentFile().mkdir();
             }
-            
+
             if (parentExists) {
                 SerializationUtils.writeObject(userPreferences, file);
             } else {
                 System.out.println("Parent folder does not exist: \'" + file.getParentFile() + "\'. User preferences not saved.");
             }
-  
+
         } catch (Exception e) {
             e.printStackTrace();
         }

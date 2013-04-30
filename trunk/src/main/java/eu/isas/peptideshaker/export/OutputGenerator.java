@@ -1714,7 +1714,7 @@ public class OutputGenerator {
                         writer.write("Protein(s)" + SEPARATOR);
                         writer.write("Protein(s) Descriptions" + SEPARATOR);
                         writer.write("Sequence" + SEPARATOR);
-                        writer.write("Phosphorylation(s)" + SEPARATOR);
+                        writer.write("Modification(s)" + SEPARATOR);
                         writer.write("A-score localization" + SEPARATOR);
                         writer.write("D-score localization" + SEPARATOR);
                         writer.write("A-score" + SEPARATOR);
@@ -1733,6 +1733,7 @@ public class OutputGenerator {
                         } else {
                             writer.write("Mass Error [Da]" + SEPARATOR);
                         }
+                        writer.write("Isotope" + SEPARATOR);
                         writer.write("Confidence" + SEPARATOR);
                         writer.write("Validated" + SEPARATOR);
                         writer.write("Decoy" + SEPARATOR);
