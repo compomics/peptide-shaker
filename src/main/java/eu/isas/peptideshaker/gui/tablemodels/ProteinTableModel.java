@@ -345,16 +345,16 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    protected int loadDataForRows(int start, int end, boolean interrupted) {
+    protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
         ArrayList<String> tempKeys = new ArrayList<String>();
-        for (int i = start; i <= end; i++) {
+        for (int i : rows) {
             String proteinKey = proteinKeys.get(i);
             tempKeys.add(proteinKey);
         }
         try {
             loadProteins(tempKeys);
 
-            for (int i = start; i <= end; i++) {
+            for (int i : rows) {
                 String proteinKey = proteinKeys.get(i);
                 peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                 if (interrupted) {
@@ -391,9 +391,9 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
                 catchException(e);
             }
-            return start;
+            return rows.get(0);
         }
-        return end;
+        return rows.get(rows.size() - 1);
     }
 
     /**
