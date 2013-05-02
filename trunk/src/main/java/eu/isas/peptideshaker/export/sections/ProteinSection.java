@@ -194,10 +194,10 @@ public class ProteinSection {
                         writer.write(psParameter.getProteinConfidence() + separator);
                         break;
                     case confident_PTMs:
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey) + separator);
+                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, separator) + separator);
                         break;
                     case other_PTMs:
-                        writer.write(identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey) + separator);
+                        writer.write(identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator) + separator);
                         break;
                     case confident_phosphosites:
                         ArrayList<String> modifications = new ArrayList<String>();
@@ -206,7 +206,7 @@ public class ProteinSection {
                                 modifications.add(ptm);
                             }
                         }
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications) + separator);
+                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator) + separator);
                         break;
                     case other_phosphosites:
                         modifications = new ArrayList<String>();
@@ -215,7 +215,7 @@ public class ProteinSection {
                                 modifications.add(ptm);
                             }
                         }
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications) + separator);
+                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, modifications, separator) + separator);
                         break;
                     case coverage:
                         Double result = 100 * identificationFeaturesGenerator.getSequenceCoverage(proteinKey);

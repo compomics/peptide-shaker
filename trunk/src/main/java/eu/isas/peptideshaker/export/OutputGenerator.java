@@ -406,8 +406,8 @@ public class OutputGenerator {
                                             }
                                             if (ptmSummary) {
                                                 try {
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey) + SEPARATOR);
-                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey) + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey, SEPARATOR) + SEPARATOR);
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey, SEPARATOR) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
@@ -2008,12 +2008,12 @@ public class OutputGenerator {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             try {
-                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey, targetedPtms) + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey, targetedPtms, SEPARATOR) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
                             try {
-                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey, targetedPtms) + SEPARATOR);
+                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey, targetedPtms, SEPARATOR) + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }

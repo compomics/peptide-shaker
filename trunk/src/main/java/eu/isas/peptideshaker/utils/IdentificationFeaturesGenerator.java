@@ -978,6 +978,7 @@ public class IdentificationFeaturesGenerator {
      * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
+     * @param separator the separator used to separate the sites and the number of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -985,8 +986,8 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getPrimaryPTMSummary(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return getPrimaryPTMSummary(proteinKey, null);
+    public String getPrimaryPTMSummary(String proteinKey, String separator) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return getPrimaryPTMSummary(proteinKey, null, separator);
     }
 
     /**
@@ -996,6 +997,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the PTMs to include in the summary
+     * @param separator the separator used to separate the sites and the number of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1003,7 +1005,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getPrimaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public String getPrimaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
@@ -1065,8 +1067,7 @@ public class IdentificationFeaturesGenerator {
             }
         }
 
-        //result.append(OutputGenerator.SEPARATOR); // @TODO: why is this here???
-        result.append("|");
+        result.append(separator);
 
         firstPtm = true;
 
@@ -1107,6 +1108,7 @@ public class IdentificationFeaturesGenerator {
      * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
+     * @param separator the separator used to separate the sites and the number of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1114,8 +1116,8 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getSecondaryPTMSummary(String proteinKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        return getSecondaryPTMSummary(proteinKey, null);
+    public String getSecondaryPTMSummary(String proteinKey, String separator) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        return getSecondaryPTMSummary(proteinKey, null, separator);
     }
 
     /**
@@ -1125,6 +1127,7 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the targeted PTMs, can be null
+     * @param separator the separator used to separate the sites and the number of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1132,7 +1135,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public String getSecondaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public String getSecondaryPTMSummary(String proteinKey, ArrayList<String> targetedPtms, String separator) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
@@ -1194,8 +1197,7 @@ public class IdentificationFeaturesGenerator {
             }
         }
 
-        //result.append(OutputGenerator.SEPARATOR); // @TODO: why is this here??
-        result.append("|");
+        result.append(separator);
 
         firstPtm = true;
 
