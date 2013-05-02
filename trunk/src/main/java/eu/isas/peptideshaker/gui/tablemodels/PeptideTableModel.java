@@ -256,9 +256,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     }
 
     @Override
-    protected int loadDataForRows(int start, int end, boolean interrupted) {
+    protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
         ArrayList<String> tempKeys = new ArrayList<String>();
-        for (int i = start; i <= end; i++) {
+        for (int i : rows) {
             if (i < peptideKeys.size()) {
                 String peptideKey = peptideKeys.get(i);
                 tempKeys.add(peptideKey);
@@ -270,7 +270,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             for (String peptideKey : tempKeys) {
                 if (interrupted) {
                     loadPeptideObjects(tempKeys);
-                    return start;
+                    return rows.get(0);
                 }
                 peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
                 loadPeptideObjects(tempKeys);
@@ -279,9 +279,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
                 catchException(e);
             }
-            return start;
+            return rows.get(0);
         }
-        return end;
+        return rows.get(rows.size()-1);
     }
 
     /**

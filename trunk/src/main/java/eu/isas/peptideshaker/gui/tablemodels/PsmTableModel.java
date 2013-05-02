@@ -233,30 +233,30 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     @Override
     protected void catchException(Exception e) {
         useDB = false;
-        catchException(e);
+            peptideShakerGUI.catchException(e);
     }
 
     @Override
-    protected int loadDataForRows(int start, int end, boolean interrupted) {
+    protected int loadDataForRows(ArrayList<Integer> rows, boolean interrupted) {
         try {
             ArrayList<String> tempPsmKeys = new ArrayList<String>();
-            for (int i = start; i <= end; i++) {
+            for (int i : rows) {
                 tempPsmKeys.add(psmKeys.get(i));
             }
             if (interrupted) {
-                return start;
+                return rows.get(0);
             }
             identification.loadSpectrumMatches(tempPsmKeys, null);
             if (interrupted) {
-                return start;
+                return rows.get(0);
             }
             identification.loadSpectrumMatchParameters(tempPsmKeys, new PSParameter(), null);
-            return end;
+            return rows.get(rows.size() - 1);
         } catch (Exception e) {
             if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
                 catchException(e);
             }
-            return start;
+            return rows.get(0);
         }
     }
 
