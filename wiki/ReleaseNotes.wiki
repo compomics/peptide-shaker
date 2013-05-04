@@ -3,11 +3,35 @@
 
 ----
 
+*Changes in PeptideShaker 0.20.0 (May ?. 2013):*
+ * NEW FEATURE: New self updating tables with better support for bigger datasets.
+
+ * FEATURE IMPROVEMENT: Improved the peptide inference method for miscleaved peptides.
+ * FEATURE IMPROVEMENT: Sped up the PTM inference processing.
+ * FEATURE IMPROVEMENT: Improved the way extracted PRIDE search parameters are displayed.
+ * FEATURE IMPROVEMENT: The waiting dialog now has "close when complete" turned on as the default.
+ * FEATURE IMPROVEMENT: If a bubble plot displays more that 20 spectra the plot legend is now hidden as to not cover too much of the plotting area.
+ * FEATURE IMPROVEMENT: Re-added the PRIDE and project zip exports to the Export menu.
+ * FEATURE IMPROVEMENT: Improve the way selections are handled across the tabs.
+
+ * BUG FIX: Fixed a problem with starting the tool on the latest Java release.
+ * BUG FIX: Fixed a bug where the tooltips and popup menus in the sequence coverage plot included all peptides even when a subset (enzymatic/non-enzymatic) was selected.
+ * BUG FIX: Added a check that the matches folder exists before deleting or listing it's files.
+ * BUG FIX: Fixed an issue with locating SearchGUI via the PrideSearchParametersDialog if the provided SearchGUI folder could not be found.
+ * BUG FIX: Removed a GUI references in the FileImporter class, improving the command line support. 
+
+ * LIBRARY UPDATE: Updated jsparklines to version 0.6.0.
+ * LIBRARY UPDATE: Updated utilities to version 3.13.6.
+
+----
+
 *Changes in PeptideShaker 0.19.3 (April 2. 2013):*
  * FEATURE IMPROVEMENT: Further developed the Progenesis export with more options.
  * LIBRARY UPDATE: Updated xtandem-parser to version 1.5.14, fixing a problem with the parsing of spectrum titles with retention time in them.
  * LIBRARY UPDATE: Updated utilities to version 3.11.29.
- 
+
+Download Count: 153 
+
 ----
 
 *Changes in PeptideShaker 0.19.2 (March 25. 2013):*
