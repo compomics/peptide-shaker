@@ -250,7 +250,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                     ProteinTableModel tableModel = (ProteinTableModel) proteinTable.getModel();
-                    tableModel.setRowSorter(proteinTable.getRowSorter());
                     tableModel.useDB(false);
                 }
             }
@@ -283,7 +282,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                     PeptideTableModel tableModel = (PeptideTableModel) peptideTable.getModel();
-                    tableModel.setRowSorter(peptideTable.getRowSorter());
                     tableModel.useDB(false);
 
                     // change the peptide shaker icon to a "waiting version"
@@ -319,7 +317,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     psmTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                     PsmTableModel tableModel = (PsmTableModel) psmTable.getModel();
-                    tableModel.setRowSorter(psmTable.getRowSorter());
                     tableModel.useDB(false);
 
                     // change the peptide shaker icon to a "waiting version"
