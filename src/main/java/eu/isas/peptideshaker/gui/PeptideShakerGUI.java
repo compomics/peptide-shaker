@@ -30,6 +30,7 @@ import com.compomics.util.experiment.biology.ions.ReporterIon;
 import com.compomics.util.experiment.identification.*;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.*;
@@ -479,7 +480,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
             utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
 
-                UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
+            UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
         }
 
         // add desktop shortcut?
@@ -6835,5 +6836,99 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public boolean isClosing() {
         return isClosing;
+    }
+
+    /**
+     * Returns the default PSM, i.e., the "best" PSM for the given peptide.
+     * 
+     * @param peptideKey the peptide to get the PSM for
+     * @return the key of the default PSM
+     */
+    public String getDefaultPsmSelection(String peptideKey) {
+        
+        if (peptideKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
+            return PeptideShakerGUI.NO_SELECTION;
+        }
+
+        String psmKey = PeptideShakerGUI.NO_SELECTION;
+
+        try {
+            PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+            ArrayList<String> psmKeys;
+
+            try {
+                psmKeys = identificationFeaturesGenerator.getSortedPsmKeys(peptideKey);
+            } catch (Exception e) {
+                try {
+                    // try without order
+                    psmKeys = peptideMatch.getSpectrumMatches();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    psmKeys = new ArrayList<String>();
+                }
+            }
+
+            if (!psmKeys.isEmpty()) {
+                psmKey = psmKeys.get(0);
+            }
+
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return psmKey;
+    }
+    
+     /**
+     * Returns the default peptide, i.e., the "best" peptide for the given protein.
+     * 
+     * @param proteinKey the protein to get the peptide for
+     * @return the key of the default peptide
+     */
+    public String getDefaultPeptideSelection(String proteinKey) {
+        
+        if (proteinKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
+            return PeptideShakerGUI.NO_SELECTION;
+        }
+
+        String peptideKey = PeptideShakerGUI.NO_SELECTION;
+
+        try {
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            ArrayList<String> peptideKeys;
+
+            try {
+                peptideKeys = identificationFeaturesGenerator.getSortedPeptideKeys(proteinKey);
+            } catch (Exception e) {
+                try {
+                    // try without order
+                    peptideKeys = proteinMatch.getPeptideMatches();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    peptideKeys = new ArrayList<String>();
+                }
+            }
+
+            if (!peptideKeys.isEmpty()) {
+                peptideKey = peptideKeys.get(0);
+            }
+
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return peptideKey;
     }
 }

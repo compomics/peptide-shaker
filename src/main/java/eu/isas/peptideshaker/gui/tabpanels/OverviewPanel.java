@@ -281,7 +281,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    
+
                     PeptideTableModel tableModel = (PeptideTableModel) peptideTable.getModel();
                     tableModel.setRowSorter(peptideTable.getRowSorter());
                     tableModel.useDB(false);
@@ -317,7 +317,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     psmTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    
+
                     PsmTableModel tableModel = (PsmTableModel) psmTable.getModel();
                     tableModel.setRowSorter(psmTable.getRowSorter());
                     tableModel.useDB(false);
@@ -4625,6 +4625,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                 updateSelection(true);
 
+                newItemSelection();
+
                 // update the sequence coverage map
                 int proteinIndex, selectedProteinRow = proteinTable.getSelectedRow();
                 if (selectedProteinRow != -1) {
@@ -5454,7 +5456,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         int peptideRow = 0;
-        peptideKey = peptideShakerGUI.getSelectedPeptideKey();
         if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             peptideRow = getPeptideRow(peptideKey);
         }
@@ -5468,7 +5469,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         }
 
         int psmRow = 0;
-        psmKey = peptideShakerGUI.getSelectedPsmKey();
         if (!psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             psmRow = getPsmRow(psmKey);
         }

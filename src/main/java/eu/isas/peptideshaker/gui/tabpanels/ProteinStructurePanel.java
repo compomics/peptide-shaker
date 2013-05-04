@@ -68,7 +68,7 @@ import org.jmol.api.JmolViewer;
 public class ProteinStructurePanel extends javax.swing.JPanel {
 
     /**
-     * Peptide keys that can be mapped to the current pdb file.
+     * Peptide keys that can be mapped to the current PDB file.
      */
     private ArrayList<String> peptidePdbArray;
 
@@ -1653,6 +1653,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
+
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideTableMouseReleased
 
@@ -2838,8 +2839,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             public void run() {
 
                 try {
-
                     peptideShakerGUI.getIdentificationFeaturesGenerator().setProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
+
                     try {
                         proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getProcessedProteinKeys(progressDialog, peptideShakerGUI.getFilterPreferences());
                     } catch (Exception e) {
@@ -2891,6 +2892,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     new Thread(new Runnable() {
                         public void run() {
+                            String proteinKey = peptideShakerGUI.getSelectedProteinKey();
+                            String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
+                            String psmKey = peptideShakerGUI.getSelectedPsmKey();
+                            proteinTableMouseReleased(null);
+                            peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
                             updateSelection(true);
                             proteinTable.requestFocus();
                         }
@@ -2933,6 +2939,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
+        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
             public void run() {
@@ -3120,7 +3127,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     }
 
     /**
-     * Transforms the PDB accesion number into an HTML link to the PDB. Note
+     * Transforms the PDB accession number into an HTML link to the PDB. Note
      * that this is a complete HTML with HTML and a href tags, where the main
      * use is to include it in the PDB tables.
      *
@@ -3281,7 +3288,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         if (proteinTable.getRowCount() > 0) {
             DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
             dm.fireTableDataChanged();
-            updateSelection(false);
+            reselect();
         }
     }
 
@@ -3325,7 +3332,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         setTableProperties();
 
         if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.STRUCTURES_TAB_INDEX) {
-            this.updateSelection(false);
+            reselect();
         }
 
         if (peptideShakerGUI.getDisplayPreferences().showScores()) {
@@ -3449,12 +3456,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             int proteinRow = getProteinRow(proteinKey);
-            proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+            if (proteinRow != -1) {
+                proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+            }
         }
 
         if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             int peptideRow = getPeptideRow(peptideKey);
-            peptideTable.setRowSelectionInterval(peptideRow, peptideRow); // @TODO: IllegalArgumentException: Row index out of range
+            if (peptideRow != -1) {
+                peptideTable.setRowSelectionInterval(peptideRow, peptideRow); // @TODO: IllegalArgumentException: Row index out of range
+            }
         }
     }
 
@@ -3526,7 +3537,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         }
 
         int peptideRow = 0;
-        peptideKey = peptideShakerGUI.getSelectedPeptideKey();
         if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             peptideRow = getPeptideRow(peptideKey);
         }
@@ -3537,6 +3547,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
             }
             peptideTableMouseReleased(null);
+        }
+
+        if (!psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            peptideShakerGUI.setSelectedItems(peptideShakerGUI.getSelectedProteinKey(), peptideShakerGUI.getSelectedPeptideKey(), psmKey);
         }
     }
 
@@ -3559,7 +3573,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         if (!proteinKey.equalsIgnoreCase(peptideShakerGUI.getSelectedProteinKey())
                 || !peptideKey.equalsIgnoreCase(peptideShakerGUI.getSelectedPeptideKey())) {
-            psmKey = PeptideShakerGUI.NO_SELECTION;
+            // protein and/or peptide changed, try to select the "best" psm for the current peptide (as to not break down the across tab selection)
+            psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
         }
 
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);

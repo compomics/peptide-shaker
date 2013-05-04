@@ -1806,6 +1806,14 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (proteinTable.getSelectedRow() != -1) {
             proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+
+            // try to select the "best" peptide for the selected peptide
+            peptideKey = peptideShakerGUI.getDefaultPeptideSelection(proteinKey);
+
+            // try to select the "best" psm for the selected peptide
+            if (!peptideKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
+                psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+            }
         }
 
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
