@@ -2821,7 +2821,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param diagramButton the button to add the diagram to
      * @param a the size of A
      * @param b the size of B
-     * @param ab the overlapp of A and B
+     * @param ab the overlap of A and B
      * @param titleA the title of dataset A
      * @param titleB the title of dataset B
      */
@@ -2839,16 +2839,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         // @TODO: remove the hardcoding below!!!
 
-        if (diagramButton.getWidth() == 0) {
-            chart.setSize(173, searchEngineTable.getHeight());
-        } else {
-            chart.setSize(diagramButton.getWidth(), diagramButton.getHeight() - 10);
-        }
-
-        chart.setCircleLegends(titleA, titleB, "");
-        chart.setCircleColors(Color.GREEN, Color.RED, Color.newColor(Util.color2Hex(diagramButton.getBackground())));
-
         try {
+            if (diagramButton.getWidth() == 0) {
+                chart.setSize(173, 150);
+            } else {
+                chart.setSize(diagramButton.getWidth(), diagramButton.getHeight() - 10);
+            }
+
+            chart.setCircleLegends(titleA, titleB, "");
+            chart.setCircleColors(Color.GREEN, Color.RED, Color.newColor(Util.color2Hex(diagramButton.getBackground())));
+
             diagramButton.setText("");
             ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
 
@@ -2865,6 +2865,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         + "</html>");
             }
         } catch (IOException e) {
+            e.printStackTrace();
+            diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
+            diagramButton.setToolTipText("Not available due to an error occuring");
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
             diagramButton.setToolTipText("Not available due to an error occuring");
@@ -2934,7 +2938,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the spectrum selected according to the last user's selection.
+     * Updates the spectrum selected according to the user's last selection.
      */
     public void updateSelection() {
 
@@ -2999,7 +3003,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Method called whenever the spectrum selection changed
+     * Method called whenever the spectrum selection changed.
      */
     private void spectrumSelectionChanged() {
 

@@ -2195,9 +2195,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
 
             // update the protein selection
-            String selectedProtein = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
-            selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
-            peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+            proteinTableKeyReleased(null);
 
             // open protein link in web browser
             if (column == proteinTable.getColumn("Accession").getModelIndex()
@@ -2227,7 +2225,17 @@ public class GOEAPanel extends javax.swing.JPanel {
             // update the protein selection
             String selectedProtein = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
             selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
-            peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+            String psmKey = PeptideShakerGUI.NO_SELECTION;
+
+            // try to select the "best" peptide for the selected peptide
+            String peptideKey = peptideShakerGUI.getDefaultPeptideSelection(selectedProtein);
+
+            // try to select the "best" psm for the selected peptide
+            if (!peptideKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
+                psmKey = peptideShakerGUI.getDefaultPsmSelection(peptideKey);
+            }
+
+            peptideShakerGUI.setSelectedItems(selectedProtein, peptideKey, psmKey);
         }
     }//GEN-LAST:event_proteinTableKeyReleased
 
@@ -2676,6 +2684,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             String selectedProtein = (String) proteinTable.getValueAt(0, proteinTable.getColumn("Accession").getModelIndex());
                             selectedProtein = selectedProtein.substring(selectedProtein.lastIndexOf("\">") + "\">".length(), selectedProtein.lastIndexOf("</font>"));
                             peptideShakerGUI.setSelectedItems(selectedProtein, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+                            proteinTableKeyReleased(null);
                         }
 
                         progressDialog.setRunFinished();
