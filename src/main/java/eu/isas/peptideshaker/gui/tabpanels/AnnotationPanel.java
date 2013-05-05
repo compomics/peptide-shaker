@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.IOException;
@@ -21,10 +21,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
      */
     private String currentAccessionNumber = "";
     /**
-     * A progress dialog.
-     */
-    private ProgressDialogX progressDialog;
-    /**
      * The PeptideShakerGUI parent.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -32,6 +28,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
 
     /**
      * Creates a new AnnotationPanel.
@@ -73,6 +73,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
         databaseJTextField = new javax.swing.JTextField();
         proteinDescriptionScrollPane = new javax.swing.JScrollPane();
         proteinDescriptionTextArea = new javax.swing.JTextArea();
+        chromosomeLabel = new javax.swing.JLabel();
+        chromosomeJTextField = new javax.swing.JTextField();
         uniprotLinkJPanel = new javax.swing.JPanel();
         uniprotLabel = new javax.swing.JLabel();
         loadUniProtJButton = new javax.swing.JButton();
@@ -123,7 +125,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
         basicAnnotationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Basic Protein Annotation"));
         basicAnnotationJPanel.setOpaque(false);
 
-        accessionNumberLabel.setText("Accession Number");
+        accessionNumberLabel.setText("Accession");
 
         accessionNumberJTextField.setEditable(false);
 
@@ -141,13 +143,18 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         databaseJTextField.setEditable(false);
 
-        proteinDescriptionTextArea.setColumns(20);
         proteinDescriptionTextArea.setEditable(false);
+        proteinDescriptionTextArea.setColumns(20);
         proteinDescriptionTextArea.setLineWrap(true);
         proteinDescriptionTextArea.setRows(2);
         proteinDescriptionTextArea.setTabSize(4);
         proteinDescriptionTextArea.setWrapStyleWord(true);
         proteinDescriptionScrollPane.setViewportView(proteinDescriptionTextArea);
+
+        chromosomeLabel.setText("Chromosome");
+
+        chromosomeJTextField.setEditable(false);
+        chromosomeJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         javax.swing.GroupLayout basicAnnotationJPanelLayout = new javax.swing.GroupLayout(basicAnnotationJPanel);
         basicAnnotationJPanel.setLayout(basicAnnotationJPanelLayout);
@@ -163,11 +170,16 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     .addComponent(databaseLabel))
                 .addGap(38, 38, 38)
                 .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
                     .addComponent(proteinDescriptionScrollPane)
-                    .addComponent(geneNameJTextField)
                     .addComponent(taxonomyJTextField)
-                    .addComponent(databaseJTextField))
+                    .addComponent(databaseJTextField)
+                    .addGroup(basicAnnotationJPanelLayout.createSequentialGroup()
+                        .addComponent(geneNameJTextField)
+                        .addGap(18, 18, 18)
+                        .addComponent(chromosomeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(chromosomeJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -190,7 +202,9 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(geneNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(geneNameLabel))
+                    .addComponent(geneNameLabel)
+                    .addComponent(chromosomeLabel)
+                    .addComponent(chromosomeJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(basicAnnotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -609,7 +623,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
         helpScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         helpScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        helpEditorPane.setContentType("text/html");
+        helpEditorPane.setContentType("text/html"); // NOI18N
         helpEditorPane.setEditable(false);
         helpEditorPane.setText("<html>\n<b>Single Protein</b><br>\nTo access the annotations for the currently selected protein, simply click the button corresponding to the \nwanted resource.\n<br><br><br>\n<b>Multiple Proteins</b><br>\nTo get the list of all validated proteins in your project click <a href=\"validated_proteins\">here</a>.<br>\nAdvanced export options: <i>Export</i> > <i>Identification Features</i>. \n<br><br>\nTo querry using multiple proteins, click the <a href=\"dummy_link\">web</a> link next to the resource and \nfollow the instructions provided at the resource web page.\n</html>");
         helpEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
@@ -817,7 +831,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     .addComponent(pdbLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1284,6 +1298,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JTextField accessionNumberJTextField;
     private javax.swing.JLabel accessionNumberLabel;
     private javax.swing.JPanel basicAnnotationJPanel;
+    private javax.swing.JTextField chromosomeJTextField;
+    private javax.swing.JLabel chromosomeLabel;
     private javax.swing.JLabel dastyLabel;
     private javax.swing.JPanel dastyLinkJPanel;
     private javax.swing.JTextField databaseJTextField;
@@ -1356,7 +1372,15 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
             try {
                 proteinDescriptionTextArea.setText(sequenceFactory.getHeader(aAccessionNumber).getDescription());
-                geneNameJTextField.setText(sequenceFactory.getHeader(aAccessionNumber).getGeneName());
+                String geneName = sequenceFactory.getHeader(aAccessionNumber).getGeneName();
+                geneNameJTextField.setText(geneName);
+
+                if (geneName != null) {
+                    chromosomeJTextField.setText(geneFactory.getChromosomeFromGeneName(geneName));
+                } else {
+                    chromosomeJTextField.setText(null);
+                }
+
                 taxonomyJTextField.setText(sequenceFactory.getHeader(aAccessionNumber).getTaxonomy());
                 databaseJTextField.setText("" + sequenceFactory.getProtein(aAccessionNumber).getDatabaseType());
             } catch (IOException e) {

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tablemodels;
 
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -28,6 +29,10 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The gene factory. 
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The main GUI class.
      */
@@ -110,7 +115,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
 
     @Override
     public int getColumnCount() {
-        return 12;
+        return 13;
     }
 
     @Override
@@ -127,22 +132,24 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             case 4:
                 return "Description";
             case 5:
-                return "Coverage";
+                return "CR";
             case 6:
-                return "#Peptides";
+                return "Coverage";
             case 7:
-                return "#Spectra";
+                return "#Peptides";
             case 8:
-                return "MS2 Quant.";
+                return "#Spectra";
             case 9:
-                return "MW";
+                return "MS2 Quant.";
             case 10:
+                return "MW";
+            case 11:
                 if (peptideShakerGUI != null && peptideShakerGUI.getDisplayPreferences().showScores()) {
                     return "Score";
                 } else {
                     return "Confidence";
                 }
-            case 11:
+            case 12:
                 return "";
             default:
                 return "";
@@ -197,6 +204,15 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                 case 5:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
+                    if (!useDB && proteinMatch == null) {
+                        dataMissingAtRow(row);
+                        return DisplayPreferences.LOADING_MESSAGE;
+                    }
+                    String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
+                    return geneFactory.getChromosomeFromGeneName(geneName);
+                case 6:
+                    proteinKey = proteinKeys.get(row);
+                    proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && (!peptideShakerGUI.getIdentificationFeaturesGenerator().sequenceCoverageInCache(proteinKey)
                             || !peptideShakerGUI.getIdentificationFeaturesGenerator().observableCoverageInCache(proteinKey))
                             && (proteinMatch == null || !identification.proteinDetailsInCache(proteinKey))) {
@@ -217,7 +233,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         peptideShakerGUI.catchException(e);
                     }
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
-                case 6:
+                case 7:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && (proteinMatch == null
@@ -228,7 +244,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     }
                     int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
                     return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
-                case 7:
+                case 8:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB
@@ -241,7 +257,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
                     int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
-                case 8:
+                case 9:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && !peptideShakerGUI.getIdentificationFeaturesGenerator().spectrumCountingInCache(proteinKey)
@@ -250,7 +266,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                         return DisplayPreferences.LOADING_MESSAGE;
                     }
                     return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
-                case 9:
+                case 10:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey, useDB);
                     if (!useDB && proteinMatch == null) {
@@ -264,7 +280,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     } else {
                         return null;
                     }
-                case 10:
+                case 11:
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
@@ -280,7 +296,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     } else {
                         return null;
                     }
-                case 11:
+                case 12:
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
@@ -417,8 +433,8 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             Collections.reverse(reversedList);
             if (column == 1
                     || column == 2
-                    || column == 10
-                    || column == 11) {
+                    || column == 11
+                    || column == 12) {
                 identification.loadProteinMatchParameters(reversedList, new PSParameter(), null);
             } else if (column == 3
                     || column == 4
@@ -426,19 +442,20 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
                     || column == 6
                     || column == 7
                     || column == 8
-                    || column == 9) {
+                    || column == 9
+                    || column == 10) {
                 identification.loadProteinMatches(reversedList, null);
             }
             for (String proteinKey : reversedList) {
-                if (column == 5) {
+                if (column == 6) {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                } else if (column == 6) {
-                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
                 } else if (column == 7) {
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
+                } else if (column == 8) {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
-                } else if (column == 8) {
+                } else if (column == 9) {
                     peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                 }
                 if (waitingHandler != null) {

@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.*;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.gui.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -183,19 +184,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * A table cacher used to cache data for the self updating tables.
      */
     private TableCacher tableCacher;
-    /**
-     * Boolean indicating whether the protein table is finished sorting
-     */
-    private boolean proteinSortingFinished = true;
-    /**
-     * Boolean indicating whether the peptide table is finished sorting
-     */
-    private boolean peptideSortingFinished = true;
-    /**
-     * Boolean indicating whether the psm table is finished sorting
-     */
-    private boolean psmSortingFinished = true;
-    
 
     /**
      * Creates a new OverviewPanel.
@@ -252,20 +240,17 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setIndeterminate(true);
                     progressDialog.setUnstoppable(false);
 
-                    proteinSortingFinished = false;
                     tableCacher.cacheForSorting(proteinTable, "proteinTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((ProteinTableModel) proteinTable.getModel()).useDB(true);
 
-                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching() && !proteinSortingFinished) {
+                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
 
-                    proteinSortingFinished = true;
                     // change the peptide shaker icon to the normal version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                     ProteinTableModel tableModel = (ProteinTableModel) proteinTable.getModel();
-                    tableModel.setRowSorter(proteinTable.getRowSorter());
                     tableModel.useDB(false);
                 }
             }
@@ -290,18 +275,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setTitle("Sorting Table. Please Wait...");
                     progressDialog.setIndeterminate(true);
                     progressDialog.setUnstoppable(false);
-                    peptideSortingFinished = false;
                     tableCacher.cacheForSorting(peptideTable, "peptideTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((PeptideTableModel) peptideTable.getModel()).useDB(true);
 
-                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching() && !peptideSortingFinished) {
-                    
-                    peptideSortingFinished = true;
+                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
+
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                     PeptideTableModel tableModel = (PeptideTableModel) peptideTable.getModel();
-                    tableModel.setRowSorter(peptideTable.getRowSorter());
                     tableModel.useDB(false);
 
                     // change the peptide shaker icon to a "waiting version"
@@ -329,17 +311,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setTitle("Sorting Table. Please Wait...");
                     progressDialog.setIndeterminate(true);
                     progressDialog.setUnstoppable(false);
-                    psmSortingFinished = false;
                     tableCacher.cacheForSorting(psmTable, "psmTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((PsmTableModel) psmTable.getModel()).useDB(true);
 
-                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching() && !psmSortingFinished) {
-                    psmSortingFinished = true;
+                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     psmTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                     PsmTableModel tableModel = (PsmTableModel) psmTable.getModel();
-                    tableModel.setRowSorter(psmTable.getRowSorter());
                     tableModel.useDB(false);
 
                     // change the peptide shaker icon to a "waiting version"
@@ -374,6 +353,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
+        proteinTableToolTips.add("Chromosome Number");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
         proteinTableToolTips.add("Number of Peptides (Validated / Total)");
         proteinTableToolTips.add("Number of Spectra (Validated / Total)");
@@ -426,6 +406,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         // the index column
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
+
+        proteinTable.getColumn("CR").setMaxWidth(37);
+        proteinTable.getColumn("CR").setMinWidth(37);
 
         try {
             proteinTable.getColumn("Confidence").setMaxWidth(90);
@@ -2143,6 +2126,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else if (column == proteinTable.getColumn("CR").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
                 proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
@@ -2239,6 +2224,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         peptideShakerGUI.getStarHider().starProtein(proteinKey);
                     } else {
                         peptideShakerGUI.getStarHider().unStarProtein(proteinKey);
+                    }
+                }
+
+                // open the gene details dialog
+                if (column == proteinTable.getColumn("CR").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                    try {
+                        new GeneDetailsDialog(peptideShakerGUI, proteinKey);
+                    } catch (IOException ex) {
+                        peptideShakerGUI.catchException(ex);
                     }
                 }
 

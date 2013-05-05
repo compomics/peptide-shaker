@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.gui.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.XYPlottingDialog;
 import com.compomics.util.gui.error_handlers.HelpDialog;
@@ -35,6 +36,7 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -262,6 +264,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
+        proteinTableToolTips.add("Chromosome Number");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
         proteinTableToolTips.add("Number of Peptides (Validated / Total)");
         proteinTableToolTips.add("Number of Spectra (Validated / Total)");
@@ -329,6 +332,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
+
+        proteinTable.getColumn("CR").setMaxWidth(37);
+        proteinTable.getColumn("CR").setMinWidth(37);
 
         // the validated column
         proteinTable.getColumn("").setMaxWidth(30);
@@ -1448,7 +1454,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_proteinTableMouseExited
 
     /**
-     * Changes the cursor into a hand cursor if the table cell contains an html
+     * Changes the cursor into a hand cursor if the table cell contains an HTML
      * link.
      *
      * @param evt
@@ -1469,6 +1475,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else if (column == proteinTable.getColumn("CR").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
@@ -1577,6 +1585,15 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 }
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                // open the gene details dialog
+                if (column == proteinTable.getColumn("CR").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                    try {
+                        new GeneDetailsDialog(peptideShakerGUI, proteinKey);
+                    } catch (IOException ex) {
+                        peptideShakerGUI.catchException(ex);
+                    }
+                }
 
                 // open protein link in web browser
                 if (column == proteinTable.getColumn("Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1

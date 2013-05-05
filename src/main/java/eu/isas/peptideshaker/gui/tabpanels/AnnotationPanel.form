@@ -101,7 +101,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="picrLinkJLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="43" max="32767" attributes="0"/>
+              <EmptySpace pref="33" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -131,11 +131,17 @@
                   </Group>
                   <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="accessionNumberJTextField" alignment="1" pref="462" max="32767" attributes="2"/>
+                      <Component id="accessionNumberJTextField" alignment="1" pref="494" max="32767" attributes="2"/>
                       <Component id="proteinDescriptionScrollPane" alignment="0" max="32767" attributes="0"/>
-                      <Component id="geneNameJTextField" alignment="0" max="32767" attributes="2"/>
                       <Component id="taxonomyJTextField" max="32767" attributes="2"/>
                       <Component id="databaseJTextField" alignment="0" max="32767" attributes="2"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="geneNameJTextField" max="32767" attributes="2"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="chromosomeLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="chromosomeJTextField" min="-2" pref="131" max="-2" attributes="2"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -163,6 +169,8 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="geneNameJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="geneNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="chromosomeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="chromosomeJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -182,7 +190,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="accessionNumberLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Accession Number"/>
+            <Property name="text" type="java.lang.String" value="Accession"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="accessionNumberJTextField">
@@ -234,8 +242,8 @@
           <SubComponents>
             <Component class="javax.swing.JTextArea" name="proteinDescriptionTextArea">
               <Properties>
-                <Property name="columns" type="int" value="20"/>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="columns" type="int" value="20"/>
                 <Property name="lineWrap" type="boolean" value="true"/>
                 <Property name="rows" type="int" value="2"/>
                 <Property name="tabSize" type="int" value="4"/>
@@ -244,6 +252,17 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JLabel" name="chromosomeLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Chromosome"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="chromosomeJTextField">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="horizontalAlignment" type="int" value="0"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="uniprotLinkJPanel">
