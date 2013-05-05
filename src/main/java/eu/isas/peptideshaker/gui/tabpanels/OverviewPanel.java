@@ -241,7 +241,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setUnstoppable(false);
 
                     tableCacher.cacheForSorting(proteinTable, "proteinTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                    ((ProteinTableModel) proteinTable.getModel()).useDB(true);
+                    
+                    ProteinTableModel tableModel = (ProteinTableModel) proteinTable.getModel();
+                    tableModel.setUpdateWhenComplete(true); // try to keep the gui stable after sorting
+                    tableModel.useDB(true);
 
                 } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
 
