@@ -333,8 +333,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
 
-        proteinTable.getColumn("C").setMaxWidth(37);
-        proteinTable.getColumn("C").setMinWidth(37);
+        proteinTable.getColumn("CHR").setMaxWidth(37);
+        proteinTable.getColumn("CHR").setMinWidth(37);
 
         // the validated column
         proteinTable.getColumn("").setMaxWidth(30);
@@ -1476,7 +1476,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else if (column == proteinTable.getColumn("C").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+        } else if (column == proteinTable.getColumn("CHR").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
@@ -1587,7 +1587,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 // open the gene details dialog
-                if (column == proteinTable.getColumn("C").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                if (column == proteinTable.getColumn("CHR").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey);
                     } catch (IOException ex) {
