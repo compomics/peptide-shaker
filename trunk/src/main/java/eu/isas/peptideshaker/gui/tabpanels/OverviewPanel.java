@@ -241,10 +241,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setUnstoppable(false);
 
                     tableCacher.cacheForSorting(proteinTable, "proteinTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                    
-                    ProteinTableModel tableModel = (ProteinTableModel) proteinTable.getModel();
-                    tableModel.setUpdateWhenComplete(true); // try to keep the gui stable after sorting
-                    tableModel.useDB(true);
+                    ((ProteinTableModel) proteinTable.getModel()).useDB(true);
 
                 } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
 
@@ -278,6 +275,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setTitle("Sorting Table. Please Wait...");
                     progressDialog.setIndeterminate(true);
                     progressDialog.setUnstoppable(false);
+
                     tableCacher.cacheForSorting(peptideTable, "peptideTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((PeptideTableModel) peptideTable.getModel()).useDB(true);
 
@@ -314,6 +312,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     progressDialog.setTitle("Sorting Table. Please Wait...");
                     progressDialog.setIndeterminate(true);
                     progressDialog.setUnstoppable(false);
+
                     tableCacher.cacheForSorting(psmTable, "psmTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
                     ((PsmTableModel) psmTable.getModel()).useDB(true);
 
@@ -410,8 +409,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
 
-        proteinTable.getColumn("CR").setMaxWidth(37);
-        proteinTable.getColumn("CR").setMinWidth(37);
+        proteinTable.getColumn("C").setMaxWidth(37);
+        proteinTable.getColumn("C").setMinWidth(37);
 
         try {
             proteinTable.getColumn("Confidence").setMaxWidth(90);
@@ -2129,7 +2128,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else if (column == proteinTable.getColumn("CR").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+        } else if (column == proteinTable.getColumn("C").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
@@ -2231,7 +2230,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 // open the gene details dialog
-                if (column == proteinTable.getColumn("CR").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                if (column == proteinTable.getColumn("C").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey);
                     } catch (IOException ex) {

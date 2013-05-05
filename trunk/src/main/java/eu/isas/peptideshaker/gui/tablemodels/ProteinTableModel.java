@@ -132,7 +132,7 @@ public class ProteinTableModel extends SelfUpdatingTableModel {
             case 4:
                 return "Description";
             case 5:
-                return "CR";
+                return "C";
             case 6:
                 return "Coverage";
             case 7:
