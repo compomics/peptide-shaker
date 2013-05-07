@@ -171,6 +171,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                 case 4:
                     peptideKey = peptideKeys.get(row);
                     ArrayList<Integer> indexes;
+                    if (sequenceFactory == null) {
+                        return null;
+                    }
                     try {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
                         indexes = currentProtein.getPeptideStart(Peptide.getSequence(peptideKey));
