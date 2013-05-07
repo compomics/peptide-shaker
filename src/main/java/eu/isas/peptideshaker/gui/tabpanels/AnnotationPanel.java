@@ -1376,7 +1376,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 geneNameJTextField.setText(geneName);
 
                 if (geneName != null) {
-                    chromosomeJTextField.setText(geneFactory.getChromosomeFromGeneName(geneName));
+                    chromosomeJTextField.setText(geneFactory.getChromosomeForGeneName(geneName));
                 } else {
                     chromosomeJTextField.setText(null);
                 }
