@@ -47,10 +47,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * attached.
      */
     private String proteinAccession;
-    /**
-     * Indicates whether data in DB shall be used.
-     */
-    private boolean useDB = false;
 
     /**
      * Constructor which sets a new table.
@@ -141,11 +137,13 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
+                boolean useDB = !isSelfUpdating();
+                int viewIndex = getViewIndex(row);
+                    String peptideKey = peptideKeys.get(viewIndex);
             switch (column) {
                 case 0:
-                    return row + 1;
+                    return viewIndex + 1;
                 case 1:
-                    String peptideKey = peptideKeys.get(row);
                     PSParameter pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -153,7 +151,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return pSParameter.isStarred();
                 case 2:
-                    peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -161,7 +158,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return pSParameter.getProteinInferenceClass();
                 case 3:
-                    peptideKey = peptideKeys.get(row);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
                     if (!useDB && peptideMatch == null) {
                         dataMissingAtRow(row);
@@ -169,7 +165,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(peptideKey, true, true, true);
                 case 4:
-                    peptideKey = peptideKeys.get(row);
                     ArrayList<Integer> indexes;
                     if (sequenceFactory == null) {
                         return null;
@@ -184,7 +179,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     Collections.sort(indexes);
                     return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort on the first index if multiple indexes
                 case 5:
-                    peptideKey = peptideKeys.get(row);
                     peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
                     if (!useDB
                             && (peptideMatch == null || !peptideShakerGUI.getIdentificationFeaturesGenerator().nValidatedSpectraForPeptideInCache(peptideKey))
@@ -196,7 +190,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     int nSpectra = peptideMatch.getSpectrumMatches().size();
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 6:
-                    peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -208,7 +201,6 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         return pSParameter.getPeptideConfidence();
                     }
                 case 7:
-                    peptideKey = peptideKeys.get(row);
                     pSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -242,19 +234,9 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         return false;
     }
 
-    /**
-     * Sets whether or not data shall be looked for in the database. If false
-     * only the cache will be used.
-     *
-     * @param useDB
-     */
-    public void useDB(boolean useDB) {
-        this.useDB = useDB;
-    }
-
     @Override
     protected void catchException(Exception e) {
-        useDB = true;
+        setSelfUpdating(false);
         peptideShakerGUI.catchException(e);
     }
 
@@ -303,29 +285,16 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
 
     @Override
     protected void loadDataForColumn(int column, WaitingHandler waitingHandler) {
-        ArrayList<String> reversedList = new ArrayList(peptideKeys);
-        Collections.reverse(reversedList);
         try {
             if (column == 1
                     || column == 2
                     || column == 6
                     || column == 7) {
-                identification.loadPeptideMatchParameters(reversedList, new PSParameter(), null);
+                identification.loadPeptideMatchParameters(peptideKeys, new PSParameter(), null);
             } else if (column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadPeptideMatches(reversedList, null);
-            }
-            for (String peptideKey : reversedList) {
-                if (column == 5) {
-                    peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectraForPeptide(peptideKey);
-                }
-                if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressValue();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                }
+                identification.loadPeptideMatches(peptideKeys, null);
             }
         } catch (Exception e) {
             if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool
