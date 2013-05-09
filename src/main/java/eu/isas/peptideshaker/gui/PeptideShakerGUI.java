@@ -90,6 +90,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.*;
@@ -122,9 +123,43 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/PeptideShaker example 1.cps";
     /**
-     * The path to the gene mapping file.
+     * The path to the folder containing the gene mapping files.
      */
-    private final String GENE_MAPPING_PATH = "/resources/conf/gene_ontology/gene_details_human";
+    private final String GENE_MAPPING_PATH = "/resources/conf/gene_ontology/";
+    /**
+     * The current species. Used for the gene mappings.
+     */
+    private String currentSpecies = "Homo sapiens";
+    /**
+     * The suffix to use for files containing gene mappings.
+     */
+    public final String GENE_MAPPING_FILE_SUFFIX = "_gene_mappings";
+    /**
+     * The suffix to use for files containing GO mappings.
+     */
+    public final String GO_MAPPING_FILE_SUFFIX = "_go_mappings";
+    /**
+     * The GO domain map. e.g., key: GO term: GO:0007568, element:
+     * biological_process.
+     */
+    private HashMap<String, String> goDomainMap;
+    /**
+     * The species map, key: latin name, element: ensembl database name, e.g.,
+     * key: Homo sapiens, element: hsapiens_gene_ensembl.
+     */
+    private HashMap<String, String> speciesMap;
+    /**
+     * The Ensembl versions for the downloaded species.
+     */
+    private HashMap<String, String> ensemblVersionsMap;
+    /**
+     * The list of species.
+     */
+    private Vector<String> species;
+    /**
+     * The species separator used in the species comboboxes.
+     */
+    public final String SPECIES_SEPARATOR = "------------------------------------------------------------";
     /**
      * Convenience static string indicating that no selection was done by the
      * user.
@@ -228,6 +263,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The gene factory.
      */
     private GeneFactory geneFactory = GeneFactory.getInstance();
+    /**
+     * The GO factory.
+     */
+    private GOFactory goFactory = GOFactory.getInstance();
     /**
      * The compomics experiment.
      */
@@ -561,7 +600,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         this.setExtendedState(MAXIMIZED_BOTH);
 
-        loadGeneMapping();
+        loadGeneMappings();
         loadEnzymes();
         resetPtmFactory();
 
@@ -2882,13 +2921,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     /**
      * Imports the gene mapping.
      */
-    private void loadGeneMapping() {
-        try {
-            geneFactory.initialize(new File(getJarFilePath(), GENE_MAPPING_PATH), null);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Not able to load the gene mapping file.", "Error importing gene mapping.", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+    private void loadGeneMappings() {
+
+        if (speciesMap != null && new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GENE_MAPPING_FILE_SUFFIX).exists()) {
+            try {
+                geneFactory.initialize(new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GENE_MAPPING_FILE_SUFFIX), null);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Unable to load the gene mapping file.", "Error importing gene mapping.", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
+
+        if (speciesMap != null && new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GO_MAPPING_FILE_SUFFIX).exists()) {
+            try {
+                goFactory.initialize(new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GO_MAPPING_FILE_SUFFIX), null);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Unable to load the gene ontology mapping file.", "Error importing gene ontology mapping.", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+
+        loadSpeciesAndGoDomains();
     }
 
     /**
@@ -3872,7 +3925,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             catchException(e);
         }
         try {
-            GOFactory.getInstance().close();
+            goFactory.closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
+        try {
+            geneFactory.closeFiles();
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
@@ -3884,16 +3943,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
             catchException(e);
         }
-
         try {
             sequenceFactory.clearFactory();
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
         }
-
         try {
-            GOFactory.getInstance().clearFactory();
+            goFactory.clearFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+        }
+        try {
+            geneFactory.clearFactory();
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);
@@ -3929,7 +3992,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         boolean databaseClosed = true;
 
-        // close the database connection
+        // closeFiles the database connection
         if (identification != null) {
 
             try {
@@ -4025,6 +4088,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 return;
             case GO_ANALYSIS_TAB_INDEX:
                 goPanel = new GOEAPanel(this);
+                if (species != null) {
+                    goPanel.setSpecies(species);
+                }
                 goJPanel.removeAll();
                 goJPanel.add(goPanel);
                 return;
@@ -4501,11 +4567,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         }
                     }
 
-                    // close the files and save the user preferences
+                    // closeFiles the files and save the user preferences
                     if (!progressDialog.isRunCanceled()) {
                         spectrumFactory.closeFiles();
                         sequenceFactory.closeFile();
-                        GOFactory.getInstance().close();
+                        GOFactory.getInstance().closeFiles();
                         saveUserPreferences();
                     }
 
@@ -4521,7 +4587,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     // clear the data and database folder
                     clearData(true);
 
-                    // close the jvm
+                    // closeFiles the jvm
                     System.exit(0);
                 }
             }
@@ -4576,7 +4642,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 try {
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
-                    GOFactory.getInstance().close();
+                    GOFactory.getInstance().closeFiles();
                     saveUserPreferences();
                     PeptideShakerGUI.this.clearData(true);
                 } catch (Exception e) {
@@ -4588,7 +4654,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 // @TODO: pass the current project to the new instance of PeptideShaker.
                 new PeptideShakerWrapper();
-                System.exit(0); // have to close the current java process (as a new one is started on the line above)
+                System.exit(0); // have to closeFiles the current java process (as a new one is started on the line above)
             }
         }.start();
     }
@@ -5053,11 +5119,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 try {
                     // reset enzymes, ptms and preferences
+                    loadGeneMappings();
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
 
-                    // close any open connection to an identification database
+                    // closeFiles any open connection to an identification database
                     if (identification != null) {
                         identification.close();
                     }
@@ -6840,12 +6907,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
     /**
      * Returns the default PSM, i.e., the "best" PSM for the given peptide.
-     * 
+     *
      * @param peptideKey the peptide to get the PSM for
      * @return the key of the default PSM
      */
     public String getDefaultPsmSelection(String peptideKey) {
-        
+
         if (peptideKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
             return PeptideShakerGUI.NO_SELECTION;
         }
@@ -6884,15 +6951,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         return psmKey;
     }
-    
-     /**
-     * Returns the default peptide, i.e., the "best" peptide for the given protein.
-     * 
+
+    /**
+     * Returns the default peptide, i.e., the "best" peptide for the given
+     * protein.
+     *
      * @param proteinKey the protein to get the peptide for
      * @return the key of the default peptide
      */
     public String getDefaultPeptideSelection(String proteinKey) {
-        
+
         if (proteinKey.equalsIgnoreCase(PeptideShakerGUI.NO_SELECTION)) {
             return PeptideShakerGUI.NO_SELECTION;
         }
@@ -6930,5 +6998,168 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         return peptideKey;
+    }
+
+    /**
+     * Returns the path to the folder containing the gene mapping files.
+     *
+     * @return the gene mapping folder
+     */
+    public File getGeneMappingFolder() {
+        return new File(getJarFilePath(), GENE_MAPPING_PATH);
+    }
+
+    /**
+     * Returns the current species.
+     *
+     * @return the currentSpecies
+     */
+    public String getCurrentSpecies() {
+        return currentSpecies;
+    }
+
+    /**
+     * Set the current species.
+     *
+     * @param currentSpecies the currentSpecies to set
+     */
+    public void setCurrentSpecies(String currentSpecies) {
+        this.currentSpecies = currentSpecies;
+    }
+
+    /**
+     * Load the mapping files.
+     */
+    public void loadSpeciesAndGoDomains() {
+
+        try {
+            File speciesFile = new File(getGeneMappingFolder(), "species");
+            File ensemblVersionsFile = new File(getGeneMappingFolder(), "ensembl_versions");
+            File goDomainsFile = new File(getGeneMappingFolder(), "go_domains");
+
+            goDomainMap = new HashMap<String, String>();
+            species = new Vector<String>();
+            speciesMap = new HashMap<String, String>();
+            ensemblVersionsMap = new HashMap<String, String>();
+
+            if (!goDomainsFile.exists()) {
+                JOptionPane.showMessageDialog(this, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
+                        + "Continuing without GO domains.", "File Not Found", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                // read the GO domains
+                FileReader r = new FileReader(goDomainsFile);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] elements = line.split("\\t");
+                    goDomainMap.put(elements[0], elements[1]);
+                    line = br.readLine();
+                }
+
+                br.close();
+                r.close();
+            }
+
+            if (ensemblVersionsFile.exists()) {
+
+                // read the Ensembl versions
+                FileReader r = new FileReader(ensemblVersionsFile);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] elements = line.split("\\t");
+                    ensemblVersionsMap.put(elements[0], elements[1]);
+                    line = br.readLine();
+                }
+
+                br.close();
+                r.close();
+            }
+
+
+            if (!speciesFile.exists()) {
+                JOptionPane.showMessageDialog(this, "GO species file \"" + speciesFile.getName() + "\" not found!\n"
+                        + "GO Analysis Canceled.", "File Not Found", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                // read the species list
+                FileReader r = new FileReader(speciesFile);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+
+                species.add("-- Select Species --");
+                species.add(SPECIES_SEPARATOR);
+
+                while (line != null) {
+                    String[] elements = line.split("\\t");
+                    speciesMap.put(elements[0].trim(), elements[1].trim());
+
+                    if (species.size() == 5) {
+                        species.add(SPECIES_SEPARATOR);
+                    }
+
+                    if (ensemblVersionsMap.containsKey(elements[1].trim())) {
+                        species.add(elements[0].trim() + " [" + ensemblVersionsMap.get(elements[1].trim()) + "]");
+                    } else {
+                        species.add(elements[0].trim() + " [N/A]");
+                    }
+
+                    line = br.readLine();
+                }
+
+                br.close();
+                r.close();
+                
+                goPanel.setSpecies(species);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured when loading the species and GO domain file.\n"
+                    + "GO Analysis Canceled.", "File Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Returns the GO domain map, e.g., key: GO term: GO:0007568, element:
+     * biological_process.
+     *
+     * @return the goDomainMap
+     */
+    public HashMap<String, String> getGoDomainMap() {
+        return goDomainMap;
+    }
+
+    /**
+     * Returns the species map. Key: latin name, element: ensembl database name,
+     * e.g., key: Homo sapiens, element: hsapiens.
+     *
+     * @return the speciesMap
+     */
+    public HashMap<String, String> getSpeciesMap() {
+        return speciesMap;
+    }
+
+    /**
+     * Returns the Ensembl versions map.
+     * 
+     * @return the ensemblVersionsMap
+     */
+    public HashMap<String, String> getEnsemblVersionsMap() {
+        return ensemblVersionsMap;
+    }
+
+    /**
+     * Return the species list. NB: also contains species separators.
+     * 
+     * @return the species
+     */
+    public Vector<String> getSpecies() {
+        return species;
     }
 }

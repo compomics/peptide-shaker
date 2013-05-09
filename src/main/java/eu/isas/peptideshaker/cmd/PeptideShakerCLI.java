@@ -292,7 +292,7 @@ public class PeptideShakerCLI implements Callable {
 
         SpectrumFactory.getInstance().closeFiles();
         SequenceFactory.getInstance().closeFile();
-        GOFactory.getInstance().close();
+        GOFactory.getInstance().closeFiles();
         identification.close();
 
         File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
