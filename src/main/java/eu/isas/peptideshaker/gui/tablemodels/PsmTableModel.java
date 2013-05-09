@@ -33,10 +33,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
      * A list of ordered PSM keys.
      */
     private ArrayList<String> psmKeys = null;
-    /**
-     * Indicates whether data in DB shall be used.
-     */
-    private boolean useDB = false;
 
     /**
      * Constructor which sets a new table.
@@ -130,11 +126,13 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
+            int viewIndex = getViewIndex(row);
+            String psmKey = psmKeys.get(viewIndex);
+                boolean useDB = !isSelfUpdating();
             switch (column) {
                 case 0:
-                    return row + 1;
+                    return viewIndex +1;
                 case 1:
-                    String psmKey = psmKeys.get(row);
                     PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -142,7 +140,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     }
                     return pSParameter.isStarred();
                 case 2:
-                    psmKey = psmKeys.get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
                         dataMissingAtRow(row);
@@ -150,7 +147,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     }
                     return SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch);
                 case 3:
-                    psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
                         dataMissingAtRow(row);
@@ -159,7 +155,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
                     return peptideShakerGUI.getDisplayFeaturesGenerator().getTaggedPeptideSequence(bestAssumption.getPeptide(), true, true, true);
                 case 4:
-                    psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
                         dataMissingAtRow(row);
@@ -167,7 +162,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     }
                     return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                 case 5:
-                    psmKey = psmKeys.get(row);
                     spectrumMatch = identification.getSpectrumMatch(psmKey, useDB);
                     if (!useDB && spectrumMatch == null) {
                         dataMissingAtRow(row);
@@ -177,7 +171,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                     Precursor precursor = peptideShakerGUI.getPrecursor(psmKey);
                     return Math.abs(bestAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                 case 6:
-                    psmKey = psmKeys.get(row);
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -189,7 +182,6 @@ public class PsmTableModel extends SelfUpdatingTableModel {
                         return pSParameter.getPsmConfidence();
                     }
                 case 7:
-                    psmKey = psmKeys.get(row);
                     pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {
                         dataMissingAtRow(row);
@@ -220,20 +212,10 @@ public class PsmTableModel extends SelfUpdatingTableModel {
         return false;
     }
 
-    /**
-     * Sets whether or not data shall be looked for in the database. If false
-     * only the cache will be used.
-     *
-     * @param useDB
-     */
-    public void useDB(boolean useDB) {
-        this.useDB = useDB;
-    }
-
     @Override
     protected void catchException(Exception e) {
-        useDB = false;
-            peptideShakerGUI.catchException(e);
+        setSelfUpdating(false);
+        peptideShakerGUI.catchException(e);
     }
 
     @Override
@@ -263,28 +245,15 @@ public class PsmTableModel extends SelfUpdatingTableModel {
     @Override
     protected void loadDataForColumn(int column, WaitingHandler waitingHandler) {
         try {
-            ArrayList<String> reversedList = new ArrayList(psmKeys);
-            Collections.reverse(reversedList);
             if (column == 1
                     || column == 6
                     || column == 7) {
-                identification.loadSpectrumMatchParameters(reversedList, new PSParameter(), null);
+                identification.loadSpectrumMatchParameters(psmKeys, new PSParameter(), null);
             } else if (column == 2
                     || column == 3
                     || column == 4
                     || column == 5) {
-                identification.loadSpectrumMatches(reversedList, null);
-            }
-            for (String psmKey : reversedList) {
-                if (column == 5) {
-                    peptideShakerGUI.getPrecursor(psmKey);
-                }
-                if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressValue();
-                    if (waitingHandler.isRunCanceled()) {
-                        return;
-                    }
-                }
+                identification.loadSpectrumMatches(psmKeys, null);
             }
         } catch (Exception e) {
             if (!peptideShakerGUI.isClosing()) { // ignore errors related to accesing the database when closing the tool

@@ -21,7 +21,6 @@ import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.spectrum.*;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
-import com.compomics.util.gui.tablemodels.TableCacher;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -181,10 +180,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The last m/z maximum displayed.
      */
     private double lastMzMaximum = 0;
-    /**
-     * A table cacher used to cache data for the self updating tables.
-     */
-    private TableCacher tableCacher;
 
     /**
      * Creates a new OverviewPanel.
@@ -194,7 +189,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     public OverviewPanel(PeptideShakerGUI parent) {
 
         this.peptideShakerGUI = parent;
-        tableCacher = new TableCacher(peptideShakerGUI.getExceptionHandler());
 
         initComponents();
 
@@ -217,118 +211,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ionTableCorner.setBackground(proteinTable.getTableHeader().getBackground());
         fragmentIonsJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ionTableCorner);
 
-        proteinTable.setAutoCreateRowSorter(true);
-        peptideTable.setAutoCreateRowSorter(true);
-        psmTable.setAutoCreateRowSorter(true);
-
-        // make sure that the user is made aware that the tool is doing something during sorting of the protein table
-        proteinTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-            @Override
-            public synchronized void sorterChanged(RowSorterEvent e) {
-
-                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED && !tableCacher.isCaching()) {
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Sorting Table. Please Wait...");
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setUnstoppable(false);
-
-                    tableCacher.cacheForSorting(proteinTable, "proteinTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                    ((ProteinTableModel) proteinTable.getModel()).useDB(true);
-
-                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
-
-                    // change the peptide shaker icon to the normal version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                    ProteinTableModel tableModel = (ProteinTableModel) proteinTable.getModel();
-                    tableModel.useDB(false);
-                }
-            }
-        });
-
-        // make sure that the user is made aware that the tool is doing something during sorting of the peptide table
-        peptideTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-            @Override
-            public synchronized void sorterChanged(RowSorterEvent e) {
-
-                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Sorting Table. Please Wait...");
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setUnstoppable(false);
-
-                    tableCacher.cacheForSorting(peptideTable, "peptideTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                    ((PeptideTableModel) peptideTable.getModel()).useDB(true);
-
-                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
-
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    peptideTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                    PeptideTableModel tableModel = (PeptideTableModel) peptideTable.getModel();
-                    tableModel.useDB(false);
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                }
-            }
-        });
-
-        // make sure that the user is made aware that the tool is doing something during sorting of the psm table
-        psmTable.getRowSorter().addRowSorterListener(new RowSorterListener() {
-            @Override
-            public synchronized void sorterChanged(RowSorterEvent e) {
-
-                if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    psmTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                    progressDialog = new ProgressDialogX(peptideShakerGUI,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Sorting Table. Please Wait...");
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setUnstoppable(false);
-
-                    tableCacher.cacheForSorting(psmTable, "psmTable", DisplayPreferences.LOADING_MESSAGE, progressDialog);
-                    ((PsmTableModel) psmTable.getModel()).useDB(true);
-
-                } else if (e.getType() == RowSorterEvent.Type.SORTED && !tableCacher.isCaching()) {
-                    peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                    psmTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                    PsmTableModel tableModel = (PsmTableModel) psmTable.getModel();
-                    tableModel.useDB(false);
-
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                }
-            }
-        });
+        SelfUpdatingTableModel.addSortListener(proteinTable, progressDialog);
+        SelfUpdatingTableModel.addSortListener(peptideTable, progressDialog);
+        SelfUpdatingTableModel.addSortListener(psmTable, progressDialog);
 
         // make sure that the scroll panes are see-through
         proteinScrollPane.getViewport().setOpaque(false);
@@ -4628,7 +4513,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // update the table model
                 if (psmTable.getModel() instanceof PsmTableModel) {
                     ((PsmTableModel) psmTable.getModel()).updateDataModel(peptideShakerGUI, psmKeys);
-                    ((PsmTableModel) psmTable.getModel()).useDB(false);
+                    ((PsmTableModel) psmTable.getModel()).setSelfUpdating(true);
                 } else {
                     PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
                     psmTable.setModel(psmTableModel);
@@ -4708,7 +4593,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // update the table model
                 if (peptideTable.getModel() instanceof PeptideTableModel) {
                     ((PeptideTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, accession, peptideKeys);
-                    ((PeptideTableModel) peptideTable.getModel()).useDB(false);
+                    ((PeptideTableModel) peptideTable.getModel()).setSelfUpdating(true);
                 } else {
                     PeptideTableModel peptideTableModel = new PeptideTableModel(peptideShakerGUI, accession, peptideKeys);
                     peptideTable.setModel(peptideTableModel);
