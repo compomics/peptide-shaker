@@ -44,8 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -189,9 +187,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         pdbJScrollPane.getViewport().setOpaque(false);
         pdbChainsJScrollPane.getViewport().setOpaque(false);
 
-        
-        SelfUpdatingTableModel.addSortListener(proteinTable, progressDialog);
-        SelfUpdatingTableModel.addSortListener(peptideTable, progressDialog);
+
+        SelfUpdatingTableModel.addSortListener(proteinTable, new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true));
+        peptideTable.setAutoCreateRowSorter(true);
     }
 
     /**

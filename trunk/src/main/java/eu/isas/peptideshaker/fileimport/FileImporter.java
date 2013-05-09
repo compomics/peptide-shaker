@@ -170,6 +170,10 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
             sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
 
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
+
             waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
 
@@ -1025,6 +1029,9 @@ public class FileImporter {
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                 waitingHandler.resetSecondaryProgressBar();
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.increaseProgressValue();
                 waitingHandler.appendReport(targetFileName + " imported.", true, true);
@@ -1034,7 +1041,7 @@ public class FileImporter {
             }
         }
     }
-    
+
     /**
      * Returns the path to the jar file.
      *

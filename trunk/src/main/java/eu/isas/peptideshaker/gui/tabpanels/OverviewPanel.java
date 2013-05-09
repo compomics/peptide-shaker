@@ -48,8 +48,6 @@ import java.text.DecimalFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -211,9 +209,18 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         ionTableCorner.setBackground(proteinTable.getTableHeader().getBackground());
         fragmentIonsJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, ionTableCorner);
 
-        SelfUpdatingTableModel.addSortListener(proteinTable, progressDialog);
-        SelfUpdatingTableModel.addSortListener(peptideTable, progressDialog);
-        SelfUpdatingTableModel.addSortListener(psmTable, progressDialog);
+        SelfUpdatingTableModel.addSortListener(proteinTable, new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true));
+        SelfUpdatingTableModel.addSortListener(peptideTable, new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true));
+        SelfUpdatingTableModel.addSortListener(psmTable, new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                true));
 
         // make sure that the scroll panes are see-through
         proteinScrollPane.getViewport().setOpaque(false);
