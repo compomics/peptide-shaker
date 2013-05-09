@@ -1475,7 +1475,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         int proteinIndex = -1;
 
         if (row != -1) {
-            proteinIndex = proteinTable.convertRowIndexToModel(row);
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            proteinIndex = tableModel.getViewIndex(row);
         }
 
         if (evt == null || (evt.getButton() == MouseEvent.BUTTON1 && (proteinIndex != -1 && column != -1))) {
@@ -1581,7 +1582,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
         try {
             int row = peptideTable.getSelectedRow();
-            int proteinIndex = proteinTable.convertRowIndexToModel(row);
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            int proteinIndex = tableModel.getViewIndex(row);
             int column = peptideTable.getSelectedColumn();
 
             if (row != -1) {
@@ -3363,7 +3365,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                             true, true, true, true, true, false, true, false, false, false);
                 } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                     ArrayList<String> selectedPeptides = getDisplayedPeptides();
-                    String proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
+                    String proteinKey = proteinKeys.get(proteinIndex);
                     outputGenerator.getPeptidesOutput(
                             null, selectedPeptides, peptidePdbArray, true, false, true, true, true, true, true,
                             true, true, true, true, true, true, true, true, false, false, false, proteinKey, true);
@@ -3523,7 +3527,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         String psmKey = peptideShakerGUI.getSelectedPsmKey();
 
         if (proteinTable.getSelectedRow() != -1) {
-            proteinKey = proteinKeys.get(proteinTable.convertRowIndexToModel(proteinTable.getSelectedRow()));
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            int proteinIndex = tableModel.getViewIndex(proteinTable.getSelectedRow());
+            proteinKey = proteinKeys.get(proteinIndex);
         }
         if (peptideTable.getSelectedRow() != -1) {
             peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
@@ -3547,7 +3553,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     private int getProteinRow(String proteinKey) {
         int modelIndex = proteinKeys.indexOf(proteinKey);
         if (modelIndex >= 0) {
-            return proteinTable.convertRowIndexToView(modelIndex);
+            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+            return tableModel.getRowNumber(modelIndex);
         } else {
             return -1;
         }
