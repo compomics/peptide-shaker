@@ -357,7 +357,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, psParameter);
 
                                     if (psParameter.isValidated() && !ProteinMatch.isDecoy(proteinKey) && !psParameter.isHidden()) {
-                                        ArrayList<String> goTerms = goFactory.getProteinMatchTerms(proteinKey);
+                                        ArrayList<String> goTerms = goFactory.getProteinGoAccessions(proteinKey);
                                         if (!goTerms.isEmpty()) {
                                             totalNumberOfGoMappedProteinsInProject++;
                                             for (String goTerm : goTerms) {
@@ -389,13 +389,16 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 goProteinCountLabel.setText("[GO Proteins: Ensembl: " + goFactory.getNumberOfProteins()
                                         + ", Project: " + totalNumberOfGoMappedProteinsInProject + "]");
 
-                                ArrayList<String> termsMapped = goFactory.getTermsMapped();
-                                Collections.sort(termsMapped);
-                                for (String goTerm : termsMapped) {
+                                ArrayList<String> termNamesMapped = goFactory.getTermNamesMapped();
+                                Collections.sort(termNamesMapped);
+
+                                for (String goTermName : termNamesMapped) {
 
                                     if (progressDialog.isRunCanceled()) {
                                         break;
                                     }
+                                    
+                                    String goTerm = goFactory.getTermAccession(goTermName);
 
                                     progressDialog.increaseProgressValue();
 
@@ -485,7 +488,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                     ((DefaultTableModel) goMappingsTable.getModel()).addRow(new Object[]{
                                                 goMappingsTable.getRowCount() + 1,
-                                                addGoLink(goTerm),
+                                                peptideShakerGUI.getDisplayFeaturesGenerator().addGoLink(goTerm),
                                                 goFactory.getTermDescription(goTerm),
                                                 goDomain,
                                                 percentAll,
@@ -555,8 +558,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         goMappingsTable.getColumn("GO Accession").setMinWidth(width);
                                         goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
                                     } else {
-                                        proteinTable.getColumn("Accession").setMinWidth(15);
-                                        proteinTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
+                                        goMappingsTable.getColumn("GO Accession").setMinWidth(15);
+                                        goMappingsTable.getColumn("GO Accession").setMaxWidth(Integer.MAX_VALUE);
                                     }
 
                                     maxLog2Diff = Math.ceil(maxLog2Diff);
@@ -1347,7 +1350,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_goMappingsTableMouseMoved
 
     /**
-     * If the user clicks the go term column the go term is opened in the web
+     * If the user clicks the GO term column the GO term is opened in the web
      * browser.
      *
      * @param evt
@@ -2109,31 +2112,6 @@ public class GOEAPanel extends javax.swing.JPanel {
     private javax.swing.JLabel unknownSpeciesLabel;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Returns the GO accession number as a web link to the given GO term at
-     * QuickGO.
-     *
-     * @param goAccession
-     * @return the GO accession number as a web link to the given GO term at
-     * QuickGO
-     */
-    private String addGoLink(String goAccession) {
-        return "<html><a href=\"" + getGoAccessionLink(goAccession)
-                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                + goAccession + "</font></a></html>";
-    }
-
-    /**
-     * Returns the GO accession number as a web link to the given GO term at
-     * QuickGO.
-     *
-     * @param goAccession the GO accession number
-     * @return the GO accession web link
-     */
-    private String getGoAccessionLink(String goAccession) {
-        return "http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
-    }
 
     /**
      * Update the plot markers.

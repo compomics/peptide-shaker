@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;
 

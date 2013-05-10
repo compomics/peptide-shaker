@@ -372,4 +372,29 @@ public class DisplayFeaturesGenerator {
         }
         return result;
     }
+
+    /**
+     * Returns the GO accession number as a web link to the given GO term at
+     * QuickGO.
+     *
+     * @param goAccession
+     * @return the GO accession number as a web link to the given GO term at
+     * QuickGO
+     */
+    public String addGoLink(String goAccession) { // @TODO: move method to utilities...
+        return "<html><a href=\"" + getGoAccessionLink(goAccession)
+                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + goAccession + "</font></a></html>";
+    }
+
+    /**
+     * Returns the GO accession number as a web link to the given GO term at
+     * QuickGO.
+     *
+     * @param goAccession the GO accession number
+     * @return the GO accession web link
+     */
+    public String getGoAccessionLink(String goAccession) {
+        return "http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
+    }
 }
