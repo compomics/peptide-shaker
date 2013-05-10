@@ -7,7 +7,6 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -15,9 +14,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import javax.print.attribute.HashAttributeSet;
 import no.uib.jsparklines.data.Chromosome;
 import no.uib.jsparklines.data.XYDataPoint;
 
