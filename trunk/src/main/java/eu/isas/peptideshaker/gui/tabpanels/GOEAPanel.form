@@ -213,7 +213,7 @@
             </Container>
             <Component class="javax.swing.JLabel" name="goMappingsFileJLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Species:"/>
+                <Property name="text" type="java.lang.String" value="Species"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="speciesJComboBox">
