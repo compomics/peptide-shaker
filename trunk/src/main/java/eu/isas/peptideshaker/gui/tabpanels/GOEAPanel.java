@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -93,6 +94,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private GOFactory goFactory = GOFactory.getInstance();
     /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
+    /**
      * The distribution chart panel.
      */
     private ChartPanel distributionChartPanel = null;
@@ -105,6 +110,11 @@ public class GOEAPanel extends javax.swing.JPanel {
      * performed.
      */
     private boolean goMappingsLoaded = false;
+    /**
+     * If true, the GO mappings are updated when selecting an item in the drop
+     * down menu. (Needed when automatically changing the selected value.)
+     */
+    private boolean loadMappings = false;
 
     /**
      * Creates a new GOEAPanel.
@@ -112,9 +122,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      * @param peptideShakerGUI
      */
     public GOEAPanel(PeptideShakerGUI peptideShakerGUI) {
-
         this.peptideShakerGUI = peptideShakerGUI;
-
         initComponents();
         setUpGUI();
     }
@@ -287,6 +295,20 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (peptideShakerGUI.getIdentification() != null) {
 
+            loadMappings = false;
+
+            // select the current species
+            boolean speciesFound = false;
+            for (int i = 0; i < speciesJComboBox.getItemCount() && !speciesFound; i++) {
+                String temp = (String) speciesJComboBox.getModel().getElementAt(i);
+                if (temp.contains(peptideShakerGUI.getCurrentSpecies())) {
+                    speciesFound = true;
+                    speciesJComboBox.setSelectedIndex(i);
+                }
+            }
+
+            loadMappings = true;
+
             String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
 
             if (selectedSpecies.indexOf("[") != -1) {
@@ -298,6 +320,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             if (speciesDatabase != null) {
 
                 final File goMappingsFile = new File(peptideShakerGUI.getGeneMappingFolder(), speciesDatabase + peptideShakerGUI.GO_MAPPING_FILE_SUFFIX);
+                final File geneMappingsFile = new File(peptideShakerGUI.getGeneMappingFolder(), speciesDatabase + peptideShakerGUI.GENE_MAPPING_FILE_SUFFIX);
 
                 if (goMappingsFile.exists()) {
 
@@ -339,6 +362,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             try {
 
                                 progressDialog.setTitle("Importing GO (1/3). Please Wait...");
+                                geneFactory.initialize(geneMappingsFile, null);
                                 goFactory.initialize(goMappingsFile, progressDialog);
 
                                 PSParameter psParameter = new PSParameter();
@@ -397,7 +421,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     if (progressDialog.isRunCanceled()) {
                                         break;
                                     }
-                                    
+
                                     String goTerm = goFactory.getTermAccession(goTermName);
 
                                     progressDialog.increaseProgressValue();
@@ -898,11 +922,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsTable.setOpaque(false);
         goMappingsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         goMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                goMappingsTableMouseExited(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 goMappingsTableMouseReleased(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                goMappingsTableMouseExited(evt);
             }
         });
         goMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1047,9 +1071,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                     .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(biasWarningLabel)
                     .addComponent(significanceJLabel)
@@ -1061,7 +1085,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         mappingsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {downloadButton, speciesJComboBox, updateButton});
 
-        mappingsPanel.setBounds(0, 0, 1020, 368);
+        mappingsPanel.setBounds(0, 0, 1020, 364);
         mappingsTableLayeredPane.add(mappingsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
@@ -1196,7 +1220,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinsPanelLayout.createSequentialGroup()
-                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                .addComponent(proteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1786,10 +1810,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                         downloadGoMappings(selectedSpecies, ensemblVersion);
                     }
                     if (!progressDialog.isRunCanceled()) {
-                        downloadGeneMappings(selectedSpecies, ensemblVersion);
+                        downloadGeneMappings(selectedSpecies);
                     }
-
-
 
                     // @TODO: the code below ought to work, but results in bugs...
                     //        therefore the user now has to reselect in the drop down menu
@@ -1818,9 +1840,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
         selectedSpecies = peptideShakerGUI.getSpeciesMap().get(selectedSpecies);
         goFactory.clearFactory();
+        geneFactory.clearFactory();
 
         try {
             goFactory.closeFiles();
+            geneFactory.closeFiles();
 
             File tempSpeciesFile = new File(peptideShakerGUI.getGeneMappingFolder(), selectedSpecies);
 
@@ -1846,7 +1870,9 @@ public class GOEAPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void speciesJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJComboBoxActionPerformed
-        updateMappings();
+        if (loadMappings) {
+            updateMappings();
+        }
     }//GEN-LAST:event_speciesJComboBoxActionPerformed
 
     /**
@@ -2240,6 +2266,8 @@ public class GOEAPanel extends javax.swing.JPanel {
             File mappingFilesFolder = peptideShakerGUI.getGeneMappingFolder();
             String[] mappingsFiles = mappingFilesFolder.list();
 
+            peptideShakerGUI.setCurrentSpecies(selectedSpecies);
+
             clearOldResults();
 
             boolean speciesFileFound = false;
@@ -2258,13 +2286,6 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             if (peptideShakerGUI.getIdentification() != null && goMappingsLoaded) {
 
-//                // invoke later to give time for components to update
-//                SwingUtilities.invokeLater(new Runnable() {
-//
-//                    public void run() {
-//                        displayResults();
-//                    }
-//                });
                 final Thread displayThread = new Thread("DisplayThread") {
                     @Override
                     public void run() {
@@ -2326,6 +2347,16 @@ public class GOEAPanel extends javax.swing.JPanel {
         plotPanel.repaint();
 
         goProteinCountLabel.setText("[GO Proteins: Ensembl: -, Project: -]");
+
+        goFactory.clearFactory();
+        geneFactory.clearFactory();
+
+        try {
+            goFactory.closeFiles();
+            geneFactory.closeFiles();
+        } catch (IOException ex) {
+            peptideShakerGUI.catchException(ex);
+        }
     }
 
     /**
@@ -2515,7 +2546,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                     if (rowLine != null && rowLine.startsWith("Query ERROR")) {
                         JOptionPane.showMessageDialog(peptideShakerGUI, rowLine, "Query Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-
                         while (rowLine != null && !progressDialog.isRunCanceled()) {
                             progressDialog.setTitle("Downloading GO Mappings. Please Wait... (" + counter++ + " rows downloaded)");
                             bw.write(rowLine + System.getProperty("line.separator"));
@@ -2574,11 +2604,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      * Download the gene mappings.
      *
      * @param selectedSpecies
-     * @param ensemblVersion
      * @throws MalformedURLException
      * @throws IOException
      */
-    private void downloadGeneMappings(String selectedSpecies, String ensemblVersion) throws MalformedURLException, IOException {
+    private void downloadGeneMappings(String selectedSpecies) throws MalformedURLException, IOException {
 
         // Construct data
         String requestXml = "query=<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

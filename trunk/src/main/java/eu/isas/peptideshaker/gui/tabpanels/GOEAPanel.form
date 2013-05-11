@@ -163,9 +163,9 @@
                           <Component id="unknownSpeciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ensemblVersionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="proteinGoMappingsScrollPane" pref="259" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="biasWarningLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="significanceJLabel" alignment="2" min="-2" max="-2" attributes="0"/>

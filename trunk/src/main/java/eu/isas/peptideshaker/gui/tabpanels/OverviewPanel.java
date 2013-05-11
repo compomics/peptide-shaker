@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinTableModel;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
@@ -166,6 +167,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The sequence coverage chart.
      */
@@ -2023,7 +2028,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null && geneFactory.isMappingFileOpen()) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
@@ -2127,7 +2132,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 // open the gene details dialog
-                if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null 
+                        && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey);
                     } catch (IOException ex) {
