@@ -255,7 +255,7 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Returns the ID filters.
-     * 
+     *
      * @return the idFilter
      */
     public IdFilter getIdFilter() {
@@ -264,7 +264,7 @@ public class PeptideShakerSettings implements UrParameter {
 
     /**
      * Sets the ID filter.
-     * 
+     *
      * @param idFilter the idFilter to set
      */
     public void setIdFilter(IdFilter idFilter) {
