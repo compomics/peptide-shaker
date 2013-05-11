@@ -3,8 +3,9 @@
 
 ----
 
-*Changes in PeptideShaker 0.20.0 (May ?. 2013):*
+*Changes in PeptideShaker 0.20.0 (May 11. 2013):*
  * NEW FEATURE: New self updating tables with better support for bigger datasets.
+ * NEW FEATURE: Added a chromosome mapping column to the protein table.
 
  * FEATURE IMPROVEMENT: Improved the peptide inference method for miscleaved peptides.
  * FEATURE IMPROVEMENT: Sped up the PTM inference processing.
@@ -21,7 +22,7 @@
  * BUG FIX: Removed a GUI references in the FileImporter class, improving the command line support. 
 
  * LIBRARY UPDATE: Updated jsparklines to version 0.6.0.
- * LIBRARY UPDATE: Updated utilities to version 3.13.6.
+ * LIBRARY UPDATE: Updated utilities to version 3.13.16.
 
 ----
 
@@ -30,7 +31,7 @@
  * LIBRARY UPDATE: Updated xtandem-parser to version 1.5.14, fixing a problem with the parsing of spectrum titles with retention time in them.
  * LIBRARY UPDATE: Updated utilities to version 3.11.29.
 
-Download Count: 153 
+Download Count: 171 
 
 ----
 
