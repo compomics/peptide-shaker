@@ -75,6 +75,7 @@ import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
 import eu.isas.peptideshaker.recalibration.FractionError;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import eu.isas.peptideshaker.preferences.GenePreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
@@ -90,7 +91,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.*;
@@ -122,44 +122,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The path to the example dataset.
      */
     private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/PeptideShaker example 1.cps";
-    /**
-     * The path to the folder containing the gene mapping files.
-     */
-    private final String GENE_MAPPING_PATH = "/resources/conf/gene_ontology/";
-    /**
-     * The current species. Used for the gene mappings.
-     */
-    private String currentSpecies = "Homo sapiens";
-    /**
-     * The suffix to use for files containing gene mappings.
-     */
-    public final String GENE_MAPPING_FILE_SUFFIX = "_gene_mappings";
-    /**
-     * The suffix to use for files containing GO mappings.
-     */
-    public final String GO_MAPPING_FILE_SUFFIX = "_go_mappings";
-    /**
-     * The GO domain map. e.g., key: GO term: GO:0007568, element:
-     * biological_process.
-     */
-    private HashMap<String, String> goDomainMap;
-    /**
-     * The species map, key: latin name, element: ensembl database name, e.g.,
-     * key: Homo sapiens, element: hsapiens_gene_ensembl.
-     */
-    private HashMap<String, String> speciesMap;
-    /**
-     * The Ensembl versions for the downloaded species.
-     */
-    private HashMap<String, String> ensemblVersionsMap;
-    /**
-     * The list of species.
-     */
-    private Vector<String> species;
-    /**
-     * The species separator used in the species comboboxes.
-     */
-    public final String SPECIES_SEPARATOR = "------------------------------------------------------------";
     /**
      * Convenience static string indicating that no selection was done by the
      * user.
@@ -307,6 +269,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * The initial processing preferences
      */
     private ProcessingPreferences processingPreferences = new ProcessingPreferences();
+    /**
+     * The gene preferences.
+     */
+    private GenePreferences genePreferences;
     /**
      * The user preferences.
      */
@@ -516,9 +482,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         // set this version as the default PeptideShaker version
         if (!getJarFilePath().equalsIgnoreCase(".")) {
-
             utilitiesUserPreferences.setPeptideShakerPath(new File(getJarFilePath(), "PeptideShaker-" + getVersion() + ".jar").getAbsolutePath());
-
             UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
         }
 
@@ -600,6 +564,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         this.setExtendedState(MAXIMIZED_BOTH);
 
+        genePreferences = new GenePreferences(this);
         loadGeneMappings();
         loadEnzymes();
         resetPtmFactory();
@@ -800,6 +765,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         fractionDetailsJMenuItem = new javax.swing.JMenuItem();
         preferencesMenuItem = new javax.swing.JMenuItem();
+        speciesJMenuItem = new javax.swing.JMenuItem();
         jSeparator13 = new javax.swing.JPopupMenu.Separator();
         javaOptionsJMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
@@ -1482,6 +1448,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         });
         editMenu.add(preferencesMenuItem);
+
+        speciesJMenuItem.setMnemonic('C');
+        speciesJMenuItem.setText("Species");
+        speciesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                speciesJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(speciesJMenuItem);
         editMenu.add(jSeparator13);
 
         javaOptionsJMenuItem.setMnemonic('O');
@@ -2907,6 +2882,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }//GEN-LAST:event_exportProjectMenuItemActionPerformed
 
     /**
+     * Open the species selection dialog.
+     *
+     * @param evt
+     */
+    private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
+        new SpeciesDialog(this, true);
+    }//GEN-LAST:event_speciesJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory.
      */
     private void loadEnzymes() {
@@ -2923,25 +2907,29 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void loadGeneMappings() {
 
-        if (speciesMap != null && new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GENE_MAPPING_FILE_SUFFIX).exists()) {
+        if (genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
+                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
             try {
-                geneFactory.initialize(new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GENE_MAPPING_FILE_SUFFIX), null);
+                geneFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
+                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX), null);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Unable to load the gene mapping file.", "Error importing gene mapping.", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         }
 
-        if (speciesMap != null && new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GO_MAPPING_FILE_SUFFIX).exists()) {
+        if (genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
+                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX).exists()) {
             try {
-                goFactory.initialize(new File(getGeneMappingFolder(), speciesMap.get(currentSpecies) + GO_MAPPING_FILE_SUFFIX), null);
+                goFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
+                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX), null);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Unable to load the gene ontology mapping file.", "Error importing gene ontology mapping.", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         }
 
-        loadSpeciesAndGoDomains();
+        genePreferences.loadSpeciesAndGoDomains();
     }
 
     /**
@@ -3000,6 +2988,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             quantifyMenuItem.setEnabled(true);
             exportPrideMenuItem.setEnabled(true);
             exportProjectMenuItem.setEnabled(true);
+            speciesJMenuItem.setEnabled(true);
 
             // disable the fractions tab if only one mgf file
             allTabsJTabbedPane.setEnabledAt(2, identification.getSpectrumFiles().size() > 1);
@@ -3153,6 +3142,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JMenu settingsMenu;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
+    private javax.swing.JMenuItem speciesJMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JCheckBoxMenuItem spectrumSlidersCheckBoxMenuItem;
@@ -3211,6 +3201,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Returns the gene preferences.
+     *
+     * @return the gene preferences
+     */
+    public GenePreferences getGenePreferences() {
+        return genePreferences;
     }
 
     /**
@@ -3675,12 +3674,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Updates the new annotation preferences.
+     * Updates the annotation preferences.
      *
      * @param annotationPreferences the new annotation preferences
      */
     public void setAnnotationPreferences(AnnotationPreferences annotationPreferences) {
         this.annotationPreferences = annotationPreferences;
+    }
+
+    /**
+     * Updates the gene preferences.
+     *
+     * @param genePreferences the new gene preferences
+     */
+    public void setGenePreferences(GenePreferences genePreferences) {
+        this.genePreferences = genePreferences;
     }
 
     /**
@@ -4088,8 +4096,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 return;
             case GO_ANALYSIS_TAB_INDEX:
                 goPanel = new GOEAPanel(this);
-                if (species != null) {
-                    goPanel.setSpecies(species);
+                if (genePreferences != null && genePreferences.getSpecies() != null) {
+                    goPanel.setSpecies(genePreferences.getSpecies());
                 }
                 goJPanel.removeAll();
                 goJPanel.add(goPanel);
@@ -4217,6 +4225,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public SpectrumIdentificationPanel getSpectrumIdentificationPanel() {
         return spectrumIdentificationPanel;
+    }
+
+    /**
+     * Returns the GO Panel.
+     *
+     * @return the GO Panel
+     */
+    public GOEAPanel getGOPanel() {
+        return goPanel;
     }
 
     /**
@@ -5254,6 +5271,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     setProcessingPreferences(experimentSettings.getProcessingPreferences());
                     setMetrics(experimentSettings.getMetrics());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
+                    //setGenePreferences(experimentSettings.getGenePreferences()); // @TODO: set the gene preferences
 
                     if (experimentSettings.getFilterPreferences() != null) {
                         setFilterPreferences(experimentSettings.getFilterPreferences());
@@ -6998,168 +7016,5 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         return peptideKey;
-    }
-
-    /**
-     * Returns the path to the folder containing the gene mapping files.
-     *
-     * @return the gene mapping folder
-     */
-    public File getGeneMappingFolder() {
-        return new File(getJarFilePath(), GENE_MAPPING_PATH);
-    }
-
-    /**
-     * Returns the current species.
-     *
-     * @return the currentSpecies
-     */
-    public String getCurrentSpecies() {
-        return currentSpecies;
-    }
-
-    /**
-     * Set the current species.
-     *
-     * @param currentSpecies the currentSpecies to set
-     */
-    public void setCurrentSpecies(String currentSpecies) {
-        this.currentSpecies = currentSpecies;
-    }
-
-    /**
-     * Load the mapping files.
-     */
-    public void loadSpeciesAndGoDomains() {
-
-        try {
-            File speciesFile = new File(getGeneMappingFolder(), "species");
-            File ensemblVersionsFile = new File(getGeneMappingFolder(), "ensembl_versions");
-            File goDomainsFile = new File(getGeneMappingFolder(), "go_domains");
-
-            goDomainMap = new HashMap<String, String>();
-            species = new Vector<String>();
-            speciesMap = new HashMap<String, String>();
-            ensemblVersionsMap = new HashMap<String, String>();
-
-            if (!goDomainsFile.exists()) {
-                JOptionPane.showMessageDialog(this, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
-                        + "Continuing without GO domains.", "File Not Found", JOptionPane.ERROR_MESSAGE);
-            } else {
-
-                // read the GO domains
-                FileReader r = new FileReader(goDomainsFile);
-                BufferedReader br = new BufferedReader(r);
-
-                String line = br.readLine();
-
-                while (line != null) {
-                    String[] elements = line.split("\\t");
-                    goDomainMap.put(elements[0], elements[1]);
-                    line = br.readLine();
-                }
-
-                br.close();
-                r.close();
-            }
-
-            if (ensemblVersionsFile.exists()) {
-
-                // read the Ensembl versions
-                FileReader r = new FileReader(ensemblVersionsFile);
-                BufferedReader br = new BufferedReader(r);
-
-                String line = br.readLine();
-
-                while (line != null) {
-                    String[] elements = line.split("\\t");
-                    ensemblVersionsMap.put(elements[0], elements[1]);
-                    line = br.readLine();
-                }
-
-                br.close();
-                r.close();
-            }
-
-
-            if (!speciesFile.exists()) {
-                JOptionPane.showMessageDialog(this, "GO species file \"" + speciesFile.getName() + "\" not found!\n"
-                        + "GO Analysis Canceled.", "File Not Found", JOptionPane.ERROR_MESSAGE);
-            } else {
-
-                // read the species list
-                FileReader r = new FileReader(speciesFile);
-                BufferedReader br = new BufferedReader(r);
-
-                String line = br.readLine();
-
-                species.add("-- Select Species --");
-                species.add(SPECIES_SEPARATOR);
-
-                while (line != null) {
-                    String[] elements = line.split("\\t");
-                    speciesMap.put(elements[0].trim(), elements[1].trim());
-
-                    if (species.size() == 5) {
-                        species.add(SPECIES_SEPARATOR);
-                    }
-
-                    if (ensemblVersionsMap.containsKey(elements[1].trim())) {
-                        species.add(elements[0].trim() + " [" + ensemblVersionsMap.get(elements[1].trim()) + "]");
-                    } else {
-                        species.add(elements[0].trim() + " [N/A]");
-                    }
-
-                    line = br.readLine();
-                }
-
-                br.close();
-                r.close();
-                
-                goPanel.setSpecies(species);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured when loading the species and GO domain file.\n"
-                    + "GO Analysis Canceled.", "File Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * Returns the GO domain map, e.g., key: GO term: GO:0007568, element:
-     * biological_process.
-     *
-     * @return the goDomainMap
-     */
-    public HashMap<String, String> getGoDomainMap() {
-        return goDomainMap;
-    }
-
-    /**
-     * Returns the species map. Key: latin name, element: ensembl database name,
-     * e.g., key: Homo sapiens, element: hsapiens.
-     *
-     * @return the speciesMap
-     */
-    public HashMap<String, String> getSpeciesMap() {
-        return speciesMap;
-    }
-
-    /**
-     * Returns the Ensembl versions map.
-     * 
-     * @return the ensemblVersionsMap
-     */
-    public HashMap<String, String> getEnsemblVersionsMap() {
-        return ensemblVersionsMap;
-    }
-
-    /**
-     * Return the species list. NB: also contains species separators.
-     * 
-     * @return the species
-     */
-    public Vector<String> getSpecies() {
-        return species;
     }
 }
