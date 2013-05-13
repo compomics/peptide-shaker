@@ -5,6 +5,7 @@
 
 *Changes in PeptideShaker 0.20.1 (May 13. 2013):*
  * BUG FIX: Fixed a bug where white space was not allowed in the installation path.
+ * LIBRARY UPDATE: Updated utilities to version 3.13.18.
 
 ----
 
