@@ -3,6 +3,11 @@
 
 ----
 
+*Changes in PeptideShaker 0.20.1 (May 13. 2013):*
+ * BUG FIX: Fixed a bug where white space was not allowed in the installation path.
+
+----
+
 *Changes in PeptideShaker 0.20.0 (May 11. 2013):*
  * NEW FEATURE: New self updating tables with better support for bigger datasets.
  * NEW FEATURE: Added a chromosome mapping column to the protein table.
@@ -23,6 +28,8 @@
 
  * LIBRARY UPDATE: Updated jsparklines to version 0.6.0.
  * LIBRARY UPDATE: Updated utilities to version 3.13.16.
+
+Download Count: 8
 
 ----
 
