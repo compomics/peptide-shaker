@@ -222,7 +222,7 @@ public class GenePreferences {
 
                 int counter = 0;
 
-                File tempFile = new File(getGeneMappingFolder(), selectedSpecies + GO_MAPPING_FILE_SUFFIX);
+                File tempFile = new File(getGeneMappingFolder(), selectedSpecies + GENE_MAPPING_FILE_SUFFIX);
                 boolean fileCreated = tempFile.createNewFile();
 
                 if (fileCreated) {

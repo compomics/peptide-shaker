@@ -262,7 +262,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.13.18</version>
+            <version>3.13.19</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>

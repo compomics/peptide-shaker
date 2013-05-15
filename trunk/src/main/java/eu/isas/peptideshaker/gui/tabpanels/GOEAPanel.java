@@ -1847,7 +1847,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         // delete the old mappings file
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
         selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
-        selectedSpecies = peptideShakerGUI.getGenePreferences().getSpeciesMap().get(selectedSpecies);
+        selectedSpecies = peptideShakerGUI.getGenePreferences().getSpeciesMap().get(selectedSpecies) + peptideShakerGUI.getGenePreferences().GO_MAPPING_FILE_SUFFIX;
         goFactory.clearFactory();
         geneFactory.clearFactory();
 
@@ -1855,18 +1855,35 @@ public class GOEAPanel extends javax.swing.JPanel {
             goFactory.closeFiles();
             geneFactory.closeFiles();
 
-            File tempSpeciesFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), selectedSpecies);
+            File tempSpeciesGoFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), selectedSpecies + peptideShakerGUI.getGenePreferences().GO_MAPPING_FILE_SUFFIX);
+            File tempSpecieGenesFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), selectedSpecies + peptideShakerGUI.getGenePreferences().GENE_MAPPING_FILE_SUFFIX);
 
-            if (tempSpeciesFile.exists()) {
-                boolean delete = tempSpeciesFile.delete();
+            boolean goFileDeleted = true;
+            boolean geneFileDeleted = true;
 
-                if (!delete) {
-                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + tempSpeciesFile.getAbsolutePath() + "\'.\n"
+            if (tempSpeciesGoFile.exists()) {
+                goFileDeleted = tempSpeciesGoFile.delete();
+
+                if (!goFileDeleted) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + tempSpeciesGoFile.getAbsolutePath() + "\'.\n"
                             + "Please delete the file manually, reselect the species in the list and click the Download button instead.", "Delete Failed",
                             JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    downloadButtonActionPerformed(null);
                 }
+
+            }
+
+            if (tempSpecieGenesFile.exists()) {
+                geneFileDeleted = tempSpecieGenesFile.delete();
+
+                if (!geneFileDeleted) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + tempSpecieGenesFile.getAbsolutePath() + "\'.\n"
+                            + "Please delete the file manually, reselect the species in the list and click the Download button instead.", "Delete Failed",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+
+            if (goFileDeleted && geneFileDeleted) {
+                downloadButtonActionPerformed(null);
             }
         } catch (IOException ex) {
             peptideShakerGUI.catchException(ex);

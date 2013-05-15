@@ -79,6 +79,12 @@ public class SpeciesDialog extends javax.swing.JDialog {
         }
 
         loadMappings = true;
+
+        if (((String) speciesJComboBox.getSelectedItem()).lastIndexOf("N/A") != -1) {
+            updateButton.setEnabled(false);
+        } else {
+            downloadButton.setEnabled(false);
+        }
     }
 
     /**
@@ -159,6 +165,8 @@ public class SpeciesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {downloadButton, speciesJComboBox, updateButton});
+
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -217,11 +225,11 @@ public class SpeciesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(okButton)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(okButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -246,6 +254,8 @@ public class SpeciesDialog extends javax.swing.JDialog {
      */
     private void speciesJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJComboBoxActionPerformed
 
+        okButton.setEnabled(true);
+
         if (loadMappings) {
 
             String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
@@ -253,6 +263,14 @@ public class SpeciesDialog extends javax.swing.JDialog {
             peptideShakerGUI.getGOPanel().clearOldResults();
 
             if (!selectedSpecies.equalsIgnoreCase(peptideShakerGUI.getGenePreferences().SPECIES_SEPARATOR) && !selectedSpecies.equalsIgnoreCase("-- Select Species --")) {
+
+                if (selectedSpecies.lastIndexOf("N/A") != -1) {
+                    updateButton.setEnabled(false);
+                    downloadButton.setEnabled(true);
+                } else {
+                    updateButton.setEnabled(true);
+                    downloadButton.setEnabled(false);
+                }
 
                 selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
                 peptideShakerGUI.getGenePreferences().setCurrentSpecies(selectedSpecies);
@@ -306,6 +324,10 @@ public class SpeciesDialog extends javax.swing.JDialog {
                         }
                     }
                 }
+            } else {
+                downloadButton.setEnabled(false);
+                updateButton.setEnabled(false);
+                okButton.setEnabled(false);
             }
         }
     }//GEN-LAST:event_speciesJComboBoxActionPerformed
@@ -376,6 +398,7 @@ public class SpeciesDialog extends javax.swing.JDialog {
                     if (geneMappingsDownloaded && goMappingsDownloadeded) {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Gene mappings downloaded.\nRe-select species to use.", "Gene Mappings", JOptionPane.INFORMATION_MESSAGE);
                         peptideShakerGUI.getGenePreferences().loadSpeciesAndGoDomains();
+                        speciesJComboBox.setModel(new DefaultComboBoxModel(peptideShakerGUI.getGenePreferences().getSpecies()));
                         speciesJComboBox.setSelectedIndex(0);
                     }
 
@@ -405,6 +428,7 @@ public class SpeciesDialog extends javax.swing.JDialog {
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
         selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
         selectedSpecies = peptideShakerGUI.getGenePreferences().getSpeciesMap().get(selectedSpecies);
+
         goFactory.clearFactory();
         geneFactory.clearFactory();
 
@@ -412,18 +436,35 @@ public class SpeciesDialog extends javax.swing.JDialog {
             goFactory.closeFiles();
             geneFactory.closeFiles();
 
-            File tempSpeciesFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), selectedSpecies);
+            File tempSpeciesGoFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), selectedSpecies + peptideShakerGUI.getGenePreferences().GO_MAPPING_FILE_SUFFIX);
+            File tempSpecieGenesFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), selectedSpecies + peptideShakerGUI.getGenePreferences().GENE_MAPPING_FILE_SUFFIX);
 
-            if (tempSpeciesFile.exists()) {
-                boolean delete = tempSpeciesFile.delete();
+            boolean goFileDeleted = true;
+            boolean geneFileDeleted = true;
 
-                if (!delete) {
-                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + tempSpeciesFile.getAbsolutePath() + "\'.\n"
+            if (tempSpeciesGoFile.exists()) {
+                goFileDeleted = tempSpeciesGoFile.delete();
+
+                if (!goFileDeleted) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + tempSpeciesGoFile.getAbsolutePath() + "\'.\n"
                             + "Please delete the file manually, reselect the species in the list and click the Download button instead.", "Delete Failed",
                             JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    downloadButtonActionPerformed(null);
                 }
+
+            }
+
+            if (tempSpecieGenesFile.exists()) {
+                geneFileDeleted = tempSpecieGenesFile.delete();
+
+                if (!geneFileDeleted) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete \'" + tempSpecieGenesFile.getAbsolutePath() + "\'.\n"
+                            + "Please delete the file manually, reselect the species in the list and click the Download button instead.", "Delete Failed",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+
+            if (goFileDeleted && geneFileDeleted) {
+                downloadButtonActionPerformed(null);
             }
         } catch (IOException ex) {
             peptideShakerGUI.catchException(ex);
@@ -500,7 +541,36 @@ public class SpeciesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        dispose();
+
+        String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
+
+        if (!selectedSpecies.equalsIgnoreCase(peptideShakerGUI.getGenePreferences().SPECIES_SEPARATOR) && !selectedSpecies.equalsIgnoreCase("-- Select Species --")) {
+
+            String temp = selectedSpecies.substring(selectedSpecies.indexOf("["));
+
+            boolean closeDialog = true;
+
+            if (temp.lastIndexOf("N/A") != -1) {
+                int option = JOptionPane.showConfirmDialog(this,
+                        "The gene and GO annotations are not downloaded for the selected species.\n"
+                        + "Download now?", "Gene Annotation Missing", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                if (option == JOptionPane.YES_OPTION) {
+                    closeDialog = false;
+                    downloadButtonActionPerformed(null);
+                } else if (option == JOptionPane.CANCEL_OPTION) {
+                    closeDialog = false;
+                }
+            }
+
+            if (closeDialog) {
+                dispose();
+            }
+
+        } else {
+            dispose();
+        }
+
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
@@ -517,9 +587,6 @@ public class SpeciesDialog extends javax.swing.JDialog {
      * Clear the old results.
      */
     private void clearOldResults() {
-
-        downloadButton.setEnabled(true);
-        updateButton.setEnabled(false);
 
         goFactory.clearFactory();
         geneFactory.clearFactory();

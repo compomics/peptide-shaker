@@ -194,7 +194,6 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Instrument");
-        setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
