@@ -758,6 +758,12 @@ public class FileImporter {
                             // change the search engine modifications into expected modifications
                             // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+
+                            // @TODO: needed to support (really) old parameter files it seems..?
+//                            if (modificationProfile.hasOMSSAIndexes()) {
+//                                ptmFactory.setSearchedOMSSAIndexes(modificationProfile);
+//                            }
+
                             ptmFactory.checkFixedModifications(modificationProfile, peptide);
                             HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
                             HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
