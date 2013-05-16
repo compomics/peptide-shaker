@@ -4658,7 +4658,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showReferenceLine(true, 0.02, Color.BLACK);
                 ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 10);
 
-                updateSelection(false);
+                updateSelection(true);
 
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);

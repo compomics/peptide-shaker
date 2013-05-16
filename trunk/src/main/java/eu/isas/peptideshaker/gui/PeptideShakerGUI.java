@@ -5548,10 +5548,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
                             identification.establishConnection(dbFolder, false, objectsCache);
                         } catch (Exception e) {
+                            e.printStackTrace();
                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                     "An error occured while reading:\n" + currentPSFile + ".\n\n"
-                                    + "It looks like another instance of PeptideShaker is still connected to the file. Please close all other instances of PeptideShaker and retry.",
+                                    + "It looks like another instance of PeptideShaker is still connected to the file.\n"
+                                    + "Please close all instances of PeptideShaker and try again.",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            progressDialog.setRunFinished();
                             return;
                         }
                     } else {
