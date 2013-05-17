@@ -75,7 +75,7 @@ import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.recalibration.DataSetErrors;
 import eu.isas.peptideshaker.recalibration.FractionError;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
-import eu.isas.peptideshaker.preferences.GenePreferences;
+import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
@@ -564,7 +564,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         this.setExtendedState(MAXIMIZED_BOTH);
 
-        genePreferences = new GenePreferences(this);
+        genePreferences = new GenePreferences();
         loadGeneMappings();
         loadEnzymes();
         resetPtmFactory();
@@ -2929,7 +2929,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             }
         }
 
-        genePreferences.loadSpeciesAndGoDomains();
+        try {
+            genePreferences.createDefaultGeneMappingFiles(
+                    new File(getJarFilePath(), "resources/conf/gene_ontology/ensembl_versions"), 
+                    new File(getJarFilePath(), "resources/conf/gene_ontology/go_domains"),
+                    new File(getJarFilePath(), "resources/conf/gene_ontology/species"),
+                    new File(getJarFilePath(), "resources/conf/gene_ontology/hsapiens_gene_ensembl_go_mappings"),
+                    new File(getJarFilePath(), "resources/conf/gene_ontology/hsapiens_gene_ensembl_gene_mappings"));
+            genePreferences.loadSpeciesAndGoDomains();
+            goPanel.setSpecies(genePreferences.getSpecies());
+        } catch (IOException e) {
+            catchException(e);
+        }
     }
 
     /**

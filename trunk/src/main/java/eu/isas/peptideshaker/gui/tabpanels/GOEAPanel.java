@@ -1818,6 +1818,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     if (geneMappingsDownloaded && goMappingsDownloadeded) {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Gene mappings downloaded.\nRe-select species to use.", "Gene Mappings", JOptionPane.INFORMATION_MESSAGE);
                         peptideShakerGUI.getGenePreferences().loadSpeciesAndGoDomains();
+                        setSpecies(peptideShakerGUI.getGenePreferences().getSpecies());
                         speciesJComboBox.setSelectedIndex(0);
                     }
 

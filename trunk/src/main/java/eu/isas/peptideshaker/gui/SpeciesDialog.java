@@ -398,6 +398,7 @@ public class SpeciesDialog extends javax.swing.JDialog {
                     if (geneMappingsDownloaded && goMappingsDownloadeded) {
                         JOptionPane.showMessageDialog(peptideShakerGUI, "Gene mappings downloaded.\nRe-select species to use.", "Gene Mappings", JOptionPane.INFORMATION_MESSAGE);
                         peptideShakerGUI.getGenePreferences().loadSpeciesAndGoDomains();
+                        peptideShakerGUI.getGOPanel().setSpecies(peptideShakerGUI.getGenePreferences().getSpecies());
                         speciesJComboBox.setModel(new DefaultComboBoxModel(peptideShakerGUI.getGenePreferences().getSpecies()));
                         speciesJComboBox.setSelectedIndex(0);
                     }
