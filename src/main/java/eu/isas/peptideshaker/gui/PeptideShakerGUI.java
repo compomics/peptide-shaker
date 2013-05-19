@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.gene_mapping.SpeciesDialog;
+import com.compomics.util.gui.gene_mapping.SpeciesDialogParent;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
@@ -112,7 +114,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, ImportSettingsDialogParent {
+public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, ImportSettingsDialogParent, SpeciesDialogParent {
 
     /**
      * The current PeptideShaker cps file.
@@ -272,7 +274,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     /**
      * The gene preferences.
      */
-    private GenePreferences genePreferences;
+    private GenePreferences genePreferences = new GenePreferences();
     /**
      * The user preferences.
      */
@@ -411,7 +413,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private boolean showNewsFeed = false;
     /**
-     * Boolean indicating that PeptideShaker is closing.
+     * Boolean indicating that PeptideShaker is closing a project.
      */
     private boolean isClosing = false;
 
@@ -564,7 +566,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         this.setExtendedState(MAXIMIZED_BOTH);
 
-        genePreferences = new GenePreferences();
         loadGeneMappings();
         loadEnzymes();
         resetPtmFactory();
@@ -2218,7 +2219,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
+                isClosing = true;
                 clearData(true);
+                isClosing = false;
                 clearPreferences();
                 userPreferences.addRecentProject(selectedFile);
                 updateRecentProjectsList();
@@ -2887,7 +2890,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-        new SpeciesDialog(this, true);
+        new SpeciesDialog(this, this, true);
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
     /**
@@ -2907,40 +2910,39 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void loadGeneMappings() {
 
-        if (genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
-                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
-            try {
-                geneFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
-                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX), null);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Unable to load the gene mapping file.", "Error importing gene mapping.", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }
-
-        if (genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
-                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX).exists()) {
-            try {
-                goFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
-                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX), null);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Unable to load the gene ontology mapping file.", "Error importing gene ontology mapping.", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }
-
         try {
             genePreferences.createDefaultGeneMappingFiles(
-                    new File(getJarFilePath(), "resources/conf/gene_ontology/ensembl_versions"), 
+                    new File(getJarFilePath(), "resources/conf/gene_ontology/ensembl_versions"),
                     new File(getJarFilePath(), "resources/conf/gene_ontology/go_domains"),
                     new File(getJarFilePath(), "resources/conf/gene_ontology/species"),
                     new File(getJarFilePath(), "resources/conf/gene_ontology/hsapiens_gene_ensembl_go_mappings"),
                     new File(getJarFilePath(), "resources/conf/gene_ontology/hsapiens_gene_ensembl_gene_mappings"));
             genePreferences.loadSpeciesAndGoDomains();
-            goPanel.setSpecies(genePreferences.getSpecies());
         } catch (IOException e) {
             catchException(e);
         }
+        
+        if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
+                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
+            try {
+                geneFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
+                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX), null);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Unable to load the gene mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+
+        if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
+                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX).exists()) {
+            try {
+                goFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
+                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX), null);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Unable to load the gene ontology mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        } 
     }
 
     /**
@@ -3328,6 +3330,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
         processingPreferences = new ProcessingPreferences();
         ptmScoringPreferences = new PTMScoringPreferences();
+        genePreferences = new GenePreferences();
     }
 
     /**
@@ -4058,6 +4061,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         displayPreferences = new DisplayPreferences();
         searchParameters = new SearchParameters();
         processingPreferences = new ProcessingPreferences();
+        genePreferences = new GenePreferences();
         idFilter = new IdFilter();
         exceptionHandler = new ExceptionHandler(this);
 
@@ -4065,6 +4069,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         loadEnzymes();
         resetPtmFactory();
         setDefaultPreferences();
+        loadGeneMappings();
     }
 
     /**
@@ -4107,9 +4112,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 return;
             case GO_ANALYSIS_TAB_INDEX:
                 goPanel = new GOEAPanel(this);
-                if (genePreferences != null && genePreferences.getSpecies() != null) {
-                    goPanel.setSpecies(genePreferences.getSpecies());
-                }
                 goJPanel.removeAll();
                 goJPanel.add(goPanel);
                 return;
@@ -5147,10 +5149,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                 try {
                     // reset enzymes, ptms and preferences
-                    loadGeneMappings();
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
+                    loadGeneMappings();
 
                     // closeFiles any open connection to an identification database
                     if (identification != null) {
@@ -5267,7 +5269,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
                                 tempSettings.getDisplayPreferences(),
                                 tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache(),
-                                tempPTMScoringPreferences, new IdFilter());
+                                tempPTMScoringPreferences, new GenePreferences(), new IdFilter());
 
                     } else {
                         experimentSettings = (PeptideShakerSettings) tempExperiment.getUrParam(experimentSettings);
@@ -5282,7 +5284,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     setProcessingPreferences(experimentSettings.getProcessingPreferences());
                     setMetrics(experimentSettings.getMetrics());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
-                    //setGenePreferences(experimentSettings.getGenePreferences()); // @TODO: set the gene preferences
+                    setGenePreferences(experimentSettings.getGenePreferences());
+                    loadGeneMappings();
 
                     if (experimentSettings.getFilterPreferences() != null) {
                         setFilterPreferences(experimentSettings.getFilterPreferences());
@@ -6216,7 +6219,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, objectsCache, emptyCache, displayPreferences, idFilter);
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, genePreferences, 
+                objectsCache, emptyCache, displayPreferences, idFilter);
     }
 
     /**
@@ -6929,9 +6933,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Returns true of the tool is closing.
+     * Returns true of the tool is currently closing a project.
      *
-     * @return true of the tool is closing
+     * @return true of the tool is currently closing a project
      */
     public boolean isClosing() {
         return isClosing;
@@ -7030,5 +7034,68 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         }
 
         return peptideKey;
+    }
+
+    @Override
+    public void clearGeneMappings() {
+        goPanel.clearOldResults();
+    }
+
+    @Override
+    public void updateGeneMappings(String selectedSpecies) {
+        
+        if (getSelectedTab() == PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX) {
+            goPanel.displayResults();
+        } else {
+            setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, false);
+
+            String speciesDatabase = genePreferences.getSpeciesMap().get(selectedSpecies);
+
+            if (speciesDatabase != null) {
+
+                final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + genePreferences.GO_MAPPING_FILE_SUFFIX);
+                final File geneMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + genePreferences.GENE_MAPPING_FILE_SUFFIX);
+
+                if (goMappingsFile.exists()) {
+
+                    progressDialog = new ProgressDialogX(this,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true);
+                    progressDialog.setTitle("Getting Gene Mapping Files. Please Wait...");
+                    progressDialog.setIndeterminate(true);
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                progressDialog.setVisible(true);
+                            } catch (IndexOutOfBoundsException e) {
+                                // ignore
+                            }
+                        }
+                    }, "ProgressDialog").start();
+
+                    new Thread("GoThread") {
+                        @Override
+                        public void run() {
+                            try {
+                                progressDialog.setTitle("Getting Gene Mappings. Please Wait...");
+                                geneFactory.initialize(geneMappingsFile, progressDialog);
+                                progressDialog.setTitle("Getting GO Mappings. Please Wait...");
+                                goFactory.initialize(goMappingsFile, progressDialog);
+                                
+                                // redraw any tables with chromosome mappings
+                                overviewPanel.getProteinTable().revalidate();
+                                proteinStructurePanel.getProteinTable().revalidate();
+                                progressDialog.setRunFinished();
+                            } catch (Exception e) {
+                                progressDialog.setRunFinished();
+                                catchException(e);
+                            }
+                        }
+                    }.start();
+                }
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.preferences.*;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesCache;
@@ -53,6 +54,10 @@ public class PeptideShakerSettings implements UrParameter {
      */
     private DisplayPreferences displayPreferences;
     /**
+     * The gene preferences.
+     */
+    private GenePreferences genePreferences;
+    /**
      * The project details.
      */
     private ProjectDetails projectDetails;
@@ -92,6 +97,7 @@ public class PeptideShakerSettings implements UrParameter {
      * @param processingPreferences The processing preferences
      * @param identificationFeaturesCache The identification features cache
      * @param ptmScoringPreferences The PTM scoring preferences
+     * @param genePreferences the gene preferences
      * @param idFilter the identification filters
      */
     public PeptideShakerSettings(SearchParameters searchParameters,
@@ -104,6 +110,7 @@ public class PeptideShakerSettings implements UrParameter {
             ProcessingPreferences processingPreferences,
             IdentificationFeaturesCache identificationFeaturesCache,
             PTMScoringPreferences ptmScoringPreferences,
+            GenePreferences genePreferences,
             IdFilter idFilter) {
         this.utiltiesSearchParameters = searchParameters;
         this.utilitiesAnnotationPreferences = annotationPreferences;
@@ -115,6 +122,7 @@ public class PeptideShakerSettings implements UrParameter {
         this.processingPreferences = processingPreferences;
         this.identificationFeaturesCache = identificationFeaturesCache;
         this.ptmScoringPreferences = ptmScoringPreferences;
+        this.genePreferences = genePreferences;
         this.idFilter = idFilter;
     }
 
@@ -162,21 +170,42 @@ public class PeptideShakerSettings implements UrParameter {
     }
 
     /**
-     * Returns the gui display preferences.
+     * Returns the GUI display preferences.
      *
-     * @return the gui display preferences
+     * @return the GUI display preferences
      */
     public FilterPreferences getFilterPreferences() {
         return filterPreferences;
     }
 
     /**
-     * Returns the gui display preferences.
+     * Returns the GUI display preferences.
      *
-     * @return the gui display preferences
+     * @return the GUI display preferences
      */
     public DisplayPreferences getDisplayPreferences() {
         return displayPreferences;
+    }
+
+    /**
+     * Returns the gene preferences.
+     *
+     * @return the gene preferences
+     */
+    public GenePreferences getGenePreferences() {
+        if (genePreferences == null) {
+            genePreferences = new GenePreferences();
+        }
+        return genePreferences;
+    }
+
+    /**
+     * Set the gene preferences.
+     *
+     * @param genePreferences
+     */
+    public void setGenePreferences(GenePreferences genePreferences) {
+        this.genePreferences = genePreferences;
     }
 
     /**

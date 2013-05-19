@@ -422,7 +422,7 @@ public class FileImporter {
          */
         private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
         /**
-         * Boolean indicating whether we can display gui stuffs
+         * Boolean indicating whether we can display GUI stuffs
          */
         private boolean hasGUI = false;
 
@@ -432,7 +432,8 @@ public class FileImporter {
          * @param idFiles ArrayList containing the identification files
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, IdFilter idFilter,
-                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
+                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, 
+                PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<File>();
             HashMap<String, File> filesMap = new HashMap<String, File>();
