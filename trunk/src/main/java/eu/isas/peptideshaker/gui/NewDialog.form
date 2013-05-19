@@ -138,7 +138,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="projectNameIdTxt" pref="484" max="32767" attributes="2"/>
                           <Component id="sampleNameIdtxt" max="32767" attributes="2"/>
-                          <Component id="speciesTextField" max="32767" attributes="0"/>
+                          <Component id="speciesTextField" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -232,17 +232,20 @@
             <Component class="javax.swing.JLabel" name="speciesLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Species"/>
+                <Property name="toolTipText" type="java.lang.String" value="Set the species to get gene annotations"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="speciesTextField">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="toolTipText" type="java.lang.String" value="Set the species to get gene annotations"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="editSpeciesButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="toolTipText" type="java.lang.String" value="Set the species"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editSpeciesButtonActionPerformed"/>

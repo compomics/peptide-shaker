@@ -86,6 +86,10 @@ public class PeptideShakerCLIInputBean {
      */
     private boolean aScoreNeutralLosses = false;
     /**
+     * The species to use for the gene mappings.
+     */
+    private String species = null;
+    /**
      * The minimal peptide length allowed.
      */
     private int minPepLength = 6;
@@ -282,6 +286,10 @@ public class PeptideShakerCLIInputBean {
             if (guiOption.trim().equals("1")) {
                 gui = true;
             }
+        }
+
+        if (aLine.hasOption(PeptideShakerCLIParams.SPECIES.id)) {
+            species = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES.id); // @TODO: check that it's a valid species??
         }
     }
 
@@ -786,12 +794,30 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Indicates whether a gui shall be used to display the progress.
+     * Indicates whether a GUI shall be used to display the progress.
      *
-     * @return a boolean indicating whether a gui shall be used to display the
+     * @return a boolean indicating whether a GUI shall be used to display the
      * progress
      */
     public boolean isGUI() {
         return gui;
+    }
+
+    /**
+     * Returns the species.
+     *
+     * @return the species
+     */
+    public String getSpecies() {
+        return species;
+    }
+
+    /**
+     * Sets the species.
+     *
+     * @param species the species to set
+     */
+    public void setSpecies(String species) {
+        this.species = species;
     }
 }

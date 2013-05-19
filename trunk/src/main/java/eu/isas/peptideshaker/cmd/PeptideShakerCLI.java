@@ -24,6 +24,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
+import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
 import eu.isas.peptideshaker.gui.DummyFrame;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -175,6 +176,10 @@ public class PeptideShakerCLI implements Callable {
         ptmScoringPreferences.setaScoreCalculation(cliInputBean.aScoreCalculation());
         ptmScoringPreferences.setaScoreNeutralLosses(cliInputBean.isaScoreNeutralLosses());
 
+        // set the gene preferences
+        GenePreferences genePreferences = new GenePreferences();
+        genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
+
         // set the spectrum counting prefrences
         SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
 
@@ -218,7 +223,7 @@ public class PeptideShakerCLI implements Callable {
             CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
                     annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
                     processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                    ptmScoringPreferences, objectsCache, true, idFilter);
+                    ptmScoringPreferences, genePreferences, objectsCache, true, idFilter);
             waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();
             loadUserPreferences();

@@ -39,7 +39,8 @@ public enum PeptideShakerCLIParams {
     XTANDEM_E_VALUE_MAX("max_xtandem_e", "Maximum X!Tandem E-value filter (default '100').", false),
     MAX_PRECURSOR_ERROR("max_precursor_error", "Maximum precursor error filter (default '10'). See also max_precursor_error_type.", false),
     MAX_PRECURSOR_ERROR_TYPE("max_precursor_error_type", "Maximum precursor error type (0: ppm, 1: Da, default is '0'). See also max_precursor_error.", false),
-    EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false);
+    EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
+    SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -74,7 +75,7 @@ public enum PeptideShakerCLIParams {
      * @param aOptions the options object where the options will be added
      */
     public static void createOptionsCLI(Options aOptions) {
-        
+
         aOptions.addOption(EXPERIMENT.id, true, EXPERIMENT.description);
         aOptions.addOption(SAMPLE.id, true, SAMPLE.description);
         aOptions.addOption(REPLICATE.id, true, REPLICATE.description);
@@ -101,34 +102,38 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(MAX_PRECURSOR_ERROR.id, true, MAX_PRECURSOR_ERROR.description);
         aOptions.addOption(MAX_PRECURSOR_ERROR_TYPE.id, true, MAX_PRECURSOR_ERROR_TYPE.description);
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
-        
+        aOptions.addOption(SPECIES.id, true, SPECIES.description);
+
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
-    
+
     /**
      * Returns the options as a string.
-     * 
+     *
      * @return the options as a string
      */
-    public static String getOptionsAsString () {
-        
+    public static String getOptionsAsString() {
+
         String output = "";
         String formatter = "%-35s";
-        
+
         output += "Mandatory parameters:\n\n";
         output += "-" + String.format(formatter, EXPERIMENT.id) + EXPERIMENT.description + "\n";
-        output += "-" + String.format(formatter, SAMPLE.id)  + SAMPLE.description + "\n";
-        output += "-" + String.format(formatter, REPLICATE.id)  + REPLICATE.description + "\n";
+        output += "-" + String.format(formatter, SAMPLE.id) + SAMPLE.description + "\n";
+        output += "-" + String.format(formatter, REPLICATE.id) + REPLICATE.description + "\n";
         output += "-" + String.format(formatter, SPECTRUM_FILES.id) + SPECTRUM_FILES.description + "\n";
-        output += "-" + String.format(formatter, IDENTIFICATION_FILES.id)  + IDENTIFICATION_FILES.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id)  + PEPTIDESHAKER_OUTPUT.description + "\n";
-        output += "-" + String.format(formatter, SEARCH_PARAMETERS.id)  + SEARCH_PARAMETERS.description + "\n";
-        
+        output += "-" + String.format(formatter, IDENTIFICATION_FILES.id) + IDENTIFICATION_FILES.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_OUTPUT.id) + PEPTIDESHAKER_OUTPUT.description + "\n";
+        output += "-" + String.format(formatter, SEARCH_PARAMETERS.id) + SEARCH_PARAMETERS.description + "\n";
+
+        output += "\n\nOptional gene annotation parameter:\n\n";
+        output += "-" + String.format(formatter, SPECIES.id) + SPECIES.description + "\n";
+
         output += "\n\nOptional output parameters:\n\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
-        
+
         output += "\n\nOptional processing parameters:\n\n";
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
         output += "-" + String.format(formatter, PEPTIDE_FDR.id) + PEPTIDE_FDR.description + "\n";
@@ -137,7 +142,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, ESTIMATE_A_SCORE.id) + ESTIMATE_A_SCORE.description + "\n";
         output += "-" + String.format(formatter, A_SCORE_NEUTRAL_LOSSES.id) + A_SCORE_NEUTRAL_LOSSES.description + "\n";
         output += "-" + String.format(formatter, PROTEIN_FRACTION_MW_CONFIDENCE.id) + PROTEIN_FRACTION_MW_CONFIDENCE.description + "\n";
-        
+
         output += "\n\nOptional filtering parameters:\n\n";
         output += "-" + String.format(formatter, MIN_PEPTIDE_LENGTH.id) + MIN_PEPTIDE_LENGTH.description + "\n";
         output += "-" + String.format(formatter, MAX_PEPTIDE_LENGTH.id) + MAX_PEPTIDE_LENGTH.description + "\n";
@@ -147,7 +152,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n\n";
-        
+
         return output;
-    } 
+    }
 }

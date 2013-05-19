@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import com.compomics.util.gui.filehandling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
@@ -166,7 +167,11 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
-        speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
+        if (peptideShakerGUI.getGenePreferences().getCurrentSpecies() != null) {
+            speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
+        } else {
+            speciesTextField.setText("(not selected)");
+        }
         validateInput();
     }
 
@@ -275,11 +280,14 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         });
 
         speciesLabel.setText("Species");
+        speciesLabel.setToolTipText("Set the species to get gene annotations");
 
         speciesTextField.setEditable(false);
         speciesTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        speciesTextField.setToolTipText("Set the species to get gene annotations");
 
         editSpeciesButton.setText("Edit");
+        editSpeciesButton.setToolTipText("Set the species");
         editSpeciesButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editSpeciesButtonActionPerformed(evt);
@@ -1144,8 +1152,12 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void editSpeciesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpeciesButtonActionPerformed
-        new SpeciesDialog(peptideShakerGUI, true);
-        speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
+        new SpeciesDialog(peptideShakerGUI, peptideShakerGUI, true);
+        if (peptideShakerGUI.getGenePreferences().getCurrentSpecies() != null) {
+            speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
+        } else {
+            speciesTextField.setText("(not selected)");
+        }
     }//GEN-LAST:event_editSpeciesButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
