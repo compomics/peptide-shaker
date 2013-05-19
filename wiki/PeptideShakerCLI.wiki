@@ -43,6 +43,13 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [par
 
 _Note that the search parameters are not strictly mandatory, as a default set of search parameters can be used. But in most case one will provide the search parameters as part of the command line._
 
+*Optional gene annotation parameter:*
+
+{{{
+-species                   The species to use for the gene annotation, e.g., 'Homo sapiens'. 
+                           Supported species are listed in the GUI. (v0.21.0 and newer.)
+}}}
+
 *Optional output parameters:*
 
 {{{
