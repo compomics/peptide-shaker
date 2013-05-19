@@ -2921,7 +2921,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         } catch (IOException e) {
             catchException(e);
         }
-        
+
         if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
                 genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
             try {
@@ -2942,7 +2942,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 JOptionPane.showMessageDialog(this, "Unable to load the gene ontology mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
-        } 
+        }
     }
 
     /**
@@ -6219,7 +6219,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
         CpsExporter.saveAs(currentPSFile, progressDialog, experiment, identification, searchParameters, annotationPreferences,
                 spectrumCountingPreferences, projectDetails, filterPreferences, metrics, processingPreferences,
-                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, genePreferences, 
+                identificationFeaturesGenerator.getIdentificationFeaturesCache(), ptmScoringPreferences, genePreferences,
                 objectsCache, emptyCache, displayPreferences, idFilter);
     }
 
@@ -7039,11 +7039,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     @Override
     public void clearGeneMappings() {
         goPanel.clearOldResults();
+        dataSaved = false;
     }
 
     @Override
     public void updateGeneMappings(String selectedSpecies) {
-        
+
+        dataSaved = false;
+
         if (getSelectedTab() == PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX) {
             goPanel.displayResults();
         } else {
@@ -7083,7 +7086,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 geneFactory.initialize(geneMappingsFile, progressDialog);
                                 progressDialog.setTitle("Getting GO Mappings. Please Wait...");
                                 goFactory.initialize(goMappingsFile, progressDialog);
-                                
+
                                 // redraw any tables with chromosome mappings
                                 overviewPanel.getProteinTable().revalidate();
                                 proteinStructurePanel.getProteinTable().revalidate();
