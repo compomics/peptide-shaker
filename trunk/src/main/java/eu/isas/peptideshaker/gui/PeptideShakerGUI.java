@@ -2910,6 +2910,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     private void loadGeneMappings() {
 
+        // @TODO: move to GenePreferences?
+        
         try {
             genePreferences.createDefaultGeneMappingFiles(
                     new File(getJarFilePath(), "resources/conf/gene_ontology/ensembl_versions"),

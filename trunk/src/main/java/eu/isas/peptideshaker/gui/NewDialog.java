@@ -17,6 +17,7 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
+import com.compomics.util.experiment.io.massspectrometry.MgfReader;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.ModificationProfile;
@@ -855,19 +856,48 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         fileChooser.setFileFilter(filter);
         int returnVal = fileChooser.showDialog(this.getParent(), "Add");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            for (File newFile : fileChooser.getSelectedFiles()) {
-                if (newFile.isDirectory()) {
-                    File[] tempFiles = newFile.listFiles();
-                    for (File file : tempFiles) {
-                        if (file.getName().toLowerCase().endsWith(".mgf")) {
-                            spectrumFiles.add(file);
+
+            try {
+
+                for (File newFile : fileChooser.getSelectedFiles()) {
+                    if (newFile.isDirectory()) {
+                        File[] tempFiles = newFile.listFiles();
+                        for (File file : tempFiles) {
+                            if (file.getName().toLowerCase().endsWith(".mgf")) {
+                                String duplicateTitle = MgfReader.validateSpectrumTitles(file, null);
+
+                                if (duplicateTitle != null) {
+                                    JOptionPane.showMessageDialog(this,
+                                            "The file \'" + file.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
+                                            + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
+                                            + "We strongly recommend correcting the spectrum titles and researching the data.",
+                                            "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+                                }
+
+                                spectrumFiles.add(file);
+                            }
                         }
+                    } else {
+                        String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
+
+                        if (duplicateTitle != null) {
+                            JOptionPane.showMessageDialog(this,
+                                    "The file \'" + newFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
+                                    + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
+                                    + "We strongly recommend correcting the spectrum titles and researching the data.",
+                                    "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+                        }
+
+                        spectrumFiles.add(newFile);
                     }
-                } else {
-                    spectrumFiles.add(newFile);
+                    peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
                 }
-                peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "An error occurred while validating the mgf file.", "Mgf Validation Error", JOptionPane.WARNING_MESSAGE);
             }
+
             spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         }
 
@@ -1041,8 +1071,8 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
 
     /**
      * Open the ImportSettingsDialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
         new ImportSettingsDialog(this, this, peptideShakerGUI.getIdFilter(), true);
@@ -1159,7 +1189,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             speciesTextField.setText("(not selected)");
         }
     }//GEN-LAST:event_editSpeciesButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -1554,11 +1583,33 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
                         if (!names.contains(newFile.getName())) {
                             if (newFile.exists()) {
                                 names.add(newFile.getName());
+
+                                String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
+
+                                if (duplicateTitle != null) {
+                                    JOptionPane.showMessageDialog(this,
+                                            "The file \'" + newFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
+                                            + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
+                                            + "We strongly recommend correcting the spectrum titles and researching the data.",
+                                            "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+                                }
+
                                 spectrumFiles.add(newFile);
                             } else {
                                 // try to find it in the same folder as the SearchGUI.properties file
                                 if (new File(searchGUIFile.getParentFile(), newFile.getName()).exists()) {
                                     names.add(new File(searchGUIFile.getParentFile(), newFile.getName()).getName());
+
+                                    String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
+
+                                    if (duplicateTitle != null) {
+                                        JOptionPane.showMessageDialog(this,
+                                                "The file \'" + newFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
+                                                + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
+                                                + "We strongly recommend correcting the spectrum titles and researching the data.",
+                                                "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+                                    }
+
                                     spectrumFiles.add(new File(searchGUIFile.getParentFile(), newFile.getName()));
                                 } else {
                                     missing += newFile.getName() + "\n";
