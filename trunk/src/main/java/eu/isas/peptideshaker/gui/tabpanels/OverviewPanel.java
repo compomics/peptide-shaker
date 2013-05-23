@@ -2115,6 +2115,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // remember the selection
                 newItemSelection();
 
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        proteinTable.requestFocus(); // @TODO: not sure why this is now needed..?
+                    }
+                });
+
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
@@ -2132,7 +2139,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 // open the gene details dialog
-                if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null 
+                if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null
                         && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey);
@@ -4545,6 +4552,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (psmTable.getModel() instanceof PsmTableModel) {
                     ((PsmTableModel) psmTable.getModel()).updateDataModel(peptideShakerGUI, psmKeys);
                     ((PsmTableModel) psmTable.getModel()).setSelfUpdating(true);
+                    ((PsmTableModel) psmTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true));
                 } else {
                     PsmTableModel psmTableModel = new PsmTableModel(peptideShakerGUI, psmKeys);
                     psmTable.setModel(psmTableModel);
@@ -4626,6 +4637,10 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 if (peptideTable.getModel() instanceof PeptideTableModel) {
                     ((PeptideTableModel) peptideTable.getModel()).updateDataModel(peptideShakerGUI, accession, peptideKeys);
                     ((PeptideTableModel) peptideTable.getModel()).setSelfUpdating(true);
+                    ((PeptideTableModel) peptideTable.getModel()).resetSorting(new ProgressDialogX(peptideShakerGUI,
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                            true));
                 } else {
                     PeptideTableModel peptideTableModel = new PeptideTableModel(peptideShakerGUI, accession, peptideKeys);
                     peptideTable.setModel(peptideTableModel);
