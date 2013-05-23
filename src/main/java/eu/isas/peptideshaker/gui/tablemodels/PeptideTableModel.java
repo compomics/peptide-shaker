@@ -137,9 +137,10 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
     public Object getValueAt(int row, int column) {
 
         try {
-                boolean useDB = !isSelfUpdating();
-                int viewIndex = getViewIndex(row);
-                    String peptideKey = peptideKeys.get(viewIndex);
+            boolean useDB = !isSelfUpdating();
+            int viewIndex = getViewIndex(row);
+            String peptideKey = peptideKeys.get(viewIndex);
+
             switch (column) {
                 case 0:
                     return viewIndex + 1;
@@ -177,7 +178,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                         return "IO Exception";
                     }
                     Collections.sort(indexes);
-                    return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to sort on the first index if multiple indexes
+                    return new StartIndexes(indexes); // note: have to be "packed" like this in order to be able to resetSorting on the first index if multiple indexes
                 case 5:
                     peptideMatch = identification.getPeptideMatch(peptideKey, useDB);
                     if (!useDB
@@ -266,7 +267,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
             }
             return rows.get(0);
         }
-        return rows.get(rows.size()-1);
+        return rows.get(rows.size() - 1);
     }
 
     /**
