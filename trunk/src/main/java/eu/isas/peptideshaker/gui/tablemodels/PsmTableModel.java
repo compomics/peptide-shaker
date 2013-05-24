@@ -11,7 +11,6 @@ import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Table model for a set of peptide to spectrum matches.
@@ -127,11 +126,12 @@ public class PsmTableModel extends SelfUpdatingTableModel {
 
         try {
             int viewIndex = getViewIndex(row);
-            String psmKey = psmKeys.get(viewIndex);
-                boolean useDB = !isSelfUpdating();
+            String psmKey = psmKeys.get(viewIndex); // @TODO: can result in an IndexOutOfBoundsException...
+            boolean useDB = !isSelfUpdating();
+
             switch (column) {
                 case 0:
-                    return viewIndex +1;
+                    return viewIndex + 1;
                 case 1:
                     PSParameter pSParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, new PSParameter(), useDB);
                     if (!useDB && pSParameter == null) {

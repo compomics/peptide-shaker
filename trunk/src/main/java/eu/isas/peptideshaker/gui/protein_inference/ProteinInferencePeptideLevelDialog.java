@@ -1,12 +1,14 @@
 package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
@@ -18,6 +20,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.data.Chromosome;
+import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 
 /**
@@ -36,6 +40,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * The sequence factory
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The key of the peptide match of interest.
      */
@@ -118,34 +126,51 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         for (String protein : possibleProteins) {
 
             String description, geneName, proteinEvidenceLevel;
+            Chromosome chromosome;
 
             try {
                 description = sequenceFactory.getHeader(protein).getDescription();
                 geneName = sequenceFactory.getHeader(protein).getGeneName();
                 proteinEvidenceLevel = sequenceFactory.getHeader(protein).getProteinEvidence();
+
+                if (proteinEvidenceLevel != null) {
+                    try {
+                        Integer level = new Integer(proteinEvidenceLevel);
+                        proteinEvidenceLevel = GenePreferences.getProteinEvidencAsString(level);
+                    } catch (NumberFormatException e) {
+                        // ignore
+                    }
+                }
+
+                String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
+                chromosome = new Chromosome(chromosomeNumber);
+
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 description = "Error";
                 geneName = "Error";
                 proteinEvidenceLevel = "Error";
+                chromosome = null;
             }
 
             if (retainedProteins.contains(protein)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
-                            (++retainedCpt),
-                            peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
-                            description,
-                            geneName,
-                            proteinEvidenceLevel
-                        });
+                    (++retainedCpt),
+                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
+                    description,
+                    geneName,
+                    chromosome,
+                    proteinEvidenceLevel
+                });
             } else {
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
-                            (++possibleCpt),
-                            peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
-                            description,
-                            geneName,
-                            proteinEvidenceLevel
-                        });
+                    (++possibleCpt),
+                    peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(protein),
+                    description,
+                    geneName,
+                    chromosome,
+                    proteinEvidenceLevel
+                });
             }
         }
 
@@ -153,15 +178,19 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn(" ").setMaxWidth(50);
         retainedProteinJTable.getColumn("Gene").setMinWidth(90);
         retainedProteinJTable.getColumn("Gene").setMaxWidth(90);
-        retainedProteinJTable.getColumn("PE").setMinWidth(90);
-        retainedProteinJTable.getColumn("PE").setMaxWidth(90);
+        retainedProteinJTable.getColumn("Chr").setMaxWidth(50);
+        retainedProteinJTable.getColumn("Chr").setMaxWidth(50);
+        retainedProteinJTable.getColumn("Evidence").setMinWidth(90);
+        retainedProteinJTable.getColumn("Evidence").setMaxWidth(90);
 
         otherProteinJTable.getColumn(" ").setMinWidth(50);
         otherProteinJTable.getColumn(" ").setMaxWidth(50);
         otherProteinJTable.getColumn("Gene").setMinWidth(90);
         otherProteinJTable.getColumn("Gene").setMaxWidth(90);
-        otherProteinJTable.getColumn("PE").setMinWidth(90);
-        otherProteinJTable.getColumn("PE").setMaxWidth(90);
+        otherProteinJTable.getColumn("Chr").setMaxWidth(50);
+        otherProteinJTable.getColumn("Chr").setMaxWidth(50);
+        otherProteinJTable.getColumn("Evidence").setMinWidth(90);
+        otherProteinJTable.getColumn("Evidence").setMaxWidth(90);
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6);
@@ -172,6 +201,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             otherProteinJTable.getColumn("Accession").setMinWidth(15);
             otherProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
+
+        otherProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+
         // set the preferred size of the accession column
         width = peptideShakerGUI.getPreferredAccessionColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 6);
         if (width != null) {
@@ -181,6 +213,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             retainedProteinJTable.getColumn("Accession").setMinWidth(15);
             retainedProteinJTable.getColumn("Accession").setMaxWidth(Integer.MAX_VALUE);
         }
+
+        retainedProteinJTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
 
         // set up the table header tooltips
         retainedProteinsTableToolTips = new ArrayList<String>();
@@ -263,14 +297,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Accession", "Description", "Gene", "PE"
+                " ", "Accession", "Description", "Gene", "Chr", "Evidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -368,14 +402,14 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                " ", "Accession", "Description", "Gene", "PE"
+                " ", "Accession", "Description", "Gene", "Chr", "Evidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {

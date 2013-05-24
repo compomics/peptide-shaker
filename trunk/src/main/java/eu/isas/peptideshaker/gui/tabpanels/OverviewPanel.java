@@ -2119,6 +2119,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     @Override
                     public void run() {
                         proteinTable.requestFocus(); // @TODO: not sure why this is now needed..?
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     }
                 });
 

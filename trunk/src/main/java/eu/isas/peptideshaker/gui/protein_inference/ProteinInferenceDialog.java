@@ -2,12 +2,14 @@ package eu.isas.peptideshaker.gui.protein_inference;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
@@ -19,6 +21,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.data.Chromosome;
+import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
@@ -26,7 +30,8 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 
 /**
- * This dialog allows the user to resolve manually some protein inference issues.
+ * This dialog allows the user to resolve manually some protein inference
+ * issues.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -53,6 +58,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The PeptideShaker parent frame.
      */
@@ -89,7 +98,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.identification = identification;
         this.peptideShakerGUI = peptideShakerGUI;
-        
+
         try {
             this.inspectedMatch = identification.getProteinMatch(inspectedMatch);
             previousMainMatch = this.inspectedMatch.getMainMatch();
@@ -97,7 +106,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             peptideShakerGUI.catchException(e);
             this.dispose();
         }
-        
+
         accessions = new ArrayList(Arrays.asList(ProteinMatch.getAccessions(inspectedMatch)));
 
         for (String proteinAccession : accessions) {
@@ -158,8 +167,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("  ").setMaxWidth(30);
         proteinMatchTable.getColumn("Gene").setMinWidth(90);
         proteinMatchTable.getColumn("Gene").setMaxWidth(90);
-        proteinMatchTable.getColumn("PE").setMinWidth(90);
-        proteinMatchTable.getColumn("PE").setMaxWidth(90);
+        proteinMatchTable.getColumn("Chr").setMinWidth(50);
+        proteinMatchTable.getColumn("Chr").setMaxWidth(50);
+        proteinMatchTable.getColumn("Evidence").setMinWidth(90);
+        proteinMatchTable.getColumn("Evidence").setMaxWidth(90);
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2);
@@ -200,6 +211,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         proteinMatchTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        proteinMatchTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
 
         uniqueHitsTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -230,6 +242,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         candidateProteinsTableToolTips.add("Protein Accession");
         candidateProteinsTableToolTips.add("Protein Description");
         candidateProteinsTableToolTips.add("Gene Name");
+        candidateProteinsTableToolTips.add("Chromosome Number");
         candidateProteinsTableToolTips.add("Protein Evidence Level");
 
         uniqueHitsTableToolTips = new ArrayList<String>();
@@ -806,8 +819,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
     /**
      * Closes the dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.setVisible(false);
@@ -845,7 +858,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 6;
+            return 7;
         }
 
         @Override
@@ -863,7 +876,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 4:
                     return "Gene";
                 case 5:
-                    return "PE";
+                    return "Chr";
+                case 6:
+                    return "Evidence";
                 default:
                     return " ";
             }
@@ -895,7 +910,27 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 5:
                     try {
-                        return sequenceFactory.getHeader(accessions.get(row)).getProteinEvidence();
+                        String geneName = sequenceFactory.getHeader(accessions.get(row)).getGeneName();
+                        String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
+                        return new Chromosome(chromosomeNumber);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return "Database Error";
+                    }
+                case 6:
+                    try {
+                        String proteinEvidenceLevel = sequenceFactory.getHeader(accessions.get(row)).getProteinEvidence();
+
+                        if (proteinEvidenceLevel != null) {
+                            try {
+                                Integer level = new Integer(proteinEvidenceLevel);
+                                proteinEvidenceLevel = GenePreferences.getProteinEvidencAsString(level);
+                            } catch (NumberFormatException e) {
+                                // ignore
+                            }
+                        }
+
+                        return proteinEvidenceLevel;
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
