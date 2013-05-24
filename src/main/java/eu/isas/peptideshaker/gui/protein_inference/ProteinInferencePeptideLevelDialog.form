@@ -7,6 +7,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -127,12 +128,13 @@
                 <Component class="javax.swing.JTable" name="otherProteinJTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="5" rowCount="0">
+                      <Table columnCount="6" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Accession" type="java.lang.String"/>
                         <Column editable="false" title="Description" type="java.lang.String"/>
                         <Column editable="false" title="Gene" type="java.lang.String"/>
-                        <Column editable="false" title="PE" type="java.lang.String"/>
+                        <Column editable="false" title="Chr" type="java.lang.String"/>
+                        <Column editable="false" title="Evidence" type="java.lang.String"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -295,12 +297,13 @@
                 <Component class="javax.swing.JTable" name="retainedProteinJTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="5" rowCount="0">
+                      <Table columnCount="6" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Accession" type="java.lang.String"/>
                         <Column editable="false" title="Description" type="java.lang.String"/>
                         <Column editable="false" title="Gene" type="java.lang.String"/>
-                        <Column editable="false" title="PE" type="java.lang.String"/>
+                        <Column editable="false" title="Chr" type="java.lang.String"/>
+                        <Column editable="false" title="Evidence" type="java.lang.String"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
