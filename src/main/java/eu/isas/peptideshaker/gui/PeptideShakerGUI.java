@@ -3587,9 +3587,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
-     * Sets the gui filter preferences to use. .\
+     * Sets the GUI filter preferences to use.
      *
-     * @param filterPreferences the gui filter preferences to use
+     * @param filterPreferences the GUI filter preferences to use
      */
     public void setFilterPreferences(FilterPreferences filterPreferences) {
         this.filterPreferences = filterPreferences;

@@ -178,7 +178,7 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
 
             if (needPeptideMap) {
-                if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) { // @TODO: should this be overrideable by the user??
+                if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) {     // @TODO: should this be overrideable by the user?? yes!!!
                     waitingHandler.appendReport("Creating peptide to protein map.", true, true);
 
                     Enzyme enzyme = searchParameters.getEnzyme();
@@ -760,11 +760,6 @@ public class FileImporter {
                             // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
-                            // @TODO: needed to support (really) old parameter files it seems..?
-//                            if (modificationProfile.hasOMSSAIndexes()) {
-//                                ptmFactory.setSearchedOMSSAIndexes(modificationProfile);
-//                            }
-
                             ptmFactory.checkFixedModifications(modificationProfile, peptide);
                             HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
                             HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
@@ -784,7 +779,8 @@ public class FileImporter {
                                             String omssaName = modificationProfile.getModification(omssaIndex);
                                             if (omssaName == null) {
                                                 if (!ignoredOMSSAModifications.contains(omssaIndex)) {
-                                                    waitingHandler.appendReport("Impossible to find OMSSA modification of index " + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
+                                                    waitingHandler.appendReport("Impossible to find OMSSA modification of index " 
+                                                            + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
                                                     ignoredOMSSAModifications.add(omssaIndex);
                                                 }
                                                 omssaName = PTMFactory.unknownPTM.getName();
