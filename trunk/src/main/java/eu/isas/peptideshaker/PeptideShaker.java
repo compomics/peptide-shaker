@@ -1144,11 +1144,12 @@ public class PeptideShaker {
      * every spectrum
      *
      * @param waitingHandler waiting handler displaying progress to the user
-     * @param ptmScoringPreferences the ptm scoring preferences
+     * @param ptmScoringPreferences the PTM scoring preferences
+     * @param enzyme the enzyme used
      * @throws SQLException exception thrown whenever a problem occurred while
      * interacting with the database
      * @throws IOException exception thrown whenever a problem occurred while
-     * writing/reading the database or the fasta file
+     * writing/reading the database or the FASTA file
      * @throws ClassNotFoundException exception thrown whenever a problem
      * occurred while deserializing an object from the database
      * @throws IllegalArgumentException exception thrown whenever an error
@@ -1518,7 +1519,7 @@ public class PeptideShaker {
         int max = identification.getPeptideIdentification().size();
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(max);
-        
+
         identification.loadPeptideMatches(null);
 
         for (String peptideKey : identification.getPeptideIdentification()) {
@@ -2333,7 +2334,6 @@ public class PeptideShaker {
         ArrayList<Double> scores = new ArrayList<Double>();
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
-        Protein currentProtein = null;
 
         //identification.loadProteinMatches(null); // @TODO: already done above?
         for (String proteinKey : identification.getProteinIdentification()) {
@@ -2345,7 +2345,7 @@ public class PeptideShaker {
                 int nPeptides = -proteinMatch.getPeptideMatches().size();
                 int nSpectra = 0;
 
-                currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
 
                 if (currentProtein != null) {
                     double mw = sequenceFactory.computeMolecularWeight(proteinMatch.getMainMatch());
@@ -2388,17 +2388,15 @@ public class PeptideShaker {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (String accession : accessions) {
-                    if (newDescriptionBetter(mainKey, accession)) {
+                    if (isBetterMainProtein(mainKey, accession)) {
                         mainKey = accession;
                     }
                 }
                 for (int i = 0; i < accessions.size() - 1; i++) {
-                    ArrayList<String> primaryDescription = parseDescription(accessions.get(i));
                     for (int j = i + 1; j < accessions.size(); j++) {
-                        ArrayList<String> secondaryDescription = parseDescription(accessions.get(j));
-                        if (getSimilarity(primaryDescription, secondaryDescription)) {
+                        if (getSimilarity(accessions.get(i), accessions.get(j))) {
                             similarityFound = true;
-                            if (newDescriptionBetter(mainKey, accessions.get(j))) {
+                            if (isBetterMainProtein(mainKey, accessions.get(j))) {
                                 mainKey = accessions.get(i);
                             }
                             break;
@@ -2412,9 +2410,7 @@ public class PeptideShaker {
                     allSimilar = true;
                     for (String key : accessions) {
                         if (!mainKey.equals(key)) {
-                            ArrayList<String> primaryDescription = parseDescription(mainKey);
-                            ArrayList<String> secondaryDescription = parseDescription(key);
-                            if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                            if (!getSimilarity(mainKey, key)) {
                                 allSimilar = false;
                                 break;
                             }
@@ -2460,11 +2456,9 @@ public class PeptideShaker {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                         PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                         boolean unrelated = false;
-                        for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                            if (!proteinKey.contains(protein)) {
-                                ArrayList<String> primaryDescription = parseDescription(mainMatch);
-                                ArrayList<String> secondaryDescription = parseDescription(protein);
-                                if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                        for (String proteinAccession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                            if (!proteinKey.contains(proteinAccession)) {
+                                if (!getSimilarity(mainMatch, proteinAccession)) {
                                     unrelated = true;
                                     break;
                                 }
@@ -2482,6 +2476,7 @@ public class PeptideShaker {
                 String mainMatch = proteinMatch.getMainMatch();
                 identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
                 identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
+
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -2490,9 +2485,7 @@ public class PeptideShaker {
                     for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
                         if (!proteinKey.contains(protein)) {
                             otherProtein = true;
-                            ArrayList<String> primaryDescription = parseDescription(mainMatch);
-                            ArrayList<String> secondaryDescription = parseDescription(protein);
-                            if (primaryDescription == null || secondaryDescription == null || !getSimilarity(primaryDescription, secondaryDescription)) {
+                            if (!getSimilarity(mainMatch, protein)) {
                                 unrelated = true;
                                 break;
                             }
@@ -2507,9 +2500,10 @@ public class PeptideShaker {
                     identification.updatePeptideMatchParameter(peptideKey, psParameter);
                 }
             }
+
             if (ProteinMatch.getNProteins(proteinKey) > 1) {
                 if (!proteinMatch.getMainMatch().equals(mainKey)) {
-                    proteinMatch.setMainMatch(mainKey);
+                    proteinMatch.setMainMatch(mainKey); // @TODO: choose the main match in a more clever way!!!
                     identification.updateProteinMatch(proteinMatch);
                 }
             }
@@ -2585,18 +2579,36 @@ public class PeptideShaker {
     }
 
     /**
-     * Checks whether a protein (newAccession) is better defined than another
-     * one (oldAccession).
+     * Checks whether a new main protein (newAccession) is better than another
+     * one main protein (oldAccession). First checks the protein evidence level
+     * (if available) and if not there then checks the protein description.
      *
      * @param oldAccession the accession of the old protein
      * @param newAccession the accession of the new protein
-     * @return a boolean indicating whether the new accession is better
-     * described
+     * @return a boolean indicating whether the new protein is a better leading
+     * protein
      * @throws IOException
      * @throws InterruptedException
      * @throws IllegalArgumentException
      */
-    private boolean newDescriptionBetter(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+    private boolean isBetterMainProtein(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+
+        String evidenceLevelOld = sequenceFactory.getHeader(oldAccession).getProteinEvidence();
+        String evidenceLevelNew = sequenceFactory.getHeader(newAccession).getProteinEvidence();
+
+        if (evidenceLevelOld != null && evidenceLevelNew != null) {
+
+            // compare protein evidence levels
+            try {
+                Integer levelOld = new Integer(evidenceLevelOld);
+                Integer levelNew = new Integer(evidenceLevelNew);
+                return levelNew < levelOld;
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+
+        // protein evidence level missing, compare descriptions instead
         String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
         String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
 
@@ -2615,29 +2627,56 @@ public class PeptideShaker {
             }
         }
         return false;
+
     }
 
     /**
-     * Simplistic method comparing protein descriptions. Returns true if both
-     * descriptions are of same length and present more than half similar words.
+     * Simplistic method comparing protein similarity. Returns true if both
+     * proteins come from the same gene or if the descriptions are of same
+     * length and present more than half similar words.
      *
-     * @param primaryDescription The parsed description of the first protein
-     * @param secondaryDescription The parsed description of the second protein
-     * @return a boolean indicating whether the descriptions are similar
+     * @param primaryProteinAccession accession number of the first protein
+     * @param secondaryProteinAccession accession number of the second protein
+     * @return a boolean indicating whether the proteins are similar
      */
-    private boolean getSimilarity(ArrayList<String> primaryDescription, ArrayList<String> secondaryDescription) {
-        if (primaryDescription.size() == secondaryDescription.size()) {
-            int nMatch = 0;
-            for (int i = 0; i < primaryDescription.size(); i++) {
-                if (primaryDescription.get(i).equals(secondaryDescription.get(i))) {
-                    nMatch++;
+    private boolean getSimilarity(String primaryProteinAccession, String secondaryProteinAccession) throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException {
+
+        String geneNamePrimaryProtein = sequenceFactory.getHeader(primaryProteinAccession).getGeneName();
+        String geneNameSecondaryProtein = sequenceFactory.getHeader(secondaryProteinAccession).getGeneName();
+        boolean sameGene = false;
+
+        // compare the gene names
+        if (geneNamePrimaryProtein != null && geneNameSecondaryProtein != null) {
+            sameGene = geneNamePrimaryProtein.equalsIgnoreCase(geneNameSecondaryProtein);
+        }
+
+        if (sameGene) {
+            return true;
+        } else {
+            
+            // @TODO: perhaps we should rather compare gene names??
+
+            // compare the protein descriptions, less secure than gene names
+            ArrayList<String> primaryDescription = parseDescription(primaryProteinAccession);
+            ArrayList<String> secondaryDescription = parseDescription(secondaryProteinAccession);
+            boolean similarDescription = false;
+
+            if (primaryDescription.size() == secondaryDescription.size()) {
+                int nMatch = 0;
+                for (int i = 0; i < primaryDescription.size(); i++) {
+                    if (primaryDescription.get(i).equals(secondaryDescription.get(i))) {
+                        nMatch++;
+                    }
+                }
+                if (nMatch >= primaryDescription.size() / 2) {
+                    similarDescription = true;
+                } else {
+                    similarDescription = false;
                 }
             }
-            if (nMatch >= primaryDescription.size() / 2) {
-                return true;
-            }
+
+            return similarDescription;
         }
-        return false;
     }
 
     /**
