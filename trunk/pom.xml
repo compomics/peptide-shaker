@@ -23,8 +23,8 @@
         <developer>
             <name>Marc Vaudel</name>
             <id>marc</id>
-            <email>marc.vaudel AT isas.de</email>
-            <organization>ISAS</organization>
+            <email>marc.vaudel AT biomed.uib.no</email>
+            <organization>Department of Biomedicine, University of Bergen, Norway</organization>
             <roles>
                 <role>Java Developer</role>
             </roles>
@@ -51,6 +51,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>peptide-shaker.properties</include>
+                    <include>peptide-shaker-splash.svg</include>
                 </includes>
             </resource>
             <resource>
@@ -58,6 +59,7 @@
                 <filtering>false</filtering>
                 <excludes>
                     <exclude>peptide-shaker.properties</exclude>
+                    <exclude>peptide-shaker-splash.svg</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -73,6 +75,39 @@
 
         <!-- Plugins -->
         <plugins>
+            
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <argument>-Dmyproperty=myvalue</argument>
+                    <argument>-classpath</argument>
+                    <!-- automatically creates the classpath using all project dependencies,
+                    also adding the project build directory -->
+                    <classpath/>
+                    <argument>com.compomics.software.SplashScreen</argument>
+
+                    <mainClass>com.compomics.software.SplashScreen</mainClass>
+                    <arguments>
+                        <argument>${project.build.directory}</argument>
+                        <argument>${project.build.directory}/${project.name}-${project.version}</argument>
+                        <argument>peptide-shaker-splash</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            
+            
+            
             <!-- Compiler plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -262,7 +297,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.13.28</version>
+            <version>3.13.29</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
