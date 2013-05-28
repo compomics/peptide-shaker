@@ -75,8 +75,8 @@
 
         <!-- Plugins -->
         <plugins>
-            
-            
+
+            <!-- SVG to PNG converter plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -96,7 +96,6 @@
                     also adding the project build directory -->
                     <classpath/>
                     <argument>com.compomics.software.SplashScreen</argument>
-
                     <mainClass>com.compomics.software.SplashScreen</mainClass>
                     <arguments>
                         <argument>${project.build.directory}</argument>
@@ -105,8 +104,6 @@
                     </arguments>
                 </configuration>
             </plugin>
-            
-            
             
             <!-- Compiler plugin -->
             <plugin>
