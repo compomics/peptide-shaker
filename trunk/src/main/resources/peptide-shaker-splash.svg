@@ -647,7 +647,7 @@ shape-rendering=&quot;geometricPrecision&quot;</clipPath>
        sodipodi:linespacing="125%">
       <tspan
          sodipodi:role="line"
-         id="tspan3288">${name}</tspan>
+         id="tspan5156">PeptideShaker</tspan>
     </text>
     <text
        id="text3333-7"
@@ -658,7 +658,7 @@ shape-rendering=&quot;geometricPrecision&quot;</clipPath>
        sodipodi:linespacing="125%">
       <tspan
          sodipodi:role="line"
-         id="tspan3290">${name}</tspan>
+         id="tspan5158">PeptideShaker</tspan>
     </text>
     <image
        style="display:inline"
@@ -685,7 +685,7 @@ shape-rendering=&quot;geometricPrecision&quot;</clipPath>
        y="-278.87836"
        x="302.46585"
        id="text3111-1"
-       transform="matrix(1.25,0,0,1.25,7.1307,861.93965)">
+       transform="matrix(1.25,0,0,1.25,-0.8693,861.93965)">
       <tspan
          style="font-size:9px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#7f7f7f;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri Bold"
          x="302.46585 306.66885 311.23184 313.63486 318.19785 322.76083 325.16385"
@@ -698,7 +698,7 @@ shape-rendering=&quot;geometricPrecision&quot;</clipPath>
        x="330.4379"
        y="351.51392"
        style="font-size:12px;fill:url(#linearGradient42855);fill-opacity:1;display:inline;filter:url(#filter3201-2-7-1-44)"
-       transform="matrix(1.25,0,0,-1.25,-27.97126,956.55663)">
+       transform="matrix(1.25,0,0,-1.25,-35.97126,956.55663)">
       <tspan
          id="tspan3335"
          sodipodi:role="line"
