@@ -275,9 +275,9 @@
                                     <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="ProteinTable"/>
                                   </AccessibilityProperties>
                                   <Events>
+                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseReleased"/>
                                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseClicked"/>
                                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseExited"/>
-                                    <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseReleased"/>
                                     <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseMoved"/>
                                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinTableKeyReleased"/>
                                   </Events>
@@ -835,9 +835,9 @@
                                                 </Property>
                                               </Properties>
                                               <Events>
+                                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseReleased"/>
                                                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseClicked"/>
                                                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseExited"/>
-                                                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseReleased"/>
                                                 <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseMoved"/>
                                                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideTableKeyReleased"/>
                                               </Events>
@@ -1564,15 +1564,15 @@
                                                         <DimensionLayout dim="0">
                                                           <Group type="103" groupAlignment="0" attributes="0">
                                                               <Component id="spectrumPaddingPanel" max="32767" attributes="0"/>
-                                                              <Component id="spectrumJPanel" max="32767" attributes="0"/>
+                                                              <Component id="spectrumJPanel" pref="425" max="32767" attributes="0"/>
                                                           </Group>
                                                         </DimensionLayout>
                                                         <DimensionLayout dim="1">
                                                           <Group type="103" groupAlignment="0" attributes="0">
                                                               <Group type="102" attributes="0">
                                                                   <Component id="spectrumPaddingPanel" min="-2" max="-2" attributes="0"/>
-                                                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                                                                  <Component id="spectrumJPanel" pref="185" max="32767" attributes="0"/>
+                                                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                                                  <Component id="spectrumJPanel" pref="179" max="32767" attributes="0"/>
                                                               </Group>
                                                           </Group>
                                                         </DimensionLayout>
@@ -1588,7 +1588,7 @@
                                                           <Layout>
                                                             <DimensionLayout dim="0">
                                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                                  <EmptySpace min="0" pref="425" max="32767" attributes="0"/>
+                                                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                                               </Group>
                                                             </DimensionLayout>
                                                             <DimensionLayout dim="1">
