@@ -186,15 +186,13 @@
                                   </Group>
                                   <Component id="proteinAccession" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                   <Component id="nonEnzymaticPeptidesProteinsTab" alignment="0" min="-2" pref="179" max="-2" attributes="0"/>
-                                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="proteinDescription" linkSize="1" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="proteinScore" linkSize="1" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="proteinConfidence" linkSize="1" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="proteinNPeptides" linkSize="1" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="proteinPI" linkSize="1" max="32767" attributes="0"/>
-                                      <Component id="proteinNSpectra" linkSize="1" max="32767" attributes="0"/>
-                                      <Component id="proteinSequenceCoverage" linkSize="1" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="proteinDescription" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinScore" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinConfidence" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinNPeptides" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="proteinPI" linkSize="1" max="32767" attributes="0"/>
+                                  <Component id="proteinNSpectra" linkSize="1" max="32767" attributes="0"/>
+                                  <Component id="proteinSequenceCoverage" linkSize="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
@@ -1476,7 +1474,9 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="reportsTableScrollPane" alignment="1" pref="523" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                                      <Component id="addReportLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="32767" attributes="0"/>
                                       <Component id="exportReportButton" min="-2" max="-2" attributes="0"/>
@@ -1501,6 +1501,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="exportReportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="helpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="addReportLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -1558,8 +1559,18 @@
                             <Font component="helpLabel" italic="true" property="font" relativeSize="true" size="0"/>
                           </FontInfo>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Right click in the table for options."/>
+                        <Property name="text" type="java.lang.String" value="Right click on a row in the table for additional options."/>
                       </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="addReportLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href&gt;Add new report type.&lt;/a&gt; &lt;/html&gt;"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addReportLabelMouseClicked"/>
+                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addReportLabelMouseEntered"/>
+                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addReportLabelMouseExited"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
