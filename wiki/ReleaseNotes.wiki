@@ -3,9 +3,41 @@
 
 ----
 
+*Changes in PeptideShaker 0.21.0 (June 1. 2013):*
+ * NEW FEATURE: Species is now selected when creating a project.
+ * NEW FEATURE: Added a species tag to the command line for setting the species.
+ * NEW FEATURE: The protein evidence level is now used when selecting the "main match" in a protein group. (UniProt databases only.)
+
+ * FEATURE IMPROVEMENT: The species selection is now stored in the project.
+ * FEATURE IMPROVEMENT: Removed the species selection section in the GO tab.
+ * FEATURE IMPROVEMENT: Updated the Ensembl species list.
+ * FEATURE IMPROVEMENT: Added a check for duplicate spectrum titles when selecting mgf files.
+ * FEATURE IMPROVEMENT: Replace protein evidence level number with text in the protein inference dialogs. 
+ * FEATURE IMPROVEMENT: Added chromosome mapping to the protein inference dialogs.
+ * FEATURE IMPROVEMENT: The gene name is now used when comparing the proteins in a protein group, if different or missing the description is still used. (UniProt databases only.)
+ * FEATURE IMPROVEMENT: Added a more visible "add new report type" option to the custom export dialog.
+
+ * BUG FIX: Fixed a bug with the hiding and reshowing of the spectrum panel in the Overview tab.
+ * BUG FIX: Fixed a bug with updating in the gene and GO mappings where a file could not be deleted.
+ * BUG FIX: Fixed some resizing issues in the PRIDE annotation dialogs.
+ * BUG FIX: Improved the handling of errors occurring when establishing a database connection when importing a PeptideShaker project.
+ * BUG FIX: Fixed the background color for the ProjectDetailsDialog.
+ * BUG FIX: Fixed a bug in the peptide selection when changing the protein selection where the selected row was not made visible.
+ * BUG FIX: Tried to fix issues related to maintaining the sorting in the tables.
+ * BUG FIX: Fixed a problem that could occur with the size of the Venn diagrams in the Spectrum IDs tab.
+ * BUG FIX: Fixed a bug in the setting of the OMSSA indexes for older search parameter files.
+ * BUG FIX: Fixed a bug with the icon not turning gray again after selecting a peptide in the Overview tab.
+
+ * LIBRARY UPDATE: Updated mascot dat file to version 3.4.11.
+ * LIBRARY UPDATE: Updated utilities to version 3.13.30.
+
+----
+
 *Changes in PeptideShaker 0.20.1 (May 13. 2013):*
  * BUG FIX: Fixed a bug where white space was not allowed in the installation path.
  * LIBRARY UPDATE: Updated utilities to version 3.13.18.
+
+Download Count: 101
 
 ----
 
