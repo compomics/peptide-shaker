@@ -3423,7 +3423,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
             JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics");
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
@@ -3444,7 +3444,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void peptideTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && peptideTable.getRowCount() > 0) {
             JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics");
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, peptideTable, peptideTableToolTips,
@@ -3465,7 +3465,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     private void psmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && psmTable.getRowCount() > 0) {
             JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics");
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, psmTable, psmTableToolTips,

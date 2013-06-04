@@ -2398,7 +2398,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         if (evt.getButton() == MouseEvent.BUTTON3 && spectrumTable.getRowCount() > 0) {
 
             JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics");
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, spectrumTable, spectrumTableToolTips,
