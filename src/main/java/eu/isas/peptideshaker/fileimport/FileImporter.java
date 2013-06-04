@@ -568,6 +568,20 @@ public class FileImporter {
                     peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
                             idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
+                } catch (OutOfMemoryError error) {
+                    System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
+                    Runtime.getRuntime().gc();
+                    waitingHandler.appendReportEndLine();
+                    waitingHandler.appendReport("Ran out of memory!", true, true);
+                    waitingHandler.setRunCanceled();
+                    JOptionPane.showMessageDialog(null,
+                            "The task used up all the available memory and had to be stopped.\n"
+                            + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
+                            + "More help can be found at our website http://peptide-shaker.googlecode.com.",
+                            "Out Of Memory Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    error.printStackTrace();
+
                 } catch (Exception e) {
                     waitingHandler.setRunCanceled();
                     e.printStackTrace();
@@ -583,19 +597,6 @@ public class FileImporter {
                         waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
                         waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
                     }
-                } catch (OutOfMemoryError error) {
-                    System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
-                    Runtime.getRuntime().gc();
-                    waitingHandler.appendReportEndLine();
-                    waitingHandler.appendReport("Ran out of memory!", true, true);
-                    waitingHandler.setRunCanceled();
-                    JOptionPane.showMessageDialog(null,
-                            "The task used up all the available memory and had to be stopped.\n"
-                            + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
-                            + "More help can be found at our website http://peptide-shaker.googlecode.com.",
-                            "Out Of Memory Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    error.printStackTrace();
                 }
             }
 
@@ -616,7 +617,6 @@ public class FileImporter {
          * occurred while reading an mzML file
          */
         public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException, IllegalArgumentException, Exception {
-
 
             boolean idReport;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
