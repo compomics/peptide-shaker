@@ -300,7 +300,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         progressDialog.setTitle("Loading Fractions. Please Wait...");
         progressDialog.setUnstoppable(true);
 
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -310,7 +310,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             }
         });
 
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread("DisplayThread") {
             @Override
             public void run() {
 
@@ -363,13 +363,17 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
                 progressDialog.setRunFinished();
             }
-        });
+        }.start();
     }
 
     /**
      * Update the peptide counts plot.
      */
     private void updatePlots() {
+
+        // @TODO: add progress bar
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         try {
 
@@ -772,6 +776,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         plotsPanel.revalidate();
         plotsPanel.repaint();

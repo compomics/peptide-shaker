@@ -36,7 +36,7 @@
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="statisticsMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Statistics"/>
+            <Property name="text" type="java.lang.String" value="Statistics (beta)"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="statisticsMenuItemActionPerformed"/>

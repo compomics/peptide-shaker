@@ -2573,7 +2573,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
             JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics");
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,

@@ -849,7 +849,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         selectTermsJPopupMenu.add(selectSignificantMenuItem);
         selectTermsJPopupMenu.add(jSeparator1);
 
-        statisticsMenuItem.setText("Statistics");
+        statisticsMenuItem.setText("Statistics (beta)");
         statisticsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 statisticsMenuItemActionPerformed(evt);
@@ -1790,7 +1790,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (evt.getButton() == MouseEvent.BUTTON3 && proteinTable.getRowCount() > 0) {
 
             JPopupMenu popupMenu = new JPopupMenu();
-            JMenuItem menuItem = new JMenuItem("Statistics");
+            JMenuItem menuItem = new JMenuItem("Statistics (beta)");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
                     new XYPlottingDialog(peptideShakerGUI, proteinTable, proteinTableToolTips,
