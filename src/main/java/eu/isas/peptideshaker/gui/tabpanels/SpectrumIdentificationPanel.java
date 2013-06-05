@@ -91,7 +91,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public static final int CONFLICT = 1;
     /**
      * Static index for the search engine agreement: one or more of the search
-     * engines did not identifie the spectrum, while one or more of the others
+     * engines did not identify the spectrum, while one or more of the others
      * did.
      */
     public static final int PARTIALLY_MISSING = 2;
@@ -235,7 +235,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         JPanel mascotCorner = new JPanel();
         mascotCorner.setBackground(omssaTable.getTableHeader().getBackground());
         mascotTableJScrollPane.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, mascotCorner);
-
 
         peptideShakerJTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
@@ -2979,11 +2978,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
         if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
-
             updateSelection = false;
             fileNamesCmb.setSelectedItem(fileName);
             updateSelection = true;
-
             fileSelected = (String) fileNamesCmb.getSelectedItem();
         }
 

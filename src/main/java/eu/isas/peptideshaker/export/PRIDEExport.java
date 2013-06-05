@@ -546,7 +546,9 @@ public class PRIDEExport {
                         } else {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PSM Validation\" value=\"No\" />" + System.getProperty("line.separator"));
                         }
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().toString() + "\" />" + System.getProperty("line.separator"));
+
+                        writeCvTerm(new CvTerm("MS", "MS:1000041", "charge state", "" + bestAssumption.getIdentificationCharge().value)); // @TODO: is 2+ etc supported?
+                        //br.write(getCurrentTabSpace() + "<userParam name=\"Identified Charge\" value=\"" + bestAssumption.getIdentificationCharge().value + "\" />" + System.getProperty("line.separator"));
 
                         // search engine specific parameters
                         ArrayList<Integer> searchEngines = new ArrayList<Integer>(scores.keySet());
@@ -882,8 +884,8 @@ public class PRIDEExport {
 
         // precursor charge states
         for (int i = 0; i < spectrum.getPrecursor().getPossibleCharges().size(); i++) {
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000041\" name=\"ChargeState\" value=\""
-                    + spectrum.getPrecursor().getPossibleCharges().get(i).value + "\" />" + System.getProperty("line.separator")); // note that charge is assumed to be positive...
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000041\" name=\"charge state\" value=\""
+                    + spectrum.getPrecursor().getPossibleCharges().get(i).value + "\" />" + System.getProperty("line.separator")); // @TODO: is 2+ etc supported?
         }
 
         // precursor m/z value
