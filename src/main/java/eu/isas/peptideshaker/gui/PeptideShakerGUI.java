@@ -2220,7 +2220,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
                 isClosing = true;
-                clearData(true);
+                clearData(true, true);
                 isClosing = false;
                 clearPreferences();
                 userPreferences.addRecentProject(selectedFile);
@@ -2911,7 +2911,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void loadGeneMappings() {
 
         // @TODO: move to GenePreferences?
-        
+
         try {
             genePreferences.createDefaultGeneMappingFiles(
                     new File(getJarFilePath(), "resources/conf/gene_ontology/ensembl_versions"),
@@ -3925,8 +3925,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      *
      * @param clearDatabaseFolder decides if the database folder is to be
      * cleared or not
+     * @param clearGeneAndGoFactories decides if the gene and GO factories are to be
+     * cleared or not
      */
-    public void clearData(boolean clearDatabaseFolder) {
+    public void clearData(boolean clearDatabaseFolder, boolean clearGeneAndGoFactories) {
 
         // reset the preferences
         selectedProteinKey = NO_SELECTION;
@@ -3948,17 +3950,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
             catchException(e);
         }
-        try {
-            goFactory.closeFiles();
-        } catch (Exception e) {
-            e.printStackTrace();
-            catchException(e);
-        }
-        try {
-            geneFactory.closeFiles();
-        } catch (Exception e) {
-            e.printStackTrace();
-            catchException(e);
+
+        if (clearGeneAndGoFactories) {
+            try {
+                goFactory.closeFiles();
+            } catch (Exception e) {
+                e.printStackTrace();
+                catchException(e);
+            }
+            try {
+                geneFactory.closeFiles();
+            } catch (Exception e) {
+                e.printStackTrace();
+                catchException(e);
+            }
         }
 
         try {
@@ -3973,17 +3978,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             e.printStackTrace();
             catchException(e);
         }
-        try {
-            goFactory.clearFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-            catchException(e);
-        }
-        try {
-            geneFactory.clearFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-            catchException(e);
+
+        if (clearGeneAndGoFactories) {
+            try {
+                goFactory.clearFactory();
+            } catch (Exception e) {
+                e.printStackTrace();
+                catchException(e);
+            }
+            try {
+                geneFactory.clearFactory();
+            } catch (Exception e) {
+                e.printStackTrace();
+                catchException(e);
+            }
         }
 
         exceptionHandler = new ExceptionHandler(this);
@@ -4617,7 +4625,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     finalRef.setVisible(false);
 
                     // clear the data and database folder
-                    clearData(true);
+                    clearData(true, true);
 
                     // closeFiles the jvm
                     System.exit(0);
@@ -4674,9 +4682,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 try {
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
-                    GOFactory.getInstance().closeFiles();
+                    goFactory.closeFiles();
                     saveUserPreferences();
-                    PeptideShakerGUI.this.clearData(true);
+                    PeptideShakerGUI.this.clearData(true, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                     catchException(e);
@@ -5024,7 +5032,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
                             temp.getUserPreferences().removerRecentProject(filePath);
                         } else {
-                            clearData(true);
+                            clearData(true, true);
                             clearPreferences();
 
                             importPeptideShakerFile(new File(filePath));
@@ -5076,7 +5084,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         tempWelcomeDialog.dispose();
                         setVisible(true);
 
-                        clearData(true);
+                        clearData(true, true);
                         clearPreferences();
 
                         importPeptideShakerFile(new File(filePath));
@@ -5396,13 +5404,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                             "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + "."
                                             + "\n\nOpen cancelled.",
                                             "File Input Error", JOptionPane.ERROR_MESSAGE);
-                                    clearData(true);
+                                    clearData(true, true);
                                     clearPreferences();
                                     progressDialog.setRunFinished();
                                     return;
                                 }
                             } else {
-                                clearData(true);
+                                clearData(true, true);
                                 clearPreferences();
                                 progressDialog.setRunFinished();
                                 return;
@@ -5426,13 +5434,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                         "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + "."
                                         + "\n\nOpen cancelled.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
-                                clearData(true);
+                                clearData(true, true);
                                 clearPreferences();
                                 progressDialog.setRunFinished();
                                 return;
                             }
                         } else {
-                            clearData(true);
+                            clearData(true, true);
                             clearPreferences();
                             progressDialog.setRunFinished();
                             return;
@@ -5519,13 +5527,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                                     spectrumFileName + " was not found in the given folder.",
                                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
-                                            clearData(true);
+                                            clearData(true, true);
                                             clearPreferences();
                                             progressDialog.setRunFinished();
                                             return;
                                         }
                                     } else {
-                                        clearData(true);
+                                        clearData(true, true);
                                         clearPreferences();
                                         progressDialog.setRunFinished();
                                         return;
@@ -5536,7 +5544,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                     "An error occured while looking for the spectrum files.",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
-                            clearData(true);
+                            clearData(true, true);
                             clearPreferences();
                             progressDialog.setRunFinished();
                             e.printStackTrace();
@@ -5670,7 +5678,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                     "An error occured while importing " + fileName + ".",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
-                            clearData(true);
+                            clearData(true, true);
                             clearPreferences();
                             progressDialog.setRunFinished();
                             e.printStackTrace();
@@ -5725,7 +5733,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     Runtime.getRuntime().gc();
                     JOptionPane.showMessageDialog(null,
                             "The task used up all the available memory and had to be stopped.\n"
-                            + "Memory boundaries are set in ../resources/conf/JavaOptions.txt.",
+                            + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
+                            + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
+                            + "Java Options).\n\n"
+                            + "More help can be found at our website http://peptide-shaker.googlecode.com.",
                             "Out Of Memory Error",
                             JOptionPane.ERROR_MESSAGE);
                     progressDialog.setRunFinished();
@@ -6710,7 +6721,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
             if (!new File(filePath).exists()) {
                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                clearData(true);
+                clearData(true, true);
                 clearPreferences();
 
                 importPeptideShakerFile(new File(filePath));

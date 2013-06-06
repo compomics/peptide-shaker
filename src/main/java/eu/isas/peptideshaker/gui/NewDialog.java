@@ -667,7 +667,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
 
             this.setVisible(false);
             peptideShakerGUI.setVisible(true); // @TODO: perhaps not make the ps main frame visible until the waiting dialog is closed? (but then the waiting dialog needs a dummy parent)
-            peptideShakerGUI.clearData(true);
+            peptideShakerGUI.clearData(true, false);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
