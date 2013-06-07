@@ -797,14 +797,14 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinTableMouseReleased(evt);
-            }
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 proteinTableMouseClicked(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinTableMouseReleased(evt);
             }
         });
         proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1590,7 +1590,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         secondarySpectrumPlotsJPanel.setLayout(new javax.swing.BoxLayout(secondarySpectrumPlotsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         spectrumSplitPane.setTopComponent(secondarySpectrumPlotsJPanel);
 
-        spectrumOuterJPanel.setOpaque(false);
+        spectrumOuterJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         spectrumPaddingPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1605,7 +1605,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             .addGap(0, 17, Short.MAX_VALUE)
         );
 
-        spectrumJPanel.setOpaque(false);
+        spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
         spectrumJPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout spectrumOuterJPanelLayout = new javax.swing.GroupLayout(spectrumOuterJPanel);
@@ -3477,6 +3477,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             popupMenu.show(psmTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_psmTableMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
