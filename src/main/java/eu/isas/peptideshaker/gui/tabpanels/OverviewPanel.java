@@ -3796,7 +3796,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     String spectrumKey = psmKeys.get(psmIndex);
                     selectedPsmKeys.add(spectrumKey);
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    selectedIndexes.add(psmIndex + " " + spectrumMatch.getBestAssumption().getIdentificationCharge().toString());
+                    selectedIndexes.add((psmIndex + 1) + " " + spectrumMatch.getBestAssumption().getIdentificationCharge().toString());
                 }
 
                 ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
