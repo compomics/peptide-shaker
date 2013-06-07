@@ -34,6 +34,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import org.apache.commons.lang3.StringEscapeUtils;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -528,7 +529,7 @@ public class PRIDEExport {
                         br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                         tabCounter++;
                         br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum File\" value=\"" + Spectrum.getSpectrumFile(spectrumKey) + "\" />" + System.getProperty("line.separator"));
-                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + Spectrum.getSpectrumTitle(spectrumKey) + "\" />" + System.getProperty("line.separator"));
+                        br.write(getCurrentTabSpace() + "<userParam name=\"Spectrum Title\" value=\"" + StringEscapeUtils.escapeHtml4(Spectrum.getSpectrumTitle(spectrumKey)) + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Protein inference\" value=\"" + peptideProteins + "\" />" + System.getProperty("line.separator"));
                         br.write(getCurrentTabSpace() + "<userParam name=\"Peptide Confidence\" value=\"" + Util.roundDouble(peptideProbabilities.getPeptideConfidence(), CONFIDENCE_DECIMALS) + "\" />" + System.getProperty("line.separator"));
                         confidenceThreshold = peptideTargetDecoyMap.getTargetDecoyMap(peptideTargetDecoyMap.getCorrectedKey(peptideProbabilities.getSpecificMapKey())).getTargetDecoyResults().getConfidenceLimit();
@@ -566,7 +567,7 @@ public class PRIDEExport {
                         if (!dScore.equals("")) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM D-score\" value=\"" + dScore + "\" />" + System.getProperty("line.separator"));
                         }
-                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation()) {
+                        if (peptideShakerGUI.getPtmScoringPreferences().aScoreCalculation() && !aScore.equals("")) {
                             br.write(getCurrentTabSpace() + "<userParam name=\"PTM A-score\" value=\"" + aScore + "\" />" + System.getProperty("line.separator"));
                         }
                         tabCounter--;
