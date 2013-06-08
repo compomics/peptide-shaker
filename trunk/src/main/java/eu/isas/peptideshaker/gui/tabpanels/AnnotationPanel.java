@@ -82,7 +82,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
         dastyLinkJPanel = new javax.swing.JPanel();
         dastyLabel = new javax.swing.JLabel();
         loadDastyJButton = new javax.swing.JButton();
-        webDasty3Label = new javax.swing.JLabel();
+        webDastyLabel = new javax.swing.JLabel();
         reactomeLinkJPanel = new javax.swing.JPanel();
         reactomeLabel = new javax.swing.JLabel();
         loadReactomeJButton = new javax.swing.JButton();
@@ -266,29 +266,29 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        dastyLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Dasty 3 - protein sequence features"));
+        dastyLinkJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("DASty - protein sequence features"));
         dastyLinkJPanel.setOpaque(false);
 
         dastyLabel.setText("Web client for visualizing protein sequence feature information.");
 
-        loadDastyJButton.setText("Search Dasty 3");
+        loadDastyJButton.setText("Search DASty");
         loadDastyJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadDastyJButtonActionPerformed(evt);
             }
         });
 
-        webDasty3Label.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
-        webDasty3Label.setToolTipText("Open the Dasty3 web page");
-        webDasty3Label.addMouseListener(new java.awt.event.MouseAdapter() {
+        webDastyLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webDastyLabel.setToolTipText("Open the DASty web page");
+        webDastyLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                webDasty3LabelMouseClicked(evt);
+                webDastyLabelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                webDasty3LabelMouseEntered(evt);
+                webDastyLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                webDasty3LabelMouseExited(evt);
+                webDastyLabelMouseExited(evt);
             }
         });
 
@@ -302,7 +302,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(dastyLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(webDasty3Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(webDastyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         dastyLinkJPanelLayout.setVerticalGroup(
@@ -312,7 +312,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addGroup(dastyLinkJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadDastyJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(dastyLabel)
-                    .addComponent(webDasty3Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(webDastyLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -831,12 +831,12 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     .addComponent(pdbLinkJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Open the protein accession in Dasty3.
+     * Open the protein accession in DASty.
      *
      * @param evt
      */
@@ -924,33 +924,33 @@ public class AnnotationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_loadInterProJButtonActionPerformed
 
     /**
-     * Open the Dasty 3 web page.
+     * Open the DASty web page.
      *
      * @param evt
      */
-    private void webDasty3LabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDasty3LabelMouseClicked
+    private void webDastyLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDastyLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/dasty");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_webDasty3LabelMouseClicked
+    }//GEN-LAST:event_webDastyLabelMouseClicked
 
     /**
      * Change the cursor icon to a hand icon.
      *
      * @param evt
      */
-    private void webDasty3LabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDasty3LabelMouseEntered
+    private void webDastyLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDastyLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_webDasty3LabelMouseEntered
+    }//GEN-LAST:event_webDastyLabelMouseEntered
 
     /**
      * Change the cursor back to the default icon.
      *
      * @param evt
      */
-    private void webDasty3LabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDasty3LabelMouseExited
+    private void webDastyLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDastyLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_webDasty3LabelMouseExited
+    }//GEN-LAST:event_webDastyLabelMouseExited
 
     /**
      * Open the UniProt web page.
@@ -1343,7 +1343,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel texonomyLabel;
     private javax.swing.JLabel uniprotLabel;
     private javax.swing.JPanel uniprotLinkJPanel;
-    private javax.swing.JLabel webDasty3Label;
+    private javax.swing.JLabel webDastyLabel;
     private javax.swing.JLabel webDavidLabel;
     private javax.swing.JLabel webIntActLabel;
     private javax.swing.JLabel webInterProLabel;

@@ -101,7 +101,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="picrLinkJLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="33" max="32767" attributes="0"/>
+              <EmptySpace pref="23" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -334,7 +334,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Dasty 3 - protein sequence features"/>
+            <TitledBorder title="DASty - protein sequence features"/>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -349,7 +349,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="dastyLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="webDasty3Label" min="-2" max="-2" attributes="0"/>
+                  <Component id="webDastyLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -361,7 +361,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="loadDastyJButton" alignment="3" max="32767" attributes="1"/>
                       <Component id="dastyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="webDasty3Label" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="webDastyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -376,21 +376,21 @@
         </Component>
         <Component class="javax.swing.JButton" name="loadDastyJButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Search Dasty 3"/>
+            <Property name="text" type="java.lang.String" value="Search DASty"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadDastyJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="webDasty3Label">
+        <Component class="javax.swing.JLabel" name="webDastyLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-            <Property name="toolTipText" type="java.lang.String" value="Open the Dasty3 web page"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the DASty web page"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webDasty3LabelMouseClicked"/>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webDasty3LabelMouseEntered"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webDasty3LabelMouseExited"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webDastyLabelMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webDastyLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="webDastyLabelMouseExited"/>
           </Events>
         </Component>
       </SubComponents>
