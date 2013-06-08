@@ -123,7 +123,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     /**
      * The path to the example dataset.
      */
-    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/PeptideShaker example 1.cps";
+    private final String EXAMPLE_DATASET_PATH = "/resources/example_dataset/HeLa Example.cps";
     /**
      * Convenience static string indicating that no selection was done by the
      * user.

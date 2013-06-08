@@ -639,7 +639,10 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                         progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(finalRef,
                                 "The task used up all the available memory and had to be stopped.\n"
-                                + "Memory boundaries are set in ../resources/conf/JavaOptions.txt.",
+                                + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
+                                + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
+                                + "Java Options).\n\n"
+                                + "More help can be found at our website http://peptide-shaker.googlecode.com.",
                                 "Out Of Memory Error",
                                 JOptionPane.ERROR_MESSAGE);
                         System.out.println("Ran out of memory!");
