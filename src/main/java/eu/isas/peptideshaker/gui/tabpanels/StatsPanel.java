@@ -1802,6 +1802,7 @@ public class StatsPanel extends javax.swing.JPanel {
             peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+            peptideShakerGUI.setDataSaved(false);
 
             applyButton.setEnabled(false);
             pepWindowApplied = true;
@@ -2005,6 +2006,7 @@ public class StatsPanel extends javax.swing.JPanel {
                             TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
                             currentResults.setUserInput(new Double(thresholdInput.getText()));
                             currentResults.setInputType(thresholdTypeCmb.getSelectedIndex());
+                            peptideShakerGUI.setDataSaved(false);
                         } else {
                             // @TODO: ideally the validation settings ought to be reset as well..?
                         }
