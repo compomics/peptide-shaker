@@ -139,6 +139,11 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
         try {
             boolean useDB = !isSelfUpdating();
             int viewIndex = getViewIndex(row);
+
+            if (viewIndex >= peptideKeys.size()) {
+                return null;
+            }
+
             String peptideKey = peptideKeys.get(viewIndex);
 
             switch (column) {

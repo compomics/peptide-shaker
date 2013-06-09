@@ -178,7 +178,7 @@ public class FileImporter {
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
 
             if (needPeptideMap) {
-                if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) {     // @TODO: should this be overrideable by the user?? yes!!!
+                if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) {     // @TODO: should this be overrideable by the user!!!
                     waitingHandler.appendReport("Creating peptide to protein map.", true, true);
 
                     Enzyme enzyme = searchParameters.getEnzyme();
@@ -234,32 +234,38 @@ public class FileImporter {
             waitingHandler.increaseProgressValue();
 
         } catch (FileNotFoundException e) {
+            System.err.println("File " + fastaFile + " was not found. Please select a different FASTA file.");
+            e.printStackTrace();
+            waitingHandler.setRunCanceled();
             waitingHandler.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.", true, true);
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
         } catch (IOException e) {
-            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
+            System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
+            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
         } catch (InterruptedException e) {
+            System.err.println("An error occured while loading " + fastaFile + ".");
+            e.printStackTrace();
+            waitingHandler.setRunCanceled();
             waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
         } catch (IllegalArgumentException e) {
-            waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.", true, true);
+            System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
+            waitingHandler.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.", true, true);
         } catch (ClassNotFoundException e) {
+            System.err.println("An error occured while loading " + fastaFile + ".");
+            e.printStackTrace();
+            waitingHandler.setRunCanceled();
             waitingHandler.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
                     + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", true, true);
+        } catch (NullPointerException e) {
+            System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-        } catch (NullPointerException e) {
             waitingHandler.appendReport("An error occurred when importing the sequences. "
                     + "Please check the Search Parameters. See the log file for details. "
                     + "If the error persists please let us know at http://peptide-shaker.googlecode.com.", true, true);
-            e.printStackTrace();
-            waitingHandler.setRunCanceled();
         }
     }
 
@@ -432,7 +438,7 @@ public class FileImporter {
          * @param idFiles ArrayList containing the identification files
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, IdFilter idFilter,
-                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences, 
+                SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProcessingPreferences processingPreferences,
                 PTMScoringPreferences ptmScoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, ProjectDetails projectDetails) {
 
             this.idFiles = new ArrayList<File>();
@@ -473,7 +479,7 @@ public class FileImporter {
         /**
          * Imports the identifications from the files given to the worker.
          *
-         * @return
+         * @return 0 if success, 1 if not
          */
         public int importFiles() {
 
@@ -501,11 +507,11 @@ public class FileImporter {
                 }
             }
 
-            importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
+            try {
+                importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
-            if (!waitingHandler.isRunCanceled()) {
+                if (!waitingHandler.isRunCanceled()) {
 
-                try {
                     waitingHandler.appendReport("Reading identification files.", true, true);
 
                     for (File idFile : idFiles) {
@@ -568,36 +574,52 @@ public class FileImporter {
                     peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
                             idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
 
-                } catch (OutOfMemoryError error) {
-                    System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
-                    Runtime.getRuntime().gc();
-                    waitingHandler.appendReportEndLine();
-                    waitingHandler.appendReport("Ran out of memory!", true, true);
-                    waitingHandler.setRunCanceled();
-                    JOptionPane.showMessageDialog(null,
-                            "The task used up all the available memory and had to be stopped.\n"
-                            + "You can increase the memory allocated to PeptideShaker under Edit -> Java Options.\n"
+                }
+            } catch (OutOfMemoryError error) {
+
+                System.out.println("<CompomicsError> PeptideShaker ran out of memory! See the PeptideShaker log for details. </CompomicsError>");
+
+                System.err.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
+                Runtime.getRuntime().gc();
+                waitingHandler.appendReportEndLine();
+                waitingHandler.appendReport("Ran out of memory!", true, true);
+                waitingHandler.setRunCanceled();
+
+                if (waitingHandler instanceof WaitingDialog) {
+                    JOptionPane.showMessageDialog((WaitingDialog) waitingHandler,
+                            "PeptideShaker used up all the available memory and had to be stopped.\n"
+                            + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
+                            + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
+                            + "Java Options).\n\n"
                             + "More help can be found at our website http://peptide-shaker.googlecode.com.",
                             "Out Of Memory Error",
                             JOptionPane.ERROR_MESSAGE);
-                    error.printStackTrace();
-
-                } catch (Exception e) {
-                    waitingHandler.setRunCanceled();
-                    e.printStackTrace();
-                    System.err.println("Free memory: " + Runtime.getRuntime().freeMemory());
-                    if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
-                        waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
-                        waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
-                    } else if (ExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
-                        waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
-                        waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                        waitingHandler.appendReport("Please see the Database help page: http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
-                    } else {
-                        waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
-                        waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
-                    }
                 }
+
+                error.printStackTrace();
+                return 1;
+
+            } catch (Exception e) {
+                waitingHandler.setRunCanceled();
+
+                System.out.println("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
+
+                if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
+                    waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
+                    waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
+                } else if (ExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {
+                    waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                    waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+                    waitingHandler.appendReport("Please see the Database help page: http://code.google.com/p/searchgui/wiki/DatabaseHelp.", true, true);
+                } else {
+                    waitingHandler.appendReport("An error occured while loading the identification files:", true, true);
+                    waitingHandler.appendReport(e.getLocalizedMessage(), true, true);
+                }
+
+                e.printStackTrace();
+                System.err.println("Free memory: " + Runtime.getRuntime().freeMemory());
+
+                return 1;
             }
 
             return 0;
@@ -631,6 +653,10 @@ public class FileImporter {
                 fileReader = new MascotIdfileReader(idFile, true);
             } else {
                 fileReader = readerFactory.getFileReader(idFile, null);
+            }
+
+            if (fileReader == null) {
+                waitingHandler.setRunCanceled();
             }
 
             waitingHandler.setSecondaryProgressDialogIndeterminate(false);
@@ -779,7 +805,7 @@ public class FileImporter {
                                             String omssaName = modificationProfile.getModification(omssaIndex);
                                             if (omssaName == null) {
                                                 if (!ignoredOMSSAModifications.contains(omssaIndex)) {
-                                                    waitingHandler.appendReport("Impossible to find OMSSA modification of index " 
+                                                    waitingHandler.appendReport("Impossible to find OMSSA modification of index "
                                                             + omssaIndex + ". The corresponding peptides will be ignored.", true, true);
                                                     ignoredOMSSAModifications.add(omssaIndex);
                                                 }

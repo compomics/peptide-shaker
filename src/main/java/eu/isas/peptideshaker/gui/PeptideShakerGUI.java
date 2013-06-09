@@ -477,7 +477,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         CompomicsWrapper.checkForNewVersion(getVersion(), "PeptideShaker", "peptide-shaker");
 
         // set up the ErrorLog
-        setUpLogFile();
+        setUpLogFile(true);
 
         // load the utilities user preferences
         loadUserPreferences();
@@ -3180,16 +3180,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Set up the log file.
+     * Set up the log file. Redirects the error and output streams to the log
+     * file.
+     *
+     * @param redirectOutputStream if true, redirects the output stream
      */
-    private void setUpLogFile() {
+    public void setUpLogFile(boolean redirectOutputStream) {
+
         if (useLogFile && !getJarFilePath().equalsIgnoreCase(".")) {
             try {
                 String path = getJarFilePath() + "/resources/PeptideShaker.log";
 
                 File file = new File(path);
-                System.setOut(new java.io.PrintStream(new FileOutputStream(file, true)));
                 System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
+
+                if (redirectOutputStream) {
+                    System.setOut(new java.io.PrintStream(new FileOutputStream(file, true)));
+                }
 
                 // creates a new log file if it does not exist
                 if (!file.exists()) {
@@ -3205,10 +3212,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                                 + "Please contact the developers.", "File Error", JOptionPane.OK_OPTION);
                     }
                 }
-                System.out.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
+                System.err.println(System.getProperty("line.separator") + System.getProperty("line.separator") + new Date()
                         + ": PeptideShaker version " + getVersion() + "." + System.getProperty("line.separator"));
-                System.out.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + "." + System.getProperty("line.separator"));
-                System.out.println("Java version: " + System.getProperty("java.version") + "." + System.getProperty("line.separator"));
+                System.err.println("Total amount of memory in the Java virtual machine: " + Runtime.getRuntime().totalMemory() + "." + System.getProperty("line.separator"));
+                System.err.println("Java version: " + System.getProperty("java.version") + "." + System.getProperty("line.separator"));
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(
                         null, "An error occured when trying to create the PeptideShaker log file.",
@@ -5732,7 +5739,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                     System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                     Runtime.getRuntime().gc();
                     JOptionPane.showMessageDialog(null,
-                            "The task used up all the available memory and had to be stopped.\n"
+                            "PeptideShaker used up all the available memory and had to be stopped.\n"
                             + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
                             + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
                             + "Java Options).\n\n"

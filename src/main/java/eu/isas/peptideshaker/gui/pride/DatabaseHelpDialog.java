@@ -638,7 +638,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                         Runtime.getRuntime().gc();
                         progressDialog.setRunFinished();
                         JOptionPane.showMessageDialog(finalRef,
-                                "The task used up all the available memory and had to be stopped.\n"
+                                "PeptideShaker used up all the available memory and had to be stopped.\n"
                                 + "Memory boundaries are changed in the the Welcome Dialog (Settings\n"
                                 + "& Help > Settings > Java Memory Settings) or in the Edit menu (Edit\n"
                                 + "Java Options).\n\n"

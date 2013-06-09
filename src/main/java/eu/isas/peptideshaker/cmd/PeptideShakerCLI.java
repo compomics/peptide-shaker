@@ -26,7 +26,7 @@ import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.export.CpsExporter;
-import eu.isas.peptideshaker.gui.DummyFrame;
+import com.compomics.util.gui.DummyFrame;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
@@ -105,7 +105,8 @@ public class PeptideShakerCLI implements Callable {
             }
 
             PeptideShakerGUI peptideShakerGUI = new PeptideShakerGUI(); // dummy object to get at the version and tips
-            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + peptideShakerGUI.getVersion()),
+            peptideShakerGUI.setUpLogFile(false); // redirect the error stream to the PeptideShaker log file
+            waitingHandler = new WaitingDialog(new DummyFrame("PeptideShaker " + peptideShakerGUI.getVersion(), "/icons/peptide-shaker.gif"),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     false, peptideShakerGUI.getTips(), "Importing Data", "PeptideShaker", peptideShakerGUI.getVersion(), true);
@@ -195,93 +196,100 @@ public class PeptideShakerCLI implements Callable {
                 annotationPreferences, projectDetails, processingPreferences, ptmScoringPreferences,
                 spectrumCountingPreferences, false);
 
-        // Identification as created by PeptideShaker
-        ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        if (!waitingHandler.isRunCanceled()) {
 
-        // Metrics saved while processing the data
-        Metrics metrics = peptideShaker.getMetrics();
+            // Identification as created by PeptideShaker
+            ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        // The cache used for identification
-        ObjectsCache objectsCache = peptideShaker.getCache();
+            // Metrics saved while processing the data
+            Metrics metrics = peptideShaker.getMetrics();
 
-        // The identification feature generator
-        IdentificationFeaturesGenerator identificationFeaturesGenerator =
-                new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
+            // The cache used for identification
+            ObjectsCache objectsCache = peptideShaker.getCache();
 
-        waitingHandler.setWaitingText("Saving Data. Please Wait...");
-        if (waitingHandler instanceof WaitingDialog) {
-            projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
-            ((WaitingDialog) waitingHandler).setRunNotFinished();
-            ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(true, false);
-        }
+            // The identification feature generator
+            IdentificationFeaturesGenerator identificationFeaturesGenerator =
+                    new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
 
-        // Save results
-        File ouptutFile = cliInputBean.getOutput();
-        try {
-            waitingHandler.appendReport("Saving results. Please wait...", true, true);
-            CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
-                    annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
-                    processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                    ptmScoringPreferences, genePreferences, objectsCache, true, idFilter);
-            waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
-            waitingHandler.appendReportEndLine();
-            loadUserPreferences();
-            userPreferences.addRecentProject(ouptutFile);
-            saveUserPreferences();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            waitingHandler.setWaitingText("Saving Data. Please Wait...");
+            if (waitingHandler instanceof WaitingDialog) {
+                projectDetails.setReport(((WaitingDialog) waitingHandler).getReport(null));
+                ((WaitingDialog) waitingHandler).setRunNotFinished();
+                ((WaitingDialog) waitingHandler).setCloseDialogWhenImportCompletes(true, false);
+            }
 
-        // text summary output - format 1
-        if (cliInputBean.getTextFormat1Directory() != null) {
-            waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
-            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
-            exporter.exportResults(waitingHandler, cliInputBean.getTextFormat1Directory());
-            waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat1Directory().getAbsolutePath() + ".", true, true);
-            waitingHandler.appendReportEndLine();
-        }
-
-        // text summary output - format 2
-        if (cliInputBean.getTextFormat2Directory() != null) {
-            waitingHandler.appendReport("Exporting results as text file. Please wait...", true, true);
-
-            // @TODO: implement text summary export format 2
-            TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
-            exporter.exportResults(waitingHandler, cliInputBean.getTextFormat2Directory());
-
-            waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat2Directory().getAbsolutePath() + ".", true, true);
-            waitingHandler.appendReportEndLine();
-        }
-
-        // PRIDE output required?
-        // @TODO: implement me
-
-        // Export entire project?
-        // @TODO: not yet implemented
-
-        // Finished
-        waitingHandler.setIndeterminate(false);
-        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setWaitingText("PeptideShaker Processing - Completed!");
-        waitingHandler.appendReportEndLine();
-
-        if (!cliInputBean.isGUI()) {
+            // Save results
+            File ouptutFile = cliInputBean.getOutput();
             try {
-                closePeptideShaker(identification);
+                waitingHandler.appendReport("Saving results. Please wait...", true, true);
+                CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
+                        annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
+                        processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
+                        ptmScoringPreferences, genePreferences, objectsCache, true, idFilter);
+                waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
+                waitingHandler.appendReportEndLine();
+                loadUserPreferences();
+                userPreferences.addRecentProject(ouptutFile);
+                saveUserPreferences();
             } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
                 e.printStackTrace();
             }
-        }
 
-        waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
-        if (waitingHandler instanceof WaitingDialog) {
-            ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
-        }
+            // text summary output - format 1
+            if (cliInputBean.getTextFormat1Directory() != null) {
+                waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
+                TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+                exporter.exportResults(waitingHandler, cliInputBean.getTextFormat1Directory());
+                waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat1Directory().getAbsolutePath() + ".", true, true);
+                waitingHandler.appendReportEndLine();
+            }
 
-        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+            // text summary output - format 2
+            if (cliInputBean.getTextFormat2Directory() != null) {
+                waitingHandler.appendReport("Exporting results as text file. Please wait...", true, true);
+
+                // @TODO: implement text summary export format 2
+                TxtExporter exporter = new TxtExporter(experiment, sample, replicateNumber, identificationFeaturesGenerator);
+                exporter.exportResults(waitingHandler, cliInputBean.getTextFormat2Directory());
+
+                waitingHandler.appendReport("Results saved as text in " + cliInputBean.getTextFormat2Directory().getAbsolutePath() + ".", true, true);
+                waitingHandler.appendReportEndLine();
+            }
+
+            // PRIDE output required?
+            // @TODO: implement me
+
+            // Export entire project?
+            // @TODO: not yet implemented
+
+            // Finished
+            waitingHandler.setIndeterminate(false);
+            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setWaitingText("PeptideShaker Processing - Completed!");
+            waitingHandler.appendReportEndLine();
+
+            if (!cliInputBean.isGUI()) {
+                try {
+                    closePeptideShaker(identification);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
+                    e.printStackTrace();
+                }
+            }
+
+            waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
+            if (waitingHandler instanceof WaitingDialog) {
+                ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
+            }
+            
+            System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+            // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+        
+        } else {
+            waitingHandler.setWaitingText("PeptideShaker Processing - Canceled!");
+            System.out.println("<CompomicsError> PeptideShaker processing canceled. </CompomicsError>");
+        }
 
         return null;
     }
@@ -509,6 +517,7 @@ public class PeptideShakerCLI implements Callable {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
         try {
             Options lOptions = new Options();
             PeptideShakerCLIParams.createOptionsCLI(lOptions);
@@ -531,12 +540,12 @@ public class PeptideShakerCLI implements Callable {
                 PeptideShakerCLI lPeptideShakerCLI = new PeptideShakerCLI(lCLIBean);
                 lPeptideShakerCLI.call();
             }
-        } catch (ParseException e) {
-            System.err.println("\n" + e.getMessage() + "\n");
-        } catch (IOException e) {
-            System.err.println("\n" + e.getMessage() + "\n");
-        } catch (ClassNotFoundException e) {
-            System.err.println("\n" + e.getMessage() + "\n");
+        } catch (OutOfMemoryError e) {
+            System.out.println("<CompomicsError> PeptideShaker used up all the memory and had to be stopped. See the PeptideShaker log for details. </CompomicsError>");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.print("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
+            e.printStackTrace();
         }
     }
 

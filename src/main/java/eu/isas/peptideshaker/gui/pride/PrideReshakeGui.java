@@ -28,7 +28,7 @@ import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
-import eu.isas.peptideshaker.gui.DummyFrame;
+import com.compomics.util.gui.DummyFrame;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import javax.swing.filechooser.FileFilter;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
