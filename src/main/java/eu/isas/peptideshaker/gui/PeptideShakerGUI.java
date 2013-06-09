@@ -3925,8 +3925,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      *
      * @param clearDatabaseFolder decides if the database folder is to be
      * cleared or not
-     * @param clearGeneAndGoFactories decides if the gene and GO factories are to be
-     * cleared or not
+     * @param clearGeneAndGoFactories decides if the gene and GO factories are
+     * to be cleared or not
      */
     public void clearData(boolean clearDatabaseFolder, boolean clearGeneAndGoFactories) {
 
@@ -5959,62 +5959,77 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      */
     public void saveProject(boolean aCloseWhenDone) {
 
-        final boolean closeWhenDone = aCloseWhenDone;
+        // check if the project is the example project
+        if (currentPSFile != null && currentPSFile.equals(new File(getJarFilePath() + EXAMPLE_DATASET_PATH))) {
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Overwriting the example project is not possible.\n"
+                    + "Please save to a different location.", "Example Project", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        progressDialog = new ProgressDialogX(this,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Saving. Please Wait...");
-        progressDialog.setUnstoppable(true);
-
-        final PeptideShakerGUI tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
+            if (value == JOptionPane.OK_OPTION) {
+                saveProjectAs(aCloseWhenDone);
+            } else {
+                // do nothing
             }
-        }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
-            @Override
-            public void run() {
-                try {
-                    saveProjectProcess(closeWhenDone);
+        } else {
 
+            final boolean closeWhenDone = aCloseWhenDone;
+
+            progressDialog = new ProgressDialogX(this,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Saving. Please Wait...");
+            progressDialog.setUnstoppable(true);
+
+            final PeptideShakerGUI tempRef = this; // needed due to threading issues
+
+            new Thread(new Runnable() {
+                public void run() {
                     try {
-                        ptmFactory.saveFactory();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
                     }
-
-                    if (!progressDialog.isRunCanceled()) {
-                        progressDialog.setRunFinished();
-                        userPreferences.addRecentProject(currentPSFile);
-                        updateRecentProjectsList();
-
-                        if (closeWhenDone) {
-                            closePeptideShaker();
-                        } else {
-                            JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
-                            dataSaved = true;
-                        }
-                    } else {
-                        progressDialog.setRunFinished();
-                        JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
-                    }
-                } catch (Exception e) {
-                    progressDialog.setRunFinished();
-                    e.printStackTrace();
-                    catchException(e);
                 }
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+                @Override
+                public void run() {
+                    try {
+                        saveProjectProcess(closeWhenDone);
+
+                        try {
+                            ptmFactory.saveFactory();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!progressDialog.isRunCanceled()) {
+                            progressDialog.setRunFinished();
+                            userPreferences.addRecentProject(currentPSFile);
+                            updateRecentProjectsList();
+
+                            if (closeWhenDone) {
+                                closePeptideShaker();
+                            } else {
+                                JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                                dataSaved = true;
+                            }
+                        } else {
+                            progressDialog.setRunFinished();
+                            JOptionPane.showMessageDialog(tempRef, "Saving of the project was cancelled by the user.", "Save Cancelled", JOptionPane.WARNING_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        e.printStackTrace();
+                        catchException(e);
+                    }
+                }
+            }.start();
+        }
     }
 
     /**
