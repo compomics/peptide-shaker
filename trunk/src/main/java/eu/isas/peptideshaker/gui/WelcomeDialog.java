@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.gui.DummyFrame;
 import com.compomics.software.ToolFactory;
 import com.compomics.software.dialogs.JavaOptionsDialog;
 import com.compomics.software.dialogs.SearchGuiSetupDialog;
@@ -33,7 +34,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     /**
      * A dummy parent frame to be able to show an icon in the task bar.
      */
-    static private DummyFrame dummyParentFrame = new DummyFrame("");
+    static private DummyFrame dummyParentFrame = new DummyFrame("", "/icons/peptide-shaker.gif");
 
     /**
      * Create a new WelcomeDialog.
