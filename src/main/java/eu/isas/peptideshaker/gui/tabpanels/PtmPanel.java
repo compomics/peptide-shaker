@@ -331,16 +331,16 @@ public class PtmPanel extends javax.swing.JPanel {
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
-        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW); // ISOFORMS
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.BLUE); // ISOFORMS_UNRELATED
-        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
+        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
+        proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
+        proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.BLUE);
+        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the protein inference tooltip map
         proteinInferenceTooltipMap = new HashMap<Integer, String>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Belongs to a group of isoforms");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Belongs to a group of isoforms and unrelated proteins");
+        proteinInferenceTooltipMap.put(PSParameter.RELATED, "Belongs to a group of related proteins");
+        proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Belongs to a group of related and unrelated proteins");
         proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Belongs to unrelated proteins");
 
         peptidesTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, proteinInferenceColorMap, proteinInferenceTooltipMap));

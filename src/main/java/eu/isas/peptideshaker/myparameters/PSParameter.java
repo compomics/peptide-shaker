@@ -70,26 +70,41 @@ public class PSParameter implements UrParameter {
      */
     private int groupClass = NOT_GROUP;
     /**
-     * Static index for a protein inference group: 0- not a protein group or
+     * Static index for a protein inference group: 0 - not a protein group or
      * unique peptide of single protein group.
      */
     public static final int NOT_GROUP = 0;
     /**
-     * Static index for a protein group: 1- isoforms or peptide of isoform
-     * groups (not necessarily unique to the group).
+     * Static index for a protein group: 1 - related proteins or peptide from
+     * related protein groups (not necessarily unique to the group).
      */
-    public static final int ISOFORMS = 1;
+    public static final int RELATED = 1;
     /**
-     * Static index for a protein group: 2- isoforms and a few unrelated
-     * proteins (less than 50%) or peptide shared by isoforms and non isoforms
+     * Static index for a protein group: 2 - related and a unrelated
+     * proteins or peptide shared by related and unrelated proteins
      * (not necessarily unique to the group).
      */
-    public static final int ISOFORMS_UNRELATED = 2;
+    public static final int RELATED_AND_UNRELATED = 2;
     /**
-     * Static index for a protein group: 3- unrelated proteins proteins or
+     * Static index for a protein group: 3 - unrelated proteins proteins or
      * peptide shared by unrelated proteins.
      */
     public static final int UNRELATED = 3;
+    /**
+     * Static index for a protein group: 1 - isoforms or peptide of isoform
+     * groups (not necessarily unique to the group).
+     * 
+     * @deprecated use RELATED instead
+     */
+    public static final int ISOFORMS = 1;
+    /**
+     * Static index for a protein group: 2 - isoforms and a few unrelated
+     * proteins (less than 50%) or peptide shared by isoforms and non isoforms
+     * (not necessarily unique to the group).
+     * 
+     * @deprecated use RELATED_AND_UNRELATED instead
+     */
+    public static final int ISOFORMS_UNRELATED = 2;
     /**
      * The fraction confidence map.
      */
@@ -442,10 +457,10 @@ public class PSParameter implements UrParameter {
         switch (matchClass) {
             case NOT_GROUP:
                 return "Single Protein";
-            case ISOFORMS:
-                return "Isoforms";
-            case ISOFORMS_UNRELATED:
-                return "Unrelated Isoforms";
+            case RELATED:
+                return "Related Proteins";
+            case RELATED_AND_UNRELATED:
+                return "Related and Unrelated Proteins";
             case UNRELATED:
                 return "Unrelated Proteins";
             default:

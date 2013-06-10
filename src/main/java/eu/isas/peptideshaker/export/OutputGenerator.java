@@ -361,7 +361,7 @@ public class OutputGenerator {
                                             }
                                             if (description) {
                                                 try {
-                                                    writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
+                                                    writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription() + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
@@ -765,7 +765,7 @@ public class OutputGenerator {
                                                     ArrayList<String> accessions = new ArrayList<String>();
 
                                                     mainMatch = proteinMatch.getMainMatch();
-                                                    mainMatchDescription = sequenceFactory.getHeader(mainMatch).getDescription();
+                                                    mainMatchDescription = sequenceFactory.getHeader(mainMatch).getSimpleProteinDescription();
                                                     boolean first = true;
 
                                                     if (!shared) {
@@ -783,7 +783,7 @@ public class OutputGenerator {
                                                                 secondaryProteinsDescriptions += "; ";
                                                             }
                                                             secondaryProteins += key;
-                                                            secondaryProteinsDescriptions += sequenceFactory.getHeader(key).getDescription();
+                                                            secondaryProteinsDescriptions += sequenceFactory.getHeader(key).getSimpleProteinDescription();
                                                             orderedProteinsKeys.add(key);
                                                         }
                                                     }
@@ -805,7 +805,7 @@ public class OutputGenerator {
                                                                 peptideProteinDescriptions += "; ";
                                                             }
                                                             peptideProteins += key;
-                                                            peptideProteinDescriptions += sequenceFactory.getHeader(key).getDescription();
+                                                            peptideProteinDescriptions += sequenceFactory.getHeader(key).getSimpleProteinDescription();
                                                             orderedProteinsKeys.add(key);
                                                         }
                                                     }
@@ -1241,7 +1241,7 @@ public class OutputGenerator {
                                                             proteinAccessions += protein;
                                                         }
                                                         if (proteinDescription) {
-                                                            proteinDescriptions += sequenceFactory.getHeader(protein).getDescription();
+                                                            proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
                                                         }
                                                     }
                                                     if (accessions) {
@@ -1595,7 +1595,7 @@ public class OutputGenerator {
                             writer.write(bestAssumption.getPeptide().getParentProteins().get(j) + SEPARATOR);
 
                             // description
-                            String description = sequenceFactory.getHeader(bestAssumption.getPeptide().getParentProteins().get(j)).getDescription();
+                            String description = sequenceFactory.getHeader(bestAssumption.getPeptide().getParentProteins().get(j)).getSimpleProteinDescription();
                             writer.write(description + SEPARATOR);
 
                             // compound
@@ -1778,7 +1778,7 @@ public class OutputGenerator {
                                         proteinDescriptions += "; ";
                                     }
                                     proteinAccessions += protein;
-                                    proteinDescriptions += sequenceFactory.getHeader(protein).getDescription();
+                                    proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
                                 }
                                 writer.write(proteinAccessions + SEPARATOR);
                                 writer.write(proteinDescriptions + SEPARATOR);
@@ -1992,7 +1992,7 @@ public class OutputGenerator {
                             writer.write(SEPARATOR);
                             writer.write(proteinPSParameter.getProteinInferenceClassAsString() + SEPARATOR);
                             try {
-                                writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
+                                writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription() + SEPARATOR);
                             } catch (Exception e) {
                                 writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                             }
@@ -2345,7 +2345,7 @@ public class OutputGenerator {
                                                             proteinAccessions += protein;
                                                         }
                                                         if (proteinDescription) {
-                                                            proteinDescriptions += sequenceFactory.getHeader(protein).getDescription();
+                                                            proteinDescriptions += sequenceFactory.getHeader(protein).getSimpleProteinDescription();
                                                         }
                                                     }
                                                     if (accession) {
@@ -2699,7 +2699,7 @@ public class OutputGenerator {
                                             }
                                             if (description) {
                                                 try {
-                                                    writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
+                                                    writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription() + SEPARATOR);
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }

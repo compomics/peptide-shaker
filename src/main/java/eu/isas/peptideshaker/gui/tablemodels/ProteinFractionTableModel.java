@@ -152,7 +152,7 @@ public class ProteinFractionTableModel extends DefaultTableModel {
                 ProteinMatch proteinMatch = identification.getProteinMatch(proteinKeys.get(row));
                 String description = "";
                 try {
-                    description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+                    description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }

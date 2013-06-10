@@ -136,7 +136,7 @@ public class ProteinGoTableModel extends DefaultTableModel {
                     proteinMatch = identification.getProteinMatch(proteinKey);
                     String description = "";
                     try {
-                        description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+                        description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription();
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }

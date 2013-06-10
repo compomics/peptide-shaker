@@ -2431,7 +2431,7 @@ public class PeptideShaker {
                     }
 
                 } else if (!allSimilar) {
-                    psParameter.setProteinInferenceClass(PSParameter.ISOFORMS_UNRELATED);
+                    psParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
                     nGroups++;
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -2439,12 +2439,12 @@ public class PeptideShaker {
                     identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                        psParameter.setProteinInferenceClass(PSParameter.ISOFORMS_UNRELATED);
+                        psParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
 
                 } else {
-                    psParameter.setProteinInferenceClass(PSParameter.ISOFORMS);
+                    psParameter.setProteinInferenceClass(PSParameter.RELATED);
                     nGroups++;
                     nSolved++;
                     identification.updateProteinMatchParameter(proteinKey, psParameter);
@@ -2465,9 +2465,9 @@ public class PeptideShaker {
                             }
                         }
                         if (unrelated) {
-                            psParameter.setProteinInferenceClass(PSParameter.ISOFORMS_UNRELATED);
+                            psParameter.setProteinInferenceClass(PSParameter.RELATED_AND_UNRELATED);
                         } else {
-                            psParameter.setProteinInferenceClass(PSParameter.ISOFORMS);
+                            psParameter.setProteinInferenceClass(PSParameter.RELATED);
                         }
                         identification.updatePeptideMatchParameter(peptideKey, psParameter);
                     }
@@ -2492,7 +2492,7 @@ public class PeptideShaker {
                         }
                     }
                     if (otherProtein) {
-                        psParameter.setProteinInferenceClass(PSParameter.ISOFORMS);
+                        psParameter.setProteinInferenceClass(PSParameter.RELATED);
                     }
                     if (unrelated) {
                         psParameter.setProteinInferenceClass(PSParameter.UNRELATED);
@@ -2503,7 +2503,7 @@ public class PeptideShaker {
 
             if (ProteinMatch.getNProteins(proteinKey) > 1) {
                 if (!proteinMatch.getMainMatch().equals(mainKey)) {
-                    proteinMatch.setMainMatch(mainKey); // @TODO: choose the main match in a more clever way!!!
+                    proteinMatch.setMainMatch(mainKey);
                     identification.updateProteinMatch(proteinMatch);
                 }
             }
@@ -2563,7 +2563,7 @@ public class PeptideShaker {
      * @return description words longer than 3 characters
      */
     private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException, InterruptedException, ClassNotFoundException {
-        String description = sequenceFactory.getHeader(proteinAccession).getDescription();
+        String description = sequenceFactory.getHeader(proteinAccession).getSimpleProteinDescription();
 
         if (description == null) {
             return new ArrayList<String>();
@@ -2609,8 +2609,8 @@ public class PeptideShaker {
         }
 
         // protein evidence level missing, compare descriptions instead
-        String oldDescription = sequenceFactory.getHeader(oldAccession).getDescription();
-        String newDescription = sequenceFactory.getHeader(newAccession).getDescription();
+        String oldDescription = sequenceFactory.getHeader(oldAccession).getSimpleProteinDescription();
+        String newDescription = sequenceFactory.getHeader(newAccession).getSimpleProteinDescription();
 
         // note: this most likely means that we have a problem with the parsing of the db, but better than a null pointer...
         if (oldDescription == null) {
@@ -2653,29 +2653,59 @@ public class PeptideShaker {
         if (sameGene) {
             return true;
         } else {
-            
-            // @TODO: perhaps we should rather compare gene names??
+
+            // compare gene names, similar gene names often means related proteins, like CPNE3 and CPNE2
+            if (geneNamePrimaryProtein != null && geneNameSecondaryProtein != null) {
+
+                // one gene name is a substring of the other, for example: EEF1A1 and EEF1A1P5
+                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein) || geneNameSecondaryProtein.contains(geneNamePrimaryProtein)) {
+                    return true;
+                }
+
+                // equal but for the last character, for example: CPNE3 and CPNE2
+                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein.substring(0, geneNameSecondaryProtein.length() - 2)) 
+                        || geneNameSecondaryProtein.contains(geneNamePrimaryProtein.substring(0, geneNamePrimaryProtein.length() - 2))) {
+                    return true;
+                }
+                
+                // equal but for the two last characters, for example: CPNE11 and CPNE12
+                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein.substring(0, geneNameSecondaryProtein.length() - 3)) 
+                        || geneNameSecondaryProtein.contains(geneNamePrimaryProtein.substring(0, geneNamePrimaryProtein.length() - 3))) {
+                    return true;
+                }
+                
+                // @TODO: support more complex gene families?
+            }
 
             // compare the protein descriptions, less secure than gene names
             ArrayList<String> primaryDescription = parseDescription(primaryProteinAccession);
             ArrayList<String> secondaryDescription = parseDescription(secondaryProteinAccession);
-            boolean similarDescription = false;
 
-            if (primaryDescription.size() == secondaryDescription.size()) {
+            if (primaryDescription.size() > secondaryDescription.size()) {
+                int nMatch = 0;
+                for (int i = 0; i < secondaryDescription.size(); i++) {
+                    if (primaryDescription.contains(secondaryDescription.get(i))) {
+                        nMatch++;
+                    }
+                }
+                if (nMatch >= secondaryDescription.size() / 2) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
                 int nMatch = 0;
                 for (int i = 0; i < primaryDescription.size(); i++) {
-                    if (primaryDescription.get(i).equals(secondaryDescription.get(i))) {
+                    if (secondaryDescription.contains(primaryDescription.get(i))) {
                         nMatch++;
                     }
                 }
                 if (nMatch >= primaryDescription.size() / 2) {
-                    similarDescription = true;
+                    return true;
                 } else {
-                    similarDescription = false;
+                    return false;
                 }
             }
-
-            return similarDescription;
         }
     }
 

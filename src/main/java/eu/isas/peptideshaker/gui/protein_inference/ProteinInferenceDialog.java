@@ -454,7 +454,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Type:");
 
-        groupClassJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Single Protein", "Isoforms", "Unrelated Isoforms", "Unrelated Proteins" }));
+        groupClassJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Single Protein", "Related Proteins", "Related and Unrelated Proteins", "Unrelated Proteins" }));
 
         javax.swing.GroupLayout groupDetalsJPanelLayout = new javax.swing.GroupLayout(groupDetalsJPanel);
         groupDetalsJPanel.setLayout(groupDetalsJPanelLayout);
@@ -896,7 +896,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     return peptideShakerGUI.getDisplayFeaturesGenerator().addDatabaseLink(accessions.get(row));
                 case 3:
                     try {
-                        return sequenceFactory.getHeader(accessions.get(row)).getDescription();
+                        return sequenceFactory.getHeader(accessions.get(row)).getSimpleProteinDescription();
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";

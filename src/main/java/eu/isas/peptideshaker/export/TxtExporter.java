@@ -339,7 +339,7 @@ public class TxtExporter {
         }
 
         try {
-            line.append(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription());
+            line.append(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription());
         } catch (Exception e) {
             line.append("Protein not found");
         }

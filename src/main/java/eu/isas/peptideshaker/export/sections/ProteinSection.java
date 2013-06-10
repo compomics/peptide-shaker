@@ -147,7 +147,7 @@ public class ProteinSection {
                         writer.write(proteinMatch.getMainMatch() + separator);
                         break;
                     case protein_description:
-                        writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + separator);
+                        writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription() + separator);
                         break;
                     case other_proteins:
                         if (!matchKey.equals(proteinKey)) {
