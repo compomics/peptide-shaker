@@ -8,6 +8,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -218,13 +219,13 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="isoformsCheck" min="-2" pref="169" max="-2" attributes="0"/>
+                                          <Component id="relatedProteinsCheck" min="-2" pref="169" max="-2" attributes="0"/>
                                           <Component id="miscleavedCheck" alignment="0" min="-2" pref="169" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="reactiveCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                          <Component id="isoformsUnrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                          <Component id="relatredAndUnrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -242,7 +243,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="vendorCmb" max="32767" attributes="0"/>
-                                  <Component id="idSelectionCmb" alignment="1" pref="364" max="32767" attributes="1"/>
+                                  <Component id="idSelectionCmb" alignment="1" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
@@ -265,10 +266,10 @@
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="isoformsCheck" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="relatedProteinsCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="ignoredProteinsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="unrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="isoformsUnrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="relatredAndUnrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -365,16 +366,16 @@
                 <Property name="text" type="java.lang.String" value="Ignored Proteins"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="isoformsCheck">
+            <Component class="javax.swing.JCheckBox" name="relatedProteinsCheck">
               <Properties>
-                <Property name="text" type="java.lang.String" value="isoforms"/>
+                <Property name="text" type="java.lang.String" value="related proteins"/>
                 <Property name="iconTextGap" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="isoformsUnrelatedCheck">
+            <Component class="javax.swing.JCheckBox" name="relatredAndUnrelatedCheck">
               <Properties>
-                <Property name="text" type="java.lang.String" value="isoforms - unrelated proteins"/>
+                <Property name="text" type="java.lang.String" value="related and unrelated proteins"/>
                 <Property name="iconTextGap" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>

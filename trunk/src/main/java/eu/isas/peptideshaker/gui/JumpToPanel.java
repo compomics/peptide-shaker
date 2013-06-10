@@ -220,7 +220,7 @@ public class JumpToPanel extends javax.swing.JPanel {
             case PROTEIN:
                 ProteinMatch proteinMatch = identification.getProteinMatch(key);
                 String mainMatch = proteinMatch.getMainMatch();
-                String description = sequenceFactory.getHeader(mainMatch).getDescription();
+                String description = sequenceFactory.getHeader(mainMatch).getSimpleProteinDescription();
                 String result = mainMatch;
                 for (String accession : ProteinMatch.getAccessions(key)) {
                     if (!accession.equals(mainMatch)) {
@@ -433,7 +433,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                                             } else {
                                                 try {
                                                     for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                                                        if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                                        if (sequenceFactory.getHeader(accession).getSimpleProteinDescription().toLowerCase().contains(input)) {
                                                             possibilities.get(jumpType).add(proteinKey);
                                                             types.get(jumpType).add(Type.PROTEIN);
                                                             break;

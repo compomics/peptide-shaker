@@ -209,16 +209,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
-        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW); // ISOFORMS
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE); // ISOFORMS_UNRELATED
-        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
+        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
+        proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
+        proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
+        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the protein inference tooltip map
         HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Isoforms");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Unrelated Isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.RELATED, "Related Proteins");
+        proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Related and Unrelated Proteins");
         proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -491,7 +491,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), "Validated Peptides", "" + (i + 1));
                     } else {
                         peptidePlotDataset.addValue(psParameter.getFractionValidatedPeptides(fraction), proteinMatch.getMainMatch()
-                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription(), "" + (i + 1));
                     }
                 }
 
@@ -572,9 +572,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                         intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), "Summed Intensity", "" + (i + 1));
                     } else {
                         spectrumPlotDataset.addValue(psParameter.getFractionValidatedSpectra(fraction), proteinMatch.getMainMatch()
-                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription(), "" + (i + 1));
                         intensityPlotDataset.addValue(psParameter.getPrecursorIntensitySummedPerFraction(fraction), proteinMatch.getMainMatch()
-                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription(), "" + (i + 1));
+                                + ": " + sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription(), "" + (i + 1));
                     }
                 }
             }

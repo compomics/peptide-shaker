@@ -57,6 +57,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -496,8 +497,8 @@
                           <StringArray count="5">
                             <StringItem index="0" value="No Requirement"/>
                             <StringItem index="1" value="Single Protein"/>
-                            <StringItem index="2" value="Isoforms"/>
-                            <StringItem index="3" value="Isoforms/Unrelated Proteins"/>
+                            <StringItem index="2" value="Related Proteins"/>
+                            <StringItem index="3" value="Related and Unrelated Proteins"/>
                             <StringItem index="4" value="Unrelated Proteins"/>
                           </StringArray>
                         </Property>
@@ -689,7 +690,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="proteinManualValidationScrollPane" pref="82" max="32767" attributes="0"/>
+                                  <Component id="proteinManualValidationScrollPane" pref="86" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -742,7 +743,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="proteinExceptionsJScrollPane" pref="82" max="32767" attributes="0"/>
+                                  <Component id="proteinExceptionsJScrollPane" pref="86" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1121,7 +1122,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="modificationsScrollPane" pref="114" max="32767" attributes="0"/>
+                                  <Component id="modificationsScrollPane" pref="0" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1217,7 +1218,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="peptidesManualValidationScrollPane" pref="82" max="32767" attributes="0"/>
+                                  <Component id="peptidesManualValidationScrollPane" pref="86" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1270,7 +1271,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="peptidesExceptionsScrollPane" pref="82" max="32767" attributes="0"/>
+                                  <Component id="peptidesExceptionsScrollPane" pref="86" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1326,7 +1327,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptidesScrollPane" pref="204" max="32767" attributes="0"/>
+                              <Component id="peptidesScrollPane" pref="206" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="previewPeptideFilterJCheckBox" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -1796,7 +1797,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="psmManualValidationScrollPane" pref="82" max="32767" attributes="0"/>
+                                  <Component id="psmManualValidationScrollPane" pref="86" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1852,7 +1853,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="psmExceptinosScrollPane" pref="82" max="32767" attributes="0"/>
+                                  <Component id="psmExceptinosScrollPane" pref="86" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>

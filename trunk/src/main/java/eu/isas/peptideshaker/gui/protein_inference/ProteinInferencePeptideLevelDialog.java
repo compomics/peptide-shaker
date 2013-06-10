@@ -129,7 +129,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             Chromosome chromosome;
 
             try {
-                description = sequenceFactory.getHeader(protein).getDescription();
+                description = sequenceFactory.getHeader(protein).getSimpleProteinDescription();
                 geneName = sequenceFactory.getHeader(protein).getGeneName();
                 proteinEvidenceLevel = sequenceFactory.getHeader(protein).getProteinEvidence();
 
@@ -353,7 +353,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Type:");
 
-        protInferenceTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unique Protein", "Isoforms", "Isoforms and Unrelated Proteins", "Unrelated Proteins" }));
+        protInferenceTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unique Protein", "Related Proteins", "Related and Unrelated Proteins", "Unrelated Proteins" }));
         protInferenceTypeCmb.setMinimumSize(new java.awt.Dimension(112, 18));
 
         jLabel2.setText("Sequence:");

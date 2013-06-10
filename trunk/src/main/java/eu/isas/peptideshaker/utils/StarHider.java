@@ -781,7 +781,7 @@ public class StarHider {
                 if (test.split(proteinFilter.getIdentifierRegex()).length == 1) {
                     boolean found = false;
                     for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                        test = "test_" + sequenceFactory.getHeader(accession).getDescription().toLowerCase() + "_test";
+                        test = "test_" + sequenceFactory.getHeader(accession).getSimpleProteinDescription().toLowerCase() + "_test";
                         if (test.split(proteinFilter.getIdentifierRegex().toLowerCase()).length > 1) {
                             found = true;
                             break;
@@ -1083,8 +1083,8 @@ public class StarHider {
                             found = true;
                             break;
                         }
-                        if (sequenceFactory.getHeader(accession).getDescription() != null
-                                && sequenceFactory.getHeader(accession).getDescription().split(peptideFilter.getProtein()).length > 1) {
+                        if (sequenceFactory.getHeader(accession).getSimpleProteinDescription() != null
+                                && sequenceFactory.getHeader(accession).getSimpleProteinDescription().split(peptideFilter.getProtein()).length > 1) {
                             found = true;
                             break;
                         }

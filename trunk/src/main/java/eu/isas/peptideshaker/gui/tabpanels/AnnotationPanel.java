@@ -1371,7 +1371,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             accessionNumberJTextField.setText(currentAccessionNumber);
 
             try {
-                proteinDescriptionTextArea.setText(sequenceFactory.getHeader(aAccessionNumber).getDescription());
+                proteinDescriptionTextArea.setText(sequenceFactory.getHeader(aAccessionNumber).getSimpleProteinDescription());
                 String geneName = sequenceFactory.getHeader(aAccessionNumber).getGeneName();
                 geneNameJTextField.setText(geneName);
 

@@ -16,6 +16,7 @@ Any value defined here will override the pom.xml file value but is only applicab
         <netbeans.hint.jdkPlatform>JDK_1.7</netbeans.hint.jdkPlatform>
     </properties>
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+        <word>PeptideShaker</word>
         <word>proteomic</word>
     </spellchecker-wordlist>
 </project-shared-configuration>

@@ -316,7 +316,7 @@ public class FindDialog extends javax.swing.JDialog {
         proteinTableToolTips.add("Hidden");
         proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
-        proteinTableToolTips.add("Protein Isoforms");
+        proteinTableToolTips.add("Other Proteins");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Protein Coverage (%)");
         proteinTableToolTips.add("Number of Peptides");
@@ -397,16 +397,16 @@ public class FindDialog extends javax.swing.JDialog {
         // add cell renderers
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
-        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW); // ISOFORMS
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE); // ISOFORMS_UNRELATED
-        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
+        proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
+        proteinInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
+        proteinInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
+        proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the protein inference tooltip map
         HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Isoforms");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Unrelated Isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.RELATED, "Related Proteins");
+        proteinInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Related and Unrelated Proteins");
         proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
 
         //proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -440,15 +440,15 @@ public class FindDialog extends javax.swing.JDialog {
         // set up the peptide inference color map
         HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
         peptideInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
-        peptideInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW);
-        peptideInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE);
+        peptideInferenceColorMap.put(PSParameter.RELATED, Color.YELLOW);
+        peptideInferenceColorMap.put(PSParameter.RELATED_AND_UNRELATED, Color.ORANGE);
         peptideInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the peptide inference tooltip map
         HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<Integer, String>();
         peptideInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
-        peptideInferenceTooltipMap.put(PSParameter.ISOFORMS, "Belongs to a group of isoforms");
-        peptideInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Belongs to a group of isoforms and unrelated proteins");
+        peptideInferenceTooltipMap.put(PSParameter.RELATED, "Belongs to a group of related proteins");
+        peptideInferenceTooltipMap.put(PSParameter.RELATED_AND_UNRELATED, "Belongs to a group of related and unrelated proteins");
         peptideInferenceTooltipMap.put(PSParameter.UNRELATED, "Belongs to unrelated proteins");
 
         peptideTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), peptideInferenceColorMap, peptideInferenceTooltipMap));
@@ -900,7 +900,7 @@ public class FindDialog extends javax.swing.JDialog {
                             try {
                                 List<RowFilter<Object, Object>> accessionFilters = new ArrayList<RowFilter<Object, Object>>();
                                 accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Accession").getModelIndex()));
-                                accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Isoforms").getModelIndex()));
+                                accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Other Proteins").getModelIndex()));
                                 accessionFilters.add(RowFilter.regexFilter(text.toLowerCase(), proteinTable.getColumn("Description").getModelIndex()));
                                 filters.add(RowFilter.orFilter(accessionFilters));
                             } catch (PatternSyntaxException pse) {
@@ -1053,7 +1053,7 @@ public class FindDialog extends javax.swing.JDialog {
                 case 4:
                     return "Accession";
                 case 5:
-                    return "Isoforms";
+                    return "Other Proteins";
                 case 6:
                     return "Description";
                 case 7:
@@ -1106,7 +1106,7 @@ public class FindDialog extends javax.swing.JDialog {
                         return otherAccessions;
                     case 6:
                         proteinMatch = identification.getProteinMatch(proteinKey);
-                        return sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription().toLowerCase();
+                        return sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription().toLowerCase();
                     case 7:
                         Double coverage;
                         try {
@@ -1413,7 +1413,7 @@ public class FindDialog extends javax.swing.JDialog {
                         peptideMatch = identification.getPeptideMatch(peptideKey);
                         String descriptions = "";
                         for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                            descriptions += sequenceFactory.getHeader(accession).getDescription() + " ";
+                            descriptions += sequenceFactory.getHeader(accession).getSimpleProteinDescription() + " ";
                         }
                         return descriptions;
                     case 6:
@@ -2195,7 +2195,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        proteinPICmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No Requirement", "Single Protein", "Isoforms", "Isoforms/Unrelated Proteins", "Unrelated Proteins" }));
+        proteinPICmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No Requirement", "Single Protein", "Related Proteins", "Related and Unrelated Proteins", "Unrelated Proteins" }));
         proteinPICmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinPICmbActionPerformed(evt);
@@ -2413,7 +2413,7 @@ public class FindDialog extends javax.swing.JDialog {
             proteinManualValidationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinManualValidationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(proteinManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2439,7 +2439,7 @@ public class FindDialog extends javax.swing.JDialog {
             proteinExceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinExceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinExceptionsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(proteinExceptionsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2630,7 +2630,7 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(modificationsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                .addComponent(modificationsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2745,7 +2745,7 @@ public class FindDialog extends javax.swing.JDialog {
             peptidesManualValidationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesManualValidationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(peptidesManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2771,7 +2771,7 @@ public class FindDialog extends javax.swing.JDialog {
             peptidesExceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesExceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesExceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(peptidesExceptionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2811,7 +2811,7 @@ public class FindDialog extends javax.swing.JDialog {
             peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptideTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .addComponent(peptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(previewPeptideFilterJCheckBox)
                 .addContainerGap())
@@ -3107,7 +3107,7 @@ public class FindDialog extends javax.swing.JDialog {
             psmManualValidationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmManualValidationPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(psmManualValidationScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -3135,7 +3135,7 @@ public class FindDialog extends javax.swing.JDialog {
             psmExceptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmExceptionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmExceptinosScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addComponent(psmExceptinosScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

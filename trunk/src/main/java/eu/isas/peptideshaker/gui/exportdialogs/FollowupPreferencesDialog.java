@@ -99,8 +99,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         vendorCmb = new javax.swing.JComboBox();
         inclusionListButton = new javax.swing.JButton();
         ignoredProteinsLabel = new javax.swing.JLabel();
-        isoformsCheck = new javax.swing.JCheckBox();
-        isoformsUnrelatedCheck = new javax.swing.JCheckBox();
+        relatedProteinsCheck = new javax.swing.JCheckBox();
+        relatredAndUnrelatedCheck = new javax.swing.JCheckBox();
         unrelatedCheck = new javax.swing.JCheckBox();
         degeneratedCheck = new javax.swing.JCheckBox();
         minRtWindowLabel = new javax.swing.JLabel();
@@ -225,13 +225,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         ignoredProteinsLabel.setText("Ignored Proteins");
 
-        isoformsCheck.setText("isoforms");
-        isoformsCheck.setIconTextGap(10);
-        isoformsCheck.setOpaque(false);
+        relatedProteinsCheck.setText("related proteins");
+        relatedProteinsCheck.setIconTextGap(10);
+        relatedProteinsCheck.setOpaque(false);
 
-        isoformsUnrelatedCheck.setText("isoforms - unrelated proteins");
-        isoformsUnrelatedCheck.setIconTextGap(10);
-        isoformsUnrelatedCheck.setOpaque(false);
+        relatredAndUnrelatedCheck.setText("related and unrelated proteins");
+        relatredAndUnrelatedCheck.setIconTextGap(10);
+        relatredAndUnrelatedCheck.setOpaque(false);
 
         unrelatedCheck.setSelected(true);
         unrelatedCheck.setText("unrelated proteins");
@@ -265,19 +265,19 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 .addComponent(ignoredPeptidesLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(ignoredProteinsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
                             .addComponent(formatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(isoformsCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(relatedProteinsCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(miscleavedCheck, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(reactiveCheck)
-                                    .addComponent(isoformsUnrelatedCheck))
+                                    .addComponent(relatredAndUnrelatedCheck))
                                 .addGap(24, 24, 24)
                                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(degeneratedCheck)
@@ -289,13 +289,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(vendorCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(idSelectionCmb, 0, 362, Short.MAX_VALUE))
+                            .addComponent(idSelectionCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        inclusionListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {degeneratedCheck, isoformsUnrelatedCheck, reactiveCheck, unrelatedCheck});
+        inclusionListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {degeneratedCheck, reactiveCheck, relatredAndUnrelatedCheck, unrelatedCheck});
 
         inclusionListPanelLayout.setVerticalGroup(
             inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,10 +309,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(reactiveCheck))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(isoformsCheck)
+                            .addComponent(relatedProteinsCheck)
                             .addComponent(ignoredProteinsLabel)
                             .addComponent(unrelatedCheck)
-                            .addComponent(isoformsUnrelatedCheck))
+                            .addComponent(relatredAndUnrelatedCheck))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(minRtWindowLabel)
@@ -1522,7 +1522,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 return true;
             }
         }
-        if (isoformsCheck.isSelected() || isoformsUnrelatedCheck.isSelected() || unrelatedCheck.isSelected()) {
+        if (relatedProteinsCheck.isSelected() || relatredAndUnrelatedCheck.isSelected() || unrelatedCheck.isSelected()) {
             PSParameter pSParameter = new PSParameter();
             try {
                 pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getSpectrumMatchParameter(proteinKey, pSParameter);
@@ -1530,10 +1530,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 peptideShakerGUI.catchException(e);
                 return false;
             }
-            if (isoformsCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.ISOFORMS) {
+            if (relatedProteinsCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.RELATED) {
                 return true;
             }
-            if (isoformsUnrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.ISOFORMS_UNRELATED) {
+            if (relatredAndUnrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.RELATED_AND_UNRELATED) {
                 return true;
             }
             if (unrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.UNRELATED) {
@@ -1650,8 +1650,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel includeValidatedPsmsLabel;
     private javax.swing.JButton inclusionListButton;
     private javax.swing.JPanel inclusionListPanel;
-    private javax.swing.JCheckBox isoformsCheck;
-    private javax.swing.JCheckBox isoformsUnrelatedCheck;
     private javax.swing.JLabel minRtWindowLabel;
     private javax.swing.JLabel minRtWindowUnitLabel;
     private javax.swing.JCheckBox miscleavedCheck;
@@ -1660,6 +1658,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JButton recalibrateMgfButton;
     private javax.swing.JLabel recalibrateSpectraLabel;
+    private javax.swing.JCheckBox relatedProteinsCheck;
+    private javax.swing.JCheckBox relatredAndUnrelatedCheck;
     private javax.swing.JTextField rtWindow;
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;
