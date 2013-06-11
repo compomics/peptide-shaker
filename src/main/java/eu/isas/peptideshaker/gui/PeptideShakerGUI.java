@@ -625,6 +625,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     }
 
     /**
+     * Reset the frame title.
+     */
+    public void resetFrameTitle() {
+        this.setTitle("PeptideShaker " + getVersion());
+    }
+
+    /**
      * Returns the last selected folder.
      *
      * @return the last selected folder
@@ -5149,6 +5156,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Importing Project. Please Wait...");
 
+        // reset the title
+        resetFrameTitle();
 
         new Thread(new Runnable() {
             public void run() {

@@ -10,33 +10,33 @@
 
         <p align="justify">
             Inferring proteins from peptides is not as simple as it may seem. Some peptides can map to multiple proteins, 
-            let’s say Protein A and Protein B. If no unique peptide ensures the presence of A or B, <b>PeptideShaker</b> 
-            cannot say whether Protein A or Protein B is present.
+            for example Protein A and Protein B. If no unique peptide ensures the presence of A or B, <b>PeptideShaker</b> 
+            cannot say whether Protein A or Protein B (or both) is present.
             <br><br>
             The <i>PI</i> column in the <i>Overview</i> tab stands for <i>Protein Inference</i>. Proteins are here flagged 
             depending on the type of protein inference: 
         </p>
         <ul>
             <li><b>Green:</b> No Conflict, i.e., a Single Protein unambiguously identified</li>
-            <li><b>Yellow:</b> Isoforms identified</li>
-            <li><b>Orange:</b> Unrelated Isoforms identified</li>
+            <li><b>Yellow:</b> Related Proteins identified</li>
+            <li><b>Orange:</b> Related and Unrelated Proteins identified</li>
             <li><b>Red:</b> Unrelated Proteins identified</li>
         </ul>
         
          <p align="justify">
-            For each type <b>PeptideShaker</b> provides you with a set of options so that you can manually select the 
-            protein you consider as the correct one. 
+            For each type <b>PeptideShaker</b> provides a set of options so that one can manually select the 
+            protein consider as the correct one. 
             <br><br>
-            In many cases the protein groups are isoforms of the same protein 
-            and depending on your experiment this small difference may or may not be important.  
+            In many cases the protein groups are closely related proteins like isoforms
+            and depending on your experiment distinguishing between these may or may not be important.  
             <br><br>
-            To support your decision you have the list of <i>Unique Hits</i> (of any) of each possible protein, and the 
+            To support your decision you have the list of <i>Unique Hits</i> (if any) of each possible protein, and the 
             list of <i>Related Hits</i> (if any) to this group.
             <br><br>
             For proteins from UniProt you also have the protein evidence to guide the selection. For more information 
             about protein evidence see: <a href="http://www.uniprot.org/manual/protein_existence">http://www.uniprot.org/manual/protein_existence</a>.
             <br><br>
-            To change the currently selected protein for the protein inference group, select the wanted protein in 
+            To change the protein inference group for the currently selected protein, select the wanted protein in 
             the <i>Candidate Proteins</i> table and click OK. The selection will be automatically updated in the rest of 
             <b>PeptideShaker</b>.
             <br><br>

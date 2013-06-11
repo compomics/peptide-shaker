@@ -219,7 +219,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         if (peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder() != null && new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder()).exists()) {
             for (File possiblePrideFile : new File(peptideShakerGUI.getUtilitiesUserPreferences().getLocalPrideFolder()).listFiles()) {
                 if (possiblePrideFile.getName().lastIndexOf("PRIDE_Exp_Complete_Ac_") != -1
-                        && possiblePrideFile.getAbsolutePath().endsWith(".xml")) {
+                        && possiblePrideFile.getAbsolutePath().endsWith(".xml")
+                        && !possiblePrideFile.getAbsolutePath().endsWith(".t.xml")) {
                     localPrideProjects.add(possiblePrideFile.getAbsolutePath());
                 }
             }
@@ -232,20 +233,20 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             String title = localProject.substring(localProject.indexOf("PRIDE_Exp_Complete_Ac_"), localProject.lastIndexOf("."));
 
             ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
-                        new Integer(accession),
-                        "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
-                        + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + title + "</font></a><html>",
-                        "",
-                        "",
-                        "",
-                        "",
-                        null,
-                        null,
-                        null,
-                        "",
-                        false
-                    });
+                new Integer(accession),
+                "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
+                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + title + "</font></a><html>",
+                "",
+                "",
+                "",
+                "",
+                null,
+                null,
+                null,
+                "",
+                false
+            });
         }
 
         try {
@@ -301,20 +302,20 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 if (!hideNonValidProjectsCheckBox.isSelected() || (hideNonValidProjectsCheckBox.isSelected() && numSpectra > 0)) {
 
                     ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
-                                accession,
-                                "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
-                                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                                + title + "</font></a><html>",
-                                project,
-                                species,
-                                tissue,
-                                ptms,
-                                numSpectra,
-                                numPeptides, // note that the order of peptides and proteins is different in the tsv file!
-                                numProteins,
-                                references,
-                                false
-                            });
+                        accession,
+                        "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
+                        + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + title + "</font></a><html>",
+                        project,
+                        species,
+                        tissue,
+                        ptms,
+                        numSpectra,
+                        numPeptides, // note that the order of peptides and proteins is different in the tsv file!
+                        numProteins,
+                        references,
+                        false
+                    });
                 }
 
                 line = br.readLine();
@@ -346,8 +347,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             ((JSparklinesBarChartTableCellRenderer) projectsTable.getColumn("#Proteins").getCellRenderer()).setMinimumChartValue(2.0);
 
         } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "The PRIDE overview file was not found. Please contact the developers.", "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "The PRIDE overview file error. Please contact the developers.", "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
 
@@ -1117,10 +1120,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * @param evt
      */
     private void localProjectsFolderLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_localProjectsFolderLabelMouseReleased
+
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Local PRIDE Projects Folder");
         fileChooser.setMultiSelectionEnabled(false);
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         FileFilter filter = new FileFilter() {
             @Override
@@ -1130,7 +1133,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "(PRIDE XML files) *.xml";
+                return "Folders";
             }
         };
 
@@ -1341,9 +1344,19 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             // currentUrlContentLength = conn.getContentLengthLong(): // @TODO: requires Java 7...
 
                         } catch (MalformedURLException ex) {
+                            JOptionPane.showMessageDialog(finalRef,
+                                    "The PRIDE XML file could not be downloaded:\n"
+                                    + ex.getMessage() + ".\n"
+                                    + "Please contact the developers.",
+                                    "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideProjectUrl = null;
                         } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(finalRef,
+                                    "The PRIDE XML file could not be downloaded:\n"
+                                    + ex.getMessage() + ".\n"
+                                    + "Please contact the developers.",
+                                    "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideProjectUrl = null;
                         }
@@ -1400,11 +1413,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                     "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml").exists()) {
 
                                 // download the pride xml file
-                                try {
-                                    FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedPrideXmlFile);
-                                } catch (IOException ex) {
-                                    ex.printStackTrace();
-                                }
+                                FileUtils.copyURLToFile(currentPrideProjectUrl, currentZippedPrideXmlFile);
 
                                 isFileBeingDownloaded = false;
 
@@ -1438,22 +1447,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                     prideSearchParametersReport = getSearchParams(prideAccession, prideSearchParameters);
                                 }
                             }
+                        } else {
+                            mgfConversionOk = false;
                         }
                     }
 
                     if (mgfConversionOk) {
-
                         // save the search params
-                        try {
-                            prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
-                            SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                            JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            JOptionPane.showMessageDialog(finalRef, "An error occured when trying to save the PRIDE search parameters!", "File Error", JOptionPane.ERROR_MESSAGE);
-                        }
+                        prideSearchParameters.setParametersFile(new File(outputFolder, "pride.parameters"));
+                        SearchParameters.saveIdentificationParameters(prideSearchParameters, new File(outputFolder, "pride.parameters"));
                     }
 
                     // clear the temp folder
@@ -1477,10 +1479,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     }
                     progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured when trying to convert the PRIDE project.\n"
+                    JOptionPane.showMessageDialog(finalRef,
+                            "An error occured when trying to convert the PRIDE project:\n"
+                            + e.getMessage() + "."
                             + "See resources/PeptideShaker.log for details.",
-                            "PRIDE Conversion Error", JOptionPane.INFORMATION_MESSAGE);
+                            "PRIDE Error", JOptionPane.INFORMATION_MESSAGE);
                     e.printStackTrace();
                 }
             }
@@ -2278,32 +2281,30 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
     /**
      * Unzip the mzData file.
+     * 
+     * @throws IOException 
      */
-    private void unzipProject() {
+    private void unzipProject() throws IOException {
 
-        try {
-            FileInputStream instream = new FileInputStream(currentZippedPrideXmlFile);
-            GZIPInputStream ginstream = new GZIPInputStream(instream);
-            FileOutputStream outstream = new FileOutputStream(currentPrideXmlFile);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = ginstream.read(buf)) > 0) {
+        FileInputStream instream = new FileInputStream(currentZippedPrideXmlFile);
+        GZIPInputStream ginstream = new GZIPInputStream(instream);
+        FileOutputStream outstream = new FileOutputStream(currentPrideXmlFile);
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = ginstream.read(buf)) > 0) {
 
-                if (progressDialog.isRunCanceled()) {
-                    ginstream.close();
-                    outstream.close();
-                    instream.close();
-                    progressDialog.setRunFinished();
-                    return;
-                }
-
-                outstream.write(buf, 0, len);
+            if (progressDialog.isRunCanceled()) {
+                ginstream.close();
+                outstream.close();
+                instream.close();
+                progressDialog.setRunFinished();
+                return;
             }
-            ginstream.close();
-            outstream.close();
-            instream.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+
+            outstream.write(buf, 0, len);
         }
+        ginstream.close();
+        outstream.close();
+        instream.close();
     }
 }

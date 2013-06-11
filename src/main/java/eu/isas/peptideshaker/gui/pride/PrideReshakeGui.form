@@ -179,9 +179,9 @@
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Edit Local Projects Folder&lt;/html&gt;"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="localProjectsFolderLabelMouseReleased"/>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="localProjectsFolderLabelMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="localProjectsFolderLabelMouseExited"/>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="localProjectsFolderLabelMouseReleased"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="projectNotFoundLabel">
