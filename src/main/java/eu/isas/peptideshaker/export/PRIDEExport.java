@@ -740,7 +740,17 @@ public class PRIDEExport {
                 }
             }
 
-            br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>" + System.getProperty("line.separator"));
+            // get the modification location
+            int modLocation = modMatch.getModificationSite();
+            
+            // have to handle terminal ptms separatly
+            if (ptm.isNTerm()) {
+                modLocation = 0;
+            } else if (ptm.isCTerm()) {
+                modLocation = peptide.getSequence().length() + 1;
+            }
+
+            br.write(getCurrentTabSpace() + "<ModLocation>" + modLocation + "</ModLocation>" + System.getProperty("line.separator"));
 
             if (cvTerm == null) {
                 // @TODO: perhaps this should be handled differently? as there is no real mapping...
