@@ -110,16 +110,22 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * The search parameters corresponding to the files selected.
      */
     private SearchParameters searchParameters = null;
+    /*
+     * The welcome dialog parent, can be null.
+     */
+    private WelcomeDialog welcomeDialog;
 
     /**
      * Creates a new open dialog.
      *
+     * @param welcomeDialog the welcome dialog parent frame
      * @param peptideShaker a reference to the main frame
      * @param modal boolean indicating whether the dialog is modal
      */
-    public NewDialog(PeptideShakerGUI peptideShaker, boolean modal) {
-        super(peptideShaker, modal);
+    public NewDialog(WelcomeDialog welcomeDialog, PeptideShakerGUI peptideShaker, boolean modal) {
+        super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShaker;
+        this.welcomeDialog = welcomeDialog;
 
         // @TODO: this does not work! have to create a new object and transfer all the values...
 
@@ -129,7 +135,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
 //        oldIdFilter = peptideShakerGUI.getIdFilter();
 
         setUpGui();
-        this.setLocationRelativeTo(peptideShaker);
+        this.setLocationRelativeTo(welcomeDialog);
     }
 
     /**
@@ -713,8 +719,11 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
                 importIdentificationFiles(waitingDialog);
             }
 
-            if (needDialog) {
+            if (welcomeDialog != null) {
+                welcomeDialog.setVisible(false);
+            }
 
+            if (needDialog) {
                 try {
                     waitingDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
@@ -798,7 +807,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         };
 
         fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showDialog(this.getParent(), "Open");
+        int returnVal = fileChooser.showDialog(this, "Open");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File fastaFile = fileChooser.getSelectedFile();
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
@@ -854,7 +863,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         };
 
         fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showDialog(this.getParent(), "Add");
+        int returnVal = fileChooser.showDialog(this, "Add");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             try {
@@ -941,7 +950,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         };
 
         fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showDialog(this.getParent(), "Add");
+        int returnVal = fileChooser.showDialog(this, "Add");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             ArrayList<File> parameterFiles = new ArrayList<File>();
@@ -1024,7 +1033,9 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, searchParameters, peptideShakerGUI.loadPrideToPtmMap(), peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(
+                peptideShakerGUI, true, searchParameters, peptideShakerGUI.loadPrideToPtmMap(), 
+                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
         if (!searchPreferencesDialog.isCanceled()) {
             try {
                 searchPreferencesDialog.updatePtmToPrideMap();
@@ -1123,10 +1134,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
 
         this.setVisible(false);
         this.dispose();
-
-        if (!peptideShakerGUI.isVisible()) {
-            new WelcomeDialog(peptideShakerGUI, true);
-        }
     }//GEN-LAST:event_formWindowClosing
 
     /**
@@ -1182,7 +1189,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void editSpeciesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpeciesButtonActionPerformed
-        new SpeciesDialog(peptideShakerGUI, peptideShakerGUI, true);
+        new SpeciesDialog(this, peptideShakerGUI, peptideShakerGUI, true);
         if (peptideShakerGUI.getGenePreferences().getCurrentSpecies() != null) {
             speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
         } else {
