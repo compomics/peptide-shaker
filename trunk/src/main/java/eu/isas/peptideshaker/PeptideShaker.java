@@ -275,7 +275,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Selecting best peptide per spectrum.", true, true);
-        fillPsmMap(inputMap, waitingHandler);
+        fillPsmMap(inputMap, waitingHandler, searchParameters, annotationPreferences);
         psmMap.cure();
         waitingHandler.increaseProgressValue();
         if (waitingHandler.isRunCanceled()) {
@@ -844,15 +844,17 @@ public class PeptideShaker {
      * @param inputMap The input map
      * @param waitingHandler the handler displaying feedback to the user
      */
-    private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler) throws Exception {
+    private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         waitingHandler.setSecondaryProgressDialogIndeterminate(false);
         waitingHandler.setMaxSecondaryProgressValue(identification.getSpectrumIdentificationSize());
 
-        // map of the first hits for this spectrum: score -> max protein count -> max search engine votes
-        HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>> peptideAssumptions;
+        SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+
+        // map of the first hits for this spectrum: score -> max protein count -> max search engine votes -> sequence coverage annotated -> min mass deviation (unless you have a better idea?)
+        HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, PeptideAssumption>>>>> peptideAssumptions;
         PSParameter psParameter, psParameter2;
         boolean multiSE = inputMap.isMultipleSearchEngines();
 
@@ -861,7 +863,7 @@ public class PeptideShaker {
             for (String spectrumKey : identification.getSpectrumIdentification(spectrumFileName)) {
                 psParameter = new PSParameter();
                 ArrayList<String> identifications = new ArrayList<String>();
-                peptideAssumptions = new HashMap<Double, HashMap<Integer, HashMap<Integer, PeptideAssumption>>>();
+                peptideAssumptions = new HashMap<Double, HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, PeptideAssumption>>>>>();
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
                 for (int searchEngine1 : spectrumMatch.getAdvocates()) {
@@ -908,13 +910,46 @@ public class PeptideShaker {
                             }
                             identifications.add(id);
                             if (!peptideAssumptions.containsKey(p)) {
-                                peptideAssumptions.put(p, new HashMap<Integer, HashMap<Integer, PeptideAssumption>>());
+                                peptideAssumptions.put(p, new HashMap<Integer, HashMap<Integer, HashMap<Double, HashMap<Double, PeptideAssumption>>>>());
                             }
                             if (!peptideAssumptions.get(p).containsKey(proteinMax)) {
-                                peptideAssumptions.get(p).put(proteinMax, new HashMap<Integer, PeptideAssumption>());
+                                peptideAssumptions.get(p).put(proteinMax, new HashMap<Integer, HashMap<Double, HashMap<Double, PeptideAssumption>>>());
                             }
                             if (!peptideAssumptions.get(p).get(proteinMax).containsKey(nSE)) {
-                                peptideAssumptions.get(p).get(proteinMax).put(nSE, peptideAssumption1);
+                                peptideAssumptions.get(p).get(proteinMax).put(nSE, new HashMap<Double, HashMap<Double, PeptideAssumption>>());
+                                peptideAssumptions.get(p).get(proteinMax).get(nSE).put(-1.0, new HashMap<Double, PeptideAssumption>());
+                                peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).put(-1.0, peptideAssumption1);
+                            } else {
+                                HashMap<Ion.IonType, ArrayList<Integer>> iontypes = annotationPreferences.getIonTypes();
+                                NeutralLossesMap neutralLosses = annotationPreferences.getNeutralLosses();
+                                ArrayList<Integer> charges = annotationPreferences.getValidatedCharges();
+                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                                double mzTolerance = searchParameters.getFragmentIonAccuracy();
+                                boolean isPpm = false; //@TODO change this as soon as search engine support fragment ion tolerance in ppm
+                                if (peptideAssumptions.get(p).get(proteinMax).get(nSE).containsKey(-1.0)) {
+                                    PeptideAssumption tempAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(-1.0).get(-1.0);
+                                    Peptide peptide = tempAssumption.getPeptide();
+                                    int precursorCharge = tempAssumption.getIdentificationCharge().value;
+                                    double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, spectrum, peptide, 0, mzTolerance, isPpm).keySet().size();
+                                    double coverage = nIons / peptide.getSequence().length();
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).put(coverage, new HashMap<Double, PeptideAssumption>());
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(-1.0, tempAssumption);
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).remove(-1.0);
+                                }
+                                Peptide peptide = peptideAssumption1.getPeptide();
+                                int precursorCharge = peptideAssumption1.getIdentificationCharge().value;
+                                double nIons = spectrumAnnotator.getCoveredAminoAcids(iontypes, neutralLosses, charges, precursorCharge, spectrum, peptide, 0, mzTolerance, isPpm).keySet().size();
+                                double coverage = nIons / peptide.getSequence().length();
+                                if (peptideAssumptions.get(p).get(proteinMax).get(nSE).containsKey(coverage)) {
+                                    PeptideAssumption tempAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).get(-1.0);
+                                    if (tempAssumption != null) {
+                                    double massError = tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, tempAssumption);
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).remove(massError);
+                                    }
+                                    double massError = peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, tempAssumption); // if there are still ex aequo peptides at this stage, I give up
+                                }
                             }
                         }
                     }
@@ -923,7 +958,9 @@ public class PeptideShaker {
                 double p = Collections.min(peptideAssumptions.keySet());
                 int proteinMax = Collections.max(peptideAssumptions.get(p).keySet());
                 int nSE = Collections.max(peptideAssumptions.get(p).get(proteinMax).keySet());
-                PeptideAssumption bestAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE);
+                double coverage = Collections.max(peptideAssumptions.get(p).get(proteinMax).get(nSE).keySet());
+                double minError = Collections.min(peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).keySet());
+                PeptideAssumption bestAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).get(minError);
 
 
                 if (multiSE) {
@@ -2284,10 +2321,10 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
+            String debug = "Q13619" + ProteinMatch.PROTEIN_KEY_SPLITTER + "Q13620";
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
                 double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                if (sharedProteinProbabilityScore < 1) {
                     boolean better = false;
                     for (String proteinUniqueKey : identification.getProteinIdentification()) {
                         if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
@@ -2312,7 +2349,6 @@ public class PeptideShaker {
                             return;
                         }
                     }
-                }
             }
         }
 
@@ -2663,17 +2699,17 @@ public class PeptideShaker {
                 }
 
                 // equal but for the last character, for example: CPNE3 and CPNE2
-                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein.substring(0, geneNameSecondaryProtein.length() - 2)) 
+                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein.substring(0, geneNameSecondaryProtein.length() - 2))
                         || geneNameSecondaryProtein.contains(geneNamePrimaryProtein.substring(0, geneNamePrimaryProtein.length() - 2))) {
                     return true;
                 }
-                
+
                 // equal but for the two last characters, for example: CPNE11 and CPNE12
-                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein.substring(0, geneNameSecondaryProtein.length() - 3)) 
+                if (geneNamePrimaryProtein.contains(geneNameSecondaryProtein.substring(0, geneNameSecondaryProtein.length() - 3))
                         || geneNameSecondaryProtein.contains(geneNamePrimaryProtein.substring(0, geneNamePrimaryProtein.length() - 3))) {
                     return true;
                 }
-                
+
                 // @TODO: support more complex gene families?
             }
 
