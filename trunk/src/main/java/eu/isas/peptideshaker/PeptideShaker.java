@@ -843,6 +843,9 @@ public class PeptideShaker {
      *
      * @param inputMap The input map
      * @param waitingHandler the handler displaying feedback to the user
+     * @param searchParameters the search parameters
+     * @param annotationPreferences the annotation preferences
+     * @throws Exception 
      */
     private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
 
@@ -943,12 +946,12 @@ public class PeptideShaker {
                                 if (peptideAssumptions.get(p).get(proteinMax).get(nSE).containsKey(coverage)) {
                                     PeptideAssumption tempAssumption = peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).get(-1.0);
                                     if (tempAssumption != null) {
-                                    double massError = tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
-                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, tempAssumption);
-                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).remove(massError);
+                                        double massError = tempAssumption.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
+                                        peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, tempAssumption);
+                                        peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).remove(massError);
                                     }
                                     double massError = peptideAssumption1.getDeltaMass(spectrum.getPrecursor().getMz(), searchParameters.isPrecursorAccuracyTypePpm());
-                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, tempAssumption); // if there are still ex aequo peptides at this stage, I give up
+                                    peptideAssumptions.get(p).get(proteinMax).get(nSE).get(coverage).put(massError, tempAssumption); // if there are still equal peptides at this stage, I give up
                                 }
                             }
                         }
@@ -2302,6 +2305,9 @@ public class PeptideShaker {
      * engine.
      * @throws IOException
      * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException 
      */
     private void cleanProteinGroups(WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
@@ -2321,34 +2327,33 @@ public class PeptideShaker {
         waitingHandler.setMaxSecondaryProgressValue(max);
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
-            String debug = "Q13619" + ProteinMatch.PROTEIN_KEY_SPLITTER + "Q13620";
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
                 double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                    boolean better = false;
-                    for (String proteinUniqueKey : identification.getProteinIdentification()) {
-                        if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
-                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
-                            double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                            ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
-                            ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
-                            for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
-                                proteinUnique.addPeptideMatch(sharedPeptideKey);
-                            }
-                            identification.updateProteinMatch(proteinUnique);
-                            if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
-                                better = true;
-                            }
+                boolean better = false;
+                for (String proteinUniqueKey : identification.getProteinIdentification()) {
+                    if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
+                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
+                        double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
+                        ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
+                        ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
+                        for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
+                            proteinUnique.addPeptideMatch(sharedPeptideKey);
+                        }
+                        identification.updateProteinMatch(proteinUnique);
+                        if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
+                            better = true;
                         }
                     }
-                    if (better) {
-                        toRemove.add(proteinSharedKey);
-                    } else {
-                        waitingHandler.increaseSecondaryProgressValue();
-                        if (waitingHandler.isRunCanceled()) {
-                            return;
-                        }
+                }
+                if (better) {
+                    toRemove.add(proteinSharedKey);
+                } else {
+                    waitingHandler.increaseSecondaryProgressValue();
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
                     }
+                }
             }
         }
 
