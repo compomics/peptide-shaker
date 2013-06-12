@@ -47,7 +47,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
-        openDialog = new NewDialog(peptideShakerGUI, false);
+        openDialog = new NewDialog(this, peptideShakerGUI, false);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -424,10 +424,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void newJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJButtonActionPerformed
-        this.setVisible(false);
         openDialog.setModal(true);
         openDialog.setVisible(true);
-        this.dispose();
     }//GEN-LAST:event_newJButtonActionPerformed
 
     /**

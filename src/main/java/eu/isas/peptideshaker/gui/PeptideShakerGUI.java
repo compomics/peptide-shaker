@@ -1760,16 +1760,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-                NewDialog openDialog = new NewDialog(this, true);
+                NewDialog openDialog = new NewDialog(null, this, true);
                 openDialog.setVisible(true);
             } else if (value == JOptionPane.CANCEL_OPTION) {
                 // do nothing
             } else { // no option
-                NewDialog newDialog = new NewDialog(this, true);
+                NewDialog newDialog = new NewDialog(null, this, true);
                 newDialog.setVisible(true);
             }
         } else {
-            NewDialog newDialog = new NewDialog(this, true);
+            NewDialog newDialog = new NewDialog(null, this, true);
             newDialog.setVisible(true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
