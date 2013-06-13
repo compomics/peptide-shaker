@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.Peptide;
@@ -21,23 +17,23 @@ import java.util.ArrayList;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class can be used to export spectra
+ * This class can be used to export spectra.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class SpectrumExporter {
 
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param identification The identification of this project
      */
@@ -47,14 +43,12 @@ public class SpectrumExporter {
 
     /**
      * Exports the spectra from different categories of PSMs according to the
-     * export type number: 1- non-validated PSMs 2- PSMs of non-validated
-     * peptides 3- PSMs of non-validated proteins 4- validated PSMs 5- validated
-     * PSMs of validated peptides 6- validated PSMs of validated peptides of
-     * validated proteins
+     * export type number: 1 - non-validated PSMs 2 - PSMs of non-validated
+     * peptides 3 - PSMs of non-validated proteins 4 - validated PSMs 5 -
+     * validated PSMs of validated peptides 6 - validated PSMs of validated
+     * peptides of validated proteins. The export format is mgf.
      *
-     * export format is mgf
-     *
-     * @param destinationFile the file where to write the spectra
+     * @param destinationFolder the folder where to write the spectra
      * @param waitingHandler waiting handler used to display progress and cancel
      * the process. Can be null.
      * @param exportType the type of PSM to export as detailed above.
@@ -63,9 +57,10 @@ public class SpectrumExporter {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
-    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, int exportType) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
-
+    public void exportSpectra(File destinationFolder, WaitingHandler waitingHandler, int exportType) 
+            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter psParameter = new PSParameter();
         if (exportType == 2 || exportType == 5 || exportType == 6) {
@@ -108,10 +103,10 @@ public class SpectrumExporter {
     }
 
     /**
-     * Returns the suffix for a spectrum file name
+     * Returns the suffix for a spectrum file name.
      *
-     * @param exportType the type of psm to be exported
-     * @return
+     * @param exportType the type of PSM to be exported
+     * @return the suffix for a spectrum file name
      */
     public static String getSuffix(int exportType) {
         switch (exportType) {
@@ -136,6 +131,7 @@ public class SpectrumExporter {
      * Returns the name of the file to write.
      *
      * @param fileName the original file name
+     * @param exportType the export type
      * @return the name of the file
      */
     public static String getFileName(String fileName, int exportType) {
