@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.MsExperiment;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Advocate;
@@ -91,6 +92,10 @@ public class TxtExporter {
      * The identification features generator.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
 
     /**
      * Creates a TxtExporter object.
@@ -123,16 +128,15 @@ public class TxtExporter {
     public boolean exportResults(WaitingHandler waitingHandler, File folder) {
 
         try {
-
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Exporting Proteins. Please Wait...");
             }
 
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
-            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
-                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage"
-                    + SEPARATOR + "Observable coverage" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR
-                    + "Description" + System.getProperty("line.separator");
+            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "Gene name" + SEPARATOR + "Chromosome" 
+                    + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" 
+                    + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" + SEPARATOR + "Observable coverage" + SEPARATOR + "p score" 
+                    + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + System.getProperty("line.separator");
             proteinWriter.write(content);
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -277,6 +281,20 @@ public class TxtExporter {
         }
 
         line.append(SEPARATOR).append(probabilities.getProteinInferenceClass()).append(SEPARATOR);
+
+        // add gene name and chromosome number
+        String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
+        String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
+        if (geneName != null) {
+            line.append(geneName);
+        }
+        line.append(SEPARATOR);
+        if (chromosomeNumber != null) {
+            line.append(chromosomeNumber);
+        }
+        line.append(SEPARATOR);
+
+        // peptide count
         line.append(proteinMatch.getPeptideCount()).append(SEPARATOR);
 
         int nSpectra = 0;

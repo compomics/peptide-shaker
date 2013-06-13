@@ -1378,7 +1378,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         outputGenerator.getProteinsOutput(this, null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), proteinAccession.isSelected(), proteinPI.isSelected(),
                 proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
                 proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), molecularWeight.isSelected(), true, proteinStarred.isSelected(),
-                true, proteinHidden.isSelected(), maximalProteinSetCheckBox.isSelected(), nonEnzymaticPeptidesProteinsTab.isSelected());
+                true, proteinHidden.isSelected(), maximalProteinSetCheckBox.isSelected(), nonEnzymaticPeptidesProteinsTab.isSelected(), proteinDescription.isSelected(), proteinDescription.isSelected()); // @TODO: gene name and chromosome number should have separate check boxes...
     }//GEN-LAST:event_proteinExportActionPerformed
 
     /**

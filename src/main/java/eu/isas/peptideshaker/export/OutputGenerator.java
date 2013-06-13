@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.export;
 
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -39,12 +40,13 @@ import no.uib.jsparklines.data.XYDataPoint;
 
 /**
  * This class will generate the output as requested by the user.
- * //@TODO: this class shall evolve to something gui independent or will disappear
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
 public class OutputGenerator {
+
+    // @TODO: this class shall evolve to something gui independent or will disappear
 
     /**
      * The main GUI.
@@ -70,6 +72,10 @@ public class OutputGenerator {
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
     /**
      * The writer used to send the output to file.
      */
@@ -132,11 +138,14 @@ public class OutputGenerator {
      * protein set is created
      * @param aShowNonEnzymaticPeptidesColumn if true, a column indicating if
      * the protein has one or more non enzymatic peptides will be included
+     * @param aGeneName if true, a column with the gene name will be included
+     * @param aChromosomeNumber if true, a column indicating with the chromosome
+     * number will be included
      */
     public void getProteinsOutput(JDialog aParentDialog, ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aMainAccession, boolean aOtherAccessions, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
             boolean aScore, boolean aConfidence, boolean aMW, boolean aIncludeHeader, boolean aOnlyStarred, boolean aShowStar, boolean aIncludeHidden, boolean aMaximalProteinSet,
-            boolean aShowNonEnzymaticPeptidesColumn) {
+            boolean aShowNonEnzymaticPeptidesColumn, boolean aGeneName, boolean aChromosomeNumber) {
 
         // create final versions of all variables use inside the export thread
         final ArrayList<String> proteinKeys;
@@ -161,6 +170,8 @@ public class OutputGenerator {
         final boolean includeHidden = aIncludeHidden;
         final boolean createMaximalProteinSet = aMaximalProteinSet;
         final boolean showNonEnzymaticPeptidesColumn = aShowNonEnzymaticPeptidesColumn;
+        final boolean geneName = aGeneName;
+        final boolean chromosomeNumber = aChromosomeNumber;
 
         final JDialog parentDialog = aParentDialog;
 
@@ -235,6 +246,12 @@ public class OutputGenerator {
                             }
                             if (description) {
                                 writer.write("Description" + SEPARATOR);
+                            }
+                            if (geneName) {
+                                writer.write("Gene Name" + SEPARATOR);
+                            }
+                            if (chromosomeNumber) {
+                                writer.write("Chromosome" + SEPARATOR);
                             }
                             if (sequenceCoverage) {
                                 writer.write("Sequence Coverage (%)" + SEPARATOR);
@@ -365,6 +382,25 @@ public class OutputGenerator {
                                                 } catch (Exception e) {
                                                     writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                 }
+                                            }
+
+                                            // gene name and chromosome number
+                                            String tempGeneName = null;
+                                            if (geneName || chromosomeNumber) {
+                                                tempGeneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
+                                            }
+                                            if (geneName) {
+                                                if (tempGeneName != null) {
+                                                    writer.write(tempGeneName);
+                                                }
+                                                writer.write(SEPARATOR);
+                                            }
+                                            if (chromosomeNumber) {
+                                                String chromosomeNumber = geneFactory.getChromosomeForGeneName(tempGeneName);
+                                                if (chromosomeNumber != null) {
+                                                    writer.write(chromosomeNumber);
+                                                }
+                                                writer.write(SEPARATOR);
                                             }
 
                                             if (sequenceCoverage) {
