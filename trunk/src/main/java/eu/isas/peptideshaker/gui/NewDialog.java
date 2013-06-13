@@ -671,8 +671,12 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
 
         if (validateUserInput()) {
 
+            if (welcomeDialog != null) {
+                welcomeDialog.setVisible(false);
+            }
+
             this.setVisible(false);
-            peptideShakerGUI.setVisible(true); // @TODO: perhaps not make the ps main frame visible until the waiting dialog is closed? (but then the waiting dialog needs a dummy parent)
+            peptideShakerGUI.setVisible(true);
             peptideShakerGUI.clearData(true, false);
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
@@ -717,10 +721,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
                     || spectrumFiles.size() > 0) {
                 needDialog = true;
                 importIdentificationFiles(waitingDialog);
-            }
-
-            if (welcomeDialog != null) {
-                welcomeDialog.setVisible(false);
             }
 
             if (needDialog) {
