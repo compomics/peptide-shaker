@@ -5278,7 +5278,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 outputGenerator.getProteinsOutput(
                         null, selectedProteins, true, false, true, true, true,
                         true, true, true, true, false, true,
-                        true, true, true, true, true, false, true, false, false, false);
+                        true, true, true, true, true, false, true, false, false, false, true, true);
             } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                 ArrayList<String> selectedPeptides = getDisplayedPeptides();
 
