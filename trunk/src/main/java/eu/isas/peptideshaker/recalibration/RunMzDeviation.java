@@ -5,32 +5,34 @@ import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.*;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.math.BasicMathFunctions;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class computes the mz deviations for a a given file.
+ * This class computes the mz deviations for a a given run (i.e. file).
  *
  * @author Marc Vaudel
  */
-public class FractionError {
+public class RunMzDeviation {
 
     /**
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The precursor grades.
+     * The precursor slopes.
      */
-    private HashMap<Double, Double> precursorGrades = new HashMap<Double, Double>();
+    private HashMap<Double, Double> precursorSlopes = new HashMap<Double, Double>();
     /**
      * The precursor offsets.
      */
@@ -52,20 +54,49 @@ public class FractionError {
      * The bin size in retention time in number of MS/MS spectra.
      */
     public static final int rtBinSize = 202;
+    /**
+     * The bin size in m/z in number of MS/MS spectra.
+     */
     public static final int mzBinSize = 101;
 
+    /**
+     * returns the list of precursor retention time bins.
+     *
+     * @return
+     */
     public ArrayList<Double> getPrecursorRTList() {
         return precursorRTList;
     }
 
+    /**
+     * returns the list for fragment ion m/z bins at a given retention time
+     * point
+     *
+     * @param precursorRT the precursor retention time
+     * @return
+     */
     public ArrayList<Double> getFragmentMZList(double precursorRT) {
         return new ArrayList<Double>(fragmentsRtDeviations.get(precursorRT).keySet());
     }
 
-    public Double getGrade(Double rtBin) {
-        return precursorGrades.get(rtBin);
+    /**
+     * Returns the precursor m/z deviation slopes at a given retention time
+     * point
+     *
+     * @param rtBin the retention time bin
+     * @return
+     */
+    public Double getSlope(Double rtBin) {
+        return precursorSlopes.get(rtBin);
     }
 
+    /**
+     * Returns the precursor m/z deviation offset at a given retention time
+     * point
+     *
+     * @param rtBin the retention time bin
+     * @return
+     */
     public Double getOffset(Double rtBin) {
         return precursorOffsets.get(rtBin);
     }
@@ -75,7 +106,7 @@ public class FractionError {
      * given precursor m/z when recalibrating with mz only.
      *
      * @param precursorMz the precursor m/z
-     * @param precursorRT 
+     * @param precursorRT
      * @return the median error
      */
     public double getPrecursorMzCorrection(Double precursorMz, Double precursorRT) {
@@ -101,7 +132,7 @@ public class FractionError {
             }
         }
 
-        double grade = (precursorGrades.get(key1) + precursorGrades.get(key2)) / 2;
+        double grade = (precursorSlopes.get(key1) + precursorSlopes.get(key2)) / 2;
         double offset = (precursorOffsets.get(key1) + precursorOffsets.get(key2)) / 2;
         return grade * precursorMz + offset;
     }
@@ -140,7 +171,7 @@ public class FractionError {
         Collections.sort(mzList);
         double mzKey1 = mzList.get(0);
         double mzKey2 = mzKey1;
-        
+
         if (fragmentMZ > mzKey1) {
             mzKey1 = mzList.get(mzList.size() - 1);
             mzKey2 = mzKey1;
@@ -158,7 +189,7 @@ public class FractionError {
                 }
             }
         }
-        
+
         double correction11 = fragmentsRtDeviations.get(rtKey1).get(mzKey1);
         double correction12 = fragmentsRtDeviations.get(rtKey1).get(mzKey2);
         double correction1 = correction11 * mzKey1 / (mzKey1 + mzKey2) + correction12 * mzKey2 / (mzKey1 + mzKey2);
@@ -167,7 +198,7 @@ public class FractionError {
         Collections.sort(mzList);
         mzKey1 = mzList.get(0);
         mzKey2 = mzKey1;
-        
+
         if (fragmentMZ > mzKey1) {
             mzKey1 = mzList.get(mzList.size() - 1);
             mzKey2 = mzKey1;
@@ -185,7 +216,7 @@ public class FractionError {
                 }
             }
         }
-        
+
         double correction21 = fragmentsRtDeviations.get(rtKey2).get(mzKey1);
         double correction22 = fragmentsRtDeviations.get(rtKey2).get(mzKey2);
         double correction2 = correction21 * mzKey1 / (mzKey1 + mzKey2) + correction22 * mzKey2 / (mzKey1 + mzKey2);
@@ -206,40 +237,39 @@ public class FractionError {
     }
 
     /**
-     * Constructor, creates the map from the spectrum matches.
+     * Creates a map of m/z deviations for a given run.
      *
-     * @param peptideShakerGUI main instance of the GUI
-     * @param fileName the name of the file of interest
-     * @param progressDialog a dialog displaying progress to the user. Can be
-     * null
+     * @param spectrumFileName the name of the file of the run
+     * @param identification the corresponding identification
+     * @param annotationPreferences the annotation preferences to be used
+     * @param waitingHandler a waiting handler displaying the progress and
+     * allowing the user to cancel the process. Can be null
+     *
      * @throws IOException
      * @throws MzMLUnmarshallerException
+     * @throws SQLException
+     * @throws ClassNotFoundException
      */
-    public FractionError(PeptideShakerGUI peptideShakerGUI, String fileName, ProgressDialogX progressDialog) throws IOException, MzMLUnmarshallerException {
+    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
 
-        Identification identification = peptideShakerGUI.getIdentification();
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
         PSParameter psParameter = new PSParameter();
-        ms2Bin = 100 * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+        ms2Bin = 100 * annotationPreferences.getFragmentIonAccuracy();
         HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
         HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
         HashMap<Double, ArrayList<Double>> spectrumFragmentMap;
 
-        for (String spectrumName : spectrumFactory.getSpectrumTitles(fileName)) {
+        for (String spectrumName : spectrumFactory.getSpectrumTitles(spectrumFileName)) {
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 break;
             }
 
-            String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumName);
+            String spectrumKey = Spectrum.getSpectrumKey(spectrumFileName, spectrumName);
 
             if (identification.matchExists(spectrumKey)) {
-                try {
-                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
+
+                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
 
                 if (psParameter.isValidated()) {
 
@@ -254,42 +284,37 @@ public class FractionError {
                         precursorRawMap.get(precursorRT).put(precursorMz, new ArrayList<Double>());
                     }
 
-                    try {
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        double error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, false);
-                        precursorRawMap.get(precursorRT).get(precursorMz).add(error);
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    double error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, false);
+                    precursorRawMap.get(precursorRT).get(precursorMz).add(error);
 
-                        MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                        ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(
-                                annotationPreferences.getIonTypes(),
-                                annotationPreferences.getNeutralLosses(),
-                                annotationPreferences.getValidatedCharges(),
-                                spectrumMatch.getBestAssumption().getIdentificationCharge().value,
-                                currentSpectrum,
-                                spectrumMatch.getBestAssumption().getPeptide(),
-                                currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                annotationPreferences.getFragmentIonAccuracy(), false);
-                        spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();
+                    MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                    ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(
+                            annotationPreferences.getIonTypes(),
+                            annotationPreferences.getNeutralLosses(),
+                            annotationPreferences.getValidatedCharges(),
+                            spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                            currentSpectrum,
+                            spectrumMatch.getBestAssumption().getPeptide(),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                            annotationPreferences.getFragmentIonAccuracy(), false);
+                    spectrumFragmentMap = new HashMap<Double, ArrayList<Double>>();
 
-                        for (IonMatch ionMatch : annotations) {
+                    for (IonMatch ionMatch : annotations) {
 
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-
-                            double fragmentMz = ionMatch.peak.mz;
-                            int roundedValue = (int) (fragmentMz / ms2Bin);
-                            double fragmentMzKey = (double) roundedValue * ms2Bin;
-
-                            if (!spectrumFragmentMap.containsKey(fragmentMzKey)) {
-                                spectrumFragmentMap.put(fragmentMzKey, new ArrayList<Double>());
-                            }
-
-                            spectrumFragmentMap.get(fragmentMzKey).add(ionMatch.getAbsoluteError());
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+                            break;
                         }
-                    } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
-                        return;
+
+                        double fragmentMz = ionMatch.peak.mz;
+                        int roundedValue = (int) (fragmentMz / ms2Bin);
+                        double fragmentMzKey = (double) roundedValue * ms2Bin;
+
+                        if (!spectrumFragmentMap.containsKey(fragmentMzKey)) {
+                            spectrumFragmentMap.put(fragmentMzKey, new ArrayList<Double>());
+                        }
+
+                        spectrumFragmentMap.get(fragmentMzKey).add(ionMatch.getAbsoluteError());
                     }
 
                     if (!fragmentRawMap.containsKey(precursorRT)) {
@@ -298,7 +323,7 @@ public class FractionError {
 
                     for (double key : spectrumFragmentMap.keySet()) {
 
-                        if (progressDialog.isRunCanceled()) {
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                             break;
                         }
 
@@ -311,16 +336,19 @@ public class FractionError {
                 }
             }
 
-            if (progressDialog != null) {
-                progressDialog.increaseProgressValue();
+            if (waitingHandler != null) {
+                waitingHandler.increaseProgressValue();
             }
         }
 
-        if (progressDialog.isRunCanceled()) {
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             return;
         }
 
         ArrayList<Double> keys = new ArrayList<Double>(precursorRawMap.keySet());
+        if (keys.isEmpty()) {
+            throw new IllegalArgumentException("No validated PSM found for file " + spectrumFileName + ".");
+        }
         Collections.sort(keys);
         int cpt1 = 0;
         HashMap<Double, HashMap<Double, ArrayList<Double>>> precursorTempMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
@@ -328,7 +356,7 @@ public class FractionError {
 
         for (double rt : keys) {
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 break;
             }
 
@@ -338,14 +366,14 @@ public class FractionError {
 
             for (ArrayList<Double> errors : tempValues.values()) {
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
 
                 cpt1 += errors.size();
             }
 
-            if (cpt1 > rtBinSize && !progressDialog.isRunCanceled()) {
+            if (cpt1 > rtBinSize && waitingHandler != null && !waitingHandler.isRunCanceled()) {
 
                 ArrayList<Double> rtList = new ArrayList<Double>(precursorTempMap.keySet());
                 Collections.sort(rtList);
@@ -354,13 +382,13 @@ public class FractionError {
 
                 for (HashMap<Double, ArrayList<Double>> errors : precursorTempMap.values()) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
                     for (double mz : errors.keySet()) {
 
-                        if (progressDialog.isRunCanceled()) {
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                             break;
                         }
 
@@ -372,7 +400,7 @@ public class FractionError {
                     }
                 }
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     return;
                 }
 
@@ -386,13 +414,13 @@ public class FractionError {
 
                 for (double mz : mzList) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
                     for (double err : mzToErrorMap.get(mz)) {
 
-                        if (progressDialog.isRunCanceled()) {
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                             break;
                         }
 
@@ -407,7 +435,7 @@ public class FractionError {
                     }
                 }
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     return;
                 }
 
@@ -415,29 +443,29 @@ public class FractionError {
                 double x2 = BasicMathFunctions.median(mz2);
                 double y1 = BasicMathFunctions.median(err1);
                 double y2 = BasicMathFunctions.median(err2);
-                double grade;
+                double slope;
 
                 if (x1 == x2) {
-                    grade = 0;
+                    slope = 0;
                 } else {
-                    grade = (y2 - y1) / (x2 - x1);
+                    slope = (y2 - y1) / (x2 - x1);
                 }
 
-                double offset = (y2 + y1 - grade * (x1 + x2)) / 2;
-                precursorGrades.put(rtRef, grade);
+                double offset = (y2 + y1 - slope * (x1 + x2)) / 2;
+                precursorSlopes.put(rtRef, slope);
                 precursorOffsets.put(rtRef, offset);
 
                 fragmentsRtDeviations.put(rtRef, new HashMap<Double, Double>());
                 mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
 
                 for (HashMap<Double, ArrayList<Double>> errors : fragmentTempMap.values()) {
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
                     for (double mz : errors.keySet()) {
 
-                        if (progressDialog.isRunCanceled()) {
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                             break;
                         }
 
@@ -459,7 +487,7 @@ public class FractionError {
 
                 for (double mz : mzList) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
@@ -479,7 +507,7 @@ public class FractionError {
                     }
                 }
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     return;
                 }
 
@@ -498,7 +526,7 @@ public class FractionError {
 
                 for (double tempRt : rtList) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
@@ -506,7 +534,7 @@ public class FractionError {
 
                     for (ArrayList<Double> errors : tempValues.values()) {
 
-                        if (progressDialog.isRunCanceled()) {
+                        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                             break;
                         }
 
@@ -523,24 +551,24 @@ public class FractionError {
             }
         }
 
-        if (progressDialog.isRunCanceled()) {
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             return;
         }
 
-        if (precursorGrades.isEmpty()) {
+        if (precursorSlopes.isEmpty()) {
 
             double rtRef = BasicMathFunctions.median(keys);
             HashMap<Double, ArrayList<Double>> mzToErrorMap = new HashMap<Double, ArrayList<Double>>();
 
             for (HashMap<Double, ArrayList<Double>> errors : precursorRawMap.values()) {
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
 
                 for (double mz : errors.keySet()) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
@@ -551,7 +579,7 @@ public class FractionError {
                 }
             }
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 return;
             }
 
@@ -565,13 +593,13 @@ public class FractionError {
 
             for (double mz : mzList) {
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
 
                 for (double err : mzToErrorMap.get(mz)) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
@@ -586,7 +614,7 @@ public class FractionError {
                 }
             }
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 return;
             }
 
@@ -603,12 +631,12 @@ public class FractionError {
             }
 
             double offset = (y2 + y1 - grade * (x1 + x2)) / 2;
-            precursorGrades.put(rtRef, grade);
+            precursorSlopes.put(rtRef, grade);
             precursorOffsets.put(rtRef, offset);
 
             for (double tempRt : keys) {
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
 
@@ -616,7 +644,7 @@ public class FractionError {
 
                 for (ArrayList<Double> errors : tempValues.values()) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
@@ -630,7 +658,7 @@ public class FractionError {
                 }
             }
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 return;
             }
 
@@ -638,13 +666,13 @@ public class FractionError {
 
             for (HashMap<Double, ArrayList<Double>> errors : precursorTempMap.values()) {
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
 
                 for (double mz : errors.keySet()) {
 
-                    if (progressDialog.isRunCanceled()) {
+                    if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                         break;
                     }
 
@@ -655,7 +683,7 @@ public class FractionError {
                 }
             }
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 return;
             }
 
@@ -670,7 +698,7 @@ public class FractionError {
 
             for (double mz : mzList) {
 
-                if (progressDialog.isRunCanceled()) {
+                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                     break;
                 }
 
@@ -687,7 +715,7 @@ public class FractionError {
                 }
             }
 
-            if (progressDialog.isRunCanceled()) {
+            if (waitingHandler != null && waitingHandler.isRunCanceled()) {
                 return;
             }
 
@@ -703,11 +731,11 @@ public class FractionError {
             }
         }
 
-        if (progressDialog.isRunCanceled()) {
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
             return;
         }
 
-        precursorRTList = new ArrayList<Double>(precursorGrades.keySet());
+        precursorRTList = new ArrayList<Double>(precursorSlopes.keySet());
         Collections.sort(precursorRTList);
     }
 }

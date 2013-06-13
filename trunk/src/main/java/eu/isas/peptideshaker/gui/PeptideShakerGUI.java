@@ -43,6 +43,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
 import com.compomics.util.io.SerializationUtils;
+import com.compomics.util.io.TarUtils;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -74,10 +75,11 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
-import eu.isas.peptideshaker.recalibration.DataSetErrors;
-import eu.isas.peptideshaker.recalibration.FractionError;
+import eu.isas.peptideshaker.recalibration.RunMzDeviation;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
 import com.compomics.util.preferences.GenePreferences;
+import eu.isas.peptideshaker.export.RecalibrationExporter;
+import eu.isas.peptideshaker.fileimport.CpsFileImporter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
@@ -2918,6 +2920,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
     private void loadGeneMappings() {
 
         // @TODO: move to GenePreferences?
+        // @TODO: when done with todo above, do the same for the command line methods
 
         try {
             genePreferences.createDefaultGeneMappingFiles(
@@ -5185,121 +5188,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         identification.close();
                     }
 
-                    File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
-                    File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
-
-//                    File matchFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
-//                    File experimentFile = new File(matchFolder, PeptideShaker.experimentObjectName);
-
-                    // empty the existing files in the matches folder
-                    if (matchFolder.exists()) {
-                        for (File file : matchFolder.listFiles()) {
-                            if (file.isDirectory()) {
-                                boolean deleted = Util.deleteDir(file);
-
-                                if (!deleted) {
-                                    System.out.println("Failed to delete folder: " + file.getPath());
-                                }
-                            } else {
-                                boolean deleted = file.delete();
-
-                                if (!deleted) {
-                                    System.out.println("Failed to delete file: " + file.getPath());
-                                }
-                            }
-                        }
-                    }
-
-                    final int BUFFER = 2048;
-                    byte data[] = new byte[BUFFER];
-                    FileInputStream fi = new FileInputStream(currentPSFile);
-                    BufferedInputStream bis = new BufferedInputStream(fi, BUFFER);
-
-                    try {
-                        ArchiveInputStream tarInput = new ArchiveStreamFactory().createArchiveInputStream(bis);
-
-                        progressDialog.setMaxProgressValue(100);
-                        progressDialog.setValue(0);
-                        progressDialog.setIndeterminate(false);
-
-                        long fileLength = currentPSFile.length();
-
-                        ArchiveEntry archiveEntry;
-
-                        while ((archiveEntry = tarInput.getNextEntry()) != null) {
-                            File destinationFile = new File(archiveEntry.getName());
-                            File destinationFolder = destinationFile.getParentFile();
-                            boolean destFolderExists = true;
-
-                            if (!destinationFolder.exists()) {
-                                destFolderExists = destinationFolder.mkdirs();
-                            }
-
-                            if (destFolderExists) {
-                                FileOutputStream fos = new FileOutputStream(destinationFile);
-                                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                                int count;
-
-                                while ((count = tarInput.read(data, 0, BUFFER)) != -1 && !progressDialog.isRunCanceled()) {
-                                    bos.write(data, 0, count);
-                                }
-
-                                bos.close();
-                                fos.close();
-                                int progress = (int) (100 * tarInput.getBytesRead() / fileLength);
-                                progressDialog.setValue(progress);
-                            } else {
-                                System.out.println("Folder does not exist: \'" + destinationFolder.getAbsolutePath() + "\'. User preferences not saved.");
-                            }
-
-                            if (progressDialog.isRunCanceled()) {
-                                progressDialog.setRunFinished();
-                                return;
-                            }
-                        }
-
-                        progressDialog.setIndeterminate(true);
-                        tarInput.close();
-                    } catch (ArchiveException e) {
-                        //Most likely an old project
-                        experimentFile = currentPSFile;
-                        e.printStackTrace();
-                    }
-
-                    fi.close();
-                    bis.close();
-                    fi.close();
-
-                    MsExperiment tempExperiment = ExperimentIO.loadExperiment(experimentFile);
-                    Sample tempSample = null;
-                    PeptideShakerSettings experimentSettings = new PeptideShakerSettings();
-
-                    if (tempExperiment.getUrParam(experimentSettings) instanceof PSSettings) {
-
-                        // convert old settings files using utilities version 3.10.68 or older
-
-                        // convert the old ProcessingPreferences object
-                        PSSettings tempSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
-                        ProcessingPreferences tempProcessingPreferences = new ProcessingPreferences();
-                        tempProcessingPreferences.setProteinFDR(tempSettings.getProcessingPreferences().getProteinFDR());
-                        tempProcessingPreferences.setPeptideFDR(tempSettings.getProcessingPreferences().getPeptideFDR());
-                        tempProcessingPreferences.setPsmFDR(tempSettings.getProcessingPreferences().getPsmFDR());
-
-                        // convert the old PTMScoringPreferences object
-                        PTMScoringPreferences tempPTMScoringPreferences = new PTMScoringPreferences();
-                        tempPTMScoringPreferences.setaScoreCalculation(tempSettings.getPTMScoringPreferences().aScoreCalculation());
-                        tempPTMScoringPreferences.setaScoreNeutralLosses(tempSettings.getPTMScoringPreferences().isaScoreNeutralLosses());
-                        tempPTMScoringPreferences.setFlrThreshold(tempSettings.getPTMScoringPreferences().getFlrThreshold());
-
-                        experimentSettings = new PeptideShakerSettings(tempSettings.getSearchParameters(), tempSettings.getAnnotationPreferences(),
-                                tempSettings.getSpectrumCountingPreferences(), tempSettings.getProjectDetails(), tempSettings.getFilterPreferences(),
-                                tempSettings.getDisplayPreferences(),
-                                tempSettings.getMetrics(), tempProcessingPreferences, tempSettings.getIdentificationFeaturesCache(),
-                                tempPTMScoringPreferences, new GenePreferences(), new IdFilter());
-
-                    } else {
-                        experimentSettings = (PeptideShakerSettings) tempExperiment.getUrParam(experimentSettings);
-                    }
+                    CpsFileImporter cpsFileImporter = new CpsFileImporter(currentPSFile, progressDialog);
+                    
+                    PeptideShakerSettings experimentSettings = cpsFileImporter.getExperimentSettings();
 
                     idFilter = experimentSettings.getIdFilter();
                     setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
@@ -5331,11 +5222,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         return;
                     }
 
-                    ArrayList<Sample> samples = new ArrayList(tempExperiment.getSamples().values());
+                    ArrayList<Sample> samples = cpsFileImporter.getSamples();
+                    
+                    Sample tempSample = samples.get(0);
 
-                    if (samples.size() == 1) {
-                        tempSample = samples.get(0);
-                    } else {
+                    if (samples.size() > 1) {
                         String[] sampleNames = new String[samples.size()];
                         for (int cpt = 0; cpt < sampleNames.length; cpt++) {
                             sampleNames[cpt] = samples.get(cpt).getReference();
@@ -5356,13 +5247,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         return;
                     }
 
-                    ArrayList<Integer> replicates = new ArrayList(tempExperiment.getAnalysisSet(tempSample).getReplicateNumberList());
+                    ArrayList<Integer> replicates = cpsFileImporter.getReplicates(tempSample);
 
-                    int tempReplicate;
+                    int tempReplicate = replicates.get(0);;
 
-                    if (replicates.size() == 1) {
-                        tempReplicate = replicates.get(0);
-                    } else {
+                    if (replicates.size() > 1) {
                         String[] replicateNames = new String[replicates.size()];
                         for (int cpt = 0; cpt < replicateNames.length; cpt++) {
                             replicateNames[cpt] = samples.get(cpt).getReference();
@@ -5373,7 +5262,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         tempReplicate = choice;
                     }
 
-                    setProject(tempExperiment, tempSample, tempReplicate);
+                    setProject(cpsFileImporter.getExperiment(), tempSample, tempReplicate);
 
                     identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
                     if (experimentSettings.getIdentificationFeaturesCache() != null) {
@@ -5611,11 +5500,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
 
                         if (outcome == JOptionPane.YES_OPTION) {
                             progressDialog.setTitle("Converting Project. Please Wait...");
-                            String idReference = Identification.getDefaultReference(tempExperiment.getReference(), tempSample.getReference(), replicateNumber);
+                            String idReference = Identification.getDefaultReference(experiment.getReference(), tempSample.getReference(), replicateNumber);
                             File serializationDirectory = new File(identification.getSerializationDirectory());
                             if (!serializationDirectory.exists()) {
                                 final String folderName = Util.getFileName(serializationDirectory);
-                                serializationDirectory = new File(experimentFile.getParent(), folderName);
+                                serializationDirectory = new File(PeptideShaker.getDefaultExperimentFile().getParent(), folderName);
                                 if (!serializationDirectory.exists()) {
                                     JOptionPane.showMessageDialog(peptideShakerGUI,
                                             "CPS folder " + folderName + " not found, please locate it manually.",
@@ -5721,17 +5610,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                         // 0.18 version, needs update of the spectrum mapping
                         identification.updateSpectrumMapping();
                     }
-//Should not be needed anymore with the self updating tables
-//                    if (!progressDialog.isRunCanceled()) {
-//                        progressDialog.setIndeterminate(true);
-//                        progressDialog.setTitle("Loading Proteins. Please Wait...");
-//                        identification.loadProteinMatches(progressDialog);
-//                        progressDialog.setTitle("Loading Protein Details. Please Wait...");
-//                        identification.loadProteinMatchParameters(new PSParameter(), progressDialog);
-//                        progressDialog.setTitle("Loading Peptide Details. Please Wait...");
-//                        identification.loadPeptideMatchParameters(new PSParameter(), progressDialog);
-//                    }
-
 
                     if (progressDialog.isRunCanceled()) {
                         progressDialog.setRunFinished();
@@ -6373,7 +6251,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 selectedFolder = selectedFolder.getParentFile();
             }
             for (String fileName : spectrumFactory.getMgfFileNames()) {
-                String newName = getRecalibratedFileName(fileName);
+                String newName = RecalibrationExporter.getRecalibratedFileName(fileName);
                 File testFile = new File(selectedFolder, newName);
                 if (testFile.exists()) {
                     int outcome = JOptionPane.showConfirmDialog(this,
@@ -6393,18 +6271,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 writeRecalibratedSpectra(parentDialog, selectedFolder, ms1, ms2);
             }
         }
-    }
-
-    /**
-     * Returns the name of the recalibrated file.
-     *
-     * @param fileName the original file name
-     * @return the name of the recalibrated file
-     */
-    public String getRecalibratedFileName(String fileName) {
-        String tempName = fileName.substring(0, fileName.lastIndexOf("."));
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        return tempName + "_recalibrated" + extension;
     }
 
     /**
@@ -6454,124 +6320,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
                 PeptideShakerGUI peptideShakerGUI = PeptideShakerGUI.this;
 
                 try {
-
-                    boolean debug = true; // the debug mode exports the ion distributions and the titles of the processed spectra
-
-                    DataSetErrors dataSetErrors = new DataSetErrors(PeptideShakerGUI.this);
-                    int progress = 1;
-                    progressDialog.setIndeterminate(false);
-
-                    for (String fileName : spectrumFactory.getMgfFileNames()) {
-
-                        if (progressDialog.isRunCanceled()) {
-                            break;
-                        }
-
-                        progressDialog.setTitle("Recalibrating " + fileName + " (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ") - correcting spectra.");
-                        progressDialog.setValue(0);
-                        progressDialog.setMaxProgressValue(2 * spectrumFactory.getNSpectra(fileName));
-                        FractionError fileErrors = dataSetErrors.getFileErrors(fileName, progressDialog);
-
-                        // Debug part
-                        if (debug && !progressDialog.isRunCanceled()) {
-
-                            File debugFile = new File(selectedFolder, getRecalibratedFileName(fileName) + "_precursors.txt");
-                            BufferedWriter debugWriter = new BufferedWriter(new FileWriter(debugFile));
-                            debugWriter.write("rt\tgrade\toffset\n");
-
-                            for (double key : fileErrors.getPrecursorRTList()) {
-
-                                if (progressDialog.isRunCanceled()) {
-                                    break;
-                                }
-
-                                debugWriter.write(key + "\t");
-                                debugWriter.write(fileErrors.getGrade(key) + "\t");
-                                debugWriter.write(fileErrors.getOffset(key) + "\t");
-                                debugWriter.write("\n");
-                            }
-
-                            debugWriter.flush();
-                            debugWriter.close();
-
-                            debugFile = new File(selectedFolder, getRecalibratedFileName(fileName) + "_fragments.txt");
-                            debugWriter = new BufferedWriter(new FileWriter(debugFile));
-
-                            for (double rtKey : fileErrors.getPrecursorRTList()) {
-
-                                debugWriter.write(rtKey + "\nm/z");
-
-                                for (double mzKey : fileErrors.getFragmentMZList(rtKey)) {
-
-                                    debugWriter.write("\t" + mzKey);
-
-                                }
-                                debugWriter.write("\nError");
-
-                                for (double mzKey : fileErrors.getFragmentMZList(rtKey)) {
-
-                                    debugWriter.write("\t" + fileErrors.getFragmentMzError(rtKey, mzKey));
-
-                                }
-
-                                debugWriter.write("\n");
-                            }
-                            debugWriter.flush();
-                            debugWriter.close();
-                            // End of debug part
-                        }
-
-                        if (progressDialog.isRunCanceled()) {
-                            return;
-                        }
-
-                        File file = new File(selectedFolder, getRecalibratedFileName(fileName));
-                        BufferedWriter writer1 = new BufferedWriter(new FileWriter(file));
-                        progressDialog.setTitle("Recalibrating " + fileName + " (" + progress + "/"
-                                + spectrumFactory.getMgfFileNames().size() + ") - writing spectra.");
-
-                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                            if (debug) {
-                                System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
-                            }
-
-                            MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(fileName, spectrumTitle);
-                            Precursor precursor = spectrum.getPrecursor();
-                            double precursorMz = precursor.getMz();
-                            double precursorRT = precursor.getRt();
-                            double correction = 0.0;
-
-                            if (precursors) {
-                                correction = fileErrors.getPrecursorMzCorrection(precursorMz, precursorRT);
-                            }
-
-                            Precursor newPrecursor = spectrum.getPrecursor().getRecalibratedPrecursor(correction, 0.0);
-                            HashMap<Double, Peak> peakList = spectrum.getPeakMap();
-
-                            if (fragments) {
-                                peakList = fileErrors.recalibratePeakList(precursorRT, spectrum.getPeakMap());
-                            }
-
-                            MSnSpectrum newSpectrum = new MSnSpectrum(2, newPrecursor, spectrumTitle, peakList, fileName);
-                            newSpectrum.writeMgf(writer1);
-                            writer1.flush();
-
-                            if (progressDialog != null) {
-                                progressDialog.increaseProgressValue();
-                            }
-                        }
-
-                        writer1.close();
-                    }
-
-                    progressDialog.setRunFinished();
+                    RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder, identification, annotationPreferences, progressDialog);
 
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
+                } finally {
                     progressDialog.setRunFinished();
                 }
             }
