@@ -124,11 +124,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         exportIdentifiedProteinsAsFastaButton = new javax.swing.JButton();
         exportAllIdentifiedProteinAccessionsLabel = new javax.swing.JLabel();
         exportIdentifiedProteinAccessionNumbersAsCsvButton = new javax.swing.JButton();
-        progenesisPanel1 = new javax.swing.JPanel();
+        deNovoSearchPanel = new javax.swing.JPanel();
         exportPepnovoButton = new javax.swing.JButton();
-        exportToProgenesisPart1Label1 = new javax.swing.JLabel();
-        exportToProgenesisLinkLabel1 = new javax.swing.JLabel();
-        exportToProgenesisHelpLabel1 = new javax.swing.JLabel();
+        exportToPepNovoPart1Label = new javax.swing.JLabel();
+        exportToPepNovoLinkLabel = new javax.swing.JLabel();
+        deNovoGuiLinkLabel = new javax.swing.JLabel();
         recalibrateForDenovoCheck = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -540,76 +540,77 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        progenesisPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("De novo Search (beta)"));
-        progenesisPanel1.setOpaque(false);
+        deNovoSearchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("De Novo Search (beta)"));
+        deNovoSearchPanel.setOpaque(false);
 
-        exportPepnovoButton.setText("Export");
+        exportPepnovoButton.setText("Export as MGF");
         exportPepnovoButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportPepnovoButtonActionPerformed(evt);
             }
         });
 
-        exportToProgenesisPart1Label1.setText("Export training files for");
+        exportToPepNovoPart1Label.setText("Export Training Files for");
 
-        exportToProgenesisLinkLabel1.setText("<html><a href=\\\"http://proteomics.ucsd.edu/Software/PepNovo.html\\\">Pepnovo</a></html>");
-        exportToProgenesisLinkLabel1.setToolTipText("Open Progenesis LC-MS web page");
-        exportToProgenesisLinkLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        exportToPepNovoLinkLabel.setText("<html><a href=\\\"http://proteomics.ucsd.edu/Software/PepNovo.html\\\">PepNovo</a></html>");
+        exportToPepNovoLinkLabel.setToolTipText("Open PepNovo home page");
+        exportToPepNovoLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                exportToProgenesisLinkLabel1MouseClicked(evt);
+                exportToPepNovoLinkLabelMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exportToProgenesisLinkLabel1MouseEntered(evt);
+                exportToPepNovoLinkLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                exportToProgenesisLinkLabel1MouseExited(evt);
+                exportToPepNovoLinkLabelMouseExited(evt);
             }
         });
 
-        exportToProgenesisHelpLabel1.setText("<html>available via <a href=\\\"http://denovogui.googlecode.com\\\">DenovoGUI</a></html>");
-        exportToProgenesisHelpLabel1.setToolTipText("");
-        exportToProgenesisHelpLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        deNovoGuiLinkLabel.setText("<html>available via <a href=\\\"http://denovogui.googlecode.com\\\">DenovoGUI</a></html>");
+        deNovoGuiLinkLabel.setToolTipText("");
+        deNovoGuiLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exportToProgenesisHelpLabel1MouseEntered(evt);
+                deNovoGuiLinkLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                exportToProgenesisHelpLabel1MouseExited(evt);
+                deNovoGuiLinkLabelMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                exportToProgenesisHelpLabel1MouseReleased(evt);
+                deNovoGuiLinkLabelMouseReleased(evt);
             }
         });
 
         recalibrateForDenovoCheck.setSelected(true);
         recalibrateForDenovoCheck.setText("recalibrate spectra (beta)");
+        recalibrateForDenovoCheck.setIconTextGap(10);
         recalibrateForDenovoCheck.setOpaque(false);
 
-        javax.swing.GroupLayout progenesisPanel1Layout = new javax.swing.GroupLayout(progenesisPanel1);
-        progenesisPanel1.setLayout(progenesisPanel1Layout);
-        progenesisPanel1Layout.setHorizontalGroup(
-            progenesisPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(progenesisPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout deNovoSearchPanelLayout = new javax.swing.GroupLayout(deNovoSearchPanel);
+        deNovoSearchPanel.setLayout(deNovoSearchPanelLayout);
+        deNovoSearchPanelLayout.setHorizontalGroup(
+            deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(deNovoSearchPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(exportToProgenesisPart1Label1)
+                .addComponent(exportToPepNovoPart1Label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exportToProgenesisLinkLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(exportToPepNovoLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exportToProgenesisHelpLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
                 .addComponent(recalibrateForDenovoCheck)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(exportPepnovoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        progenesisPanel1Layout.setVerticalGroup(
-            progenesisPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(progenesisPanel1Layout.createSequentialGroup()
+        deNovoSearchPanelLayout.setVerticalGroup(
+            deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(deNovoSearchPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(progenesisPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportToProgenesisPart1Label1)
+                .addGroup(deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportToPepNovoPart1Label)
                     .addComponent(exportPepnovoButton)
-                    .addComponent(exportToProgenesisLinkLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportToProgenesisHelpLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportToPepNovoLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(recalibrateForDenovoCheck))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -629,7 +630,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(progenesisPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(progenesisPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -643,9 +644,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(11, 11, 11)
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(progenesisPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -658,7 +659,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 672, Short.MAX_VALUE)
         );
 
         pack();
@@ -1526,33 +1527,72 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, ep, "Progenesis Help", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_exportToProgenesisHelpLabelMouseReleased
 
+    /**
+     * Export the data to PepNovo.
+     * 
+     * @param evt 
+     */
     private void exportPepnovoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPepnovoButtonActionPerformed
-        // TODO add your handling code here:
+        //  @TODO: implement me!!
     }//GEN-LAST:event_exportPepnovoButtonActionPerformed
 
-    private void exportToProgenesisLinkLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabel1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exportToProgenesisLinkLabel1MouseClicked
+    /**
+     * Open the PepNovo home page.
+     *
+     * @param evt
+     */
+    private void exportToPepNovoLinkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToPepNovoLinkLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://proteomics.ucsd.edu/Software/PepNovo.html");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportToPepNovoLinkLabelMouseClicked
 
-    private void exportToProgenesisLinkLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabel1MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exportToProgenesisLinkLabel1MouseEntered
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void exportToPepNovoLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToPepNovoLinkLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportToPepNovoLinkLabelMouseEntered
 
-    private void exportToProgenesisLinkLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisLinkLabel1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exportToProgenesisLinkLabel1MouseExited
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void exportToPepNovoLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToPepNovoLinkLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportToPepNovoLinkLabelMouseExited
 
-    private void exportToProgenesisHelpLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabel1MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exportToProgenesisHelpLabel1MouseEntered
+    /**
+     * Change the cursor to a hand cursor.
+     *
+     * @param evt
+     */
+    private void deNovoGuiLinkLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deNovoGuiLinkLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_deNovoGuiLinkLabelMouseEntered
 
-    private void exportToProgenesisHelpLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabel1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exportToProgenesisHelpLabel1MouseExited
+    /**
+     * Change the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void deNovoGuiLinkLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deNovoGuiLinkLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_deNovoGuiLinkLabelMouseExited
 
-    private void exportToProgenesisHelpLabel1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportToProgenesisHelpLabel1MouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_exportToProgenesisHelpLabel1MouseReleased
+    /**
+     * Open the PepNovo home page.
+     *
+     * @param evt
+     */
+    private void deNovoGuiLinkLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deNovoGuiLinkLabelMouseReleased
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://denovogui.googlecode.com");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_deNovoGuiLinkLabelMouseReleased
 
     /**
      * Indicates whether a spectrum is validated according to the user's
@@ -1740,6 +1780,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JLabel deNovoGuiLinkLabel;
+    private javax.swing.JPanel deNovoSearchPanel;
     private javax.swing.JCheckBox degeneratedCheck;
     private javax.swing.JLabel exportAllIdentifiedProteinAccessionsLabel;
     private javax.swing.JLabel exportAllIdentifiedProteinsAsFastaLabel;
@@ -1751,12 +1793,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportPepnovoButton;
     private javax.swing.JButton exportProgenesisButton;
     private javax.swing.JLabel exportSpectraLabel;
+    private javax.swing.JLabel exportToPepNovoLinkLabel;
+    private javax.swing.JLabel exportToPepNovoPart1Label;
     private javax.swing.JLabel exportToProgenesisHelpLabel;
-    private javax.swing.JLabel exportToProgenesisHelpLabel1;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
-    private javax.swing.JLabel exportToProgenesisLinkLabel1;
     private javax.swing.JLabel exportToProgenesisPart1Label;
-    private javax.swing.JLabel exportToProgenesisPart1Label1;
     private javax.swing.JButton exportUnidentifiedProteinsAccessionNumbersAsCsvButton;
     private javax.swing.JButton exportUnidentifiedProteinsAsFastaButton;
     private javax.swing.JLabel formatLabel;
@@ -1772,7 +1813,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel minRtWindowUnitLabel;
     private javax.swing.JCheckBox miscleavedCheck;
     private javax.swing.JPanel progenesisPanel;
-    private javax.swing.JPanel progenesisPanel1;
     private javax.swing.JLabel progensisWarningLabel;
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JCheckBox recalibrateForDenovoCheck;

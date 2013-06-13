@@ -2816,7 +2816,8 @@ public class PeptideShaker {
     }
     
     /**
-     * Returns the default experiment file
+     * Returns the default experiment file.
+     * 
      * @return the default experiment file
      */
     public static File getDefaultExperimentFile() {

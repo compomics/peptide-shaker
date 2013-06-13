@@ -6,9 +6,7 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.*;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.math.BasicMathFunctions;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
 import java.io.IOException;
@@ -60,31 +58,31 @@ public class RunMzDeviation {
     public static final int mzBinSize = 101;
 
     /**
-     * returns the list of precursor retention time bins.
+     * Returns the list of precursor retention time bins.
      *
-     * @return
+     * @return the list of precursor retention time bins
      */
     public ArrayList<Double> getPrecursorRTList() {
         return precursorRTList;
     }
 
     /**
-     * returns the list for fragment ion m/z bins at a given retention time
-     * point
+     * Returns the list for fragment ion m/z bins at a given retention time
+     * point.
      *
      * @param precursorRT the precursor retention time
-     * @return
+     * @return the list for fragment ion m/z bins
      */
     public ArrayList<Double> getFragmentMZList(double precursorRT) {
         return new ArrayList<Double>(fragmentsRtDeviations.get(precursorRT).keySet());
     }
 
     /**
-     * Returns the precursor m/z deviation slopes at a given retention time
-     * point
+     * Returns the precursor m/z deviation slope at a given retention time
+     * point.
      *
      * @param rtBin the retention time bin
-     * @return
+     * @return the precursor m/z deviation slope
      */
     public Double getSlope(Double rtBin) {
         return precursorSlopes.get(rtBin);
@@ -92,10 +90,10 @@ public class RunMzDeviation {
 
     /**
      * Returns the precursor m/z deviation offset at a given retention time
-     * point
+     * point.
      *
      * @param rtBin the retention time bin
-     * @return
+     * @return the precursor m/z deviation offset
      */
     public Double getOffset(Double rtBin) {
         return precursorOffsets.get(rtBin);
@@ -138,7 +136,7 @@ public class RunMzDeviation {
     }
 
     /**
-     * Returns the fragment error at the given retention time and framgent m/z.
+     * Returns the fragment error at the given retention time and fragment m/z.
      *
      * @param precursorRT the precursor retention time
      * @param fragmentMZ the fragment m/z
@@ -224,6 +222,13 @@ public class RunMzDeviation {
         return correction1 * rtKey1 / (rtKey1 + rtKey2) + correction2 * rtKey2 / (rtKey1 + rtKey2);
     }
 
+    /**
+     * Recalibrate a peak list.
+     * 
+     * @param precursorRT
+     * @param originalPeakList
+     * @return the recalibrated peak list
+     */
     public HashMap<Double, Peak> recalibratePeakList(double precursorRT, HashMap<Double, Peak> originalPeakList) {
         HashMap<Double, Peak> recalibratedPeakList = new HashMap<Double, Peak>(originalPeakList.size());
 
@@ -250,7 +255,8 @@ public class RunMzDeviation {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
+    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, 
+            WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
 
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
         PSParameter psParameter = new PSParameter();

@@ -78,47 +78,47 @@ public class PeptideShakerCLI implements Callable {
      */
     private UserPreferences userPreferences;
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The identification features generator
+     * The identification features generator.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * The identification filter used
+     * The identification filter used.
      */
     private IdFilter idFilter;
     /**
-     * The annotation preferences to use
+     * The annotation preferences to use.
      */
     private AnnotationPreferences annotationPreferences;
     /**
-     * The spectrum counting preferences
+     * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
     /**
-     * The PTM scoring preferences
+     * The PTM scoring preferences.
      */
     private PTMScoringPreferences ptmScoringPreferences;
     /**
-     * The project details
+     * The project details.
      */
     private ProjectDetails projectDetails;
     /**
-     * The search parameters
+     * The search parameters.
      */
     private SearchParameters searchParameters;
     /**
-     * The processing preferences
+     * The processing preferences.
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The metrics stored during processing
+     * The metrics stored during processing.
      */
     private Metrics metrics;
     /**
-     * The experiment object
+     * The experiment object.
      */
     private MsExperiment experiment;
     /**
@@ -130,11 +130,11 @@ public class PeptideShakerCLI implements Callable {
      */
     private int replicateNumber;
     /**
-     * The cache used to store identification objects
+     * The cache used to store identification objects.
      */
     private ObjectsCache objectsCache;
     /**
-     * The gene preferences
+     * The gene preferences.
      */
     private GenePreferences genePreferences;
 
@@ -215,7 +215,7 @@ public class PeptideShakerCLI implements Callable {
             waitingHandler.appendReport("Starting follow-up tasks.", true, true);
             // Recalibrate spectra
             try {
-                CliMethods.recalibrateSpectra(cliInputBean.getFollowUpCLIInputBean(), identification, annotationPreferences, waitingHandler);
+                CLIMethods.recalibrateSpectra(cliInputBean.getFollowUpCLIInputBean(), identification, annotationPreferences, waitingHandler);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating spectra.", true, true);
                 e.printStackTrace();
@@ -373,7 +373,7 @@ public class PeptideShakerCLI implements Callable {
     }
 
     /**
-     * Saves the project
+     * Saves the project.
      */
     private void saveProject() throws IOException, SQLException, FileNotFoundException, ArchiveException {
         File ouptutFile = cliInputBean.getOutput();

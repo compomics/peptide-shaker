@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
@@ -28,7 +24,6 @@ import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.export.RecalibrationExporter;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -42,20 +37,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 /**
- * Command line interface to run follow-up analyses on cps files
+ * Command line interface to run follow-up analysis on cps files.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class FollowUpCLI {
 
     /**
-     * The follow up options
+     * The follow up options.
      */
     private FollowUpCLIInputBean followUpCLIInputBean = null;
     /**
@@ -88,47 +82,47 @@ public class FollowUpCLI {
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
-     * The identification
+     * The identification.
      */
     private Identification identification;
     /**
-     * The identification features generator
+     * The identification features generator.
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator;
     /**
-     * The identification filter used
+     * The identification filter used.
      */
     private IdFilter idFilter;
     /**
-     * The annotation preferences to use
+     * The annotation preferences to use.
      */
     private AnnotationPreferences annotationPreferences;
     /**
-     * The spectrum counting preferences
+     * The spectrum counting preferences.
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
     /**
-     * The PTM scoring preferences
+     * The PTM scoring preferences.
      */
     private PTMScoringPreferences ptmScoringPreferences;
     /**
-     * The project details
+     * The project details.
      */
     private ProjectDetails projectDetails;
     /**
-     * The search parameters
+     * The search parameters.
      */
     private SearchParameters searchParameters;
     /**
-     * The processing preferences
+     * The processing preferences.
      */
     private ProcessingPreferences processingPreferences;
     /**
-     * The metrics stored during processing
+     * The metrics stored during processing.
      */
     private Metrics metrics;
     /**
-     * The gene preferences
+     * The gene preferences.
      */
     private GenePreferences genePreferences;
     /**
@@ -165,14 +159,14 @@ public class FollowUpCLI {
 
         // recalibrate spectra
         try {
-            CliMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+            CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while recalibrating spectra.", true, true);
             e.printStackTrace();
         }
 
         try {
-        closePeptideShaker();
+            closePeptideShaker();
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
@@ -182,11 +176,13 @@ public class FollowUpCLI {
     }
 
     /**
-     * Imports the information needed for the follow-up processing from a cps file
+     * Imports the information needed for the follow-up processing from a cps
+     * file.
+     *
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws Exception 
+     * @throws Exception
      */
     public void loadCpsFile() throws FileNotFoundException, IOException, ClassNotFoundException, Exception {
 
@@ -305,8 +301,7 @@ public class FollowUpCLI {
             }
         }
     }
-    
-    
+
     /**
      * PeptideShaker CLI header message when printing the usage.
      */
@@ -336,7 +331,7 @@ public class FollowUpCLI {
         if (aLine.getOptions().length == 0) {
             return false;
         }
-        
+
 
         if (!aLine.hasOption(FollowUpCLIParams.CPS_FILE.id) || ((String) aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id)).equals("")) {
             System.out.println("\n" + FollowUpCLIParams.CPS_FILE.description + " not specified.\n");
@@ -345,11 +340,11 @@ public class FollowUpCLI {
             String fileTxt = aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id);
             File testFile = new File(fileTxt.trim());
             if (!testFile.exists()) {
-                System.out.println("\n" + FollowUpCLIParams.CPS_FILE.description + " \'" + testFile.getAbsolutePath()+ "\' not found.\n");
+                System.out.println("\n" + FollowUpCLIParams.CPS_FILE.description + " \'" + testFile.getAbsolutePath() + "\' not found.\n");
                 return false;
             }
         }
-        
+
         return true;
     }
 

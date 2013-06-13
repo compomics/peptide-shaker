@@ -1,15 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.cmd;
 
 import org.apache.commons.cli.Options;
 
 /**
- * Enum class specifying the Command Line Parameters for follow up analyses.
+ * Enum class specifying the Command Line Parameters for follow up analysis.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum FollowUpCLIParams {
 
@@ -72,12 +68,10 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, CPS_FILE.id) + CPS_FILE.description + "\n";
 
         output += "\n\nOptional output parameters:\n\n";
-        output +=getOutputOptionsAsString();
-
+        output += getOutputOptionsAsString();
 
         return output;
     }
-    
 
     /**
      * Returns the output options as a string.
@@ -95,5 +89,4 @@ public enum FollowUpCLIParams {
 
         return output;
     }
-    
 }

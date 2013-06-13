@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.Util;
@@ -17,28 +13,33 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 
 /**
- * The Cps file importer extracts the information contained in a cps file
+ * The Cps file importer extracts the information contained in a cps file.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class CpsFileImporter {
 
+    /**
+     * The experiment object.
+     */
     private MsExperiment experiment;
-    
+
+    /**
+     * Constructor.
+     * 
+     * @param cpsFile the cps file
+     * @param waitingHandler the waiting handler
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
     public CpsFileImporter(File cpsFile, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
 
         File matchFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
@@ -71,9 +72,7 @@ public class CpsFileImporter {
         }
 
         try {
-
             TarUtils.extractFile(cpsFile, waitingHandler);
-
         } catch (ArchiveException e) {
             //Most likely an old project
             experimentFile = cpsFile;
@@ -81,17 +80,17 @@ public class CpsFileImporter {
         }
 
         experiment = ExperimentIO.loadExperiment(experimentFile);
-
     }
 
     /**
-     * Returns the experiment settings as imported from the cps file
-     * @return 
+     * Returns the experiment settings as imported from the cps file.
+     *
+     * @return the experiment settings as imported from the cps file
      */
     public PeptideShakerSettings getExperimentSettings() {
-        
+
         PeptideShakerSettings experimentSettings = new PeptideShakerSettings();
-        
+
         if (experiment.getUrParam(experimentSettings) instanceof PSSettings) {
 
             // convert old settings files using utilities version 3.10.68 or older
@@ -118,19 +117,35 @@ public class CpsFileImporter {
         } else {
             experimentSettings = (PeptideShakerSettings) experiment.getUrParam(experimentSettings);
         }
-        
+
         return experimentSettings;
-        
+
     }
-    
+
+    /**
+     * Returns the samples.
+     * 
+     * @return the samples
+     */
     public ArrayList<Sample> getSamples() {
         return new ArrayList(experiment.getSamples().values());
     }
-    
+
+    /**
+     * Returns the replicates for a given sample.
+     * 
+     * @param sample
+     * @return the replicates
+     */
     public ArrayList<Integer> getReplicates(Sample sample) {
         return new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
     }
 
+    /**
+     * Returns the experiment.
+     * 
+     * @return the experiment
+     */
     public MsExperiment getExperiment() {
         return experiment;
     }

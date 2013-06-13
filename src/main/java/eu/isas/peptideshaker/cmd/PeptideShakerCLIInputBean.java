@@ -74,8 +74,6 @@ public class PeptideShakerCLIInputBean {
     /**
      * The minimum confidence required for a protein to be included in the
      * average molecular weight analysis in the Fractions tab.
-     * 
-     * Am I the only one surprised to see this here?
      */
     private Double proteinConfidenceMwPlots = 95.0;
     /**
@@ -134,7 +132,7 @@ public class PeptideShakerCLIInputBean {
      */
     private boolean gui = false;
     /**
-     * The follow up options chosen
+     * The follow up options chosen.
      */
     private FollowUpCLIInputBean followUpCLIInputBean;
 
@@ -297,9 +295,9 @@ public class PeptideShakerCLIInputBean {
         if (aLine.hasOption(PeptideShakerCLIParams.SPECIES.id)) {
             species = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES.id); // @TODO: check that it's a valid species??
         }
-        
+
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
-        
+
     }
 
     /**
@@ -831,7 +829,8 @@ public class PeptideShakerCLIInputBean {
     }
 
     /**
-     * Returns the follow-up options required
+     * Returns the follow-up options required.
+     *
      * @return the follow-up options required
      */
     public FollowUpCLIInputBean getFollowUpCLIInputBean() {

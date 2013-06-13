@@ -30,7 +30,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="backgroundPanel" min="-2" max="-2" attributes="0"/>
+          <Component id="backgroundPanel" pref="672" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -58,7 +58,7 @@
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="progenesisPanel1" alignment="0" max="32767" attributes="1"/>
+                      <Component id="deNovoSearchPanel" alignment="0" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -75,9 +75,9 @@
                   <Component id="unidentifiedProteinsPanel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                   <Component id="progenesisPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="progenesisPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="deNovoSearchPanel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="inclusionListPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -692,11 +692,11 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="progenesisPanel1">
+        <Container class="javax.swing.JPanel" name="deNovoSearchPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="De novo Search (beta)"/>
+                <TitledBorder title="De Novo Search (beta)"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -707,14 +707,14 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisPart1Label1" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportToPepNovoPart1Label" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisLinkLabel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportToPepNovoLinkLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisHelpLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="deNovoGuiLinkLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                       <Component id="recalibrateForDenovoCheck" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="exportPepnovoButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -725,10 +725,10 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="exportToProgenesisPart1Label1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToPepNovoPart1Label" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportPepnovoButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportToProgenesisLinkLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportToProgenesisHelpLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToPepNovoLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="deNovoGuiLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="recalibrateForDenovoCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -739,43 +739,44 @@
           <SubComponents>
             <Component class="javax.swing.JButton" name="exportPepnovoButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export"/>
+                <Property name="text" type="java.lang.String" value="Export as MGF"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPepnovoButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="exportToProgenesisPart1Label1">
+            <Component class="javax.swing.JLabel" name="exportToPepNovoPart1Label">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export training files for"/>
+                <Property name="text" type="java.lang.String" value="Export Training Files for"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="exportToProgenesisLinkLabel1">
+            <Component class="javax.swing.JLabel" name="exportToPepNovoLinkLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://proteomics.ucsd.edu/Software/PepNovo.html\u005c&quot;&gt;Pepnovo&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-                <Property name="toolTipText" type="java.lang.String" value="Open Progenesis LC-MS web page"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://proteomics.ucsd.edu/Software/PepNovo.html\u005c&quot;&gt;PepNovo&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open PepNovo home page"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabel1MouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabel1MouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabel1MouseExited"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseExited"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="exportToProgenesisHelpLabel1">
+            <Component class="javax.swing.JLabel" name="deNovoGuiLinkLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;available via &lt;a href=\u005c&quot;http://denovogui.googlecode.com\u005c&quot;&gt;DenovoGUI&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
               <Events>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabel1MouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabel1MouseExited"/>
-                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabel1MouseReleased"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseExited"/>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseReleased"/>
               </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="recalibrateForDenovoCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="recalibrate spectra (beta)"/>
+                <Property name="iconTextGap" type="int" value="10"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
