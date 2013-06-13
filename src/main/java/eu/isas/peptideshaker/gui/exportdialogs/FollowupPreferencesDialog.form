@@ -150,10 +150,13 @@
             <Component class="javax.swing.JComboBox" name="spectrumValidationCmb">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="3">
+                  <StringArray count="6">
                     <StringItem index="0" value="Non-Validated PSMs / Unidentified Spectra"/>
                     <StringItem index="1" value="Non-Validated Peptides"/>
                     <StringItem index="2" value="Non-Validated Proteins"/>
+                    <StringItem index="3" value="Validated PSMs"/>
+                    <StringItem index="4" value="Validated PSMs of Validated Peptides"/>
+                    <StringItem index="5" value="Validated PSMs of Validated Peptides of Validated Proteins"/>
                   </StringArray>
                 </Property>
               </Properties>
