@@ -16,6 +16,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.export.OutputGenerator;
+import eu.isas.peptideshaker.export.SpectrumExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
@@ -142,7 +143,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         exportSpectraLabel.setText("Export Spectra");
 
-        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs / Unidentified Spectra", "Non-Validated Peptides", "Non-Validated Proteins" }));
+        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs / Unidentified Spectra", "Non-Validated Peptides", "Non-Validated Proteins", "Validated PSMs", "Validated PSMs of Validated Peptides", "Validated PSMs of Validated Peptides of Validated Proteins" }));
 
         exportMgfButton.setText("Export as MGF");
         exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
@@ -672,9 +673,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
-        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".mgf", "(Mascot Generic File) *.mgf", "Select Destination File", false);
+        final File finalOutputFolder = peptideShakerGUI.getUserSelectedFile(".mgf", "(Mascot Generic File) *.mgf", "Select Destination File", false); //@Harald: we would need a folder now but I don't find the correct method
 
-        if (finalOutputFile != null) {
+        if (finalOutputFolder != null) {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -708,35 +709,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         }
                         progressDialog.setMaxProgressValue(total);
 
-                        FileWriter f = new FileWriter(finalOutputFile);
-                        BufferedWriter b = new BufferedWriter(f);
-
-                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-                            for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
-                                String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                                if (!isValidated(spectrumKey)) {
-                                    b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
-                                }
-                                progressDialog.increaseProgressValue();
-
-                                if (progressDialog.isRunCanceled()) {
-                                    break;
-                                }
-                            }
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                        }
-
-                        b.close();
-                        f.close();
+                        SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
+                        spectrumExporter.exportSpectra(finalOutputFolder, progressDialog, spectrumValidationCmb.getSelectedIndex()+1);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFolder + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
