@@ -20,9 +20,9 @@ public enum PeptideShakerCLIParams {
     SPECTRUM_FILES("spectrum_files", "Spectrum files (mgf format), comma separated list or an entire folder.", true),
     IDENTIFICATION_FILES("identification_files", "Identification files (.dat, .omx or .t.xml), comma separated list or an entire folder.", true),
     PEPTIDESHAKER_OUTPUT("out", "PeptideShaker output file. Note: if file exists it will be overwritten.", true),
-    PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms).", false),
-    PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented.)", false),
-    PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented.)", false),
+    PEPTIDESHAKER_TXT_1("out_txt_1", "Output folder for text summary - format 1 (three files: proteins, peptides and psms, soon deprecated).", false),
+    PEPTIDESHAKER_TXT_2("out_txt_2", "Output folder for text summary - format 2 (one file: proteins and peptides). (Not yet implemented and will most likely not be implemented)", false),
+    PEPTIDESHAKER_PRIDE("out_pride", "PeptideShaker PRIDE XML output file. (Not yet implemented))", false),
     PSM_FDR("psm_FDR", "FDR at the PSM level (default 1% FDR: '1').", false),
     PSM_FLR("psm_FLR", "FLR at the PSM level (default 1% FLR: '1').", false),
     PEPTIDE_FDR("peptide_FDR", "FDR at the peptide level (default 1% FDR: '1').", false),
@@ -76,6 +76,7 @@ public enum PeptideShakerCLIParams {
      */
     public static void createOptionsCLI(Options aOptions) {
 
+        // Standard options
         aOptions.addOption(EXPERIMENT.id, true, EXPERIMENT.description);
         aOptions.addOption(SAMPLE.id, true, SAMPLE.description);
         aOptions.addOption(REPLICATE.id, true, REPLICATE.description);
@@ -103,6 +104,9 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(MAX_PRECURSOR_ERROR_TYPE.id, true, MAX_PRECURSOR_ERROR_TYPE.description);
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
         aOptions.addOption(SPECIES.id, true, SPECIES.description);
+        
+        // Follow-up options
+        FollowUpCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -129,11 +133,6 @@ public enum PeptideShakerCLIParams {
         output += "\n\nOptional gene annotation parameter:\n\n";
         output += "-" + String.format(formatter, SPECIES.id) + SPECIES.description + "\n";
 
-        output += "\n\nOptional output parameters:\n\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
-        output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
-
         output += "\n\nOptional processing parameters:\n\n";
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
         output += "-" + String.format(formatter, PEPTIDE_FDR.id) + PEPTIDE_FDR.description + "\n";
@@ -153,6 +152,13 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n\n";
 
+        
+        output += "\n\nOptional output parameters:\n\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
+        output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
+        output += FollowUpCLIParams.getOutputOptionsAsString();
+        
         return output;
     }
 }

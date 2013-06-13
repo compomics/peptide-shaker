@@ -2814,4 +2814,12 @@ public class PeptideShaker {
         }
         return error;
     }
+    
+    /**
+     * Returns the default experiment file
+     * @return the default experiment file
+     */
+    public static File getDefaultExperimentFile() {
+        return new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
+    }
 }
