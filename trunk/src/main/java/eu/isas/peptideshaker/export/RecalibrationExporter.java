@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.identification.Identification;
@@ -20,37 +16,42 @@ import java.util.Date;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class exports recalibrated spectra
+ * This class exports recalibrated spectra.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class RecalibrationExporter {
 
     /**
-     * Boolean indicating whether the exporter shall be used in debug mode
+     * Boolean indicating whether the exporter shall be used in debug mode.
      *
      * The debug mode exports the ion distributions and the titles of the
      * processed spectra
      */
     private static boolean debug = true;
 
-    
     /**
-     * Writes the recalibrated spectra in files named according to getRecalibratedFileName in the given folder.
-     * 
-     * @param recalibratePrecursors boolean indicating whether precursor ions shall be recalibrated
-     * @param recalibrateFragmentIons boolean indicating whether fragment ions shall be recalibrated
+     * Writes the recalibrated spectra in files named according to
+     * getRecalibratedFileName in the given folder.
+     *
+     * @param recalibratePrecursors boolean indicating whether precursor ions
+     * shall be recalibrated
+     * @param recalibrateFragmentIons boolean indicating whether fragment ions
+     * shall be recalibrated
      * @param folder folder where recalibrated files shall be written
      * @param identification identification of the project
      * @param annotationPreferences the spectrum annotation preferences
-     * @param waitingHandler waiting handler displaying progress and used to cancel the process. Can be null. The method does not call RunFinished.
-     * 
+     * @param waitingHandler waiting handler displaying progress and used to
+     * cancel the process. Can be null. The method does not call RunFinished.
+     *
      * @throws IOException
      * @throws MzMLUnmarshallerException
      * @throws SQLException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
-    public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
+    public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder, 
+            Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) 
+            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
@@ -155,7 +156,7 @@ public class RecalibrationExporter {
                     waitingHandler.increaseProgressValue();
                 }
             }
-            
+
             spectrumRecalibrator.clearErrors(fileName);
 
             writer1.close();
