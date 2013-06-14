@@ -1,5 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
+import eu.isas.peptideshaker.export.FastaExport;
+import eu.isas.peptideshaker.export.SpectrumExporter;
 import org.apache.commons.cli.Options;
 
 /**
@@ -13,7 +15,11 @@ public enum FollowUpCLIParams {
     RECALIBRATION_FOLDER("recalibration_folder", "Folder where recalibrated files shall be exported. Note: existing files will be silently overwritten.", false),
     RECALIBRATION_MODE("recalibration_mode", "Type of recalibration. 0: precursor and fragment ions (default), 1: precursor only, 2: fragment ions only.", false),
     SPECTRUM_FOLDER("spectrum_folder", "Folder where to export spectra. Note: existing files will be silently overwritten.", false),
-    PSM_TYPE("psm_type", "When exporting spectra, select a category of PSMs. 1: non-validated PSMs (default), 2: PSMs of non-validated peptides, 3: PSMs of non-validated proteins, 4: validated PSMs, 5: validated PSMs of validated peptides, 6: validated PSMs of validated peptides of validated proteins.", false);
+    PSM_TYPE("psm_type", "When exporting spectra, select a category of PSMs. " + SpectrumExporter.ExportType.getCommandLineOptions(), false),
+    ACCESSIONS_FILE("accessions_file", "File where to export the protein accessions in text format. Note: existing files will be silently overwritten.", false),
+    ACCESSIONS_TYPE("accessions_type", "When exporting accessions, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
+    FASTA_FILE("fasta_file", "File where to export the protein details in fasta format. Note: existing files will be silently overwritten.", false),
+    FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false);
     
     /**
      * Short Id for the CLI parameter.
@@ -55,6 +61,10 @@ public enum FollowUpCLIParams {
         aOptions.addOption(RECALIBRATION_MODE.id, true, RECALIBRATION_MODE.description);
         aOptions.addOption(SPECTRUM_FOLDER.id, true, SPECTRUM_FOLDER.description);
         aOptions.addOption(PSM_TYPE.id, true, PSM_TYPE.description);
+        aOptions.addOption(ACCESSIONS_FILE.id, true, ACCESSIONS_FILE.description);
+        aOptions.addOption(ACCESSIONS_TYPE.id, true, ACCESSIONS_TYPE.description);
+        aOptions.addOption(FASTA_FILE.id, true, FASTA_FILE.description);
+        aOptions.addOption(FASTA_TYPE.id, true, FASTA_TYPE.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -96,6 +106,13 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, SPECTRUM_FOLDER.id) + SPECTRUM_FOLDER.description + "\n";
         output += "-" + String.format(formatter, PSM_TYPE.id) + PSM_TYPE.description + "\n";
         
+        output += "\nAccessions export:\n\n";
+        output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + ACCESSIONS_FILE.description + "\n";
+        output += "-" + String.format(formatter, ACCESSIONS_TYPE.id) + ACCESSIONS_TYPE.description + "\n";
+        
+        output += "\nAccessions export:\n\n";
+        output += "-" + String.format(formatter, FASTA_FILE.id) + FASTA_FILE.description + "\n";
+        output += "-" + String.format(formatter, FASTA_TYPE.id) + FASTA_TYPE.description + "\n";
 
         return output;
     }

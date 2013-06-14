@@ -30,9 +30,11 @@ import com.compomics.util.gui.DummyFrame;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferences;
+import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.Properties;
@@ -54,7 +56,7 @@ import org.apache.commons.compress.archivers.ArchiveException;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class PeptideShakerCLI implements Callable {
+public class PeptideShakerCLI extends CpsParent implements Callable {
 
     /**
      * The Progress messaging handler reports the status throughout all
@@ -73,70 +75,6 @@ public class PeptideShakerCLI implements Callable {
      * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
-    /**
-     * The user preferences.
-     */
-    private UserPreferences userPreferences;
-    /**
-     * The identification.
-     */
-    private Identification identification;
-    /**
-     * The identification features generator.
-     */
-    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
-    /**
-     * The identification filter used.
-     */
-    private IdFilter idFilter;
-    /**
-     * The annotation preferences to use.
-     */
-    private AnnotationPreferences annotationPreferences;
-    /**
-     * The spectrum counting preferences.
-     */
-    private SpectrumCountingPreferences spectrumCountingPreferences;
-    /**
-     * The PTM scoring preferences.
-     */
-    private PTMScoringPreferences ptmScoringPreferences;
-    /**
-     * The project details.
-     */
-    private ProjectDetails projectDetails;
-    /**
-     * The search parameters.
-     */
-    private SearchParameters searchParameters;
-    /**
-     * The processing preferences.
-     */
-    private ProcessingPreferences processingPreferences;
-    /**
-     * The metrics stored during processing.
-     */
-    private Metrics metrics;
-    /**
-     * The experiment object.
-     */
-    private MsExperiment experiment;
-    /**
-     * The investigated sample.
-     */
-    private Sample sample;
-    /**
-     * The replicate number.
-     */
-    private int replicateNumber;
-    /**
-     * The cache used to store identification objects.
-     */
-    private ObjectsCache objectsCache;
-    /**
-     * The gene preferences.
-     */
-    private GenePreferences genePreferences;
 
     /**
      * Construct a new PeptideShakerCLI runnable from a PeptideShakerCLI Bean.
@@ -199,7 +137,11 @@ public class PeptideShakerCLI implements Callable {
 
         // save project
         try {
-            saveProject();
+            cpsFile = cliInputBean.getOutput();
+                waitingHandler.appendReport("Saving results. Please wait...", true, true);
+            saveProject(waitingHandler, true);
+                waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
+                waitingHandler.appendReportEndLine();
         } catch (Exception e) {
             waitingHandler.appendReport("An exception occurred while saving the project.", true, true);
             e.printStackTrace();
@@ -213,16 +155,50 @@ public class PeptideShakerCLI implements Callable {
         FollowUpCLIInputBean followUpCLIInputBean = cliInputBean.getFollowUpCLIInputBean();
         if (followUpCLIInputBean.followUpNeeded()) {
             waitingHandler.appendReport("Starting follow-up tasks.", true, true);
-            // Recalibrate spectra
-            try {
-                CLIMethods.recalibrateSpectra(cliInputBean.getFollowUpCLIInputBean(), identification, annotationPreferences, waitingHandler);
-            } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while recalibrating spectra.", true, true);
-                e.printStackTrace();
+
+            // recalibrate spectra
+            if (followUpCLIInputBean.recalibrationNeeded()) {
+                try {
+                    CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
+                    e.printStackTrace();
+                }
             }
+
+            // export spectra
+            if (followUpCLIInputBean.spectrumExportNeeded()) {
+                try {
+                    CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
+                    e.printStackTrace();
+                }
+            }
+
+            // export protein accessions
+            if (followUpCLIInputBean.accessionExportNeeded()) {
+                try {
+                    CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
+                    e.printStackTrace();
+                }
+            }
+
+            // export protein details
+            if (followUpCLIInputBean.accessionExportNeeded()) {
+                try {
+                    CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
+                    e.printStackTrace();
+                }
+            }
+
         }
 
-        //@TODO: move that to the follow-up or delete
+        //@TODO: move that to the report cli as soon as it exists
         // text summary output - format 1
         if (cliInputBean.getTextFormat1Directory() != null) {
             waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
@@ -373,23 +349,6 @@ public class PeptideShakerCLI implements Callable {
     }
 
     /**
-     * Saves the project.
-     */
-    private void saveProject() throws IOException, SQLException, FileNotFoundException, ArchiveException {
-        File ouptutFile = cliInputBean.getOutput();
-        waitingHandler.appendReport("Saving results. Please wait...", true, true);
-        CpsExporter.saveAs(ouptutFile, waitingHandler, experiment, identification, searchParameters,
-                annotationPreferences, spectrumCountingPreferences, projectDetails, metrics,
-                processingPreferences, identificationFeaturesGenerator.getIdentificationFeaturesCache(),
-                ptmScoringPreferences, genePreferences, objectsCache, true, idFilter);
-        waitingHandler.appendReport("Results saved to " + ouptutFile.getAbsolutePath() + ".", true, true);
-        waitingHandler.appendReportEndLine();
-        loadUserPreferences();
-        userPreferences.addRecentProject(ouptutFile);
-        saveUserPreferences();
-    }
-
-    /**
      * Close the PeptideShaker instance by clearing up factories and cache.
      *
      * @param identification the identification to close
@@ -445,11 +404,7 @@ public class PeptideShakerCLI implements Callable {
         }
     }
 
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
+    @Override
     public String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerCLI.class").getPath(), "PeptideShaker");
     }
@@ -652,53 +607,5 @@ public class PeptideShakerCLI implements Callable {
                 + ", ptmFactory=" + ptmFactory
                 + ", enzymeFactory=" + enzymeFactory
                 + '}';
-    }
-
-    /**
-     * Loads the user preferences.
-     */
-    public void loadUserPreferences() {
-
-        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
-
-        try {
-            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
-            if (!file.exists()) {
-                userPreferences = new UserPreferences();
-                saveUserPreferences();
-            } else {
-                userPreferences = (UserPreferences) SerializationUtils.readObject(file);
-            }
-        } catch (Exception e) {
-            System.err.println("An error occurred while loading " + PeptideShaker.USER_PREFERENCES_FILE + " (see below). User preferences set back to default.");
-            e.printStackTrace();
-            userPreferences = new UserPreferences();
-        }
-    }
-
-    /**
-     * Saves the user preferences.
-     */
-    public void saveUserPreferences() {
-
-        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
-
-        try {
-            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
-            boolean parentExists = true;
-
-            if (!file.getParentFile().exists()) {
-                parentExists = file.getParentFile().mkdir();
-            }
-
-            if (parentExists) {
-                SerializationUtils.writeObject(userPreferences, file);
-            } else {
-                System.out.println("Parent folder does not exist: \'" + file.getParentFile() + "\'. User preferences not saved.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

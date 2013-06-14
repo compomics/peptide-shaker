@@ -13,10 +13,12 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.export.FastaExport;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.export.SpectrumExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -65,6 +67,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         spectrumValidationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         idSelectionCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        proteinExportCmb1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        proteinExportCmb2.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
 
@@ -111,18 +115,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         progensisWarningLabel = new javax.swing.JLabel();
         exportToProgenesisLinkLabel = new javax.swing.JLabel();
         exportToProgenesisHelpLabel = new javax.swing.JLabel();
-        unidentifiedProteinsPanel = new javax.swing.JPanel();
-        exportAllUnidentifiedProteinsAsFastaLabel = new javax.swing.JLabel();
-        exportUnidentifiedProteinsAsFastaButton = new javax.swing.JButton();
-        includeNonValidatedInUnidentifiedFastaCheckBox = new javax.swing.JCheckBox();
-        exportAllUnidentifiedAccessionsLabel = new javax.swing.JLabel();
-        includeNonValidatedInProteinUnidentifiedCsvCheckBox = new javax.swing.JCheckBox();
-        exportUnidentifiedProteinsAccessionNumbersAsCsvButton = new javax.swing.JButton();
         unidentifiedProteinsPanel1 = new javax.swing.JPanel();
         exportAllIdentifiedProteinsAsFastaLabel = new javax.swing.JLabel();
         exportIdentifiedProteinsAsFastaButton = new javax.swing.JButton();
         exportAllIdentifiedProteinAccessionsLabel = new javax.swing.JLabel();
         exportIdentifiedProteinAccessionNumbersAsCsvButton = new javax.swing.JButton();
+        proteinExportCmb1 = new javax.swing.JComboBox();
+        proteinExportCmb2 = new javax.swing.JComboBox();
         deNovoSearchPanel = new javax.swing.JPanel();
         exportPepnovoButton = new javax.swing.JButton();
         exportToPepNovoPart1Label = new javax.swing.JLabel();
@@ -141,7 +140,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         exportSpectraLabel.setText("Export Spectra");
 
-        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs / Unidentified Spectra", "Non-Validated Peptides", "Non-Validated Proteins", "Validated PSMs", "Validated PSMs of Validated Peptides", "Validated PSMs of Validated Peptides of Validated Proteins" }));
+        spectrumValidationCmb.setModel(new DefaultComboBoxModel(SpectrumExporter.ExportType.getPossibilities()));
 
         exportMgfButton.setText("Export as MGF");
         exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
@@ -419,80 +418,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        unidentifiedProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unidentified Proteins"));
-        unidentifiedProteinsPanel.setOpaque(false);
-
-        exportAllUnidentifiedProteinsAsFastaLabel.setText("<html>Export all the <b>unidentified</b> proteins as a FASTA file</html>");
-
-        exportUnidentifiedProteinsAsFastaButton.setText("Export as FASTA");
-        exportUnidentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportUnidentifiedProteinsAsFastaButtonActionPerformed(evt);
-            }
-        });
-
-        includeNonValidatedInUnidentifiedFastaCheckBox.setSelected(true);
-        includeNonValidatedInUnidentifiedFastaCheckBox.setText("Include Non-Validated");
-        includeNonValidatedInUnidentifiedFastaCheckBox.setToolTipText("Include non-validated protein identification");
-        includeNonValidatedInUnidentifiedFastaCheckBox.setIconTextGap(10);
-        includeNonValidatedInUnidentifiedFastaCheckBox.setOpaque(false);
-
-        exportAllUnidentifiedAccessionsLabel.setText("<html>Export all the <b>unidentified</b> proteins accession numbers</html>");
-
-        includeNonValidatedInProteinUnidentifiedCsvCheckBox.setSelected(true);
-        includeNonValidatedInProteinUnidentifiedCsvCheckBox.setText("Include Non-Validated");
-        includeNonValidatedInProteinUnidentifiedCsvCheckBox.setToolTipText("Include non-validated protein identification");
-        includeNonValidatedInProteinUnidentifiedCsvCheckBox.setIconTextGap(10);
-        includeNonValidatedInProteinUnidentifiedCsvCheckBox.setOpaque(false);
-
-        exportUnidentifiedProteinsAccessionNumbersAsCsvButton.setText("Export as CSV");
-        exportUnidentifiedProteinsAccessionNumbersAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout unidentifiedProteinsPanelLayout = new javax.swing.GroupLayout(unidentifiedProteinsPanel);
-        unidentifiedProteinsPanel.setLayout(unidentifiedProteinsPanelLayout);
-        unidentifiedProteinsPanelLayout.setHorizontalGroup(
-            unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
-                        .addComponent(exportAllUnidentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(includeNonValidatedInUnidentifiedFastaCheckBox))
-                    .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
-                        .addComponent(exportAllUnidentifiedAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exportUnidentifiedProteinsAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(exportUnidentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        unidentifiedProteinsPanelLayout.setVerticalGroup(
-            unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportAllUnidentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportUnidentifiedProteinsAsFastaButton)
-                    .addComponent(includeNonValidatedInUnidentifiedFastaCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportAllUnidentifiedAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportUnidentifiedProteinsAccessionNumbersAsCsvButton)
-                    .addComponent(includeNonValidatedInProteinUnidentifiedCsvCheckBox))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        unidentifiedProteinsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Identified Proteins"));
+        unidentifiedProteinsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
         unidentifiedProteinsPanel1.setOpaque(false);
 
-        exportAllIdentifiedProteinsAsFastaLabel.setText("<html>Export all the <b>identified</b> proteins as a FASTA file</html>");
+        exportAllIdentifiedProteinsAsFastaLabel.setText("Export sequences");
 
         exportIdentifiedProteinsAsFastaButton.setText("Export as FASTA");
         exportIdentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
@@ -501,14 +430,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        exportAllIdentifiedProteinAccessionsLabel.setText("<html>Export all the <b>identified</b> proteins accession numbers</html>");
+        exportAllIdentifiedProteinAccessionsLabel.setText("Export accession numbers");
 
-        exportIdentifiedProteinAccessionNumbersAsCsvButton.setText("Export as CSV");
+        exportIdentifiedProteinAccessionNumbersAsCsvButton.setText("Export as TXT");
         exportIdentifiedProteinAccessionNumbersAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed(evt);
             }
         });
+
+        proteinExportCmb1.setModel(new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities()));
+
+        proteinExportCmb2.setModel(new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities()));
 
         javax.swing.GroupLayout unidentifiedProteinsPanel1Layout = new javax.swing.GroupLayout(unidentifiedProteinsPanel1);
         unidentifiedProteinsPanel1.setLayout(unidentifiedProteinsPanel1Layout);
@@ -517,11 +450,17 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
+                        .addComponent(exportAllIdentifiedProteinsAsFastaLabel)
+                        .addGap(82, 82, 82)
+                        .addComponent(proteinExportCmb2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
+                        .addComponent(exportAllIdentifiedProteinAccessionsLabel)
+                        .addGap(33, 33, 33)
+                        .addComponent(proteinExportCmb1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exportIdentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -530,12 +469,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportIdentifiedProteinsAsFastaButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(exportAllIdentifiedProteinAccessionsLabel)
+                    .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton)
+                    .addComponent(proteinExportCmb1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton))
+                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel)
+                    .addComponent(exportIdentifiedProteinsAsFastaButton)
+                    .addComponent(proteinExportCmb2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -621,15 +562,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(spectraPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(unidentifiedProteinsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(progenesisPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(inclusionListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -637,15 +577,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(unidentifiedProteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -658,7 +596,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -707,7 +645,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setMaxProgressValue(total);
 
                         SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, spectrumValidationCmb.getSelectedIndex() + 1);
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()));
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
@@ -998,272 +936,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_exportProgenesisButtonActionPerformed
 
     /**
-     * Export all the unidentified proteins to a FASTA file.
-     *
-     * @param evt
-     */
-    private void exportUnidentifiedProteinsAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedProteinsAsFastaButtonActionPerformed
-
-        // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
-
-        if (selectedFile != null) {
-
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Exporting. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExportThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
-
-                        FileWriter f = new FileWriter(selectedFile);
-                        BufferedWriter b = new BufferedWriter(f);
-
-                        ArrayList<String> accessions = sequenceFactory.getAccessions();
-                        PSParameter probabilities = new PSParameter();
-
-                        for (int i = 0; i < accessions.size(); i++) {
-
-                            Protein tempProtein = sequenceFactory.getProtein(accessions.get(i));
-
-                            if (!tempProtein.isDecoy()) {
-                                if (!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-                                    b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + System.getProperty("line.separator"));
-                                    b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + System.getProperty("line.separator"));
-                                } else if (includeNonValidatedInUnidentifiedFastaCheckBox.isSelected()) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
-
-                                    if (!probabilities.isValidated()) {
-                                        b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + System.getProperty("line.separator"));
-                                        b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + System.getProperty("line.separator"));
-                                    }
-                                }
-                            }
-
-                            progressDialog.increaseProgressValue();
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                        }
-
-                        b.close();
-                        f.close();
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_exportUnidentifiedProteinsAsFastaButtonActionPerformed
-
-    /**
-     * Export all the unidentified protein accession numbers to a tab separated
-     * text file.
-     *
-     * @param evt
-     */
-    private void exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed
-
-        // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
-
-        if (selectedFile != null) {
-
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Exporting. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExportThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
-
-                        FileWriter f = new FileWriter(selectedFile);
-                        BufferedWriter b = new BufferedWriter(f);
-
-                        ArrayList<String> accessions = sequenceFactory.getAccessions();
-                        PSParameter probabilities = new PSParameter();
-
-                        for (int i = 0; i < accessions.size(); i++) {
-
-                            Protein tempProtein = sequenceFactory.getProtein(accessions.get(i));
-
-                            if (!tempProtein.isDecoy()) {
-                                if (!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-                                    b.write(accessions.get(i) + System.getProperty("line.separator"));
-                                } else if (includeNonValidatedInProteinUnidentifiedCsvCheckBox.isSelected()) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
-
-                                    if (!probabilities.isValidated()) {
-                                        b.write(accessions.get(i) + System.getProperty("line.separator"));
-                                    }
-                                }
-                            }
-
-                            progressDialog.increaseProgressValue();
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                        }
-
-                        b.close();
-                        f.close();
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Unidentified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed
-
-    /**
      * Export all the identified proteins to a FASTA file.
      *
      * @param evt
      */
     private void exportIdentifiedProteinsAsFastaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
-
-        // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
-
-        if (selectedFile != null) {
-
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Exporting. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExportThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
-
-                        FileWriter f = new FileWriter(selectedFile);
-                        BufferedWriter b = new BufferedWriter(f);
-
-                        ArrayList<String> accessions = sequenceFactory.getAccessions();
-                        PSParameter probabilities = new PSParameter();
-
-                        for (int i = 0; i < accessions.size(); i++) {
-
-                            Protein tempProtein = sequenceFactory.getProtein(accessions.get(i));
-
-                            if (!tempProtein.isDecoy()) {
-                                if (peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
-
-                                    if (probabilities.isValidated()) {
-                                        b.write(sequenceFactory.getHeader(accessions.get(i)).toString() + System.getProperty("line.separator"));
-                                        b.write(sequenceFactory.getProtein(accessions.get(i)).getSequence() + System.getProperty("line.separator"));
-                                    }
-                                }
-                            }
-
-                            progressDialog.increaseProgressValue();
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                        }
-
-                        b.close();
-                        f.close();
-
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-        }
+        exportFasta(false);
     }//GEN-LAST:event_exportIdentifiedProteinsAsFastaButtonActionPerformed
 
     /**
@@ -1273,87 +951,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
-
-        // get the file to send the output to
-        final File selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
-
-        if (selectedFile != null) {
-
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                    true);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setTitle("Exporting. Please Wait...");
-
-            new Thread(new Runnable() {
-                public void run() {
-
-                    try {
-                        progressDialog.setVisible(true);
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExportThread") {
-                @Override
-                public void run() {
-
-                    try {
-                        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(sequenceFactory.getNTargetSequences());
-
-                        FileWriter f = new FileWriter(selectedFile);
-                        BufferedWriter b = new BufferedWriter(f);
-
-                        ArrayList<String> accessions = sequenceFactory.getAccessions();
-                        PSParameter probabilities = new PSParameter();
-
-                        for (int i = 0; i < accessions.size(); i++) {
-
-                            Protein tempProtein = sequenceFactory.getProtein(accessions.get(i));
-
-                            if (!tempProtein.isDecoy()) {
-                                if (peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(accessions.get(i), probabilities);
-
-                                    if (probabilities.isValidated()) {
-                                        b.write(accessions.get(i) + System.getProperty("line.separator"));
-                                    }
-                                }
-                            }
-
-                            progressDialog.increaseProgressValue();
-
-                            if (progressDialog.isRunCanceled()) {
-                                break;
-                            }
-                        }
-
-                        b.close();
-                        f.close();
-
-
-                        boolean processCancelled = progressDialog.isRunCanceled();
-                        progressDialog.setRunFinished();
-
-                        if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    } catch (Exception e) {
-                        progressDialog.setRunFinished();
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-        }
+        exportFasta(true);
     }//GEN-LAST:event_exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed
 
     /**
@@ -1696,6 +1294,75 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         return true;
     }
 
+    private void exportFasta(boolean accessionsOnly) {
+        // get the file to send the output to
+        final File selectedFile;
+        if (accessionsOnly) {
+            selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Supported formats: text format (.txt)", "Select Destination File", false);
+        }else {
+            selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
+        }
+        final boolean finalAccessionsOnly = accessionsOnly;
+
+        if (selectedFile != null) {
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Exporting. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
+
+                    try {
+
+                        FastaExport.ExportType exportType;
+                        if (finalAccessionsOnly) {
+                            exportType = FastaExport.ExportType.getTypeFromIndex(proteinExportCmb1.getSelectedIndex());
+                        } else {
+                            exportType = FastaExport.ExportType.getTypeFromIndex(proteinExportCmb2.getSelectedIndex());
+                        }
+                        SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                        IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+
+                        progressDialog.setIndeterminate(false);
+                        if (exportType == FastaExport.ExportType.non_validated) {
+                            progressDialog.setMaxProgressValue(sequenceFactory.getAccessions().size());
+                        } else {
+                            progressDialog.setMaxProgressValue(identificationFeaturesGenerator.getNValidatedProteins());
+                        }
+
+                        FastaExport.export(selectedFile, peptideShakerGUI.getIdentification(), identificationFeaturesGenerator, exportType, progressDialog, finalAccessionsOnly);
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }.start();
+        }
+    }
+
     /**
      * Returns a line to be output in an inclusion list according to the user's
      * input.
@@ -1762,8 +1429,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox degeneratedCheck;
     private javax.swing.JLabel exportAllIdentifiedProteinAccessionsLabel;
     private javax.swing.JLabel exportAllIdentifiedProteinsAsFastaLabel;
-    private javax.swing.JLabel exportAllUnidentifiedAccessionsLabel;
-    private javax.swing.JLabel exportAllUnidentifiedProteinsAsFastaLabel;
     private javax.swing.JButton exportIdentifiedProteinAccessionNumbersAsCsvButton;
     private javax.swing.JButton exportIdentifiedProteinsAsFastaButton;
     private javax.swing.JButton exportMgfButton;
@@ -1775,14 +1440,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel exportToProgenesisHelpLabel;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
     private javax.swing.JLabel exportToProgenesisPart1Label;
-    private javax.swing.JButton exportUnidentifiedProteinsAccessionNumbersAsCsvButton;
-    private javax.swing.JButton exportUnidentifiedProteinsAsFastaButton;
     private javax.swing.JLabel formatLabel;
     private javax.swing.JComboBox idSelectionCmb;
     private javax.swing.JLabel ignoredPeptidesLabel;
     private javax.swing.JLabel ignoredProteinsLabel;
-    private javax.swing.JCheckBox includeNonValidatedInProteinUnidentifiedCsvCheckBox;
-    private javax.swing.JCheckBox includeNonValidatedInUnidentifiedFastaCheckBox;
     private javax.swing.JLabel includeValidatedPsmsLabel;
     private javax.swing.JButton inclusionListButton;
     private javax.swing.JPanel inclusionListPanel;
@@ -1791,6 +1452,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox miscleavedCheck;
     private javax.swing.JPanel progenesisPanel;
     private javax.swing.JLabel progensisWarningLabel;
+    private javax.swing.JComboBox proteinExportCmb1;
+    private javax.swing.JComboBox proteinExportCmb2;
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JCheckBox recalibrateForDenovoCheck;
     private javax.swing.JButton recalibrateMgfButton;
@@ -1801,7 +1464,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;
     private javax.swing.JComboBox spectrumValidationCmb;
-    private javax.swing.JPanel unidentifiedProteinsPanel;
     private javax.swing.JPanel unidentifiedProteinsPanel1;
     private javax.swing.JCheckBox unrelatedCheck;
     private javax.swing.JComboBox vendorCmb;

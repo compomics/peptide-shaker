@@ -697,7 +697,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void searchGUISettingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchGUISettingsMenuItemActionPerformed
         try {
             new SearchGuiSetupDialog(peptideShakerGUI, true);
-            peptideShakerGUI.loadUserPreferences();
+            peptideShakerGUI.loadUserPreferences(); //Will the user preferences not be loaded at a later stage anyway?
         } catch (Exception ex) {
             peptideShakerGUI.catchException(ex);
         }

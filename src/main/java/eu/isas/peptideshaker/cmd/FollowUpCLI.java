@@ -25,6 +25,7 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.CpsFileImporter;
+import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -46,7 +47,7 @@ import org.apache.commons.cli.Options;
  *
  * @author Marc Vaudel
  */
-public class FollowUpCLI {
+public class FollowUpCLI extends CpsParent {
 
     /**
      * The follow up options.
@@ -81,54 +82,6 @@ public class FollowUpCLI {
      * The enzyme factory.
      */
     private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
-    /**
-     * The identification.
-     */
-    private Identification identification;
-    /**
-     * The identification features generator.
-     */
-    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
-    /**
-     * The identification filter used.
-     */
-    private IdFilter idFilter;
-    /**
-     * The annotation preferences to use.
-     */
-    private AnnotationPreferences annotationPreferences;
-    /**
-     * The spectrum counting preferences.
-     */
-    private SpectrumCountingPreferences spectrumCountingPreferences;
-    /**
-     * The PTM scoring preferences.
-     */
-    private PTMScoringPreferences ptmScoringPreferences;
-    /**
-     * The project details.
-     */
-    private ProjectDetails projectDetails;
-    /**
-     * The search parameters.
-     */
-    private SearchParameters searchParameters;
-    /**
-     * The processing preferences.
-     */
-    private ProcessingPreferences processingPreferences;
-    /**
-     * The metrics stored during processing.
-     */
-    private Metrics metrics;
-    /**
-     * The gene preferences.
-     */
-    private GenePreferences genePreferences;
-    /**
-     * The user preferences.
-     */
-    private UserPreferences userPreferences;
 
     /**
      * Construct a new FollowUpCLI runnable from a FollowUpCLI Bean. When
@@ -150,20 +103,92 @@ public class FollowUpCLI {
 
         waitingHandler = new WaitingHandlerCLIImpl();
 
+        cpsFile = followUpCLIInputBean.getCpsFile();
+
         try {
-            loadCpsFile();
+            loadCpsFile(waitingHandler);
+        } catch (SQLException e) {
+            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile + ".\n\n"
+                    + "It looks like another instance of PeptideShaker is still connected to the file.\n"
+                    + "Please close all instances of PeptideShaker and try again.", true, true);
+            e.printStackTrace();
         } catch (Exception e) {
+            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile + ".", true, true);
             e.printStackTrace();
             return 1;
         }
 
-        // recalibrate spectra
+        // Load fasta file
         try {
-            CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+            if (!loadFastaFile(waitingHandler)) {
+                waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
+                return 1;
+            }
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occurred while recalibrating spectra.", true, true);
+            waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
+            return 1;
         }
+
+        // Load the spectrum files
+        try {
+            if (!loadSpectrumFiles(waitingHandler)) {
+                if (identification.getSpectrumFiles().size() > 1) {
+                    waitingHandler.appendReport("The spectrum files were not found, please locate them using the GUI.", true, true);
+                } else {
+                    waitingHandler.appendReport("The spectrum file was not found, please locate it using the GUI.", true, true);
+                }
+                return 1;
+            }
+        } catch (Exception e) {
+            waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
+            e.printStackTrace();
+            return 1;
+        }
+
+        loadGeneMappings(waitingHandler);
+
+        // recalibrate spectra
+        if (followUpCLIInputBean.recalibrationNeeded()) {
+            try {
+                CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
+                e.printStackTrace();
+            }
+        }
+
+        // export spectra
+        if (followUpCLIInputBean.spectrumExportNeeded()) {
+            try {
+                CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
+                e.printStackTrace();
+            }
+        }
+
+        // export protein accessions
+        if (followUpCLIInputBean.accessionExportNeeded()) {
+            try {
+                CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
+                e.printStackTrace();
+            }
+        }
+
+        // export protein details
+        if (followUpCLIInputBean.accessionExportNeeded()) {
+            try {
+                CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
+                e.printStackTrace();
+            }
+        }
+
+
 
         try {
             closePeptideShaker();
@@ -171,112 +196,7 @@ public class FollowUpCLI {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
-
         return null;
-    }
-
-    /**
-     * Imports the information needed for the follow-up processing from a cps
-     * file.
-     *
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws Exception
-     */
-    public void loadCpsFile() throws FileNotFoundException, IOException, ClassNotFoundException, Exception {
-
-        CpsFileImporter cpsFileImporter = new CpsFileImporter(followUpCLIInputBean.getCpsFile(), waitingHandler);
-
-        // Get the experiment data
-        MsExperiment experiment = cpsFileImporter.getExperiment();
-        ArrayList<Sample> samples = cpsFileImporter.getSamples();
-        if (samples == null || samples.isEmpty()) {
-            throw new IllegalArgumentException("No sample found for the experiment " + experiment.getReference());
-        }
-        Sample sample = samples.get(0);
-        if (samples.size() > 1) { // pretty unlikely to happen for now
-            waitingHandler.appendReport(samples.size() + " samples found in experiment " + experiment.getReference() + ", sample " + sample.getReference() + " selected by default.", true, true);
-        }
-        ArrayList<Integer> replicates = cpsFileImporter.getReplicates(sample);
-        if (replicates == null || replicates.isEmpty()) {
-            throw new IllegalArgumentException("No replicate found for the sample " + sample.getReference() + " of experiment " + experiment.getReference());
-        }
-        int replicate = replicates.get(0);
-        if (replicates.size() > 1) { // pretty unlikely to happen for now
-            waitingHandler.appendReport(replicates.size() + " replicates found in sample " + sample.getReference() + " of experiment " + experiment.getReference() + ", replicate " + sample.getReference() + " selected by default.", true, true);
-        }
-        ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicate);
-
-        // Get PeptideShaker settings
-        PeptideShakerSettings experimentSettings = cpsFileImporter.getExperimentSettings();
-        idFilter = experimentSettings.getIdFilter();
-        annotationPreferences = experimentSettings.getAnnotationPreferences();
-        spectrumCountingPreferences = experimentSettings.getSpectrumCountingPreferences();
-        ptmScoringPreferences = experimentSettings.getPTMScoringPreferences();
-        projectDetails = experimentSettings.getProjectDetails();
-        searchParameters = experimentSettings.getSearchParameters();
-        processingPreferences = experimentSettings.getProcessingPreferences();
-        metrics = experimentSettings.getMetrics();
-        genePreferences = experimentSettings.getGenePreferences();
-        loadGeneMappings();
-
-        // Get identification details and set up caches
-        identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        identificationFeaturesGenerator = new IdentificationFeaturesGenerator(identification, searchParameters, idFilter, metrics, spectrumCountingPreferences);
-        if (experimentSettings.getIdentificationFeaturesCache() != null) {
-            identificationFeaturesGenerator.setIdentificationFeaturesCache(experimentSettings.getIdentificationFeaturesCache());
-        }
-        ObjectsCache objectsCache = new ObjectsCache();
-        objectsCache.setAutomatedMemoryManagement(true);
-        try {
-            String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
-            identification.establishConnection(dbFolder, false, objectsCache);
-        } catch (Exception e) {
-            waitingHandler.appendReport("An error occured while reading:\n" + followUpCLIInputBean.getCpsFile() + ".\n\n"
-                    + "It looks like another instance of PeptideShaker is still connected to the file.\n"
-                    + "Please close all instances of PeptideShaker and try again.", true, true);
-            throw e;
-        }
-
-        // Load fasta file
-        File providedFastaLocation = experimentSettings.getSearchParameters().getFastaFile();
-        String fileName = providedFastaLocation.getName();
-        File projectFolder = followUpCLIInputBean.getCpsFile().getParentFile();
-        File dataFolder = new File(projectFolder, "data");
-        if (providedFastaLocation.exists()) {
-            sequenceFactory.loadFastaFile(providedFastaLocation);
-        } else if (new File(projectFolder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(projectFolder, fileName));
-            experimentSettings.getSearchParameters().setFastaFile(new File(projectFolder, fileName));
-        } else if (new File(dataFolder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(dataFolder, fileName));
-            experimentSettings.getSearchParameters().setFastaFile(new File(dataFolder, fileName));
-        } else {
-            throw new IllegalArgumentException("Fasta file " + providedFastaLocation.getAbsolutePath() + " not found, please locate the fasta file using the GUI.");
-        }
-
-        // Load spectrum files
-        for (String spectrumFileName : identification.getSpectrumFiles()) {
-            File providedSpectrumLocation = projectDetails.getSpectrumFile(spectrumFileName);
-            // try to locate the spectrum file
-            if (providedSpectrumLocation == null || !providedSpectrumLocation.exists()) {
-                File fileInProjectFolder = new File(projectFolder, spectrumFileName);
-                File fileInDataFolder = new File(dataFolder, spectrumFileName);
-                if (fileInProjectFolder.exists()) {
-                    projectDetails.addSpectrumFile(fileInProjectFolder);
-                } else if (fileInDataFolder.exists()) {
-                    projectDetails.addSpectrumFile(fileInDataFolder);
-                } else {
-                    throw new IllegalArgumentException("Spectrum file " + providedSpectrumLocation.getAbsolutePath() + " not found, please locate the spectrum file using the GUI.");
-                }
-            }
-            File mgfFile = projectDetails.getSpectrumFile(fileName);
-            spectrumFactory.addSpectra(mgfFile, waitingHandler);
-        }
-
-        // Looks like everything is correctly loaded
-        waitingHandler.appendReport(followUpCLIInputBean.getCpsFile().getName() + " loaded successfully.", true, true);
     }
 
     /**
@@ -382,54 +302,7 @@ public class FollowUpCLI {
         }
     }
 
-    /**
-     * Imports the gene mapping.
-     */
-    private void loadGeneMappings() {
-
-        // @TODO: move to GenePreferences?
-
-        try {
-            genePreferences.createDefaultGeneMappingFiles(
-                    new File(getJarFilePath(), "resources/conf/gene_ontology/ensembl_versions"),
-                    new File(getJarFilePath(), "resources/conf/gene_ontology/go_domains"),
-                    new File(getJarFilePath(), "resources/conf/gene_ontology/species"),
-                    new File(getJarFilePath(), "resources/conf/gene_ontology/hsapiens_gene_ensembl_go_mappings"),
-                    new File(getJarFilePath(), "resources/conf/gene_ontology/hsapiens_gene_ensembl_gene_mappings"));
-            genePreferences.loadSpeciesAndGoDomains();
-        } catch (IOException e) {
-            waitingHandler.appendReport("An error occurred while attempting to create the gene preferences.", true, true);
-            e.printStackTrace();
-        }
-
-        if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
-                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
-            try {
-                geneFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
-                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX), null);
-            } catch (Exception e) {
-                waitingHandler.appendReport("Unable to load the gene mapping file.", true, true);
-                e.printStackTrace();
-            }
-        }
-
-        if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
-                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX).exists()) {
-            try {
-                goFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
-                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX), null);
-            } catch (Exception e) {
-                waitingHandler.appendReport("Unable to load the gene ontology mapping file.", true, true);
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
+    @Override
     public String getJarFilePath() {
         return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerCLI.class").getPath(), "PeptideShaker");
     }
@@ -481,53 +354,5 @@ public class FollowUpCLI {
                 + ", ptmFactory=" + ptmFactory
                 + ", enzymeFactory=" + enzymeFactory
                 + '}';
-    }
-
-    /**
-     * Loads the user preferences.
-     */
-    public void loadUserPreferences() {
-
-        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
-
-        try {
-            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
-            if (!file.exists()) {
-                userPreferences = new UserPreferences();
-                saveUserPreferences();
-            } else {
-                userPreferences = (UserPreferences) SerializationUtils.readObject(file);
-            }
-        } catch (Exception e) {
-            System.err.println("An error occurred while loading " + PeptideShaker.USER_PREFERENCES_FILE + " (see below). User preferences set back to default.");
-            e.printStackTrace();
-            userPreferences = new UserPreferences();
-        }
-    }
-
-    /**
-     * Saves the user preferences.
-     */
-    public void saveUserPreferences() {
-
-        // @TODO: this method should be merged with the similar method in the PeptideShakerGUI class!!
-
-        try {
-            File file = new File(PeptideShaker.USER_PREFERENCES_FILE);
-            boolean parentExists = true;
-
-            if (!file.getParentFile().exists()) {
-                parentExists = file.getParentFile().mkdir();
-            }
-
-            if (parentExists) {
-                SerializationUtils.writeObject(userPreferences, file);
-            } else {
-                System.out.println("Parent folder does not exist: \'" + file.getParentFile() + "\'. User preferences not saved.");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
