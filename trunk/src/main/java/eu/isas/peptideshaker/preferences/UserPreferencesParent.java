@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.io.SerializationUtils;
@@ -9,17 +5,17 @@ import eu.isas.peptideshaker.PeptideShaker;
 import java.io.File;
 
 /**
- * Implementing this class will give you access to the saved user preferences
+ * Implementing this class will give you access to the saved user preferences.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public abstract class UserPreferencesParent {
-    
+
     /**
      * The user preferences.
      */
     protected UserPreferences userPreferences;
-    
+
     /**
      * Loads the user preferences.
      */
@@ -63,5 +59,4 @@ public abstract class UserPreferencesParent {
             e.printStackTrace();
         }
     }
-    
 }

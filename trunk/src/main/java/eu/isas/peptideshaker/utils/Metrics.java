@@ -7,13 +7,13 @@ import java.util.HashMap;
 /**
  * This class contains metrics from the dataset for later use.
  *
- * @TODO Merge with the IdentificationFeaturesCache.
- *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
 public class Metrics implements Serializable {
 
+    // @TODO Merge with the IdentificationFeaturesCache.
+    
     /**
      * Serial number for versions compatibility.
      */

@@ -67,7 +67,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * The selected ptms.
+     * The selected PTMs.
      */
     private ArrayList<String> modificationList = new ArrayList<String>();
     /**
@@ -75,17 +75,17 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
      */
     private boolean editable;
     /**
-     * The ptm to pride map.
+     * The PTM to pride map.
      */
     private PtmToPrideMap ptmToPrideMap;
     /**
-     * @TODO: this ought to be a compomics setting
+     * The color for the HTML tags for selected rows.
      */
-    private String selectedRowHtmlTagFontColor;
+    private String selectedRowHtmlTagFontColor; // @TODO: this ought to be a compomics setting
     /**
-     * @TODO: this ought to be a compomics setting
+     * The color for the HTML tags for not selected rows.
      */
-    private String notSelectedRowHtmlTagFontColor;
+    private String notSelectedRowHtmlTagFontColor; //@TODO: this ought to be a compomics setting
     /**
      * Boolean indicating whether the user pushed on cancel.
      */

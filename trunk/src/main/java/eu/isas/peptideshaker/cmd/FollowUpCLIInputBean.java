@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.cmd;
 
-import eu.isas.peptideshaker.export.SpectrumExporter;
 import java.io.File;
 import org.apache.commons.cli.CommandLine;
 
@@ -25,15 +24,16 @@ public class FollowUpCLIInputBean {
      */
     private int recalibrationMode = 0;
     /**
-     * The folder where to export spectra
+     * The folder where to export spectra.
      */
     private File spectrumExportFolder = null;
     /**
-     * the spectrum export type index. see SpectrumExporter.ExportType for details.
+     * the spectrum export type index. see SpectrumExporter.ExportType for
+     * details.
      */
     private int spectrumExportTypeIndex = 0;
     /**
-     * The file where to export protein accessions
+     * The file where to export protein accessions.
      */
     private File accessionsExportFile = null;
     /**
@@ -41,11 +41,12 @@ public class FollowUpCLIInputBean {
      */
     private int accessionsExportTypeIndex = 0;
     /**
-     * The file where to export protein details
+     * The file where to export protein details.
      */
     private File fastaExportFile = null;
     /**
-     * the protein details export type index. see FastaExport.ExportType for details.
+     * the protein details export type index. see FastaExport.ExportType for
+     * details.
      */
     private int fastaExportTypeIndex = 0;
 
@@ -88,7 +89,7 @@ public class FollowUpCLIInputBean {
     /**
      * The cps file selected by the user. Null if not set.
      *
-     * @return
+     * @return cps file selected by the user
      */
     public File getCpsFile() {
         return cpsFile;
@@ -97,7 +98,7 @@ public class FollowUpCLIInputBean {
     /**
      * The folder where to export recalibrated spectra. Null if not set.
      *
-     * @return
+     * @return the folder where to export recalibrated spectra
      */
     public File getRecalibrationFolder() {
         return recalibrationFolder;
@@ -107,7 +108,7 @@ public class FollowUpCLIInputBean {
      * The recalibration mode. 0 by default. See the FollowUpCLIParams for
      * detailed description.
      *
-     * @return
+     * @return the recalibration mode
      */
     public int getRecalibrationMode() {
         return recalibrationMode;
@@ -115,18 +116,18 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the folder where to export the spectrum files. Null if not set.
-     * 
-     * @return 
+     *
+     * @return the folder where to export the spectrum files
      */
     public File getSpectrumExportFolder() {
         return spectrumExportFolder;
     }
 
     /**
-     * Returns the type of export needed for the spectra. 0 by default. See the FollowUpCLIParams for
-     * detailed description.
-     * 
-     * @return 
+     * Returns the type of export needed for the spectra. 0 by default. See the
+     * FollowUpCLIParams for detailed description.
+     *
+     * @return the type of export needed for the spectra
      */
     public int getSpectrumExportTypeIndex() {
         return spectrumExportTypeIndex;
@@ -134,42 +135,42 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the file where to export the accessions. Null if not set.
-     * 
-     * @return 
+     *
+     * @return the file where to export the accessions
      */
     public File getAccessionsExportFile() {
         return accessionsExportFile;
     }
 
     /**
-     * Returns the type of export needed for the accessions. 0 by default. See the FollowUpCLIParams for
-     * detailed description.
-     * 
-     * @return 
+     * Returns the type of export needed for the accessions. 0 by default. See
+     * the FollowUpCLIParams for detailed description.
+     *
+     * @return the type of export needed for the accession
      */
     public int getAccessionsExportTypeIndex() {
         return accessionsExportTypeIndex;
     }
 
     /**
-     * returns the file where to export the protein details. Null if not set.
-     * 
-     * @return 
+     * Returns the file where to export the protein details. Null if not set.
+     *
+     * @return the file where to export the protein details
      */
     public File getFastaExportFile() {
         return fastaExportFile;
     }
 
     /**
-     * Returns the type of export needed for the protein details. 0 by default. See the FollowUpCLIParams for
-     * detailed description.
-     * 
-     * @return 
+     * Returns the type of export needed for the protein details. 0 by default.
+     * See the FollowUpCLIParams for detailed description.
+     *
+     * @return the type of export needed for the protein details
      */
     public int getFastaExportTypeIndex() {
         return fastaExportTypeIndex;
     }
-    
+
     /**
      * Indicates whether follow-up tasks are required.
      *
@@ -181,41 +182,40 @@ public class FollowUpCLIInputBean {
                 || accessionExportNeeded()
                 || fastaExportNeeded();
     }
-    
+
     /**
      * Indicates whether a recalibration is needed.
-     * 
-     * @return 
+     *
+     * @return whether a recalibration is needed
      */
     public boolean recalibrationNeeded() {
-        return recalibrationFolder != null ;
+        return recalibrationFolder != null;
     }
-    
+
     /**
      * Indicates whether a spectrum export is needed.
-     * 
-     * @return 
+     *
+     * @return whether a spectrum export is needed
      */
     public boolean spectrumExportNeeded() {
         return spectrumExportFolder != null;
     }
-    
+
     /**
      * Indicates whether an accession export is needed.
-     * 
-     * @return 
+     *
+     * @return whether an accession export is needed
      */
     public boolean accessionExportNeeded() {
         return accessionsExportFile != null;
     }
-    
+
     /**
-     * Indicates whether a fasta export is needed.
-     * 
-     * @return 
+     * Indicates whether a FASTA export is needed.
+     *
+     * @return whether a FASTA export is needed
      */
     public boolean fastaExportNeeded() {
         return fastaExportFile != null;
     }
-    
 }

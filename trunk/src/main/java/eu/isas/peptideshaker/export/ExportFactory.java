@@ -165,8 +165,6 @@ public class ExportFactory implements Serializable {
      * Writes the desired export in text format. If an argument is not needed,
      * provide null (at your own risks).
      *
-     * @TODO: implement other formats, put sometimes text instead of tables
-     *
      * @param exportScheme the scheme of the export
      * @param destinationFile the destination file
      * @param experiment the experiment corresponding to this project (mandatory
@@ -219,6 +217,8 @@ public class ExportFactory implements Serializable {
             PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, PSMaps psMaps,
             ModificationProfile modificationProfile, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException {
+
+        // @TODO: implement other formats, put sometimes text instead of tables
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(destinationFile));
 
