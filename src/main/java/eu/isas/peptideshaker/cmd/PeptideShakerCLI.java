@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
@@ -22,10 +21,8 @@ import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
-import eu.isas.peptideshaker.export.CpsExporter;
 import com.compomics.util.gui.DummyFrame;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import com.compomics.util.preferences.PTMScoringPreferences;
@@ -33,10 +30,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.preferences.UserPreferences;
-import eu.isas.peptideshaker.preferences.UserPreferencesParent;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -47,7 +41,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Callable;
-import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
  * A Command line interface to run PeptideShaker
@@ -138,10 +131,10 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // save project
         try {
             cpsFile = cliInputBean.getOutput();
-                waitingHandler.appendReport("Saving results. Please wait...", true, true);
+            waitingHandler.appendReport("Saving results. Please wait...", true, true);
             saveProject(waitingHandler, true);
-                waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
-                waitingHandler.appendReportEndLine();
+            waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
+            waitingHandler.appendReportEndLine();
         } catch (Exception e) {
             waitingHandler.appendReport("An exception occurred while saving the project.", true, true);
             e.printStackTrace();
@@ -195,18 +188,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     e.printStackTrace();
                 }
             }
-            
-        // progenesis export
-        if (followUpCLIInputBean.progenesisExportNeeded()) {
-            try {
-                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler);
-                waitingHandler.appendReport("Progenesis export completed.", true, true);
-            } catch (Exception e) {
-                waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
-                e.printStackTrace();
-            }
-        }
 
+            // progenesis export
+            if (followUpCLIInputBean.progenesisExportNeeded()) {
+                try {
+                    CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler);
+                    waitingHandler.appendReport("Progenesis export completed.", true, true);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
+                    e.printStackTrace();
+                }
+            }
         }
 
         //@TODO: move that to the report cli as soon as it exists

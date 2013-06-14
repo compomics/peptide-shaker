@@ -45,21 +45,16 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="inclusionListPanel" max="32767" attributes="3"/>
                       <Component id="deNovoSearchPanel" alignment="0" max="32767" attributes="1"/>
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
-                              <Component id="inclusionListPanel" alignment="0" max="32767" attributes="3"/>
-                              <Component id="proteinsPanel" alignment="0" max="32767" attributes="3"/>
-                              <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
-                          </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
+                      <Component id="proteinsPanel" alignment="0" max="32767" attributes="3"/>
+                      <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -207,33 +202,38 @@
                           <Component id="formatLabel" alignment="0" max="32767" attributes="1"/>
                           <Component id="includeValidatedPsmsLabel" pref="160" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="relatedProteinsCheck" min="-2" pref="169" max="-2" attributes="0"/>
-                                  <Component id="miscleavedCheck" alignment="0" min="-2" pref="169" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="reactiveCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="relatredAndUnrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="rtWindow" min="-2" pref="104" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="minRtWindowUnitLabel" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="relatedProteinsCheck" min="-2" pref="169" max="-2" attributes="0"/>
+                                          <Component id="miscleavedCheck" alignment="0" min="-2" pref="169" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="reactiveCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                          <Component id="relatredAndUnrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="degeneratedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                          <Component id="unrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="degeneratedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="unrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="rtWindow" min="-2" pref="104" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="minRtWindowUnitLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="idSelectionCmb" alignment="0" max="32767" attributes="1"/>
                                   <Component id="vendorCmb" max="32767" attributes="0"/>
-                                  <Component id="idSelectionCmb" alignment="1" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
@@ -248,27 +248,27 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="miscleavedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ignoredPeptidesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="reactiveCheck" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ignoredPeptidesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="relatedProteinsCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ignoredProteinsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="unrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="relatredAndUnrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="minRtWindowLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="rtWindow" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="minRtWindowUnitLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ignoredProteinsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="degeneratedCheck" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="minRtWindowLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="rtWindow" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="minRtWindowUnitLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -417,31 +417,25 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisPart1Label" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportToProgenesisLinkLabel" min="-2" pref="160" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisLinkLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="exportToProgenesisHelpLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="psmSelectionComboBox" max="32767" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="progensisWarningLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="exportProgenesisButton" min="-2" pref="180" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="exportToProgenesisPart1Label" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="psmSelectionComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportProgenesisButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="progensisWarningLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportToProgenesisLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportToProgenesisHelpLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -457,41 +451,27 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProgenesisButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="exportToProgenesisPart1Label">
+            <Component class="javax.swing.JComboBox" name="psmSelectionComboBox">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Spectrum IDs to"/>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="4">
+                    <StringItem index="0" value="Validated PSMs of Validated Peptides of Validated Proteins"/>
+                    <StringItem index="1" value="Validated PSMs of Validated Peptides"/>
+                    <StringItem index="2" value="Validated PSMs"/>
+                    <StringItem index="3" value="Validated PSMs Containing Confidently Localized PTMs"/>
+                  </StringArray>
+                </Property>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="progensisWarningLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;color=&quot;red&quot;&gt;&lt;a href=&quot;&quot;&gt;Warning&lt;/a&gt;&lt;/html&gt;"/>
-                <Property name="toolTipText" type="java.lang.String" value="Progenesis format warning"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progensisWarningLabelMouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progensisWarningLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="progensisWarningLabelMouseExited"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="exportToProgenesisLinkLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://www.nonlinear.com/products/progenesis/lc-ms/overview/\u005c&quot;&gt;Progenesis&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-                <Property name="toolTipText" type="java.lang.String" value="Open Progenesis LC-MS web page"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://www.nonlinear.com/products/progenesis/lc-ms/overview/\u005c&quot;&gt;Progenesis LC-MS&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Click for Progenesis LC-MS export help"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseClicked"/>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisLinkLabelMouseExited"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="exportToProgenesisHelpLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;as &lt;a href=&quot;&quot;&gt;Tab Separated Text&lt;/a&gt;&lt;/html&gt;"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabelMouseExited"/>
-                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToProgenesisHelpLabelMouseReleased"/>
               </Events>
             </Component>
           </SubComponents>
@@ -607,14 +587,14 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="exportToPepNovoPart1Label" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportToPepNovoPart1Label" min="-2" pref="160" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="exportToPepNovoLinkLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="deNovoGuiLinkLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                       <Component id="recalibrateForDenovoCheck" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="91" max="32767" attributes="0"/>
                       <Component id="exportPepnovoButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -627,9 +607,11 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="exportToPepNovoPart1Label" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportPepnovoButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportToPepNovoLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="deNovoGuiLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="recalibrateForDenovoCheck" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                              <Component id="exportToPepNovoLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="deNovoGuiLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -647,19 +629,16 @@
             </Component>
             <Component class="javax.swing.JLabel" name="exportToPepNovoPart1Label">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export Training Files for"/>
+                <Property name="text" type="java.lang.String" value="Export Training Files"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="exportToPepNovoLinkLabel">
+            <Component class="javax.swing.JCheckBox" name="recalibrateForDenovoCheck">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://proteomics.ucsd.edu/Software/PepNovo.html\u005c&quot;&gt;PepNovo&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-                <Property name="toolTipText" type="java.lang.String" value="Open PepNovo home page"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="recalibrate spectra (beta)"/>
+                <Property name="iconTextGap" type="int" value="10"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseClicked"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseExited"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="deNovoGuiLinkLabel">
               <Properties>
@@ -672,13 +651,16 @@
                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseReleased"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="recalibrateForDenovoCheck">
+            <Component class="javax.swing.JLabel" name="exportToPepNovoLinkLabel">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="recalibrate spectra (beta)"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;http://proteomics.ucsd.edu/Software/PepNovo.html\u005c&quot;&gt;PepNovo&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Open PepNovo home page"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseExited"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

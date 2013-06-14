@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.Peptide;
@@ -24,9 +20,9 @@ import java.util.HashMap;
 
 /**
  * This class exports identifications for post-processing with Non-Linear
- * Progenesis
+ * Progenesis.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ProgenesisExport {
 
@@ -36,23 +32,22 @@ public class ProgenesisExport {
     public static final String SEPARATOR = "\t";
 
     /**
-     * Writes a file containing the PSMs in a progenesis compatible format
+     * Writes a file containing the PSMs in a Progenesis compatible format
      *
      * @param destinationFile the destination file
      * @param identification the identification
      * @param exportType the type of export
      * @param waitingHandler waiting handler displaying progress to the user and
      * allowing canceling the process
-     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void writeProgenesisExport(File destinationFile, Identification identification, ExportType exportType, WaitingHandler waitingHandler)
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-
         PSParameter psParameter = new PSParameter();
 
         if (exportType == ExportType.validated_psms_peptides || exportType == ExportType.validated_psms_peptides_proteins) {
@@ -68,11 +63,14 @@ public class ProgenesisExport {
             identification.loadProteinMatchParameters(psParameter, waitingHandler);
         }
 
+        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
+            return;
+        }
+
         FileWriter f = new FileWriter(destinationFile);
         try {
             BufferedWriter writer = new BufferedWriter(f);
             try {
-
                 writer.write("sequence" + SEPARATOR);
                 writer.write("modif" + SEPARATOR);
                 writer.write("score" + SEPARATOR);
@@ -172,19 +170,19 @@ public class ProgenesisExport {
 
     /**
      * Writes the lines corresponding to a PSM in the export file in the
-     * progenesis format
+     * Progenesis format.
      *
      * @param writer the writer
      * @param spectrumKey the key of the PSM to export
      * @param identification the identification
-     *
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         PSParameter psParameter = new PSParameter();
@@ -257,34 +255,35 @@ public class ProgenesisExport {
     }
 
     /**
-     * Enum of the different types of export implemented
+     * Enum of the different types of export implemented.
      */
     public enum ExportType {
 
         /**
          * Exports the spectra of validated PSMs of validated peptides of
-         * validated proteins
+         * validated proteins.
          */
-        validated_psms_peptides_proteins(0, "Spectra of validated PSMs of validated peptides of validated proteins"),
+        validated_psms_peptides_proteins(0, "Spectra of Validated PSMs of Validated Peptides of Validated Proteins"),
         /**
-         * Exports the spectra of validated PSMs of validated peptides
+         * Exports the spectra of validated PSMs of validated peptides.
          */
-        validated_psms_peptides(1, "Spectra of validated PSMs of validated peptides"),
+        validated_psms_peptides(1, "Spectra of Validated PSMs of Validated Peptides"),
         /**
-         * Exports the spectra of validated PSMs
+         * Exports the spectra of validated PSMs.
          */
         validated_psms(2, "Spectra of validated PSMs");
         /**
-         * index for the export type
+         *
+         * Index for the export type.
          */
         public int index;
         /**
-         * Description of the export
+         * Description of the export.
          */
         public String description;
 
         /**
-         * constructor
+         * Constructor.
          *
          * @param index
          */
@@ -294,10 +293,10 @@ public class ProgenesisExport {
         }
 
         /**
-         * Returns the export type corresponding to a given index
+         * Returns the export type corresponding to a given index.
          *
          * @param index the index of interest
-         * @return
+         * @return the export type
          */
         public static ExportType getTypeFromIndex(int index) {
             if (index == validated_psms.index) {
@@ -307,7 +306,7 @@ public class ProgenesisExport {
             } else if (index == validated_psms_peptides_proteins.index) {
                 return validated_psms_peptides_proteins;
             } else {
-                throw new IllegalArgumentException("Fasta export index " + index + "not implemented.");
+                throw new IllegalArgumentException("Fasta export index " + index + " not implemented.");
             }
             //Note: don't forget to add new enums in the following methods
         }
@@ -316,7 +315,7 @@ public class ProgenesisExport {
          * Returns all possibilities descriptions in an array of string. Tip:
          * the position in the array corresponds to the type index.
          *
-         * @return
+         * @return all possibilities descriptions in an array of string
          */
         public static String[] getPossibilities() {
             return new String[]{
@@ -327,9 +326,9 @@ public class ProgenesisExport {
         }
 
         /**
-         * Returns a description of the command line arguments
+         * Returns a description of the command line arguments.
          *
-         * @return
+         * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
             return validated_psms_peptides_proteins.index + ":" + validated_psms_peptides_proteins.description + "."

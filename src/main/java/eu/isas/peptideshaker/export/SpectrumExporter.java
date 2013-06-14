@@ -90,9 +90,9 @@ public class SpectrumExporter {
                     || exportType == ExportType.validated_psms
                     || exportType == ExportType.validated_psms_peptides
                     || exportType == ExportType.validated_psms_peptides_proteins) {
-            if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Exporting Spectra - Loading PSM parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-            }
+                if (waitingHandler != null) {
+                    waitingHandler.setWaitingText("Exporting Spectra - Loading PSM Parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                }
                 identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
             }
 
