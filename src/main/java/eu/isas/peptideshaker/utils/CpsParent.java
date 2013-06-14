@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -33,9 +28,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferencesParent;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import eu.isas.peptideshaker.utils.Metrics;
-import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,9 +36,9 @@ import java.util.ArrayList;
 import org.apache.commons.compress.archivers.ArchiveException;
 
 /**
- * Implementing this abstract class allows interacting with a cps files
+ * Implementing this abstract class allows interacting with a cps files.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public abstract class CpsParent extends UserPreferencesParent {
 
@@ -95,23 +87,23 @@ public abstract class CpsParent extends UserPreferencesParent {
      */
     protected GenePreferences genePreferences = new GenePreferences();
     /**
-     * The MS experiment class
+     * The MS experiment class.
      */
     protected MsExperiment experiment;
     /**
-     * The sample
+     * The sample.
      */
     protected Sample sample;
     /**
-     * The replicate number
+     * The replicate number.
      */
     protected int replicateNumber;
     /**
-     * The proteomic analysis
+     * The proteomic analysis.
      */
     protected ProteomicAnalysis proteomicAnalysis;
     /**
-     * The cache used to store objects
+     * The cache used to store objects.
      */
     protected ObjectsCache objectsCache;
     /**
@@ -123,20 +115,19 @@ public abstract class CpsParent extends UserPreferencesParent {
      */
     protected DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
-     * The currently loaded cps file
+     * The currently loaded cps file.
      */
     protected File cpsFile = null;
 
     /**
      * Loads the information from a cps file
      *
-     * @param cpsFile the cps file
      * @param waitingHandler a waiting handler displaying feedback to the user.
      * Ignored if null
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws Exception
+     * @throws SQLException
      */
     public void loadCpsFile(WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException, SQLException {
 
@@ -167,7 +158,8 @@ public abstract class CpsParent extends UserPreferencesParent {
         replicateNumber = replicates.get(0);
         if (replicates.size() > 1) { // pretty unlikely to happen for now
             if (waitingHandler != null) {
-                waitingHandler.appendReport(replicates.size() + " replicates found in sample " + sample.getReference() + " of experiment " + experiment.getReference() + ", replicate " + sample.getReference() + " selected by default.", true, true);
+                waitingHandler.appendReport(replicates.size() + " replicates found in sample " + sample.getReference()
+                        + " of experiment " + experiment.getReference() + ", replicate " + sample.getReference() + " selected by default.", true, true);
             }
         }
         proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
@@ -226,7 +218,7 @@ public abstract class CpsParent extends UserPreferencesParent {
      *
      * @param waitingHandler waiting handler displaying feedback to the user.
      * can be null.
-     *
+     * @param emptyCache if true the cache will be emptied
      * @throws IOException
      * @throws SQLException
      * @throws FileNotFoundException
@@ -244,11 +236,10 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Loads the fasta file in the sequence factory
+     * Loads the FASTA file in the sequence factory.
      *
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     *
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -260,13 +251,12 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Loads the fasta file in the sequence factory
+     * Loads the FASTA file in the sequence factory
      *
      * @param folder a folder to look into, the user last selected folder for
      * instance, can be null
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     *
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -300,11 +290,10 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Loads the spectra in the spectrum factory
+     * Loads the spectra in the spectrum factory.
      *
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     *
      * @throws FileNotFoundException
      * @throws IOException
      *
@@ -315,13 +304,12 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Loads the spectra in the spectrum factory
+     * Loads the spectra in the spectrum factory.
      *
      * @param folder a folder to look into, the user last selected folder for
      * instance, can be null
      * @param waitingHandler a waiting handler displaying progress to the user.
      * Can be null
-     *
      * @throws FileNotFoundException
      * @throws IOException
      *
@@ -359,11 +347,12 @@ public abstract class CpsParent extends UserPreferencesParent {
     /**
      * Imports the gene mapping.
      *
-     * @TODO: we might want to split this method?
-     *
+     * @param waitingHandler the waiting handler
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadGeneMappings(WaitingHandler waitingHandler) {
+
+        //@TODO: we might want to split this method?
 
         boolean success = true;
         try {
@@ -380,13 +369,12 @@ public abstract class CpsParent extends UserPreferencesParent {
             success = false;
         }
 
-
         if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
-                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
+                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + GenePreferences.GENE_MAPPING_FILE_SUFFIX).exists()) {
             try {
                 GeneFactory geneFactory = GeneFactory.getInstance();
                 geneFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
-                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GENE_MAPPING_FILE_SUFFIX), null);
+                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + GenePreferences.GENE_MAPPING_FILE_SUFFIX), null);
             } catch (Exception e) {
                 waitingHandler.appendReport("Unable to load the gene mapping file.", true, true);
                 e.printStackTrace();
@@ -395,11 +383,11 @@ public abstract class CpsParent extends UserPreferencesParent {
         }
 
         if (genePreferences.getCurrentSpecies() != null && genePreferences.getSpeciesMap() != null && new File(genePreferences.getGeneMappingFolder(),
-                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX).exists()) {
+                genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + GenePreferences.GO_MAPPING_FILE_SUFFIX).exists()) {
             try {
                 GOFactory goFactory = GOFactory.getInstance();
                 goFactory.initialize(new File(genePreferences.getGeneMappingFolder(),
-                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + genePreferences.GO_MAPPING_FILE_SUFFIX), null);
+                        genePreferences.getSpeciesMap().get(genePreferences.getCurrentSpecies()) + GenePreferences.GO_MAPPING_FILE_SUFFIX), null);
             } catch (Exception e) {
                 waitingHandler.appendReport("Unable to load the gene ontology mapping file.", true, true);
                 e.printStackTrace();
@@ -417,148 +405,323 @@ public abstract class CpsParent extends UserPreferencesParent {
      */
     public abstract String getJarFilePath();
 
+    /**
+     * Returns the identification object.
+     *
+     * @return the identification object
+     */
     public Identification getIdentification() {
         return identification;
     }
 
+    /**
+     * Returns the identification features generator object.
+     *
+     * @return the identification features generator object
+     */
     public IdentificationFeaturesGenerator getIdentificationFeaturesGenerator() {
         return identificationFeaturesGenerator;
     }
 
+    /**
+     * Returns the ID filter.
+     *
+     * @return the ID filter
+     */
     public IdFilter getIdFilter() {
         return idFilter;
     }
 
+    /**
+     * Returns the annotation preferences.
+     *
+     * @return the annotation preferences
+     */
     public AnnotationPreferences getAnnotationPreferences() {
         return annotationPreferences;
     }
 
+    /**
+     * Returns the spectrum counting preferences.
+     *
+     * @return the spectrum counting preferences
+     */
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
         return spectrumCountingPreferences;
     }
 
+    /**
+     * Returns the PTM scoring preferences.
+     *
+     * @return the PTM scoring preferences
+     */
     public PTMScoringPreferences getPtmScoringPreferences() {
         return ptmScoringPreferences;
     }
 
+    /**
+     * Returns the project details.
+     *
+     * @return the project details
+     */
     public ProjectDetails getProjectDetails() {
         return projectDetails;
     }
 
+    /**
+     * Returns the search parameters.
+     *
+     * @return the search parameters
+     */
     public SearchParameters getSearchParameters() {
         return searchParameters;
     }
 
+    /**
+     * Returns the processing preferences.
+     *
+     * @return the processing preferences
+     */
     public ProcessingPreferences getProcessingPreferences() {
         return processingPreferences;
     }
 
+    /**
+     * Returns the metrics object.
+     *
+     * @return the metrics object
+     */
     public Metrics getMetrics() {
         return metrics;
     }
 
+    /**
+     * Returns the gene preferences.
+     *
+     * @return the gene preferences
+     */
     public GenePreferences getGenePreferences() {
         return genePreferences;
     }
 
+    /**
+     * Returns the experiment object.
+     *
+     * @return the experiment object
+     */
     public MsExperiment getExperiment() {
         return experiment;
     }
 
+    /**
+     * Returns the sample.
+     *
+     * @return the sample
+     */
     public Sample getSample() {
         return sample;
     }
 
+    /**
+     * Returns the replicate number.
+     *
+     * @return the replicate number
+     */
     public int getReplicateNumber() {
         return replicateNumber;
     }
 
+    /**
+     * Returns the proteomics analysis object.
+     *
+     * @return the proteomics analysis object
+     */
     public ProteomicAnalysis getProteomicAnalysis() {
         return proteomicAnalysis;
     }
 
+    /**
+     * Returns the object cache.
+     *
+     * @return the object cache
+     */
     public ObjectsCache getObjectsCache() {
         return objectsCache;
     }
 
+    /**
+     * Returns the filter preferences.
+     *
+     * @return the filter preferences
+     */
     public FilterPreferences getFilterPreferences() {
         return filterPreferences;
     }
 
+    /**
+     * Returns the display preferences.
+     *
+     * @return the display preferences
+     */
     public DisplayPreferences getDisplayPreferences() {
         return displayPreferences;
     }
 
+    /**
+     * Returns the cps file.
+     *
+     * @return the cps file
+     */
     public File getCpsFile() {
         return cpsFile;
     }
 
+    /**
+     * Set the identification feature generator.
+     *
+     * @param identificationFeaturesGenerator
+     */
     public void setIdentificationFeaturesGenerator(IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.identificationFeaturesGenerator = identificationFeaturesGenerator;
     }
 
+    /**
+     * Set the ID filter.
+     *
+     * @param idFilter
+     */
     public void setIdFilter(IdFilter idFilter) {
         this.idFilter = idFilter;
     }
 
+    /**
+     * Set the annotation preferences.
+     *
+     * @param annotationPreferences
+     */
     public void setAnnotationPreferences(AnnotationPreferences annotationPreferences) {
         this.annotationPreferences = annotationPreferences;
     }
 
+    /**
+     * Set the spectrum counting preferences.
+     *
+     * @param spectrumCountingPreferences
+     */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
         this.spectrumCountingPreferences = spectrumCountingPreferences;
     }
 
+    /**
+     * Set the PTM scoring preferences.
+     *
+     * @param ptmScoringPreferences
+     */
     public void setPtmScoringPreferences(PTMScoringPreferences ptmScoringPreferences) {
         this.ptmScoringPreferences = ptmScoringPreferences;
     }
 
+    /**
+     * Set the project details.
+     *
+     * @param projectDetails
+     */
     public void setProjectDetails(ProjectDetails projectDetails) {
         this.projectDetails = projectDetails;
     }
 
+    /**
+     * Set the search parameters.
+     *
+     * @param searchParameters
+     */
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
     }
 
+    /**
+     * Set the processing preferences.
+     *
+     * @param processingPreferences
+     */
     public void setProcessingPreferences(ProcessingPreferences processingPreferences) {
         this.processingPreferences = processingPreferences;
     }
 
+    /**
+     * Set the metrics.
+     *
+     * @param metrics
+     */
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
     }
 
+    /**
+     * Set the gene preferences.
+     *
+     * @param genePreferences
+     */
     public void setGenePreferences(GenePreferences genePreferences) {
         this.genePreferences = genePreferences;
     }
 
+    /**
+     * Set the objects cache.
+     *
+     * @param objectsCache
+     */
     public void setObjectsCache(ObjectsCache objectsCache) {
         this.objectsCache = objectsCache;
     }
 
+    /**
+     * Set the filter preferences.
+     *
+     * @param filterPreferences
+     */
     public void setFilterPreferences(FilterPreferences filterPreferences) {
         this.filterPreferences = filterPreferences;
     }
 
+    /**
+     * Set the display preferences.
+     *
+     * @param displayPreferences
+     */
     public void setDisplayPreferences(DisplayPreferences displayPreferences) {
         this.displayPreferences = displayPreferences;
     }
 
+    /**
+     * Set the cps file.
+     *
+     * @param cpsFile
+     */
     public void setCpsFile(File cpsFile) {
         this.cpsFile = cpsFile;
     }
 
+    /**
+     * Returns the user preferences.
+     *
+     * @return the user preferences
+     */
     public UserPreferences getUserPreferences() {
         return userPreferences;
     }
 
+    /**
+     * Set the identification object.
+     *
+     * @param identification
+     */
     public void setIdentification(Identification identification) {
         this.identification = identification;
     }
 
     /**
-     * Sets the project
+     * Sets the project.
      *
      * @param experiment the experiment
      * @param sample the sample
@@ -573,7 +736,7 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Resets the preferences
+     * Resets the preferences.
      */
     public void clearPreferences() {
         annotationPreferences = new AnnotationPreferences();

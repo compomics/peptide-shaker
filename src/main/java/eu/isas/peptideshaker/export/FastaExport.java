@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -21,86 +16,99 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Export proteins in the fasta format
+ * Export proteins in the FASTA format.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class FastaExport {
 
-    
     /**
-     * Exports the proteins of interest in a text file of the fasta format.
-     * non validated protein mode iterates all proteins in the original fasta file (size in the sequence factory)
-     * validated protein mode iterates only validated proteins (size in the identification features generator)
-     * 
+     * Exports the proteins of interest in a text file of the FASTA format. Non
+     * validated protein mode iterates all proteins in the original FASTA file
+     * (size in the sequence factory). Validated protein mode iterates only
+     * validated proteins (size in the identification features generator).
+     *
      * @param destinationFile the file where to write
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features generator
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      * @param exportType the export type (see enum below)
-     * @param waitingHandler waiting handler used to display progress and cancel the process
-     * @param accessionOnly if true only the accession of the protein will be exported, if false the entire information in Fasta format
-     * 
+     * @param waitingHandler waiting handler used to display progress and cancel
+     * the process
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    public static void exportFasta(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportFasta(File destinationFile, Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler)
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, false);
     }
-    
+
     /**
-     * Exports the accessions proteins of interest in a text file.
-     * non validated protein mode iterates all proteins in the original fasta file (size in the sequence factory)
-     * validated protein mode iterates only validated proteins (size in the identification features generator)
-     * 
+     * Exports the accessions proteins of interest in a text file. Non validated
+     * protein mode iterates all proteins in the original FASTA file (size in
+     * the sequence factory). Validated protein mode iterates only validated
+     * proteins (size in the identification features generator).
+     *
      * @param destinationFile the file where to write
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features generator
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      * @param exportType the export type (see enum below)
-     * @param waitingHandler waiting handler used to display progress and cancel the process
-     * 
+     * @param waitingHandler waiting handler used to display progress and cancel
+     * the process
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    public static void exportAccessions(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void exportAccessions(File destinationFile, Identification identification,
+            IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler)
+            throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         export(destinationFile, identification, identificationFeaturesGenerator, exportType, waitingHandler, true);
     }
-    
-    
+
     /**
-     * Exports the proteins of interest in a text file of the given format.
-     * non validated protein mode iterates all proteins in the original fasta file (size in the sequence factory)
-     * validated protein mode iterates only validated proteins (size in the identification features generator)
-     * 
+     * Exports the proteins of interest in a text file of the given format. Non
+     * validated protein mode iterates all proteins in the original FASTA file
+     * (size in the sequence factory). Validated protein mode iterates only
+     * validated proteins (size in the identification features generator).
+     *
      * @param destinationFile the file where to write
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features generator
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      * @param exportType the export type (see enum below)
-     * @param waitingHandler waiting handler used to display progress and cancel the process
-     * @param accessionOnly if true only the accession of the protein will be exported, if false the entire information in Fasta format
-     * 
+     * @param waitingHandler waiting handler used to display progress and cancel
+     * the process
+     * @param accessionOnly if true only the accession of the protein will be
+     * exported, if false the entire information in FASTA format
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    public static void export(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ExportType exportType, WaitingHandler waitingHandler, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+    public static void export(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
+            ExportType exportType, WaitingHandler waitingHandler, boolean accessionOnly) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-
         FileWriter f = new FileWriter(destinationFile);
-        try {
-            BufferedWriter b = new BufferedWriter(f);
-            try {
 
+        try {
+
+            BufferedWriter b = new BufferedWriter(f);
+
+            try {
                 if (exportType == ExportType.non_validated) {
 
                     PSParameter psParameter = new PSParameter();
                     identification.loadProteinMatchParameters(psParameter, waitingHandler);
-                    
+
                     for (String accession : sequenceFactory.getAccessions()) {
 
                         if (!SequenceFactory.isDecoy(accession)) {
@@ -123,12 +131,12 @@ public class FastaExport {
                             }
 
                         }
-                            if (waitingHandler != null) {
-                                if (waitingHandler.isRunCanceled()) {
-                                    break;
-                                }
-                                waitingHandler.increaseSecondaryProgressValue();
+                        if (waitingHandler != null) {
+                            if (waitingHandler.isRunCanceled()) {
+                                break;
                             }
+                            waitingHandler.increaseSecondaryProgressValue();
+                        }
                     }
                 } else {
 
@@ -152,12 +160,12 @@ public class FastaExport {
                                 exported.add(accession);
                             }
                         }
-                            if (waitingHandler != null) {
-                                if (waitingHandler.isRunCanceled()) {
-                                    break;
-                                }
-                                waitingHandler.increaseSecondaryProgressValue();
+                        if (waitingHandler != null) {
+                            if (waitingHandler.isRunCanceled()) {
+                                break;
                             }
+                            waitingHandler.increaseSecondaryProgressValue();
+                        }
                     }
                 }
             } finally {
@@ -170,13 +178,13 @@ public class FastaExport {
     }
 
     /**
-     * Writes the desired information about a given accession
+     * Writes the desired information about a given accession.
      *
      * @param b the stream where to write
      * @param accession the accession of interest
      * @param sequenceFactory the sequence factory
      * @param accessionOnly indicate whether only the accession shall be written
-     * or the entire protein details in fasta format
+     * or the entire protein details in FASTA format
      *
      * @throws IOException
      * @throws IllegalArgumentException
@@ -184,7 +192,9 @@ public class FastaExport {
      * @throws FileNotFoundException
      * @throws ClassNotFoundException
      */
-    private static void writeAccession(BufferedWriter b, String accession, SequenceFactory sequenceFactory, boolean accessionOnly) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
+    private static void writeAccession(BufferedWriter b, String accession, SequenceFactory sequenceFactory, boolean accessionOnly) 
+            throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
+
         if (accessionOnly) {
             b.write(accession);
             b.newLine();
@@ -197,33 +207,33 @@ public class FastaExport {
     }
 
     /**
-     * Enum of the different types of export implemented
+     * Enum of the different types of export implemented.
      */
     public enum ExportType {
 
         /**
-         * Exports the main accession of validated protein groups
+         * Exports the main accession of validated protein groups.
          */
         validated_main_accession(0, "Main accession of validated protein groups"),
         /**
-         * Exports all accessions of validated protein groups
+         * Exports all accessions of validated protein groups.
          */
         validated_all_accessions(1, "All accessions of validated protein groups"),
         /**
-         * Exports accessions which cannot be mapped to a protein group
+         * Exports accessions which cannot be mapped to a protein group.
          */
         non_validated(2, "Non-validated accessions");
         /**
-         * index for the export type
+         * Index for the export type.
          */
         public int index;
         /**
-         * Description of the export
+         * Description of the export.
          */
         public String description;
 
         /**
-         * constructor
+         * Constructor.
          *
          * @param index
          */
@@ -233,10 +243,10 @@ public class FastaExport {
         }
 
         /**
-         * Returns the export type corresponding to a given index
+         * Returns the export type corresponding to a given index.
          *
          * @param index the index of interest
-         * @return
+         * @return the export type
          */
         public static ExportType getTypeFromIndex(int index) {
             if (index == validated_main_accession.index) {
@@ -254,16 +264,16 @@ public class FastaExport {
          * Returns all possibilities descriptions in an array of string. Tip:
          * the position in the array corresponds to the type index.
          *
-         * @return
+         * @return all possibilities descriptions in an array of string
          */
         public static String[] getPossibilities() {
             return new String[]{validated_main_accession.description, validated_all_accessions.description, non_validated.description};
         }
 
         /**
-         * Returns a description of the command line arguments
+         * Returns a description of the command line arguments.
          *
-         * @return
+         * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
             return validated_main_accession.index + ":" + validated_main_accession.description + " (default), "

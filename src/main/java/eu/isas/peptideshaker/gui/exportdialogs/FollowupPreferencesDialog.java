@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -115,7 +114,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         progensisWarningLabel = new javax.swing.JLabel();
         exportToProgenesisLinkLabel = new javax.swing.JLabel();
         exportToProgenesisHelpLabel = new javax.swing.JLabel();
-        unidentifiedProteinsPanel1 = new javax.swing.JPanel();
+        proteinsPanel = new javax.swing.JPanel();
         exportAllIdentifiedProteinsAsFastaLabel = new javax.swing.JLabel();
         exportIdentifiedProteinsAsFastaButton = new javax.swing.JButton();
         exportAllIdentifiedProteinAccessionsLabel = new javax.swing.JLabel();
@@ -167,9 +166,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(exportSpectraLabel)
-                    .addComponent(recalibrateSpectraLabel))
-                .addGap(31, 31, 31)
+                    .addComponent(exportSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(recalibrateSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(spectraPanelLayout.createSequentialGroup()
                         .addComponent(spectrumValidationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -189,7 +188,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(recalibrateSpectraLabel)
                     .addComponent(recalibrateMgfButton)
                     .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportSpectraLabel)
                     .addComponent(exportMgfButton)
@@ -261,15 +260,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(includeValidatedPsmsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(includeValidatedPsmsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(minRtWindowLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ignoredPeptidesLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ignoredProteinsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
-                            .addComponent(formatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(minRtWindowLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                                .addComponent(ignoredPeptidesLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                                .addComponent(ignoredProteinsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE))
+                            .addComponent(formatLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)))
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -293,7 +292,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createSequentialGroup()
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(vendorCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(idSelectionCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(idSelectionCmb, 0, 374, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -418,10 +417,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        unidentifiedProteinsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
-        unidentifiedProteinsPanel1.setOpaque(false);
+        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
+        proteinsPanel.setOpaque(false);
 
-        exportAllIdentifiedProteinsAsFastaLabel.setText("Export sequences");
+        exportAllIdentifiedProteinsAsFastaLabel.setText("Export Sequences");
 
         exportIdentifiedProteinsAsFastaButton.setText("Export as FASTA");
         exportIdentifiedProteinsAsFastaButton.addActionListener(new java.awt.event.ActionListener() {
@@ -430,7 +429,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        exportAllIdentifiedProteinAccessionsLabel.setText("Export accession numbers");
+        exportAllIdentifiedProteinAccessionsLabel.setText("Export Accession Numbers");
 
         exportIdentifiedProteinAccessionNumbersAsCsvButton.setText("Export as TXT");
         exportIdentifiedProteinAccessionNumbersAsCsvButton.addActionListener(new java.awt.event.ActionListener() {
@@ -443,37 +442,35 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         proteinExportCmb2.setModel(new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities()));
 
-        javax.swing.GroupLayout unidentifiedProteinsPanel1Layout = new javax.swing.GroupLayout(unidentifiedProteinsPanel1);
-        unidentifiedProteinsPanel1.setLayout(unidentifiedProteinsPanel1Layout);
-        unidentifiedProteinsPanel1Layout.setHorizontalGroup(
-            unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
+        proteinsPanel.setLayout(proteinsPanelLayout);
+        proteinsPanelLayout.setHorizontalGroup(
+            proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
-                        .addComponent(exportAllIdentifiedProteinsAsFastaLabel)
-                        .addGap(82, 82, 82)
-                        .addComponent(proteinExportCmb2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
-                        .addComponent(exportAllIdentifiedProteinAccessionsLabel)
-                        .addGap(33, 33, 33)
-                        .addComponent(proteinExportCmb1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(exportAllIdentifiedProteinAccessionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportAllIdentifiedProteinsAsFastaLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinExportCmb1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinExportCmb2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(exportIdentifiedProteinsAsFastaButton, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        unidentifiedProteinsPanel1Layout.setVerticalGroup(
-            unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(unidentifiedProteinsPanel1Layout.createSequentialGroup()
+        proteinsPanelLayout.setVerticalGroup(
+            proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportAllIdentifiedProteinAccessionsLabel)
                     .addComponent(exportIdentifiedProteinAccessionNumbersAsCsvButton)
                     .addComponent(proteinExportCmb1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(unidentifiedProteinsPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportAllIdentifiedProteinsAsFastaLabel)
                     .addComponent(exportIdentifiedProteinsAsFastaButton)
                     .addComponent(proteinExportCmb2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -567,7 +564,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(inclusionListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -577,13 +574,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(unidentifiedProteinsPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(proteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -596,7 +593,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -1294,12 +1291,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         return true;
     }
 
+    /**
+     * Export proteins.
+     * 
+     * @param accessionsOnly if true, only accession numbers are exported
+     */
     private void exportFasta(boolean accessionsOnly) {
+
         // get the file to send the output to
         final File selectedFile;
         if (accessionsOnly) {
             selectedFile = peptideShakerGUI.getUserSelectedFile(".txt", "Supported formats: text format (.txt)", "Select Destination File", false);
-        }else {
+        } else {
             selectedFile = peptideShakerGUI.getUserSelectedFile(".fasta", "Supported formats: FASTA format (.fasta)", "Select Destination File", false);
         }
         final boolean finalAccessionsOnly = accessionsOnly;
@@ -1328,7 +1331,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-
                         FastaExport.ExportType exportType;
                         if (finalAccessionsOnly) {
                             exportType = FastaExport.ExportType.getTypeFromIndex(proteinExportCmb1.getSelectedIndex());
@@ -1351,7 +1353,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Identified proteins exported to " 
+                                    + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
@@ -1454,6 +1457,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel progensisWarningLabel;
     private javax.swing.JComboBox proteinExportCmb1;
     private javax.swing.JComboBox proteinExportCmb2;
+    private javax.swing.JPanel proteinsPanel;
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JCheckBox recalibrateForDenovoCheck;
     private javax.swing.JButton recalibrateMgfButton;
@@ -1464,7 +1468,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumRecalibrationCmb;
     private javax.swing.JComboBox spectrumValidationCmb;
-    private javax.swing.JPanel unidentifiedProteinsPanel1;
     private javax.swing.JCheckBox unrelatedCheck;
     private javax.swing.JComboBox vendorCmb;
     // End of variables declaration//GEN-END:variables

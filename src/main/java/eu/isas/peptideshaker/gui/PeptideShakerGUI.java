@@ -5307,18 +5307,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the identification filter used when loading the files
+     * Returns the identification filter used when loading the files.
      *
-     * @return
+     * @return the identification filter
      */
     public IdFilter getIdFilter() {
         return cpsBean.getIdFilter();
     }
 
     /**
-     * Sets the identification filter used when loading the files
+     * Sets the identification filter used when loading the files.
      *
-     * @param idFilter
+     * @param idFilter the identification filter to set
      */
     public void setIdFilter(IdFilter idFilter) {
         cpsBean.setIdFilter(idFilter);

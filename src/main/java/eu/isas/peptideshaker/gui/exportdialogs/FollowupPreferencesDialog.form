@@ -30,7 +30,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="backgroundPanel" max="32767" attributes="0"/>
+          <Component id="backgroundPanel" min="-2" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -53,7 +53,7 @@
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
                               <Component id="inclusionListPanel" alignment="0" max="32767" attributes="3"/>
-                              <Component id="unidentifiedProteinsPanel1" alignment="0" max="32767" attributes="3"/>
+                              <Component id="proteinsPanel" alignment="0" max="32767" attributes="3"/>
                               <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -68,13 +68,13 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="spectraPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                  <Component id="unidentifiedProteinsPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="proteinsPanel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="progenesisPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="deNovoSearchPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="inclusionListPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -98,10 +98,10 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="exportSpectraLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="recalibrateSpectraLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportSpectraLabel" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
+                          <Component id="recalibrateSpectraLabel" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="spectrumValidationCmb" max="32767" attributes="0"/>
@@ -127,7 +127,7 @@
                           <Component id="recalibrateMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumRecalibrationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="exportSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -201,17 +201,17 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="includeValidatedPsmsLabel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="includeValidatedPsmsLabel" alignment="0" pref="152" max="32767" attributes="1"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="minRtWindowLabel" alignment="1" max="32767" attributes="1"/>
-                                      <Component id="ignoredPeptidesLabel" alignment="0" max="32767" attributes="1"/>
-                                      <Component id="ignoredProteinsLabel" alignment="0" pref="126" max="32767" attributes="1"/>
+                                      <Component id="minRtWindowLabel" alignment="1" pref="140" max="32767" attributes="1"/>
+                                      <Component id="ignoredPeptidesLabel" alignment="0" pref="140" max="32767" attributes="1"/>
+                                      <Component id="ignoredProteinsLabel" alignment="0" pref="140" max="32767" attributes="1"/>
                                   </Group>
-                                  <Component id="formatLabel" alignment="0" min="-2" pref="116" max="-2" attributes="1"/>
+                                  <Component id="formatLabel" alignment="0" min="-2" pref="140" max="-2" attributes="1"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="12" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -244,7 +244,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="vendorCmb" max="32767" attributes="0"/>
-                                  <Component id="idSelectionCmb" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="idSelectionCmb" alignment="1" pref="374" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
@@ -507,7 +507,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="unidentifiedProteinsPanel1">
+        <Container class="javax.swing.JPanel" name="proteinsPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -523,16 +523,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="exportAllIdentifiedProteinsAsFastaLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
-                              <Component id="proteinExportCmb2" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="exportAllIdentifiedProteinAccessionsLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                              <Component id="proteinExportCmb1" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
+                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="proteinExportCmb1" max="32767" attributes="0"/>
+                          <Component id="proteinExportCmb2" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -552,7 +549,7 @@
                           <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="proteinExportCmb1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -566,7 +563,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="exportAllIdentifiedProteinsAsFastaLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export sequences"/>
+                <Property name="text" type="java.lang.String" value="Export Sequences"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportIdentifiedProteinsAsFastaButton">
@@ -579,7 +576,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="exportAllIdentifiedProteinAccessionsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export accession numbers"/>
+                <Property name="text" type="java.lang.String" value="Export Accession Numbers"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportIdentifiedProteinAccessionNumbersAsCsvButton">
