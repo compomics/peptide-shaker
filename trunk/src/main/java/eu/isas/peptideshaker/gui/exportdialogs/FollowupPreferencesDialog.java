@@ -9,9 +9,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -69,7 +67,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
-        
+
         setVisible(true);
     }
 
@@ -673,9 +671,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
-        final File finalOutputFolder = peptideShakerGUI.getUserSelectedFile(".mgf", "(Mascot Generic File) *.mgf", "Select Destination File", false); //@Harald: we would need a folder now but I don't find the correct method
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
 
-        if (finalOutputFolder != null) {
+        if (selectedFolder != null) {
 
             final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -701,7 +699,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-
                         progressDialog.setIndeterminate(false);
                         int total = 0;
                         for (String mgfFile : spectrumFactory.getMgfFileNames()) {
@@ -710,13 +707,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setMaxProgressValue(total);
 
                         SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(finalOutputFolder, progressDialog, spectrumValidationCmb.getSelectedIndex()+1);
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, spectrumValidationCmb.getSelectedIndex() + 1);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFolder + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
@@ -933,7 +930,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
 
         try {
-            ProgenesisOptionsDialog progenesisOptionsDialog = new ProgenesisOptionsDialog(peptideShakerGUI, peptideShakerGUI.getIdentification(), 
+            ProgenesisOptionsDialog progenesisOptionsDialog = new ProgenesisOptionsDialog(peptideShakerGUI, peptideShakerGUI.getIdentification(),
                     peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getFilterPreferences(), peptideShakerGUI.getSearchParameters());
             final ArrayList<String> psms = progenesisOptionsDialog.getSelectedPsms();
 
@@ -1509,8 +1506,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Export the data to PepNovo.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportPepnovoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPepnovoButtonActionPerformed
         //  @TODO: implement me!!

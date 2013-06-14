@@ -6234,18 +6234,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ClipboardOwn
      * @param ms2 boolean indicating whether ms2 peaks should be recalibrated
      */
     public void recalibrateSpectra(JDialog parentDialog, boolean ms1, boolean ms2) {
-        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Output Folder");
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setMultiSelectionEnabled(false);
-
-        int returnVal = fileChooser.showDialog(this.getParent(), "Save");
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File selectedFolder = fileChooser.getSelectedFile();
-            if (!selectedFolder.isDirectory()) {
-                selectedFolder = selectedFolder.getParentFile();
-            }
+        
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", lastSelectedFolder, "Output Folder", "Select", false);
+        
+        if (selectedFolder != null) {
+            
+            lastSelectedFolder = selectedFolder.getAbsolutePath();
+            
             for (String fileName : spectrumFactory.getMgfFileNames()) {
                 String newName = RecalibrationExporter.getRecalibratedFileName(fileName);
                 File testFile = new File(selectedFolder, newName);

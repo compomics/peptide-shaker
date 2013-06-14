@@ -30,7 +30,6 @@ import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.DummyFrame;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
-import javax.swing.filechooser.FileFilter;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import uk.ac.ebi.pride.jaxb.model.*;
 import uk.ac.ebi.pride.jaxb.xml.PrideXmlReader;
@@ -1021,52 +1020,10 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private void reshakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reshakeButtonActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Output Folder");
-        fileChooser.setMultiSelectionEnabled(false);
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "(Mascot generic files) *.mgf";
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-
-        int returnVal = fileChooser.showSaveDialog(this);
-        File selectedFolder = null;
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            selectedFolder = fileChooser.getSelectedFile();
-
-            if (!selectedFolder.exists()) {
-                int value = JOptionPane.showConfirmDialog(this, "The folder \'" + selectedFolder.getAbsolutePath() + "\' does not exist.\n"
-                        + "Do you want to create it?", "Create Folder?", JOptionPane.YES_NO_OPTION);
-                if (value == JOptionPane.NO_OPTION) {
-                    return;
-                } else { // yes option selected
-                    boolean success = selectedFolder.mkdir();
-
-                    if (!success) {
-                        JOptionPane.showMessageDialog(this, "Failed to create the folder. Please create it manually and then select it.",
-                                "File Error", JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-                }
-            }
-
-            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
-        }
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
 
         if (selectedFolder != null) {
+            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
             outputFolder = selectedFolder.getAbsolutePath();
             ArrayList<Integer> selectedProjects = new ArrayList<Integer>();
 
@@ -1120,52 +1077,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      * @param evt
      */
     private void localProjectsFolderLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_localProjectsFolderLabelMouseReleased
-
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Local PRIDE Projects Folder");
-        fileChooser.setMultiSelectionEnabled(false);
-
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Folders";
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-
-        int returnVal = fileChooser.showSaveDialog(this);
-        File selectedFolder = null;
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            selectedFolder = fileChooser.getSelectedFile();
-
-            if (!selectedFolder.exists()) {
-                int value = JOptionPane.showConfirmDialog(this, "The folder \'" + selectedFolder.getAbsolutePath() + "\' does not exist.\n"
-                        + "Do you want to create it?", "Create Folder?", JOptionPane.YES_NO_OPTION);
-                if (value == JOptionPane.NO_OPTION) {
-                    return;
-                } else { // yes option selected
-                    boolean success = selectedFolder.mkdir();
-
-                    if (!success) {
-                        JOptionPane.showMessageDialog(this, "Failed to create the folder. Please create it manually and then select it.",
-                                "File Error", JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-                }
-            }
-
-            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
-        }
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Local PRIDE Projects Folder", peptideShakerGUI.getLastSelectedFolder(), "PRIDE XML Folder", "Select", false);
 
         if (selectedFolder != null) {
+
+            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
             // reload the user preferences as these may have been changed by other tools
             try {

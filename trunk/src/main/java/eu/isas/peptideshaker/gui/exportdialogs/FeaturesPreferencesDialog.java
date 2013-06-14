@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
+import com.compomics.util.Util;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.export.ExportFactory;
@@ -12,9 +13,7 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -1423,48 +1422,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportAllActionPerformed
 
-        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Result Folder");
-        fileChooser.setMultiSelectionEnabled(false);
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", peptideShakerGUI.getLastSelectedFolder(), "Text File Folder", "Save", false);
+        
+        if (selectedFolder != null) {
 
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "(Tab separated text file) *.txt";
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-
-        int returnVal = fileChooser.showSaveDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-            File tempDir = fileChooser.getSelectedFile();
-
-            if (!tempDir.exists()) {
-                int value = JOptionPane.showConfirmDialog(this, "The folder \'" + tempDir.getAbsolutePath() + "\' does not exist.\n"
-                        + "Do you want to create it?", "Create Folder?", JOptionPane.YES_NO_OPTION);
-                if (value == JOptionPane.NO_OPTION) {
-                    return;
-                } else { // yes option selected
-                    boolean success = tempDir.mkdir();
-
-                    if (!success) {
-                        JOptionPane.showMessageDialog(this, "Failed to create the folder. Please create it manually and then select it.",
-                                "File Error", JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-                }
-            }
-
-            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
+            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
             final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
@@ -1474,7 +1436,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Exporting. Please Wait...");
-
 
             new Thread(new Runnable() {
                 public void run() {
@@ -1492,7 +1453,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                     TxtExporter exporter = new TxtExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getIdentificationFeaturesGenerator());
-                    boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
+                    boolean exported = exporter.exportResults(progressDialog, selectedFolder);
 
                     boolean processCancelled = progressDialog.isRunCanceled();
                     progressDialog.setRunFinished();
@@ -1500,7 +1461,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     if (!processCancelled) {
 
                         if (exported) {
-                            JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
+                            JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + selectedFolder.getName() + "\'.",
                                     "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See resources/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
