@@ -108,12 +108,13 @@ public class FollowUpCLI extends CpsParent {
         try {
             loadCpsFile(waitingHandler);
         } catch (SQLException e) {
-            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile + ".\n\n"
+            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile.getAbsolutePath() + ".\n\n"
                     + "It looks like another instance of PeptideShaker is still connected to the file.\n"
                     + "Please close all instances of PeptideShaker and try again.", true, true);
             e.printStackTrace();
+            waitingHandler.appendReport(cpsFile.getAbsolutePath() + " successfuly loaded.", true, true);
         } catch (Exception e) {
-            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile + ".", true, true);
+            waitingHandler.appendReport("An error occured while reading:\n" + cpsFile.getAbsolutePath() + ".", true, true);
             e.printStackTrace();
             return 1;
         }
@@ -124,6 +125,7 @@ public class FollowUpCLI extends CpsParent {
                 waitingHandler.appendReport("The fasta file was not found, please locate it using the GUI.", true, true);
                 return 1;
             }
+            waitingHandler.appendReport("Protein database " + searchParameters.getFastaFile().getName() + ".", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the fasta file.", true, true);
             e.printStackTrace();
@@ -140,6 +142,7 @@ public class FollowUpCLI extends CpsParent {
                 }
                 return 1;
             }
+            waitingHandler.appendReport("Spectrum file(s) successfully loaded.", true, true);
         } catch (Exception e) {
             waitingHandler.appendReport("An error occurred while loading the spectrum file(s).", true, true);
             e.printStackTrace();
@@ -152,6 +155,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
                 CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+            waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                 e.printStackTrace();
@@ -162,6 +166,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
                 CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler);
+            waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                 e.printStackTrace();
@@ -172,6 +177,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
                 CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
+            waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
                 e.printStackTrace();
@@ -182,6 +188,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
                 CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
+            waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
                 e.printStackTrace();
@@ -304,7 +311,7 @@ public class FollowUpCLI extends CpsParent {
 
     @Override
     public String getJarFilePath() {
-        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("PeptideShakerCLI.class").getPath(), "PeptideShaker");
+        return CompomicsWrapper.getJarFilePath(this.getClass().getResource("FollowUpCLI.class").getPath(), "PeptideShaker");
     }
 
     /**
@@ -317,7 +324,7 @@ public class FollowUpCLI extends CpsParent {
 
         try {
             Options lOptions = new Options();
-            PeptideShakerCLIParams.createOptionsCLI(lOptions);
+            FollowUpCLIParams.createOptionsCLI(lOptions);
             BasicParser parser = new BasicParser();
             CommandLine line = parser.parse(lOptions, args);
 
@@ -327,15 +334,15 @@ public class FollowUpCLI extends CpsParent {
                 lPrintWriter.print("PeptideShaker follow-up - Command Line" + System.getProperty("line.separator"));
                 lPrintWriter.print("==============================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
-                lPrintWriter.print(PeptideShakerCLIParams.getOptionsAsString());
+                lPrintWriter.print(FollowUpCLIParams.getOptionsAsString());
                 lPrintWriter.flush();
                 lPrintWriter.close();
 
                 System.exit(0);
             } else {
                 FollowUpCLIInputBean lCLIBean = new FollowUpCLIInputBean(line);
-                FollowUpCLI lPeptideShakerCLI = new FollowUpCLI(lCLIBean);
-                lPeptideShakerCLI.call();
+                FollowUpCLI followUpCLI = new FollowUpCLI(lCLIBean);
+                followUpCLI.call();
             }
         } catch (OutOfMemoryError e) {
             System.out.println("<CompomicsError> PeptideShaker used up all the memory and had to be stopped. See the PeptideShaker log for details. </CompomicsError>");

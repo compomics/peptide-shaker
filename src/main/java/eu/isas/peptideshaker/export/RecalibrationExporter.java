@@ -51,7 +51,7 @@ public class RecalibrationExporter {
      */
     public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder, 
             Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) 
-            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
+            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
@@ -143,7 +143,7 @@ public class RecalibrationExporter {
                     break;
                 }
                 if (debug) {
-                    System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
+                    //System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
                 }
 
                 MSnSpectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, recalibratePrecursors, recalibrateFragmentIons);

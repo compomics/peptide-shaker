@@ -78,7 +78,7 @@ public class SpectrumRecalibrator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
+    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, annotationPreferences, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
     }
