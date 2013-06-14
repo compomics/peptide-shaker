@@ -795,14 +795,11 @@ public class PrideExportDialog extends javax.swing.JDialog {
      */
     private void browseOutputFolderJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseOutputFolderJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        
+        File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
 
-        JFileChooser chooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setDialogTitle("Select The Output Folder");
-
-        int returnVal = chooser.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            String path = (chooser.getSelectedFile().getAbsoluteFile().getPath());
+        if (selectedFolder != null) {
+            String path = selectedFolder.getAbsolutePath();
             peptideShakerGUI.setLastSelectedFolder(path);
             outputFolderJTextField.setText(path);
         }
