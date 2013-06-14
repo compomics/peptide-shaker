@@ -256,7 +256,7 @@ public class RunMzDeviation {
      * @throws ClassNotFoundException
      */
     public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, 
-            WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
+            WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
         PSParameter psParameter = new PSParameter();
@@ -265,6 +265,9 @@ public class RunMzDeviation {
         HashMap<Double, HashMap<Double, ArrayList<Double>>> fragmentRawMap = new HashMap<Double, HashMap<Double, ArrayList<Double>>>();
         HashMap<Double, ArrayList<Double>> spectrumFragmentMap;
 
+        identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, waitingHandler);
+        identification.loadSpectrumMatches(spectrumFileName, waitingHandler);
+        
         for (String spectrumName : spectrumFactory.getSpectrumTitles(spectrumFileName)) {
 
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {

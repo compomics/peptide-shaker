@@ -34,7 +34,7 @@ public class CLIMethods {
      * @throws ClassNotFoundException
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
-            AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException {
+            AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
         boolean ms1 = true;
         boolean ms2 = true;
