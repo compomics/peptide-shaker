@@ -195,6 +195,17 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     e.printStackTrace();
                 }
             }
+            
+        // progenesis export
+        if (followUpCLIInputBean.progenesisExportNeeded()) {
+            try {
+                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler);
+                waitingHandler.appendReport("Progenesis export completed.", true, true);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
+                e.printStackTrace();
+            }
+        }
 
         }
 

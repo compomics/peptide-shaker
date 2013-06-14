@@ -49,6 +49,14 @@ public class FollowUpCLIInputBean {
      * details.
      */
     private int fastaExportTypeIndex = 0;
+    /**
+     * The file where to export the progenesis file.
+     */
+    private File progenesisExportFile = null;
+    /**
+     * the type of progenesis export
+     */
+    private int progenesisExportTypeIndex = 0;
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -67,22 +75,28 @@ public class FollowUpCLIInputBean {
             recalibrationMode = new Integer(aLine.getOptionValue(FollowUpCLIParams.RECALIBRATION_MODE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.SPECTRUM_FOLDER.id)) {
-            recalibrationFolder = new File(aLine.getOptionValue(FollowUpCLIParams.SPECTRUM_FOLDER.id));
+            spectrumExportFolder = new File(aLine.getOptionValue(FollowUpCLIParams.SPECTRUM_FOLDER.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.PSM_TYPE.id)) {
-            recalibrationMode = new Integer(aLine.getOptionValue(FollowUpCLIParams.PSM_TYPE.id));
+            spectrumExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.PSM_TYPE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.ACCESSIONS_FILE.id)) {
-            recalibrationFolder = new File(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_FILE.id));
+            accessionsExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_FILE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.ACCESSIONS_TYPE.id)) {
-            recalibrationMode = new Integer(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_TYPE.id));
+            accessionsExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.ACCESSIONS_TYPE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.FASTA_FILE.id)) {
-            recalibrationFolder = new File(aLine.getOptionValue(FollowUpCLIParams.FASTA_FILE.id));
+            fastaExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.FASTA_FILE.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.FASTA_TYPE.id)) {
-            recalibrationMode = new Integer(aLine.getOptionValue(FollowUpCLIParams.FASTA_TYPE.id));
+            fastaExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.FASTA_TYPE.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_FILE.id)) {
+            progenesisExportFile = new File(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_FILE.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.PROGENESIS_TYPE.id)) {
+            progenesisExportTypeIndex = new Integer(aLine.getOptionValue(FollowUpCLIParams.PROGENESIS_TYPE.id));
         }
     }
 
@@ -172,6 +186,25 @@ public class FollowUpCLIInputBean {
     }
 
     /**
+     * Returns the progenesis file. Null if not set.
+     * 
+     * @return the progenesis file
+     */
+    public File getProgenesisExportFile() {
+        return progenesisExportFile;
+    }
+
+    /**
+     * Returns the type of export needed for the progenesis export. 0 by default.
+     * See the FollowUpCLIParams for detailed description.
+     *
+     * @return the type of export needed for the progenesis export
+     */
+    public int getProgenesisExportTypeIndex() {
+        return progenesisExportTypeIndex;
+    }
+
+    /**
      * Indicates whether follow-up tasks are required.
      *
      * @return indicates whether follow-up tasks are required
@@ -180,7 +213,8 @@ public class FollowUpCLIInputBean {
         return recalibrationNeeded()
                 || spectrumExportNeeded()
                 || accessionExportNeeded()
-                || fastaExportNeeded();
+                || fastaExportNeeded()
+                || progenesisExportNeeded();
     }
 
     /**
@@ -217,5 +251,14 @@ public class FollowUpCLIInputBean {
      */
     public boolean fastaExportNeeded() {
         return fastaExportFile != null;
+    }
+    
+    /**
+     * Indicates whether a progenesis export is needed.
+     * 
+     * @return whether a progenesis export is needed
+     */
+    public boolean progenesisExportNeeded() {
+        return progenesisExportFile != null;
     }
 }
