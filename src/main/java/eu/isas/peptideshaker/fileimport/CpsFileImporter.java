@@ -66,9 +66,8 @@ public class CpsFileImporter {
         File experimentFile = PeptideShaker.getDefaultExperimentFile();
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressValue(100);
-            waitingHandler.setMaxSecondaryProgressValue(0);
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.setMaxSecondaryProgressValue(100);
         }
 
         try {
