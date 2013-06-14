@@ -4,6 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.FastaExport;
+import eu.isas.peptideshaker.export.ProgenesisExport;
 import eu.isas.peptideshaker.export.RecalibrationExporter;
 import eu.isas.peptideshaker.export.SpectrumExporter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -100,5 +101,22 @@ public class CLIMethods {
     public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFile = followUpCLIInputBean.getFastaExportFile();
         FastaExport.exportFasta(destinationFile, identification, identificationFeaturesGenerator, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getFastaExportTypeIndex()), waitingHandler);
+    }
+    
+    /**
+     * Exports the identification in a progenesis compatible format.
+     * 
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param waitingHandler a waiting handler to display progress
+     * 
+     * @throws IOException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException 
+     */
+    public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
+        File destinationFile = followUpCLIInputBean.getProgenesisExportFile();
+        ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler);
     }
 }

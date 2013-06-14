@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import eu.isas.peptideshaker.export.FastaExport;
+import eu.isas.peptideshaker.export.ProgenesisExport;
 import eu.isas.peptideshaker.export.SpectrumExporter;
 import org.apache.commons.cli.Options;
 
@@ -19,7 +20,9 @@ public enum FollowUpCLIParams {
     ACCESSIONS_FILE("accessions_file", "File where to export the protein accessions in text format. Note: existing files will be silently overwritten.", false),
     ACCESSIONS_TYPE("accessions_type", "When exporting accessions, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
     FASTA_FILE("fasta_file", "File where to export the protein details in fasta format. Note: existing files will be silently overwritten.", false),
-    FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false);
+    FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
+    PROGENESIS_FILE("progenesis_file", "File where to export the identification results in a Non-Linear Progenesis compatible format. Note: existing files will be silently overwritten.", false),
+    PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), false);
     
     /**
      * Short Id for the CLI parameter.
@@ -65,6 +68,8 @@ public enum FollowUpCLIParams {
         aOptions.addOption(ACCESSIONS_TYPE.id, true, ACCESSIONS_TYPE.description);
         aOptions.addOption(FASTA_FILE.id, true, FASTA_FILE.description);
         aOptions.addOption(FASTA_TYPE.id, true, FASTA_TYPE.description);
+        aOptions.addOption(PROGENESIS_FILE.id, true, PROGENESIS_FILE.description);
+        aOptions.addOption(PROGENESIS_TYPE.id, true, PROGENESIS_TYPE.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -105,6 +110,10 @@ public enum FollowUpCLIParams {
         output += "\nSpectrum export:\n\n";
         output += "-" + String.format(formatter, SPECTRUM_FOLDER.id) + SPECTRUM_FOLDER.description + "\n";
         output += "-" + String.format(formatter, PSM_TYPE.id) + PSM_TYPE.description + "\n";
+        
+        output += "\nProgenesis export:\n\n";
+        output += "-" + String.format(formatter, PROGENESIS_FILE.id) + PROGENESIS_FILE.description + "\n";
+        output += "-" + String.format(formatter, PROGENESIS_TYPE.id) + PROGENESIS_TYPE.description + "\n";
         
         output += "\nAccessions export:\n\n";
         output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + ACCESSIONS_FILE.description + "\n";

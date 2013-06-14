@@ -155,7 +155,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.recalibrationNeeded()) {
             try {
                 CLIMethods.recalibrateSpectra(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
-            waitingHandler.appendReport("Recalibration process completed.", true, true);
+                waitingHandler.appendReport("Recalibration process completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while recalibrating the spectra.", true, true);
                 e.printStackTrace();
@@ -166,7 +166,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.spectrumExportNeeded()) {
             try {
                 CLIMethods.exportSpectra(followUpCLIInputBean, identification, waitingHandler);
-            waitingHandler.appendReport("Spectrum export completed.", true, true);
+                waitingHandler.appendReport("Spectrum export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the spectra.", true, true);
                 e.printStackTrace();
@@ -177,7 +177,7 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
                 CLIMethods.exportAccessions(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
-            waitingHandler.appendReport("Protein accessions export completed.", true, true);
+                waitingHandler.appendReport("Protein accessions export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein accessions.", true, true);
                 e.printStackTrace();
@@ -188,14 +188,23 @@ public class FollowUpCLI extends CpsParent {
         if (followUpCLIInputBean.accessionExportNeeded()) {
             try {
                 CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
-            waitingHandler.appendReport("Protein details export completed.", true, true);
+                waitingHandler.appendReport("Protein details export completed.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("An error occurred while exporting the protein details.", true, true);
                 e.printStackTrace();
             }
         }
 
-
+        // progenesis export
+        if (followUpCLIInputBean.progenesisExportNeeded()) {
+            try {
+                CLIMethods.exportProgenesis(followUpCLIInputBean, identification, waitingHandler);
+                waitingHandler.appendReport("Progenesis export completed.", true, true);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while exporting the Progenesis file.", true, true);
+                e.printStackTrace();
+            }
+        }
 
         try {
             closePeptideShaker();

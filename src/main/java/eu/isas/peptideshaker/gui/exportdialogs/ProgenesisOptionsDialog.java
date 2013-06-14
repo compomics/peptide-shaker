@@ -71,106 +71,19 @@ public class ProgenesisOptionsDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Returns a list of the selected PSMs.
-     *
-     * @return a list of the selected PSMs
-     * @throws SQLException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws InterruptedException
+     * Returns the index selected by the user
+     * @return 
      */
-    public ArrayList<String> getSelectedPsms() throws SQLException, IOException, ClassNotFoundException, InterruptedException {
-        if (!canceled) {
-            ArrayList<String> result = new ArrayList<String>();
-            PSParameter psParameter = new PSParameter();
-            if (psmSelectionComboBox.getSelectedIndex() == 0) {
-                identification.loadProteinMatches(null);
-                identification.loadProteinMatchParameters(psParameter, null);
-                for (String proteinKey : identificationFeaturesGenerator.getProteinKeys(null, filterPreferences)) {
-                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                    if (psParameter.isValidated() && !psParameter.isHidden()) {
-                        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                        identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
-                        identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
-                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                            psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                            if (psParameter.isValidated() && !psParameter.isHidden()) {
-                                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                                identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
-                                for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                                    if (psParameter.isValidated() && !psParameter.isHidden()) {
-                                        result.add(spectrumKey);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (psmSelectionComboBox.getSelectedIndex() == 1) {
-                identification.loadPeptideMatches(null);
-                identification.loadPeptideMatchParameters(psParameter, null);
-                for (String peptideKey : identification.getPeptideIdentification()) {
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                    if (psParameter.isValidated() && !psParameter.isHidden()) {
-                        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                        identification.loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
-                        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                            if (psParameter.isValidated() && !psParameter.isHidden()) {
-                                result.add(spectrumKey);
-                            }
-                        }
-                    }
-                }
-            } else if (psmSelectionComboBox.getSelectedIndex() == 2) {
-                for (String spectrumFile : identification.getSpectrumFiles()) {
-                    identification.loadSpectrumMatchParameters(spectrumFile, psParameter, null);
-                    for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
-                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                        if (psParameter.isValidated() && !psParameter.isHidden()) {
-                            result.add(spectrumKey);
-                        }
-                    }
-                }
-            } else if (psmSelectionComboBox.getSelectedIndex() == 3) {
-                PtmSelectionDialog ptmSelectionDialog = new PtmSelectionDialog(parent, searchParameters.getModificationProfile().getAllNotFixedModifications());
-                ArrayList<String> ptms = ptmSelectionDialog.selectedModifications();
-                if (ptms != null && !ptms.isEmpty()) {
-                    boolean confidentOnly = ptmSelectionDialog.confidentOnly();
-                    for (String spectrumFile : identification.getSpectrumFiles()) {
-                        identification.loadSpectrumMatches(spectrumFile, null);
-                        identification.loadSpectrumMatchParameters(spectrumFile, psParameter, null);
-                        for (String spectrumKey : identification.getSpectrumIdentification(spectrumFile)) {
-                            psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                            if (psParameter.isValidated() && !psParameter.isHidden()) {
-                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                                boolean confident = true;
-                                boolean found = false;
-                                for (ModificationMatch modMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
-                                    if (ptms.contains(modMatch.getTheoreticPtm())) {
-                                        found = true;
-                                        if (!confidentOnly) {
-                                            break;
-                                        } else if (!modMatch.isConfident()) {
-                                            confident = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (found && confident) {
-                                    result.add(spectrumKey);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    return null;
-                }
-            }
-            return result;
-        }
-        return null;
+    public int getUserSelection() {
+        return psmSelectionComboBox.getSelectedIndex();
+    }
+    
+    /**
+     * Indicates whether the used canceled
+     * @return 
+     */
+    public boolean canceled() {
+        return canceled;
     }
 
     /**

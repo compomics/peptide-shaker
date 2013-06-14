@@ -14,6 +14,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.export.FastaExport;
 import eu.isas.peptideshaker.export.OutputGenerator;
+import eu.isas.peptideshaker.export.ProgenesisExport;
 import eu.isas.peptideshaker.export.SpectrumExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -609,8 +610,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             
             peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
-            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
             progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
@@ -633,12 +632,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        progressDialog.setIndeterminate(false);
-                        int total = 0;
-                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-                            total += spectrumFactory.getSpectrumTitles(mgfFile).size();
-                        }
-                        progressDialog.setMaxProgressValue(total);
+                        progressDialog.setIndeterminate(true);
 
                         SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
                         spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()));
@@ -647,12 +641,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
                         e.printStackTrace();
-                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }.start();
@@ -866,14 +860,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         try {
             ProgenesisOptionsDialog progenesisOptionsDialog = new ProgenesisOptionsDialog(peptideShakerGUI, peptideShakerGUI.getIdentification(),
                     peptideShakerGUI.getIdentificationFeaturesGenerator(), peptideShakerGUI.getFilterPreferences(), peptideShakerGUI.getSearchParameters());
-            final ArrayList<String> psms = progenesisOptionsDialog.getSelectedPsms();
+            final int userChoice = progenesisOptionsDialog.getUserSelection();
 
-            if (psms != null) {
+            if (!progenesisOptionsDialog.canceled()) {
                 final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
 
                 if (finalOutputFile != null) {
-
-                    final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
                     progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
@@ -897,29 +889,19 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         public void run() {
 
                             try {
-                                FileWriter f = new FileWriter(finalOutputFile);
-                                BufferedWriter b = new BufferedWriter(f);
-
-                                OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-                                outputGenerator.getPSMsProgenesisExport(progressDialog, psms, b);
-
-                                b.close();
-                                f.close();
+                                
+                                ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog);
 
                                 boolean processCancelled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
 
                                 if (!processCancelled) {
-                                    JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                                 }
 
-                            } catch (IOException e) {
-                                progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                                e.printStackTrace();
                             } catch (Exception e) {
                                 progressDialog.setRunFinished();
-                                JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
                         }

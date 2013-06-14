@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -82,19 +83,16 @@ public class SpectrumExporter {
             String mgfFile = spectrumFactory.getMgfFileNames().get(i);
 
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Exporting Spectra - Loading Spectra. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                waitingHandler.setWaitingText("Exporting Spectra - Loading PSMs. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
             }
-
-            if (exportType == ExportType.non_validated_peptides
-                    || exportType == ExportType.non_validated_proteins
-                    || exportType == ExportType.validated_psms_peptides
-                    || exportType == ExportType.validated_psms_peptides_proteins) {
-                identification.loadSpectrumMatches(mgfFile, waitingHandler);
-            }
+            identification.loadSpectrumMatches(mgfFile, waitingHandler);
             if (exportType == ExportType.non_validated_psms
                     || exportType == ExportType.validated_psms
                     || exportType == ExportType.validated_psms_peptides
                     || exportType == ExportType.validated_psms_peptides_proteins) {
+            if (waitingHandler != null) {
+                waitingHandler.setWaitingText("Exporting Spectra - Loading PSM parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+            }
                 identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
             }
 
@@ -105,10 +103,7 @@ public class SpectrumExporter {
                 try {
                     if (waitingHandler != null) {
                         waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                    }
-
-                    // reset the progress bar
-                    if (waitingHandler != null) {
+                        // reset the progress bar
                         waitingHandler.resetSecondaryProgressBar();
                         waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(mgfFile).size());
                     }
@@ -191,7 +186,15 @@ public class SpectrumExporter {
                 if (identification.matchExists(spectrumKey)) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
                     if (psParameter.isValidated()) {
-                        return exportType == ExportType.validated_psms;
+                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        boolean decoy = false;
+                        for (String accession : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
+                            if (SequenceFactory.isDecoy(accession)) {
+                                decoy = true;
+                                break;
+                            }
+                        }
+                        return !decoy && exportType == ExportType.validated_psms;
                     }
                 }
                 return exportType == ExportType.non_validated_psms;
@@ -200,11 +203,20 @@ public class SpectrumExporter {
                 if (identification.matchExists(spectrumKey)) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
-                    String peptideKey = peptide.getKey();
-                    psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
-                    if (exportType == ExportType.non_validated_peptides || ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
-                        if (psParameter.isValidated()) {
-                            return exportType == ExportType.validated_psms_peptides;
+                    boolean decoy = false;
+                    for (String accession : peptide.getParentProteins()) {
+                        if (SequenceFactory.isDecoy(accession)) {
+                            decoy = true;
+                            break;
+                        }
+                    }
+                    if (!decoy) {
+                        String peptideKey = peptide.getKey();
+                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
+                        if (exportType == ExportType.non_validated_peptides || ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
+                            if (psParameter.isValidated()) {
+                                return exportType == ExportType.validated_psms_peptides;
+                            }
                         }
                     }
                 }
@@ -214,18 +226,27 @@ public class SpectrumExporter {
                 if (identification.matchExists(spectrumKey)) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
-                    String peptideKey = peptide.getKey();
-                    if (exportType == ExportType.non_validated_proteins
-                            || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).isValidated()
-                            && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
-                        ArrayList<String> proteins = peptide.getParentProteins();
-                        for (String accession : proteins) {
-                            ArrayList<String> accessions = identification.getProteinMap().get(accession);
-                            if (accessions != null) {
-                                for (String proteinKey : accessions) {
-                                    psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
-                                    if (psParameter.isValidated()) {
-                                        return exportType == ExportType.validated_psms_peptides_proteins;
+                    boolean decoy = false;
+                    for (String accession : peptide.getParentProteins()) {
+                        if (SequenceFactory.isDecoy(accession)) {
+                            decoy = true;
+                            break;
+                        }
+                    }
+                    if (!decoy) {
+                        String peptideKey = peptide.getKey();
+                        if (exportType == ExportType.non_validated_proteins
+                                || ((PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter)).isValidated()
+                                && ((PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter)).isValidated()) {
+                            ArrayList<String> proteins = peptide.getParentProteins();
+                            for (String accession : proteins) {
+                                ArrayList<String> accessions = identification.getProteinMap().get(accession);
+                                if (accessions != null) {
+                                    for (String proteinKey : accessions) {
+                                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
+                                        if (psParameter.isValidated()) {
+                                            return exportType == ExportType.validated_psms_peptides_proteins;
+                                        }
                                     }
                                 }
                             }
