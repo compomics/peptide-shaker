@@ -214,15 +214,15 @@ public class FastaExport {
         /**
          * Exports the main accession of validated protein groups.
          */
-        validated_main_accession(0, "Main accession of validated protein groups"),
+        validated_main_accession(0, "Main Accession of Validated Protein Groups"),
         /**
          * Exports all accessions of validated protein groups.
          */
-        validated_all_accessions(1, "All accessions of validated protein groups"),
+        validated_all_accessions(1, "All Accessions of Validated Protein Groups"),
         /**
          * Exports accessions which cannot be mapped to a protein group.
          */
-        non_validated(2, "Non-validated accessions");
+        non_validated(2, "Non-Validated Accessions");
         /**
          * Index for the export type.
          */

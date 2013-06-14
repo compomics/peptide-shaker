@@ -210,7 +210,6 @@ public abstract class CpsParent extends UserPreferencesParent {
         loadUserPreferences();
         userPreferences.addRecentProject(cpsFile);
         saveUserPreferences();
-
     }
 
     /**
