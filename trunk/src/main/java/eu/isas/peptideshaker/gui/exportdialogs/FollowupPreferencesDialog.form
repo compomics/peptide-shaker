@@ -30,7 +30,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="backgroundPanel" min="-2" max="-2" attributes="0"/>
+          <Component id="backgroundPanel" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -48,17 +48,16 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
-                              <Component id="unidentifiedProteinsPanel" alignment="0" max="32767" attributes="3"/>
-                              <Component id="unidentifiedProteinsPanel1" alignment="0" max="32767" attributes="3"/>
+                      <Component id="deNovoSearchPanel" alignment="0" max="32767" attributes="1"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
                               <Component id="inclusionListPanel" alignment="0" max="32767" attributes="3"/>
+                              <Component id="unidentifiedProteinsPanel1" alignment="0" max="32767" attributes="3"/>
+                              <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="deNovoSearchPanel" alignment="0" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -70,14 +69,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="spectraPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                  <Component id="unidentifiedProteinsPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="unidentifiedProteinsPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="progenesisPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="deNovoSearchPanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="inclusionListPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -149,15 +146,8 @@
             </Component>
             <Component class="javax.swing.JComboBox" name="spectrumValidationCmb">
               <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="6">
-                    <StringItem index="0" value="Non-Validated PSMs / Unidentified Spectra"/>
-                    <StringItem index="1" value="Non-Validated Peptides"/>
-                    <StringItem index="2" value="Non-Validated Proteins"/>
-                    <StringItem index="3" value="Validated PSMs"/>
-                    <StringItem index="4" value="Validated PSMs of Validated Peptides"/>
-                    <StringItem index="5" value="Validated PSMs of Validated Peptides of Validated Proteins"/>
-                  </StringArray>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new DefaultComboBoxModel(SpectrumExporter.ExportType.getPossibilities())" type="code"/>
                 </Property>
               </Properties>
             </Component>
@@ -517,114 +507,11 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="unidentifiedProteinsPanel">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Unidentified Proteins"/>
-              </Border>
-            </Property>
-            <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
-
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="1">
-                              <Component id="exportAllUnidentifiedProteinsAsFastaLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="includeNonValidatedInUnidentifiedFastaCheckBox" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="exportAllUnidentifiedAccessionsLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="includeNonValidatedInProteinUnidentifiedCsvCheckBox" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="exportUnidentifiedProteinsAccessionNumbersAsCsvButton" pref="180" max="32767" attributes="0"/>
-                          <Component id="exportUnidentifiedProteinsAsFastaButton" pref="180" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="exportAllUnidentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportUnidentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="includeNonValidatedInUnidentifiedFastaCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="exportAllUnidentifiedAccessionsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportUnidentifiedProteinsAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="includeNonValidatedInProteinUnidentifiedCsvCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-          <SubComponents>
-            <Component class="javax.swing.JLabel" name="exportAllUnidentifiedProteinsAsFastaLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins as a FASTA file&lt;/html&gt;"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="exportUnidentifiedProteinsAsFastaButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Export as FASTA"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedProteinsAsFastaButtonActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="includeNonValidatedInUnidentifiedFastaCheckBox">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Include Non-Validated"/>
-                <Property name="toolTipText" type="java.lang.String" value="Include non-validated protein identification"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="exportAllUnidentifiedAccessionsLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;unidentified&lt;/b&gt; proteins accession numbers&lt;/html&gt;"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="includeNonValidatedInProteinUnidentifiedCsvCheckBox">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Include Non-Validated"/>
-                <Property name="toolTipText" type="java.lang.String" value="Include non-validated protein identification"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="exportUnidentifiedProteinsAccessionNumbersAsCsvButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Export as CSV"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedProteinsAccessionNumbersAsCsvButtonActionPerformed"/>
-              </Events>
-            </Component>
-          </SubComponents>
-        </Container>
         <Container class="javax.swing.JPanel" name="unidentifiedProteinsPanel1">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Identified Proteins"/>
+                <TitledBorder title="Proteins"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -636,12 +523,20 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="exportAllIdentifiedProteinsAsFastaLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+                              <Component id="proteinExportCmb2" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="exportAllIdentifiedProteinAccessionsLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                              <Component id="proteinExportCmb1" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="0" pref="180" max="32767" attributes="0"/>
+                          <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="0" max="32767" attributes="0"/>
                           <Component id="exportIdentifiedProteinsAsFastaButton" alignment="0" pref="180" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -653,13 +548,15 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="exportAllIdentifiedProteinAccessionsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportIdentifiedProteinAccessionNumbersAsCsvButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="proteinExportCmb1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="exportAllIdentifiedProteinsAsFastaLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportIdentifiedProteinsAsFastaButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="proteinExportCmb2" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -669,7 +566,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="exportAllIdentifiedProteinsAsFastaLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins as a FASTA file&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="Export sequences"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportIdentifiedProteinsAsFastaButton">
@@ -682,16 +579,30 @@
             </Component>
             <Component class="javax.swing.JLabel" name="exportAllIdentifiedProteinAccessionsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Export all the &lt;b&gt;identified&lt;/b&gt; proteins accession numbers&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="Export accession numbers"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="exportIdentifiedProteinAccessionNumbersAsCsvButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export as CSV"/>
+                <Property name="text" type="java.lang.String" value="Export as TXT"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIdentifiedProteinAccessionNumbersAsCsvButtonActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="proteinExportCmb1">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities())" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="proteinExportCmb2">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new DefaultComboBoxModel(FastaExport.ExportType.getPossibilities())" type="code"/>
+                </Property>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

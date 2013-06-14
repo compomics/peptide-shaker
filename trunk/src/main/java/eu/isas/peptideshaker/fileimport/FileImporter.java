@@ -602,9 +602,9 @@ public class FileImporter {
             } catch (Exception e) {
                 waitingHandler.setRunCanceled();
 
-                System.out.println("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
+                 System.out.println("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
 
-                if (e.getLocalizedMessage().equalsIgnoreCase("null")) {
+                if (e instanceof NullPointerException) {
                     waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
                     waitingHandler.appendReport("Please see the error log (Help Menu > Bug Report) for details.", true, true);
                 } else if (ExceptionHandler.getExceptionType(e).equalsIgnoreCase("Protein not found")) {

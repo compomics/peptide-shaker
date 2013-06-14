@@ -126,14 +126,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShaker;
         this.welcomeDialog = welcomeDialog;
-
-        // @TODO: this does not work! have to create a new object and transfer all the values...
-
-        // store the current settings  
-//        oldSearchParameters = peptideShakerGUI.getSearchParameters();
-//        oldProfileFile = peptideShakerGUI.getModificationProfileFile();
-//        oldIdFilter = peptideShakerGUI.getIdFilter();
-
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
     }
@@ -686,6 +678,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             experiment.addAnalysisSet(sample, analysisSet);
 
             peptideShakerGUI.setProjectDetails(getProjectDetails());
+            peptideShakerGUI.setDefaultPreferences();
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
@@ -1124,13 +1117,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
-        // @TODO: this does not work! have to create a new object and transfer all the values...
-
-        // reset the preferences as this can have been changed
-//        peptideShakerGUI.setSearchParameters(oldSearchParameters);
-//        peptideShakerGUI.setModificationProfileFile(oldProfileFile);
-//        peptideShakerGUI.setIdFilter(oldIdFilter);
 
         this.setVisible(false);
         this.dispose();
