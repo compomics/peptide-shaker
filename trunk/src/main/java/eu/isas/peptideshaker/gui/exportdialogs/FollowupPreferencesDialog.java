@@ -12,9 +12,9 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.export.FastaExport;
-import eu.isas.peptideshaker.export.SpectrumExporter;
-import eu.isas.peptideshaker.export.ProgenesisExport;
+import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.SpectrumExporter;
+import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -509,9 +509,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(exportToPepNovoPart1Label)
                     .addComponent(exportPepnovoButton)
                     .addComponent(recalibrateForDenovoCheck)
-                    .addGroup(deNovoSearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(exportToPepNovoLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportToPepNovoLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -952,7 +951,52 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void exportPepnovoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPepnovoButtonActionPerformed
-        //  @TODO: implement me!!
+        
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
+
+        if (selectedFolder != null) {
+
+            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Exporting Spectra. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+                @Override
+                public void run() {
+
+                    try {
+                        SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
+                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()));
+
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        progressDialog.setRunFinished();
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_exportPepnovoButtonActionPerformed
 
     /**

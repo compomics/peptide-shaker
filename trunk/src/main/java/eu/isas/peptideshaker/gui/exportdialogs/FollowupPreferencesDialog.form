@@ -608,10 +608,8 @@
                           <Component id="exportToPepNovoPart1Label" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportPepnovoButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="recalibrateForDenovoCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
-                              <Component id="exportToPepNovoLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="deNovoGuiLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="deNovoGuiLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportToPepNovoLinkLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
