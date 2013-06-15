@@ -175,6 +175,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         processingPreferences = experimentSettings.getProcessingPreferences();
         metrics = experimentSettings.getMetrics();
         genePreferences = experimentSettings.getGenePreferences();
+
         if (experimentSettings.getFilterPreferences() != null) {
             filterPreferences = experimentSettings.getFilterPreferences();
         } else {
@@ -271,6 +272,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         String fileName = providedFastaLocation.getName();
         File projectFolder = cpsFile.getParentFile();
         File dataFolder = new File(projectFolder, "data");
+
         if (providedFastaLocation.exists()) {
             sequenceFactory.loadFastaFile(providedFastaLocation);
         } else if (folder != null && new File(folder, fileName).exists()) {
@@ -285,6 +287,7 @@ public abstract class CpsParent extends UserPreferencesParent {
         } else {
             return false;
         }
+
         return true;
     }
 
