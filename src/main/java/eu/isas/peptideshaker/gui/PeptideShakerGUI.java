@@ -2866,11 +2866,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * Imports the gene mapping.
      */
     private void loadGeneMappings() {
-
         if (!cpsBean.loadGeneMappings(progressDialog)) {
             JOptionPane.showMessageDialog(this, "Unable to load the gene/GO mapping file.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     /**
@@ -3923,7 +3921,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     public void clearPreferences() {
 
         cpsBean.clearPreferences();
-
         exceptionHandler = new ExceptionHandler(this);
 
         // reset enzymes, ptms and preferences
@@ -5020,6 +5017,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     try {
                         cpsBean.loadCpsFile(progressDialog);
+                        loadGeneMappings(); // have to load the new gene mappings
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
@@ -5043,6 +5041,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     } catch (Exception e) {
                         fileFound = false;
                     }
+
                     if (!fileFound && !locateFastaFileManually()) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occured while reading:\n" + getSearchParameters().getFastaFile() + "."
