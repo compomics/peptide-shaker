@@ -1,8 +1,8 @@
 package eu.isas.peptideshaker.cmd;
 
-import eu.isas.peptideshaker.export.FastaExport;
-import eu.isas.peptideshaker.export.ProgenesisExport;
-import eu.isas.peptideshaker.export.SpectrumExporter;
+import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.ProgenesisExport;
+import eu.isas.peptideshaker.followup.SpectrumExporter;
 import org.apache.commons.cli.Options;
 
 /**

@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.export;
+package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;

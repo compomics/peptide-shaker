@@ -1,10 +1,11 @@
-package eu.isas.peptideshaker.export;
+package eu.isas.peptideshaker.followup;
 
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -127,24 +128,24 @@ public class ProgenesisExport {
                                             if (exportType == ExportType.validated_psms_peptides) {
                                                 writePsm(writer, spectrumKey, identification);
                                             } else {
-                                                boolean found = false;
+                                                ArrayList<String> accessions = new ArrayList<String>();
                                                 for (String accession : peptide.getParentProteins()) {
                                                     ArrayList<String> groups = identification.getProteinMap().get(accession);
                                                     if (groups != null) {
                                                         for (String group : groups) {
                                                             psParameter = (PSParameter) identification.getProteinMatchParameter(group, psParameter);
                                                             if (psParameter.isValidated()) {
-                                                                found = true;
-                                                                break;
+                                                                for (String groupAccession : ProteinMatch.getAccessions(group)) {
+                                                                    if (!accessions.contains(groupAccession)) {
+                                                                        accessions.add(groupAccession);
+                                                                    }
+                                                                }
                                                             }
-                                                        }
-                                                        if (found) {
-                                                            break;
                                                         }
                                                     }
                                                 }
-                                                if (found) {
-                                                    writePsm(writer, spectrumKey, identification);
+                                                if (!accessions.isEmpty()) {
+                                                    writePsm(writer, spectrumKey, accessions, identification);
                                                 }
                                             }
                                         }
@@ -183,13 +184,36 @@ public class ProgenesisExport {
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        writePsm(writer, spectrumKey, identification);
+    }
+
+    /**
+     * Writes the lines corresponding to a PSM in the export file in the
+     * Progenesis format.
+     *
+     * @param writer the writer
+     * @param spectrumKey the key of the PSM to export
+     * @param accessions the accessions corresponding to that peptide according to protein inference. If null all proteins will be reported.
+     * @param identification the identification
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    private static void writePsm(BufferedWriter writer, String spectrumKey, ArrayList<String> accessions, Identification identification)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
         PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
-        for (String protein : bestAssumption.getPeptide().getParentProteins()) {
+        if (accessions == null) {
+            accessions = bestAssumption.getPeptide().getParentProteins();
+        }
+
+        for (String protein : accessions) {
 
             // peptide sequence
             writer.write(bestAssumption.getPeptide().getSequence() + SEPARATOR);
