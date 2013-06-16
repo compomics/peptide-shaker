@@ -141,18 +141,18 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the peptide probability.
+     * Returns the peptide posterior error probability.
      *
-     * @return the peptide probability
+     * @return the peptide posterior error probability
      */
     public double getPeptideProbability() {
         return peptideProbability;
     }
 
     /**
-     * Set the peptide probability.
+     * Set the peptide posterior error probability.
      *
-     * @param peptideProbability the new peptide probability
+     * @param peptideProbability the new peptide posterior error probability
      */
     public void setPeptideProbability(double peptideProbability) {
         this.peptideProbability = peptideProbability;
@@ -208,18 +208,18 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein probability.
+     * Returns the protein posterior error probability.
      *
-     * @return the protein probability
+     * @return the protein posterior error probability
      */
     public double getProteinProbability() {
         return proteinProbability;
     }
 
     /**
-     * Set the protein probability.
+     * Set the protein posterior error probability.
      *
-     * @param proteinProbability the new protein probability
+     * @param proteinProbability the new protein posterior error probability
      */
     public void setProteinProbability(double proteinProbability) {
         this.proteinProbability = proteinProbability;
@@ -275,18 +275,18 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the search engine probability.
+     * Returns the search engine posterior error probability.
      *
-     * @return the search engine probability
+     * @return the search engine posterior error probability
      */
     public double getSearchEngineProbability() {
         return searchEngineProbability;
     }
 
     /**
-     * Set the search engine probability.
+     * Set the search engine posterior error probability.
      *
-     * @param searchEngineProbability the new search engine probability
+     * @param searchEngineProbability the new search engine posterior error probability
      */
     public void setSearchEngineProbability(double searchEngineProbability) {
         this.searchEngineProbability = searchEngineProbability;
@@ -306,18 +306,18 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the PSM probability.
+     * Returns the PSM posterior error probability.
      *
-     * @return the PSM probability
+     * @return the PSM posterior error probability
      */
     public double getPsmProbability() {
         return psmProbability;
     }
 
     /**
-     * Set the the PSM probability.
+     * Set the the PSM posterior error probability.
      *
-     * @param psmProbability the new the PSM probability
+     * @param psmProbability the new the PSM posterior error probability
      */
     public void setPsmProbability(double psmProbability) {
         this.psmProbability = psmProbability;
