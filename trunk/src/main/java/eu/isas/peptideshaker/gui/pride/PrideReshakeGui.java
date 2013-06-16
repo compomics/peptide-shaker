@@ -183,6 +183,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         projectsTable.getColumn("Title").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         projectsTableToolTips = new ArrayList<String>();
+        projectsTableToolTips.add("Reanalyze PRIDE Project");
         projectsTableToolTips.add("PRIDE Accession Number");
         projectsTableToolTips.add("Project Title");
         projectsTableToolTips.add("Proejct Name");
@@ -193,7 +194,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         projectsTableToolTips.add("Number of Peptides");
         projectsTableToolTips.add("Number of Proteins");
         projectsTableToolTips.add("References");
-        projectsTableToolTips.add("Reanalyze PRIDE Project");
     }
 
     /**
@@ -232,6 +232,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             String title = localProject.substring(localProject.indexOf("PRIDE_Exp_Complete_Ac_"), localProject.lastIndexOf("."));
 
             ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                false,
                 new Integer(accession),
                 "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
                 + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
@@ -243,8 +244,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 null,
                 null,
                 null,
-                "",
-                false
+                ""
             });
         }
 
@@ -301,6 +301,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 if (!hideNonValidProjectsCheckBox.isSelected() || (hideNonValidProjectsCheckBox.isSelected() && numSpectra > 0)) {
 
                     ((DefaultTableModel) projectsTable.getModel()).addRow(new Object[]{
+                        false,
                         accession,
                         "<html><a href=\"" + peptideShakerGUI.getDisplayFeaturesGenerator().getPrideAccessionLink("" + accession)
                         + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
@@ -312,8 +313,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                         numSpectra,
                         numPeptides, // note that the order of peptides and proteins is different in the tsv file!
                         numProteins,
-                        references,
-                        false
+                        references
                     });
                 }
 
@@ -442,14 +442,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", " "
+                " ", "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, true
+                true, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -483,14 +483,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         localProjectsFolderLabel.setText("<html><a href>Edit Local Projects Folder</html>");
         localProjectsFolderLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                localProjectsFolderLabelMouseReleased(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 localProjectsFolderLabelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 localProjectsFolderLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                localProjectsFolderLabelMouseReleased(evt);
             }
         });
 
@@ -801,14 +801,14 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         searchTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null,  new Boolean(false)}
+                { new Boolean(false), null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References", " "
+                " ", "Accession", "Title", "Project", "Species", "Tissue", "PTMs", "#Spectra", "#Peptides", "#Proteins", "References"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
