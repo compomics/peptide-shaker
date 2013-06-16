@@ -131,7 +131,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // save project
         try {
             cpsFile = cliInputBean.getOutput();
-            waitingHandler.appendReport("Saving results. Please wait...", true, true);
+            waitingHandler.appendReport("Saving Results. Please Wait...", true, true);
             saveProject(waitingHandler, true);
             waitingHandler.appendReport("Results saved to " + cpsFile.getAbsolutePath() + ".", true, true);
             waitingHandler.appendReportEndLine();

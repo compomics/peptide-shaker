@@ -5438,7 +5438,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 public void run() {
                     try {
 
-                        progressDialog.setWaitingText("Saving results. Please wait...");
+                        progressDialog.setWaitingText("Saving Results. Please Wait...");
                         cpsBean.saveProject(progressDialog, closeWhenDone);
 
                         try {
