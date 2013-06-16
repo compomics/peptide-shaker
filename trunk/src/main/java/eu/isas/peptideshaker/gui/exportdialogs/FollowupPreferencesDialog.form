@@ -184,7 +184,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Inclusion Lists"/>
+                <TitledBorder title="Inclusion Lists (beta)"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -195,50 +195,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="minRtWindowLabel" alignment="1" max="32767" attributes="1"/>
-                          <Component id="ignoredPeptidesLabel" alignment="0" max="32767" attributes="1"/>
-                          <Component id="ignoredProteinsLabel" alignment="0" max="32767" attributes="1"/>
-                          <Component id="formatLabel" alignment="0" max="32767" attributes="1"/>
-                          <Component id="includeValidatedPsmsLabel" pref="160" max="32767" attributes="1"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="rtWindow" min="-2" pref="104" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="minRtWindowUnitLabel" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="relatedProteinsCheck" min="-2" pref="169" max="-2" attributes="0"/>
-                                          <Component id="miscleavedCheck" alignment="0" min="-2" pref="169" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="reactiveCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                          <Component id="relatredAndUnrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="degeneratedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                          <Component id="unrelatedCheck" linkSize="2" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                              </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="idSelectionCmb" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="vendorCmb" max="32767" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                      <Component id="includeValidatedPsmsLabel" min="-2" pref="160" max="-2" attributes="1"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="idSelectionCmb" max="32767" attributes="1"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="inclusionListButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -246,39 +207,10 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="miscleavedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="reactiveCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ignoredPeptidesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="relatedProteinsCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="unrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="relatredAndUnrelatedCheck" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="ignoredProteinsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Component id="degeneratedCheck" min="-2" max="-2" attributes="0"/>
-                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="minRtWindowLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="rtWindow" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="minRtWindowUnitLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="idSelectionCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="includeValidatedPsmsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="vendorCmb" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="formatLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="inclusionListButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -287,30 +219,9 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="ignoredPeptidesLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Ignored Peptides"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="miscleavedCheck">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="miscleaved peptides"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="reactiveCheck">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="reactive peptides"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="includeValidatedPsmsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Include Validated PSMs"/>
+                <Property name="text" type="java.lang.String" value="PSMs Selection"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="idSelectionCmb">
@@ -326,81 +237,13 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="formatLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Format"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="vendorCmb">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Thermo"/>
-                    <StringItem index="1" value="ABI"/>
-                    <StringItem index="2" value="Bruker"/>
-                    <StringItem index="3" value="MassLynx"/>
-                  </StringArray>
-                </Property>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JButton" name="inclusionListButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Generate Inclusion List"/>
+                <Property name="text" type="java.lang.String" value="Export as List"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inclusionListButtonActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="ignoredProteinsLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Ignored Proteins"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="relatedProteinsCheck">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="related proteins"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="relatredAndUnrelatedCheck">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="related and unrelated proteins"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="unrelatedCheck">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="unrelated proteins"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="degeneratedCheck">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="degenerated peptides"/>
-                <Property name="iconTextGap" type="int" value="10"/>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="minRtWindowLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Minimum RT Window"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="rtWindow">
-              <Properties>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="20"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="minRtWindowUnitLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="s"/>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>
