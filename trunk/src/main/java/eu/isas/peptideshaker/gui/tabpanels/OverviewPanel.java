@@ -3477,7 +3477,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             popupMenu.show(psmTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_psmTableMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
@@ -3789,11 +3788,20 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 // get the list of currently selected psms
                 ArrayList<String> selectedPsmKeys = new ArrayList<String>();
 
-                int[] selectedRows = psmTable.getSelectedRows();
-                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) psmTable.getModel();
+                // get the currently selected peptide
+                SelfUpdatingTableModel peptideTableModel = (SelfUpdatingTableModel) peptideTable.getModel();
+                int peptideIndex = peptideTableModel.getViewIndex(peptideTable.getSelectedRow());
+                String peptideKey = peptideKeys.get(peptideIndex);
+                PeptideMatch selectedPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                //peptideShakerGUI.getIdentification().loadSpectrumMatches(selectedPeptideMatch.getSpectrumMatches(), null); // @TODO: not sure if loading all spectra is a good idea when we usually only need some of them??
 
-                for (int row : selectedRows) {
-                    int psmIndex = tableModel.getViewIndex(row);
+                // get the currenly selected rows in the psm table
+                int[] selectedPsmRows = psmTable.getSelectedRows();
+                SelfUpdatingTableModel psmTableModel = (SelfUpdatingTableModel) psmTable.getModel();
+
+                // iterate the selected psms rows
+                for (int row : selectedPsmRows) {
+                    int psmIndex = psmTableModel.getViewIndex(row);
                     String spectrumKey = psmKeys.get(psmIndex);
                     selectedPsmKeys.add(spectrumKey);
                     SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
@@ -3803,39 +3811,31 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ArrayList<ArrayList<IonMatch>> allAnnotations = new ArrayList<ArrayList<IonMatch>>();
                 ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
                 SpectrumAnnotator miniAnnotator = new SpectrumAnnotator();
-
-                tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
-                int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
-                String peptideKey = peptideKeys.get(peptideIndex);
-                PeptideMatch selectedPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                 AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+                
+                // iterate the selected psms
+                for (String spectrumKey : selectedPsmKeys) {
 
-                peptideShakerGUI.getIdentification().loadSpectrumMatches(selectedPeptideMatch.getSpectrumMatches(), progressDialog);
-                for (String spectrumKey : selectedPeptideMatch.getSpectrumMatches()) {
+                    MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
-                    if (selectedPsmKeys.contains(spectrumKey)) {
+                    if (currentSpectrum != null) {
+                        SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                        annotationPreferences.setCurrentSettings(
+                                selectedPeptideMatch.getTheoreticPeptide(),
+                                spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
+                        ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                                annotationPreferences.getNeutralLosses(),
+                                annotationPreferences.getValidatedCharges(),
+                                spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                currentSpectrum,
+                                selectedPeptideMatch.getTheoreticPeptide(),
+                                currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                                annotationPreferences.getFragmentIonAccuracy(), false);
+                        allAnnotations.add(annotations);
+                        allSpectra.add(currentSpectrum);
 
-                        MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-
-                        if (currentSpectrum != null) {
-                            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                            annotationPreferences.setCurrentSettings(
-                                    selectedPeptideMatch.getTheoreticPeptide(),
-                                    spectrumMatch.getBestAssumption().getIdentificationCharge().value,
-                                    !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
-                            ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                                    annotationPreferences.getNeutralLosses(),
-                                    annotationPreferences.getValidatedCharges(),
-                                    spectrumMatch.getBestAssumption().getIdentificationCharge().value,
-                                    currentSpectrum,
-                                    selectedPeptideMatch.getTheoreticPeptide(),
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                    annotationPreferences.getFragmentIonAccuracy(), false);
-                            allAnnotations.add(annotations);
-                            allSpectra.add(currentSpectrum);
-
-                            currentSpectrumKey = spectrumKey;
-                        }
+                        currentSpectrumKey = spectrumKey;
                     }
                 }
 
