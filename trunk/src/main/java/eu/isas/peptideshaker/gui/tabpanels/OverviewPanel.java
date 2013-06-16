@@ -3812,7 +3812,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
                 SpectrumAnnotator miniAnnotator = new SpectrumAnnotator();
                 AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-                
+
                 // iterate the selected psms
                 for (String spectrumKey : selectedPsmKeys) {
 
@@ -3890,85 +3890,89 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
         currentProteinSequence = currentProtein.getSequence();
         SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-        String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
-        String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage (";
-        try {
-            double sequenceCoverage = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
-            title += Util.roundDouble(sequenceCoverage, 2);
+        if (proteinTable.getSelectedRow() != -1) {
+
+            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
+
+            String title = PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage (";
             try {
-                double possibleCoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
-                title += "% of exp " + Util.roundDouble(possibleCoverarge, 2) + "%";
-            } catch (Exception ePossibleCoverage) {
-                // skip the possible coverage
-                peptideShakerGUI.catchException(ePossibleCoverage);
-            }
-            title += "   ";
-            title += currentProteinSequence.length() + " AA)";
-            title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
-        } catch (Exception eCoverage) {
-            peptideShakerGUI.catchException(eCoverage);
-            // Worst case, we did not even manage to get the coverage.
-            title += currentProteinSequence.length() + " AA)";
-            title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
-        }
-
-        ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(title);
-        sequenceCoverageTitledPanel.repaint();
-
-        // an array containing the coverage index for each residue
-        coverage = new int[currentProteinSequence.length() + 1];
-
-        double maxCoverageValue = 0;
-
-        PSParameter psParameter = new PSParameter();
-
-        // iterate the peptide table and store the coverage for each validated peptide
-        peptideShakerGUI.getIdentification().loadPeptideMatchParameters(peptideKeys, psParameter, null);
-
-        for (String peptideKey : peptideKeys) {
-
-            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
-
-            if (psParameter.isValidated()) {
-                String peptideSequence = Peptide.getSequence(peptideKey);
-                String tempSequence = currentProteinSequence;
-
-                boolean includePeptide = false;
-
-                if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
-                    includePeptide = true;
-                } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                    includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme());
-                } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
-                    includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme());
+                double sequenceCoverage = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                title += Util.roundDouble(sequenceCoverage, 2);
+                try {
+                    double possibleCoverarge = 100.0 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
+                    title += "% of exp " + Util.roundDouble(possibleCoverarge, 2) + "%";
+                } catch (Exception ePossibleCoverage) {
+                    // skip the possible coverage
+                    peptideShakerGUI.catchException(ePossibleCoverage);
                 }
+                title += "   ";
+                title += currentProteinSequence.length() + " AA)";
+                title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+            } catch (Exception eCoverage) {
+                peptideShakerGUI.catchException(eCoverage);
+                // Worst case, we did not even manage to get the coverage.
+                title += currentProteinSequence.length() + " AA)";
+                title += PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING;
+            }
 
-                if (includePeptide) {
-                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                        int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                        int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                        for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                            coverage[j]++;
+            ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(title);
+            sequenceCoverageTitledPanel.repaint();
 
-                            if (coverage[j] > maxCoverageValue) {
-                                maxCoverageValue = coverage[j];
+            // an array containing the coverage index for each residue
+            coverage = new int[currentProteinSequence.length() + 1];
+
+            double maxCoverageValue = 0;
+
+            PSParameter psParameter = new PSParameter();
+
+            // iterate the peptide table and store the coverage for each validated peptide
+            peptideShakerGUI.getIdentification().loadPeptideMatchParameters(peptideKeys, psParameter, null);
+
+            for (String peptideKey : peptideKeys) {
+
+                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
+
+                if (psParameter.isValidated()) {
+                    String peptideSequence = Peptide.getSequence(peptideKey);
+                    String tempSequence = currentProteinSequence;
+
+                    boolean includePeptide = false;
+
+                    if (coverageShowAllPeptidesJRadioButtonMenuItem.isSelected()) {
+                        includePeptide = true;
+                    } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
+                        includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme());
+                    } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
+                        includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence, peptideShakerGUI.getSearchParameters().getEnzyme());
+                    }
+
+                    if (includePeptide) {
+                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                            for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                                coverage[j]++;
+
+                                if (coverage[j] > maxCoverageValue) {
+                                    maxCoverageValue = coverage[j];
+                                }
                             }
+                            tempSequence = currentProteinSequence.substring(0, peptideTempStart);
                         }
-                        tempSequence = currentProteinSequence.substring(0, peptideTempStart);
                     }
                 }
             }
-        }
 
-        // get the possible coverage
-        try {
-            coveragePossible = peptideShakerGUI.getIdentificationFeaturesGenerator().getCoverableAA(proteinKey);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            coveragePossible = new boolean[currentProteinSequence.length() + 1];
-            for (int i = 0; i < currentProteinSequence.length() + 1; i++) {
-                coveragePossible[i] = true;
+            // get the possible coverage
+            try {
+                coveragePossible = peptideShakerGUI.getIdentificationFeaturesGenerator().getCoverableAA(proteinKey);
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                coveragePossible = new boolean[currentProteinSequence.length() + 1];
+                for (int i = 0; i < currentProteinSequence.length() + 1; i++) {
+                    coveragePossible[i] = true;
+                }
             }
         }
     }
@@ -4161,120 +4165,123 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void updatePtmCoveragePlot(String proteinAccession) {
 
-        try {
-            SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
-            String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow())); // @TODO: can result in an IndexOutOfBoundsException
+        if (proteinTable.getSelectedRow() != -1) {
 
-            // get the ptms
-            ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<JSparklinesDataSeries>();
-            HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
+            try {
+                SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) proteinTable.getModel();
+                String proteinKey = proteinKeys.get(tableModel.getViewIndex(proteinTable.getSelectedRow()));
 
-            // we need to add a first empty filler as the coverage table starts at 0
-            ArrayList<Double> data = new ArrayList<Double>();
-            data.add(new Double(1));
-            JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
-            sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
+                // get the ptms
+                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<JSparklinesDataSeries>();
+                HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
 
-            PSPtmScores psPtmScores = new PSPtmScores();
-            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-            psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+                // we need to add a first empty filler as the coverage table starts at 0
+                ArrayList<Double> data = new ArrayList<Double>();
+                data.add(new Double(1));
+                JSparklinesDataSeries sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+                sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
-            String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-            psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
-            int unmodifiedCounter = 0;
+                PSPtmScores psPtmScores = new PSPtmScores();
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
 
-            // get the fixed ptms
-            HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note this this only supports one fixed ptm per residue
+                String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+                psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+                int unmodifiedCounter = 0;
 
-            Identification identification = peptideShakerGUI.getIdentification();
-            identification.loadPeptideMatches(peptideKeys, null);
-            DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+                // get the fixed ptms
+                HashMap<Integer, String> fixedPtms = new HashMap<Integer, String>(); // @TODO: note this this only supports one fixed ptm per residue
 
-            for (String peptideKey : peptideKeys) {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-                for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                    if (!modMatch.isVariable()) {
-                        String ptmName = modMatch.getTheoreticPtm();
-                        if (displayPreferences.isDisplayedPTM(ptmName)) {
-                            ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey));
-                            for (Integer index : indexes) {
-                                fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
+                Identification identification = peptideShakerGUI.getIdentification();
+                identification.loadPeptideMatches(peptideKeys, null);
+                DisplayPreferences displayPreferences = peptideShakerGUI.getDisplayPreferences();
+
+                for (String peptideKey : peptideKeys) {
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    for (ModificationMatch modMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                        if (!modMatch.isVariable()) {
+                            String ptmName = modMatch.getTheoreticPtm();
+                            if (displayPreferences.isDisplayedPTM(ptmName)) {
+                                ArrayList<Integer> indexes = sequenceFactory.getProtein(proteinAccession).getPeptideStart(Peptide.getSequence(peptideKey));
+                                for (Integer index : indexes) {
+                                    fixedPtms.put(modMatch.getModificationSite() + index - 2, ptmName);
+                                }
                             }
                         }
                     }
                 }
-            }
 
 
-            for (int aa = 0; aa < sequence.length(); aa++) {
+                for (int aa = 0; aa < sequence.length(); aa++) {
 
-                String ptmName = fixedPtms.get(aa);
-                for (String variablePTM : psPtmScores.getMainModificationsAt(aa)) {
-                    if (displayPreferences.isDisplayedPTM(variablePTM)) {
-                        ptmName = variablePTM;
-                        break;
-                    }
-                }
-
-                if (ptmName != null) {
-
-                    // add the non-modified area
-                    if (unmodifiedCounter > 0) {
-                        data = new ArrayList<Double>(1);
-                        data.add(new Double(unmodifiedCounter));
-                        sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
-                        sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
+                    String ptmName = fixedPtms.get(aa);
+                    for (String variablePTM : psPtmScores.getMainModificationsAt(aa)) {
+                        if (displayPreferences.isDisplayedPTM(variablePTM)) {
+                            ptmName = variablePTM;
+                            break;
+                        }
                     }
 
-                    // @TODO: what about multiple ptms on the same residue..?
+                    if (ptmName != null) {
+
+                        // add the non-modified area
+                        if (unmodifiedCounter > 0) {
+                            data = new ArrayList<Double>(1);
+                            data.add(new Double(unmodifiedCounter));
+                            sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+                            sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
+                        }
+
+                        // @TODO: what about multiple ptms on the same residue..?
 //                        if (psPtmScores.getMainModificationsAt(aa).size() > 1) {
 //                            for (int i=0; i<psPtmScores.getMainModificationsAt(aa).size(); i++) {
 //                                psPtmScores.getMainModificationsAt(aa).get(i);
 //                            }
 //                        }
 
-                    // @TODO: are peptide terminal mods excluded??  
+                        // @TODO: are peptide terminal mods excluded??  
 
-                    Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
-                    if (ptmColor == null) {
-                        ptmColor = Color.lightGray;
+                        Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
+                        if (ptmColor == null) {
+                            ptmColor = Color.lightGray;
+                        }
+
+                        ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                        annotations.add(new ResidueAnnotation(ptmName, null, false));
+                        proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
+
+                        data = new ArrayList<Double>(1);
+                        data.add(new Double(1));
+                        sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
+                        sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
+
+                        // reset the non-modified area counter
+                        unmodifiedCounter = 0;
+
+                    } else {
+                        unmodifiedCounter++;
                     }
-
-                    ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
-                    annotations.add(new ResidueAnnotation(ptmName, null, false));
-                    proteinTooltips.put(sparkLineDataSeriesPtm.size(), annotations);
-
-                    data = new ArrayList<Double>(1);
-                    data.add(new Double(1));
-                    sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
-                    sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
-
-                    // reset the non-modified area counter
-                    unmodifiedCounter = 0;
-
-                } else {
-                    unmodifiedCounter++;
                 }
-            }
 
-            if (unmodifiedCounter > 0) {
-                // add the remaining non-modified area
-                data = new ArrayList<Double>();
-                data.add(new Double(unmodifiedCounter));
-                sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
-                sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
-            }
+                if (unmodifiedCounter > 0) {
+                    // add the remaining non-modified area
+                    data = new ArrayList<Double>();
+                    data.add(new Double(unmodifiedCounter));
+                    sparklineDataseriesPtm = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+                    sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
+                }
 
-            ptmChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesPtm), proteinTooltips, false, false);
-            sequencePtmsPanel.removeAll();
-            sequencePtmsPanel.add(ptmChart);
-            sequencePtmsPanel.revalidate();
-            sequencePtmsPanel.repaint();
-        } catch (ClassCastException e) {
-            // ignore   @TODO: this should not happen, but can happen if the table does not update fast enough for the filtering
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            e.printStackTrace();
+                ptmChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesPtm), proteinTooltips, false, false);
+                sequencePtmsPanel.removeAll();
+                sequencePtmsPanel.add(ptmChart);
+                sequencePtmsPanel.revalidate();
+                sequencePtmsPanel.repaint();
+            } catch (ClassCastException e) {
+                // ignore   @TODO: this should not happen, but can happen if the table does not update fast enough for the filtering
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                e.printStackTrace();
+            }
         }
     }
 
