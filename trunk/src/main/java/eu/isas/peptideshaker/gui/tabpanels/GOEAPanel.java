@@ -12,6 +12,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
+import com.compomics.util.preferences.GenePreferences;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tablemodels.ProteinGoTableModel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -286,20 +287,22 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         if (peptideShakerGUI.getIdentification() != null) {
 
-            String selectedSpecies = peptideShakerGUI.getGenePreferences().getCurrentSpecies();
+            GenePreferences genePreferences = peptideShakerGUI.getGenePreferences();
+            String selectedSpecies = genePreferences.getCurrentSpecies();
 
             if (selectedSpecies == null) {
-                new SpeciesDialog(peptideShakerGUI, peptideShakerGUI, true);
+                new SpeciesDialog(peptideShakerGUI, genePreferences, true, peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getNormalIcon());
+             selectedSpecies = genePreferences.getCurrentSpecies();
             }
 
             if (selectedSpecies != null) {
 
-                String speciesDatabase = peptideShakerGUI.getGenePreferences().getSpeciesMap().get(selectedSpecies);
+                String speciesDatabase = genePreferences.getSpeciesMap().get(selectedSpecies);
 
                 if (speciesDatabase != null) {
 
-                    final File goMappingsFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), speciesDatabase + peptideShakerGUI.getGenePreferences().GO_MAPPING_FILE_SUFFIX);
-                    final File geneMappingsFile = new File(peptideShakerGUI.getGenePreferences().getGeneMappingFolder(), speciesDatabase + peptideShakerGUI.getGenePreferences().GENE_MAPPING_FILE_SUFFIX);
+                    final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
+                    final File geneMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GENE_MAPPING_FILE_SUFFIX);
 
                     if (goMappingsFile.exists()) {
 
