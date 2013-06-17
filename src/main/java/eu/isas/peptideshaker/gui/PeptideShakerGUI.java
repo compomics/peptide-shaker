@@ -40,6 +40,7 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
+import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -5417,6 +5418,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             if (value == JOptionPane.OK_OPTION) {
                 saveProjectAs(aCloseWhenDone);
             } else {
+                // cancel the saving
             }
 
         } else {
@@ -6380,8 +6382,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 goFactory.initialize(goMappingsFile, progressDialog);
 
                                 // redraw any tables with chromosome mappings
-                                overviewPanel.getProteinTable().revalidate();
-                                proteinStructurePanel.getProteinTable().revalidate();
+                                ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
+                                ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
                                 progressDialog.setRunFinished();
                             } catch (Exception e) {
                                 progressDialog.setRunFinished();
@@ -6389,6 +6391,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             }
                         }
                     }.start();
+                } else {
+                    // redraw any tables with chromosome mappings
+                    ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
+                    ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
                 }
             }
         }
