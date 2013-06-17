@@ -667,8 +667,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        double confidenceLimit = 95; //@TODO: make this a user selection?
-                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), confidenceLimit, recalibrateForDenovoCheck.isSelected(), progressDialog);
+                        
+                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), 1.0, 1.0, recalibrateForDenovoCheck.isSelected(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();

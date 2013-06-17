@@ -4,6 +4,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
@@ -118,5 +119,24 @@ public class CLIMethods {
     public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFile = followUpCLIInputBean.getProgenesisExportFile();
         ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler);
+    }
+    
+    /**
+     * Exports the files needed for the pepnovo training.
+     * 
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param annotationPreferences the annotation preferences
+     * @param waitingHandler a waiting handler to display progress
+     * 
+     * @throws IOException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException 
+     */
+    public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
+        PepnovoTrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
     }
 }

@@ -199,6 +199,18 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
                     e.printStackTrace();
                 }
             }
+
+            // Pepnovo training export
+            if (followUpCLIInputBean.pepnovoTrainingExportNeeded()) {
+                try {
+                    CLIMethods.exportPepnovoTrainingFiles(followUpCLIInputBean, identification, annotationPreferences, waitingHandler);
+                    waitingHandler.appendReport("Pepnovo training export completed.", true, true);
+                } catch (Exception e) {
+                    waitingHandler.appendReport("An error occurred while exporting the Pepnovo training file.", true, true);
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         //@TODO: move that to the report cli as soon as it exists
