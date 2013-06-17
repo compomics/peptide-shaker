@@ -113,7 +113,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      */
     private SearchParameters searchParameters = new SearchParameters();
     /**
-     * The gene preferences
+     * The gene preferences.
      */
     private GenePreferences genePreferences;
     /*
@@ -976,9 +976,29 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             if (parameterFiles.size() == 1) {
                 parameterFile = parameterFiles.get(0);
             } else if (parameterFiles.size() > 1) {
-                FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
-                if (!fileSelection.isCanceled()) {
-                    parameterFile = fileSelection.getSelectedFile();
+
+                boolean equalParameters = true;
+
+                try {
+                    for (int i = 0; i < parameterFiles.size() && equalParameters; i++) {
+                        for (int j = 0; j < parameterFiles.size() && equalParameters; j++) {
+                            equalParameters = SearchParameters.getIdentificationParameters(parameterFiles.get(i)).equals(SearchParameters.getIdentificationParameters(parameterFiles.get(j)));
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    equalParameters = false;
+                } catch (IOException e) {
+                    equalParameters = false;
+                }
+
+                if (equalParameters) {
+                    // all parameters are equal, just select one of them
+                    parameterFile = parameterFiles.get(0); // @TODO: can we be more clever in selecting the "right" one?
+                } else {
+                    FileSelectionDialog fileSelection = new FileSelectionDialog(peptideShakerGUI, parameterFiles, "Select the wanted SearchGUI parameters file.");
+                    if (!fileSelection.isCanceled()) {
+                        parameterFile = fileSelection.getSelectedFile();
+                    }
                 }
             }
             if (parameterFile != null) {
@@ -1659,13 +1679,10 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             public void run() {
 
                 try {
-                    System.out.println(new Date() + ": loading fasta file");
                     sequenceFactory.loadFastaFile(fastaFile, progressDialog); // @TODO: does not show actual progress if started automatically by the loading of search result files...
                     progressDialog.setRunFinished();
 
-                    System.out.println(new Date() + ": getting first accession");
                     String firstAccession = sequenceFactory.getAccessions().get(0);
-                    System.out.println(new Date() + ": checking uniprot");
                     if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
                         showDataBaseHelpDialog();
                     }

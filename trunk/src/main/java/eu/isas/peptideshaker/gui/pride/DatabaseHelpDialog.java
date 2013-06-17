@@ -551,8 +551,8 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
         // @TODO: this method should be merged with the identical method in SearchGUI...
 
         progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/searchgui.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/searchgui-orange.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setUnstoppable(true);
         progressDialog.setIndeterminate(true);
