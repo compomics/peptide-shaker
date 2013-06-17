@@ -2865,13 +2865,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         String oldSpecies = genePreferences.getCurrentSpecies();
         new SpeciesDialog(this, genePreferences, true, getWaitingIcon(), getNormalIcon());
         String newSpecies = genePreferences.getCurrentSpecies();
+
         if (!oldSpecies.equals(newSpecies)) {
+            clearGeneMappings(); // clear the old mappings
             if (newSpecies != null) {
-                loadGeneMappings();
-                updateGeneDisplay();
-            } else {
-                clearGeneMappings();
+                loadGeneMappings(); // load the new mappings
             }
+            updateGeneDisplay(); // display the new mappings
         }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
@@ -5052,7 +5052,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 + "Please close all instances of PeptideShaker and try again.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    progressDialog.setTitle("Loading Gene mappings. Please Wait...");
+                    progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(); // have to load the new gene mappings
 
                     if (progressDialog.isRunCanceled()) {
@@ -6358,8 +6358,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
     /**
      * Update the gene mapping results.
-     *
-     * @param selectedSpecies the new species
      */
     public void updateGeneDisplay() {
 
