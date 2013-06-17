@@ -9,8 +9,13 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import static eu.isas.peptideshaker.followup.RecalibrationExporter.getRecalibratedFileName;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;
+import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,17 +43,13 @@ public class PepnovoTrainingExport {
     public static final String badTrainingSetSuffix = "_bad_training";
 
     /**
-     * Exports the PepNovo training files, eventually recalibrated with the
+     * Exports the PepNovo training files using the validation settings, eventually recalibrated with the
      * recalibrated mgf.
      *
      * @param destinationFolder the folder where to write the output files
      * @param identification the identification
      * @param annotationPreferences the annotation preferences. Only necessary
      * in recalibration mode.
-     * @param confidenceLevel the confidence threshold to use for the export in
-     * percent. PSMs above this threshold (threshold inclusive) will be used for
-     * the good training set. PSMs below 1-threshold (1-threshold inclusive)
-     * will be used for the bad training set.
      * @param recalibrate boolean indicating whether the files shall be
      * recalibrated
      * @param waitingHandler waiting handler displaying progress to the user and
@@ -59,11 +60,77 @@ public class PepnovoTrainingExport {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences, double confidenceLevel,
+    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences,
+            boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+        exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, null, null, recalibrate, waitingHandler);
+    }
+
+    /**
+     * Exports the PepNovo training files, eventually recalibrated with the
+     * recalibrated mgf.
+     *
+     * @param destinationFolder the folder where to write the output files
+     * @param identification the identification
+     * @param annotationPreferences the annotation preferences. Only necessary
+     * in recalibration mode.
+     * @param fdr the false discovery rate to use for the selection of "good"
+     * spectra. Can be null, then the value used for validation is used.
+     * @param fnr the false negative rate to use for the selection fo "bad"
+     * spectra. Can be null, then the same value as for the fdr parameter is
+     * used.
+     * @param recalibrate boolean indicating whether the files shall be
+     * recalibrated
+     * @param waitingHandler waiting handler displaying progress to the user and
+     * allowing canceling the process
+     * @throws IOException
+     * @throws MzMLUnmarshallerException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences, Double fdr, Double fnr,
             boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
         SpectrumRecalibrator spectrumRecalibrator = new SpectrumRecalibrator();
+
+        PSMaps psMaps = new PSMaps();
+        psMaps = (PSMaps) identification.getUrParam(psMaps);
+        PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
+        HashMap<Integer, Double> highConfidenceThresholds = new HashMap<Integer, Double>(),
+                lowConfidenceThresholds = new HashMap<Integer, Double>();
+        for (Integer key : psmTargetDecoyMap.getKeys().keySet()) {
+            double fdrThreshold, fnrThreshold;
+            TargetDecoyResults currentResults = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults();
+            if (fdr == null) {
+                if (currentResults.getInputType() == 1) {
+                    fdrThreshold = currentResults.getUserInput();
+                } else {
+                    fdrThreshold = currentResults.getFdrLimit();
+                }
+            } else {
+                fdrThreshold = fdr;
+                currentResults = new TargetDecoyResults();
+                currentResults.setClassicalEstimators(true);
+                currentResults.setClassicalValidation(true);
+                currentResults.setFdrLimit(fdrThreshold);
+                TargetDecoySeries currentSeries = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoySeries();
+                currentSeries.getFDRResults(currentResults);
+            }
+            highConfidenceThresholds.put(key, currentResults.getConfidenceLimit());
+            if (fnr == null) {
+                fnrThreshold = fdrThreshold;
+            } else {
+                fnrThreshold = fnr;
+            }
+            currentResults = new TargetDecoyResults();
+            currentResults.setClassicalEstimators(true);
+            currentResults.setClassicalValidation(true);
+            currentResults.setFnrLimit(fnrThreshold);
+            TargetDecoySeries currentSeries = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoySeries();
+            currentSeries.getFNRResults(currentResults);
+            lowConfidenceThresholds.put(key, currentResults.getConfidenceLimit());
+        }
 
         int progress = 1;
 
@@ -104,6 +171,7 @@ public class PepnovoTrainingExport {
                 String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
                 if (identification.matchExists(spectrumKey)) {
                     psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                    double confidenceLevel = highConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
                     if (psParameter.getPsmConfidence() >= confidenceLevel) {
                         keys.add(spectrumKey);
                     }
@@ -158,6 +226,7 @@ public class PepnovoTrainingExport {
                     }
                     if (identification.matchExists(spectrumKey)) {
                         psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                        double confidenceLevel = highConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
                         if (psParameter.getPsmConfidence() >= confidenceLevel) {
                             if (spectrum == null) {
                                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
@@ -168,7 +237,8 @@ public class PepnovoTrainingExport {
                             tags.put("SEQ", sequence);
                             spectrum.writeMgf(writerGood, tags);
                         }
-                        if (psParameter.getPsmConfidence() <= 100 - confidenceLevel) {
+                        confidenceLevel = lowConfidenceThresholds.get(psmTargetDecoyMap.getCorrectedKey(psParameter.getSpecificMapKey()));
+                        if (psParameter.getPsmConfidence() <= confidenceLevel) {
                             if (spectrum == null) {
                                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                             }
@@ -192,6 +262,7 @@ public class PepnovoTrainingExport {
             }
 
             spectrumRecalibrator.clearErrors(fileName);
+            progress++;
         }
     }
 

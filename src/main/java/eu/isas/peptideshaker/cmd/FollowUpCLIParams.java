@@ -22,7 +22,12 @@ public enum FollowUpCLIParams {
     FASTA_FILE("fasta_file", "File where to export the protein details in fasta format. Note: existing files will be silently overwritten.", false),
     FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
     PROGENESIS_FILE("progenesis_file", "File where to export the identification results in a Non-Linear Progenesis compatible format. Note: existing files will be silently overwritten.", false),
-    PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), false);
+    PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), false),
+    PEPNOVO_TRAINING_FOLDER("pepnovo_training_folder", "Folder where to output the pepnovo training files. Note: existing files will be silently overwritten.", false),
+    PEPNOVO_TRAINING_RECALIBRATION("pepnovo_training_recalibration", "Indicate whether the exported mgf files shall be recalibrated. 0: No, 1: Yes (default).", false),
+    PEPNOVO_TRAINING_FDR("pepnovo_training_fdr", "The FDR used for the 'good spectra' export. If not set, the validation FDR will be used.", false),
+    PEPNOVO_TRAINING_FNR("pepnovo_training_fnr", "The FNR used for the 'bad spectra' export. If not set, the same value as for the 'good spectra' FDR will be used.", false);
+    
     
     /**
      * Short Id for the CLI parameter.
@@ -70,6 +75,10 @@ public enum FollowUpCLIParams {
         aOptions.addOption(FASTA_TYPE.id, true, FASTA_TYPE.description);
         aOptions.addOption(PROGENESIS_FILE.id, true, PROGENESIS_FILE.description);
         aOptions.addOption(PROGENESIS_TYPE.id, true, PROGENESIS_TYPE.description);
+        aOptions.addOption(PEPNOVO_TRAINING_FOLDER.id, true, PEPNOVO_TRAINING_FOLDER.description);
+        aOptions.addOption(PEPNOVO_TRAINING_RECALIBRATION.id, true, PEPNOVO_TRAINING_RECALIBRATION.description);
+        aOptions.addOption(PEPNOVO_TRAINING_FDR.id, true, PEPNOVO_TRAINING_FDR.description);
+        aOptions.addOption(PEPNOVO_TRAINING_FNR.id, true, PEPNOVO_TRAINING_FNR.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -122,6 +131,13 @@ public enum FollowUpCLIParams {
         output += "\nAccessions export:\n\n";
         output += "-" + String.format(formatter, FASTA_FILE.id) + FASTA_FILE.description + "\n";
         output += "-" + String.format(formatter, FASTA_TYPE.id) + FASTA_TYPE.description + "\n";
+        
+        output += "\nPepnovo training files export:\n\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FOLDER.id) + PEPNOVO_TRAINING_FOLDER.description + "\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_RECALIBRATION.id) + PEPNOVO_TRAINING_RECALIBRATION.description + "\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FDR.id) + PEPNOVO_TRAINING_FDR.description + "\n";
+        output += "-" + String.format(formatter, PEPNOVO_TRAINING_FNR.id) + PEPNOVO_TRAINING_FNR.description + "\n";
+        
 
         return output;
     }
