@@ -30,6 +30,7 @@ import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
 import com.compomics.util.preferences.gui.ImportSettingsDialogParent;
+import com.compomics.util.pride.PtmToPrideMap;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -109,7 +110,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
     /**
      * The search parameters corresponding to the files selected.
      */
-    private SearchParameters searchParameters = null;
+    private SearchParameters searchParameters = new SearchParameters();
     /*
      * The welcome dialog parent, can be null.
      */
@@ -128,34 +129,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         this.welcomeDialog = welcomeDialog;
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
-    }
-
-    /**
-     * Creates a new open dialog.
-     *
-     * @param peptideShaker a reference to the main frame
-     * @param modal boolean indicating whether the dialog is modal
-     * @param experiment The experiment conducted
-     * @param sample The sample analyzed
-     * @param replicateNumber The replicate number
-     */
-    public NewDialog(PeptideShakerGUI peptideShaker, boolean modal, MsExperiment experiment, Sample sample, int replicateNumber) {
-        super(peptideShaker, modal);
-
-        this.peptideShakerGUI = peptideShaker;
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
-
-        // @TODO: this does not work! have to create a new object and transfer all the values...
-
-        // store the current settings
-//        oldSearchParameters = peptideShakerGUI.getSearchParameters();
-//        oldProfileFile = peptideShakerGUI.getModificationProfileFile();
-//        oldIdFilter = peptideShakerGUI.getIdFilter();
-
-        setUpGui();
-        this.setLocationRelativeTo(peptideShaker);
     }
 
     /**
@@ -1026,8 +999,14 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
+        PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
+        try {
+            ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(searchParameters);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
         SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(
-                peptideShakerGUI, true, searchParameters, peptideShakerGUI.loadPrideToPtmMap(), 
+                peptideShakerGUI, true, searchParameters, ptmToPrideMap, 
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
         if (!searchPreferencesDialog.isCanceled()) {
             try {
@@ -1674,14 +1653,19 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             public void run() {
 
                 try {
+                    System.out.println(new Date() + " : start");
                     sequenceFactory.loadFastaFile(fastaFile, progressDialog);
+                    System.out.println(new Date() + " : fasta loaded");
                     progressDialog.setRunFinished();
 
+                    System.out.println(new Date() + " : checking first accession");
                     String firstAccession = sequenceFactory.getAccessions().get(0);
+                    System.out.println(new Date() + " : first accession loaded");
                     if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
                         showDataBaseHelpDialog();
                     }
 
+                    System.out.println(new Date() + " :checking target/decoy");
                     if (!sequenceFactory.concatenatedTargetDecoy()) {
                         JOptionPane.showMessageDialog(finalRef, "PeptideShaker validation requires the use of a taget-decoy database.\n"
                                 + "Some features will be limited if using other types of databases.\n\n"
