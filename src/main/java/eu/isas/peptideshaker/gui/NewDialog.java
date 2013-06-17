@@ -30,7 +30,6 @@ import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
-import com.compomics.util.preferences.gui.ImportSettingsDialogParent;
 import com.compomics.util.pride.PtmToPrideMap;
 
 import javax.swing.*;
@@ -50,7 +49,7 @@ import java.util.Properties;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class NewDialog extends javax.swing.JDialog implements ImportSettingsDialogParent {
+public class NewDialog extends javax.swing.JDialog {
 
     /**
      * The compomics PTM factory.
@@ -1084,7 +1083,12 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        new ImportSettingsDialog(this, this, peptideShakerGUI.getIdFilter(), true);
+        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, peptideShakerGUI.getIdFilter(), true);
+        IdFilter newFilter = importSettingsDialog.getFilter();
+        if (newFilter != null) {
+            idFilesTxt.setText("User defined");
+            peptideShakerGUI.setIdFilter(newFilter);
+        }
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
 
     /**
@@ -1764,18 +1768,4 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         progressDialog.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    @Override
-    public void updateFilterSettingsField(String text) {
-        importFilterTxt.setText(text);
-    }
-
-    @Override
-    public void setIdFilter(IdFilter idFilter) {
-        peptideShakerGUI.setIdFilter(idFilter);
-    }
-
-    @Override
-    public IdFilter getIdFilter() {
-        return peptideShakerGUI.getIdFilter();
-    }
 }
