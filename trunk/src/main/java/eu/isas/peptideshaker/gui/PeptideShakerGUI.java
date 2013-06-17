@@ -4,7 +4,6 @@ import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
-import com.compomics.util.preferences.gui.ImportSettingsDialogParent;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.pride.PrideReshakeGui;
@@ -104,7 +103,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, ImportSettingsDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent {
 
     /**
      * The path to the example dataset.
@@ -2495,7 +2494,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
-        new ImportSettingsDialog(this, this, getIdFilter(), false);
+        ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, getIdFilter(), true);
+        IdFilter newFilter = importSettingsDialog.getFilter();
+        if (newFilter != null) {
+            setIdFilter(newFilter);
+        }
     }//GEN-LAST:event_importFilterMenuActionPerformed
 
     /**
