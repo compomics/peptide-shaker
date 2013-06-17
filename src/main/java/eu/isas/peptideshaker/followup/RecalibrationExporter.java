@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -29,6 +30,10 @@ public class RecalibrationExporter {
      * processed spectra
      */
     private static boolean debug = true;
+    /**
+     * Suffix for the mgf file containing all recalibrated spectra.
+     */
+    public static final String recalibrated = "_recalibrated";
 
     /**
      * Writes the recalibrated spectra in files named according to
@@ -66,7 +71,7 @@ public class RecalibrationExporter {
                 }
 
                 waitingHandler.setWaitingText("Recalibrating " + fileName + " (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ") - inspecting mass deviations.");
-                waitingHandler.setSecondaryProgressValue(0);
+                waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressValue(2 * spectrumFactory.getNSpectra(fileName));
             }
@@ -139,9 +144,6 @@ public class RecalibrationExporter {
 
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
-                if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-                    break;
-                }
                 if (debug) {
                     //System.out.println(new Date() + " recalibrating " + spectrumTitle + "\n");
                 }
@@ -151,6 +153,9 @@ public class RecalibrationExporter {
                 writer1.flush();
 
                 if (waitingHandler != null) {
+                    if (waitingHandler.isRunCanceled()) {
+                        break;
+                    }
                     waitingHandler.increaseProgressValue();
                 }
             }
@@ -167,8 +172,6 @@ public class RecalibrationExporter {
      * @return the name of the recalibrated file
      */
     public static String getRecalibratedFileName(String fileName) {
-        String tempName = fileName.substring(0, fileName.lastIndexOf("."));
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        return tempName + "_recalibrated" + extension;
+        return Util.appendSuffix(fileName, recalibrated);
     }
 }

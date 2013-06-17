@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.followup;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -30,11 +31,11 @@ public class PepnovoTrainingExport {
      * Suffix for the mgf file containing annotated spectra making the "good
      * training" set.
      */
-    public static final String goodTraining = "good_training";
+    public static final String goodTrainingSetSuffix = "_good_training";
     /**
      * Suffix for the mgf file containing spectra making the "bad training" set.
      */
-    public static final String badTraining = "bad_training";
+    public static final String badTrainingSetSuffix = "_bad_training";
 
     /**
      * Exports the PepNovo training files, eventually recalibrated with the
@@ -56,9 +57,9 @@ public class PepnovoTrainingExport {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
-    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences, double confidenceLevel, 
+    public static void exportPepnovoTrainingFiles(File destinationFolder, Identification identification, AnnotationPreferences annotationPreferences, double confidenceLevel,
             boolean recalibrate, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -93,14 +94,19 @@ public class PepnovoTrainingExport {
                 }
                 waitingHandler.setWaitingText("Selecting good PSMs " + fileName + " (" + progress + "/"
                         + spectrumFactory.getMgfFileNames().size() + ").");
+                // reset the progress bar
+                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(fileName).size());
             }
             ArrayList<String> keys = new ArrayList<String>();
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
                 String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
-                psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                if (psParameter.getPsmConfidence() >= confidenceLevel) {
-                    keys.add(spectrumKey);
+                if (identification.matchExists(spectrumKey)) {
+                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                    if (psParameter.getPsmConfidence() >= confidenceLevel) {
+                        keys.add(spectrumKey);
+                    }
                 }
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -108,6 +114,13 @@ public class PepnovoTrainingExport {
                     }
                     waitingHandler.increaseSecondaryProgressValue();
                 }
+            }
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                waitingHandler.setWaitingText("Loading PSMs " + fileName + " (" + progress + "/"
+                        + spectrumFactory.getMgfFileNames().size() + ").");
             }
             identification.loadSpectrumMatches(keys, waitingHandler);
 
@@ -117,14 +130,20 @@ public class PepnovoTrainingExport {
                 }
                 waitingHandler.setWaitingText("Exporting Pepnovo training files " + fileName + " (" + progress + "/"
                         + spectrumFactory.getMgfFileNames().size() + ").");
+                // reset the progress bar
+                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(fileName).size());
             }
 
             File file = new File(destinationFolder, getRecalibratedFileName(fileName));
-            BufferedWriter writerRecalibration = new BufferedWriter(new FileWriter(file));
-            file = new File(destinationFolder, getRecalibratedFileName(fileName));
             BufferedWriter writerGood = new BufferedWriter(new FileWriter(file));
             file = new File(destinationFolder, getRecalibratedFileName(fileName));
             BufferedWriter writerBad = new BufferedWriter(new FileWriter(file));
+            BufferedWriter writerRecalibration = null;
+            if (recalibrate) {
+                file = new File(destinationFolder, getRecalibratedFileName(fileName));
+                writerRecalibration = new BufferedWriter(new FileWriter(file));
+            }
 
             try {
 
@@ -156,29 +175,19 @@ public class PepnovoTrainingExport {
                         if (waitingHandler.isRunCanceled()) {
                             return;
                         }
-                        waitingHandler.increaseProgressValue();
+                        waitingHandler.increaseSecondaryProgressValue();
                     }
                 }
             } finally {
-                writerRecalibration.close();
                 writerBad.close();
                 writerGood.close();
+                if (writerRecalibration != null) {
+                    writerRecalibration.close();
+                }
             }
 
             spectrumRecalibrator.clearErrors(fileName);
         }
-    }
-
-    /**
-     * Returns the name of the recalibrated file.
-     *
-     * @param fileName the original file name
-     * @return the name of the recalibrated file
-     */
-    public static String getRecalibratedFileName(String fileName) {
-        String tempName = fileName.substring(0, fileName.lastIndexOf("."));
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        return tempName + "_recalibrated" + extension;
     }
 
     /**
@@ -188,9 +197,7 @@ public class PepnovoTrainingExport {
      * @return the name of the good training set file
      */
     public static String getGoodSetFileName(String fileName) {
-        String tempName = fileName.substring(0, fileName.lastIndexOf("."));
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        return tempName + goodTraining + extension;
+        return Util.appendSuffix(fileName, goodTrainingSetSuffix);
     }
 
     /**
@@ -200,8 +207,6 @@ public class PepnovoTrainingExport {
      * @return the name of the bad training set file
      */
     public static String getBadetFileName(String fileName) {
-        String tempName = fileName.substring(0, fileName.lastIndexOf("."));
-        String extension = fileName.substring(fileName.lastIndexOf("."));
-        return tempName + badTraining + extension;
+        return Util.appendSuffix(fileName, badTrainingSetSuffix);
     }
 }

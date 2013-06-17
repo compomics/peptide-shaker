@@ -19,6 +19,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.experiment.io.massspectrometry.MgfReader;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -111,6 +112,10 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * The search parameters corresponding to the files selected.
      */
     private SearchParameters searchParameters = new SearchParameters();
+    /**
+     * The gene preferences
+     */
+    private GenePreferences genePreferences;
     /*
      * The welcome dialog parent, can be null.
      */
@@ -127,6 +132,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShaker;
         this.welcomeDialog = welcomeDialog;
+        this.genePreferences = new GenePreferences(peptideShaker.getGenePreferences());
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
     }
@@ -139,8 +145,8 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
-        if (peptideShakerGUI.getGenePreferences().getCurrentSpecies() != null) {
-            speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
+        if (genePreferences.getCurrentSpecies() != null) {
+            speciesTextField.setText(genePreferences.getCurrentSpecies());
         } else {
             speciesTextField.setText("(not selected)");
         }
@@ -643,16 +649,17 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             this.setVisible(false);
             peptideShakerGUI.setVisible(true);
             peptideShakerGUI.clearData(true, false);
+            peptideShakerGUI.setDefaultPreferences();
+            peptideShakerGUI.setGenePreferences(genePreferences);
+            peptideShakerGUI.setSearchParameters(searchParameters);
+            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
+            peptideShakerGUI.setProjectDetails(getProjectDetails());
 
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
             replicateNumber = getReplicateNumber();
             SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(replicateNumber));
             experiment.addAnalysisSet(sample, analysisSet);
-
-            peptideShakerGUI.setProjectDetails(getProjectDetails());
-            peptideShakerGUI.setDefaultPreferences();
-            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
@@ -699,7 +706,6 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             }
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
-                peptideShakerGUI.setSearchParameters(searchParameters);
                 peptideShakerGUI.setProcessingPreferences(processingPreferences);
                 peptideShakerGUI.setPtmScoringPreferences(ptmScoringPreferences);
                 peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
@@ -1154,9 +1160,9 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      * @param evt
      */
     private void editSpeciesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSpeciesButtonActionPerformed
-        new SpeciesDialog(this, peptideShakerGUI, peptideShakerGUI, true);
-        if (peptideShakerGUI.getGenePreferences().getCurrentSpecies() != null) {
-            speciesTextField.setText(peptideShakerGUI.getGenePreferences().getCurrentSpecies());
+        new SpeciesDialog(this, peptideShakerGUI, genePreferences, true, peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getNormalIcon());
+        if (genePreferences.getCurrentSpecies() != null) {
+            speciesTextField.setText(genePreferences.getCurrentSpecies());
         } else {
             speciesTextField.setText("(not selected)");
         }
@@ -1653,10 +1659,13 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             public void run() {
 
                 try {
+                    System.out.println(new Date() + ": loading fasta file");
                     sequenceFactory.loadFastaFile(fastaFile, progressDialog); // @TODO: does not show actual progress if started automatically by the loading of search result files...
                     progressDialog.setRunFinished();
 
+                    System.out.println(new Date() + ": getting first accession");
                     String firstAccession = sequenceFactory.getAccessions().get(0);
+                    System.out.println(new Date() + ": checking uniprot");
                     if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
                         showDataBaseHelpDialog();
                     }

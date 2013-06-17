@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.gui.gene_mapping.SpeciesDialog;
-import com.compomics.util.gui.gene_mapping.SpeciesDialogParent;
 import eu.isas.peptideshaker.gui.exportdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.exportdialogs.FollowupPreferencesDialog;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
@@ -107,7 +106,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, ImportSettingsDialogParent, SpeciesDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, ImportSettingsDialogParent {
 
     /**
      * The path to the example dataset.
@@ -2859,7 +2858,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param evt
      */
     private void speciesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speciesJMenuItemActionPerformed
-        new SpeciesDialog(this, this, true);
+        GenePreferences genePreferences = getGenePreferences();
+        String oldSpecies = genePreferences.getCurrentSpecies();
+        new SpeciesDialog(this, genePreferences, true, getWaitingIcon(), getNormalIcon());
+        String newSpecies = genePreferences.getCurrentSpecies();
+        if (!oldSpecies.equals(newSpecies)) {
+            if (newSpecies != null) {
+                loadGeneMappings();
+                updateGeneDisplay();
+            } else {
+                clearGeneMappings();
+            }
+        }
     }//GEN-LAST:event_speciesJMenuItemActionPerformed
 
     /**
@@ -3205,23 +3215,26 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void updateAnnotationPreferencesFromSearchSettings() {
 
-        getAnnotationPreferences().setPreferencesFromSearchParamaers(getSearchParameters());
+        SearchParameters searchParameters = getSearchParameters();
+        AnnotationPreferences annotationPreferences = new AnnotationPreferences();
+        annotationPreferences.setPreferencesFromSearchParamaers(searchParameters);
+        setAnnotationPreferences(annotationPreferences);
 
-        if (getSearchParameters().getIonSearched1() == PeptideFragmentIon.A_ION) {
+        if (searchParameters.getIonSearched1() == PeptideFragmentIon.A_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("a-ions");
-        } else if (getSearchParameters().getIonSearched1() == PeptideFragmentIon.B_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.B_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("b-ions");
-        } else if (getSearchParameters().getIonSearched1() == PeptideFragmentIon.C_ION) {
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIon.C_ION) {
             forwardIonsDeNovoCheckBoxMenuItem.setText("c-ions");
         }
 
         forwardIonsDeNovoCheckBoxMenuItem.repaint();
 
-        if (getSearchParameters().getIonSearched2() == PeptideFragmentIon.X_ION) {
+        if (searchParameters.getIonSearched2() == PeptideFragmentIon.X_ION) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("x-ions");
-        } else if (getSearchParameters().getIonSearched2() == PeptideFragmentIon.Y_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Y_ION) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("y-ions");
-        } else if (getSearchParameters().getIonSearched2() == PeptideFragmentIon.Z_ION) {
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIon.Z_ION) {
             rewindIonsDeNovoCheckBoxMenuItem.setText("z-ions");
         }
 
@@ -3572,6 +3585,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public void setGenePreferences(GenePreferences genePreferences) {
         cpsBean.setGenePreferences(genePreferences);
+        loadGeneMappings();
     }
 
     /**
@@ -5028,7 +5042,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     try {
                         cpsBean.loadCpsFile(progressDialog);
-                        loadGeneMappings(); // have to load the new gene mappings
                     } catch (SQLException e) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
@@ -5036,6 +5049,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 + "Please close all instances of PeptideShaker and try again.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                     }
+                    progressDialog.setTitle("Loading Gene mappings. Please Wait...");
+                    loadGeneMappings(); // have to load the new gene mappings
 
                     if (progressDialog.isRunCanceled()) {
                         clearData(true, true);
@@ -6330,14 +6345,20 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         return peptideKey;
     }
 
-    @Override
+    /**
+     * Clear the gene mappings.
+     */
     public void clearGeneMappings() {
         goPanel.clearOldResults();
         dataSaved = false;
     }
 
-    @Override
-    public void updateGeneMappings(String selectedSpecies) {
+    /**
+     * Update the gene mapping results.
+     *
+     * @param selectedSpecies the new species
+     */
+    public void updateGeneDisplay() {
 
         dataSaved = false;
 
@@ -6346,12 +6367,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } else {
             setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, false);
 
-            String speciesDatabase = getGenePreferences().getSpeciesMap().get(selectedSpecies);
+            GenePreferences genePreferences = getGenePreferences();
+            String selectedSpecies = genePreferences.getCurrentSpecies();
+            String speciesDatabase = genePreferences.getEnsemblDatabaseName(selectedSpecies);
 
             if (speciesDatabase != null) {
 
-                final File goMappingsFile = new File(getGenePreferences().getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
-                final File geneMappingsFile = new File(getGenePreferences().getGeneMappingFolder(), speciesDatabase + GenePreferences.GENE_MAPPING_FILE_SUFFIX);
+                final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
 
                 if (goMappingsFile.exists()) {
 
@@ -6376,11 +6398,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         @Override
                         public void run() {
                             try {
-                                progressDialog.setTitle("Getting Gene Mappings. Please Wait...");
-                                geneFactory.initialize(geneMappingsFile, progressDialog);
-                                progressDialog.setTitle("Getting GO Mappings. Please Wait...");
-                                goFactory.initialize(goMappingsFile, progressDialog);
-
                                 // redraw any tables with chromosome mappings
                                 ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
                                 ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();

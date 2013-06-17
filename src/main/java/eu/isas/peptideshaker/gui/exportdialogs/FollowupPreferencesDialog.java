@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -666,8 +667,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        SpectrumExporter spectrumExporter = new SpectrumExporter(peptideShakerGUI.getIdentification());
-                        spectrumExporter.exportSpectra(selectedFolder, progressDialog, SpectrumExporter.ExportType.getTypeFromIndex(spectrumValidationCmb.getSelectedIndex()));
+                        double confidenceLimit = 95; //@TODO: make this a user selection?
+                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), confidenceLimit, recalibrateForDenovoCheck.isSelected(), progressDialog);
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
