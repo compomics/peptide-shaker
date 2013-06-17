@@ -1826,7 +1826,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private void searchParametersMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersMenuActionPerformed
 
-        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, getSearchParameters(), loadPrideToPtmMap(),
+        SearchParameters searchParameters = getSearchParameters();
+        if (searchParameters == null) {
+            setDefaultPreferences();
+            searchParameters = getSearchParameters();
+        }
+        PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
+        try {
+            ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(getSearchParameters());
+        } catch (Exception e) {
+            catchException(e);
+        }
+        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, searchParameters, ptmToPrideMap,
                 selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor);
 
         if (!searchPreferencesDialog.isCanceled()) {
@@ -5013,7 +5024,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     loadEnzymes();
                     resetPtmFactory();
                     setDefaultPreferences();
-                    loadGeneMappings();
 
                     try {
                         cpsBean.loadCpsFile(progressDialog);
@@ -5664,38 +5674,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         cpsBean.setCpsFile(selectedFile);
         if (selectedFile != null) {
             saveProject(closeWhenDone);
-        }
-    }
-
-    /**
-     * Loads the PRIDE to PTM map from the user folder or creates a new one if
-     * the file is not present. Loads a default mapping if a PTM is not present.
-     *
-     * @return the PRIDE to PTM map
-     */
-    public PtmToPrideMap loadPrideToPtmMap() {
-        try {
-            PrideObjectsFactory prideObjectsFactory = PrideObjectsFactory.getInstance();
-            PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
-            boolean changes = false;
-            ModificationProfile modificationProfile = getSearchParameters().getModificationProfile();
-            for (String psPtm : modificationProfile.getAllModifications()) {
-                if (ptmToPrideMap.getCVTerm(psPtm) == null) {
-                    CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(psPtm);
-                    if (defaultCVTerm != null) {
-                        ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
-                        changes = true;
-                        break;
-                    }
-                }
-            }
-            if (changes) {
-                prideObjectsFactory.setPtmToPrideMap(ptmToPrideMap);
-            }
-            return ptmToPrideMap;
-        } catch (Exception e) {
-            catchException(e);
-            return null;
         }
     }
 

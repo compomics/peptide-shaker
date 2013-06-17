@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewSampleDialog;
 import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewInstrumentDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.pride.prideobjects.Reference;
 import com.compomics.util.pride.prideobjects.Contact;
@@ -162,7 +163,13 @@ public class PrideExportDialog extends javax.swing.JDialog {
      */
     private void updatePtmMap() {
 
-        peptideShakerGUI.loadPrideToPtmMap();
+        SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+        PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
+        try {
+            ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(searchParameters);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+        }
         ArrayList<String> missingMods = checkModifications();
 
         if (!missingMods.isEmpty()) {
@@ -178,7 +185,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
             }
             report += ".\nPlease add a CV term by clicking on the corresponding case in the PTM table.";
             JOptionPane.showMessageDialog(peptideShakerGUI, report, "PTM CV Term(s) Missing.", JOptionPane.WARNING_MESSAGE);
-            SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.loadPrideToPtmMap(), peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
+            SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, searchParameters, ptmToPrideMap, peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
             if (!searchPreferencesDialog.isCanceled()) {
                 try {
                     searchPreferencesDialog.updatePtmToPrideMap();
