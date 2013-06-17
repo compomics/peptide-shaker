@@ -135,9 +135,9 @@ public class PepnovoTrainingExport {
                 waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(fileName).size());
             }
 
-            File file = new File(destinationFolder, getRecalibratedFileName(fileName));
+            File file = new File(destinationFolder, getGoodSetFileName(fileName));
             BufferedWriter writerGood = new BufferedWriter(new FileWriter(file));
-            file = new File(destinationFolder, getRecalibratedFileName(fileName));
+            file = new File(destinationFolder, getBadSetFileName(fileName));
             BufferedWriter writerBad = new BufferedWriter(new FileWriter(file));
             BufferedWriter writerRecalibration = null;
             if (recalibrate) {
@@ -151,24 +151,29 @@ public class PepnovoTrainingExport {
 
                     String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);
 
-                    MSnSpectrum spectrum;
+                    MSnSpectrum spectrum = null;
                     if (recalibrate) {
                         spectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, true, true);
                         spectrum.writeMgf(writerRecalibration);
-                    } else {
-                        spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                     }
-
-                    psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
-                    if (psParameter.getPsmConfidence() >= confidenceLevel) {
-                        SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                        String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
-                        HashMap<String, String> tags = new HashMap<String, String>();
-                        tags.put("SEQ", sequence);
-                        spectrum.writeMgf(writerGood, tags);
-                    }
-                    if (psParameter.getPsmConfidence() <= 100 - confidenceLevel) {
-                        spectrum.writeMgf(writerBad);
+                    if (identification.matchExists(spectrumKey)) {
+                        psParameter = (PSParameter) identification.getSpectrumMatchParameter(spectrumKey, psParameter);
+                        if (psParameter.getPsmConfidence() >= confidenceLevel) {
+                            if (spectrum == null) {
+                                spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                            }
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            String sequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                            HashMap<String, String> tags = new HashMap<String, String>();
+                            tags.put("SEQ", sequence);
+                            spectrum.writeMgf(writerGood, tags);
+                        }
+                        if (psParameter.getPsmConfidence() <= 100 - confidenceLevel) {
+                            if (spectrum == null) {
+                                spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
+                            }
+                            spectrum.writeMgf(writerBad);
+                        }
                     }
 
                     if (waitingHandler != null) {
@@ -206,7 +211,7 @@ public class PepnovoTrainingExport {
      * @param fileName the original file name
      * @return the name of the bad training set file
      */
-    public static String getBadetFileName(String fileName) {
+    public static String getBadSetFileName(String fileName) {
         return Util.appendSuffix(fileName, badTrainingSetSuffix);
     }
 }
