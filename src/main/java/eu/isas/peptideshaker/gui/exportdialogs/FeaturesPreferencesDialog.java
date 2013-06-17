@@ -2195,7 +2195,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
                         PSMaps pSMaps = new PSMaps();
                         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                        progressDialog.setTitle("Exporting. Please wait...");
+                        progressDialog.setTitle("Exporting. Please Wait...");
                         ExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),
                                 peptideShakerGUI.getProjectDetails(), peptideShakerGUI.getIdentification(),

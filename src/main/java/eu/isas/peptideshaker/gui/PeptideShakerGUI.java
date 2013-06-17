@@ -58,8 +58,6 @@ import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferences;
-import com.compomics.util.pride.CvTerm;
-import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
@@ -1837,23 +1835,28 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         } catch (Exception e) {
             catchException(e);
         }
-        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(this, false, searchParameters, ptmToPrideMap,
+        SearchPreferencesDialog searchPreferencesDialog =
+                new SearchPreferencesDialog(this, false, searchParameters, ptmToPrideMap,
                 selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor);
 
         if (!searchPreferencesDialog.isCanceled()) {
-            try {
-                searchPreferencesDialog.updatePtmToPrideMap();
-            } catch (Exception e) {
-                catchException(e);
-            }
 
-            //@TODO: do this only if the new search settings are different from the old ones
-            setSearchParameters(searchPreferencesDialog.getSearchParameters());
-            updateAnnotationPreferencesFromSearchSettings();
-            setSelectedItems();
-            backgroundPanel.revalidate();
-            backgroundPanel.repaint();
-            dataSaved = false;
+            // update only if the new search settings are different from the old ones
+            if (!searchPreferencesDialog.getSearchParameters().equals(searchParameters)) {
+
+                try {
+                    searchPreferencesDialog.updatePtmToPrideMap();
+                } catch (Exception e) {
+                    catchException(e);
+                }
+
+                setSearchParameters(searchPreferencesDialog.getSearchParameters());
+                updateAnnotationPreferencesFromSearchSettings();
+                setSelectedItems();
+                backgroundPanel.revalidate();
+                backgroundPanel.repaint();
+                dataSaved = false;
+            }
         }
     }//GEN-LAST:event_searchParametersMenuActionPerformed
 
