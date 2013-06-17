@@ -1006,7 +1006,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             peptideShakerGUI.catchException(e);
         }
         SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(
-                peptideShakerGUI, true, searchParameters, ptmToPrideMap, 
+                peptideShakerGUI, true, searchParameters, ptmToPrideMap,
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
         if (!searchPreferencesDialog.isCanceled()) {
             try {
@@ -1628,7 +1628,7 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
      */
     private void checkFastaFile(File file) {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI,
+        progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
@@ -1653,19 +1653,14 @@ public class NewDialog extends javax.swing.JDialog implements ImportSettingsDial
             public void run() {
 
                 try {
-                    System.out.println(new Date() + " : start");
-                    sequenceFactory.loadFastaFile(fastaFile, progressDialog);
-                    System.out.println(new Date() + " : fasta loaded");
+                    sequenceFactory.loadFastaFile(fastaFile, progressDialog); // @TODO: does not show actual progress if started automatically by the loading of search result files...
                     progressDialog.setRunFinished();
 
-                    System.out.println(new Date() + " : checking first accession");
                     String firstAccession = sequenceFactory.getAccessions().get(0);
-                    System.out.println(new Date() + " : first accession loaded");
                     if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
                         showDataBaseHelpDialog();
                     }
 
-                    System.out.println(new Date() + " :checking target/decoy");
                     if (!sequenceFactory.concatenatedTargetDecoy()) {
                         JOptionPane.showMessageDialog(finalRef, "PeptideShaker validation requires the use of a taget-decoy database.\n"
                                 + "Some features will be limited if using other types of databases.\n\n"
