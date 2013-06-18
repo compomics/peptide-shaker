@@ -96,8 +96,9 @@ public class PepnovoTrainingExport {
         PSMaps psMaps = new PSMaps();
         psMaps = (PSMaps) identification.getUrParam(psMaps);
         PsmSpecificMap psmTargetDecoyMap = psMaps.getPsmSpecificMap();
-        HashMap<Integer, Double> highConfidenceThresholds = new HashMap<Integer, Double>(),
-                lowConfidenceThresholds = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> highConfidenceThresholds = new HashMap<Integer, Double>();
+        HashMap<Integer, Double> lowConfidenceThresholds = new HashMap<Integer, Double>();
+        
         for (Integer key : psmTargetDecoyMap.getKeys().keySet()) {
             double fdrThreshold, fnrThreshold;
             TargetDecoyResults currentResults = psmTargetDecoyMap.getTargetDecoyMap(key).getTargetDecoyResults();
@@ -141,14 +142,13 @@ public class PepnovoTrainingExport {
                         break;
                     }
 
-                    waitingHandler.setWaitingText("Recalibrating " + fileName + " (" + fileName + ", " + progress + "/" + spectrumFactory.getMgfFileNames().size() + ").");
+                    waitingHandler.setWaitingText("Recalibrating Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                     waitingHandler.setSecondaryProgressValue(0);
                     waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                     waitingHandler.setMaxSecondaryProgressValue(2 * spectrumFactory.getNSpectra(fileName));
                 }
 
                 spectrumRecalibrator.estimateErrors(fileName, identification, annotationPreferences, waitingHandler);
-
             }
 
             PSParameter psParameter = new PSParameter();
@@ -158,12 +158,12 @@ public class PepnovoTrainingExport {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.setWaitingText("Selecting good PSMs " + fileName + " (" + progress + "/"
-                        + spectrumFactory.getMgfFileNames().size() + ").");
+                waitingHandler.setWaitingText("Selecting Good PSMs. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                 // reset the progress bar
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(fileName).size());
             }
+
             ArrayList<String> keys = new ArrayList<String>();
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
@@ -186,8 +186,8 @@ public class PepnovoTrainingExport {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.setWaitingText("Loading PSMs " + fileName + " (" + progress + "/"
-                        + spectrumFactory.getMgfFileNames().size() + ").");
+                waitingHandler.setWaitingText("Loading PSMs. Please Wait... (" + progress + "/"
+                        + spectrumFactory.getMgfFileNames().size() + ")");
             }
             identification.loadSpectrumMatches(keys, waitingHandler);
 
@@ -195,8 +195,7 @@ public class PepnovoTrainingExport {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.setWaitingText("Exporting Pepnovo training files " + fileName + " (" + progress + "/"
-                        + spectrumFactory.getMgfFileNames().size() + ").");
+                waitingHandler.setWaitingText("Exporting PepNovo Training Files. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ").");
                 // reset the progress bar
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(fileName).size());

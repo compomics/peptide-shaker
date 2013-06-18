@@ -4595,7 +4595,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 String proteinKey = proteinKeys.get(proteinIndex);
                 final ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
 
-                new Thread(new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         try {
                             updateSequenceCoverage(proteinMatch.getMainMatch());
@@ -4603,7 +4603,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                             peptideShakerGUI.catchException(e);
                         }
                     }
-                }, "CoveragePlot").start();
+                });
 
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);

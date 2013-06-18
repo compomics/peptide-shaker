@@ -134,41 +134,41 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(recalibrateSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportSpectraLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(spectraPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumValidationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(exportSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(spectraPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumRecalibrationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(recalibrateMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(recalibrateSpectraLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spectrumRecalibrationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(exportMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(recalibrateMgfButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         spectraPanelLayout.setVerticalGroup(
             spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectraPanelLayout.createSequentialGroup()
+            .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(recalibrateSpectraLabel)
-                    .addComponent(recalibrateMgfButton)
-                    .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(exportSpectraLabel)
+                    .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportMgfButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportSpectraLabel)
-                    .addComponent(exportMgfButton)
-                    .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(recalibrateSpectraLabel)
+                    .addComponent(spectrumRecalibrationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(recalibrateMgfButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion Lists (beta)"));
+        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion List (beta)"));
         inclusionListPanel.setOpaque(false);
 
-        includeValidatedPsmsLabel.setText("Format:");
+        includeValidatedPsmsLabel.setText("Instrument Format");
 
         inclusionListFormat.setModel(new DefaultComboBoxModel(InclusionListExport.ExportFormat.getPossibilities()));
 
@@ -326,8 +326,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         exportToPepNovoPart1Label.setText("Export Training Files");
 
         recalibrateForDenovoCheck.setSelected(true);
-        recalibrateForDenovoCheck.setText("recalibrate spectra (beta)");
-        recalibrateForDenovoCheck.setIconTextGap(10);
+        recalibrateForDenovoCheck.setText("Recalibrate Spectra (beta)");
+        recalibrateForDenovoCheck.setIconTextGap(15);
         recalibrateForDenovoCheck.setOpaque(false);
 
         deNovoGuiLinkLabel.setText("<html>available via <a href=\\\"http://denovogui.googlecode.com\\\">DenovoGUI</a></html>");
@@ -371,7 +371,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(deNovoGuiLinkLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49)
                 .addComponent(recalibrateForDenovoCheck)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(exportPepnovoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -668,14 +668,16 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        
-                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), 1.0, 1.0, recalibrateForDenovoCheck.isSelected(), progressDialog);
+                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(), 
+                                peptideShakerGUI.getAnnotationPreferences(), 1.0, 1.0, recalibrateForDenovoCheck.isSelected(), progressDialog); // @TODO: fdr and fnr should not be hard coded here!!
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, 
+                                    "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", 
+                                    "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
                         progressDialog.setRunFinished();

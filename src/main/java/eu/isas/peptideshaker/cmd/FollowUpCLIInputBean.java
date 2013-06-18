@@ -77,7 +77,7 @@ public class FollowUpCLIInputBean {
      */
     private Double pepnovoTrainingFNR = null;
     /**
-     * The file for inclusion list export
+     * The file for inclusion list export.
      */
     private File inclusionFile;
     /**
@@ -85,18 +85,17 @@ public class FollowUpCLIInputBean {
      */
     private int inclusionFormat = 0;
     /**
-     * List of protein inference filters for the inclusion list creation
+     * List of protein inference filters for the inclusion list creation.
      */
     private ArrayList<Integer> inclusionProteinFilter;
     /**
-     * List of peptide filters for the inclusion list creation
+     * List of peptide filters for the inclusion list creation.
      */
     private ArrayList<Integer> inclusionPeptideFilter;
     /**
      * RT window for the inclusion list creation. 20 by default.
      */
     private Double inclusionRtWindow = 20.0;
-    
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -317,7 +316,7 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the file for the inclusion list generation. null if not set.
-     * 
+     *
      * @return the file for the inclusion list generation. null if not set
      */
     public File getInclusionFile() {
@@ -326,7 +325,7 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the format for inclusion list generation.
-     * 
+     *
      * @return the format for inclusion list generation.
      */
     public int getInclusionFormat() {
@@ -334,9 +333,11 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Returns the protein inference filters to use for inclusion list generation.
-     * 
-     * @return the protein inference filters to use for inclusion list generation.
+     * Returns the protein inference filters to use for inclusion list
+     * generation.
+     *
+     * @return the protein inference filters to use for inclusion list
+     * generation
      */
     public ArrayList<Integer> getInclusionProteinFilter() {
         if (inclusionProteinFilter == null) {
@@ -348,8 +349,8 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the peptide filters to use for inclusion list generation.
-     * 
-     * @return the peptide filters to use for inclusion list generation.
+     *
+     * @return the peptide filters to use for inclusion list generation
      */
     public ArrayList<Integer> getInclusionPeptideFilter() {
         if (inclusionProteinFilter == null) {
@@ -362,9 +363,9 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Returns the retention time window to use for inclusion list generation. 
-     * 
-     * @return the retention time window to use for inclusion list generation. 
+     * Returns the retention time window to use for inclusion list generation.
+     *
+     * @return the retention time window to use for inclusion list generation
      */
     public Double getInclusionRtWindow() {
         return inclusionRtWindow;
@@ -421,26 +422,26 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Indicates whether a progenesis export is needed.
+     * Indicates whether a Progenesis export is needed.
      *
-     * @return whether a progenesis export is needed
+     * @return whether a Progenesis export is needed
      */
     public boolean progenesisExportNeeded() {
         return progenesisExportFile != null;
     }
 
     /**
-     * Indicates whether a pepnovo training export is needed.
+     * Indicates whether a PepNovo training export is needed.
      *
-     * @return whether a pepnovo training export export is needed
+     * @return whether a PepNovo training export export is needed
      */
     public boolean pepnovoTrainingExportNeeded() {
         return pepnovoTrainingFolder != null;
     }
-    
+
     /**
-     * Indicates whether an inclusion list generation is needed
-     * 
+     * Indicates whether an inclusion list generation is needed.
+     *
      * @return whether an inclusion list generation is needed
      */
     public boolean inclusionListNeeded() {

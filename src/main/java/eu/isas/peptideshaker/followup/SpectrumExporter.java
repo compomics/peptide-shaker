@@ -83,7 +83,7 @@ public class SpectrumExporter {
             String mgfFile = spectrumFactory.getMgfFileNames().get(i);
 
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Exporting Spectra - Loading PSMs. Please Wait... (" + mgfFile + ", " + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                waitingHandler.setWaitingText("Exporting Spectra - Loading PSMs. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
             }
             identification.loadSpectrumMatches(mgfFile, waitingHandler);
             if (exportType == ExportType.non_validated_psms
@@ -91,7 +91,7 @@ public class SpectrumExporter {
                     || exportType == ExportType.validated_psms_peptides
                     || exportType == ExportType.validated_psms_peptides_proteins) {
                 if (waitingHandler != null) {
-                    waitingHandler.setWaitingText("Exporting Spectra - Loading PSM Parameters. Please Wait... (" + mgfFile + ", " + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                    waitingHandler.setWaitingText("Exporting Spectra - Loading PSM Parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                 }
                 identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
             }
@@ -102,7 +102,7 @@ public class SpectrumExporter {
                 BufferedWriter b = new BufferedWriter(f);
                 try {
                     if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + mgfFile + ", " + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                        waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                         // reset the progress bar
                         waitingHandler.resetSecondaryProgressBar();
                         waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(mgfFile).size());

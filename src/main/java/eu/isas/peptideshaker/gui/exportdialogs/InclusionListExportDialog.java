@@ -1,35 +1,21 @@
 package eu.isas.peptideshaker.gui.exportdialogs;
 
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.SearchParameters;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.InclusionListExport.ExportFormat;
-import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
 /**
  * Dialog for setting the inclusion list export settings.
  *
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class InclusionListExportDialog extends javax.swing.JDialog {
 
@@ -42,20 +28,16 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-    /**
-     * The export format
+     * The export format.
      */
     private ExportFormat exportFormat;
 
     /**
      * Creates a new InclusionListExportDialog.
-     *
+     * 
      * @param followupPreferencesDialog
-     * @param modal
-     * @param selectedPsmType the PTM category to export
+     * @param exportFormat
+     * @param modal 
      */
     public InclusionListExportDialog(FollowupPreferencesDialog followupPreferencesDialog, ExportFormat exportFormat, boolean modal) {
         super(followupPreferencesDialog, modal);
@@ -330,7 +312,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
                 File tempOutputFile = fileChooser.getSelectedFile();
 
-                ExportFormat.verifyFileExtension(tempOutputFile, exportFormat);
+                tempOutputFile = ExportFormat.verifyFileExtension(tempOutputFile, exportFormat);
 
                 int outcome = JOptionPane.YES_OPTION;
 
@@ -364,10 +346,10 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                         public void run() {
 
                             try {
-
-
                                 PeptideShakerGUI peptideShakerGUI = followupPreferencesDialog.getPeptideShakerGUI();
-                                InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(), exportFormat, peptideShakerGUI.getSearchParameters(), WIDTH, progressDialog);
+                                InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(), 
+                                        peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(), 
+                                        exportFormat, peptideShakerGUI.getSearchParameters(), WIDTH, progressDialog);
 
                                 boolean processCancelled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
@@ -423,7 +405,7 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     /**
      * Returns the protein filters selected as list of PI statuses.
      *
-     * @return
+     * @return the protein filters
      */
     private ArrayList<Integer> getProteinFilters() {
         ArrayList<Integer> proteinFilters = new ArrayList<Integer>();
@@ -438,11 +420,11 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
         }
         return proteinFilters;
     }
-    
+
     /**
      * Returns the peptide filters selected as a list of PeptideFilterType.
-     * 
-     * @return 
+     *
+     * @return the peptide filters
      */
     private ArrayList<InclusionListExport.PeptideFilterType> getPeptideFilters() {
         ArrayList<InclusionListExport.PeptideFilterType> peptideFilters = new ArrayList<InclusionListExport.PeptideFilterType>();
@@ -457,5 +439,4 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
         }
         return peptideFilters;
     }
-
 }
