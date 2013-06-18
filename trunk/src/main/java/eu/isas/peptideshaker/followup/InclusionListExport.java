@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.followup;
 
-import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
@@ -22,13 +17,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class exports identifications in an inclusion list
+ * This class exports identifications in an inclusion list.
  *
- * @author MArc
+ * @author Marc Vaudel
  */
 public class InclusionListExport {
 
@@ -54,20 +48,22 @@ public class InclusionListExport {
     public static void exportInclusionList(File destinationFile, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, ArrayList<Integer> proteinFilters, ArrayList<PeptideFilterType> peptideFilters, ExportFormat exportFormat, SearchParameters searchParameters, double rtWindow, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         FileWriter f = new FileWriter(destinationFile);
+
         try {
+
             BufferedWriter b = new BufferedWriter(f);
+
             try {
 
                 SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
-
                 ArrayList<String> validatedProteins = identificationFeaturesGenerator.getValidatedProteins();
-
                 PSParameter psParameter = new PSParameter();
 
                 if (waitingHandler != null) {
                     waitingHandler.setWaitingText("Inclusion List - Loading Proteins. Please Wait...");
                 }
                 identification.loadProteinMatches(validatedProteins, waitingHandler);
+
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
                         return;
@@ -75,20 +71,26 @@ public class InclusionListExport {
                     waitingHandler.setWaitingText("Inclusion List - Loading Protein Details. Please Wait...");
                 }
                 identification.loadProteinMatchParameters(validatedProteins, psParameter, waitingHandler);
+
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
-                    waitingHandler.setWaitingText("Inclusion List - writing file. Please Wait...");
+                    waitingHandler.setWaitingText("Inclusion List - Writing File. Please Wait...");
                     waitingHandler.resetSecondaryProgressBar();
-                    waitingHandler.setMaxSecondaryProgressValue(validatedProteins.size());
+                    waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
                 }
+
                 for (String proteinMatchKey : identification.getProteinIdentification()) {
+
                     psParameter = (PSParameter) identification.getProteinMatchParameter(proteinMatchKey, psParameter);
+
                     if (!proteinFilters.contains(psParameter.getProteinInferenceClass())) {
+
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
                         identification.loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, null);
                         ArrayList<String> peptideMatches = new ArrayList<String>();
+
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                             if (psParameter.isValidated()) {
@@ -124,6 +126,7 @@ public class InclusionListExport {
                                 }
                             }
                         }
+
                         if (!peptideMatches.isEmpty()) {
                             identification.loadPeptideMatches(peptideMatches, null);
                             for (String peptideKey : peptideMatches) {
@@ -152,6 +155,7 @@ public class InclusionListExport {
                             }
                         }
                     }
+
                     if (waitingHandler != null) {
                         if (waitingHandler.isRunCanceled()) {
                             return;
@@ -181,7 +185,8 @@ public class InclusionListExport {
      * @throws Exception exception thrown whenever a problem was encountered
      * while reading the spectrum file
      */
-    private static String getInclusionListLine(SpectrumMatch spectrumMatch, ArrayList<Double> retentionTimes, double rtWindow, ExportFormat exportFormat, SearchParameters searchParameters) throws IOException, MzMLUnmarshallerException {
+    private static String getInclusionListLine(SpectrumMatch spectrumMatch, ArrayList<Double> retentionTimes, double rtWindow,
+            ExportFormat exportFormat, SearchParameters searchParameters) throws IOException, MzMLUnmarshallerException {
 
         String spectrumKey = spectrumMatch.getKey();
 
@@ -230,8 +235,6 @@ public class InclusionListExport {
                 return precursor.getMz() + "," + rt;
             default:
                 return "";
-
-
         }
     }
 
@@ -243,19 +246,19 @@ public class InclusionListExport {
         /**
          * Thermo format
          */
-        Thermo(0, "Thermo format", "txt"),
+        Thermo(0, "Thermo", "txt"),
         /**
          * ABI format
          */
-        ABI(1, "ABI format", "txt"),
+        ABI(1, "ABI", "txt"),
         /**
          * Bruker format
          */
-        Bruker(2, "Bruker format", "csv"),
+        Bruker(2, "Bruker", "csv"),
         /**
          * MassLynx format
          */
-        MassLynx(3, "MassLynx format", "txt");
+        MassLynx(3, "MassLynx", "txt");
         /**
          * Index for the export type.
          */
@@ -272,7 +275,7 @@ public class InclusionListExport {
         /**
          * Constructor.
          *
-         * @param index the index number of the paramter
+         * @param index the index number of the parameter
          * @param description the description of the parameter
          * @param extension the extension of the file
          */
@@ -332,14 +335,13 @@ public class InclusionListExport {
 
         /**
          * Verifies that the file extension is chosen according to the
-         * manufacturers specificiation and ads the extension if missing
+         * manufacturers specification and adds the extension if missing.
          *
          * @param destinationFile the destination file
          * @param exportFormat the export format
          * @return returns a file with updated extension
          */
         public static File verifyFileExtension(File destinationFile, ExportFormat exportFormat) {
-
             if (!destinationFile.getName().endsWith(exportFormat.extension)) {
                 return new File(destinationFile.getParent(), destinationFile.getName() + exportFormat.extension);
             }
@@ -348,20 +350,20 @@ public class InclusionListExport {
     }
 
     /**
-     * Enum of thepeptide filters implemented.
+     * Enum of the peptide filters implemented.
      */
     public enum PeptideFilterType {
 
         /**
-         * Miscleaved Peptides
+         * Miscleaved Peptides.
          */
         miscleaved(0, "Miscleaved Peptides"),
         /**
-         * Reactive Peptides
+         * Reactive Peptides.
          */
         reactive(1, "Reactive Peptides"),
         /**
-         * Degenerated Peptides
+         * Degenerated Peptides.
          */
         degenerated(2, "Degenerated Peptides");
         /**
@@ -376,7 +378,7 @@ public class InclusionListExport {
         /**
          * Constructor.
          *
-         * @param index the index number of the paramter
+         * @param index the index number of the parameter
          * @param description the description of the parameter
          */
         private PeptideFilterType(int index, String description) {

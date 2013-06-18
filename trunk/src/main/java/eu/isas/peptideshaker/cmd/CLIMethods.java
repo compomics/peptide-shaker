@@ -37,6 +37,7 @@ public class CLIMethods {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
             AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
@@ -106,57 +107,58 @@ public class CLIMethods {
         File destinationFile = followUpCLIInputBean.getFastaExportFile();
         FastaExport.exportFasta(destinationFile, identification, identificationFeaturesGenerator, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getFastaExportTypeIndex()), waitingHandler);
     }
-    
+
     /**
      * Exports the identification in a progenesis compatible format.
-     * 
+     *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param waitingHandler a waiting handler to display progress
-     * 
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
         File destinationFile = followUpCLIInputBean.getProgenesisExportFile();
         ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler);
     }
-    
+
     /**
      * Exports the files needed for the pepnovo training.
-     * 
+     *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
      * @param annotationPreferences the annotation preferences
      * @param waitingHandler a waiting handler to display progress
-     * 
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
-     * @throws MzMLUnmarshallerException 
+     * @throws MzMLUnmarshallerException
      */
     public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
         PepnovoTrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
     }
-    
+
     /**
      * Exports an inclusion list of the validated hits.
-     * 
+     *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
-     * @param identificationFeaturesGenerator the identification features generator
+     * @param identificationFeaturesGenerator the identification features
+     * generator
      * @param searchParameters the search parameters
      * @param waitingHandler a waiting handler to display progress
-     * 
+     *
      * @throws IOException
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
-     * @throws MzMLUnmarshallerException 
+     * @throws MzMLUnmarshallerException
      */
     public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<InclusionListExport.PeptideFilterType>();
@@ -166,5 +168,4 @@ public class CLIMethods {
         File detinationFile = followUpCLIInputBean.getInclusionFile();
         InclusionListExport.exportInclusionList(detinationFile, identification, identificationFeaturesGenerator, followUpCLIInputBean.getInclusionProteinFilter(), peptideFilterType, InclusionListExport.ExportFormat.getTypeFromIndex(followUpCLIInputBean.getInclusionFormat()), searchParameters, followUpCLIInputBean.getInclusionRtWindow(), waitingHandler);
     }
-    
 }

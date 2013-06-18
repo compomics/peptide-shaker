@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Date;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -70,7 +69,7 @@ public class RecalibrationExporter {
                     break;
                 }
 
-                waitingHandler.setWaitingText("Recalibrating " + fileName + " (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ") - inspecting mass deviations.");
+                waitingHandler.setWaitingText("Recalibrating Spectra. Inspecting Mass Deviations. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                 waitingHandler.resetSecondaryProgressBar();
                 waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                 waitingHandler.setMaxSecondaryProgressValue(2 * spectrumFactory.getNSpectra(fileName));
@@ -138,8 +137,7 @@ public class RecalibrationExporter {
             File file = new File(folder, getRecalibratedFileName(fileName));
             BufferedWriter writer1 = new BufferedWriter(new FileWriter(file));
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Recalibrating " + fileName + " (" + progress + "/"
-                        + spectrumFactory.getMgfFileNames().size() + ") - writing spectra.");
+                waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
             }
 
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {

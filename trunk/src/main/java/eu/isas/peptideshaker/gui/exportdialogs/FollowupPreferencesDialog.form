@@ -92,41 +92,41 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="recalibrateSpectraLabel" min="-2" pref="160" max="-2" attributes="0"/>
-                          <Component id="exportSpectraLabel" alignment="1" min="-2" pref="160" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="spectrumValidationCmb" max="32767" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="exportMgfButton" min="-2" pref="180" max="-2" attributes="0"/>
+                              <Component id="exportSpectraLabel" min="-2" pref="160" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="spectrumValidationCmb" min="-2" pref="445" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
+                              <Component id="recalibrateSpectraLabel" min="-2" pref="160" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="spectrumRecalibrationCmb" max="32767" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="recalibrateMgfButton" min="-2" pref="180" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="exportMgfButton" min="-2" pref="180" max="-2" attributes="0"/>
+                          <Component id="recalibrateMgfButton" min="-2" pref="180" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="recalibrateSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="recalibrateMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="spectrumRecalibrationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="exportSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumValidationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="recalibrateSpectraLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spectrumRecalibrationCmb" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="recalibrateMgfButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -184,7 +184,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Inclusion Lists (beta)"/>
+                <TitledBorder title="Inclusion List (beta)"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -221,7 +221,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="includeValidatedPsmsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Format:"/>
+                <Property name="text" type="java.lang.String" value="Instrument Format"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="inclusionListFormat">
@@ -431,7 +431,7 @@
                       <Component id="deNovoGuiLinkLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                       <Component id="recalibrateForDenovoCheck" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="91" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="exportPepnovoButton" min="-2" pref="180" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -470,8 +470,8 @@
             <Component class="javax.swing.JCheckBox" name="recalibrateForDenovoCheck">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="recalibrate spectra (beta)"/>
-                <Property name="iconTextGap" type="int" value="10"/>
+                <Property name="text" type="java.lang.String" value="Recalibrate Spectra (beta)"/>
+                <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
