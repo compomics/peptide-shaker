@@ -3,8 +3,6 @@ package eu.isas.peptideshaker.utils;
 import com.compomics.util.db.ObjectsCache;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
-import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -347,7 +345,7 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-        * Imports the gene mapping.
+     * Imports the gene mapping.
      *
      * @param waitingHandler the waiting handler
      * @return a boolean indicating whether the loading was successful
@@ -355,6 +353,7 @@ public abstract class CpsParent extends UserPreferencesParent {
     public boolean loadGeneMappings(WaitingHandler waitingHandler) {
         return genePreferences.loadGeneMappings(getJarFilePath(), waitingHandler);
     }
+
     /**
      * Returns the path to the jar file.
      *
