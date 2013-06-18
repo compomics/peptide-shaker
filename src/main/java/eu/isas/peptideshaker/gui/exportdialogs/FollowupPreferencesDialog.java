@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.followup.FastaExport;
@@ -10,6 +11,7 @@ import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
+import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
@@ -571,14 +573,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void recalibrateMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recalibrateMgfButtonActionPerformed
-        boolean ms1 = true;
-        boolean ms2 = true;
-        if (spectrumRecalibrationCmb.getSelectedIndex() == 1) {
-            ms2 = false;
-        } else if (spectrumRecalibrationCmb.getSelectedIndex() == 2) {
-            ms1 = false;
-        }
-        peptideShakerGUI.recalibrateSpectra(this, ms1, ms2);
+        recalibrateSpectra();
     }//GEN-LAST:event_recalibrateMgfButtonActionPerformed
 
     /**
@@ -820,6 +815,76 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
+    }
+
+    /**
+     * Lets the user select an output folder and starts the recalibration of
+     * spectra
+     *
+     */
+    public void recalibrateSpectra() {
+
+       final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
+
+        if (selectedFolder != null) {
+            
+            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
+
+            SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+            for (String fileName : spectrumFactory.getMgfFileNames()) {
+                String newName = RecalibrationExporter.getRecalibratedFileName(fileName);
+                File testFile = new File(selectedFolder, newName);
+                if (testFile.exists()) {
+                    int outcome = JOptionPane.showConfirmDialog(this,
+                            "File(s) already exist, shall it be overwritten?", "Selected File Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    if (outcome != JOptionPane.YES_OPTION) {
+                        return;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Exporting. Please Wait...");
+        progressDialog.setUnstoppable(true);
+
+        int selection = spectrumRecalibrationCmb.getSelectedIndex();
+        final boolean precursors = selection == 0
+                || selection == 1;
+        final boolean fragments = selection == 0
+                || selection == 2;
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    progressDialog.setVisible(true);
+                } catch (IndexOutOfBoundsException e) {
+                    // ignore
+                }
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("SaveThread") {
+            @Override
+            public void run() {
+
+                try {
+                    RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder, peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), progressDialog);
+
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                } finally {
+                    progressDialog.setRunFinished();
+                }
+            }
+        }.start();
+    }
     }
 
     /**

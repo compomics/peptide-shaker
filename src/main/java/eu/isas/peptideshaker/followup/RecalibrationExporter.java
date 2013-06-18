@@ -28,7 +28,7 @@ public class RecalibrationExporter {
      * The debug mode exports the ion distributions and the titles of the
      * processed spectra
      */
-    private static boolean debug = true;
+    private static boolean debug = false;
     /**
      * Suffix for the mgf file containing all recalibrated spectra.
      */
@@ -138,6 +138,8 @@ public class RecalibrationExporter {
             BufferedWriter writer1 = new BufferedWriter(new FileWriter(file));
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getNSpectra(fileName));
             }
 
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
