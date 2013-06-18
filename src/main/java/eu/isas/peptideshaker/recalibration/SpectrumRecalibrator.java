@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.recalibration;
 
 import com.compomics.util.experiment.identification.Identification;
@@ -10,7 +6,6 @@ import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,30 +13,30 @@ import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class recalibrates spectra
+ * This class recalibrates spectra.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class SpectrumRecalibrator {
 
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * Map of the runs errors
+     * Map of the runs errors.
      */
     private HashMap<String, RunMzDeviation> runMzDeviationMap = new HashMap<String, RunMzDeviation>();
 
     /**
-     * Constructor
+     * Constructor.
      */
     public SpectrumRecalibrator() {
     }
 
     /**
-     * clears the loaded error statistics for the given file name in order to
-     * save memory
+     * Clears the loaded error statistics for the given file name in order to
+     * save memory.
      *
      * @param spectrumFileName the spectrum file name
      */
@@ -64,7 +59,7 @@ public class SpectrumRecalibrator {
      * Estimates the file m/z errors and displays the progress in a waiting
      * handler. Shall be done before calibration. The information generated can
      * be cleared from the mapping using clearErrors(String spectrumFileName).
-     * 
+     *
      * The progress will only be updated, max value is the number of spectra
      *
      * @param spectrumFileName the name of the file of the run
@@ -77,22 +72,26 @@ public class SpectrumRecalibrator {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws InterruptedException  
      */
-    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+    public void estimateErrors(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) 
+            throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         RunMzDeviation fileErrors = new RunMzDeviation(spectrumFileName, identification, annotationPreferences, waitingHandler);
         runMzDeviationMap.put(spectrumFileName, fileErrors);
     }
 
     /**
-     * Recalibrates a spectrum
-     * 
+     * Recalibrates a spectrum.
+     *
      * @param fileName the name of the file where to find the spectrum
      * @param spectrumTitle the title of the spectrum
-     * @param recalibratePrecursor boolean indicating whether precursors shall be recalibrated
-     * @param recalibrateFragmentIons boolean indicating whether fragment ions shall be recalibrated
+     * @param recalibratePrecursor boolean indicating whether precursors shall
+     * be recalibrated
+     * @param recalibrateFragmentIons boolean indicating whether fragment ions
+     * shall be recalibrated
      * @return a recalibrated spectrum
      * @throws IOException
-     * @throws MzMLUnmarshallerException 
+     * @throws MzMLUnmarshallerException
      */
     public MSnSpectrum recalibrateSpectrum(String fileName, String spectrumTitle, boolean recalibratePrecursor, boolean recalibrateFragmentIons) throws IOException, MzMLUnmarshallerException {
 
@@ -106,7 +105,6 @@ public class SpectrumRecalibrator {
         double precursorMz = precursor.getMz();
         double precursorRT = precursor.getRt();
         double correction = 0.0;
-
 
         if (recalibratePrecursor) {
             correction = runError.getPrecursorMzCorrection(precursorMz, precursorRT);
