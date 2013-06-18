@@ -3,6 +3,43 @@
 
 ----
 
+*Changes in PeptideShaker 0.22.0 (June ?. 2013):*
+
+ * NEW FEATURE: New an improved example dataset.
+ * NEW FEATURE: Cleaned up and improved the protein inference groupings, relying more on gene names when available.
+ * NEW FEATURE: A simplified shorter protein description is now used for UniProt headers.
+
+ * FEATURE IMPROVEMENT: Sped up the batch db interaction, making it possible to save projects a lot faster when having limited memory.
+ * FEATURE IMPROVEMENT: Updated the Ensembl human mappings to Ensembl 71.
+ * FEATURE IMPROVEMENT: Added better handling of PeptideShaker errors when PeptideShaker is started from SearchGUI.
+ * FEATURE IMPROVEMENT: Changed the PRIDE export to use a CV term instead of a user term for the search engine inferred charge state.
+ * FEATURE IMPROVEMENT: The indexes in the legend in the bubble plot now start on 1 instead of 0, corresponding to the row numbers.
+ * FEATURE IMPROVEMENT: HTML in spectrum titles are now escaped when exporting to PRIDE XML.
+ * FEATURE IMPROVEMENT: The a-score is no longer added as a user parameter to the PRIDE XML export if there are no PTMs in the peptide.
+ * FEATURE IMPROVEMENT: Added better error handling in the PRIDE Reshake dialog.
+ * FEATURE IMPROVEMENT: The title in the main frame is now reset when loading a new project, and not after the project is done loading as before.
+ * FEATURE IMPROVEMENT: PeptideShaker now stays in the task bar when the New Project dialog is displayed.
+ * FEATURE IMPROVEMENT: Improved the handling of equally scoring peptides.
+ * FEATURE IMPROVEMENT: Included the null confidence proteins in the protein inference process.
+ * FEATURE IMPROVEMENT: Added gene name and chromosome to the old school text export options.
+ * FEATURE IMPROVEMENT: Re-implemented the follow up exports making it ready for command line support.
+ * FEATURE IMPROVEMENT: If there are multiple identical search parameter file options when loading search result files, the first will now be automatically selected.
+
+ * BUG FIX: Fixed a bug in the DatabaseHelpDialog add decoys option where the SearchGUI icon was used even though it was not available, thus crashing the tool.
+ * BUG FIX: Fixed a bug in the PRIDE export where the terminal modifications were incorrectly annotated.
+ * BUG FIX: Fixed a bug in the PRIDE PSI-MOD mapping for oxidations.
+ * BUG FIX: Fixed a bug in the spectrum and plots export to figure feature that included a see through area between the spectrum and the plots.
+ * BUG FIX: Fixed a bug with the default values for the min and max peptide length in the IdFilter that resulted in issues for the possible protein coverage, the spectrum counting and the peptide to protein mapping.
+ * BUG FIX: The gene ontology is now saved when chosen in the New Project dialog.
+ * BUG FIX: Fixed a minor issue in the FileImporter where general exceptions was caught before the specific out of memory error.
+ * BUG FIX: Tried to fix a threading issue in the protein fractions tab.
+ * BUG FIX: The project is now labeled as unsaved after applying new validation settings.
+
+ * LIBRARY UPDATE: Added commons-lang3 has a dependency.
+ * LIBRARY UPDATE: Updated utilities to version 3.13.51.
+
+----
+
 *Changes in PeptideShaker 0.21.0 (June 1. 2013):*
  * NEW FEATURE: Species is now selected when creating a project.
  * NEW FEATURE: Added a species tag to the command line for setting the species.
@@ -30,6 +67,8 @@
 
  * LIBRARY UPDATE: Updated mascot dat file to version 3.4.11.
  * LIBRARY UPDATE: Updated utilities to version 3.13.30.
+
+Download Count: 67
 
 ----
 
