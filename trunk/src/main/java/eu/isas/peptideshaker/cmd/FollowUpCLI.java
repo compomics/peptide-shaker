@@ -216,6 +216,16 @@ public class FollowUpCLI extends CpsParent {
                 e.printStackTrace();
             }
         }
+        
+        // Inclusion list export
+        if (followUpCLIInputBean.inclusionListNeeded()) {
+            try {
+                CLIMethods.exportInclusionList(followUpCLIInputBean, identification, identificationFeaturesGenerator, searchParameters, waitingHandler);
+            } catch (Exception e) {
+                waitingHandler.appendReport("An error occurred while generating the inclusion list.", true, true);
+                e.printStackTrace();
+            }
+        }
 
         try {
             closePeptideShaker();
@@ -278,8 +288,6 @@ public class FollowUpCLI extends CpsParent {
         if (aLine.getOptions().length == 0) {
             return false;
         }
-
-
         if (!aLine.hasOption(FollowUpCLIParams.CPS_FILE.id) || ((String) aLine.getOptionValue(FollowUpCLIParams.CPS_FILE.id)).equals("")) {
             System.out.println("\n" + FollowUpCLIParams.CPS_FILE.description + " not specified.\n");
             return false;

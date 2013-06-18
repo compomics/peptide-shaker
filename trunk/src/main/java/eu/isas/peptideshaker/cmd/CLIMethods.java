@@ -1,9 +1,11 @@
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.util.experiment.identification.Identification;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
@@ -12,6 +14,7 @@ import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -139,4 +142,29 @@ public class CLIMethods {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
         PepnovoTrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
     }
+    
+    /**
+     * Exports an inclusion list of the validated hits.
+     * 
+     * @param followUpCLIInputBean the follow up input bean
+     * @param identification the identification
+     * @param identificationFeaturesGenerator the identification features generator
+     * @param searchParameters the search parameters
+     * @param waitingHandler a waiting handler to display progress
+     * 
+     * @throws IOException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     * @throws MzMLUnmarshallerException 
+     */
+    public static void exportInclusionList(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+        ArrayList<InclusionListExport.PeptideFilterType> peptideFilterType = new ArrayList<InclusionListExport.PeptideFilterType>();
+        for (int index : followUpCLIInputBean.getInclusionPeptideFilter()) {
+            peptideFilterType.add(InclusionListExport.PeptideFilterType.getTypeFromIndex(index));
+        }
+        File detinationFile = followUpCLIInputBean.getInclusionFile();
+        InclusionListExport.exportInclusionList(detinationFile, identification, identificationFeaturesGenerator, followUpCLIInputBean.getInclusionProteinFilter(), peptideFilterType, InclusionListExport.ExportFormat.getTypeFromIndex(followUpCLIInputBean.getInclusionFormat()), searchParameters, followUpCLIInputBean.getInclusionRtWindow(), waitingHandler);
+    }
+    
 }

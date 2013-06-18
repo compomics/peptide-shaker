@@ -9,6 +9,10 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import eu.isas.peptideshaker.followup.InclusionListExport;
+import eu.isas.peptideshaker.followup.InclusionListExport.ExportFormat;
+import eu.isas.peptideshaker.followup.SpectrumExporter;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
@@ -16,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -37,27 +42,26 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * The selected PSM export type.
-     */
-    private int selectedPsmType; // @TODO: should be an enum
-    /**
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The export format
+     */
+    private ExportFormat exportFormat;
 
     /**
      * Creates a new InclusionListExportDialog.
      *
      * @param followupPreferencesDialog
      * @param modal
-     * @param selectedPsmType the PTM category to export 
+     * @param selectedPsmType the PTM category to export
      */
-    public InclusionListExportDialog(FollowupPreferencesDialog followupPreferencesDialog, boolean modal, int selectedPsmType) {
+    public InclusionListExportDialog(FollowupPreferencesDialog followupPreferencesDialog, ExportFormat exportFormat, boolean modal) {
         super(followupPreferencesDialog, modal);
         this.followupPreferencesDialog = followupPreferencesDialog;
-        this.selectedPsmType = selectedPsmType;
+        this.exportFormat = exportFormat;
         initComponents();
-        vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         setLocationRelativeTo(followupPreferencesDialog);
         setVisible(true);
     }
@@ -84,8 +88,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
         rtWindow = new javax.swing.JTextField();
         minRtWindowUnitLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        formatPanel = new javax.swing.JPanel();
-        vendorCmb = new javax.swing.JComboBox();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
@@ -211,28 +213,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        formatPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Format"));
-        formatPanel.setOpaque(false);
-
-        vendorCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Thermo", "ABI", "Bruker", "MassLynx" }));
-
-        javax.swing.GroupLayout formatPanelLayout = new javax.swing.GroupLayout(formatPanel);
-        formatPanel.setLayout(formatPanelLayout);
-        formatPanelLayout.setHorizontalGroup(
-            formatPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(formatPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(vendorCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        formatPanelLayout.setVerticalGroup(
-            formatPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(formatPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -254,7 +234,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(formatPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(peptideFilterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(proteinFilterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(rtFilterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -277,8 +256,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                 .addComponent(peptideFilterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rtFilterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(formatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
@@ -325,22 +302,19 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
             FileFilter filter = new FileFilter() {
                 @Override
                 public boolean accept(File myFile) {
-                    if (vendorCmb.getSelectedIndex() == 2) {
-                        return myFile.isDirectory() || myFile.getName().endsWith(".csv");
-                    }
-                    return myFile.isDirectory() || myFile.getName().endsWith(".txt");
+                    return myFile.isDirectory() || myFile.getName().endsWith(exportFormat.extension);
                 }
 
                 @Override
                 public String getDescription() {
-                    switch (vendorCmb.getSelectedIndex()) {
-                        case 0:
+                    switch (exportFormat) {
+                        case Thermo:
                             return "(Thermo inclusion list) .txt";
-                        case 1:
+                        case ABI:
                             return "(ABI inclusion list) .txt";
-                        case 2:
+                        case Bruker:
                             return "(Bruker inclusion list) .csv";
-                        case 3:
+                        case MassLynx:
                             return "(MassLynx inclusion list) .txt";
                         default:
                             return "(unknown format) .txt";
@@ -356,6 +330,8 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
 
                 File tempOutputFile = fileChooser.getSelectedFile();
 
+                ExportFormat.verifyFileExtension(tempOutputFile, exportFormat);
+
                 int outcome = JOptionPane.YES_OPTION;
 
                 if (tempOutputFile.exists()) {
@@ -365,17 +341,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                 }
 
                 if (outcome == JOptionPane.YES_OPTION) {
-
-                    if (vendorCmb.getSelectedIndex() == 2) {
-                        if (!tempOutputFile.getName().endsWith(".csv")) {
-                            tempOutputFile = new File(tempOutputFile.getParent(), tempOutputFile.getName() + ".csv");
-                        }
-                    } else {
-                        if (!tempOutputFile.getName().endsWith(".txt")) {
-                            tempOutputFile = new File(tempOutputFile.getParent(), tempOutputFile.getName() + ".txt");
-                        }
-                    }
-                    
                     dispose();
 
                     progressDialog = new ProgressDialogX(this, followupPreferencesDialog.getPeptideShakerGUI(),
@@ -399,93 +364,10 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
                         public void run() {
 
                             try {
-                                ArrayList<String> inspectedProteins;
 
-                                if (selectedPsmType == 4) {
-                                    inspectedProteins = followupPreferencesDialog.getPeptideShakerGUI().getDisplayedProteins();
-                                } else {
-                                    inspectedProteins = new ArrayList<String>(followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getProteinIdentification());
-                                }
 
-                                progressDialog.setIndeterminate(false);
-                                progressDialog.setMaxProgressValue(inspectedProteins.size());
-                                ArrayList<String> displayedPeptides = followupPreferencesDialog.getPeptideShakerGUI().getDisplayedPeptides();
-                                FileWriter f = new FileWriter(outputFile);
-                                BufferedWriter b = new BufferedWriter(f);
-                                PSParameter psParameter = new PSParameter();
-
-                                // @TODO: implement better waiting handler usage
-
-                                for (String proteinKey : inspectedProteins) {
-
-                                    ProteinMatch proteinMatch = followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getProteinMatch(proteinKey);
-                                    psParameter = (PSParameter) followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getProteinMatchParameter(proteinKey, psParameter);
-
-                                    if (selectedPsmType == 0
-                                            || selectedPsmType == 1
-                                            || selectedPsmType == 3
-                                            || selectedPsmType == 2 && psParameter.isValidated()) {
-
-                                        followupPreferencesDialog.getPeptideShakerGUI().getIdentification().loadPeptideMatches(proteinMatch.getPeptideMatches(), progressDialog);
-                                        followupPreferencesDialog.getPeptideShakerGUI().getIdentification().loadPeptideMatchParameters(proteinMatch.getPeptideMatches(), psParameter, progressDialog);
-
-                                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
-
-                                            psParameter = (PSParameter) followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getPeptideMatchParameter(peptideKey, psParameter);
-
-                                            if (selectedPsmType == 0
-                                                    || selectedPsmType == 1 && psParameter.isValidated()
-                                                    || selectedPsmType == 2 && psParameter.isValidated()
-                                                    || selectedPsmType == 3 && displayedPeptides.contains(peptideKey)) {
-
-                                                PeptideMatch peptideMatch = followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getPeptideMatch(peptideKey);
-
-                                                if (!shallExclude(proteinKey, peptideMatch.getTheoreticPeptide())) {
-
-                                                    ArrayList<Double> retentionTimes = new ArrayList<Double>();
-
-                                                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-
-                                                        if (progressDialog.isRunCanceled()) {
-                                                            break;
-                                                        }
-
-                                                        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-                                                        retentionTimes.add(precursor.getRt());
-                                                    }
-
-                                                    followupPreferencesDialog.getPeptideShakerGUI().getIdentification().loadSpectrumMatchParameters(peptideMatch.getSpectrumMatches(), psParameter, null);
-
-                                                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-
-                                                        if (progressDialog.isRunCanceled()) {
-                                                            break;
-                                                        }
-
-                                                        psParameter = (PSParameter) followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getSpectrumMatchParameter(spectrumKey, psParameter);
-
-                                                        if (psParameter.isValidated()) {
-                                                            b.write(getInclusionListLine(spectrumKey, retentionTimes));
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            if (progressDialog.isRunCanceled()) {
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    progressDialog.increaseProgressValue();
-
-                                    if (progressDialog.isRunCanceled()) {
-                                        break;
-                                    }
-                                }
-
-                                b.close();
-                                f.close();
+                                PeptideShakerGUI peptideShakerGUI = followupPreferencesDialog.getPeptideShakerGUI();
+                                InclusionListExport.exportInclusionList(outputFile, peptideShakerGUI.getIdentification(), peptideShakerGUI.getIdentificationFeaturesGenerator(), getProteinFilters(), getPeptideFilters(), exportFormat, peptideShakerGUI.getSearchParameters(), WIDTH, progressDialog);
 
                                 boolean processCancelled = progressDialog.isRunCanceled();
                                 progressDialog.setRunFinished();
@@ -509,7 +391,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox degeneratedCheck;
-    private javax.swing.JPanel formatPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel minRtWindowUnitLabel;
     private javax.swing.JCheckBox miscleavedCheck;
@@ -522,7 +403,6 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     private javax.swing.JPanel rtFilterPanel;
     private javax.swing.JTextField rtWindow;
     private javax.swing.JCheckBox unrelatedCheck;
-    private javax.swing.JComboBox vendorCmb;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -541,117 +421,41 @@ public class InclusionListExportDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Returns whether a peptide should be excluded from the inclusion list
-     * according to the GUI setting and the protein match it belongs to.
+     * Returns the protein filters selected as list of PI statuses.
      *
-     * @param proteinMatch the protein match this peptide belongs to
-     * @param peptide the peptide of interest
-     * @return a boolean indicating whether this peptide should be excluded
+     * @return
      */
-    private boolean shallExclude(String proteinKey, Peptide peptide) {
-        if (miscleavedCheck.isSelected() && peptide.getNMissedCleavages(followupPreferencesDialog.getPeptideShakerGUI().getSearchParameters().getEnzyme()) > 0) {
-            return true;
+    private ArrayList<Integer> getProteinFilters() {
+        ArrayList<Integer> proteinFilters = new ArrayList<Integer>();
+        if (relatedProteinsCheck.isSelected()) {
+            proteinFilters.add(1);
         }
-        if (reactiveCheck.isSelected()) {
-            String sequence = peptide.getSequence();
-            if (sequence.contains("M")
-                    || sequence.contains("C")
-                    || sequence.contains("W")
-                    || sequence.contains("NG")
-                    || sequence.contains("DG")
-                    || sequence.contains("QG")
-                    || sequence.startsWith("N")
-                    || sequence.startsWith("Q")) {
-                return true;
-            }
+        if (relatredAndUnrelatedCheck.isSelected()) {
+            proteinFilters.add(2);
         }
-        if (relatedProteinsCheck.isSelected() || relatredAndUnrelatedCheck.isSelected() || unrelatedCheck.isSelected()) {
-            PSParameter pSParameter = new PSParameter();
-            try {
-                pSParameter = (PSParameter) followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getSpectrumMatchParameter(proteinKey, pSParameter);
-            } catch (Exception e) {
-                followupPreferencesDialog.getPeptideShakerGUI().catchException(e);
-                return false;
-            }
-            if (relatedProteinsCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.RELATED) {
-                return true;
-            }
-            if (relatredAndUnrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.RELATED_AND_UNRELATED) {
-                return true;
-            }
-            if (unrelatedCheck.isSelected() && pSParameter.getProteinInferenceClass() == PSParameter.UNRELATED) {
-                return true;
-            }
+        if (unrelatedCheck.isSelected()) {
+            proteinFilters.add(3);
+        }
+        return proteinFilters;
+    }
+    
+    /**
+     * Returns the peptide filters selected as a list of PeptideFilterType.
+     * 
+     * @return 
+     */
+    private ArrayList<InclusionListExport.PeptideFilterType> getPeptideFilters() {
+        ArrayList<InclusionListExport.PeptideFilterType> peptideFilters = new ArrayList<InclusionListExport.PeptideFilterType>();
+        if (miscleavedCheck.isSelected()) {
+            peptideFilters.add(InclusionListExport.PeptideFilterType.miscleaved);
         }
         if (degeneratedCheck.isSelected()) {
-            for (String protein : peptide.getParentProteins()) {
-                if (!proteinKey.contains(protein)) {
-                    return true;
-                }
-            }
+            peptideFilters.add(InclusionListExport.PeptideFilterType.degenerated);
         }
-        return false;
+        if (reactiveCheck.isSelected()) {
+            peptideFilters.add(InclusionListExport.PeptideFilterType.reactive);
+        }
+        return peptideFilters;
     }
 
-    /**
-     * Returns a line to be output in an inclusion list according to the user's
-     * input.
-     *
-     * @param spectrumKey The key of the spectrum
-     * @param retentionTimes The retention times found for this peptide
-     * @return a line to be appended in the inclusion list
-     * @throws Exception exception thrown whenever a problem was encountered
-     * while reading the spectrum file
-     */
-    private String getInclusionListLine(String spectrumKey, ArrayList<Double> retentionTimes) throws Exception {
-
-        Collections.sort(retentionTimes);
-        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
-        double minWindow = new Double(rtWindow.getText().trim());
-
-        switch (vendorCmb.getSelectedIndex()) {
-            case 0:
-                int index = (int) (0.25 * retentionTimes.size());
-                double rtMin = retentionTimes.get(index) / 60;
-                index = (int) (0.75 * retentionTimes.size());
-                double rtMax = retentionTimes.get(index) / 60;
-                if (rtMax - rtMin < minWindow / 60) {
-                    index = (int) (0.5 * retentionTimes.size());
-                    rtMin = (retentionTimes.get(index) - minWindow / 2) / 60;
-                    rtMax = (retentionTimes.get(index) + minWindow / 2) / 60;
-                }
-                return precursor.getMz() + "\t" + rtMin + "\t" + rtMax + System.getProperty("line.separator");
-            case 1:
-                index = (int) (0.5 * retentionTimes.size());
-                double rtInMin = retentionTimes.get(index) / 60;
-                return rtInMin + "\t" + precursor.getMz() + System.getProperty("line.separator");
-            case 2:
-                index = (int) 0.5 * retentionTimes.size();
-                double rt = retentionTimes.get(index);
-                int index25 = (int) (0.25 * retentionTimes.size());
-                int index75 = (int) (0.75 * retentionTimes.size());
-                double range = retentionTimes.get(index75) - retentionTimes.get(index25);
-                if (range < minWindow) {
-                    range = minWindow;
-                }
-                if (followupPreferencesDialog.getPeptideShakerGUI().getSearchParameters().getPrecursorAccuracyType() == SearchParameters.PrecursorAccuracyType.PPM) {
-                    double deltaMZ = followupPreferencesDialog.getPeptideShakerGUI().getSearchParameters().getPrecursorAccuracy() / 1000000 * precursor.getMz();
-                    double mzMin = precursor.getMz() - deltaMZ;
-                    double mzMax = precursor.getMz() + deltaMZ;
-                    return rt + "," + range + "," + mzMin + "," + mzMax + System.getProperty("line.separator");
-                } else { // Dalton
-                    SpectrumMatch spectrumMatch = followupPreferencesDialog.getPeptideShakerGUI().getIdentification().getSpectrumMatch(spectrumKey);
-                    double deltaMZ = followupPreferencesDialog.getPeptideShakerGUI().getSearchParameters().getPrecursorAccuracy() / spectrumMatch.getBestAssumption().getIdentificationCharge().value;
-                    double mzMin = precursor.getMz() - deltaMZ;
-                    double mzMax = precursor.getMz() + deltaMZ;
-                    return rt + "," + range + "," + mzMin + "," + mzMax + System.getProperty("line.separator");
-                }
-            case 3:
-                index = (int) (0.5 * retentionTimes.size());
-                rt = retentionTimes.get(index);
-                return precursor.getMz() + "," + rt + System.getProperty("line.separator");
-            default:
-                return "";
-        }
-    }
 }
