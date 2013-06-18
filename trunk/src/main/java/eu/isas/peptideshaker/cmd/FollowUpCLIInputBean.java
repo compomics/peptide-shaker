@@ -50,30 +50,30 @@ public class FollowUpCLIInputBean {
      */
     private int fastaExportTypeIndex = 0;
     /**
-     * The file where to export the progenesis file.
+     * The file where to export the Progenesis file.
      */
     private File progenesisExportFile = null;
     /**
-     * the type of progenesis export
+     * the type of Progenesis export.
      */
     private int progenesisExportTypeIndex = 0;
     /**
-     * The folder where to output the pepnovo training files
+     * The folder where to output the PepNovo training files.
      */
     private File pepnovoTrainingFolder = null;
     /**
-     * boolean indicating whether the mgf files exported by the pepnovo training method shall be recalibrated
+     * Boolean indicating whether the mgf files exported by the PepNovo training
+     * method shall be recalibrated.
      */
     private boolean pepnovoTrainingRecalibrate = true;
     /**
-     * the FDR for the "good spectra" training set
+     * The FDR for the "good spectra" training set.
      */
     private Double pepnovoTrainingFDR = null;
     /**
-     * The FNR for the "bad spectra" training set
+     * The FNR for the "bad spectra" training set.
      */
     private Double pepnovoTrainingFNR = null;
-    
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -128,7 +128,7 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_FNR.id)) {
             pepnovoTrainingFNR = new Double(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_FNR.id));
         }
-        
+
     }
 
     /**
@@ -218,7 +218,7 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the progenesis file. Null if not set.
-     * 
+     *
      * @return the progenesis file
      */
     public File getProgenesisExportFile() {
@@ -226,8 +226,8 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Returns the type of export needed for the progenesis export. 0 by default.
-     * See the FollowUpCLIParams for detailed description.
+     * Returns the type of export needed for the progenesis export. 0 by
+     * default. See the FollowUpCLIParams for detailed description.
      *
      * @return the type of export needed for the progenesis export
      */
@@ -237,7 +237,7 @@ public class FollowUpCLIInputBean {
 
     /**
      * Returns the folder set for the export of Pepnovo training files.
-     * 
+     *
      * @return the folder set for the export of Pepnovo training files
      */
     public File getPepnovoTrainingFolder() {
@@ -245,27 +245,33 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Indicates whether the mgf files exported by the pepnovo export shall be recalibrated.
-     * 
-     * @return a boolean indicating whether the mgf files exported by the pepnovo export shall be recalibrated
+     * Indicates whether the mgf files exported by the pepnovo export shall be
+     * recalibrated.
+     *
+     * @return a boolean indicating whether the mgf files exported by the
+     * pepnovo export shall be recalibrated
      */
     public boolean isPepnovoTrainingRecalibrate() {
         return pepnovoTrainingRecalibrate;
     }
 
     /**
-     * Indicates the FDR set for the "good spectra" set of the pepnovo training files. Null if not set.
-     * 
-     * @return the FDR set for the "good spectra" set of the pepnovo training files
+     * Indicates the FDR set for the "good spectra" set of the pepnovo training
+     * files. Null if not set.
+     *
+     * @return the FDR set for the "good spectra" set of the pepnovo training
+     * files
      */
     public Double getPepnovoTrainingFDR() {
         return pepnovoTrainingFDR;
     }
 
     /**
-     * Indicates the FNR set for the "good spectra" set of the pepnovo training files. Null if not set.
-     * 
-     * @return the FNR set for the "good spectra" set of the pepnovo training files
+     * Indicates the FNR set for the "good spectra" set of the pepnovo training
+     * files. Null if not set.
+     *
+     * @return the FNR set for the "good spectra" set of the pepnovo training
+     * files
      */
     public Double getPepnovoTrainingFNR() {
         return pepnovoTrainingFNR;
@@ -319,18 +325,19 @@ public class FollowUpCLIInputBean {
     public boolean fastaExportNeeded() {
         return fastaExportFile != null;
     }
-    
+
     /**
      * Indicates whether a progenesis export is needed.
-     * 
+     *
      * @return whether a progenesis export is needed
      */
     public boolean progenesisExportNeeded() {
         return progenesisExportFile != null;
     }
+
     /**
      * Indicates whether a pepnovo training export is needed.
-     * 
+     *
      * @return whether a pepnovo training export export is needed
      */
     public boolean pepnovoTrainingExportNeeded() {

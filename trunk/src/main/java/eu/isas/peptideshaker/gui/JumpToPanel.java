@@ -277,7 +277,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         setOpaque(false);
 
-        findJLabel.setText("Find:");
+        findJLabel.setText("Find");
 
         inputTxt.setForeground(new java.awt.Color(204, 204, 204));
         inputTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
