@@ -141,7 +141,7 @@ public class PepnovoTrainingExport {
                         break;
                     }
 
-                    waitingHandler.setWaitingText("Recalibrating " + fileName + " (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ").");
+                    waitingHandler.setWaitingText("Recalibrating " + fileName + " (" + fileName + ", " + progress + "/" + spectrumFactory.getMgfFileNames().size() + ").");
                     waitingHandler.setSecondaryProgressValue(0);
                     waitingHandler.setSecondaryProgressDialogIndeterminate(false);
                     waitingHandler.setMaxSecondaryProgressValue(2 * spectrumFactory.getNSpectra(fileName));

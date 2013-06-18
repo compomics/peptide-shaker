@@ -330,7 +330,7 @@ public class ProgenesisExport {
             } else if (index == validated_psms_peptides_proteins.index) {
                 return validated_psms_peptides_proteins;
             } else {
-                throw new IllegalArgumentException("Fasta export index " + index + " not implemented.");
+                throw new IllegalArgumentException("Export type index " + index + " not implemented.");
             }
             //Note: don't forget to add new enums in the following methods
         }

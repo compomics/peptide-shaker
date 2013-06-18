@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.cmd;
 
+import com.compomics.software.CommandLineUtils;
 import java.io.File;
+import java.util.ArrayList;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -74,6 +76,27 @@ public class FollowUpCLIInputBean {
      * The FNR for the "bad spectra" training set.
      */
     private Double pepnovoTrainingFNR = null;
+    /**
+     * The file for inclusion list export
+     */
+    private File inclusionFile;
+    /**
+     * The format of inclusion list export. Thermo by default.
+     */
+    private int inclusionFormat = 0;
+    /**
+     * List of protein inference filters for the inclusion list creation
+     */
+    private ArrayList<Integer> inclusionProteinFilter;
+    /**
+     * List of peptide filters for the inclusion list creation
+     */
+    private ArrayList<Integer> inclusionPeptideFilter;
+    /**
+     * RT window for the inclusion list creation. 20 by default.
+     */
+    private Double inclusionRtWindow = 20.0;
+    
 
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
@@ -127,6 +150,21 @@ public class FollowUpCLIInputBean {
         }
         if (aLine.hasOption(FollowUpCLIParams.PEPNOVO_TRAINING_FNR.id)) {
             pepnovoTrainingFNR = new Double(aLine.getOptionValue(FollowUpCLIParams.PEPNOVO_TRAINING_FNR.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_FILE.id)) {
+            inclusionFile = new File(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FILE.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_FORMAT.id)) {
+            inclusionFormat = new Integer(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FORMAT.id));
+        }
+        if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id)) {
+            inclusionProteinFilter = CommandLineUtils.getIntegerListFromString(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id, ",");
+        }
+        if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_PEPTIDE_FILTERS.id)) {
+            inclusionPeptideFilter = CommandLineUtils.getIntegerListFromString(FollowUpCLIParams.INCLUSION_LIST_PEPTIDE_FILTERS.id, ",");
+        }
+        if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
+            inclusionRtWindow = new Double(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id);
         }
 
     }
@@ -278,6 +316,61 @@ public class FollowUpCLIInputBean {
     }
 
     /**
+     * Returns the file for the inclusion list generation. null if not set.
+     * 
+     * @return the file for the inclusion list generation. null if not set
+     */
+    public File getInclusionFile() {
+        return inclusionFile;
+    }
+
+    /**
+     * Returns the format for inclusion list generation.
+     * 
+     * @return the format for inclusion list generation.
+     */
+    public int getInclusionFormat() {
+        return inclusionFormat;
+    }
+
+    /**
+     * Returns the protein inference filters to use for inclusion list generation.
+     * 
+     * @return the protein inference filters to use for inclusion list generation.
+     */
+    public ArrayList<Integer> getInclusionProteinFilter() {
+        if (inclusionProteinFilter == null) {
+            inclusionProteinFilter = new ArrayList<Integer>();
+            inclusionProteinFilter.add(3);
+        }
+        return inclusionProteinFilter;
+    }
+
+    /**
+     * Returns the peptide filters to use for inclusion list generation.
+     * 
+     * @return the peptide filters to use for inclusion list generation.
+     */
+    public ArrayList<Integer> getInclusionPeptideFilter() {
+        if (inclusionProteinFilter == null) {
+            inclusionProteinFilter = new ArrayList<Integer>();
+            inclusionPeptideFilter.add(0);
+            inclusionPeptideFilter.add(1);
+            inclusionPeptideFilter.add(2);
+        }
+        return inclusionPeptideFilter;
+    }
+
+    /**
+     * Returns the retention time window to use for inclusion list generation. 
+     * 
+     * @return the retention time window to use for inclusion list generation. 
+     */
+    public Double getInclusionRtWindow() {
+        return inclusionRtWindow;
+    }
+
+    /**
      * Indicates whether follow-up tasks are required.
      *
      * @return indicates whether follow-up tasks are required
@@ -287,7 +380,8 @@ public class FollowUpCLIInputBean {
                 || spectrumExportNeeded()
                 || accessionExportNeeded()
                 || fastaExportNeeded()
-                || progenesisExportNeeded();
+                || progenesisExportNeeded()
+                || inclusionListNeeded();
     }
 
     /**
@@ -342,5 +436,14 @@ public class FollowUpCLIInputBean {
      */
     public boolean pepnovoTrainingExportNeeded() {
         return pepnovoTrainingFolder != null;
+    }
+    
+    /**
+     * Indicates whether an inclusion list generation is needed
+     * 
+     * @return whether an inclusion list generation is needed
+     */
+    public boolean inclusionListNeeded() {
+        return inclusionFile != null;
     }
 }

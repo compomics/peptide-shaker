@@ -6,6 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
@@ -47,7 +48,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         spectrumRecalibrationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         spectrumValidationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        idSelectionCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        inclusionListFormat.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         proteinExportCmb1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         proteinExportCmb2.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         psmSelectionComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -76,7 +77,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         recalibrateMgfButton = new javax.swing.JButton();
         inclusionListPanel = new javax.swing.JPanel();
         includeValidatedPsmsLabel = new javax.swing.JLabel();
-        idSelectionCmb = new javax.swing.JComboBox();
+        inclusionListFormat = new javax.swing.JComboBox();
         inclusionListButton = new javax.swing.JButton();
         progenesisPanel = new javax.swing.JPanel();
         exportProgenesisButton = new javax.swing.JButton();
@@ -167,9 +168,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion Lists (beta)"));
         inclusionListPanel.setOpaque(false);
 
-        includeValidatedPsmsLabel.setText("PSMs Selection");
+        includeValidatedPsmsLabel.setText("Format:");
 
-        idSelectionCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All Validated PSMs", "Validated PSMs of All Validated Peptides", "Validated PSMs of Validated Peptides of All Validated Proteins", "Validated PSMs of Currently Displayed Peptides", "Validated PSMs of Currently Displayed Proteins" }));
+        inclusionListFormat.setModel(new DefaultComboBoxModel(InclusionListExport.ExportFormat.getPossibilities()));
 
         inclusionListButton.setText("Export as List");
         inclusionListButton.addActionListener(new java.awt.event.ActionListener() {
@@ -186,7 +187,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(includeValidatedPsmsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(idSelectionCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(inclusionListFormat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(inclusionListButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -196,7 +197,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inclusionListFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(includeValidatedPsmsLabel)
                     .addComponent(inclusionListButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -491,7 +492,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void inclusionListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inclusionListButtonActionPerformed
-        new InclusionListExportDialog(this, true, idSelectionCmb.getSelectedIndex());
+        new InclusionListExportDialog(this, InclusionListExport.ExportFormat.getTypeFromIndex(inclusionListFormat.getSelectedIndex()), true);
     }//GEN-LAST:event_inclusionListButtonActionPerformed
 
     /**
@@ -842,9 +843,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel exportToPepNovoLinkLabel;
     private javax.swing.JLabel exportToPepNovoPart1Label;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
-    private javax.swing.JComboBox idSelectionCmb;
     private javax.swing.JLabel includeValidatedPsmsLabel;
     private javax.swing.JButton inclusionListButton;
+    private javax.swing.JComboBox inclusionListFormat;
     private javax.swing.JPanel inclusionListPanel;
     private javax.swing.JPanel progenesisPanel;
     private javax.swing.JComboBox proteinExportCmb1;

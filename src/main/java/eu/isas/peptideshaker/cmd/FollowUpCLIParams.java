@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.cmd;
 
 import eu.isas.peptideshaker.followup.FastaExport;
+import eu.isas.peptideshaker.followup.InclusionListExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
 import org.apache.commons.cli.Options;
@@ -26,7 +27,12 @@ public enum FollowUpCLIParams {
     PEPNOVO_TRAINING_FOLDER("pepnovo_training_folder", "Folder where to output the pepnovo training files. Note: existing files will be silently overwritten.", false),
     PEPNOVO_TRAINING_RECALIBRATION("pepnovo_training_recalibration", "Indicate whether the exported mgf files shall be recalibrated. 0: No, 1: Yes (default).", false),
     PEPNOVO_TRAINING_FDR("pepnovo_training_fdr", "The FDR used for the 'good spectra' export. If not set, the validation FDR will be used.", false),
-    PEPNOVO_TRAINING_FNR("pepnovo_training_fnr", "The FNR used for the 'bad spectra' export. If not set, the same value as for the 'good spectra' FDR will be used.", false);
+    PEPNOVO_TRAINING_FNR("pepnovo_training_fnr", "The FNR used for the 'bad spectra' export. If not set, the same value as for the 'good spectra' FDR will be used.", false),
+    INCLUSION_LIST_FILE("inclusion_list_file", "File where to export an inclusion list of validated hits. Note: existing files will be silently overwritten.", false),
+    INCLUSION_LIST_FORMAT("inclusion_list_format", "Format to use for the inclusion list. " + InclusionListExport.ExportFormat.getCommandLineOptions(), false),
+    INCLUSION_LIST_PROTEIN_FILTERS("inclusion_list_protein_filters", "The protein inference filters to be used for the inclusion list export (comma separated list). " + InclusionListExport.getProteinFiltersCommandLineOptions(), false),
+    INCLUSION_LIST_PEPTIDE_FILTERS("inclusion_list_peptide_filters", "The peptide filters to be used for the inclusion list export (comma separated list). " + InclusionListExport.PeptideFilterType.getCommandLineOptions(), false),
+    INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "The retention time window to be used for the inclusion list export (in seconds).", false);
     
     
     /**
@@ -79,6 +85,11 @@ public enum FollowUpCLIParams {
         aOptions.addOption(PEPNOVO_TRAINING_RECALIBRATION.id, true, PEPNOVO_TRAINING_RECALIBRATION.description);
         aOptions.addOption(PEPNOVO_TRAINING_FDR.id, true, PEPNOVO_TRAINING_FDR.description);
         aOptions.addOption(PEPNOVO_TRAINING_FNR.id, true, PEPNOVO_TRAINING_FNR.description);
+        aOptions.addOption(INCLUSION_LIST_FILE.id, true, INCLUSION_LIST_FILE.description);
+        aOptions.addOption(INCLUSION_LIST_FORMAT.id, true, INCLUSION_LIST_FORMAT.description);
+        aOptions.addOption(INCLUSION_LIST_PEPTIDE_FILTERS.id, true, INCLUSION_LIST_PEPTIDE_FILTERS.description);
+        aOptions.addOption(INCLUSION_LIST_PROTEIN_FILTERS.id, true, INCLUSION_LIST_PROTEIN_FILTERS.description);
+        aOptions.addOption(INCLUSION_LIST_RT_WINDOW.id, true, INCLUSION_LIST_RT_WINDOW.description);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -137,6 +148,13 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, PEPNOVO_TRAINING_RECALIBRATION.id) + PEPNOVO_TRAINING_RECALIBRATION.description + "\n";
         output += "-" + String.format(formatter, PEPNOVO_TRAINING_FDR.id) + PEPNOVO_TRAINING_FDR.description + "\n";
         output += "-" + String.format(formatter, PEPNOVO_TRAINING_FNR.id) + PEPNOVO_TRAINING_FNR.description + "\n";
+        
+        output += "\nInclusion list generation\n\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_FILE.id) + INCLUSION_LIST_FILE.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_FORMAT.id) + INCLUSION_LIST_FORMAT.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_PEPTIDE_FILTERS.id) + INCLUSION_LIST_PEPTIDE_FILTERS.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_PROTEIN_FILTERS.id) + INCLUSION_LIST_PROTEIN_FILTERS.description + "\n";
+        output += "-" + String.format(formatter, INCLUSION_LIST_RT_WINDOW.id) + INCLUSION_LIST_RT_WINDOW.description + "\n";
         
 
         return output;
