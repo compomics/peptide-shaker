@@ -12,7 +12,6 @@ import static eu.isas.peptideshaker.followup.RecalibrationExporter.getRecalibrat
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;
-import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
@@ -43,8 +42,8 @@ public class PepnovoTrainingExport {
     public static final String badTrainingSetSuffix = "_bad_training";
 
     /**
-     * Exports the PepNovo training files using the validation settings, eventually recalibrated with the
-     * recalibrated mgf.
+     * Exports the PepNovo training files using the validation settings,
+     * eventually recalibrated with the recalibrated mgf.
      *
      * @param destinationFolder the folder where to write the output files
      * @param identification the identification

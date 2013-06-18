@@ -53,7 +53,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="findJLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Find:"/>
+        <Property name="text" type="java.lang.String" value="Find"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="inputTxt">
