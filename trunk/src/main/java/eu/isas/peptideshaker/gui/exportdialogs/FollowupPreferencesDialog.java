@@ -663,15 +663,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 public void run() {
 
                     try {
-                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(), 
+                        PepnovoTrainingExport.exportPepnovoTrainingFiles(selectedFolder, peptideShakerGUI.getIdentification(),
                                 peptideShakerGUI.getAnnotationPreferences(), 1.0, 1.0, recalibrateForDenovoCheck.isSelected(), progressDialog); // @TODO: fdr and fnr should not be hard coded here!!
 
                         boolean processCancelled = progressDialog.isRunCanceled();
                         progressDialog.setRunFinished();
 
                         if (!processCancelled) {
-                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, 
-                                    "Spectra saved to " + selectedFolder.getAbsolutePath() + ".", 
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
+                                    "Spectra saved to " + selectedFolder.getAbsolutePath() + ".",
                                     "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } catch (Exception e) {
@@ -819,15 +819,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Lets the user select an output folder and starts the recalibration of
-     * spectra
-     *
+     * spectra.
      */
     public void recalibrateSpectra() {
 
-       final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Output Folder", peptideShakerGUI.getLastSelectedFolder(), "Output Folder", "Select", false);
 
         if (selectedFolder != null) {
-            
+
             peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
 
             SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
@@ -836,7 +835,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 File testFile = new File(selectedFolder, newName);
                 if (testFile.exists()) {
                     int outcome = JOptionPane.showConfirmDialog(this,
-                            "File(s) already exist, shall it be overwritten?", "Selected File Already Exists",
+                            "File(s) already exist, shall it be overwritten?", "Selected File(s) Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     if (outcome != JOptionPane.YES_OPTION) {
                         return;
@@ -852,39 +851,44 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Exporting. Please Wait...");
-        progressDialog.setUnstoppable(true);
+            progressDialog.setUnstoppable(true);
 
-        int selection = spectrumRecalibrationCmb.getSelectedIndex();
-        final boolean precursors = selection == 0
-                || selection == 1;
-        final boolean fragments = selection == 0
-                || selection == 2;
+            int selection = spectrumRecalibrationCmb.getSelectedIndex();
+            final boolean precursors = selection == 0 || selection == 1;
+            final boolean fragments = selection == 0 || selection == 2;
 
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
-            }
-        }, "ProgressDialog").start();
+            }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
-            @Override
-            public void run() {
+            new Thread("SaveThread") {
+                @Override
+                public void run() {
+                    try {
+                        RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder,
+                                peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), progressDialog);
 
-                try {
-                    RecalibrationExporter.writeRecalibratedSpectra(precursors, fragments, selectedFolder, peptideShakerGUI.getIdentification(), peptideShakerGUI.getAnnotationPreferences(), progressDialog);
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
 
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                } finally {
-                    progressDialog.setRunFinished();
+                        if (!processCancelled) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
+                                    "Recalibrated spectra saved to " + selectedFolder.getAbsolutePath() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    } finally {
+                        progressDialog.setRunFinished();
+                    }
                 }
-            }
-        }.start();
-    }
+            }.start();
+        }
     }
 
     /**

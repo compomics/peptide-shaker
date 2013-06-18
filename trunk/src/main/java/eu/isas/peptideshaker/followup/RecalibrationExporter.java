@@ -52,6 +52,7 @@ public class RecalibrationExporter {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws InterruptedException  
      */
     public static void writeRecalibratedSpectra(boolean recalibratePrecursors, boolean recalibrateFragmentIons, File folder,
             Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler)
@@ -135,7 +136,7 @@ public class RecalibrationExporter {
             }
 
             File file = new File(folder, getRecalibratedFileName(fileName));
-            BufferedWriter writer1 = new BufferedWriter(new FileWriter(file));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                 waitingHandler.resetSecondaryProgressBar();
@@ -149,8 +150,8 @@ public class RecalibrationExporter {
                 }
 
                 MSnSpectrum recalibratedSpectrum = spectrumRecalibrator.recalibrateSpectrum(fileName, spectrumTitle, recalibratePrecursors, recalibrateFragmentIons);
-                recalibratedSpectrum.writeMgf(writer1);
-                writer1.flush();
+                recalibratedSpectrum.writeMgf(writer);
+                writer.flush();
 
                 if (waitingHandler != null) {
                     if (waitingHandler.isRunCanceled()) {
@@ -161,7 +162,7 @@ public class RecalibrationExporter {
             }
 
             spectrumRecalibrator.clearErrors(fileName);
-            writer1.close();
+            writer.close();
         }
     }
 

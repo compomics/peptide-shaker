@@ -254,9 +254,12 @@ public class RunMzDeviation {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
+     * @throws InterruptedException  
      */
     public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, 
             WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
+
+        // @TODO: the progress bar usage in the code below could be improved
 
         SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
         PSParameter psParameter = new PSParameter();
@@ -267,7 +270,12 @@ public class RunMzDeviation {
 
         identification.loadSpectrumMatchParameters(spectrumFileName, psParameter, waitingHandler);
         identification.loadSpectrumMatches(spectrumFileName, waitingHandler);
-        
+
+        if (waitingHandler != null) {
+            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
+        }
+
         for (String spectrumName : spectrumFactory.getSpectrumTitles(spectrumFileName)) {
 
             if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -350,8 +358,11 @@ public class RunMzDeviation {
             }
         }
 
-        if (waitingHandler != null && waitingHandler.isRunCanceled()) {
-            return;
+        if (waitingHandler != null) {
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            if (waitingHandler.isRunCanceled()) {
+                return;
+            }
         }
 
         ArrayList<Double> keys = new ArrayList<Double>(precursorRawMap.keySet());

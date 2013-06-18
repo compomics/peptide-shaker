@@ -212,7 +212,6 @@ public class PepnovoTrainingExport {
             }
 
             try {
-
                 for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
 
                     String spectrumKey = Spectrum.getSpectrumKey(fileName, spectrumTitle);

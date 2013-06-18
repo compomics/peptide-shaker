@@ -435,7 +435,7 @@ public class InclusionListExport {
      * Returns a description of the command line arguments for the protein
      * filters.
      *
-     * @return
+     * @return a description of the command line arguments
      */
     public static String getProteinFiltersCommandLineOptions() {
         return PSParameter.RELATED + ":" + PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED) + ", "
