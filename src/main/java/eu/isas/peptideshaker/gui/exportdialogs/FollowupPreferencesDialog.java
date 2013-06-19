@@ -851,7 +851,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Exporting. Please Wait...");
-            progressDialog.setUnstoppable(true);
 
             int selection = spectrumRecalibrationCmb.getSelectedIndex();
             final boolean precursors = selection == 0 || selection == 1;

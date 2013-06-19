@@ -2092,7 +2092,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
             progressDialog.setIndeterminate(true);
-            progressDialog.setUnstoppable(true);
             progressDialog.setTitle("Loading Protein Data. Please Wait...");
 
             new Thread(new Runnable() {

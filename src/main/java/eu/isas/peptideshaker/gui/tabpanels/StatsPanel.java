@@ -1712,7 +1712,6 @@ public class StatsPanel extends javax.swing.JPanel {
                         true);
                 progressDialog.setTitle("Recalculating. Please Wait...");
                 progressDialog.setIndeterminate(false);
-                progressDialog.setUnstoppable(true);
 
                 new Thread(new Runnable() {
 
@@ -1966,7 +1965,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 true);
             progressDialog.setTitle("Recalculating. Please Wait...");
             progressDialog.setIndeterminate(false);
-            progressDialog.setUnstoppable(true);
 
             new Thread(new Runnable() {
 
@@ -3584,7 +3582,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setIndeterminate(false);
-        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
@@ -3635,7 +3632,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setIndeterminate(false);
-        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
@@ -3686,7 +3682,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setIndeterminate(false);
-        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
 
