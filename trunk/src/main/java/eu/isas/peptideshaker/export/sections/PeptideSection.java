@@ -136,9 +136,20 @@ public class PeptideSection {
         int line = 1;
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setWaitingText("Loading Peptides. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
+        }
+        identification.loadPeptideMatches(keys, waitingHandler);
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Loading Peptide Details. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
+        }
+        identification.loadPeptideMatchParameters(keys, psParameter, waitingHandler);
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Exporting. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setMaxSecondaryProgressValue(keys.size());
-            waitingHandler.setSecondaryProgressValue(0);
         }
 
         for (String peptideKey : keys) {

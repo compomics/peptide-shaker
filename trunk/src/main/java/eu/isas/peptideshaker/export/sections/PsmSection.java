@@ -79,7 +79,7 @@ public class PsmSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
-     * @param keys the keys of the protein matches to output
+     * @param keys the keys of the PSM matches to output
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
@@ -138,10 +138,33 @@ public class PsmSection {
             totalSize += psmMap.get(spectrumFile).size();
         }
 
+        // get the sepctrum keys
+        ArrayList<String> spectrumKeys = new ArrayList<String>();
+
+        for (String spectrumFile : psmMap.keySet()) {
+            for (String spectrumKey : psmMap.get(spectrumFile)) {
+                if (!spectrumKeys.contains(spectrumKey)) {
+                    spectrumKeys.add(spectrumKey);
+                }
+            }
+        }
+
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setWaitingText("Loading Spectra. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
+        }
+        identification.loadSpectrumMatches(spectrumKeys, waitingHandler);
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Loading Spectrum Details. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
+        }
+        identification.loadSpectrumMatchParameters(spectrumKeys, psParameter, waitingHandler);
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Exporting. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setMaxSecondaryProgressValue(totalSize);
-            waitingHandler.setSecondaryProgressValue(0);
         }
 
         for (String spectrumFile : psmMap.keySet()) {
