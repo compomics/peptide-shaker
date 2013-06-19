@@ -275,7 +275,6 @@ public class ReportEditor extends javax.swing.JDialog {
 
         reportTitleLabel.setText("Report Title");
 
-        mainTitleTxt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         mainTitleTxt.setEnabled(false);
 
         javax.swing.GroupLayout reporterSettingsPanelLayout = new javax.swing.GroupLayout(reporterSettingsPanel);
