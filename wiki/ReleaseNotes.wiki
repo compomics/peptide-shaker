@@ -3,7 +3,7 @@
 
 ----
 
-*Changes in PeptideShaker 0.22.0 (June ?. 2013):*
+*Changes in PeptideShaker 0.22.0 (June 19. 2013):*
 
  * NEW FEATURE: New an improved example dataset.
  * NEW FEATURE: Cleaned up and improved the protein inference groupings, relying more on gene names when available.
@@ -34,9 +34,11 @@
  * BUG FIX: Fixed a minor issue in the FileImporter where general exceptions was caught before the specific out of memory error.
  * BUG FIX: Tried to fix a threading issue in the protein fractions tab.
  * BUG FIX: The project is now labeled as unsaved after applying new validation settings.
+ * BUG FIX: Inclusion list export now works again.
+ * BUG FIX: Fixed a bug in the way column delimiters including backslashes were supported, resulting in \t in the export instead of tabs
 
  * LIBRARY UPDATE: Added commons-lang3 has a dependency.
- * LIBRARY UPDATE: Updated utilities to version 3.13.51.
+ * LIBRARY UPDATE: Updated utilities to version 3.13.54.
 
 ----
 
@@ -68,7 +70,7 @@
  * LIBRARY UPDATE: Updated mascot dat file to version 3.4.11.
  * LIBRARY UPDATE: Updated utilities to version 3.13.30.
 
-Download Count: 67
+Download Count: 68
 
 ----
 
