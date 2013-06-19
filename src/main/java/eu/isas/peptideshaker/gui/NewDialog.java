@@ -835,53 +835,90 @@ public class NewDialog extends javax.swing.JDialog {
 
         fileChooser.setFileFilter(filter);
         int returnVal = fileChooser.showDialog(this, "Add");
+
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            try {
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setTitle("Validating MGF File(s). Please Wait...");
 
-                for (File newFile : fileChooser.getSelectedFiles()) {
-                    if (newFile.isDirectory()) {
-                        File[] tempFiles = newFile.listFiles();
-                        for (File file : tempFiles) {
-                            if (file.getName().toLowerCase().endsWith(".mgf")) {
-                                String duplicateTitle = MgfReader.validateSpectrumTitles(file, null);
+            final NewDialog finalRef = this;
+            final JFileChooser finalJFileChooser = fileChooser;
 
-                                if (duplicateTitle != null) {
-                                    JOptionPane.showMessageDialog(this,
-                                            "The file \'" + file.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
-                                            + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
-                                            + "We strongly recommend correcting the spectrum titles and researching the data.",
-                                            "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ValidateMgfThread") {
+                @Override
+                public void run() {
+
+                    try {
+                        ArrayList<File> tempMgfFiles = new ArrayList<File>();
+
+                        // get the files
+                        for (File newFile : finalJFileChooser.getSelectedFiles()) {
+                            if (newFile.isDirectory()) {
+                                File[] tempFiles = newFile.listFiles();
+                                for (File file : tempFiles) {
+                                    if (file.getName().toLowerCase().endsWith(".mgf")) {
+                                        tempMgfFiles.add(file);
+                                    }
                                 }
-
-                                spectrumFiles.add(file);
+                            } else {
+                                tempMgfFiles.add(newFile);
                             }
                         }
-                    } else {
-                        String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
 
-                        if (duplicateTitle != null) {
-                            JOptionPane.showMessageDialog(this,
-                                    "The file \'" + newFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
-                                    + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
-                                    + "We strongly recommend correcting the spectrum titles and researching the data.",
-                                    "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+                        int fileCounter = 0;
+                        
+                        // iterate the files and validate them
+                        for (File mgfFile : tempMgfFiles) {
+
+                            progressDialog.setTitle("Validating Spectrum Files. Please Wait... (" + ++fileCounter + "/" + tempMgfFiles.size() + ")");
+                            String duplicateTitle = MgfReader.validateSpectrumTitles(mgfFile, progressDialog);
+
+                            if (duplicateTitle != null) {
+                                JOptionPane.showMessageDialog(finalRef,
+                                        "The file \'" + mgfFile.getAbsolutePath() + "\' contains duplicate spectrum titles!\n"
+                                        + "First duplicate spectrum title: \'" + duplicateTitle + "\'.\n\n"
+                                        + "We strongly recommend correcting the spectrum titles and researching the data.",
+                                        "Duplicate Spectrum Titles", JOptionPane.WARNING_MESSAGE);
+                            }
+
+                            spectrumFiles.add(mgfFile);
+                            peptideShakerGUI.setLastSelectedFolder(mgfFile.getAbsolutePath());
+
+                            if (progressDialog.isRunCanceled()) {
+                                spectrumFiles.clear();
+                                progressDialog.setRunFinished();
+                                return;
+                            }
                         }
 
-                        spectrumFiles.add(newFile);
+                    } catch (IOException e) {
+                        progressDialog.setRunFinished();
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(finalRef, "An error occurred while validating the mgf file.", "Mgf Validation Error", JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
-                    peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
+
+                    progressDialog.setRunFinished();
+                    spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+
+                    validateInput();
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "An error occurred while validating the mgf file.", "Mgf Validation Error", JOptionPane.WARNING_MESSAGE);
-            }
-
-            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+            }.start();
         }
-
-        validateInput();
 }//GEN-LAST:event_browseSpectraActionPerformed
 
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
@@ -1767,5 +1804,4 @@ public class NewDialog extends javax.swing.JDialog {
 
         progressDialog.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
-
 }

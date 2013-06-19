@@ -119,9 +119,20 @@ public class ProteinSection {
         int line = 1;
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setWaitingText("Loading Proteins. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
+        }
+        identification.loadProteinMatches(keys, waitingHandler);
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Loading Protein Details. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
+        }
+        identification.loadProteinMatchParameters(keys, psParameter, waitingHandler);
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Exporting. Please Wait...");
+            waitingHandler.resetSecondaryProgressBar();
             waitingHandler.setMaxSecondaryProgressValue(keys.size());
-            waitingHandler.setSecondaryProgressValue(0);
         }
 
         for (String proteinKey : keys) {
