@@ -1976,8 +1976,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void editReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReportMenuItemActionPerformed
         new ReportEditor(peptideShakerGUI, (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1), true);
+        int selectedRow = reportsTable.getSelectedRow();
         updateReportsList();
         ((DefaultTableModel) reportsTable.getModel()).fireTableDataChanged();
+        if (selectedRow != -1) {
+            reportsTable.setRowSelectionInterval(selectedRow, selectedRow);
+        }
         reportsTableMouseClicked(null);
     }//GEN-LAST:event_editReportMenuItemActionPerformed
 
@@ -1988,8 +1992,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
      */
     private void addReportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReportMenuItemActionPerformed
         new ReportEditor(peptideShakerGUI);
+        int selectedRow = reportsTable.getSelectedRow();
         updateReportsList();
         ((DefaultTableModel) reportsTable.getModel()).fireTableDataChanged();
+        if (selectedRow != -1) {
+            reportsTable.setRowSelectionInterval(selectedRow, selectedRow);
+        }
         reportsTableMouseClicked(null);
     }//GEN-LAST:event_addReportMenuItemActionPerformed
 
