@@ -4454,7 +4454,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 true);
         progressDialog.setTitle("Closing. Please Wait...");
         progressDialog.setIndeterminate(true);
-        progressDialog.setUnstoppable(true);
 
         final PeptideShakerGUI finalRef = this;
 
@@ -5451,7 +5450,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     true);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Saving. Please Wait...");
-            progressDialog.setUnstoppable(true);
 
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
 

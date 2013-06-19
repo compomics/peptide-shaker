@@ -2904,7 +2904,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
-        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
             public void run() {

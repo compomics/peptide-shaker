@@ -1208,7 +1208,6 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         progressDialog.setTitle("Downloading PRIDE Project. Please Wait...");
-        progressDialog.setUnstoppable(true); // @TODO: can this be removed??
         isFileBeingDownloaded = true;
 
         new Thread(new Runnable() {
@@ -1275,6 +1274,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                     "Download Error", JOptionPane.ERROR_MESSAGE);
                             ex.printStackTrace();
                             currentPrideProjectUrl = null;
+                        }
+
+                        if (progressDialog.isRunCanceled()) {
+                            progressDialog.setRunFinished();
+                            return;
                         }
 
                         if (currentPrideProjectUrl != null) {
@@ -1347,6 +1351,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                         "PRIDE_Exp_Complete_Ac_" + prideAccession + ".xml");
                             }
 
+                            if (progressDialog.isRunCanceled()) {
+                                progressDialog.setRunFinished();
+                                return;
+                            }
+
                             // file unzipped, time to start the conversion to mgf
                             if (selectedProjects.size() > 1) {
                                 progressDialog.setTitle("Converting PRIDE Project (" + (i + 1) + "/" + selectedProjects.size() + "). Please Wait...");
@@ -1355,6 +1364,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                             }
 
                             mgfConversionOk = convertPrideXmlToMgf();
+
+                            if (progressDialog.isRunCanceled()) {
+                                progressDialog.setRunFinished();
+                                return;
+                            }
 
                             if (mgfConversionOk) {
                                 // get the search params from the pride xml file
@@ -2197,8 +2211,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
     /**
      * Unzip the mzData file.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void unzipProject() throws IOException {
 

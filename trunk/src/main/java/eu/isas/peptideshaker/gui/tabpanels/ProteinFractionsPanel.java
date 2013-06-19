@@ -298,7 +298,6 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Loading Fractions. Please Wait...");
-        progressDialog.setUnstoppable(true);
 
         new Thread(new Runnable() {
             public void run() {

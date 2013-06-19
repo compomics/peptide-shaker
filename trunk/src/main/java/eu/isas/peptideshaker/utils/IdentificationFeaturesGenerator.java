@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
+import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -682,6 +682,7 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws IOException
      * @throws ClassNotFoundException
+     * @throws InterruptedException  
      */
     public int getNUniquePeptides(String proteinMatchKey) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         Integer result = (Integer) identificationFeaturesCache.getObject(IdentificationFeaturesCache.ObjectType.unique_peptides, proteinMatchKey);
@@ -978,7 +979,8 @@ public class IdentificationFeaturesGenerator {
      * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
-     * @param separator the separator used to separate the sites and the number of sites
+     * @param separator the separator used to separate the sites and the number
+     * of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -997,7 +999,8 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the PTMs to include in the summary
-     * @param separator the separator used to separate the sites and the number of sites
+     * @param separator the separator used to separate the sites and the number
+     * of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1108,7 +1111,8 @@ public class IdentificationFeaturesGenerator {
      * of M (M6)
      *
      * @param proteinKey the key of the protein match of interest
-     * @param separator the separator used to separate the sites and the number of sites
+     * @param separator the separator used to separate the sites and the number
+     * of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1127,7 +1131,8 @@ public class IdentificationFeaturesGenerator {
      *
      * @param proteinKey the key of the protein match of interest
      * @param targetedPtms the targeted PTMs, can be null
-     * @param separator the separator used to separate the sites and the number of sites
+     * @param separator the separator used to separate the sites and the number
+     * of sites
      * @return a PTM summary for the given protein
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1284,7 +1289,7 @@ public class IdentificationFeaturesGenerator {
      * Returns the sorted list of protein keys.
      *
      * @param filterPreferences the filtering preferences used. can be null
-     * @param progressDialog the progress dialog, can be null
+     * @param waitingHandler the waiting handler, can be null
      * @return the sorted list of protein keys
      * @throws IOException
      * @throws IllegalArgumentException
@@ -1292,13 +1297,12 @@ public class IdentificationFeaturesGenerator {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public ArrayList<String> getProcessedProteinKeys(ProgressDialogX progressDialog, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (identificationFeaturesCache.getProteinList() == null) {
-            if (progressDialog != null) {
-                progressDialog.setIndeterminate(false);
-                progressDialog.setTitle("Loading Protein Information. Please Wait...");
-                progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
-                progressDialog.setValue(0);
+            if (waitingHandler != null) {
+                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.setWaitingText("Loading Protein Information. Please Wait...");
+                waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
             }
             boolean needMaxValues = (metrics.getMaxNPeptides() == null)
                     || metrics.getMaxNPeptides() <= 0
@@ -1375,8 +1379,12 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
 
-                if (progressDialog != null) {
-                    progressDialog.increaseProgressValue();
+                if (waitingHandler != null) {
+                    waitingHandler.increaseSecondaryProgressValue();
+
+                    if (waitingHandler.isRunCanceled()) {
+                        return null;
+                    }
                 }
             }
 
@@ -1393,11 +1401,10 @@ public class IdentificationFeaturesGenerator {
             ArrayList<Double> scoreList = new ArrayList<Double>(orderMap.keySet());
             Collections.sort(scoreList);
 
-            if (progressDialog != null) {
-                progressDialog.setIndeterminate(false);
-                progressDialog.setTitle("Updating Protein Table. Please Wait...");
-                progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
-                progressDialog.setValue(0);
+            if (waitingHandler != null) {
+                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.setWaitingText("Updating Protein Table. Please Wait...");
+                waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
             }
 
             for (double currentScore : scoreList) {
@@ -1414,8 +1421,12 @@ public class IdentificationFeaturesGenerator {
                         ArrayList<String> tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                         Collections.sort(tempList);
                         proteinList.addAll(tempList);
-                        if (progressDialog != null) {
-                            progressDialog.increaseProgressValue(tempList.size());
+                        if (waitingHandler != null) {
+                            waitingHandler.setMaxSecondaryProgressValue(tempList.size());
+
+                            if (waitingHandler.isRunCanceled()) {
+                                return null;
+                            }
                         }
                     }
                 }
@@ -1423,8 +1434,12 @@ public class IdentificationFeaturesGenerator {
 
             identificationFeaturesCache.setProteinList(proteinList);
 
-            if (progressDialog != null) {
-                progressDialog.setIndeterminate(true);
+            if (waitingHandler != null) {
+                waitingHandler.setIndeterminate(true);
+
+                if (waitingHandler.isRunCanceled()) {
+                    return null;
+                }
             }
         }
 
@@ -1443,7 +1458,16 @@ public class IdentificationFeaturesGenerator {
                         validatedProteinList.add(proteinKey);
                     }
                 }
+
+                if (waitingHandler != null) {
+                    waitingHandler.setIndeterminate(true);
+
+                    if (waitingHandler.isRunCanceled()) {
+                        return null;
+                    }
+                }
             }
+
             identificationFeaturesCache.setProteinListAfterHiding(proteinListAfterHiding);
             identificationFeaturesCache.setValidatedProteinList(validatedProteinList);
             metrics.setnValidatedProteins(nValidatedProteins);
@@ -1455,7 +1479,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * Returns the ordered protein keys to display when no filtering is applied.
      *
-     * @param progressDialogX can be null
+     * @param waitingHandler can be null
      * @param filterPreferences the filtering preferences used. can be null
      * @return the ordered protein keys to display when no filtering is applied.
      * @throws SQLException
@@ -1463,9 +1487,9 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      * @throws InterruptedException
      */
-    public ArrayList<String> getProteinKeys(ProgressDialogX progressDialogX, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+    public ArrayList<String> getProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (identificationFeaturesCache.getProteinList() == null) {
-            getProcessedProteinKeys(progressDialogX, filterPreferences);
+            getProcessedProteinKeys(waitingHandler, filterPreferences);
         }
         return identificationFeaturesCache.getProteinList();
     }
