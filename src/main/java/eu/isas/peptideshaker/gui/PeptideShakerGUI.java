@@ -1706,17 +1706,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-                NewDialog openDialog = new NewDialog(null, this, true);
-                openDialog.setVisible(true);
+                new NewDialog(null, this, true);
             } else if (value == JOptionPane.CANCEL_OPTION) {
                 // do nothing
             } else { // no option
-                NewDialog newDialog = new NewDialog(null, this, true);
-                newDialog.setVisible(true);
+                new NewDialog(null, this, true);
             }
         } else {
-            NewDialog newDialog = new NewDialog(null, this, true);
-            newDialog.setVisible(true);
+            new NewDialog(null, this, true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
 
@@ -2868,7 +2865,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         new SpeciesDialog(this, genePreferences, true, getWaitingIcon(), getNormalIcon());
         String newSpecies = genePreferences.getCurrentSpecies();
 
-        if (!oldSpecies.equals(newSpecies)) {
+        if (oldSpecies == null || !oldSpecies.equals(newSpecies)) {
             clearGeneMappings(); // clear the old mappings
             if (newSpecies != null) {
                 loadGeneMappings(); // load the new mappings

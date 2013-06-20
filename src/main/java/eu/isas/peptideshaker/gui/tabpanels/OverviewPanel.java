@@ -3995,106 +3995,108 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      */
     private void updateSequenceCoverage(String proteinAccession, boolean updateProtein) {
 
-        // @TODO: the sequence coverage plotting code should be moved into a separate class!
+        if (coverage != null) { // @TODO: this shouldn't be null...
 
-        ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
-        ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
-        HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
+            // @TODO: the sequence coverage plotting code should be moved into a separate class!
 
-        try {
-            // only need to redo this if the protein changes
-            if (updateProtein || !proteinAccession.equalsIgnoreCase(currentProteinAccession)) {
+            ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
+            ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
+            HashMap<Integer, ArrayList<ResidueAnnotation>> proteinTooltips = new HashMap<Integer, ArrayList<ResidueAnnotation>>();
 
-                // clear the old values
-                //sequenceCoverageInnerPanel.removeAll(); // @TODO: this results in rather ugly "blinking" in the plot
-                //sequencePtmsPanel.removeAll();
-                //sequenceCoverageInnerPanel.add(new JLabel("Loading..."));
-                //sequenceCoverageInnerPanel.revalidate();
-                //sequenceCoverageInnerPanel.repaint();
+            try {
+                // only need to redo this if the protein changes
+                if (updateProtein || !proteinAccession.equalsIgnoreCase(currentProteinAccession)) {
 
-                updateProteinSequenceCoveragePlot(proteinAccession);
-                updatePtmCoveragePlot(proteinAccession);
-            }
+                    // clear the old values
+                    //sequenceCoverageInnerPanel.removeAll(); // @TODO: this results in rather ugly "blinking" in the plot
+                    //sequencePtmsPanel.removeAll();
+                    //sequenceCoverageInnerPanel.add(new JLabel("Loading..."));
+                    //sequenceCoverageInnerPanel.revalidate();
+                    //sequenceCoverageInnerPanel.repaint();
 
-            currentProteinAccession = proteinAccession;
-
-            if (currentProteinSequence.length() < MAX_SEQUENCE_LENGTH) {
-
-                String tempSequence = currentProteinSequence;
-
-                if (peptideTable.getSelectedRow() != -1) {
-
-                    SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
-                    int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
-                    String peptideKey = peptideKeys.get(peptideIndex);
-                    String peptideSequence = Peptide.getSequence(peptideKey);
-
-                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                        int startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
-                        selectedPeptideStart.add(startIndex);
-                        selectedPeptideEnd.add(startIndex + peptideSequence.length());
-                        tempSequence = currentProteinSequence.substring(0, startIndex);
-                    }
+                    updateProteinSequenceCoveragePlot(proteinAccession);
+                    updatePtmCoveragePlot(proteinAccession);
                 }
 
+                currentProteinAccession = proteinAccession;
 
-                // create the coverage plot
-                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
+                if (currentProteinSequence.length() < MAX_SEQUENCE_LENGTH) {
 
-                for (int i = 1; i < coverage.length; i++) {
+                    String tempSequence = currentProteinSequence;
 
-                    boolean covered = coverage[i] > 0;
-                    boolean possibleToCover = false;
+                    if (peptideTable.getSelectedRow() != -1) {
 
-                    try {
-                        possibleToCover = coveragePossible[i];
-                    } catch (IndexOutOfBoundsException e) {
-                        // ignore, can happen to old projects due to a bug
+                        SelfUpdatingTableModel tableModel = (SelfUpdatingTableModel) peptideTable.getModel();
+                        int peptideIndex = tableModel.getViewIndex(peptideTable.getSelectedRow());
+                        String peptideKey = peptideKeys.get(peptideIndex);
+                        String peptideSequence = Peptide.getSequence(peptideKey);
+
+                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                            int startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
+                            selectedPeptideStart.add(startIndex);
+                            selectedPeptideEnd.add(startIndex + peptideSequence.length());
+                            tempSequence = currentProteinSequence.substring(0, startIndex);
+                        }
                     }
 
-                    int sequenceCounter = 1;
-                    int possibleToCoverCounter = 0;
 
-                    if (covered) {
-                        while (i + 1 < coverage.length && coverage[i + 1] > 0) {
-                            sequenceCounter++;
-                            i++;
+                    // create the coverage plot
+                    ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
 
-                            // we need to start a new peptide in order to be able to highlight a given peptide
-                            if (selectedPeptideEnd.contains(Integer.valueOf(i + 1)) || selectedPeptideStart.contains(Integer.valueOf(i + 1))) {
-                                break;
+                    for (int i = 1; i < coverage.length; i++) {
+
+                        boolean covered = coverage[i] > 0;
+                        boolean possibleToCover = false;
+
+                        try {
+                            possibleToCover = coveragePossible[i];
+                        } catch (IndexOutOfBoundsException e) {
+                            // ignore, can happen to old projects due to a bug
+                        }
+
+                        int sequenceCounter = 1;
+                        int possibleToCoverCounter = 0;
+
+                        if (covered) {
+                            while (i + 1 < coverage.length && coverage[i + 1] > 0) {
+                                sequenceCounter++;
+                                i++;
+
+                                // we need to start a new peptide in order to be able to highlight a given peptide
+                                if (selectedPeptideEnd.contains(Integer.valueOf(i + 1)) || selectedPeptideStart.contains(Integer.valueOf(i + 1))) {
+                                    break;
+                                }
+                            }
+                        } else if (possibleToCover && coverageShowPossiblePeptidesJCheckBoxMenuItem.isSelected()) {
+
+                            possibleToCoverCounter++;
+
+                            while (i < coveragePossible.length && coveragePossible[i] && coverage[i + 1] == 0) {
+                                possibleToCoverCounter++;
+                                sequenceCounter++;
+                                i++;
+                            }
+                        } else {
+                            while (i + 1 < coverage.length && coverage[i + 1] == 0 && !coveragePossible[i]) {
+                                sequenceCounter++;
+                                i++;
                             }
                         }
-                    } else if (possibleToCover && coverageShowPossiblePeptidesJCheckBoxMenuItem.isSelected()) {
 
-                        possibleToCoverCounter++;
+                        ArrayList<Double> data = new ArrayList<Double>();
+                        data.add(new Double(sequenceCounter));
 
-                        while (i < coveragePossible.length && coveragePossible[i] && coverage[i + 1] == 0) {
-                            possibleToCoverCounter++;
-                            sequenceCounter++;
-                            i++;
-                        }
-                    } else {
-                        while (i + 1 < coverage.length && coverage[i + 1] == 0 && !coveragePossible[i]) {
-                            sequenceCounter++;
-                            i++;
-                        }
-                    }
+                        JSparklinesDataSeries sparklineDataseries;
 
-                    ArrayList<Double> data = new ArrayList<Double>();
-                    data.add(new Double(sequenceCounter));
+                        if (covered) {
+                            proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
 
-                    JSparklinesDataSeries sparklineDataseries;
+                            if (selectedPeptideEnd.contains(Integer.valueOf(i + 1))) {
+                                sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getPeptideSelected(), null);
+                            } else {
+                                // sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
 
-                    if (covered) {
-                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), getResidueAnnotations(i - sequenceCounter + 1, i));
-
-                        if (selectedPeptideEnd.contains(Integer.valueOf(i + 1))) {
-                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getPeptideSelected(), null);
-                        } else {
-                            // sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
-
-                            Color peptideColor = peptideShakerGUI.getSparklineColor();
+                                Color peptideColor = peptideShakerGUI.getSparklineColor();
 
 //                             if (coverage[i] < maxCoverageValue * 0.25) {
 //                                peptideColor = new Color((int) (peptideShakerGUI.getSparklineColor().getRed() * 0.25),
@@ -4110,51 +4112,52 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 //                                        (int) (peptideShakerGUI.getSparklineColor().getBlue() * 0.75));
 //                            }
 
-                            sparklineDataseries = new JSparklinesDataSeries(data, peptideColor, null);
+                                sparklineDataseries = new JSparklinesDataSeries(data, peptideColor, null);
+                            }
+                        } else if (possibleToCoverCounter > 0) {
+                            ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
+                            annotations.add(new ResidueAnnotation("Possible to cover (" + (i - sequenceCounter + 1) + "-" + i + ")", null, false));
+                            proteinTooltips.put(sparkLineDataSeriesCoverage.size(), annotations);
+                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), null);
+                        } else {
+                            sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                         }
-                    } else if (possibleToCoverCounter > 0) {
-                        ArrayList<ResidueAnnotation> annotations = new ArrayList<ResidueAnnotation>(1);
-                        annotations.add(new ResidueAnnotation("Possible to cover (" + (i - sequenceCounter + 1) + "-" + i + ")", null, false));
-                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), annotations);
-                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUtilitiesUserPreferences().getSparklineColorNotFound(), null);
-                    } else {
-                        sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+
+                        sparkLineDataSeriesCoverage.add(sparklineDataseries);
                     }
 
-                    sparkLineDataSeriesCoverage.add(sparklineDataseries);
+                    coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), proteinTooltips, true, true);
+
+                    // make sure that the range is the same for both charts (coverage and ptm)
+                    coverageChart.getChart().addChangeListener(new ChartChangeListener() {
+                        @Override
+                        public void chartChanged(ChartChangeEvent cce) {
+                            if (ptmChart != null) {
+                                Range range = ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().getRange();
+                                ((CategoryPlot) ptmChart.getChart().getPlot()).getRangeAxis().setRange(range);
+                                ptmChart.revalidate();
+                                ptmChart.repaint();
+                            }
+                        }
+                    });
+
+                    sequenceCoverageInnerPanel.removeAll();
+                    sequenceCoverageInnerPanel.add(coverageChart);
+                    sequenceCoverageInnerPanel.revalidate();
+                    sequenceCoverageInnerPanel.repaint();
+
+                } else {
+                    ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage ("
+                            + Util.roundDouble((Double) proteinTable.getValueAt(proteinTable.getSelectedRow(), proteinTable.getColumn("Coverage").getModelIndex()), 2)
+                            + "%, " + currentProteinSequence.length() + " AA)" + " - Too long to display..." + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
+                    sequenceCoverageTitledPanel.repaint();
                 }
-
-                coverageChart = new ProteinSequencePanel(Color.WHITE).getSequencePlot(this, new JSparklinesDataset(sparkLineDataSeriesCoverage), proteinTooltips, true, true);
-
-                // make sure that the range is the same for both charts (coverage and ptm)
-                coverageChart.getChart().addChangeListener(new ChartChangeListener() {
-                    @Override
-                    public void chartChanged(ChartChangeEvent cce) {
-                        if (ptmChart != null) {
-                            Range range = ((CategoryPlot) coverageChart.getChart().getPlot()).getRangeAxis().getRange();
-                            ((CategoryPlot) ptmChart.getChart().getPlot()).getRangeAxis().setRange(range);
-                            ptmChart.revalidate();
-                            ptmChart.repaint();
-                        }
-                    }
-                });
-
-                sequenceCoverageInnerPanel.removeAll();
-                sequenceCoverageInnerPanel.add(coverageChart);
-                sequenceCoverageInnerPanel.revalidate();
-                sequenceCoverageInnerPanel.repaint();
-
-            } else {
-                ((TitledBorder) sequenceCoverageTitledPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Protein Sequence Coverage ("
-                        + Util.roundDouble((Double) proteinTable.getValueAt(proteinTable.getSelectedRow(), proteinTable.getColumn("Coverage").getModelIndex()), 2)
-                        + "%, " + currentProteinSequence.length() + " AA)" + " - Too long to display..." + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
-                sequenceCoverageTitledPanel.repaint();
+            } catch (ClassCastException e) {
+                // ignore   @TODO: this should not happen, but can happen if the table does not update fast enough for the filtering
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                e.printStackTrace();
             }
-        } catch (ClassCastException e) {
-            // ignore   @TODO: this should not happen, but can happen if the table does not update fast enough for the filtering
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-            e.printStackTrace();
         }
     }
 
