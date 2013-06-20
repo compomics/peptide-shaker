@@ -134,6 +134,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.genePreferences = new GenePreferences(peptideShaker.getGenePreferences());
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
+        setVisible(true);
     }
 
     /**

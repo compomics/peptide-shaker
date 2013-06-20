@@ -28,10 +28,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * A reference to the open dialog.
-     */
-    private NewDialog openDialog;
-    /**
      * A dummy parent frame to be able to show an icon in the task bar.
      */
     static private DummyFrame dummyParentFrame = new DummyFrame("", "/icons/peptide-shaker.gif");
@@ -46,8 +42,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
         super(dummyParentFrame.setNewTitle(peptideShakerGUI.getTitle()), modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-
-        openDialog = new NewDialog(this, peptideShakerGUI, false);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -424,8 +418,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void newJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJButtonActionPerformed
-        openDialog.setModal(true);
-        openDialog.setVisible(true);
+        new NewDialog(this, peptideShakerGUI, true);
     }//GEN-LAST:event_newJButtonActionPerformed
 
     /**
