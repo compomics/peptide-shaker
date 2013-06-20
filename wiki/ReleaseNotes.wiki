@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.22.1 (June 20. 2013):*
+
+ * FEATURE IMPROVEMENT: Cleaned up the use of the New Project dialog when called from the Welcome dialog.
+
+ * BUG FIX: Fixed a bug where missing mgf files that had to be relocated where not indexed.
+ * BUG FIX: Fixed a bug in the code for locating a FASTA file if it was not in the location given in the cps file.
+ * BUG FIX: Fixed a bug that made is impossible to set the species if no species was selected when loading the project.
+ * BUG FIX: Handled a possible null pointer in the Overview tab.
+
+----
+
 *Changes in PeptideShaker 0.22.0 (June 19. 2013):*
 
  * NEW FEATURE: New an improved example dataset.
@@ -39,6 +50,8 @@
 
  * LIBRARY UPDATE: Added commons-lang3 has a dependency.
  * LIBRARY UPDATE: Updated utilities to version 3.13.54.
+
+Download Count: 8
 
 ----
 
