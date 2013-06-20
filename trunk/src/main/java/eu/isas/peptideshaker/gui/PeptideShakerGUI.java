@@ -5143,6 +5143,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                             String fileName = file.getName();
                                             if (spectrumFileName2.equals(fileName)) {
                                                 getProjectDetails().addSpectrumFile(file);
+                                                spectrumFactory.addSpectra(file, progressDialog);
                                             }
                                             if (fileName.equals(spectrumFileName2)) {
                                                 found = true;
@@ -5226,7 +5227,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 + "\n\nPlease locate it manually.",
                 "File Input Error", JOptionPane.ERROR_MESSAGE);
 
-        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder()); // @TODO: replace by new getUserSelectedFile with multiple file endings option
         fileChooser.setDialogTitle("Open FASTA File");
 
         FileFilter filter = new FileFilter() {

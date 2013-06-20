@@ -274,8 +274,8 @@ public abstract class CpsParent extends UserPreferencesParent {
         if (providedFastaLocation.exists()) {
             sequenceFactory.loadFastaFile(providedFastaLocation);
         } else if (folder != null && new File(folder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(projectFolder, fileName));
-            searchParameters.setFastaFile(new File(projectFolder, fileName));
+            sequenceFactory.loadFastaFile(new File(folder, fileName));
+            searchParameters.setFastaFile(new File(folder, fileName));
         } else if (new File(projectFolder, fileName).exists()) {
             sequenceFactory.loadFastaFile(new File(projectFolder, fileName));
             searchParameters.setFastaFile(new File(projectFolder, fileName));
