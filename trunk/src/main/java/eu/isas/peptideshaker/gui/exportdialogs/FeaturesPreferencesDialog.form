@@ -213,7 +213,7 @@
                                               <Component id="proteinEmpai" min="-2" pref="138" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace min="0" pref="138" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -494,7 +494,7 @@
                                               <Component id="uniqueOnlyHelpLabel" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <EmptySpace min="0" pref="96" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="122" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -770,7 +770,7 @@
                                           <Component id="psmValidated" linkSize="3" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="psmPrecursor" min="-2" pref="179" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="0" pref="109" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="139" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -989,7 +989,7 @@
                                               <Component id="slashLabel4" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="searchEnginesDeselectAllLabel" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="334" max="32767" attributes="0"/>
+                                              <EmptySpace pref="336" max="32767" attributes="0"/>
                                               <Component id="assumptionExport" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <Group type="102" attributes="0">
@@ -1191,7 +1191,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="fractionsWarningLabel" pref="513" max="32767" attributes="0"/>
+                                          <Component id="fractionsWarningLabel" pref="543" max="32767" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="fractionsSelectAllLabel" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
@@ -1236,7 +1236,7 @@
                               <Component id="fractionMwRange" linkSize="20" min="-2" pref="23" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="nonEnzymaticPeptidesFractionTab" linkSize="20" min="-2" pref="23" max="-2" attributes="0"/>
-                              <EmptySpace pref="34" max="32767" attributes="0"/>
+                              <EmptySpace pref="42" max="32767" attributes="0"/>
                               <Component id="fractionsWarningLabel" min="-2" pref="58" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="2" attributes="0">
@@ -1389,7 +1389,7 @@
                                   <Component id="exportMethodsSummaryJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="exportMethodsSummaryLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="118" max="32767" attributes="0"/>
+                              <EmptySpace pref="130" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1478,7 +1478,7 @@
                                       <Component id="addReportLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                      <EmptySpace pref="27" max="32767" attributes="0"/>
                                       <Component id="exportReportButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
@@ -1496,7 +1496,7 @@
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                               <Component id="selectReportTypeLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="reportsTableScrollPane" pref="199" max="32767" attributes="0"/>
+                              <Component id="reportsTableScrollPane" pref="213" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="exportReportButton" alignment="3" min="-2" max="-2" attributes="0"/>

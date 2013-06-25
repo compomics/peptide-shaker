@@ -1,13 +1,17 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
+import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.ExportFeature;
+import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.ProteinFeatures;
+import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class outputs the protein related export features.
@@ -32,9 +37,13 @@ public class ProteinSection {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The features to export.
+     * The protein features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<ExportFeature> proteinFeatures = new ArrayList<ExportFeature>();
+    /**
+     * The peptide subsection if any.
+     */
+    private PeptideSection peptideSection = null;
     /**
      * The separator used to separate columns.
      */
@@ -55,14 +64,26 @@ public class ProteinSection {
     /**
      * Constructor.
      *
-     * @param exportFeatures the features to export in this section
+     * @param exportFeatures the features to export in this section.
+     * ProteinFeatures as main features. If Peptide or protein features are
+     * selected, they will be added as sub-sections.
      * @param separator
      * @param indexes
      * @param header
      * @param writer
      */
     public ProteinSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
+        ArrayList<ExportFeature> peptideFeatures = new ArrayList<ExportFeature>();
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof ProteinFeatures) {
+                proteinFeatures.add(exportFeature);
+            } else if (exportFeature instanceof PeptideFeatures || exportFeature instanceof PsmFeatures) {
+                peptideFeatures.add(exportFeature);
+            }
+        }
+        if (!peptideFeatures.isEmpty()) {
+            peptideSection = new PeptideSection(peptideFeatures, separator, indexes, false, writer);
+        }
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
@@ -76,7 +97,10 @@ public class ProteinSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
-     * @param keys the keys of the protein matches to output
+     * @param keys the keys of the protein matches to output. if null all
+     * proteins will be exported.
+     * @param nSurroundingAas in case a peptide export is included with
+     * surrounding amino-acids, the number of surrounding amino acids to use
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
@@ -86,27 +110,15 @@ public class ProteinSection {
      * @throws InterruptedException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
-            ClassNotFoundException, InterruptedException {
+            SearchParameters searchParameters, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
         }
 
         if (header) {
-            if (indexes) {
-                writer.write(separator);
-            }
-            boolean firstColumn = true;
-            for (ExportFeature exportFeature : exportFeatures) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.write(separator);
-                }
-                writer.write(exportFeature.getTitle());
-            }
-            writer.newLine();
+            writeHeader();
         }
 
         if (keys == null) {
@@ -147,7 +159,7 @@ public class ProteinSection {
             if (indexes) {
                 writer.write(line + separator);
             }
-            for (ExportFeature exportFeature : exportFeatures) {
+            for (ExportFeature exportFeature : proteinFeatures) {
                 ProteinFeatures proteinFeatures = (ProteinFeatures) exportFeature;
                 switch (proteinFeatures) {
                     case accession:
@@ -159,6 +171,73 @@ public class ProteinSection {
                         break;
                     case protein_description:
                         writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getSimpleProteinDescription() + separator);
+                        break;
+                    case ensembl_gene_id:
+                        if (!matchKey.equals(proteinKey)) {
+                            proteinMatch = identification.getProteinMatch(proteinKey);
+                            matchKey = proteinKey;
+                        }
+                        GeneFactory geneFactory = GeneFactory.getInstance();
+                        String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                        if (geneName != null) {
+                            String ensemblId = geneFactory.getGeneEnsemblId(geneName);
+                            if (ensemblId != null) {
+                                writer.write(ensemblId);
+                            }
+                        }
+                        break;
+                    case gene_name:
+                        if (!matchKey.equals(proteinKey)) {
+                            proteinMatch = identification.getProteinMatch(proteinKey);
+                            matchKey = proteinKey;
+                        }
+                        geneFactory = GeneFactory.getInstance();
+                        geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                        if (geneName != null) {
+                            writer.write(geneName);
+                        }
+                        break;
+                    case chromosome:
+                        if (!matchKey.equals(proteinKey)) {
+                            proteinMatch = identification.getProteinMatch(proteinKey);
+                            matchKey = proteinKey;
+                        }
+                        geneFactory = GeneFactory.getInstance();
+                        geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                        if (geneName != null) {
+                            String chromosome = geneFactory.getChromosomeForGeneName(geneName);
+                            if (chromosome != null) {
+                                writer.write(chromosome);
+                            }
+                        }
+                        break;
+                    case go_accession:
+                        ArrayList<String> goTermaccessions = GOFactory.getInstance().getProteinGoAccessions(proteinKey);
+                        if (goTermaccessions != null) {
+                            boolean first = true;
+                            for (String accession : goTermaccessions) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    writer.write(", ");
+                                }
+                                writer.write(accession);
+                            }
+                        }
+                        break;
+                    case go_description:
+                        ArrayList<String> goTermDescriptions = GOFactory.getInstance().getProteinGoDescriptions(proteinKey);
+                        if (goTermDescriptions != null) {
+                            boolean first = true;
+                            for (String description : goTermDescriptions) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    writer.write(", ");
+                                }
+                                writer.write(description);
+                            }
+                        }
                         break;
                     case other_proteins:
                         if (!matchKey.equals(proteinKey)) {
@@ -205,10 +284,10 @@ public class ProteinSection {
                         writer.write(psParameter.getProteinConfidence() + separator);
                         break;
                     case confident_PTMs:
-                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, separator) + separator);
+                        writer.write(identificationFeaturesGenerator.getPrimaryPTMSummary(proteinKey, separator));
                         break;
                     case other_PTMs:
-                        writer.write(identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator) + separator);
+                        writer.write(identificationFeaturesGenerator.getSecondaryPTMSummary(proteinKey, separator));
                         break;
                     case confident_phosphosites:
                         ArrayList<String> modifications = new ArrayList<String>();
@@ -342,7 +421,34 @@ public class ProteinSection {
                 }
             }
             writer.newLine();
+            if (peptideSection != null) {
+                peptideSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, proteinMatch.getPeptideMatches(), nSurroundingAas, line + ".", null);
+            }
             line++;
+        }
+    }
+
+    /**
+     * Writes the header of the protein section.
+     *
+     * @throws IOException
+     */
+    public void writeHeader() throws IOException {
+        if (indexes) {
+            writer.write(separator);
+        }
+        boolean firstColumn = true;
+        for (ExportFeature exportFeature : proteinFeatures) {
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.write(separator);
+            }
+            writer.write(exportFeature.getTitle());
+        }
+        writer.newLine();
+        if (peptideSection != null) {
+            peptideSection.writeHeader();
         }
     }
 }

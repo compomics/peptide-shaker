@@ -12,6 +12,11 @@ public enum ProteinFeatures implements ExportFeature {
 
     accession("Main Accession", "Main accession of the protein group."),
     protein_description("Description", "Description of the protein designed by the main accession."),
+    ensembl_gene_id("Ensembl Gene ID", "The Ensembl gene ID associated to the main accession."),
+    gene_name("Gene Name", "The gene names of the Ensembl gene ID associated to the main accession."),
+    chromosome("Chromosome", "The chromosome of the Ensembl gene ID associated to the main accession."),
+    go_accession("GO Accession", "The accessions of the Gene Ontology terms associated to the accessions of the group."),
+    go_description("GO Description", "The descriptions of the Gene Ontology terms associated to the accessions of the group."),
     mw("MW (kDa)", "Molecular Weight."),
     coverage("Coverage (%)", "Sequence coverage in percent of the protein designed by the main accession."),
     possible_coverage("Possible Coverage (%)", "Possible sequence coverage in percent of the protein designed by the main accession according to the search settings."),
@@ -65,6 +70,11 @@ public enum ProteinFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accession);
         result.add(protein_description);
+        result.add(ensembl_gene_id);
+        result.add(gene_name);
+        result.add(chromosome);
+        result.add(go_accession);
+        result.add(go_description);
         result.add(mw);
         result.add(coverage);
         result.add(possible_coverage);

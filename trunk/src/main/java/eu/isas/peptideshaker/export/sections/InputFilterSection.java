@@ -87,10 +87,20 @@ public class InputFilterSection {
 
             switch (inputFilterFeatures) {
                 case mascot_max_evalue:
-                    writer.write(idFilter.getMascotMaxEvalue() + "");
+                    double value = idFilter.getMascotMaxEvalue();
+                    if (value == -1) {
+                        writer.write("none");
+                    } else {
+                        writer.write(value + "");
+                    }
                     break;
                 case max_mz_deviation:
-                    writer.write(idFilter.getMaxMzDeviation() + "");
+                    value = idFilter.getMaxMzDeviation();
+                    if (value == -1) {
+                        writer.write("none");
+                    } else {
+                        writer.write(value + "");
+                    }
                     break;
                 case max_mz_deviation_unit:
                     if (idFilter.isIsPpm()) {
@@ -106,7 +116,12 @@ public class InputFilterSection {
                     writer.write(idFilter.getMinPepLength() + "");
                     break;
                 case omssa_max_evalue:
-                    writer.write(idFilter.getOmssaMaxEvalue() + "");
+                    value = idFilter.getOmssaMaxEvalue();
+                    if (value == -1) {
+                        writer.write("none");
+                    } else {
+                        writer.write(value + "");
+                    }
                     break;
                 case unknown_PTM:
                     if (idFilter.removeUnknownPTMs()) {
@@ -116,7 +131,12 @@ public class InputFilterSection {
                     }
                     break;
                 case xtandem_max_evalue:
-                    writer.write(idFilter.getXtandemMaxEvalue() + "");
+                    value = idFilter.getXtandemMaxEvalue();
+                    if (value == -1) {
+                        writer.write("none");
+                    } else {
+                        writer.write(value + "");
+                    }
                     break;
                 default:
                     writer.write("Not implemented");

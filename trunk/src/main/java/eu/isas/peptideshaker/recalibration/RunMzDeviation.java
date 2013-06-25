@@ -224,7 +224,7 @@ public class RunMzDeviation {
 
     /**
      * Recalibrate a peak list.
-     * 
+     *
      * @param precursorRT
      * @param originalPeakList
      * @return the recalibrated peak list
@@ -254,9 +254,9 @@ public class RunMzDeviation {
      * @throws MzMLUnmarshallerException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException  
+     * @throws InterruptedException
      */
-    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences, 
+    public RunMzDeviation(String spectrumFileName, Identification identification, AnnotationPreferences annotationPreferences,
             WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
 
         // @TODO: the progress bar usage in the code below could be improved
@@ -354,15 +354,15 @@ public class RunMzDeviation {
             }
 
             if (waitingHandler != null) {
-                waitingHandler.increaseProgressValue();
+                waitingHandler.increaseSecondaryProgressValue();
             }
         }
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
+            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
         }
 
         ArrayList<Double> keys = new ArrayList<Double>(precursorRawMap.keySet());
@@ -642,16 +642,16 @@ public class RunMzDeviation {
             double x2 = BasicMathFunctions.median(mz2);
             double y1 = BasicMathFunctions.median(err1);
             double y2 = BasicMathFunctions.median(err2);
-            double grade;
+            double slope;
 
             if (x1 == x2) {
-                grade = 0;
+                slope = 0;
             } else {
-                grade = (y2 - y1) / (x2 - x1);
+                slope = (y2 - y1) / (x2 - x1);
             }
 
-            double offset = (y2 + y1 - grade * (x1 + x2)) / 2;
-            precursorSlopes.put(rtRef, grade);
+            double offset = (y2 + y1 - slope * (x1 + x2)) / 2;
+            precursorSlopes.put(rtRef, slope);
             precursorOffsets.put(rtRef, offset);
 
             for (double tempRt : keys) {

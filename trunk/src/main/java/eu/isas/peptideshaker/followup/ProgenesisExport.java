@@ -123,7 +123,8 @@ public class ProgenesisExport {
                                     if (exportType == ExportType.validated_psms) {
                                         writePsm(writer, spectrumKey, identification);
                                     } else {
-                                        psParameter = (PSParameter) identification.getPeptideMatchParameter(mgfFile, psParameter);
+                                        String peptideKey = peptide.getKey();
+                                        psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
                                         if (psParameter.isValidated()) {
                                             if (exportType == ExportType.validated_psms_peptides) {
                                                 writePsm(writer, spectrumKey, identification);

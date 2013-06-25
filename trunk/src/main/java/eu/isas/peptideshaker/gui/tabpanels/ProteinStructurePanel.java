@@ -1537,7 +1537,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 if (column == proteinTable.getColumn("Chr").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey);
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         peptideShakerGUI.catchException(ex);
                     }
                 }

@@ -233,6 +233,10 @@ public class FollowUpCLI extends CpsParent {
             waitingHandler.appendReport("An error occurred while closing PeptideShaker.", true, true);
             e.printStackTrace();
         }
+        
+        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+        
         return null;
     }
 
@@ -260,7 +264,7 @@ public class FollowUpCLI extends CpsParent {
     }
 
     /**
-     * PeptideShaker CLI header message when printing the usage.
+     * PeptideShaker follow-up CLI header message when printing the usage.
      */
     private static String getHeader() {
         return System.getProperty("line.separator")
@@ -384,10 +388,7 @@ public class FollowUpCLI extends CpsParent {
     @Override
     public String toString() {
         return "FollowUpCLI{"
-                + ", waitingHandler=" + waitingHandler
                 + ", cliInputBean=" + followUpCLIInputBean
-                + ", ptmFactory=" + ptmFactory
-                + ", enzymeFactory=" + enzymeFactory
                 + '}';
     }
 }
