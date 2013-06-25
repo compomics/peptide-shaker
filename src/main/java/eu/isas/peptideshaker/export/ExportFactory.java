@@ -205,10 +205,7 @@ public class ExportFactory implements Serializable {
      * the PTM scoring section)
      * @param spectrumCountingPreferences the spectrum counting preferences
      * (mandatory for the spectrum counting section)
-     * @param psMaps the PeptideShaker validation maps (mandatory for the
-     * Validation section)
      * @param waitingHandler the waiting handler
-     * @param modificationProfile the current modification profile
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws SQLException
@@ -220,8 +217,8 @@ public class ExportFactory implements Serializable {
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, ArrayList<String> proteinKeys, ArrayList<String> peptideKeys, ArrayList<String> psmKeys,
             String proteinMatchKey, int nSurroundingAA, AnnotationPreferences annotationPreferences, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
-            InterruptedException, MzMLUnmarshallerException {
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) 
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         // @TODO: implement other formats, put sometimes text instead of tables
 
