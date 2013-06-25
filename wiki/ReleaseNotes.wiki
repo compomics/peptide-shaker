@@ -3,6 +3,21 @@
 
 ----
 
+*Changes in PeptideShaker 0.22.2 (June 25. 2013):*
+
+ * NEW FEATURE: The tool now checks if 64 bit Java is used the first time PeptideShaker is started.
+
+ * FEATURE IMPROVEMENT: Added gene details in the default custom exports.
+
+ * BUG FIX: Corrected a bug in the Progenesis export.
+ * BUG FIX: Fixed a bug where the coverage panel had gone missing.
+ * BUG FIX: Fixed a bug in the gene name comparison as part of the protein inference grouping where gene names of length 1-2 resulted in issues. 
+ * BUG FIX: Corrected bugs in the custom exports.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.13.55.
+
+----
+
 *Changes in PeptideShaker 0.22.1 (June 20. 2013):*
 
  * FEATURE IMPROVEMENT: Cleaned up the use of the New Project dialog when called from the Welcome dialog.
@@ -11,6 +26,8 @@
  * BUG FIX: Fixed a bug in the code for locating a FASTA file if it was not in the location given in the cps file.
  * BUG FIX: Fixed a bug that made is impossible to set the species if no species was selected when loading the project.
  * BUG FIX: Handled a possible null pointer in the Overview tab.
+
+Download Count: 37
 
 ----
 
