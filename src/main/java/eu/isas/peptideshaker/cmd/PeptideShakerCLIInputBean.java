@@ -302,7 +302,7 @@ public class PeptideShakerCLIInputBean {
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
         reportCLIInputBean = new ReportCLIInputBean(aLine);
-        
+
     }
 
     /**
@@ -844,12 +844,10 @@ public class PeptideShakerCLIInputBean {
 
     /**
      * Returns the report export options required.
-     * 
+     *
      * @return the report export options required
      */
     public ReportCLIInputBean getReportCLIInputBean() {
         return reportCLIInputBean;
     }
-
-    
 }

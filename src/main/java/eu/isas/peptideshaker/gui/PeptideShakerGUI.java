@@ -409,12 +409,16 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             UtilitiesUserPreferences.saveUserPreferences(utilitiesUserPreferences);
         }
 
+        // check for 64 bit Java
+        if (!getJarFilePath().equalsIgnoreCase(".")
+                && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
+            CompomicsWrapper.checkJavaVersion("PeptideShaker");
+        }
+
         // add desktop shortcut?
         if (!getJarFilePath().equalsIgnoreCase(".")
                 && System.getProperty("os.name").lastIndexOf("Windows") != -1
                 && new File(getJarFilePath() + "/resources/conf/firstRun").exists()) {
-
-
 
             // @TODO: add support for desktop icons in mac and linux??
 
@@ -1991,7 +1995,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
             // check if we have re-loaded the data using the current threshold and PEP window settings
-            if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
+            if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) { // @TODO: should only ask once when leaving the validation tab, not when switching tabs after that...
 
                 if (!statsPanel.thresholdUpdated() || !statsPanel.pepWindowApplied()) {
 

@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -16,7 +11,6 @@ import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.preferences.DisplayPreferences;
 import eu.isas.peptideshaker.utils.CpsParent;
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +23,12 @@ import org.apache.commons.cli.Options;
 /**
  * This class performs the command line export of reports in command line.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ReportCLI extends CpsParent {
 
     /**
-     * The report command line options
+     * The report command line options.
      */
     private ReportCLIInputBean reportCLIInputBean;
     /**
@@ -47,22 +41,6 @@ public class ReportCLI extends CpsParent {
      */
     private WaitingHandler waitingHandler;
     /**
-     * The gene factory.
-     */
-    private GeneFactory geneFactory = GeneFactory.getInstance();
-    /**
-     * The GO factory.
-     */
-    private GOFactory goFactory = GOFactory.getInstance();
-    /**
-     * The sequence factory
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
-    /**
-     * The spectrum factory.
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
-    /**
      * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
@@ -72,7 +50,7 @@ public class ReportCLI extends CpsParent {
      * initialization is successful, calling "run" will open the PeptideShaker
      * project and write the desired output files.
      *
-     * @param ReportCLI the report export options
+     * @param reportCLIInputBean the input bean
      */
     public ReportCLI(ReportCLIInputBean reportCLIInputBean) {
         this.reportCLIInputBean = reportCLIInputBean;
@@ -147,7 +125,7 @@ public class ReportCLI extends CpsParent {
                 }
             }
         }
-        
+
         // Export documentation(s)
         if (reportCLIInputBean.documentationExportNeeded()) {
             for (String reportType : reportCLIInputBean.getReportTypes()) {
@@ -159,7 +137,7 @@ public class ReportCLI extends CpsParent {
                 }
             }
         }
-        
+
 
         waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
         if (waitingHandler instanceof WaitingDialog) {
@@ -170,9 +148,7 @@ public class ReportCLI extends CpsParent {
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
 
         return null;
-
     }
-    
 
     /**
      * PeptideShaker report CLI header message when printing the usage.
@@ -228,7 +204,6 @@ public class ReportCLI extends CpsParent {
         return true;
     }
 
-    
     /**
      * Starts the launcher by calling the launch method. Use this as the main
      * class in the jar file.
@@ -274,7 +249,7 @@ public class ReportCLI extends CpsParent {
                 + ", cliInputBean=" + reportCLIInputBean
                 + '}';
     }
-    
+
     /**
      * Close the PeptideShaker instance by clearing up factories and cache.
      *

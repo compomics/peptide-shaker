@@ -6,7 +6,6 @@ import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.io.SerializationUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
-import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
 import eu.isas.peptideshaker.export.exportfeatures.InputFilterFeatures;
@@ -68,7 +67,7 @@ public class ExportFactory implements Serializable {
      */
     private HashMap<String, ExportScheme> userSchemes = new HashMap<String, ExportScheme>();
     /**
-     * Sorted list of the implemented reports
+     * Sorted list of the implemented reports.
      */
     private ArrayList<String> implementedReports = null;
 
@@ -347,7 +346,7 @@ public class ExportFactory implements Serializable {
     /**
      * Returns the list of implemented reports as command line option.
      *
-     * @return
+     * @return the list of implemented reports
      */
     public String getCommandLineOptions() {
         setUpReportList();
@@ -365,11 +364,11 @@ public class ExportFactory implements Serializable {
      * Returns the default file name for the export of a report based on the
      * project details
      *
-     * @param experiment the exeriment of the project
+     * @param experiment the experiment of the project
      * @param sample the sample of the project
      * @param replicate the replicate number
      * @param exportName the name of the report type
-     * @return
+     * @return the default file name for the export
      */
     public static String getDefaultReportName(String experiment, String sample, int replicate, String exportName) {
         return experiment + "_" + sample + "_" + replicate + "_" + exportName + ".txt";
@@ -380,7 +379,7 @@ public class ExportFactory implements Serializable {
      * given report export type.
      *
      * @param exportName the export name
-     * @return
+     * @return the default file name for the export
      */
     public static String getDefaultDocumentation(String exportName) {
         return exportName + "_documentation.txt";
@@ -391,7 +390,7 @@ public class ExportFactory implements Serializable {
      *
      * @param commandLine the number used in command line option. See
      * getCommandLineOptions().
-     * @return the corresponding export name.
+     * @return the corresponding export name
      */
     public String getExportTypeFromCommandLineOption(int commandLine) {
         if (implementedReports == null) {
@@ -404,7 +403,7 @@ public class ExportFactory implements Serializable {
     }
 
     /**
-     * initiates the sorted list of implemented reports
+     * Initiates the sorted list of implemented reports.
      */
     private void setUpReportList() {
         implementedReports = new ArrayList<String>();
@@ -458,7 +457,7 @@ public class ExportFactory implements Serializable {
         exportFeatures.add(ProteinFeatures.confidence);
         exportFeatures.add(ProteinFeatures.decoy);
         exportFeatures.add(ProteinFeatures.validated);
-        
+
         // Peptide sub-section
         // accessions
         exportFeatures.add(PeptideFeatures.accessions);
@@ -514,10 +513,10 @@ public class ExportFactory implements Serializable {
         exportFeatures.add(PsmFeatures.confidence);
         exportFeatures.add(PsmFeatures.decoy);
         exportFeatures.add(PsmFeatures.validated);
-        
+
         ExportScheme topDownReport = new ExportScheme("Default Top Down Report", false, ProteinFeatures.type, exportFeatures, "\t", true, true, 0, false);
-        
-        
+
+
         ///////////////////////////
         // Default protein report
         ///////////////////////////

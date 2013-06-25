@@ -78,7 +78,9 @@ public class ExportScheme implements Serializable {
     }
 
     /**
-     * Constructor allowing either a list of sections or a merged section (depending on sectionFamily being null or not). For more clarity, use the other constructors, dedicated to specific use cases.
+     * Constructor allowing either a list of sections or a merged section
+     * (depending on sectionFamily being null or not). For more clarity, use the
+     * other constructors, dedicated to specific use cases.
      *
      * @param name the name of the scheme
      * @param editable a boolean indicating whether the scheme can be edited by
@@ -92,22 +94,24 @@ public class ExportScheme implements Serializable {
      * @param includeSectionTitles indicates whether section titles shall be
      * used
      * @param mainTitle the title of the report
-     * @param sectionFamily the section family. If null the sections will be automatically separated based on the feature type. Note, be sure that all features are implemented for this section.
+     * @param sectionFamily the section family. If null the sections will be
+     * automatically separated based on the feature type. Note, be sure that all
+     * features are implemented for this section.
      */
     private ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle, String sectionFamily) {
         this.sectionList = sectionList;
         if (sectionFamily == null) {
-        for (ExportFeature exportFeature : exportFeatures) {
-            String key = exportFeature.getFeatureFamily();
-            if (!exportFeaturesMap.containsKey(key)) {
-                exportFeaturesMap.put(key, new ArrayList<ExportFeature>());
+            for (ExportFeature exportFeature : exportFeatures) {
+                String key = exportFeature.getFeatureFamily();
+                if (!exportFeaturesMap.containsKey(key)) {
+                    exportFeaturesMap.put(key, new ArrayList<ExportFeature>());
+                }
+                exportFeaturesMap.get(key).add(exportFeature);
+                if (!sectionList.contains(key)) {
+                    sectionList.add(key);
+                }
             }
-            exportFeaturesMap.get(key).add(exportFeature);
-            if (!sectionList.contains(key)) {
-                sectionList.add(key);
-            }
-        }
         } else {
             exportFeaturesMap.put(sectionFamily, exportFeatures);
             this.sectionList = new ArrayList<String>(exportFeaturesMap.keySet());

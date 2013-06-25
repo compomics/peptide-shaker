@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CommandLineUtils;
@@ -14,7 +10,7 @@ import org.apache.commons.cli.CommandLine;
  * This class is a simple bean wrapping the CLI parameters provided in an
  * Options instance.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class ReportCLIInputBean {
 
@@ -23,19 +19,18 @@ public class ReportCLIInputBean {
      */
     private File cpsFile = null;
     /**
-     * folder where to export the reports
+     * Folder where to export the reports.
      */
     private File outputFolder = null;
     /**
-     * The report types required by the user
+     * The report types required by the user.
      */
     private ArrayList<String> reportTypes = new ArrayList<String>();
     /**
-     * The documentation types required by the user
+     * The documentation types required by the user.
      */
     private ArrayList<String> documentationTypes = new ArrayList<String>();
-    
-    
+
     /**
      * Construct a FollowUpCLIInputBean from an Apache CLI instance.
      *
@@ -67,8 +62,8 @@ public class ReportCLIInputBean {
 
     /**
      * Returns the cps file from which the information can be obtained.
-     * 
-     * @return 
+     *
+     * @return the cps file from which the information can be obtained
      */
     public File getCpsFile() {
         return cpsFile;
@@ -76,8 +71,8 @@ public class ReportCLIInputBean {
 
     /**
      * Returns the output folder.
-     * 
-     * @return 
+     *
+     * @return the output folder
      */
     public File getOutputFolder() {
         return outputFolder;
@@ -85,7 +80,8 @@ public class ReportCLIInputBean {
 
     /**
      * Returns the types of output required by the user
-     * @return 
+     *
+     * @return the types of output
      */
     public ArrayList<String> getReportTypes() {
         return reportTypes;
@@ -93,39 +89,37 @@ public class ReportCLIInputBean {
 
     /**
      * Returns the type of documentation required by the user.
-     * 
-     * @return 
+     *
+     * @return the type of documentation types
      */
     public ArrayList<String> getDocumentationTypes() {
         return documentationTypes;
     }
-    
+
     /**
      * Indicates whether a report export is needed.
-     * 
-     * @return 
+     *
+     * @return true if a report export is needed
      */
     public boolean exportNeeded() {
         return reportExportNeeded() || documentationExportNeeded();
     }
-    
+
     /**
      * Indicates whether a report export is required by the user.
-     * 
-     * @return 
+     *
+     * @return true if a report export is required
      */
     public boolean reportExportNeeded() {
         return outputFolder != null && !reportTypes.isEmpty();
     }
-    
+
     /**
      * Indicates whether a documentation export is required by the user.
-     * 
-     * @return 
+     *
+     * @return true if documentation export is require
      */
     public boolean documentationExportNeeded() {
         return outputFolder != null && !documentationTypes.isEmpty();
     }
-    
-    
 }

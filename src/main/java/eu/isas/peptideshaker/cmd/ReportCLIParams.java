@@ -1,25 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.cmd;
 
 import eu.isas.peptideshaker.export.ExportFactory;
 import org.apache.commons.cli.Options;
 
 /**
- * This class provides the available reports as command line parameters
+ * This class provides the available reports as command line parameters.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public enum ReportCLIParams {
-    
-    
+
     CPS_FILE("in", "PeptideShaker project (.cps file)", true),
     EXPORT_FOLDER("out", "Folder where report files shall be exported. Note: existing files will be silently overwritten.", true),
     REPORT_TYPE("reports", "Comma separated list of types of report to export. " + ExportFactory.getInstance().getCommandLineOptions(), false),
     DOCUMENTATION_TYPE("documentation", "Comma separated list of types of report documentation to export. " + ExportFactory.getInstance().getCommandLineOptions(), false);
-    
     /**
      * Short Id for the CLI parameter.
      */
@@ -46,7 +40,6 @@ public enum ReportCLIParams {
         this.description = description;
         this.mandatory = mandatory;
     }
-        
 
     /**
      * Creates the options for the command line interface based on the possible
@@ -96,7 +89,7 @@ public enum ReportCLIParams {
 
         output += "\nReport export:\n\n";
         output += "-" + String.format(formatter, REPORT_TYPE.id) + REPORT_TYPE.description + "\n";
-        
+
         output += "\nReport Documentation export:\n\n";
         output += "-" + String.format(formatter, DOCUMENTATION_TYPE.id) + DOCUMENTATION_TYPE.description + "\n";
 
