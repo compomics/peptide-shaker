@@ -212,8 +212,39 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             }
 
         }
+        
+        // Report export if needed
+        ReportCLIInputBean reportCLIInputBean = cliInputBean.getReportCLIInputBean();
+        if (reportCLIInputBean.exportNeeded()) {
+            waitingHandler.appendReport("Starting report export.", true, true);
 
-        //@TODO: move that to the report cli as soon as it exists
+            // Export report(s)
+            if (reportCLIInputBean.exportNeeded()) {
+                int nSurroundingAAs = 2; //@TODO: this shall not be hard coded
+                for (String reportType : reportCLIInputBean.getReportTypes()) {
+                    try {
+                        CLIMethods.exportReport(reportCLIInputBean, reportType, experiment.getReference(), sample.getReference(), replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, nSurroundingAAs, idFilter, ptmScoringPreferences, spectrumCountingPreferences, waitingHandler);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the " + reportType + ".", true, true);
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // Export documentation(s)
+            if (reportCLIInputBean.documentationExportNeeded()) {
+                for (String reportType : reportCLIInputBean.getReportTypes()) {
+                    try {
+                        CLIMethods.exportDocumentation(reportCLIInputBean, reportType, waitingHandler);
+                    } catch (Exception e) {
+                        waitingHandler.appendReport("An error occurred while exporting the documentation for " + reportType + ".", true, true);
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        //@TODO: move that to the report cli as soon as tested
         // text summary output - format 1
         if (cliInputBean.getTextFormat1Directory() != null) {
             waitingHandler.appendReport("Exporting results as text files. Please wait...", true, true);
@@ -253,10 +284,6 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (waitingHandler instanceof WaitingDialog) {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
         }
-
-        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
-        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
-
 
         return null;
     }

@@ -80,6 +80,7 @@ public class PsmSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param keys the keys of the PSM matches to output
+     * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
@@ -90,7 +91,7 @@ public class PsmSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            SearchParameters searchParameters, ArrayList<String> keys, String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -98,19 +99,7 @@ public class PsmSection {
         }
 
         if (header) {
-            if (indexes) {
-                writer.write(separator);
-            }
-            boolean firstColumn = true;
-            for (ExportFeature exportFeature : exportFeatures) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.write(separator);
-                }
-                writer.write(exportFeature.getTitle());
-            }
-            writer.newLine();
+            writeHeader();
         }
 
         HashMap<String, ArrayList<String>> psmMap = new HashMap<String, ArrayList<String>>();
@@ -179,6 +168,9 @@ public class PsmSection {
                 }
 
                 if (indexes) {
+                    if (linePrefix != null) {
+                        writer.write(linePrefix);
+                    }
                     writer.write(line + separator);
                 }
                 for (ExportFeature exportFeature : exportFeatures) {
@@ -538,5 +530,26 @@ public class PsmSection {
         }
 
         return modMap;
+    }
+    
+    /**
+     * Writes the header of this section.
+     * 
+     * @throws IOException 
+     */
+    public void writeHeader() throws IOException {
+            if (indexes) {
+                writer.write(separator);
+            }
+            boolean firstColumn = true;
+            for (ExportFeature exportFeature : exportFeatures) {
+                if (firstColumn) {
+                    firstColumn = false;
+                } else {
+                    writer.write(separator);
+                }
+                writer.write(exportFeature.getTitle());
+            }
+            writer.newLine();
     }
 }

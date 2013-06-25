@@ -2144,7 +2144,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
                     try {
                         new GeneDetailsDialog(peptideShakerGUI, proteinKey);
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         peptideShakerGUI.catchException(ex);
                     }
                 }

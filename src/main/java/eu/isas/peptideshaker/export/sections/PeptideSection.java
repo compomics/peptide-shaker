@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class outputs the peptide related export features.
@@ -36,9 +37,13 @@ public class PeptideSection {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The features to export.
+     * The peptide features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<ExportFeature> peptideFeatures = new ArrayList<ExportFeature>();
+    /**
+     * The psm subsection if needed.
+     */
+    private PsmSection psmSection = null;
     /**
      * The separator used to separate columns.
      */
@@ -55,10 +60,6 @@ public class PeptideSection {
      * The writer used to send the output to file.
      */
     private BufferedWriter writer;
-    /**
-     * The current modification profile.
-     */
-    private ModificationProfile modificationProfile;
 
     /**
      * Constructor.
@@ -68,15 +69,23 @@ public class PeptideSection {
      * @param indexes
      * @param header
      * @param writer
-     * @param modificationProfile the current modification profile
      */
-    public PeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer, ModificationProfile modificationProfile) {
-        this.exportFeatures = exportFeatures;
+    public PeptideSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
+        ArrayList<ExportFeature> psmFeatures = new ArrayList<ExportFeature>();
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof PeptideFeatures) {
+                peptideFeatures.add(exportFeature);
+            } else {
+                psmFeatures.add(exportFeature);
+            }
+        }
+        if (!psmFeatures.isEmpty()) {
+            psmSection = new PsmSection(psmFeatures, separator, indexes, false, writer);
+        }
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
         this.writer = writer;
-        this.modificationProfile = modificationProfile;
     }
 
     /**
@@ -87,8 +96,8 @@ public class PeptideSection {
      * generator of the project
      * @param searchParameters the search parameters of the project
      * @param keys the keys of the protein matches to output
-     * @param proteinMatchKey
-     * @param nSurroundingAA
+     * @param nSurroundingAA the number of surrounding amino acids to export
+     * @param linePrefix the line prefix to use.
      * @param waitingHandler the waiting handler
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
@@ -98,36 +107,20 @@ public class PeptideSection {
      * @throws InterruptedException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, String proteinMatchKey, int nSurroundingAA, WaitingHandler waitingHandler)
-            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+            SearchParameters searchParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix, WaitingHandler waitingHandler)
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressDialogIndeterminate(true);
         }
 
+
         if (header) {
-            if (indexes) {
-                writer.write(separator);
-            }
-            boolean firstColumn = true;
-            for (ExportFeature exportFeature : exportFeatures) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.write(separator);
-                }
-                writer.write(exportFeature.getTitle());
-            }
-            writer.newLine();
+            writeHeader();
         }
 
         if (keys == null) {
-            if (proteinMatchKey != null) {
-                ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
-                keys = proteinMatch.getPeptideMatches();
-            } else {
-                keys = identification.getPeptideIdentification();
-            }
+            keys = identification.getPeptideIdentification();
         }
 
         PSParameter psParameter = new PSParameter();
@@ -162,11 +155,14 @@ public class PeptideSection {
             }
 
             if (indexes) {
+                if (linePrefix != null) {
+                    writer.write(linePrefix);
+                }
                 writer.write(line + separator);
             }
-            for (ExportFeature exportFeature : exportFeatures) {
-                PeptideFeatures peptideFeatures = (PeptideFeatures) exportFeature;
-                switch (peptideFeatures) {
+            for (ExportFeature exportFeature : peptideFeatures) {
+                PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
+                switch (peptideFeature) {
                     case accessions:
                         if (!matchKey.equals(peptideKey)) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -217,7 +213,7 @@ public class PeptideSection {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             matchKey = peptideKey;
                         }
-                        writer.write(getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, modificationProfile) + separator);
+                        writer.write(getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, searchParameters.getModificationProfile()) + separator);
                         break;
                     case pi:
                         if (!parameterKey.equals(peptideKey)) {
@@ -362,7 +358,8 @@ public class PeptideSection {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             matchKey = peptideKey;
                         }
-                        if (identificationFeaturesGenerator.isUnique(proteinMatchKey, peptideMatch.getTheoreticPeptide())) {
+                        peptide = peptideMatch.getTheoreticPeptide();
+                        if (identification.isUnique(peptide)) {
                             writer.write(1 + separator);
                         } else {
                             writer.write(0 + separator);
@@ -387,6 +384,14 @@ public class PeptideSection {
                 }
             }
             writer.newLine();
+            if (psmSection != null) {
+                String psmSectionPrefix = "";
+                if (linePrefix != null) {
+                    psmSectionPrefix += linePrefix;
+                }
+                psmSectionPrefix += line + ".";
+                psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, peptideMatch.getSpectrumMatches(), psmSectionPrefix, null);
+            }
             line++;
         }
     }
@@ -497,5 +502,29 @@ public class PeptideSection {
         }
 
         return result;
+    }
+
+    /**
+     * Writes the title of the section.
+     *
+     * @throws IOException
+     */
+    public void writeHeader() throws IOException {
+        if (indexes) {
+            writer.write(separator);
+        }
+        boolean firstColumn = true;
+        for (ExportFeature exportFeature : peptideFeatures) {
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
+                writer.write(separator);
+            }
+            writer.write(exportFeature.getTitle());
+        }
+        writer.newLine();
+        if (psmSection != null) {
+            psmSection.writeHeader();
+        }
     }
 }

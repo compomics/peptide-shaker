@@ -107,6 +107,9 @@ public enum PeptideShakerCLIParams {
         
         // Follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
+        
+        // Report options
+        ReportCLIParams.createOptionsCLI(aOptions);
 
         // note: remember to add new parameters to the getOptionsAsString below as well
     }
@@ -159,6 +162,7 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
         
         output += FollowUpCLIParams.getOutputOptionsAsString();
+        output += ReportCLIParams.getOutputOptionsAsString();
         
         return output;
     }

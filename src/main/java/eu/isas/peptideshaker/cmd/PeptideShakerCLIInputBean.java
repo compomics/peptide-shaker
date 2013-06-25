@@ -135,6 +135,10 @@ public class PeptideShakerCLIInputBean {
      * The follow up options chosen.
      */
     private FollowUpCLIInputBean followUpCLIInputBean;
+    /**
+     * The report export options chosen.
+     */
+    private ReportCLIInputBean reportCLIInputBean;
 
     /**
      * Construct a PeptideShakerCLIInputBean from an Apache CLI instance.
@@ -297,7 +301,8 @@ public class PeptideShakerCLIInputBean {
         }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
-
+        reportCLIInputBean = new ReportCLIInputBean(aLine);
+        
     }
 
     /**
@@ -836,4 +841,15 @@ public class PeptideShakerCLIInputBean {
     public FollowUpCLIInputBean getFollowUpCLIInputBean() {
         return followUpCLIInputBean;
     }
+
+    /**
+     * Returns the report export options required.
+     * 
+     * @return the report export options required
+     */
+    public ReportCLIInputBean getReportCLIInputBean() {
+        return reportCLIInputBean;
+    }
+
+    
 }

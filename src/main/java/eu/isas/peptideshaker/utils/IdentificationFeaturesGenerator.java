@@ -695,32 +695,6 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Indicates whether a peptide is unique to a protein match.
-     *
-     * @param proteinMatchKey the key of the protein match
-     * @param peptide the peptide of interest
-     * @return a boolean indicating whether a peptide is unique to a protein
-     * match
-     */
-    public boolean isUnique(String proteinMatchKey, Peptide peptide) {
-        String[] accessions = ProteinMatch.getAccessions(proteinMatchKey);
-        ArrayList<String> peptideAccessions = peptide.getParentProteins();
-        if (peptideAccessions.size() == accessions.length) {
-            boolean same = true;
-            for (String accession : accessions) {
-                if (!peptideAccessions.contains(accession)) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Estimates the number of peptides unique to a protein match.
      *
      * @param proteinMatchKey the key of the protein match
@@ -738,7 +712,7 @@ public class IdentificationFeaturesGenerator {
         identification.loadPeptideMatches(proteinMatch.getPeptideMatches(), null);
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
-            if (isUnique(proteinMatchKey, peptideMatch.getTheoreticPeptide())) {
+            if (identification.isUnique(peptideMatch.getTheoreticPeptide())) {
                 cpt++;
             }
         }

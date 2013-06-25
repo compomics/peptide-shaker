@@ -157,13 +157,13 @@ public class FollowUpCLIInputBean {
             inclusionFormat = new Integer(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_FORMAT.id));
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id)) {
-            inclusionProteinFilter = CommandLineUtils.getIntegerListFromString(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id, ",");
+            inclusionProteinFilter = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_PROTEIN_FILTERS.id), ",");
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_PEPTIDE_FILTERS.id)) {
-            inclusionPeptideFilter = CommandLineUtils.getIntegerListFromString(FollowUpCLIParams.INCLUSION_LIST_PEPTIDE_FILTERS.id, ",");
+            inclusionPeptideFilter = CommandLineUtils.getIntegerListFromString(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_PEPTIDE_FILTERS.id), ",");
         }
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
-            inclusionRtWindow = new Double(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id);
+            inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
         }
 
     }
