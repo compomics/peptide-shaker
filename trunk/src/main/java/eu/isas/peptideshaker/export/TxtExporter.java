@@ -133,9 +133,9 @@ public class TxtExporter {
             }
 
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
-            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "Gene name" + SEPARATOR + "Chromosome" 
-                    + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" 
-                    + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" + SEPARATOR + "Observable coverage" + SEPARATOR + "p score" 
+            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "Gene name" + SEPARATOR + "Chromosome"
+                    + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated"
+                    + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "Sequence coverage" + SEPARATOR + "Observable coverage" + SEPARATOR + "p score"
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + System.getProperty("line.separator");
             proteinWriter.write(content);
 
@@ -285,11 +285,11 @@ public class TxtExporter {
         // add gene name and chromosome number
         String geneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
         String chromosomeNumber = geneFactory.getChromosomeForGeneName(geneName);
-        if (geneName != null) {
+        if (geneName != null && !identification.getProteinMatch(proteinKey).isDecoy()) {
             line.append(geneName);
         }
         line.append(SEPARATOR);
-        if (chromosomeNumber != null) {
+        if (chromosomeNumber != null && !identification.getProteinMatch(proteinKey).isDecoy()) {
             line.append(chromosomeNumber);
         }
         line.append(SEPARATOR);

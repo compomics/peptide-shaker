@@ -522,6 +522,8 @@ public class ExportFactory implements Serializable {
         // protein accessions and protein inferences 
         exportFeatures.add(ProteinFeatures.accession);
         exportFeatures.add(ProteinFeatures.protein_description);
+        exportFeatures.add(ProteinFeatures.gene_name);
+        exportFeatures.add(ProteinFeatures.chromosome);
         exportFeatures.add(ProteinFeatures.pi);
         exportFeatures.add(ProteinFeatures.other_proteins);
         exportFeatures.add(ProteinFeatures.protein_group);

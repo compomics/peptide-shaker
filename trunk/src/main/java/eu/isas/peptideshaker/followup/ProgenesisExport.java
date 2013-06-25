@@ -194,7 +194,8 @@ public class ProgenesisExport {
      *
      * @param writer the writer
      * @param spectrumKey the key of the PSM to export
-     * @param accessions the accessions corresponding to that peptide according to protein inference. If null all proteins will be reported.
+     * @param accessions the accessions corresponding to that peptide according
+     * to protein inference. If null all proteins will be reported.
      * @param identification the identification
      * @throws IllegalArgumentException
      * @throws SQLException

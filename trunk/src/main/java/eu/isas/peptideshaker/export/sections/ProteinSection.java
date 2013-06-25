@@ -108,6 +108,7 @@ public class ProteinSection {
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
@@ -160,8 +161,8 @@ public class ProteinSection {
                 writer.write(line + separator);
             }
             for (ExportFeature exportFeature : proteinFeatures) {
-                ProteinFeatures proteinFeatures = (ProteinFeatures) exportFeature;
-                switch (proteinFeatures) {
+                ProteinFeatures tempProteinFeatures = (ProteinFeatures) exportFeature;
+                switch (tempProteinFeatures) {
                     case accession:
                         if (!matchKey.equals(proteinKey)) {
                             proteinMatch = identification.getProteinMatch(proteinKey);
@@ -177,67 +178,82 @@ public class ProteinSection {
                             proteinMatch = identification.getProteinMatch(proteinKey);
                             matchKey = proteinKey;
                         }
-                        GeneFactory geneFactory = GeneFactory.getInstance();
-                        String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
-                        if (geneName != null) {
-                            String ensemblId = geneFactory.getGeneEnsemblId(geneName);
-                            if (ensemblId != null) {
-                                writer.write(ensemblId);
+                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
+                            GeneFactory geneFactory = GeneFactory.getInstance();
+                            String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                            if (geneName != null) {
+                                String ensemblId = geneFactory.getGeneEnsemblId(geneName);
+                                if (ensemblId != null) {
+                                    writer.write(ensemblId);
+                                }
                             }
                         }
+                        writer.write(separator);
                         break;
                     case gene_name:
                         if (!matchKey.equals(proteinKey)) {
                             proteinMatch = identification.getProteinMatch(proteinKey);
                             matchKey = proteinKey;
                         }
-                        geneFactory = GeneFactory.getInstance();
-                        geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
-                        if (geneName != null) {
-                            writer.write(geneName);
+                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
+                            GeneFactory geneFactory = GeneFactory.getInstance();
+                            String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                            if (geneName != null) {
+                                writer.write(geneName);
+                            }
                         }
+                        writer.write(separator);
                         break;
                     case chromosome:
                         if (!matchKey.equals(proteinKey)) {
                             proteinMatch = identification.getProteinMatch(proteinKey);
                             matchKey = proteinKey;
                         }
-                        geneFactory = GeneFactory.getInstance();
-                        geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
-                        if (geneName != null) {
-                            String chromosome = geneFactory.getChromosomeForGeneName(geneName);
-                            if (chromosome != null) {
-                                writer.write(chromosome);
+                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
+                            GeneFactory geneFactory = GeneFactory.getInstance();
+                            String geneName = geneFactory.getGeneNameForUniProtProtein(proteinMatch.getMainMatch());
+                            if (geneName != null) {
+                                String chromosome = geneFactory.getChromosomeForGeneName(geneName);
+                                if (chromosome != null) {
+                                    writer.write(chromosome);
+                                }
                             }
                         }
+                        writer.write(separator);
                         break;
                     case go_accession:
-                        ArrayList<String> goTermaccessions = GOFactory.getInstance().getProteinGoAccessions(proteinKey);
-                        if (goTermaccessions != null) {
-                            boolean first = true;
-                            for (String accession : goTermaccessions) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    writer.write(", ");
+                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
+                            ArrayList<String> goTermaccessions = GOFactory.getInstance().getProteinGoAccessions(proteinKey);
+                            if (goTermaccessions != null) {
+                                boolean first = true;
+                                for (String accession : goTermaccessions) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        writer.write(", ");
+                                    }
+                                    writer.write(accession);
                                 }
-                                writer.write(accession);
                             }
                         }
+                        writer.write(separator);
                         break;
                     case go_description:
-                        ArrayList<String> goTermDescriptions = GOFactory.getInstance().getProteinGoDescriptions(proteinKey);
-                        if (goTermDescriptions != null) {
-                            boolean first = true;
-                            for (String description : goTermDescriptions) {
-                                if (first) {
-                                    first = false;
-                                } else {
-                                    writer.write(", ");
+                        if (!identification.getProteinMatch(proteinKey).isDecoy()) {
+                            ArrayList<String> goTermDescriptions = GOFactory.getInstance().getProteinGoDescriptions(proteinKey);
+                            if (goTermDescriptions != null) {
+                                boolean first = true;
+                                for (String description : goTermDescriptions) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        writer.write(", ");
+                                    }
+                                    writer.write(description);
                                 }
-                                writer.write(description);
                             }
                         }
+                        writer.write(separator);
                         break;
                     case other_proteins:
                         if (!matchKey.equals(proteinKey)) {

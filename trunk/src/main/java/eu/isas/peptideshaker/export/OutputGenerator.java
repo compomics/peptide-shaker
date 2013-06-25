@@ -390,14 +390,14 @@ public class OutputGenerator {
                                                 tempGeneName = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getGeneName();
                                             }
                                             if (geneName) {
-                                                if (tempGeneName != null) {
+                                                if (tempGeneName != null && !identification.getProteinMatch(proteinKey).isDecoy()) {
                                                     writer.write(tempGeneName);
                                                 }
                                                 writer.write(SEPARATOR);
                                             }
                                             if (chromosomeNumber) {
                                                 String chromosomeNumber = geneFactory.getChromosomeForGeneName(tempGeneName);
-                                                if (chromosomeNumber != null) {
+                                                if (chromosomeNumber != null && !identification.getProteinMatch(proteinKey).isDecoy()) {
                                                     writer.write(chromosomeNumber);
                                                 }
                                                 writer.write(SEPARATOR);
