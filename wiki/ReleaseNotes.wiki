@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.22.3 (June 27. 2013):*
+
+ * FEATURE IMPROVEMENT: Added gene name and chromosome number to the default protein report.
+ * FEATURE IMPROVEMENT: Gene name and chromosome is no longer exported for decoy sequences.
+ * FEATURE IMPROVEMENT: Improved the way the progress bar is canceled when the Progenesis export is done.
+ * FEATURE IMPROVEMENT: The Validation settings not applied warning is now only shown when leaving the Validation tab.
+
+ * BUG FIX: Fixed a bug in the Progenesis export where a method was called recursively without stop.
+ * BUG FIX: Fixed bugs in the custom exports for gene name and chromosome where column separators where missing.
+ * BUG FIX: The simple protein description now include the "-reverse" tag for decoy sequences.
+ * BUG FIX: Tried to fix the reason for the table model number conversion exception being thrown.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.13.56.
+
+----
+
 *Changes in PeptideShaker 0.22.2 (June 25. 2013):*
 
  * NEW FEATURE: The tool now checks if 64 bit Java is used the first time PeptideShaker is started.
@@ -15,6 +31,8 @@
  * BUG FIX: Corrected bugs in the custom exports.
 
  * LIBRARY UPDATE: Updated utilities to version 3.13.55.
+
+Download Count: 18
 
 ----
 
