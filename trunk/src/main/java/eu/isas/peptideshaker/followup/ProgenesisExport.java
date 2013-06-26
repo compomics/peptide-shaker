@@ -185,7 +185,7 @@ public class ProgenesisExport {
      */
     private static void writePsm(BufferedWriter writer, String spectrumKey, Identification identification)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
-        writePsm(writer, spectrumKey, identification);
+        writePsm(writer, spectrumKey, new ArrayList<String>(), identification);
     }
 
     /**

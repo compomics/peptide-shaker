@@ -37,7 +37,6 @@ import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2812,6 +2811,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         // Now I'd be surprised that you reach this stage
                         peptideShakerGUI.catchException(e);
                     }
+
+                    setTableProperties();
 
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {
