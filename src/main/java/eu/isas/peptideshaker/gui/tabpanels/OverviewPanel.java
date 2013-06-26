@@ -4736,6 +4736,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                     peptideShakerGUI.resetSelectedItems();
 
+                    setTableProperties();
+
                     // update the table model
                     if (proteinTable.getModel() instanceof ProteinTableModel) {
                         ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);

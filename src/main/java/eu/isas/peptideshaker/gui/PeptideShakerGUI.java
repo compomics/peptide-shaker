@@ -329,7 +329,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private boolean isClosing = false;
     /**
-     * the cps parent used to manage the data
+     * The cps parent used to manage the data.
      */
     private CpsParent cpsBean = new CpsParent() {
         @Override
@@ -1995,9 +1995,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
             // check if we have re-loaded the data using the current threshold and PEP window settings
-            if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) { // @TODO: should only ask once when leaving the validation tab, not when switching tabs after that...
+            if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
 
-                if (!statsPanel.thresholdUpdated() || !statsPanel.pepWindowApplied()) {
+                if ((!statsPanel.thresholdUpdated() || !statsPanel.pepWindowApplied())) {
 
                     int value = JOptionPane.showConfirmDialog(
                             this, "Discard the current validation settings?", "Discard Settings?",
@@ -2005,6 +2005,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     if (value == JOptionPane.YES_OPTION) {
                         // do nothing
+                        statsPanel.setThresholdAndPepApplied();
+                        updateNeeded.put(VALIDATION_TAB_INDEX, true);
                     } else {
                         updateNeeded.put(VALIDATION_TAB_INDEX, false);
                         allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);

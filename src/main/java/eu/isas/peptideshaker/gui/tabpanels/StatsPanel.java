@@ -1714,7 +1714,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 progressDialog.setIndeterminate(false);
 
                 new Thread(new Runnable() {
-
                     public void run() {
                         try {
                             progressDialog.setVisible(true);
@@ -1725,12 +1724,11 @@ public class StatsPanel extends javax.swing.JPanel {
                 }, "ProgressDialog").start();
 
                 new Thread("RecalculateThread") {
-
                     @Override
                     public void run() {
 
                         currentTargetDecoyMap.estimateProbabilities(progressDialog);
-                        
+
                         if (!progressDialog.isRunCanceled()) {
                             targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
                             updateResults();
@@ -1822,7 +1820,6 @@ public class StatsPanel extends javax.swing.JPanel {
         rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
                 estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
@@ -1830,14 +1827,12 @@ public class StatsPanel extends javax.swing.JPanel {
         });
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
             }
         });
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 optimizationJPanel.revalidate();
                 optimizationJPanel.repaint();
@@ -1845,7 +1840,6 @@ public class StatsPanel extends javax.swing.JPanel {
         });
 
         SwingUtilities.invokeLater(new Runnable() {
-
             public void run() {
                 // move the icons
                 confidencePlotLayeredPane.getComponent(0).setBounds(
@@ -1959,15 +1953,14 @@ public class StatsPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
         } else {
 
-            progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
             progressDialog.setTitle("Recalculating. Please Wait...");
             progressDialog.setIndeterminate(false);
 
             new Thread(new Runnable() {
-
                 public void run() {
                     try {
                         progressDialog.setVisible(true);
@@ -1978,7 +1971,6 @@ public class StatsPanel extends javax.swing.JPanel {
             }, "ProgressDialog").start();
 
             new Thread("RecalculateThread") {
-
                 @Override
                 public void run() {
 
@@ -2886,26 +2878,24 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
         progressDialog.setTitle("Updating Validation Data. Please Wait...");
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
                 } catch (IndexOutOfBoundsException e) {
-                        // ignore
-                    }
+                    // ignore
                 }
+            }
         }, "ProgressDialog").start();
 
         new Thread("DisplayThread") {
-
             @Override
             public void run() {
 
@@ -3100,7 +3090,7 @@ public class StatsPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the updates the different components of the gui with the new
+     * Updates the updates the different components of the GUI with the new
      * results.
      */
     private void updateDisplayedComponents() {
@@ -3337,7 +3327,6 @@ public class StatsPanel extends javax.swing.JPanel {
         legendItemsNew.add(legendItemsOld.get(0));
 
         LegendItemSource source = new LegendItemSource() {
-
             LegendItemCollection lic = new LegendItemCollection();
 
             {
@@ -3576,15 +3565,14 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void recalculatePeptidesAndProteins() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setIndeterminate(false);
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -3595,7 +3583,6 @@ public class StatsPanel extends javax.swing.JPanel {
         }, "ProgressDialog").start();
 
         new Thread("RecalculateThread") {
-
             @Override
             public void run() {
 
@@ -3626,15 +3613,14 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void recalculateProteins() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setIndeterminate(false);
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -3645,7 +3631,6 @@ public class StatsPanel extends javax.swing.JPanel {
         }, "ProgressDialog").start();
 
         new Thread("RecalculateThread") {
-
             @Override
             public void run() {
 
@@ -3676,15 +3661,14 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void applyProteins() {
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, 
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")), 
+        progressDialog = new ProgressDialogX(peptideShakerGUI,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
         progressDialog.setIndeterminate(false);
 
         new Thread(new Runnable() {
-
             public void run() {
                 try {
                     progressDialog.setVisible(true);
@@ -3695,7 +3679,6 @@ public class StatsPanel extends javax.swing.JPanel {
         }, "ProgressDialog").start();
 
         new Thread("RecalculateThread") {
-
             @Override
             public void run() {
 
@@ -3709,7 +3692,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
-                
+
                 progressDialog.setRunFinished();
             }
         }.start();
@@ -3742,6 +3725,14 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public boolean pepWindowApplied() {
         return pepWindowApplied;
+    }
+
+    /**
+     * Sets both the threshold and pep window applied to true.
+     */
+    public void setThresholdAndPepApplied() {
+        dataValidated = true;
+        pepWindowApplied = true;
     }
 
     /**

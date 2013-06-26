@@ -534,11 +534,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         final int userChoice = psmSelectionComboBox.getSelectedIndex();
                         ProgenesisExport.writeProgenesisExport(finalOutputFile, peptideShakerGUI.getIdentification(), ProgenesisExport.ExportType.getTypeFromIndex(userChoice), progressDialog);
 
-                        if (!progressDialog.isRunCanceled()) {
+                        boolean processCancelled = progressDialog.isRunCanceled();
+                        progressDialog.setRunFinished();
+
+                        if (!processCancelled) {
                             JOptionPane.showMessageDialog(FollowupPreferencesDialog.this, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
-
-                        progressDialog.setRunFinished();
                     } catch (Exception e) {
                         progressDialog.setRunFinished();
                         peptideShakerGUI.catchException(e);
