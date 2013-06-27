@@ -106,7 +106,7 @@ public class StatsPanel extends javax.swing.JPanel {
     /**
      * The Benefit/cost plot.
      */
-    private XYPlot benefitCostPlot = new XYPlot();
+    private XYPlot costBenefitPlot = new XYPlot();
     /**
      * The last threshold input.
      */
@@ -224,15 +224,15 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrFnrPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
         fdrFnrPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
-        // Initialize benefit/cost plot
+        // Initialize cost/benefit plot
         NumberAxis benefitAxis = new NumberAxis("Benefit (1-FNR) [%]");
         NumberAxis costAxis = new NumberAxis("Cost (FDR) [%]");
         benefitAxis.setAutoRangeIncludesZero(true);
         costAxis.setAutoRangeIncludesZero(true);
-        benefitCostPlot.setDomainAxis(costAxis);
-        benefitCostPlot.setRangeAxis(0, benefitAxis);
-        benefitCostPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
-        benefitCostPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
+        costBenefitPlot.setDomainAxis(costAxis);
+        costBenefitPlot.setRangeAxis(0, benefitAxis);
+        costBenefitPlot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
+        costBenefitPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
         fdrCombo1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         thresholdTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -330,14 +330,14 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrFnrChartPanel = new javax.swing.JPanel();
         fdrFnrPlotHelpJButton = new javax.swing.JButton();
         fdrFnrPlotExportJButton = new javax.swing.JButton();
-        benefitCostPanel = new javax.swing.JPanel();
+        costBenefitPanel = new javax.swing.JPanel();
         jLabel32 = new javax.swing.JLabel();
         fdrSlider2 = new javax.swing.JSlider();
         jLabel33 = new javax.swing.JLabel();
-        benefitPlotLayeredPane = new javax.swing.JLayeredPane();
-        benefitCostChartPanel = new javax.swing.JPanel();
-        benefitPlotHelpJButton = new javax.swing.JButton();
-        benefitPlotExportJButton = new javax.swing.JButton();
+        costBenefitPlotLayeredPane = new javax.swing.JLayeredPane();
+        costBenefitChartPanel = new javax.swing.JPanel();
+        costBenefitPlotHelpJButton = new javax.swing.JButton();
+        costBenefitPlotExportJButton = new javax.swing.JButton();
         parametersJPanel = new javax.swing.JPanel();
         thresholdInput = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -456,16 +456,16 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel2.setText("Total TP:");
         jLabel2.setToolTipText("Total number of true positives");
 
-        nTotalTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTotalTxt.setEditable(false);
+        nTotalTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTotalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nTotalTxt.setToolTipText("Total number of true positives");
 
         jLabel1.setText("# Validated Hits:");
         jLabel1.setToolTipText("Number of validated hits");
 
-        nValidatedTxt.setBackground(new java.awt.Color(245, 245, 245));
         nValidatedTxt.setEditable(false);
+        nValidatedTxt.setBackground(new java.awt.Color(245, 245, 245));
         nValidatedTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nValidatedTxt.setToolTipText("Number of validated hits");
 
@@ -475,13 +475,13 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel10.setText("# TP:");
         jLabel10.setToolTipText("Number of true positives");
 
-        nTPlTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTPlTxt.setEditable(false);
+        nTPlTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTPlTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nTPlTxt.setToolTipText("Number of true positives");
 
-        nFPTxt.setBackground(new java.awt.Color(245, 245, 245));
         nFPTxt.setEditable(false);
+        nFPTxt.setBackground(new java.awt.Color(245, 245, 245));
         nFPTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nFPTxt.setToolTipText("Number of false positives");
 
@@ -505,8 +505,8 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel20.setText("Resolution:");
         jLabel20.setToolTipText("Confidence estimation resolution");
 
-        nMaxTxt.setBackground(new java.awt.Color(245, 245, 245));
         nMaxTxt.setEditable(false);
+        nMaxTxt.setBackground(new java.awt.Color(245, 245, 245));
         nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nMaxTxt.setToolTipText("Confidence estimation resolution");
 
@@ -516,8 +516,8 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel23.setText("Confidence:");
         jLabel23.setToolTipText("Minimum Confidence");
 
-        confidenceTxt.setBackground(new java.awt.Color(245, 245, 245));
         confidenceTxt.setEditable(false);
+        confidenceTxt.setBackground(new java.awt.Color(245, 245, 245));
         confidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         confidenceTxt.setToolTipText("Minimum Confidence");
 
@@ -1230,7 +1230,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         rightPlotSplitPane.setLeftComponent(fdrFnrPanel);
 
-        benefitCostPanel.setOpaque(false);
+        costBenefitPanel.setOpaque(false);
 
         jLabel32.setText("Quality");
 
@@ -1250,66 +1250,66 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel33.setText("Quantity");
 
-        benefitCostChartPanel.setOpaque(false);
-        benefitCostChartPanel.setLayout(new javax.swing.BoxLayout(benefitCostChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-        benefitCostChartPanel.setBounds(0, -4, 326, 450);
-        benefitPlotLayeredPane.add(benefitCostChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        costBenefitChartPanel.setOpaque(false);
+        costBenefitChartPanel.setLayout(new javax.swing.BoxLayout(costBenefitChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        costBenefitChartPanel.setBounds(0, -4, 326, 450);
+        costBenefitPlotLayeredPane.add(costBenefitChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        benefitPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-        benefitPlotHelpJButton.setToolTipText("Help");
-        benefitPlotHelpJButton.setBorder(null);
-        benefitPlotHelpJButton.setBorderPainted(false);
-        benefitPlotHelpJButton.setContentAreaFilled(false);
-        benefitPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-        benefitPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        costBenefitPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        costBenefitPlotHelpJButton.setToolTipText("Help");
+        costBenefitPlotHelpJButton.setBorder(null);
+        costBenefitPlotHelpJButton.setBorderPainted(false);
+        costBenefitPlotHelpJButton.setContentAreaFilled(false);
+        costBenefitPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        costBenefitPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                benefitPlotHelpJButtonMouseEntered(evt);
+                costBenefitPlotHelpJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                benefitPlotHelpJButtonMouseExited(evt);
+                costBenefitPlotHelpJButtonMouseExited(evt);
             }
         });
-        benefitPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+        costBenefitPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                benefitPlotHelpJButtonActionPerformed(evt);
+                costBenefitPlotHelpJButtonActionPerformed(evt);
             }
         });
-        benefitPlotHelpJButton.setBounds(300, 10, 10, 25);
-        benefitPlotLayeredPane.add(benefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        costBenefitPlotHelpJButton.setBounds(300, 10, 10, 25);
+        costBenefitPlotLayeredPane.add(costBenefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        benefitPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        benefitPlotExportJButton.setToolTipText("Export");
-        benefitPlotExportJButton.setBorder(null);
-        benefitPlotExportJButton.setBorderPainted(false);
-        benefitPlotExportJButton.setContentAreaFilled(false);
-        benefitPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        benefitPlotExportJButton.setEnabled(false);
-        benefitPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-        benefitPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        costBenefitPlotExportJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        costBenefitPlotExportJButton.setToolTipText("Export");
+        costBenefitPlotExportJButton.setBorder(null);
+        costBenefitPlotExportJButton.setBorderPainted(false);
+        costBenefitPlotExportJButton.setContentAreaFilled(false);
+        costBenefitPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        costBenefitPlotExportJButton.setEnabled(false);
+        costBenefitPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        costBenefitPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                benefitPlotExportJButtonMouseEntered(evt);
+                costBenefitPlotExportJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                benefitPlotExportJButtonMouseExited(evt);
+                costBenefitPlotExportJButtonMouseExited(evt);
             }
         });
-        benefitPlotExportJButton.addActionListener(new java.awt.event.ActionListener() {
+        costBenefitPlotExportJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                benefitPlotExportJButtonActionPerformed(evt);
+                costBenefitPlotExportJButtonActionPerformed(evt);
             }
         });
-        benefitPlotExportJButton.setBounds(290, 10, 10, 25);
-        benefitPlotLayeredPane.add(benefitPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        costBenefitPlotExportJButton.setBounds(290, 10, 10, 25);
+        costBenefitPlotLayeredPane.add(costBenefitPlotExportJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        javax.swing.GroupLayout benefitCostPanelLayout = new javax.swing.GroupLayout(benefitCostPanel);
-        benefitCostPanel.setLayout(benefitCostPanelLayout);
-        benefitCostPanelLayout.setHorizontalGroup(
-            benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout costBenefitPanelLayout = new javax.swing.GroupLayout(costBenefitPanel);
+        costBenefitPanel.setLayout(costBenefitPanelLayout);
+        costBenefitPanelLayout.setHorizontalGroup(
+            costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, costBenefitPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
-                    .addGroup(benefitCostPanelLayout.createSequentialGroup()
+                .addGroup(costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                    .addGroup(costBenefitPanelLayout.createSequentialGroup()
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
                         .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
@@ -1317,20 +1317,20 @@ public class StatsPanel extends javax.swing.JPanel {
                         .addComponent(jLabel33)))
                 .addContainerGap())
         );
-        benefitCostPanelLayout.setVerticalGroup(
-            benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
+        costBenefitPanelLayout.setVerticalGroup(
+            costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, costBenefitPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                .addComponent(costBenefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(costBenefitPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel32)
                     .addComponent(fdrSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel33))
                 .addContainerGap())
         );
 
-        rightPlotSplitPane.setRightComponent(benefitCostPanel);
+        rightPlotSplitPane.setRightComponent(costBenefitPanel);
 
         leftPlotSplitPane.setRightComponent(rightPlotSplitPane);
 
@@ -1880,22 +1880,22 @@ public class StatsPanel extends javax.swing.JPanel {
 
 
                 // move the icons
-                benefitPlotLayeredPane.getComponent(0).setBounds(
-                        benefitPlotLayeredPane.getWidth() - benefitPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        benefitPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
-                        benefitPlotLayeredPane.getComponent(0).getWidth(),
-                        benefitPlotLayeredPane.getComponent(0).getHeight());
+                costBenefitPlotLayeredPane.getComponent(0).setBounds(
+                        costBenefitPlotLayeredPane.getWidth() - costBenefitPlotLayeredPane.getComponent(0).getWidth() - 10,
+                        costBenefitPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
+                        costBenefitPlotLayeredPane.getComponent(0).getWidth(),
+                        costBenefitPlotLayeredPane.getComponent(0).getHeight());
 
-                benefitPlotLayeredPane.getComponent(1).setBounds(
-                        benefitPlotLayeredPane.getWidth() - benefitPlotLayeredPane.getComponent(0).getWidth() - 20,
-                        benefitPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
-                        benefitPlotLayeredPane.getComponent(1).getWidth(),
-                        benefitPlotLayeredPane.getComponent(1).getHeight());
+                costBenefitPlotLayeredPane.getComponent(1).setBounds(
+                        costBenefitPlotLayeredPane.getWidth() - costBenefitPlotLayeredPane.getComponent(0).getWidth() - 20,
+                        costBenefitPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
+                        costBenefitPlotLayeredPane.getComponent(1).getWidth(),
+                        costBenefitPlotLayeredPane.getComponent(1).getHeight());
 
                 // resize the plot area
-                benefitPlotLayeredPane.getComponent(2).setBounds(0, 0, benefitPlotLayeredPane.getWidth(), benefitPlotLayeredPane.getHeight());
-                benefitPlotLayeredPane.revalidate();
-                benefitPlotLayeredPane.repaint();
+                costBenefitPlotLayeredPane.getComponent(2).setBounds(0, 0, costBenefitPlotLayeredPane.getWidth(), costBenefitPlotLayeredPane.getHeight());
+                costBenefitPlotLayeredPane.revalidate();
+                costBenefitPlotLayeredPane.repaint();
 
 
                 // move the icons
@@ -2068,14 +2068,14 @@ public class StatsPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void benefitPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonActionPerformed
+    private void costBenefitPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_costBenefitPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#ROC_plot",
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 "PeptideShaker - Help");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_benefitPlotHelpJButtonActionPerformed
+    }//GEN-LAST:event_costBenefitPlotHelpJButtonActionPerformed
 
     /**
      * Opens a help dialog.
@@ -2228,18 +2228,18 @@ public class StatsPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void benefitPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonMouseExited
+    private void costBenefitPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_costBenefitPlotHelpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_benefitPlotHelpJButtonMouseExited
+    }//GEN-LAST:event_costBenefitPlotHelpJButtonMouseExited
 
     /**
      * Change the cursor to a hand cursor.
      *
      * @param evt
      */
-    private void benefitPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonMouseEntered
+    private void costBenefitPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_costBenefitPlotHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_benefitPlotHelpJButtonMouseEntered
+    }//GEN-LAST:event_costBenefitPlotHelpJButtonMouseEntered
 
     /**
      * Update the threshold setting.
@@ -2499,27 +2499,27 @@ public class StatsPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void benefitPlotExportJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotExportJButtonMouseEntered
+    private void costBenefitPlotExportJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_costBenefitPlotExportJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_benefitPlotExportJButtonMouseEntered
+    }//GEN-LAST:event_costBenefitPlotExportJButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void benefitPlotExportJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotExportJButtonMouseExited
+    private void costBenefitPlotExportJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_costBenefitPlotExportJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_benefitPlotExportJButtonMouseExited
+    }//GEN-LAST:event_costBenefitPlotExportJButtonMouseExited
 
     /**
      * Export the plot to figure format.
      *
      * @param evt
      */
-    private void benefitPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotExportJButtonActionPerformed
-        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, benefitCostChartPanel);
-    }//GEN-LAST:event_benefitPlotExportJButtonActionPerformed
+    private void costBenefitPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_costBenefitPlotExportJButtonActionPerformed
+        new ExportGraphicsDialog(peptideShakerGUI, peptideShakerGUI, true, costBenefitChartPanel);
+    }//GEN-LAST:event_costBenefitPlotExportJButtonActionPerformed
 
     /**
      * Opens the help dialog.
@@ -2778,11 +2778,6 @@ public class StatsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_estimatorHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
-    private javax.swing.JPanel benefitCostChartPanel;
-    private javax.swing.JPanel benefitCostPanel;
-    private javax.swing.JButton benefitPlotExportJButton;
-    private javax.swing.JButton benefitPlotHelpJButton;
-    private javax.swing.JLayeredPane benefitPlotLayeredPane;
     private javax.swing.JPanel confidenceChartPanel;
     private javax.swing.JButton confidenceHelpJButton;
     private javax.swing.JPanel confidencePanel;
@@ -2791,6 +2786,11 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JLayeredPane confidencePlotLayeredPane;
     private javax.swing.JSlider confidenceSlider;
     private javax.swing.JTextField confidenceTxt;
+    private javax.swing.JPanel costBenefitChartPanel;
+    private javax.swing.JPanel costBenefitPanel;
+    private javax.swing.JButton costBenefitPlotExportJButton;
+    private javax.swing.JButton costBenefitPlotHelpJButton;
+    private javax.swing.JLayeredPane costBenefitPlotLayeredPane;
     private javax.swing.JButton estimatorHelpJButton;
     private javax.swing.JPanel estimatorOptimizationTab;
     private javax.swing.JSplitPane estimatorsPlotSplitPane;
@@ -2972,7 +2972,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     fdrPlotExportJButton.setEnabled(true);
                     confidencePlotExportJButton.setEnabled(true);
                     fdrFnrPlotExportJButton.setEnabled(true);
-                    benefitPlotExportJButton.setEnabled(true);
+                    costBenefitPlotExportJButton.setEnabled(true);
 
                     tabInitiated = true;
                 }
@@ -3176,8 +3176,8 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrsPanel.repaint();
         fdrFnrPanel.revalidate();
         fdrFnrPanel.repaint();
-        benefitCostChartPanel.revalidate();
-        benefitCostChartPanel.repaint();
+        costBenefitChartPanel.revalidate();
+        costBenefitChartPanel.repaint();
     }
 
     /**
@@ -3229,16 +3229,16 @@ public class StatsPanel extends javax.swing.JPanel {
 
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {fdr, benefit};
-        benefitData.addSeries("Retained Benefit/Cost", benefitSeries);
-        benefitCostPlot.setDataset(1, benefitData);
-        benefitCostPlot.mapDatasetToRangeAxis(1, 0);
+        benefitData.addSeries("Retained Cost/Benefit", benefitSeries);
+        costBenefitPlot.setDataset(1, benefitData);
+        costBenefitPlot.mapDatasetToRangeAxis(1, 0);
 
         XYLineAndShapeRenderer benefitRendrer = new XYLineAndShapeRenderer();
         benefitRendrer.setSeriesShapesVisible(0, true);
         benefitRendrer.setSeriesLinesVisible(0, false);
         benefitRendrer.setSeriesPaint(0, Color.blue);
         benefitRendrer.setSeriesShape(0, DefaultDrawingSupplier.createStandardSeriesShapes()[1]);
-        benefitCostPlot.setRenderer(1, benefitRendrer);
+        costBenefitPlot.setRenderer(1, benefitRendrer);
     }
 
     /**
@@ -3504,17 +3504,17 @@ public class StatsPanel extends javax.swing.JPanel {
         DefaultXYDataset benefitData = new DefaultXYDataset();
         double[][] benefitSeries = {targetDecoySeries.getProbaFDR(), targetDecoySeries.getProbaBenefit()};
         benefitData.addSeries("Benefit", benefitSeries);
-        benefitCostPlot.setDataset(0, benefitData);
-        benefitCostPlot.mapDatasetToRangeAxis(0, 0);
+        costBenefitPlot.setDataset(0, benefitData);
+        costBenefitPlot.mapDatasetToRangeAxis(0, 0);
 
         XYLineAndShapeRenderer benefitRendrer = new XYLineAndShapeRenderer();
         benefitRendrer.setSeriesShapesVisible(0, false);
         benefitRendrer.setSeriesLinesVisible(0, true);
         benefitRendrer.setSeriesPaint(0, Color.blue);
         benefitRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
-        benefitCostPlot.setRenderer(0, benefitRendrer);
+        costBenefitPlot.setRenderer(0, benefitRendrer);
 
-        JFreeChart benefitCostChart = new JFreeChart(benefitCostPlot);
+        JFreeChart benefitCostChart = new JFreeChart(costBenefitPlot);
         ChartPanel chartPanel = new ChartPanel(benefitCostChart);
         benefitCostChart.setTitle("Cost/Benefit");
 
@@ -3523,10 +3523,10 @@ public class StatsPanel extends javax.swing.JPanel {
         benefitCostChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
 
-        benefitCostChartPanel.removeAll();
-        benefitCostChartPanel.add(chartPanel);
-        benefitCostChartPanel.revalidate();
-        benefitCostChartPanel.repaint();
+        costBenefitChartPanel.removeAll();
+        costBenefitChartPanel.add(chartPanel);
+        costBenefitChartPanel.revalidate();
+        costBenefitChartPanel.repaint();
     }
 
     /**
@@ -3539,9 +3539,9 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrFnrChartPanel.removeAll();
         fdrFnrChartPanel.revalidate();
         fdrFnrChartPanel.repaint();
-        benefitCostChartPanel.removeAll();
-        benefitCostChartPanel.revalidate();
-        benefitCostChartPanel.repaint();
+        costBenefitChartPanel.removeAll();
+        costBenefitChartPanel.revalidate();
+        costBenefitChartPanel.repaint();
     }
 
     /**
