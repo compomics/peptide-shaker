@@ -3516,7 +3516,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         JFreeChart benefitCostChart = new JFreeChart(benefitCostPlot);
         ChartPanel chartPanel = new ChartPanel(benefitCostChart);
-        benefitCostChart.setTitle("Benefit/Cost");
+        benefitCostChart.setTitle("Cost/Benefit");
 
         // set background color
         benefitCostChart.getPlot().setBackgroundPaint(Color.WHITE);

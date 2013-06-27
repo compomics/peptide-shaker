@@ -4558,6 +4558,9 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
 
+                // clear the selection in care more than one row was selected for the last peptide
+                psmTable.clearSelection();
+
                 // update the table model
                 if (psmTable.getModel() instanceof PsmTableModel) {
                     ((PsmTableModel) psmTable.getModel()).updateDataModel(peptideShakerGUI, psmKeys);
@@ -4580,7 +4583,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 psmsPanel.repaint();
 
                 updateSelection(true);
-
                 newItemSelection();
 
                 // update the sequence coverage map
