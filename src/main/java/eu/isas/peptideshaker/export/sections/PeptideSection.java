@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
@@ -80,7 +81,7 @@ public class PeptideSection {
             }
         }
         if (!psmFeatures.isEmpty()) {
-            psmSection = new PsmSection(psmFeatures, separator, indexes, false, writer);
+            psmSection = new PsmSection(psmFeatures, separator, indexes, header, writer);
         }
         this.separator = separator;
         this.indexes = indexes;
@@ -107,7 +108,7 @@ public class PeptideSection {
      * @throws InterruptedException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, int nSurroundingAA, String linePrefix, WaitingHandler waitingHandler)
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, WaitingHandler waitingHandler)
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -282,6 +283,13 @@ public class PeptideSection {
                     case sequence:
                         writer.write(Peptide.getSequence(peptideKey) + separator);
                         break;
+                    case modified_sequence:
+                        if (!matchKey.equals(peptideKey)) {
+                            peptideMatch = identification.getPeptideMatch(peptideKey);
+                            matchKey = peptideKey;
+                        }
+                        writer.write(peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
+                        break;
                     case starred:
                         if (!parameterKey.equals(peptideKey)) {
                             psParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, psParameter);
@@ -390,7 +398,7 @@ public class PeptideSection {
                     psmSectionPrefix += linePrefix;
                 }
                 psmSectionPrefix += line + ".";
-                psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, peptideMatch.getSpectrumMatches(), psmSectionPrefix, null);
+                psmSection.writeSection(identification, identificationFeaturesGenerator, searchParameters, annotationPreferences, peptideMatch.getSpectrumMatches(), psmSectionPrefix, null);
             }
             line++;
         }
@@ -523,8 +531,5 @@ public class PeptideSection {
             writer.write(exportFeature.getTitle());
         }
         writer.newLine();
-        if (psmSection != null) {
-            psmSection.writeHeader();
-        }
     }
 }

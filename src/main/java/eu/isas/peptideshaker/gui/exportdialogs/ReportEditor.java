@@ -517,10 +517,6 @@ public class ReportEditor extends javax.swing.JDialog {
             if (oldName != null && !oldName.contains(newName)) {
                 exportFactory.removeExportScheme(oldName);
             }
-            ArrayList<ExportFeature> features = new ArrayList<ExportFeature>();
-            for (ArrayList<ExportFeature> exportFeatures : selection.values()) {
-                features.addAll(exportFeatures);
-            }
 
             // get the separator
             String separator;
@@ -534,7 +530,9 @@ public class ReportEditor extends javax.swing.JDialog {
             } else { // space selected
                 separator = " ";
             }
-
+            
+            HashMap<String, ArrayList<ExportFeature>> features = new HashMap<String, ArrayList<ExportFeature>>(selection);
+            
             if (maintTitleCheckBox.isSelected()) {
                 ExportScheme exportScheme = new ExportScheme(newName, true, features, separator,
                         lineNumberCheckBox.isSelected(), headerCheckBox.isSelected(), (Integer) separationLinesSpinner.getValue(),
@@ -659,26 +657,26 @@ public class ReportEditor extends javax.swing.JDialog {
         featuresList = new ArrayList<ExportFeature>();
         if (sectionName != null) {
             if (sectionName.equals(AnnotationFeatures.type)) {
-                featuresList.addAll(Arrays.asList(AnnotationFeatures.values()));
+                featuresList.addAll(AnnotationFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(InputFilterFeatures.type)) {
-                featuresList.addAll(Arrays.asList(InputFilterFeatures.values()));
+                featuresList.addAll(InputFilterFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(PeptideFeatures.type)) {
-                featuresList.addAll(Arrays.asList(PeptideFeatures.values()));
+                featuresList.addAll(PeptideFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(ProjectFeatures.type)) {
-                featuresList.addAll(Arrays.asList(ProjectFeatures.values()));
+                featuresList.addAll(ProjectFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(ProteinFeatures.type)) {
-                featuresList.addAll(Arrays.asList(ProteinFeatures.values()));
+                featuresList.addAll(ProteinFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(PsmFeatures.type)) {
-                featuresList.addAll(Arrays.asList(PsmFeatures.values()));
+                featuresList.addAll(PsmFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(PtmScoringFeatures.type)) {
-                featuresList.addAll(Arrays.asList(PtmScoringFeatures.values()));
+                featuresList.addAll(PtmScoringFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(SearchFeatures.type)) {
-                featuresList.addAll(Arrays.asList(SearchFeatures.values()));
+                featuresList.addAll(SearchFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(SpectrumCountingFeatures.type)) {
-                featuresList.addAll(Arrays.asList(SpectrumCountingFeatures.values()));
+                featuresList.addAll(SpectrumCountingFeatures.values()[0].getExportFeatures());
             } else if (sectionName.equals(ValidationFeatures.type)) {
-                featuresList.addAll(Arrays.asList(ValidationFeatures.values()));
-            }
+                featuresList.addAll(ValidationFeatures.values()[0].getExportFeatures());
+        }
         }
         ((DefaultTableModel) featuresTable.getModel()).fireTableDataChanged();
     }
@@ -775,7 +773,7 @@ public class ReportEditor extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -786,8 +784,10 @@ public class ReportEditor extends javax.swing.JDialog {
                 case 1:
                     return "  ";
                 case 2:
-                    return "Name";
+                    return "Section";
                 case 3:
+                    return "Name";
+                case 4:
                     return "Description";
                 default:
                     return "";
@@ -802,8 +802,10 @@ public class ReportEditor extends javax.swing.JDialog {
                 case 1:
                     return isSelected(sectionName, featuresList.get(row));
                 case 2:
-                    return featuresList.get(row).getTitle();
+                    return featuresList.get(row).getFeatureFamily();
                 case 3:
+                    return featuresList.get(row).getTitle();
+                case 4:
                     return featuresList.get(row).getDescription();
                 default:
                     return "";

@@ -71,51 +71,14 @@ public class ExportScheme implements Serializable {
      * @param includeSectionTitles indicates whether section titles shall be
      * used
      * @param mainTitle the title of the report
-     */
-    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator,
-            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
-        this(name, editable, sectionList, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, mainTitle, null);
-    }
-
-    /**
-     * Constructor allowing either a list of sections or a merged section
-     * (depending on sectionFamily being null or not). For more clarity, use the
-     * other constructors, dedicated to specific use cases.
-     *
-     * @param name the name of the scheme
-     * @param editable a boolean indicating whether the scheme can be edited by
-     * the user
-     * @param sectionList ordered list of the sections included in the report
-     * @param exportFeatures list of features to be included in the report
-     * @param separator the column separator to be used
-     * @param indexes indicates whether lines shall be indexed
-     * @param header indicates whether column headers shall be included
-     * @param separationLines the number of lines to use for section separation
-     * @param includeSectionTitles indicates whether section titles shall be
-     * used
-     * @param mainTitle the title of the report
      * @param sectionFamily the section family. If null the sections will be
      * automatically separated based on the feature type. Note, be sure that all
      * features are implemented for this section.
      */
-    private ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator,
-            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle, String sectionFamily) {
+    private ExportScheme(String name, boolean editable, ArrayList<String> sectionList, HashMap<String, ArrayList<ExportFeature>> exportFeatures, String separator,
+            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
         this.sectionList = sectionList;
-        if (sectionFamily == null) {
-            for (ExportFeature exportFeature : exportFeatures) {
-                String key = exportFeature.getFeatureFamily();
-                if (!exportFeaturesMap.containsKey(key)) {
-                    exportFeaturesMap.put(key, new ArrayList<ExportFeature>());
-                }
-                exportFeaturesMap.get(key).add(exportFeature);
-                if (!sectionList.contains(key)) {
-                    sectionList.add(key);
-                }
-            }
-        } else {
-            exportFeaturesMap.put(sectionFamily, exportFeatures);
-            this.sectionList = new ArrayList<String>(exportFeaturesMap.keySet());
-        }
+        exportFeaturesMap.putAll(exportFeatures);
         this.separator = separator;
         this.indexes = indexes;
         this.separationLines = separationLines;
@@ -141,9 +104,9 @@ public class ExportScheme implements Serializable {
      * used
      * @param mainTitle the title of the report
      */
-    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator,
+    public ExportScheme(String name, boolean editable, HashMap<String, ArrayList<ExportFeature>> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles, String mainTitle) {
-        this(name, editable, new ArrayList<String>(), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, mainTitle, null);
+        this(name, editable, new ArrayList<String>(exportFeatures.keySet()), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, mainTitle);
     }
 
     /**
@@ -161,9 +124,9 @@ public class ExportScheme implements Serializable {
      * @param includeSectionTitles indicates whether section titles shall be
      * used
      */
-    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, ArrayList<ExportFeature> exportFeatures, String separator,
+    public ExportScheme(String name, boolean editable, ArrayList<String> sectionList, HashMap<String, ArrayList<ExportFeature>> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
-        this(name, editable, sectionList, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null, null);
+        this(name, editable, sectionList, exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
     }
 
     /**
@@ -181,29 +144,9 @@ public class ExportScheme implements Serializable {
      * @param includeSectionTitles indicates whether section titles shall be
      * used
      */
-    public ExportScheme(String name, boolean editable, ArrayList<ExportFeature> exportFeatures, String separator,
+    public ExportScheme(String name, boolean editable, HashMap<String, ArrayList<ExportFeature>> exportFeatures, String separator,
             boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
-        this(name, editable, new ArrayList<String>(), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null, null);
-    }
-
-    /**
-     * Constructor. This report will not contain any title and a single section.
-     *
-     * @param name the name of the scheme
-     * @param editable a boolean indicating whether the scheme can be edited by
-     * the user
-     * @param sectionTitle the section title
-     * @param exportFeatures list of features to be included in the report
-     * @param separator the column separator to be used
-     * @param indexes indicates whether lines shall be indexed
-     * @param header indicates whether column headers shall be included
-     * @param separationLines the number of lines to use for section separation
-     * @param includeSectionTitles indicates whether section titles shall be
-     * used
-     */
-    public ExportScheme(String name, boolean editable, String sectionTitle, ArrayList<ExportFeature> exportFeatures, String separator,
-            boolean indexes, boolean header, int separationLines, boolean includeSectionTitles) {
-        this(name, editable, new ArrayList<String>(), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null, sectionTitle);
+        this(name, editable, new ArrayList<String>(exportFeatures.keySet()), exportFeatures, separator, indexes, header, separationLines, includeSectionTitles, null);
     }
 
     /**

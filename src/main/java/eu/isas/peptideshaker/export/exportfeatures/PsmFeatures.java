@@ -12,6 +12,7 @@ public enum PsmFeatures implements ExportFeature {
 
     accessions("Protein(s)", "Protein(s) to which the peptide can be attached."),
     sequence("Sequence", "Sequence of the peptide."),
+    modified_sequence("Modified Sequence", "The peptide sequence annotated with variable modifications."),
     variable_ptms("Variable Modifications", "The variable modifications."),
     fixed_ptms("Fixed Modifications", "The fixed modifications."),
     localization_confidence("Localization Confidence", "The confidence in PTMs localization."),
@@ -23,6 +24,8 @@ public enum PsmFeatures implements ExportFeature {
     rt("RT", "Retention time"),
     mz("m/z", "Measured m/z"),
     spectrum_charge("Measured Charge", "The charge as given in the spectrum file."),
+    total_spectrum_intensity("Total Spectrum Intensity", "The summed intensity of all peaks in the spectrum."),
+    max_intensity("Maximal Spectrum Intensity", "The maximal intensity found in the spectrum."),
     identification_charge("Identification Charge", "The charge as inferred by the search engine."),
     theoretical_mass("Theoretical Mass", "The theoretical mass of the peptide."),
     isotope("Isotope Number", "The isotope number targetted by the instrument."),
@@ -62,6 +65,7 @@ public enum PsmFeatures implements ExportFeature {
         ArrayList<ExportFeature> result = new ArrayList<ExportFeature>();
         result.add(accessions);
         result.add(sequence);
+        result.add(modified_sequence);
         result.add(variable_ptms);
         result.add(fixed_ptms);
         result.add(localization_confidence);
@@ -72,6 +76,8 @@ public enum PsmFeatures implements ExportFeature {
         result.add(spectrum_scan_number);
         result.add(rt);
         result.add(mz);
+        result.add(total_spectrum_intensity);
+        result.add(max_intensity);
         result.add(spectrum_charge);
         result.add(identification_charge);
         result.add(theoretical_mass);
@@ -83,6 +89,7 @@ public enum PsmFeatures implements ExportFeature {
         result.add(validated);
         result.add(starred);
         result.add(hidden);
+        result.addAll(FragmentFeatures.values()[0].getExportFeatures());
         return result;
     }
 
