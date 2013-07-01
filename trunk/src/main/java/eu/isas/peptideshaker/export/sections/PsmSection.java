@@ -9,8 +9,10 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
+import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.total_spectrum_intensity;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -37,7 +39,11 @@ public class PsmSection {
     /**
      * The features to export.
      */
-    private ArrayList<ExportFeature> exportFeatures;
+    private ArrayList<ExportFeature> psmFeatures = new ArrayList<ExportFeature>();
+    /**
+     * The fragment subsection if needed.
+     */
+    private FragmentSection fragmentSection = null;
     /**
      * The separator used to separate columns.
      */
@@ -65,7 +71,17 @@ public class PsmSection {
      * @param writer
      */
     public PsmSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
-        this.exportFeatures = exportFeatures;
+        ArrayList<ExportFeature> fragmentFeatures = new ArrayList<ExportFeature>();
+        for (ExportFeature exportFeature : exportFeatures) {
+            if (exportFeature instanceof PsmFeatures) {
+                psmFeatures.add(exportFeature);
+            } else {
+                fragmentFeatures.add(exportFeature);
+            }
+        }
+        if (!fragmentFeatures.isEmpty()) {
+            fragmentSection = new FragmentSection(fragmentFeatures, separator, indexes, header, writer);
+        }
         this.separator = separator;
         this.indexes = indexes;
         this.header = header;
@@ -91,7 +107,7 @@ public class PsmSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, ArrayList<String> keys, String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
@@ -173,7 +189,7 @@ public class PsmSection {
                     }
                     writer.write(line + separator);
                 }
-                for (ExportFeature exportFeature : exportFeatures) {
+                for (ExportFeature exportFeature : psmFeatures) {
                     PsmFeatures psmFeature = (PsmFeatures) exportFeature;
                     switch (psmFeature) {
                         case variable_ptms:
@@ -430,6 +446,14 @@ public class PsmSection {
                             precursor = spectrumFactory.getPrecursor(spectrumKey);
                             writer.write(precursor.getMz() + separator);
                             break;
+                        case total_spectrum_intensity:
+                            Spectrum spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                            writer.write(spectrum.getTotalIntensity() + separator);
+                            break;
+                        case max_intensity:
+                            spectrum = spectrumFactory.getSpectrum(spectrumKey);
+                            writer.write(spectrum.getMaxIntensity() + separator);
+                            break;
                         case mz_error:
                             if (!matchKey.equals(spectrumKey)) {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -455,6 +479,13 @@ public class PsmSection {
                                 matchKey = spectrumKey;
                             }
                             writer.write(spectrumMatch.getBestAssumption().getPeptide().getSequence() + separator);
+                            break;
+                        case modified_sequence:
+                            if (!matchKey.equals(spectrumKey)) {
+                                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                                matchKey = spectrumKey;
+                            }
+                            writer.write(spectrumMatch.getBestAssumption().getPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
                             break;
                         case spectrum_charge:
                             precursor = spectrumFactory.getPrecursor(spectrumKey);
@@ -503,6 +534,18 @@ public class PsmSection {
                     }
                 }
                 writer.newLine();
+                if (fragmentSection != null) {
+                    String fractionPrefix = "";
+                    if (linePrefix != null) {
+                        fractionPrefix += linePrefix;
+                    }
+                    fractionPrefix += line + ".";
+                    if (!matchKey.equals(spectrumKey)) {
+                        spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        matchKey = spectrumKey;
+                    }
+                    fragmentSection.writeSection(spectrumMatch, searchParameters, annotationPreferences, fractionPrefix, null);
+                }
                 line++;
             }
         }
@@ -531,25 +574,25 @@ public class PsmSection {
 
         return modMap;
     }
-    
+
     /**
      * Writes the header of this section.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void writeHeader() throws IOException {
-            if (indexes) {
+        if (indexes) {
+            writer.write(separator);
+        }
+        boolean firstColumn = true;
+        for (ExportFeature exportFeature : psmFeatures) {
+            if (firstColumn) {
+                firstColumn = false;
+            } else {
                 writer.write(separator);
             }
-            boolean firstColumn = true;
-            for (ExportFeature exportFeature : exportFeatures) {
-                if (firstColumn) {
-                    firstColumn = false;
-                } else {
-                    writer.write(separator);
-                }
-                writer.write(exportFeature.getTitle());
-            }
-            writer.newLine();
+            writer.write(exportFeature.getTitle());
+        }
+        writer.newLine();
     }
 }

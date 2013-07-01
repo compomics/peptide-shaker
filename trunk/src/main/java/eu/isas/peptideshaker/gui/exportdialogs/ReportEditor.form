@@ -233,10 +233,9 @@
                                   <Component id="headerCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="spaceRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="2" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

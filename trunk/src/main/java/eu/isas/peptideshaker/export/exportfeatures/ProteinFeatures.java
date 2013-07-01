@@ -95,6 +95,7 @@ public enum ProteinFeatures implements ExportFeature {
         result.add(confidence);
         result.add(decoy);
         result.add(validated);
+        result.addAll(PeptideFeatures.values()[0].getExportFeatures());
         return result;
     }
 

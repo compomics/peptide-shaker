@@ -161,7 +161,10 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
         
+        output += "\n\nOptional follow-up export:\n\n";
         output += FollowUpCLIParams.getOutputOptionsAsString();
+        
+        output += "\n\nOptional follow-up export:\n\n";
         output += ReportCLIParams.getOutputOptionsAsString();
         
         return output;
