@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.exportfeatures;
 
 import eu.isas.peptideshaker.export.ExportFeature;
@@ -23,8 +19,7 @@ public enum FragmentFeatures implements ExportFeature {
     mz("m/z", "The m/z of the peak."),
     intensity("Intensity", "The intensity of the peak."),
     error_Da("m/z Error (Da)", "The absolute m/z error."),
-    error_ppm("m/z Error (ppm)", "The relative m/z error (in ppm).")
-    ;
+    error_ppm("m/z Error (ppm)", "The relative m/z error (in ppm).");
     /**
      * The title of the feature which will be used for column heading.
      */

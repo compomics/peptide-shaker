@@ -1,70 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.Ion;
-import com.compomics.util.experiment.biology.Ion.IonType;
-import static com.compomics.util.experiment.biology.Ion.IonType.ELEMENTARY_ION;
-import static com.compomics.util.experiment.biology.Ion.IonType.GLYCON;
-import static com.compomics.util.experiment.biology.Ion.IonType.IMMONIUM_ION;
-import static com.compomics.util.experiment.biology.Ion.IonType.PEPTIDE_FRAGMENT_ION;
-import static com.compomics.util.experiment.biology.Ion.IonType.PRECURSOR_ION;
-import static com.compomics.util.experiment.biology.Ion.IonType.REPORTER_ION;
-import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.ions.ElementaryIon;
-import com.compomics.util.experiment.biology.ions.Glycon;
-import com.compomics.util.experiment.biology.ions.ImmoniumIon;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.biology.ions.PrecursorIon;
-import com.compomics.util.experiment.biology.ions.ReporterIon;
-import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
 import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_type;
-import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.a_score;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.accessions;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.confidence;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.d_score;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.decoy;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.fixed_ptms;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.hidden;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.identification_charge;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.isotope;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.localization_confidence;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.max_intensity;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.modified_sequence;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.mz;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.mz_error;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.rt;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.score;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.sequence;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.spectrum_charge;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.spectrum_file;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.spectrum_scan_number;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.spectrum_title;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.starred;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.theoretical_mass;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.total_spectrum_intensity;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.validated;
-import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.variable_ptms;
-import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import eu.isas.peptideshaker.scoring.PtmScoring;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -109,10 +56,10 @@ public class FragmentSection {
      * Constructor.
      *
      * @param exportFeatures the features to export in this section
-     * @param separator
-     * @param indexes
-     * @param header
-     * @param writer
+     * @param separator the separator
+     * @param indexes show indexes
+     * @param header show header
+     * @param writer the writer
      */
     public FragmentSection(ArrayList<ExportFeature> exportFeatures, String separator, boolean indexes, boolean header, BufferedWriter writer) {
         this.exportFeatures = exportFeatures;
@@ -138,7 +85,8 @@ public class FragmentSection {
      * @throws InterruptedException
      * @throws MzMLUnmarshallerException
      */
-    public void writeSection(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
+    public void writeSection(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, 
+            String linePrefix, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
