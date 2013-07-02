@@ -32,6 +32,10 @@ public class SpectrumExporter {
      * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The sequence factory.
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor.
@@ -189,7 +193,7 @@ public class SpectrumExporter {
                         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         boolean decoy = false;
                         for (String accession : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
-                            if (SequenceFactory.isDecoy(accession)) {
+                            if (sequenceFactory.isDecoyAccession(accession)) {
                                 decoy = true;
                                 break;
                             }
@@ -205,7 +209,7 @@ public class SpectrumExporter {
                     Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
                     boolean decoy = false;
                     for (String accession : peptide.getParentProteins()) {
-                        if (SequenceFactory.isDecoy(accession)) {
+                        if (sequenceFactory.isDecoyAccession(accession)) {
                             decoy = true;
                             break;
                         }
@@ -228,7 +232,7 @@ public class SpectrumExporter {
                     Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
                     boolean decoy = false;
                     for (String accession : peptide.getParentProteins()) {
-                        if (SequenceFactory.isDecoy(accession)) {
+                        if (sequenceFactory.isDecoyAccession(accession)) {
                             decoy = true;
                             break;
                         }

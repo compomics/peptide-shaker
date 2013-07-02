@@ -112,7 +112,7 @@ public class DisplayFeaturesGenerator {
             String proteinAccession = proteins.get(i);
 
             try {
-                if (!SequenceFactory.isDecoy(proteins.get(i)) && sequenceFactory.getHeader(proteinAccession) != null) {
+                if (!sequenceFactory.isDecoyAccession(proteins.get(i)) && sequenceFactory.getHeader(proteinAccession) != null) {
 
                     // try to find the database from the SequenceDatabase
                     DatabaseType database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();

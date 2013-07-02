@@ -1800,7 +1800,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!psParameter.isHidden()) {
 
-                        if (!peptideMatch.isDecoy()) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
                             if (psParameter.isValidated()) {
                                 validatedValues.add(value);
                             } else {
@@ -1844,7 +1844,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.isDecoy()) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
                             if (psParameter.isValidated()) {
                                 validatedValues.add(value);
                             } else {
@@ -1887,7 +1887,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        if (!peptideMatch.isDecoy()) {
+                        if (!peptideMatch.getTheoreticPeptide().isDecoy()) {
                             if (psParameter.isValidated()) {
                                 validatedValues.add(length);
                             } else {
@@ -1957,7 +1957,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                            if (!spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
                                 if (psParameter.isValidated()) {
                                     validatedValues.add(value);
                                 } else {
@@ -2001,7 +2001,7 @@ public class QCPanel extends javax.swing.JPanel {
                                 maxValue = value;
                             }
 
-                            if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                            if (!spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
                                 if (psParameter.isValidated()) {
                                     validatedValues.add(value);
                                 } else {

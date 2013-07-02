@@ -580,7 +580,7 @@ public class PRIDEExport {
                 // additional protein id parameters
                 br.write(getCurrentTabSpace() + "<additional>" + System.getProperty("line.separator"));
                 tabCounter++;
-                if (SequenceFactory.isDecoy(proteinKey)) {
+                if (ProteinMatch.isDecoy(proteinKey)) {
                     br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"1\" />" + System.getProperty("line.separator"));
                 } else {
                     br.write(getCurrentTabSpace() + "<userParam name=\"Decoy\" value=\"0\" />" + System.getProperty("line.separator"));

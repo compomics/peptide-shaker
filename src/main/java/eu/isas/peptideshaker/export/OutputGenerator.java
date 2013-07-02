@@ -750,7 +750,7 @@ public class OutputGenerator {
                             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                             peptidePSParameter = (PSParameter) identification.getPeptideMatchParameter(peptideKey, peptidePSParameter);
 
-                            if (!peptideMatch.isDecoy() || !onlyValidated) {
+                            if (!peptideMatch.getTheoreticPeptide().isDecoy() || !onlyValidated) {
                                 if ((onlyValidated && peptidePSParameter.isValidated()) || !onlyValidated) {
                                     if ((!includeHidden && !peptidePSParameter.isHidden()) || includeHidden) {
                                         if ((onlyStarred && peptidePSParameter.isStarred()) || !onlyStarred) {
@@ -1004,7 +1004,7 @@ public class OutputGenerator {
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
                                                     }
-                                                    if (peptideMatch.isDecoy()) {
+                                                    if (peptideMatch.getTheoreticPeptide().isDecoy()) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -1247,7 +1247,7 @@ public class OutputGenerator {
                                 psParameter = (PSParameter) identification.getSpectrumMatchParameter(psmKey, psParameter);
                                 PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
-                                if (!bestAssumption.isDecoy() || !onlyValidated) {
+                                if (!bestAssumption.getPeptide().isDecoy() || !onlyValidated) {
                                     if ((onlyValidated && psParameter.isValidated()) || !onlyValidated) {
                                         if ((!includeHidden && !psParameter.isHidden()) || includeHidden) {
                                             if ((onlyStarred && psParameter.isStarred()) || !onlyStarred) {
@@ -1469,7 +1469,7 @@ public class OutputGenerator {
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
                                                     }
-                                                    if (bestAssumption.isDecoy()) {
+                                                    if (bestAssumption.getPeptide().isDecoy()) {
                                                         writer.write(1 + SEPARATOR);
                                                     } else {
                                                         writer.write(0 + SEPARATOR);
@@ -1784,7 +1784,7 @@ public class OutputGenerator {
                                 } else {
                                     writer.write(0 + SEPARATOR);
                                 }
-                                if (bestAssumption.isDecoy()) {
+                                if (bestAssumption.getPeptide().isDecoy()) {
                                     writer.write(1 + SEPARATOR);
                                 } else {
                                     writer.write(0 + SEPARATOR);
@@ -2290,7 +2290,7 @@ public class OutputGenerator {
                                                 } else {
                                                     writer.write(0 + SEPARATOR);
                                                 }
-                                                if (peptideAssumption.isDecoy()) {
+                                                if (peptideAssumption.getPeptide().isDecoy()) {
                                                     writer.write(1 + SEPARATOR);
                                                 } else {
                                                     writer.write(0 + SEPARATOR);

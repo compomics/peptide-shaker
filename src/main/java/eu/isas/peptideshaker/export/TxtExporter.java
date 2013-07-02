@@ -477,7 +477,7 @@ public class TxtExporter {
 
         line.append(probabilities.getPeptideProbabilityScore()).append(SEPARATOR).append(probabilities.getPeptideProbability()).append(SEPARATOR);
 
-        if (peptideMatch.isDecoy()) {
+        if (peptideMatch.getTheoreticPeptide().isDecoy()) {
             line.append("1").append(SEPARATOR);
         } else {
             line.append("0").append(SEPARATOR);
@@ -771,7 +771,7 @@ public class TxtExporter {
 
         line.append(probabilities.getPsmProbabilityScore()).append(SEPARATOR).append(probabilities.getPsmProbability()).append(SEPARATOR);
 
-        if (spectrumMatch.getBestAssumption().isDecoy()) {
+        if (spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
             line.append("1").append(SEPARATOR);
         } else {
             line.append("0").append(SEPARATOR);
@@ -879,7 +879,7 @@ public class TxtExporter {
                         line += SEPARATOR + SEPARATOR;
                     }
 
-                    if (assumption.isDecoy()) {
+                    if (assumption.getPeptide().isDecoy()) {
                         line += "1" + SEPARATOR;
                     } else {
                         line += "0" + SEPARATOR;

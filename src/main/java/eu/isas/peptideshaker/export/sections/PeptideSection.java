@@ -192,7 +192,7 @@ public class PeptideSection {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             matchKey = peptideKey;
                         }
-                        if (peptideMatch.isDecoy()) {
+                        if (peptideMatch.getTheoreticPeptide().isDecoy()) {
                             writer.write(1 + separator);
                         } else {
                             writer.write(0 + separator);
