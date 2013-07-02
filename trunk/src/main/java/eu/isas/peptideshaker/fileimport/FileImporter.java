@@ -969,7 +969,7 @@ public class FileImporter {
                                             }
                                         }
                                     }
-                                    inputMap.addEntry(searchEngine, firstHit.getScore(), firstHit.isDecoy());
+                                    inputMap.addEntry(searchEngine, firstHit.getScore(), firstHit.getPeptide().isDecoy());
                                     identification.addSpectrumMatch(match);
                                     nRetained++;
                                     break;

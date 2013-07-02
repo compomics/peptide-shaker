@@ -114,7 +114,7 @@
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="psmPlotLayeredPane" pref="657" max="32767" attributes="0"/>
+                              <Component id="psmPlotLayeredPane" pref="747" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -123,14 +123,14 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="450" max="32767" attributes="0"/>
+                          <EmptySpace pref="452" max="32767" attributes="0"/>
                           <Component id="psmPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="psmPlotLayeredPane" pref="423" max="32767" attributes="0"/>
+                              <Component id="psmPlotLayeredPane" pref="431" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -156,7 +156,7 @@
                               <Component id="psmPrecursorMassErrorJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="psmPrecursorChargeJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="375" max="32767" attributes="0"/>
+                              <EmptySpace pref="419" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -307,7 +307,7 @@
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptidesPlotLayeredPane" pref="657" max="32767" attributes="0"/>
+                              <Component id="peptidesPlotLayeredPane" pref="747" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -316,14 +316,14 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="450" max="32767" attributes="0"/>
+                          <EmptySpace pref="452" max="32767" attributes="0"/>
                           <Component id="peptidesPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="peptidesPlotLayeredPane" pref="423" max="32767" attributes="0"/>
+                              <Component id="peptidesPlotLayeredPane" pref="431" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="93" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -351,7 +351,7 @@
                               <Component id="peptideMissedCleavagesJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="peptideLengthJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="272" max="32767" attributes="0"/>
+                              <EmptySpace pref="306" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

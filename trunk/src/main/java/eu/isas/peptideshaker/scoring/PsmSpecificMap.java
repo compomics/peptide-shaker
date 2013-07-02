@@ -100,7 +100,7 @@ public class PsmSpecificMap implements Serializable {
         if (!psmsMaps.containsKey(key)) {
             psmsMaps.put(key, new TargetDecoyMap());
         }
-        psmsMaps.get(key).put(probabilityScore, spectrumMatch.getBestAssumption().isDecoy());
+        psmsMaps.get(key).put(probabilityScore, spectrumMatch.getBestAssumption().getPeptide().isDecoy());
     }
 
     /**

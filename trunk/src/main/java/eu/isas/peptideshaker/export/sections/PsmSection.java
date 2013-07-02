@@ -368,7 +368,7 @@ public class PsmSection {
                                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                                 matchKey = spectrumKey;
                             }
-                            if (spectrumMatch.getBestAssumption().isDecoy()) {
+                            if (spectrumMatch.getBestAssumption().getPeptide().isDecoy()) {
                                 writer.write(1 + separator);
                             } else {
                                 writer.write(0 + separator);

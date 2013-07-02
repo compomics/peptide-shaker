@@ -1298,7 +1298,7 @@ public class IdentificationFeaturesGenerator {
 
             for (String proteinKey : identification.getProteinIdentification()) {
 
-                if (!SequenceFactory.isDecoy(proteinKey)) {
+                if (!sequenceFactory.isDecoyAccession(proteinKey)) {
                     probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
                     if (!probabilities.isHidden()) {
                         ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);

@@ -114,7 +114,7 @@ public class ProgenesisExport {
                                 Peptide peptide = spectrumMatch.getBestAssumption().getPeptide();
                                 boolean decoy = false;
                                 for (String protein : peptide.getParentProteins()) {
-                                    if (SequenceFactory.isDecoy(protein)) {
+                                    if (SequenceFactory.getInstance().isDecoyAccession(protein)) {
                                         decoy = true;
                                         break;
                                     }

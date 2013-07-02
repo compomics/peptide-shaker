@@ -92,7 +92,7 @@ public class PeptideSpecificMap implements Serializable {
         if (!peptideMaps.containsKey(key)) {
             peptideMaps.put(key, new TargetDecoyMap());
         }
-        peptideMaps.get(key).put(probabilityScore, peptideMatch.isDecoy());
+        peptideMaps.get(key).put(probabilityScore, peptideMatch.getTheoreticPeptide().isDecoy());
     }
 
     /**

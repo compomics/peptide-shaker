@@ -2380,7 +2380,7 @@ public class PeptideShaker {
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
-            if (!SequenceFactory.isDecoy(proteinKey)) {
+            if (!ProteinMatch.isDecoy(proteinKey)) {
                 probabilities = (PSParameter) identification.getProteinMatchParameter(proteinKey, probabilities);
                 double score = probabilities.getProteinProbabilityScore();
                 int nPeptides = -proteinMatch.getPeptideMatches().size();
