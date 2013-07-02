@@ -2239,7 +2239,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an HTML
-     * link. Or shows a tooltip with modification details is over the sequence
+     * link. Or shows a tooltip with modification details if over the sequence
      * column.
      *
      * @param evt

@@ -1,6 +1,3 @@
-Homo sapiens 	hsapiens_gene_ensembl
-Mus musculus 	mmusculus_gene_ensembl
-Rattus norvegicus 	rnorvegicus_gene_ensembl
 Ailuropoda melanoleuca 	amelanoleuca_gene_ensembl
 Anolis carolinensis 	acarolinensis_gene_ensembl
 Bos taurus 	btaurus_gene_ensembl
@@ -22,6 +19,7 @@ Felis catus 	fcatus_gene_ensembl
 Gallus gallus 	ggallus_gene_ensembl
 Gasterosteus aculeatus 	gaculeatus_gene_ensembl
 Gorilla gorilla 	ggorilla_gene_ensembl
+Homo sapiens 	hsapiens_gene_ensembl
 Ictidomys tridecemlineatus 	itridecemlineatus_gene_ensembl
 Latimeria chalumnae 	lchalumnae_gene_ensembl
 Loxodonta africana 	lafricana_gene_ensembl
@@ -30,6 +28,7 @@ Macropus eugenii 	meugenii_gene_ensembl
 Meleagris gallopavo 	mgallopavo_gene_ensembl
 Microcebus murinus 	mmurinus_gene_ensembl
 Monodelphis domestica 	mdomestica_gene_ensembl
+Mus musculus 	mmusculus_gene_ensembl
 Mustela putorius furo 	mfuro_gene_ensembl
 Myotis lucifugus 	mlucifugus_gene_ensembl
 Nomascus leucogenys 	nleucogenys_gene_ensembl
@@ -45,6 +44,7 @@ Pelodiscus sinensis 	psinensis_gene_ensembl
 Pongo abelii 	pabelii_gene_ensembl
 Procavia capensis 	pcapensis_gene_ensembl
 Pteropus vampyrus 	pvampyrus_gene_ensembl
+Rattus norvegicus 	rnorvegicus_gene_ensembl
 Saccharomyces cerevisiae 	scerevisiae_gene_ensembl
 Sarcophilus harrisii 	sharrisii_gene_ensembl
 Sorex araneus 	saraneus_gene_ensembl
