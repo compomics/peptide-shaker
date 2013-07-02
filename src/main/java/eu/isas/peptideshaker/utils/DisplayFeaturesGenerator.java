@@ -215,6 +215,8 @@ public class DisplayFeaturesGenerator {
      * @return a String with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
+        
+        // @TODO: should be merged with the same method on DeNovoGUI - ResultsPanel -  and moved to utilities
 
         String tooltip = "<html>";
         ArrayList<String> alreadyAnnotated = new ArrayList<String>();
