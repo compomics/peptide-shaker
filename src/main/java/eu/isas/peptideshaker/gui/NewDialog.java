@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.experiment.io.massspectrometry.MgfReader;
+import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -751,47 +752,18 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
-        JFileChooser fileChooser;
+        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-        if (searchParameters != null && searchParameters.getFastaFile() != null && searchParameters.getFastaFile().exists()) {
-            fileChooser = new JFileChooser(searchParameters.getFastaFile());
-        } else {
-            fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        }
-
-        fileChooser.setDialogTitle("Select FASTA File(s)");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setMultiSelectionEnabled(false);
-
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("fasta")
-                        || myFile.getName().toLowerCase().endsWith("fast")
-                        || myFile.getName().toLowerCase().endsWith("fas")
-                        || myFile.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Supported formats: FASTA (.fasta)";
-            }
-        };
-
-        fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showDialog(this, "Open");
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File fastaFile = fileChooser.getSelectedFile();
-            peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
-            fastaFileTxt.setText(fastaFile.getName());
-            checkFastaFile(fastaFile);
+        if (sequenceFactory.getCurrentFastaFile() != null) {
+            fastaFileTxt.setText(sequenceFactory.getFileName());
+            checkFastaFile();
             if (searchParameters == null) {
                 searchParameters = new SearchParameters();
                 searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             }
-            searchParameters.setFastaFile(fastaFile);
+            searchParameters.setFastaFile(sequenceFactory.getCurrentFastaFile());
         }
-
         validateInput();
 }//GEN-LAST:event_browseDbButtonActionPerformed
 
@@ -881,7 +853,7 @@ public class NewDialog extends javax.swing.JDialog {
                         }
 
                         int fileCounter = 0;
-                        
+
                         // iterate the files and validate them
                         for (File mgfFile : tempMgfFiles) {
 
@@ -1523,14 +1495,14 @@ public class NewDialog extends javax.swing.JDialog {
         File fastaFile = searchParameters.getFastaFile();
         if (fastaFile != null && fastaFile.exists()) {
             fastaFileTxt.setText(fastaFile.getName());
-            checkFastaFile(fastaFile);
+            loadFastaFile(fastaFile);
         } else {
             // try to find it in the same folder as the SearchGUI.properties file
             if (new File(file.getParentFile(), fastaFile.getName()).exists()) {
                 fastaFile = new File(file.getParentFile(), fastaFile.getName());
                 searchParameters.setFastaFile(fastaFile);
                 fastaFileTxt.setText(fastaFile.getName());
-                checkFastaFile(fastaFile);
+                loadFastaFile(fastaFile);
             } else {
                 JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             }
@@ -1677,34 +1649,38 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates the project details for this new project.
+     * Checks whether the fasta file loaded is uniprot concatenated target decoy
      *
-     * @return the project details
      */
-    private ProjectDetails getProjectDetails() {
-        ProjectDetails projectDetails = new ProjectDetails();
-        projectDetails.setCreationDate(new Date());
-        projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
-        return projectDetails;
+    public void checkFastaFile() {
+        if (sequenceFactory.getCurrentFastaIndex().getDatabaseType() != DatabaseType.UniProt) {
+            showDataBaseHelpDialog();
+        }
+        if (!sequenceFactory.concatenatedTargetDecoy()) {
+            JOptionPane.showMessageDialog(this, "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                    + "Some features will be limited if using other types of databases.\n\n"
+                    + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
+                    + "See the PeptideShaker home page for details.",
+                    "No Decoys Found",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
-     * Checks the FASTA file: 1) if it's a UniProt database, and 2) that it's a
-     * target-decoy database. Shows warnings if one of these is false.
+     * Loads the FASTA file in the factory
      *
-     * @param fastaFile the FASTA file to test
+     * @param file the FASTA file
      */
-    private void checkFastaFile(File file) {
+    private void loadFastaFile(File file) {
+
+        final File finalFile = file;
 
         progressDialog = new ProgressDialogX(this, peptideShakerGUI,
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Checking FASTA File. Please Wait...");
-
-        final NewDialog finalRef = this;
-        final File fastaFile = file;
+        progressDialog.setTitle("Loading Database. Please Wait...");
 
         new Thread(new Runnable() {
             public void run() {
@@ -1716,62 +1692,58 @@ public class NewDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("DisplayThread") {
-            @Override
+        new Thread("importThread") {
             public void run() {
 
                 try {
-                    sequenceFactory.loadFastaFile(fastaFile, progressDialog); // @TODO: does not show actual progress if started automatically by the loading of search result files...
-                    progressDialog.setRunFinished();
-
-                    String firstAccession = sequenceFactory.getAccessions().get(0);
-                    if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
-                        showDataBaseHelpDialog();
-                    }
-
-                    if (!sequenceFactory.concatenatedTargetDecoy()) {
-                        JOptionPane.showMessageDialog(finalRef, "PeptideShaker validation requires the use of a taget-decoy database.\n"
-                                + "Some features will be limited if using other types of databases.\n\n"
-                                + "Note that using Automatic Decoy Search in Mascot is not supported.\n\n"
-                                + "See the PeptideShaker home page for details.",
-                                "No Decoys Found",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    }
-                } catch (FileNotFoundException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, "File " + fastaFile + " was not found. Please select a different FASTA file.", "File Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    fastaFileTxt.setText("");
-                    validateInput();
+                    progressDialog.setTitle("Importing Database. Please Wait...");
+                    progressDialog.setIndeterminate(false);
+                    sequenceFactory.loadFastaFile(finalFile, progressDialog);
+                    checkFastaFile();
                 } catch (IOException e) {
                     progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, "An error occured while loading " + fastaFile + ".", "File Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            new String[]{"FASTA Import Error.", "File " + finalFile.getAbsolutePath() + " not found."},
+                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
-                    fastaFileTxt.setText("");
-                    validateInput();
-                } catch (InterruptedException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, "An error occured while loading " + fastaFile + ".", "File Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    fastaFileTxt.setText("");
-                    validateInput();
-                } catch (IllegalArgumentException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.",
-                            "File Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    fastaFileTxt.setText("");
-                    validateInput();
+                    return;
                 } catch (ClassNotFoundException e) {
                     progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(finalRef, "Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
-                            + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.", "File Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            new String[]{"FASTA Import Error.", "File index of " + finalFile.getName() + " could not be imported. Please contact the developers."},
+                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
-                    fastaFileTxt.setText("");
-                    validateInput();
+                    return;
+                } catch (StringIndexOutOfBoundsException e) {
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            e.getMessage(),
+                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+                    e.printStackTrace();
+                    return;
+                } catch (IllegalArgumentException e) {
+                    progressDialog.setRunFinished();
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            e.getMessage(),
+                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+                    e.printStackTrace();
+                    return;
                 }
+                progressDialog.setRunFinished();
             }
         }.start();
+    }
+
+    /**
+     * Creates the project details for this new project.
+     *
+     * @return the project details
+     */
+    private ProjectDetails getProjectDetails() {
+        ProjectDetails projectDetails = new ProjectDetails();
+        projectDetails.setCreationDate(new Date());
+        projectDetails.setPeptideShakerVersion(new eu.isas.peptideshaker.utils.Properties().getVersion());
+        return projectDetails;
     }
 
     /**
