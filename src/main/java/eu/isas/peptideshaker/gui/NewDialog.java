@@ -132,7 +132,7 @@ public class NewDialog extends javax.swing.JDialog {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShaker;
         this.welcomeDialog = welcomeDialog;
-        this.genePreferences = new GenePreferences(peptideShaker.getGenePreferences());
+        this.genePreferences = peptideShaker.getGenePreferences(); // new GenePreferences(peptideShaker.getGenePreferences()); // @TODO: this wrapping does no longer work...
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
         setVisible(true);
@@ -741,6 +741,12 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void clearDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDbButtonActionPerformed
         fastaFileTxt.setText("");
+        try {
+            sequenceFactory.clearFactory();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
+        }
         validateInput();
 }//GEN-LAST:event_clearDbButtonActionPerformed
 
@@ -752,8 +758,16 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private void browseDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseDbButtonActionPerformed
 
-        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true, Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+        SequenceDbDetailsDialog sequenceDbDetailsDialog = new SequenceDbDetailsDialog(peptideShakerGUI, peptideShakerGUI.getLastSelectedFolder(), true,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+        boolean success = sequenceDbDetailsDialog.selectDB(true);
+        if (success) {
+            sequenceDbDetailsDialog.setVisible(true);
+        }
+
+        peptideShakerGUI.setLastSelectedFolder(sequenceDbDetailsDialog.getLastSelectedFolder());
 
         if (sequenceFactory.getCurrentFastaFile() != null) {
             fastaFileTxt.setText(sequenceFactory.getFileName());
@@ -1136,7 +1150,12 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
+        try {
+            sequenceFactory.clearFactory();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
+        }
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
@@ -1649,7 +1668,8 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Checks whether the fasta file loaded is uniprot concatenated target decoy
+     * Checks whether the FASTA file loaded is UniProt concatenated target
+     * decoy.
      *
      */
     public void checkFastaFile() {
@@ -1667,7 +1687,7 @@ public class NewDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads the FASTA file in the factory
+     * Loads the FASTA file in the factory.
      *
      * @param file the FASTA file
      */
