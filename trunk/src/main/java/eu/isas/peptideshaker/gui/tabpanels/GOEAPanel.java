@@ -292,12 +292,12 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             if (selectedSpecies == null) {
                 new SpeciesDialog(peptideShakerGUI, genePreferences, true, peptideShakerGUI.getWaitingIcon(), peptideShakerGUI.getNormalIcon());
-             selectedSpecies = genePreferences.getCurrentSpecies();
+                selectedSpecies = genePreferences.getCurrentSpecies();
             }
 
             if (selectedSpecies != null) {
 
-                String speciesDatabase = genePreferences.getSpeciesMap().get(selectedSpecies);
+                String speciesDatabase = genePreferences.getAllSpeciesMap().get(genePreferences.getCurrentSpeciesType()).get(selectedSpecies);
 
                 if (speciesDatabase != null) {
 
@@ -1957,7 +1957,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         String selectedSpecies = peptideShakerGUI.getGenePreferences().getCurrentSpecies();
-        String speciesDatabase = peptideShakerGUI.getGenePreferences().getSpeciesMap().get(selectedSpecies);
+        String speciesDatabase = peptideShakerGUI.getGenePreferences().getAllSpeciesMap().get(peptideShakerGUI.getGenePreferences().getCurrentSpeciesType()).get(selectedSpecies);
 
         if (speciesDatabase != null) {
 
