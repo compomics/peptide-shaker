@@ -285,6 +285,9 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
             ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
         }
 
+        System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
+        // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!
+
         return null;
     }
 
@@ -346,6 +349,7 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         // set the gene preferences
         genePreferences = new GenePreferences();
         genePreferences.setCurrentSpecies(cliInputBean.getSpecies());
+        genePreferences.setCurrentSpeciesType(cliInputBean.getSpeciesType());
 
         // set the spectrum counting prefrences
         spectrumCountingPreferences = new SpectrumCountingPreferences();
@@ -365,8 +369,8 @@ public class PeptideShakerCLI extends CpsParent implements Callable {
         if (!waitingHandler.isRunCanceled()) {
 
             // Identification as created by PeptideShaker
-            ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-            identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            ProteomicAnalysis tempProteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+            identification = tempProteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
             // Metrics saved while processing the data
             metrics = peptideShaker.getMetrics();

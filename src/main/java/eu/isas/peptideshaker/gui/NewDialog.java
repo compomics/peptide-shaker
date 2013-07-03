@@ -132,7 +132,7 @@ public class NewDialog extends javax.swing.JDialog {
         super(welcomeDialog, modal);
         this.peptideShakerGUI = peptideShaker;
         this.welcomeDialog = welcomeDialog;
-        this.genePreferences = peptideShaker.getGenePreferences(); // new GenePreferences(peptideShaker.getGenePreferences()); // @TODO: this wrapping does no longer work...
+        this.genePreferences = peptideShaker.getGenePreferences();
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
         setVisible(true);
