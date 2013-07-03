@@ -40,7 +40,8 @@ public enum PeptideShakerCLIParams {
     MAX_PRECURSOR_ERROR("max_precursor_error", "Maximum precursor error filter (default '10'). See also max_precursor_error_type.", false),
     MAX_PRECURSOR_ERROR_TYPE("max_precursor_error_type", "Maximum precursor error type (0: ppm, 1: Da, default is '0'). See also max_precursor_error.", false),
     EXCLUDE_UNKNOWN_PTMS("exclude_unknown_ptms", "Exclude unknown PTMs (1: true, 0: false, default is '1').", false),
-    SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false);
+    SPECIES("species", "The species to use for the gene annotation. Supported species are listed in the GUI.", false),
+    SPECIES_TYPE("species_type", "The species type to use for the gene annotation. Supported species are listed in the GUI.", false);
     /**
      * Short Id for the CLI parameter.
      */
@@ -104,6 +105,7 @@ public enum PeptideShakerCLIParams {
         aOptions.addOption(MAX_PRECURSOR_ERROR_TYPE.id, true, MAX_PRECURSOR_ERROR_TYPE.description);
         aOptions.addOption(EXCLUDE_UNKNOWN_PTMS.id, true, EXCLUDE_UNKNOWN_PTMS.description);
         aOptions.addOption(SPECIES.id, true, SPECIES.description);
+        aOptions.addOption(SPECIES_TYPE.id, true, SPECIES_TYPE.description);
         
         // Follow-up options
         FollowUpCLIParams.createOptionsCLI(aOptions);
@@ -135,6 +137,7 @@ public enum PeptideShakerCLIParams {
 
         output += "\n\nOptional gene annotation parameter:\n\n";
         output += "-" + String.format(formatter, SPECIES.id) + SPECIES.description + "\n";
+        output += "-" + String.format(formatter, SPECIES_TYPE.id) + SPECIES_TYPE.description + "\n";
 
         output += "\n\nOptional processing parameters:\n\n";
         output += "-" + String.format(formatter, PROTEIN_FDR.id) + PROTEIN_FDR.description + "\n";
@@ -155,7 +158,6 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
         output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n\n";
 
-        
         output += "\n\nOptional output parameters:\n\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";

@@ -90,6 +90,10 @@ public class PeptideShakerCLIInputBean {
      */
     private String species = null;
     /**
+     * The species type to use for the gene mappings.
+     */
+    private String speciesType = null;
+    /**
      * The minimal peptide length allowed.
      */
     private int minPepLength = 6;
@@ -296,8 +300,12 @@ public class PeptideShakerCLIInputBean {
             }
         }
 
+        // species and species type
         if (aLine.hasOption(PeptideShakerCLIParams.SPECIES.id)) {
             species = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES.id); // @TODO: check that it's a valid species??
+        }
+        if (aLine.hasOption(PeptideShakerCLIParams.SPECIES_TYPE.id)) {
+            speciesType = aLine.getOptionValue(PeptideShakerCLIParams.SPECIES_TYPE.id); // @TODO: check that it's a valid species type??
         }
 
         followUpCLIInputBean = new FollowUpCLIInputBean(aLine);
@@ -831,6 +839,24 @@ public class PeptideShakerCLIInputBean {
      */
     public void setSpecies(String species) {
         this.species = species;
+    }
+
+    /**
+     * Returns the species type.
+     *
+     * @return the species type
+     */
+    public String getSpeciesType() {
+        return speciesType;
+    }
+
+    /**
+     * Sets the species type.
+     *
+     * @param speciesType the species to set
+     */
+    public void setSpeciesType(String speciesType) {
+        this.speciesType = speciesType;
     }
 
     /**
