@@ -51,7 +51,7 @@ public abstract class CpsParent extends UserPreferencesParent {
     /**
      * The identification filter used.
      */
-    protected IdFilter idFilter;
+    protected IdFilter idFilter = new IdFilter();
     /**
      * The annotation preferences to use.
      */
