@@ -3,6 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.22.4 (July ?. 2013):*
+
+ * NEW FEATURE: Extended the species support. 
+
+ * FEATURE IMPROVEMENT: Added fragment ion annotation in the exports as well as modified sequence.
+ * FEATURE IMPROVEMENT: Renamed the Validation plot from Benefit/Cost to Cost/Benefit.
+
+ * BUG FIX: Fixed a bug in the PSM table where the row selection was not cleared before the table was updated.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.14.1.
+
+----
+
 *Changes in PeptideShaker 0.22.3 (June 27. 2013):*
 
  * FEATURE IMPROVEMENT: Added gene name and chromosome number to the default protein report.
