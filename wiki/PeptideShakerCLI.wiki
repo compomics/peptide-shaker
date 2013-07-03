@@ -48,6 +48,9 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 {{{
 -species                   The species to use for the gene annotation, e.g., 'Homo sapiens'. 
                            Supported species are listed in the GUI. (v0.21.0 and newer.)
+
+-species_type              The species type to use for the gene annotation, e.g., 'Vertebrates' or 'Plants'. 
+                           Supported species types are listed in the GUI. (v0.22.4 and newer.)
 }}}
 
 *Optional output parameters:*
