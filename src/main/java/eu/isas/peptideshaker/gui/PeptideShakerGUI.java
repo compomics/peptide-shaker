@@ -6277,7 +6277,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             GenePreferences genePreferences = getGenePreferences();
             String selectedSpecies = genePreferences.getCurrentSpecies();
-            String speciesDatabase = genePreferences.getEnsemblDatabaseName(selectedSpecies);
+            String speciesDatabase = genePreferences.getEnsemblDatabaseName(genePreferences.getCurrentSpeciesType(), selectedSpecies);
 
             if (speciesDatabase != null) {
 

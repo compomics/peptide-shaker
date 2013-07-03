@@ -174,6 +174,9 @@ public abstract class CpsParent extends UserPreferencesParent {
         metrics = experimentSettings.getMetrics();
         genePreferences = experimentSettings.getGenePreferences();
 
+        if (genePreferences.getCurrentSpeciesType() == null) {
+            genePreferences.setCurrentSpeciesType("Vertebrates");
+        }
         if (experimentSettings.getFilterPreferences() != null) {
             filterPreferences = experimentSettings.getFilterPreferences();
         } else {
