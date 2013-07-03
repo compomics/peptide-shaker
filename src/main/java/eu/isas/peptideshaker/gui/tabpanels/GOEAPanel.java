@@ -505,6 +505,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         });
                                     }
 
+                                    if (indexes.size() == 0) {
+                                        progressDialog.setRunCanceled();
+                                    }
+
                                     int significantCounter = 0;
                                     double significanceLevel = 0.05;
 
