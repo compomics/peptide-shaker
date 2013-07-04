@@ -6277,49 +6277,54 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
             GenePreferences genePreferences = getGenePreferences();
             String selectedSpecies = genePreferences.getCurrentSpecies();
-            String speciesDatabase = genePreferences.getEnsemblDatabaseName(genePreferences.getCurrentSpeciesType(), selectedSpecies);
+            String currentSpeciesType = genePreferences.getCurrentSpeciesType();
 
-            if (speciesDatabase != null) {
+            if (currentSpeciesType != null) {
 
-                final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
+                String speciesDatabase = genePreferences.getEnsemblDatabaseName(currentSpeciesType, selectedSpecies);
 
-                if (goMappingsFile.exists()) {
+                if (speciesDatabase != null) {
 
-                    progressDialog = new ProgressDialogX(this,
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                            Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                            true);
-                    progressDialog.setTitle("Getting Gene Mapping Files. Please Wait...");
-                    progressDialog.setIndeterminate(true);
+                    final File goMappingsFile = new File(genePreferences.getGeneMappingFolder(), speciesDatabase + GenePreferences.GO_MAPPING_FILE_SUFFIX);
 
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                progressDialog.setVisible(true);
-                            } catch (IndexOutOfBoundsException e) {
-                                // ignore
+                    if (goMappingsFile.exists()) {
+
+                        progressDialog = new ProgressDialogX(this,
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                                true);
+                        progressDialog.setTitle("Getting Gene Mapping Files. Please Wait...");
+                        progressDialog.setIndeterminate(true);
+
+                        new Thread(new Runnable() {
+                            public void run() {
+                                try {
+                                    progressDialog.setVisible(true);
+                                } catch (IndexOutOfBoundsException e) {
+                                    // ignore
+                                }
                             }
-                        }
-                    }, "ProgressDialog").start();
+                        }, "ProgressDialog").start();
 
-                    new Thread("GoThread") {
-                        @Override
-                        public void run() {
-                            try {
-                                // redraw any tables with chromosome mappings
-                                ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
-                                ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
-                                progressDialog.setRunFinished();
-                            } catch (Exception e) {
-                                progressDialog.setRunFinished();
-                                catchException(e);
+                        new Thread("GoThread") {
+                            @Override
+                            public void run() {
+                                try {
+                                    // redraw any tables with chromosome mappings
+                                    ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
+                                    ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
+                                    progressDialog.setRunFinished();
+                                } catch (Exception e) {
+                                    progressDialog.setRunFinished();
+                                    catchException(e);
+                                }
                             }
-                        }
-                    }.start();
-                } else {
-                    // redraw any tables with chromosome mappings
-                    ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
-                    ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
+                        }.start();
+                    } else {
+                        // redraw any tables with chromosome mappings
+                        ((SelfUpdatingTableModel) overviewPanel.getProteinTable().getModel()).fireTableDataChanged();
+                        ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
+                    }
                 }
             }
         }

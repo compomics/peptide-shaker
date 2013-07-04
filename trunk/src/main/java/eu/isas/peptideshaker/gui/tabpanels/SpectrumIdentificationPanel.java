@@ -2513,8 +2513,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     int cpt = 0;
 
                     for (String tempName : spectrumFileNames) {
-                        filesArray[cpt] = tempName;
-                        cpt++;
+                        filesArray[cpt++] = tempName;
                     }
 
                     progressDialog.setIndeterminate(false);

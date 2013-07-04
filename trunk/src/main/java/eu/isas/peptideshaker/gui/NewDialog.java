@@ -121,7 +121,7 @@ public class NewDialog extends javax.swing.JDialog {
      */
     private WelcomeDialog welcomeDialog;
     /**
-     * The fasta file of the currently loaded project if any
+     * The FASTA file of the currently loaded project if any.
      */
     private File currentFastaFile = null;
 
