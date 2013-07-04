@@ -5056,8 +5056,11 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 + "Please close all instances of PeptideShaker and try again.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                     }
+
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(); // have to load the new gene mappings
+                    
+                    // @TODO: check if the used gene mapping files are available and download if not?
 
                     if (progressDialog.isRunCanceled()) {
                         clearData(true, true);
