@@ -5,7 +5,7 @@
 
 *Changes in PeptideShaker 0.22.4 (July 4. 2013):*
 
- * NEW FEATURE: Extended the species support. 
+ * NEW FEATURE: Extended the species support. (beta) 
  * NEW FEATURE: New database details dialog.
 
  * FEATURE IMPROVEMENT: Added fragment ion annotation in the exports as well as modified sequence.
