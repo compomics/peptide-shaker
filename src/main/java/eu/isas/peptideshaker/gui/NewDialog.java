@@ -120,6 +120,10 @@ public class NewDialog extends javax.swing.JDialog {
      * The welcome dialog parent, can be null.
      */
     private WelcomeDialog welcomeDialog;
+    /**
+     * The fasta file of the currently loaded project if any
+     */
+    private File currentFastaFile = null;
 
     /**
      * Creates a new open dialog.
@@ -133,6 +137,7 @@ public class NewDialog extends javax.swing.JDialog {
         this.peptideShakerGUI = peptideShaker;
         this.welcomeDialog = welcomeDialog;
         this.genePreferences = peptideShaker.getGenePreferences();
+        currentFastaFile = sequenceFactory.getCurrentFastaFile();
         setUpGui();
         this.setLocationRelativeTo(welcomeDialog);
         setVisible(true);
@@ -1150,11 +1155,15 @@ public class NewDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        try {
-            sequenceFactory.clearFactory();
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
+        if (currentFastaFile == null) {
+            try {
+                sequenceFactory.clearFactory();
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (!currentFastaFile.equals(sequenceFactory.getCurrentFastaFile())) {
+            loadFastaFile(currentFastaFile);
         }
         this.setVisible(false);
         this.dispose();
