@@ -2475,7 +2475,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Data. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2516,8 +2516,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         filesArray[cpt++] = tempName;
                     }
 
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
+                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                    progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
                     progressDialog.setValue(0);
 
                     // @TODO: this should be moved to when the files are loaded and done only once...?
@@ -2611,13 +2611,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 x++;
                             }
 
-                            progressDialog.increaseProgressValue();
+                            progressDialog.increasePrimaryProgressCounter();
                         }
                     }
 
                     if (!progressDialog.isRunCanceled()) {
 
-                        progressDialog.setIndeterminate(true);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
                         progressDialog.setTitle("Updating Tables. Please Wait...");
 
                         int nMascot = m;
@@ -2882,7 +2882,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2909,7 +2909,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
-                progressDialog.setIndeterminate(true);
+                progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 if (!progressDialog.isRunCanceled()) {
                     ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle(PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING + "Spectrum Selection ("
                             + (identification.getSpectrumIdentification(fileSelected).size()) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")" + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
@@ -3488,7 +3488,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true);
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setTitle("Copying to File. Please Wait...");
 
                     new Thread(new Runnable() {

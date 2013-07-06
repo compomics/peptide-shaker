@@ -1711,7 +1711,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true);
                 progressDialog.setTitle("Recalculating. Please Wait...");
-                progressDialog.setIndeterminate(false);
+                progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
                 new Thread(new Runnable() {
                     public void run() {
@@ -1958,7 +1958,7 @@ public class StatsPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
             progressDialog.setTitle("Recalculating. Please Wait...");
-            progressDialog.setIndeterminate(false);
+            progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
             new Thread(new Runnable() {
                 public void run() {
@@ -1981,7 +1981,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
                         miniShaker.validateIdentifications(progressDialog);
 
-                        progressDialog.setIndeterminate(true);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                         if (!progressDialog.isRunCanceled()) {
                             // update the other tabs
@@ -2882,7 +2882,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Updating Validation Data. Please Wait...");
 
         new Thread(new Runnable() {
@@ -3570,7 +3570,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
         new Thread(new Runnable() {
             public void run() {
@@ -3618,7 +3618,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
         new Thread(new Runnable() {
             public void run() {
@@ -3666,7 +3666,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Recalculating. Please Wait...");
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
         new Thread(new Runnable() {
             public void run() {

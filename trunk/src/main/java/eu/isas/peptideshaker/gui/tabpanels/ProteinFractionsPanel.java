@@ -296,7 +296,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Fractions. Please Wait...");
 
         new Thread(new Runnable() {

@@ -17,7 +17,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -142,8 +142,8 @@ public class TxtExporter {
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
             if (waitingHandler != null) {
-                waitingHandler.setIndeterminate(false);
-                waitingHandler.setMaxProgressValue(identification.getProteinIdentification().size()
+                waitingHandler.setPrimaryProgressCounterIndeterminate(false);
+                waitingHandler.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size()
                         + identification.getPeptideIdentification().size()
                         + 2 * identification.getSpectrumIdentificationSize());
             }
@@ -153,7 +153,7 @@ public class TxtExporter {
                 proteinWriter.write(getProteinLine(proteinKey));
 
                 if (waitingHandler != null) {
-                    waitingHandler.increaseProgressValue();
+                    waitingHandler.increasePrimaryProgressCounter();
                 }
 
                 if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -179,7 +179,7 @@ public class TxtExporter {
                 peptideWriter.write(getPeptideLine(peptideKey));
 
                 if (waitingHandler != null) {
-                    waitingHandler.increaseProgressValue();
+                    waitingHandler.increasePrimaryProgressCounter();
                 }
 
                 if (waitingHandler != null && waitingHandler.isRunCanceled()) {
@@ -212,7 +212,7 @@ public class TxtExporter {
                     spectrumWriter.write(getSpectrumLine(spectrumKey));
 
                     if (waitingHandler != null) {
-                        waitingHandler.increaseProgressValue();
+                        waitingHandler.increasePrimaryProgressCounter();
                     }
 
                     if (waitingHandler != null && waitingHandler.isRunCanceled()) {

@@ -1940,7 +1940,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setTitle("Getting Peptides. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2036,7 +2036,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Getting Related Peptides. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2240,7 +2240,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setTitle("Getting Modifications. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2305,7 +2305,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Getting Peptides. Please Wait...");
 
             new Thread(new Runnable() {
@@ -3202,7 +3202,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 peptideMap.get(NO_MODIFICATION).add(peptideKey);
             }
             if (progressDialogX != null) {
-                progressDialogX.increaseProgressValue();
+                progressDialogX.increasePrimaryProgressCounter();
             }
         }
     }
@@ -3225,7 +3225,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Updating Data. Please Wait...");
 
         new Thread(new Runnable() {
@@ -3435,7 +3435,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Updating Selection. Please Wait...");
 
         new Thread(new Runnable() {
@@ -3477,13 +3477,13 @@ public class PtmPanel extends javax.swing.JPanel {
                 HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
                 PSParameter probabilities = new PSParameter();
 
-                progressDialog.setIndeterminate(false);
+                progressDialog.setPrimaryProgressCounterIndeterminate(false);
                 progressDialog.setValue(0);
-                progressDialog.setMaxProgressValue(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size());
+                progressDialog.setMaxPrimaryProgressCounter(peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex())).size());
 
                 for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
 
                     if (progressDialog.isRunCanceled()) {
                         break;
@@ -3610,9 +3610,9 @@ public class PtmPanel extends javax.swing.JPanel {
         String currentSequence, referenceSequence = Peptide.getSequence(peptideKey);
         PSParameter probabilities = new PSParameter();
 
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
         progressDialog.setValue(0);
-        progressDialog.setMaxProgressValue(identification.getPeptideIdentification().size());
+        progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size());
 
         for (String newKey : identification.getPeptideIdentification()) {
 
@@ -3620,7 +3620,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 break;
             }
 
-            progressDialog.increaseProgressValue();
+            progressDialog.increasePrimaryProgressCounter();
 
             currentSequence = Peptide.getSequence(newKey);
 
@@ -3649,19 +3649,19 @@ public class PtmPanel extends javax.swing.JPanel {
         if (!progressDialog.isRunCanceled()) {
 
             progressDialog.setTitle("Sorting Related Peptides. Please Wait...");
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
             relatedPeptides = new ArrayList<String>();
             ArrayList<Double> scores = new ArrayList<Double>(scoreToKeyMap.keySet());
             Collections.sort(scores);
 
-            progressDialog.setIndeterminate(false);
+            progressDialog.setPrimaryProgressCounterIndeterminate(false);
             progressDialog.setValue(0);
-            progressDialog.setMaxProgressValue(scores.size());
+            progressDialog.setMaxPrimaryProgressCounter(scores.size());
 
             for (Double score : scores) {
                 relatedPeptides.addAll(scoreToKeyMap.get(score));
-                progressDialog.increaseProgressValue();
+                progressDialog.increasePrimaryProgressCounter();
             }
 
             ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
@@ -3771,14 +3771,14 @@ public class PtmPanel extends javax.swing.JPanel {
 
             if (relatedPsmsTable.getRowCount() > 0) {
                 progressDialog.setTitle("Updating Selected PSMs. Please Wait...");
-                progressDialog.setIndeterminate(false);
+                progressDialog.setPrimaryProgressCounterIndeterminate(false);
                 progressDialog.setValue(0);
-                progressDialog.setMaxProgressValue(relatedPsmsTable.getRowCount());
+                progressDialog.setMaxPrimaryProgressCounter(relatedPsmsTable.getRowCount());
             }
 
             for (int i = 0; i < relatedPsmsTable.getRowCount(); i++) {
 
-                progressDialog.increaseProgressValue();
+                progressDialog.increasePrimaryProgressCounter();
 
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(i);
                 Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
@@ -3828,7 +3828,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         if (progressDialog != null) {
             progressDialog.setTitle("Updating Graphics. Please Wait...");
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
         }
 
         try {
@@ -4625,7 +4625,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         if (progressDialog != null) {
             progressDialog.setTitle("Updating Modification Profile. Please Wait...");
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
         }
 
         try {
@@ -4662,7 +4662,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Copying to File/Clipboard. Please Wait...");
 
             new Thread(new Runnable() {
@@ -4799,7 +4799,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         if (spectrumTabbedPane.isEnabledAt(0)) {
             progressDialog.setTitle("Updating Modification Profile Table. Please Wait...");
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
             psmAScoresTable.setModel(new DefaultTableModel() {
                 @Override

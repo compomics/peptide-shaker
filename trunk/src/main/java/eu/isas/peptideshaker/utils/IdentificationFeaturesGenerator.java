@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -1274,9 +1274,9 @@ public class IdentificationFeaturesGenerator {
     public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         if (identificationFeaturesCache.getProteinList() == null) {
             if (waitingHandler != null) {
-                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setWaitingText("Loading Protein Information. Please Wait...");
-                waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
+                waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
             }
             boolean needMaxValues = (metrics.getMaxNPeptides() == null)
                     || metrics.getMaxNPeptides() <= 0
@@ -1354,7 +1354,7 @@ public class IdentificationFeaturesGenerator {
                 }
 
                 if (waitingHandler != null) {
-                    waitingHandler.increaseSecondaryProgressValue();
+                    waitingHandler.increaseSecondaryProgressCounter();
 
                     if (waitingHandler.isRunCanceled()) {
                         return null;
@@ -1376,9 +1376,9 @@ public class IdentificationFeaturesGenerator {
             Collections.sort(scoreList);
 
             if (waitingHandler != null) {
-                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.resetSecondaryProgressCounter();
                 waitingHandler.setWaitingText("Updating Protein Table. Please Wait...");
-                waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
+                waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
             }
 
             for (double currentScore : scoreList) {
@@ -1396,7 +1396,7 @@ public class IdentificationFeaturesGenerator {
                         Collections.sort(tempList);
                         proteinList.addAll(tempList);
                         if (waitingHandler != null) {
-                            waitingHandler.setMaxSecondaryProgressValue(tempList.size());
+                            waitingHandler.setMaxSecondaryProgressCounter(tempList.size());
 
                             if (waitingHandler.isRunCanceled()) {
                                 return null;
@@ -1409,7 +1409,7 @@ public class IdentificationFeaturesGenerator {
             identificationFeaturesCache.setProteinList(proteinList);
 
             if (waitingHandler != null) {
-                waitingHandler.setIndeterminate(true);
+                waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
                 if (waitingHandler.isRunCanceled()) {
                     return null;
@@ -1434,7 +1434,7 @@ public class IdentificationFeaturesGenerator {
                 }
 
                 if (waitingHandler != null) {
-                    waitingHandler.setIndeterminate(true);
+                    waitingHandler.setPrimaryProgressCounterIndeterminate(true);
 
                     if (waitingHandler.isRunCanceled()) {
                         return null;

@@ -554,7 +554,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Creating Decoy. Please Wait...");
 
         final DatabaseHelpDialog finalRef = this;
@@ -575,7 +575,7 @@ public class DatabaseHelpDialog extends javax.swing.JDialog {
                 String fastaInput = databaseSettingsTxt.getText().trim();
                 try {
                     progressDialog.setTitle("Importing Database. Please Wait...");
-                    progressDialog.setIndeterminate(false);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
                     sequenceFactory.loadFastaFile(new File(fastaInput), progressDialog);
                 } catch (IOException e) {
                     progressDialog.setRunFinished();

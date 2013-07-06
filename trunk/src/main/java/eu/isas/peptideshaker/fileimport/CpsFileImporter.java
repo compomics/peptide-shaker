@@ -4,7 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.io.ExperimentIO;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.TarUtils;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -66,8 +66,8 @@ public class CpsFileImporter {
         File experimentFile = PeptideShaker.getDefaultExperimentFile();
 
         if (waitingHandler != null) {
-            waitingHandler.resetSecondaryProgressBar();
-            waitingHandler.setMaxSecondaryProgressValue(100);
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(100);
         }
 
         try {

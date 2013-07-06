@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -237,7 +237,7 @@ public class TargetDecoyMap implements Serializable {
             }
             previousPoint = point;
 
-            waitingHandler.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressCounter();
             if (waitingHandler.isRunCanceled()) {
                 return;
             }

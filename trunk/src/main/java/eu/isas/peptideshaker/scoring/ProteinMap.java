@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
 
@@ -36,12 +36,12 @@ public class ProteinMap implements Serializable {
 
         waitingHandler.setWaitingText("Estimating Probabilities. Please Wait...");
 
-        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(proteinMatchMap.getMapSize());
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressCounter(proteinMatchMap.getMapSize());
 
         proteinMatchMap.estimateProbabilities(waitingHandler);
 
-        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
     /**

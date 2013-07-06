@@ -213,7 +213,7 @@ public class OutputGenerator {
             }
 
             progressDialog.setTitle("Copying to File. Please Wait...");
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
             new Thread(new Runnable() {
                 public void run() {
@@ -308,8 +308,8 @@ public class OutputGenerator {
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
 
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(proteinKeys.size());
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                        progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
@@ -511,7 +511,7 @@ public class OutputGenerator {
                                 }
                             }
 
-                            progressDialog.increaseProgressValue();
+                            progressDialog.increasePrimaryProgressCounter();
                         }
 
                         writer.close();
@@ -632,7 +632,7 @@ public class OutputGenerator {
                         true);
             }
 
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
@@ -735,8 +735,8 @@ public class OutputGenerator {
                         progressDialog.setTitle("Loading Peptide Details. Please Wait...");
                         identification.loadPeptideMatchParameters(peptidePSParameter, progressDialog);
 
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(peptideKeys.size());
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                        progressDialog.setMaxPrimaryProgressCounter(peptideKeys.size());
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
@@ -1022,7 +1022,7 @@ public class OutputGenerator {
                                     }
                                 }
                             }
-                            progressDialog.increaseProgressValue();
+                            progressDialog.increasePrimaryProgressCounter();
                         }
 
                         writer.close();
@@ -1117,7 +1117,7 @@ public class OutputGenerator {
                         true);
             }
 
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
@@ -1139,11 +1139,11 @@ public class OutputGenerator {
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
 
-                        progressDialog.setIndeterminate(false);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         if (psmKeys != null) {
-                            progressDialog.setMaxProgressValue(psmKeys.size());
+                            progressDialog.setMaxPrimaryProgressCounter(psmKeys.size());
                         } else {
-                            progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
+                            progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
                         }
 
                         if (includeHeader) {
@@ -1235,7 +1235,7 @@ public class OutputGenerator {
                                 identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
                             }
 
-                            progressDialog.setMaxProgressValue(spectrumKeys.get(spectrumFile).size());
+                            progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
                             progressDialog.setValue(0);
                             for (String psmKey : spectrumKeys.get(spectrumFile)) {
 
@@ -1484,7 +1484,7 @@ public class OutputGenerator {
                                         }
                                     }
                                 }
-                                progressDialog.increaseProgressValue();
+                                progressDialog.increasePrimaryProgressCounter();
                             }
                         }
                         writer.close();
@@ -1551,7 +1551,7 @@ public class OutputGenerator {
                         true);
             }
 
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
@@ -1585,8 +1585,8 @@ public class OutputGenerator {
                         PTMFactory ptmFactory = PTMFactory.getInstance();
                         ModificationProfile ptmProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
 
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                        progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
 
                         writer.write("Index" + SEPARATOR);
                         writer.write("Protein(s)" + SEPARATOR);
@@ -1632,7 +1632,7 @@ public class OutputGenerator {
                             progressDialog.setTitle("Loading Spectrum Matches Details. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
                             identification.loadSpectrumMatchParameters(spectrumKeys.get(spectrumFile), psParameter, progressDialog);
                             progressDialog.setTitle("Copying Spectrum Matches Phospho Details to File. Please Wait... (" + fileCounter + "/" + spectrumKeys.size() + ")");
-                            progressDialog.setMaxProgressValue(spectrumKeys.get(spectrumFile).size());
+                            progressDialog.setMaxPrimaryProgressCounter(spectrumKeys.get(spectrumFile).size());
                             progressDialog.setValue(0);
 
                             for (String psmKey : spectrumKeys.get(spectrumFile)) {
@@ -1790,7 +1790,7 @@ public class OutputGenerator {
                                     writer.write(0 + SEPARATOR);
                                 }
                                 writer.write(System.getProperty("line.separator"));
-                                progressDialog.increaseProgressValue();
+                                progressDialog.increasePrimaryProgressCounter();
                             }
                         }
                         writer.close();
@@ -1838,8 +1838,8 @@ public class OutputGenerator {
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
 
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                        progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying Protein Phospho Details to File. Please Wait...");
 
@@ -1931,7 +1931,7 @@ public class OutputGenerator {
                                 writer.write(0 + SEPARATOR);
                             }
                             writer.newLine();
-                            progressDialog.increaseProgressValue();
+                            progressDialog.increasePrimaryProgressCounter();
                         }
 
 
@@ -1947,8 +1947,8 @@ public class OutputGenerator {
 //
 //                        ArrayList<String> taken = new ArrayList<String>();
 //
-//                        progressDialog.setIndeterminate(false);
-//                        progressDialog.setMaxProgressValue(identification.getPeptideIdentification().size() + 2*identification.getSpectrumIdentificationSize());
+//                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+//                        progressDialog.setMaxPrimaryProgressCounter(identification.getPeptideIdentification().size() + 2*identification.getSpectrumIdentificationSize());
 //                        progressDialog.setValue(0);
 //                        progressDialog.setTitle("Copying Protein Phospho Details to File. Please Wait...");
 //                        for (String peptideKey : identification.getPeptideIdentification()) {
@@ -1968,7 +1968,7 @@ public class OutputGenerator {
 //                                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(title);
 //                                writer.write(spectrum.asMgf());
 //                            }
-//                            progressDialog.increaseProgressValue();
+//                            progressDialog.increasePrimaryProgressCounter();
 //                        }
 //                        int ratio = 10;
 //                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
@@ -1981,7 +1981,7 @@ public class OutputGenerator {
 //                                    }
 //                                    cpt++;
 //                                }
-//                            progressDialog.increaseProgressValue();
+//                            progressDialog.increasePrimaryProgressCounter();
 //                            }
 //                        }
 //
@@ -2002,7 +2002,7 @@ public class OutputGenerator {
 //                                        }
 //                                    }
 //                                }
-//                            progressDialog.increaseProgressValue();
+//                            progressDialog.increasePrimaryProgressCounter();
 //                            }
 //                        }
 //
@@ -2089,7 +2089,7 @@ public class OutputGenerator {
                         true);
             }
 
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Copying to File. Please Wait...");
 
             new Thread(new Runnable() {
@@ -2158,11 +2158,11 @@ public class OutputGenerator {
                         PSParameter psParameter = new PSParameter();
                         int rank, progress = 0;
 
-                        progressDialog.setIndeterminate(false);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         if (psmKeys != null) {
-                            progressDialog.setMaxProgressValue(psmKeys.size());
+                            progressDialog.setMaxPrimaryProgressCounter(psmKeys.size());
                         } else {
-                            progressDialog.setMaxProgressValue(identification.getSpectrumIdentificationSize());
+                            progressDialog.setMaxPrimaryProgressCounter(identification.getSpectrumIdentificationSize());
                         }
                         HashMap<String, ArrayList<String>> spectrumKeys = new HashMap<String, ArrayList<String>>();
                         if (psmKeys == null) {
@@ -2438,7 +2438,7 @@ public class OutputGenerator {
             }
 
             progressDialog.setTitle("Copying to File. Please Wait...");
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
             new Thread(new Runnable() {
                 public void run() {
@@ -2533,8 +2533,8 @@ public class OutputGenerator {
                         progressDialog.setTitle("Loading Protein Details. Please Wait...");
                         identification.loadProteinMatchParameters(proteinPSParameter, progressDialog);
 
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMaxProgressValue(proteinKeys.size());
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                        progressDialog.setMaxPrimaryProgressCounter(proteinKeys.size());
                         progressDialog.setValue(0);
                         progressDialog.setTitle("Copying to File. Please Wait...");
 
@@ -2756,7 +2756,7 @@ public class OutputGenerator {
                                 }
                             }
 
-                            progressDialog.increaseProgressValue();
+                            progressDialog.increasePrimaryProgressCounter();
                         }
 
                         writer.close();

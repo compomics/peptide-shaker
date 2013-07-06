@@ -5,7 +5,7 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,19 +53,19 @@ public class PeptideSpecificMap implements Serializable {
         waitingHandler.setWaitingText("Estimating Probabilities. Please Wait...");
 
         int max = getNEntries();
-        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (String modifications : peptideMaps.keySet()) {
 
-            waitingHandler.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressCounter();
 
             if (!groupedMaps.contains(modifications)) {
                 peptideMaps.get(modifications).estimateProbabilities(waitingHandler);
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
     /**

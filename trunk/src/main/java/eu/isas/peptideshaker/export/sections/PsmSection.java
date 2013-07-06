@@ -8,7 +8,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
@@ -111,7 +111,7 @@ public class PsmSection {
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
         if (header) {
@@ -156,20 +156,20 @@ public class PsmSection {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Spectra. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.resetSecondaryProgressCounter();
         }
         identification.loadSpectrumMatches(spectrumKeys, waitingHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Spectrum Details. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.resetSecondaryProgressCounter();
         }
         identification.loadSpectrumMatchParameters(spectrumKeys, psParameter, waitingHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
-            waitingHandler.setMaxSecondaryProgressValue(totalSize);
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(totalSize);
         }
 
         for (String spectrumFile : psmMap.keySet()) {
@@ -180,7 +180,7 @@ public class PsmSection {
                     if (waitingHandler.isRunCanceled()) {
                         return;
                     }
-                    waitingHandler.increaseSecondaryProgressValue();
+                    waitingHandler.increaseSecondaryProgressCounter();
                 }
 
                 if (indexes) {

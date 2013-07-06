@@ -7,7 +7,7 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -140,9 +140,7 @@ public class ReportCLI extends CpsParent {
 
 
         waitingHandler.appendReport("End of PeptideShaker processing.", true, true);
-        if (waitingHandler instanceof WaitingDialog) {
-            ((WaitingDialog) waitingHandler).getSecondaryProgressBar().setString("Processing Completed!");
-        }
+        waitingHandler.setSecondaryProgressText("Processing Completed!");
 
         System.exit(0); // @TODO: Find other ways of cancelling the process? If not cancelled searchgui will not stop.
         // Note that if a different solution is found, the DummyFrame has to be closed similar to the setVisible method in the WelcomeDialog!!

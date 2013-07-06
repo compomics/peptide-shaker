@@ -1099,7 +1099,7 @@ public class QCPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
             new Thread(new Runnable() {
@@ -1117,7 +1117,7 @@ public class QCPanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
 
-                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                    progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getProteinIdentification().size());
                     progressDialog.setTitle("Getting Protein Dataset. Please Wait...");
                     getProteinDataset();
                     progressDialog.setTitle("Loading Protein QC Plots. Please Wait...");
@@ -1287,7 +1287,7 @@ public class QCPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
             new Thread(new Runnable() {
@@ -1304,7 +1304,7 @@ public class QCPanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
 
-                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+                    progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
                     progressDialog.setTitle("Getting Peptide Dataset. Please Wait...");
                     getPeptideDataset();
                     progressDialog.setTitle("Loading Peptide QC Plots. Please Wait...");
@@ -1431,7 +1431,7 @@ public class QCPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading QC Plot. Please Wait...");
 
             new Thread(new Runnable() {
@@ -1448,7 +1448,7 @@ public class QCPanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
 
-                    progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
+                    progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
 
                     progressDialog.setTitle("Getting PSM Dataset. Please Wait...");
                     getPsmDataset();
@@ -1546,8 +1546,8 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void getProteinDataset() {
 
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getProteinIdentification().size());
         progressDialog.setValue(0);
 
         try {
@@ -1598,7 +1598,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
 
             } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
@@ -1651,7 +1651,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
             } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
 
@@ -1696,7 +1696,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
             } else if (proteinSequenceLengthJRadioButton.isSelected()) {
                 // Values for the sequence length
@@ -1743,7 +1743,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
             }
         } catch (Exception e) {
@@ -1756,8 +1756,8 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void getPeptideDataset() {
 
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
         progressDialog.setValue(0);
 
         try {
@@ -1815,7 +1815,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
             } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
 
@@ -1859,7 +1859,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
             } else if (peptideLengthJRadioButton.isSelected()) {
 
@@ -1902,7 +1902,7 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    progressDialog.increaseProgressValue();
+                    progressDialog.increasePrimaryProgressCounter();
                 }
             }
         } catch (Exception e) {
@@ -1915,8 +1915,8 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void getPsmDataset() {
 
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMaxProgressValue(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getSpectrumIdentificationSize());
         progressDialog.setValue(0);
 
         try {
@@ -1972,7 +1972,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        progressDialog.increaseProgressValue();
+                        progressDialog.increasePrimaryProgressCounter();
                     }
                 }
             } else if (psmPrecursorChargeJRadioButton.isSelected()) {
@@ -2016,7 +2016,7 @@ public class QCPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        progressDialog.increaseProgressValue();
+                        progressDialog.increasePrimaryProgressCounter();
                     }
                 }
             }

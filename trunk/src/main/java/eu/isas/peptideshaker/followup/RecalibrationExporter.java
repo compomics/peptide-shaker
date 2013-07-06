@@ -4,7 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.recalibration.RunMzDeviation;
 import eu.isas.peptideshaker.recalibration.SpectrumRecalibrator;
@@ -71,9 +71,9 @@ public class RecalibrationExporter {
                 }
 
                 waitingHandler.setWaitingText("Recalibrating Spectra. Inspecting Mass Deviations. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                waitingHandler.resetSecondaryProgressBar();
-                waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                waitingHandler.setMaxSecondaryProgressValue(2 * spectrumFactory.getNSpectra(fileName));
+                waitingHandler.resetSecondaryProgressCounter();
+                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                waitingHandler.setMaxSecondaryProgressCounter(2 * spectrumFactory.getNSpectra(fileName));
             }
 
             spectrumRecalibrator.estimateErrors(fileName, identification, annotationPreferences, waitingHandler);
@@ -139,8 +139,8 @@ public class RecalibrationExporter {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Recalibrating Spectra. Writing Spectra. Please Wait... (" + progress + "/" + spectrumFactory.getMgfFileNames().size() + ")");
-                waitingHandler.resetSecondaryProgressBar();
-                waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getNSpectra(fileName));
+                waitingHandler.resetSecondaryProgressCounter();
+                waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getNSpectra(fileName));
             }
 
             for (String spectrumTitle : spectrumFactory.getSpectrumTitles(fileName)) {
@@ -157,7 +157,7 @@ public class RecalibrationExporter {
                     if (waitingHandler.isRunCanceled()) {
                         break;
                     }
-                    waitingHandler.increaseProgressValue();
+                    waitingHandler.increasePrimaryProgressCounter();
                 }
             }
 

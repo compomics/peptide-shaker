@@ -4456,7 +4456,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
         progressDialog.setTitle("Closing. Please Wait...");
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
         final PeptideShakerGUI finalRef = this;
 
@@ -4483,8 +4483,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         String[] files = serializationFolder.list();
 
                         if (files != null) {
-                            progressDialog.setIndeterminate(false);
-                            progressDialog.setMaxProgressValue(files.length);
+                            progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                            progressDialog.setMaxPrimaryProgressCounter(files.length);
                         }
                     }
 
@@ -4544,7 +4544,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Closing. Please Wait...");
 
         new Thread(new Runnable() {
@@ -5021,7 +5021,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Importing Project. Please Wait...");
 
         // reset the title
@@ -5097,13 +5097,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     }
 
                     progressDialog.setTitle("Loading Spectrum Files. Please Wait...");
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setMaxProgressValue(getIdentification().getSpectrumFiles().size() + 1);
-                    progressDialog.increaseProgressValue();
+                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                    progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumFiles().size() + 1);
+                    progressDialog.increasePrimaryProgressCounter();
 
                     for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
 
-                        progressDialog.increaseProgressValue();
+                        progressDialog.increasePrimaryProgressCounter();
 
                         boolean found = true;
                         try {
@@ -5180,7 +5180,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     }
 
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setRunFinished();
                     peptideShakerGUI.displayResults();
                     allTabsJTabbedPaneStateChanged(null); // display the overview tab data
@@ -5455,7 +5455,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Saving. Please Wait...");
 
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
@@ -5972,7 +5972,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                             Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                             true);
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setTitle("Exporting Project. Please Wait...");
 
                     new Thread(new Runnable() {
@@ -6004,15 +6004,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             }
 
                             progressDialog.setTitle("Getting Spectrum Files. Please Wait...");
-                            progressDialog.setIndeterminate(false);
+                            progressDialog.setPrimaryProgressCounterIndeterminate(false);
                             progressDialog.setValue(0);
-                            progressDialog.setMaxProgressValue(getIdentification().getSpectrumFiles().size());
+                            progressDialog.setMaxPrimaryProgressCounter(getIdentification().getSpectrumFiles().size());
 
                             ArrayList<String> names = new ArrayList<String>();
 
                             for (String spectrumFileName : getIdentification().getSpectrumFiles()) {
 
-                                progressDialog.increaseProgressValue();
+                                progressDialog.increasePrimaryProgressCounter();
 
                                 File spectrumFile = getProjectDetails().getSpectrumFile(spectrumFileName);
 
@@ -6030,7 +6030,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                             }
 
                             progressDialog.setTitle("Zipping Project. Please Wait...");
-                            progressDialog.setIndeterminate(true);
+                            progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
 
                             // zip the project
@@ -6063,13 +6063,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                     String files[] = cpsFolder.list();
 
                                     progressDialog.setTitle("Zipping PeptideShaker Folder. Please Wait...");
-                                    progressDialog.setIndeterminate(false);
+                                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
                                     progressDialog.setValue(0);
-                                    progressDialog.setMaxProgressValue(files.length);
+                                    progressDialog.setMaxPrimaryProgressCounter(files.length);
 
                                     for (int i = 0; i < files.length && !progressDialog.isRunCanceled(); i++) {
 
-                                        progressDialog.increaseProgressValue();
+                                        progressDialog.increasePrimaryProgressCounter();
 
                                         fi = new FileInputStream(new File(cpsFolder, files[i]));
                                         origin = new BufferedInputStream(fi, BUFFER);
@@ -6086,13 +6086,13 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                                 // add the data files
                                 progressDialog.setTitle("Zipping FASTA and Spectrum Files. Please Wait...");
-                                progressDialog.setIndeterminate(false);
+                                progressDialog.setPrimaryProgressCounterIndeterminate(false);
                                 progressDialog.setValue(0);
-                                progressDialog.setMaxProgressValue(dataFiles.size());
+                                progressDialog.setMaxPrimaryProgressCounter(dataFiles.size());
 
                                 for (int i = 0; i < dataFiles.size() && !progressDialog.isRunCanceled(); i++) {
 
-                                    progressDialog.increaseProgressValue();
+                                    progressDialog.increasePrimaryProgressCounter();
 
                                     fi = new FileInputStream(new File(dataFiles.get(i)));
                                     origin = new BufferedInputStream(fi, BUFFER);
@@ -6105,7 +6105,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 }
 
 
-                                progressDialog.setIndeterminate(true);
+                                progressDialog.setPrimaryProgressCounterIndeterminate(true);
                                 progressDialog.setTitle("Cleaning Up. Please Wait...");
 
                                 out.close();
@@ -6297,7 +6297,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                                 true);
                         progressDialog.setTitle("Getting Gene Mapping Files. Please Wait...");
-                        progressDialog.setIndeterminate(true);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                         new Thread(new Runnable() {
                             public void run() {

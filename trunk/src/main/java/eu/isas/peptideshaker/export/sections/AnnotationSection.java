@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.AnnotationFeatures;
@@ -66,7 +66,7 @@ public class AnnotationSection {
     public void writeSection(AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
         if (header) {

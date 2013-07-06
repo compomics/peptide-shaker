@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.followup;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
@@ -135,7 +135,7 @@ public class FastaExport {
                             if (waitingHandler.isRunCanceled()) {
                                 break;
                             }
-                            waitingHandler.increaseSecondaryProgressValue();
+                            waitingHandler.increaseSecondaryProgressCounter();
                         }
                     }
                 } else {
@@ -164,7 +164,7 @@ public class FastaExport {
                             if (waitingHandler.isRunCanceled()) {
                                 break;
                             }
-                            waitingHandler.increaseSecondaryProgressValue();
+                            waitingHandler.increaseSecondaryProgressCounter();
                         }
                     }
                 }

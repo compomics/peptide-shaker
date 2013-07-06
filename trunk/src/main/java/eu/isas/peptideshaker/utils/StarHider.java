@@ -63,7 +63,7 @@ public class StarHider {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
 
         new Thread(new Runnable() {
@@ -82,8 +82,8 @@ public class StarHider {
 
                 try {
                     Identification identification = peptideShakerGUI.getIdentification();
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
+                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                    progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
 
                     PSParameter psParameter = new PSParameter();
 
@@ -185,7 +185,7 @@ public class StarHider {
                             }
                         }
 
-                        progressDialog.increaseProgressValue();
+                        progressDialog.increasePrimaryProgressCounter();
                     }
 
                     // set the observed fractional molecular weights per fraction
