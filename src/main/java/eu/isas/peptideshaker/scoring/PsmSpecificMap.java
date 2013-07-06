@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.scoring;
 
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,19 +44,19 @@ public class PsmSpecificMap implements Serializable {
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
         int max = getMapsSize();
-        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (Integer charge : psmsMaps.keySet()) {
 
-            waitingHandler.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressCounter();
 
             if (!grouping.containsKey(charge)) {
                 psmsMaps.get(charge).estimateProbabilities(waitingHandler);
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
     /**

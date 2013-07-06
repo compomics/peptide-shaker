@@ -5,7 +5,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.ExperimentIO;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.io.TarUtils;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.GenePreferences;
@@ -108,8 +108,8 @@ public class CpsExporter {
 
         // transfer all files in the match directory
         if (waitingHandler != null && !waitingHandler.isRunCanceled()) {
-            waitingHandler.setIndeterminate(true);
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setPrimaryProgressCounterIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             File experimentFile = new File(PeptideShaker.SERIALIZATION_DIRECTORY, PeptideShaker.experimentObjectName);
             ExperimentIO.save(experimentFile, experiment);
         }

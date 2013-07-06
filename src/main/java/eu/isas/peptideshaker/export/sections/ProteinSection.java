@@ -7,7 +7,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
@@ -116,7 +116,7 @@ public class ProteinSection {
             ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
         if (header) {
@@ -135,31 +135,31 @@ public class ProteinSection {
         if (peptideSection != null) {
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Loading Peptides. Please Wait...");
-                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.resetSecondaryProgressCounter();
             }
             identification.loadPeptideMatches(waitingHandler);
             if (waitingHandler != null) {
                 waitingHandler.setWaitingText("Loading Peptide Details. Please Wait...");
-                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.resetSecondaryProgressCounter();
             }
             identification.loadPeptideMatchParameters(psParameter, waitingHandler);
         }
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Proteins. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.resetSecondaryProgressCounter();
         }
         identification.loadProteinMatches(keys, waitingHandler);
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Protein Details. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.resetSecondaryProgressCounter();
         }
         identification.loadProteinMatchParameters(keys, psParameter, waitingHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
-            waitingHandler.setMaxSecondaryProgressValue(keys.size());
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(keys.size());
         }
 
         for (String proteinKey : keys) {
@@ -168,7 +168,7 @@ public class ProteinSection {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.increaseSecondaryProgressValue();
+                waitingHandler.increaseSecondaryProgressCounter();
             }
 
             if (indexes) {

@@ -688,8 +688,8 @@ public class NewDialog extends javax.swing.JDialog {
             // add one more just to not start at 0%
             progressCounter++;
 
-            waitingDialog.setMaxProgressValue(progressCounter);
-            waitingDialog.increaseProgressValue(); // just to not start at 0%
+            waitingDialog.setMaxPrimaryProgressCounter(progressCounter);
+            waitingDialog.increasePrimaryProgressCounter(); // just to not start at 0%
 
             boolean needDialog = false;
 
@@ -834,7 +834,7 @@ public class NewDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Validating MGF File(s). Please Wait...");
 
             final NewDialog finalRef = this;
@@ -1708,7 +1708,7 @@ public class NewDialog extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Database. Please Wait...");
 
         new Thread(new Runnable() {
@@ -1726,7 +1726,7 @@ public class NewDialog extends javax.swing.JDialog {
 
                 try {
                     progressDialog.setTitle("Importing Database. Please Wait...");
-                    progressDialog.setIndeterminate(false);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
                     sequenceFactory.loadFastaFile(finalFile, progressDialog);
                     checkFastaFile();
                 } catch (IOException e) {
@@ -1804,6 +1804,6 @@ public class NewDialog extends javax.swing.JDialog {
         ep.setBorder(null);
         ep.setEditable(false);
 
-        progressDialog.displayHtmlMessage(ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(progressDialog, ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
     }
 }

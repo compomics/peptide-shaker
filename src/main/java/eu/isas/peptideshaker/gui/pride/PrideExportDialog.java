@@ -1021,7 +1021,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
 
         new Thread(new Runnable() {
@@ -1081,7 +1081,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
                     // validate the pride xml file
                     if (validatePrideXml && !prideExportDialog.progressCancelled()) {
-                        progressDialog.setIndeterminate(true);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
                         progressDialog.setTitle("Validating PRIDE XML. Please Wait...");
                         PrideXmlValidator validator = new PrideXmlValidator();
                         conversionCompleted = validator.validate(new File(outputFolderJTextField.getText(), prideFileName + ".xml"));

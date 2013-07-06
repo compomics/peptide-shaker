@@ -451,7 +451,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting Spectra. Please Wait...");
 
             new Thread(new Runnable() {
@@ -514,7 +514,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting PSMs. Please Wait...");
 
             new Thread(new Runnable() {
@@ -646,7 +646,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting Spectra. Please Wait...");
 
             new Thread(new Runnable() {
@@ -765,7 +765,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting. Please Wait...");
 
             new Thread(new Runnable() {
@@ -792,11 +792,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         SequenceFactory sequenceFactory = SequenceFactory.getInstance();
                         IdentificationFeaturesGenerator identificationFeaturesGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
 
-                        progressDialog.setIndeterminate(false);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(false);
                         if (exportType == FastaExport.ExportType.non_validated) {
-                            progressDialog.setMaxProgressValue(sequenceFactory.getAccessions().size());
+                            progressDialog.setMaxPrimaryProgressCounter(sequenceFactory.getAccessions().size());
                         } else {
-                            progressDialog.setMaxProgressValue(identificationFeaturesGenerator.getNValidatedProteins());
+                            progressDialog.setMaxPrimaryProgressCounter(identificationFeaturesGenerator.getNValidatedProteins());
                         }
 
                         FastaExport.export(selectedFile, peptideShakerGUI.getIdentification(), identificationFeaturesGenerator, exportType, progressDialog, finalAccessionsOnly);
@@ -850,7 +850,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Exporting. Please Wait...");
 
             int selection = spectrumRecalibrationCmb.getSelectedIndex();

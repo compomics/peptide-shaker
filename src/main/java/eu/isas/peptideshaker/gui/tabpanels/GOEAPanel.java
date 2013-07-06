@@ -312,7 +312,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 true);
                         progressDialog.setTitle("Getting GO Mappings. Please Wait...");
 
-                        progressDialog.setIndeterminate(true);
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                         new Thread(new Runnable() {
                             public void run() {
@@ -352,8 +352,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     identification.loadProteinMatchParameters(psParameter, null);
 
                                     progressDialog.setTitle("Getting GO Mappings (2/3). Please Wait...");
-                                    progressDialog.setIndeterminate(false);
-                                    progressDialog.setMaxProgressValue(identification.getProteinIdentification().size());
+                                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                                    progressDialog.setMaxPrimaryProgressCounter(identification.getProteinIdentification().size());
                                     progressDialog.setValue(0);
                                     int totalNumberOfGoMappedProteinsInProject = 0;
 
@@ -377,12 +377,12 @@ public class GOEAPanel extends javax.swing.JPanel {
                                         if (progressDialog.isRunCanceled()) {
                                             return;
                                         }
-                                        progressDialog.increaseProgressValue();
+                                        progressDialog.increasePrimaryProgressCounter();
                                     }
 
                                     progressDialog.setTitle("Creating GO Plots (3/3). Please Wait...");
                                     progressDialog.setValue(0);
-                                    progressDialog.setMaxProgressValue(goFactory.getNumberOfTerms());
+                                    progressDialog.setMaxPrimaryProgressCounter(goFactory.getNumberOfTerms());
 
 
                                     // update the table
@@ -405,7 +405,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                         String goTerm = goFactory.getTermAccession(goTermName);
 
-                                        progressDialog.increaseProgressValue();
+                                        progressDialog.increasePrimaryProgressCounter();
 
                                         Integer frequencyAll = goFactory.getNProteinsForTerm(goTerm);
 
@@ -559,7 +559,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                                 + PeptideShakerGUI.TITLED_BORDER_HORIZONTAL_PADDING);
                                         mappingsPanel.repaint();
 
-                                        progressDialog.setIndeterminate(true);
+                                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                                         // set the preferred size of the accession column
                                         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
@@ -1490,7 +1490,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Copying to Clipboard. Please Wait...");
 
         new Thread(new Runnable() {
@@ -1609,7 +1609,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                         Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                         true);
-                progressDialog.setIndeterminate(true);
+                progressDialog.setPrimaryProgressCounterIndeterminate(true);
                 progressDialog.setTitle("Exporting to File. Please Wait...");
 
                 new Thread(new Runnable() {
@@ -2095,7 +2095,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading Protein Data. Please Wait...");
 
             new Thread(new Runnable() {

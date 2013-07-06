@@ -8,7 +8,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
@@ -77,8 +77,8 @@ public class InclusionListExport {
                         return;
                     }
                     waitingHandler.setWaitingText("Inclusion List - Writing File. Please Wait...");
-                    waitingHandler.resetSecondaryProgressBar();
-                    waitingHandler.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
+                    waitingHandler.resetSecondaryProgressCounter();
+                    waitingHandler.setMaxSecondaryProgressCounter(identification.getProteinIdentification().size());
                 }
 
                 for (String proteinMatchKey : identification.getProteinIdentification()) {
@@ -160,7 +160,7 @@ public class InclusionListExport {
                         if (waitingHandler.isRunCanceled()) {
                             return;
                         }
-                        waitingHandler.increaseSecondaryProgressValue();
+                        waitingHandler.increaseSecondaryProgressCounter();
                     }
                 }
             } finally {

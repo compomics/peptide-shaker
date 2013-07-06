@@ -1783,7 +1783,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                     Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                     true);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             progressDialog.setTitle("Loading PDB Structure. Please Wait...");
 
             new Thread(new Runnable() {
@@ -1800,7 +1800,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 @Override
                 public void run() {
 
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
                     int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
                     PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
@@ -2785,7 +2785,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Updating Data. Please Wait...");
 
         new Thread(new Runnable() {
@@ -2850,7 +2850,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
 
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setTitle("Preparing 3D Structure Tab. Please Wait...");
 
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2904,7 +2904,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
         new Thread(new Runnable() {
             public void run() {

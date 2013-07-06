@@ -1283,11 +1283,11 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                         if (currentPrideProjectUrl != null) {
                             if (currentUrlContentLength != -1) {
-                                progressDialog.setIndeterminate(false);
+                                progressDialog.setPrimaryProgressCounterIndeterminate(false);
                                 progressDialog.setValue(0);
-                                progressDialog.setMaxProgressValue(currentUrlContentLength);
+                                progressDialog.setMaxPrimaryProgressCounter(currentUrlContentLength);
                             } else {
-                                progressDialog.setIndeterminate(true);
+                                progressDialog.setPrimaryProgressCounterIndeterminate(true);
                             }
 
                             isFileBeingDownloaded = true;
@@ -1343,7 +1343,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                                 } else {
                                     progressDialog.setTitle("Unzipping PRIDE Project. Please Wait...");
                                 }
-                                progressDialog.setIndeterminate(true);
+                                progressDialog.setPrimaryProgressCounterIndeterminate(true);
                                 unzipProject();
                             } else {
                                 isFileBeingDownloaded = false;
@@ -1390,7 +1390,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                     // clear the temp folder
                     progressDialog.setTitle("Clearing Temp Files. Please Wait...");
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     Util.deleteDir(currentZippedPrideXmlFile.getParentFile());
 
                     progressDialog.setRunFinished();
@@ -1432,7 +1432,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
      */
     private String getSearchParams(Integer prideAccession, SearchParameters prideSearchParameters) throws Exception {
 
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
         Double fragmentIonMassTolerance = null;
         Double peptideIonMassTolerance = null;
@@ -1480,13 +1480,13 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         // get the fragment ion types used
         List<String> ids = prideXmlReader.getIdentIds();
 
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMaxProgressValue(ids.size());
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(ids.size());
         progressDialog.setValue(0);
 
         for (String id : ids) {
 
-            progressDialog.increaseProgressValue();
+            progressDialog.increasePrimaryProgressCounter();
 
             Identification identification = prideXmlReader.getIdentById(id);
             List<PeptideItem> peptides = identification.getPeptideItem();
@@ -2060,7 +2060,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         boolean conversionOk = true;
 
         try {
-            progressDialog.setIndeterminate(true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
             PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
             FileWriter w = new FileWriter(currentMgfFile);
             BufferedWriter bw = new BufferedWriter(w);
@@ -2075,8 +2075,8 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                 return false;
             }
 
-            progressDialog.setIndeterminate(false);
-            progressDialog.setMaxProgressValue(spectraCount);
+            progressDialog.setPrimaryProgressCounterIndeterminate(false);
+            progressDialog.setMaxPrimaryProgressCounter(spectraCount);
             progressDialog.setValue(0);
 
             int validSpectrumCount = 0;
@@ -2097,7 +2097,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
                     validSpectrumCount++;
                 }
 
-                progressDialog.increaseProgressValue();
+                progressDialog.increasePrimaryProgressCounter();
             }
 
             if (validSpectrumCount == 0) {

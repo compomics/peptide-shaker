@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,18 +49,18 @@ public class InputMap {
     public void estimateProbabilities(WaitingHandler waitingHandler) {
 
         int max = getNEntries();
-        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-        waitingHandler.setMaxSecondaryProgressValue(max);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+        waitingHandler.setMaxSecondaryProgressCounter(max);
 
         for (TargetDecoyMap hitmap : inputMap.values()) {
-            waitingHandler.increaseSecondaryProgressValue();
+            waitingHandler.increaseSecondaryProgressCounter();
             hitmap.estimateProbabilities(waitingHandler);
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
         }
 
-        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
     }
 
     /**

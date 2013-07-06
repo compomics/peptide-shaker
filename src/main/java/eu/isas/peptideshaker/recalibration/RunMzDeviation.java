@@ -5,7 +5,7 @@ import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.*;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.math.BasicMathFunctions;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import com.compomics.util.preferences.AnnotationPreferences;
@@ -272,8 +272,8 @@ public class RunMzDeviation {
         identification.loadSpectrumMatches(spectrumFileName, waitingHandler);
 
         if (waitingHandler != null) {
-            waitingHandler.resetSecondaryProgressBar();
-            waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(spectrumFileName).size());
         }
 
         for (String spectrumName : spectrumFactory.getSpectrumTitles(spectrumFileName)) {
@@ -354,7 +354,7 @@ public class RunMzDeviation {
             }
 
             if (waitingHandler != null) {
-                waitingHandler.increaseSecondaryProgressValue();
+                waitingHandler.increaseSecondaryProgressCounter();
             }
         }
 
@@ -362,7 +362,7 @@ public class RunMzDeviation {
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
         ArrayList<Double> keys = new ArrayList<Double>(precursorRawMap.keySet());

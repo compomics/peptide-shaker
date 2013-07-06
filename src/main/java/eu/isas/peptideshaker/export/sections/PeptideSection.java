@@ -9,7 +9,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.export.ExportFeature;
@@ -112,7 +112,7 @@ public class PeptideSection {
             throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
 
@@ -131,19 +131,19 @@ public class PeptideSection {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Peptides. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.resetSecondaryProgressCounter();
         }
         identification.loadPeptideMatches(keys, waitingHandler);
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Loading Peptide Details. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
+            waitingHandler.resetSecondaryProgressCounter();
         }
         identification.loadPeptideMatchParameters(keys, psParameter, waitingHandler);
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Exporting. Please Wait...");
-            waitingHandler.resetSecondaryProgressBar();
-            waitingHandler.setMaxSecondaryProgressValue(keys.size());
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setMaxSecondaryProgressCounter(keys.size());
         }
 
         for (String peptideKey : keys) {
@@ -152,7 +152,7 @@ public class PeptideSection {
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.increaseSecondaryProgressValue();
+                waitingHandler.increaseSecondaryProgressCounter();
             }
 
             if (indexes) {

@@ -4704,7 +4704,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setIndeterminate(true);
+        progressDialog.setPrimaryProgressCounterIndeterminate(true);
         progressDialog.setTitle("Loading Overview. Please Wait...");
 
         new Thread(new Runnable() {
@@ -4730,7 +4730,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                         peptideShakerGUI.catchException(e);
                     }
 
-                    progressDialog.setIndeterminate(true);
+                    progressDialog.setPrimaryProgressCounterIndeterminate(true);
                     progressDialog.setTitle("Preparing Overview. Please Wait..."); // @TODO: not sure why the progress bar seems to be stuck here...
 
                     // change the peptide shaker icon to a "waiting version" // @TODO: not really sure why we need to set this again here, but seems to be needed

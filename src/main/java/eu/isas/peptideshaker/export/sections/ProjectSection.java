@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.ProjectFeatures;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -71,7 +71,7 @@ public class ProjectSection {
     public void writeSection(String experiment, String sample, int replicateNumber, ProjectDetails projectDetails, WaitingHandler waitingHandler) throws IOException {
 
         if (waitingHandler != null) {
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
         if (header) {

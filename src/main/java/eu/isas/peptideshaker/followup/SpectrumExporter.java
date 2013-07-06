@@ -7,7 +7,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -108,8 +108,8 @@ public class SpectrumExporter {
                     if (waitingHandler != null) {
                         waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                         // reset the progress bar
-                        waitingHandler.resetSecondaryProgressBar();
-                        waitingHandler.setMaxSecondaryProgressValue(spectrumFactory.getSpectrumTitles(mgfFile).size());
+                        waitingHandler.resetSecondaryProgressCounter();
+                        waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(mgfFile).size());
                     }
 
                     for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
@@ -121,7 +121,7 @@ public class SpectrumExporter {
                             if (waitingHandler.isRunCanceled()) {
                                 return;
                             }
-                            waitingHandler.increaseSecondaryProgressValue();
+                            waitingHandler.increaseSecondaryProgressCounter();
                         }
                     }
                 } finally {

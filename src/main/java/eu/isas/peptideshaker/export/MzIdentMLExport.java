@@ -246,8 +246,8 @@ public class MzIdentMLExport {
             totalProgress += spectrumFactory.getNSpectra(mgfFile);
         }
         totalProgress = 2 * totalProgress;
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMaxProgressValue(100);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
+        progressDialog.setMaxPrimaryProgressCounter(100);
         progressDialog.setValue(0);
 
         if (prideExportDialog.progressCancelled()) {
@@ -1374,7 +1374,7 @@ public class MzIdentMLExport {
         br.write(getCurrentTabSpace() + "<spectrumList count=\"" + spectrumCounter + "\">" + System.getProperty("line.separator"));
         tabCounter++;
 
-        progressDialog.setIndeterminate(false);
+        progressDialog.setPrimaryProgressCounterIndeterminate(false);
 
         Identification identification = peptideShakerGUI.getIdentification();
 

@@ -20,7 +20,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.general.ExceptionHandler;
 import eu.isas.peptideshaker.PeptideShaker;
-import com.compomics.util.gui.waiting.WaitingHandler;
+import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
@@ -167,15 +167,15 @@ public class FileImporter {
 
         try {
             waitingHandler.appendReport("Importing sequences from " + fastaFile.getName() + ".", true, true);
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
 
             if (waitingHandler.isRunCanceled()) {
                 return;
             }
 
-            waitingHandler.resetSecondaryProgressBar();
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.resetSecondaryProgressCounter();
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
             if (needPeptideMap) {
                 if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) {     // @TODO: should this be overrideable by the user!!!
@@ -193,12 +193,12 @@ public class FileImporter {
 
                     int numberOfSequences = sequenceFactory.getAccessions().size();
 
-                    waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                    waitingHandler.setMaxSecondaryProgressValue(numberOfSequences);
+                    waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                    waitingHandler.setMaxSecondaryProgressCounter(numberOfSequences);
 
                     for (String proteinKey : sequenceFactory.getAccessions()) {
 
-                        waitingHandler.increaseSecondaryProgressValue();
+                        waitingHandler.increaseSecondaryProgressCounter();
 
                         String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
 
@@ -224,14 +224,14 @@ public class FileImporter {
                     }
                     tempMap.clear();
 
-                    waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+                    waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                 } else {
                     waitingHandler.appendReport("The database is too large to be parsed into peptides. Note that X!Tandem peptides might present protein inference issues.", true, true);
                 }
             }
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
-            waitingHandler.increaseProgressValue();
+            waitingHandler.increasePrimaryProgressCounter();
 
         } catch (FileNotFoundException e) {
             System.err.println("File " + fastaFile + " was not found. Please select a different FASTA file.");
@@ -497,7 +497,7 @@ public class FileImporter {
                 identification.setIsDB(false);
             }
 
-            waitingHandler.increaseProgressValue();
+            waitingHandler.increasePrimaryProgressCounter();
 
             for (File idFile : idFiles) {
                 int searchEngine = readerFactory.getSearchEngine(idFile);
@@ -535,7 +535,7 @@ public class FileImporter {
                                 }
                                 missingFiles += mgfFile.getName();
                             }
-                            waitingHandler.displayMessage("MGF files missing", missingFiles, 1);
+                            waitingHandler.appendReport("MGF files missing: " + missingFiles, true, true);
                             return 1;
                         }
                         waitingHandler.appendReport("Processing files with the new input.", true, true);
@@ -569,7 +569,7 @@ public class FileImporter {
                     waitingHandler.appendReport("File import completed. "
                             + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra.", true, true);
                     waitingHandler.appendReport("[" + nRetained + " first hits passed the initial filtering]", true, true);
-                    waitingHandler.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
+                    waitingHandler.increaseSecondaryProgressCounter(spectrumFiles.size() - mgfUsed.size());
                     peptideShaker.setProteinCountMap(proteinCount);
                     peptideShaker.processIdentifications(inputMap, waitingHandler, searchParameters, annotationPreferences,
                             idFilter, processingPreferences, ptmScoringPreferences, spectrumCountingPreferences);
@@ -642,7 +642,7 @@ public class FileImporter {
 
             boolean idReport;
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-            waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(true);
             waitingHandler.appendReport("Parsing " + idFile.getName() + ".", true, true);
             IdfileReader fileReader;
             ArrayList<Integer> ignoredOMSSAModifications = new ArrayList<Integer>();
@@ -659,7 +659,7 @@ public class FileImporter {
                 waitingHandler.setRunCanceled();
             }
 
-            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             HashSet<SpectrumMatch> tempSet = null;
             try {
                 tempSet = fileReader.getAllSpectrumMatches(waitingHandler);
@@ -681,7 +681,7 @@ public class FileImporter {
                         peptideIssue = 0,
                         precursorIssue = 0,
                         ptmIssue = 0;
-                waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
+                waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                 idReport = false;
                 ArrayList<Integer> charges = new ArrayList<Integer>();
                 double maxErrorPpm = 0, maxErrorDa = 0;
@@ -728,8 +728,8 @@ public class FileImporter {
                         File spectrumFile = spectrumFiles.get(fileName);
                         if (spectrumFile != null && spectrumFile.exists()) {
                             importSpectra(fileName);
-                            waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                            waitingHandler.setMaxSecondaryProgressValue(numberOfMatches);
+                            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                            waitingHandler.setMaxSecondaryProgressCounter(numberOfMatches);
                             mgfUsed.add(fileName);
                             projectDetails.addSpectrumFile(spectrumFile);
                             nSpectra += spectrumFactory.getNSpectra(fileName);
@@ -987,7 +987,7 @@ public class FileImporter {
                         return;
                     }
 
-                    waitingHandler.setSecondaryProgressValue(++progress);
+                    waitingHandler.setSecondaryProgressCounter(++progress);
                 }
 
                 metrics.addFoundCharges(charges);
@@ -1004,12 +1004,12 @@ public class FileImporter {
                     System.gc();
                     if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
                         waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
-                        waitingHandler.setSecondaryProgressDialogIndeterminate(false);
+                        waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                         double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
                         share = Math.min(share, 1);
                         peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                         System.gc();
-                        waitingHandler.setSecondaryProgressDialogIndeterminate(true);
+                        waitingHandler.setSecondaryProgressCounterIndeterminate(true);
                     }
                 }
                 projectDetails.addIdentificationFiles(idFile);
@@ -1040,7 +1040,7 @@ public class FileImporter {
                     waitingHandler.appendReport(report, true, true);
                 }
             }
-            waitingHandler.increaseProgressValue();
+            waitingHandler.increasePrimaryProgressCounter();
         }
 
         /**
@@ -1055,14 +1055,14 @@ public class FileImporter {
 
             try {
                 waitingHandler.appendReport("Importing " + targetFileName, true, true);
-                waitingHandler.setSecondaryProgressDialogIndeterminate(false);
-                waitingHandler.resetSecondaryProgressBar();
+                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                waitingHandler.resetSecondaryProgressCounter();
                 spectrumFactory.addSpectra(spectrumFile, waitingHandler);
                 if (waitingHandler.isRunCanceled()) {
                     return;
                 }
-                waitingHandler.resetSecondaryProgressBar();
-                waitingHandler.increaseProgressValue();
+                waitingHandler.resetSecondaryProgressCounter();
+                waitingHandler.increasePrimaryProgressCounter();
                 waitingHandler.appendReport(targetFileName + " imported.", true, true);
             } catch (Exception e) {
                 waitingHandler.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".", true, true);
