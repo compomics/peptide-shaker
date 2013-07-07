@@ -95,10 +95,10 @@ public class ProgenesisExport {
                     }
                     identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
                     if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                        waitingHandler.setWaitingText("Exporting Spectra - Writing File. Please Wait...");
                         // reset the progress bar
                         waitingHandler.resetSecondaryProgressCounter();
-                        waitingHandler.setMaxSecondaryProgressCounter(spectrumFactory.getSpectrumTitles(mgfFile).size());
+                        waitingHandler.setMaxSecondaryProgressCounter(identification.getSpectrumIdentificationSize());
                     }
 
                     for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
@@ -153,12 +153,12 @@ public class ProgenesisExport {
                                     }
                                 }
                             }
-                        }
-                        if (waitingHandler != null) {
-                            if (waitingHandler.isRunCanceled()) {
-                                return;
-                            }
+                            if (waitingHandler != null) {
+                                if (waitingHandler.isRunCanceled()) {
+                                    return;
+                                }
                             waitingHandler.increaseSecondaryProgressCounter();
+                            }
                         }
                     }
                 }
