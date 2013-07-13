@@ -2225,6 +2225,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     peptideShakerGUI.catchException(e);
                 }
             }
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    updateSelection(true);
+                }
+            });
         }
     }//GEN-LAST:event_peptideTableMouseReleased
 
@@ -4558,7 +4565,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
 
-                // clear the selection in care more than one row was selected for the last peptide
+                // clear the selection in case more than one row was selected for the last peptide
                 psmTable.clearSelection();
 
                 // update the table model
@@ -4685,7 +4692,12 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showReferenceLine(true, 0.02, Color.BLACK);
                 ((JSparklinesMultiIntervalChartTableCellRenderer) peptideTable.getColumn("Start").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 10);
 
-                updateSelection(true);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateSelection(true);
+                    }
+                });
 
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
