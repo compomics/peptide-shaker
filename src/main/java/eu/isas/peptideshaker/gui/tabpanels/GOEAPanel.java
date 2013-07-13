@@ -273,7 +273,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                     proteinTable.getTableHeader().setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-                    // change the peptide shaker icon to a "waiting version"
+                    // change the peptide shaker icon back to the normal version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }
