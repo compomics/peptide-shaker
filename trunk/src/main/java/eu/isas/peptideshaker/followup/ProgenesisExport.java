@@ -33,7 +33,7 @@ public class ProgenesisExport {
     public static final String SEPARATOR = "\t";
 
     /**
-     * Writes a file containing the PSMs in a Progenesis compatible format
+     * Writes a file containing the PSMs in a Progenesis compatible format.
      *
      * @param destinationFile the destination file
      * @param identification the identification
@@ -91,7 +91,7 @@ public class ProgenesisExport {
                     }
                     identification.loadSpectrumMatches(mgfFile, waitingHandler);
                     if (waitingHandler != null) {
-                        waitingHandler.setWaitingText("Exporting Spectra - Loading PSM parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
+                        waitingHandler.setWaitingText("Exporting Spectra - Loading PSM Parameters. Please Wait... (" + (i + 1) + "/" + spectrumFactory.getMgfFileNames().size() + ")");
                     }
                     identification.loadSpectrumMatchParameters(mgfFile, psParameter, waitingHandler);
                     if (waitingHandler != null) {
@@ -157,7 +157,7 @@ public class ProgenesisExport {
                                 if (waitingHandler.isRunCanceled()) {
                                     return;
                                 }
-                            waitingHandler.increaseSecondaryProgressCounter();
+                                waitingHandler.increaseSecondaryProgressCounter();
                             }
                         }
                     }
