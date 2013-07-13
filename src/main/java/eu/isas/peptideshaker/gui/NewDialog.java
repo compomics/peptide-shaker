@@ -205,7 +205,6 @@ public class NewDialog extends javax.swing.JDialog {
         browseDbButton = new javax.swing.JButton();
         clearDbButton = new javax.swing.JButton();
         openDialogHelpJButton = new javax.swing.JButton();
-        exampleFilesLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker - New Project");
@@ -559,20 +558,6 @@ public class NewDialog extends javax.swing.JDialog {
             }
         });
 
-        exampleFilesLabel.setForeground(new java.awt.Color(0, 0, 255));
-        exampleFilesLabel.setText("<html><u><i>Need example files?</i></u></html>");
-        exampleFilesLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                exampleFilesLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exampleFilesLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                exampleFilesLabelMouseExited(evt);
-            }
-        });
-
         javax.swing.GroupLayout sampleDetailsPanelLayout = new javax.swing.GroupLayout(sampleDetailsPanel);
         sampleDetailsPanel.setLayout(sampleDetailsPanelLayout);
         sampleDetailsPanelLayout.setHorizontalGroup(
@@ -588,8 +573,6 @@ public class NewDialog extends javax.swing.JDialog {
                         .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(helpLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17)))
@@ -607,7 +590,6 @@ public class NewDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(openButton)
-                    .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(openDialogHelpJButton)
                     .addComponent(helpLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1121,35 +1103,6 @@ public class NewDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
 
     /**
-     * Change the icon to a hand icon.
-     *
-     * @param evt
-     */
-    private void exampleFilesLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exampleFilesLabelMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_exampleFilesLabelMouseEntered
-
-    /**
-     * Change the icon to the default icon.
-     *
-     * @param evt
-     */
-    private void exampleFilesLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exampleFilesLabelMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_exampleFilesLabelMouseExited
-
-    /**
-     * Open the example file web page.
-     *
-     * @param evt
-     */
-    private void exampleFilesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exampleFilesLabelMouseClicked
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://code.google.com/p/peptide-shaker/downloads/detail?name=peptide-shaker_test_files.zip");
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_exampleFilesLabelMouseClicked
-
-    /**
      * Closes the dialog.
      *
      * @param evt
@@ -1241,7 +1194,6 @@ public class NewDialog extends javax.swing.JDialog {
     private javax.swing.JButton editPreferencesButton;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JButton editSpeciesButton;
-    private javax.swing.JLabel exampleFilesLabel;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JLabel idFilesLabel;
