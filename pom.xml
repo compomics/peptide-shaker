@@ -5,7 +5,7 @@
     <groupId>eu.isas.peptideshaker</groupId>
     <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.22.5</version>
+    <version>0.22.6-beta</version>
     <name>PeptideShaker</name>
     <url>http://peptide-shaker.googlecode.com</url>
 
@@ -334,7 +334,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>mascotdatfile</artifactId>
-            <version>3.4.14</version>
+            <version>3.4.15</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.lowagie</groupId>
