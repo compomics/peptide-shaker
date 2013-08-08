@@ -1114,7 +1114,7 @@ public class PeptideShaker {
      */
     private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingHandler waitingHandler) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, Exception {
 
-        waitingHandler.setWaitingText("Attaching Spectrum Probabilities, building peptides and proteins. Please Wait...");
+        waitingHandler.setWaitingText("Attaching Spectrum Probabilities - Building Peptides and Proteins. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
