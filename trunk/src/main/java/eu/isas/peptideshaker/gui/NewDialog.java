@@ -1590,7 +1590,8 @@ public class NewDialog extends javax.swing.JDialog {
                             } else {
                                 // try to find it in the same folder as the SearchGUI.properties file
                                 if (new File(searchGUIFile.getParentFile(), newFile.getName()).exists()) {
-                                    names.add(new File(searchGUIFile.getParentFile(), newFile.getName()).getName());
+                                    newFile = new File(searchGUIFile.getParentFile(), newFile.getName());
+                                    names.add(newFile.getName());
 
                                     String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
 
@@ -1631,7 +1632,6 @@ public class NewDialog extends javax.swing.JDialog {
     /**
      * Checks whether the FASTA file loaded is UniProt concatenated target
      * decoy.
-     *
      */
     public void checkFastaFile() {
         if (sequenceFactory.getCurrentFastaIndex().getDatabaseType() != DatabaseType.UniProt) {
@@ -1687,30 +1687,27 @@ public class NewDialog extends javax.swing.JDialog {
                             new String[]{"FASTA Import Error.", "File " + finalFile.getAbsolutePath() + " not found."},
                             "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
-                    return;
                 } catch (ClassNotFoundException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             new String[]{"FASTA Import Error.", "File index of " + finalFile.getName() + " could not be imported. Please contact the developers."},
                             "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
-                    return;
                 } catch (StringIndexOutOfBoundsException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             e.getMessage(),
                             "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
-                    return;
                 } catch (IllegalArgumentException e) {
                     progressDialog.setRunFinished();
                     JOptionPane.showMessageDialog(peptideShakerGUI,
                             e.getMessage(),
                             "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
-                    return;
+                } finally {
+                    progressDialog.setRunFinished();
                 }
-                progressDialog.setRunFinished();
             }
         }.start();
     }

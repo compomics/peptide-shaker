@@ -1356,7 +1356,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     }
 
     /**
-     * Sets the selected ion types
+     * Sets the selected ion types.
      */
     private void setIons() {
         if (searchParameters.getIonSearched1() != null) {
