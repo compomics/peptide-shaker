@@ -63,7 +63,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private HashMap<JumpType, String> welcomeText;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
