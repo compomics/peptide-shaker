@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.ptm.ModificationsDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.ptm.PtmDialog;
 import com.compomics.util.gui.ptm.PtmDialogParent;
@@ -268,6 +269,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                 };
             }
         };
+        editModificationsLabel = new javax.swing.JLabel();
         searchGuiParamsPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         fileTxt = new javax.swing.JTextField();
@@ -515,6 +517,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
         });
         availableModsScrollPane.setViewportView(availableModificationsTable);
 
+        editModificationsLabel.setText("<html><a href>Edit</a></html>");
+        editModificationsLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                editModificationsLabelMouseReleased(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                editModificationsLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                editModificationsLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout modProfilePanelLayout = new javax.swing.GroupLayout(modProfilePanel);
         modProfilePanel.setLayout(modProfilePanelLayout);
         modProfilePanelLayout.setHorizontalGroup(
@@ -531,7 +546,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                         .addComponent(removeModification, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(modProfilePanelLayout.createSequentialGroup()
                         .addGroup(modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(availableModsLabel)
+                            .addGroup(modProfilePanelLayout.createSequentialGroup()
+                                .addComponent(availableModsLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(editModificationsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(expectedModsLabel))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -553,7 +571,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
                             .addComponent(removeModification, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addModifications, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(14, 14, 14))
-                    .addComponent(availableModsLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modProfilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(availableModsLabel)
+                        .addComponent(editModificationsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(availableModsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1166,6 +1186,34 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private void addAvailablePtmJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAvailablePtmJMenuItemActionPerformed
         addModificationsActionPerformed(null);
     }//GEN-LAST:event_addAvailablePtmJMenuItemActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void editModificationsLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editModificationsLabelMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_editModificationsLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void editModificationsLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editModificationsLabelMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_editModificationsLabelMouseExited
+
+    /**
+     * Open the modification overview dialog.
+     * 
+     * @param evt 
+     */
+    private void editModificationsLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editModificationsLabelMouseReleased
+        new ModificationsDialog(peptideShakerGUI, this, true); 
+    }//GEN-LAST:event_editModificationsLabelMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem addAvailablePtmJMenuItem;
     private javax.swing.JButton addModifications;
@@ -1177,6 +1225,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
     private javax.swing.JButton cancelButton;
     private javax.swing.JMenuItem editAvailablePtmJMenuItem;
     private javax.swing.JMenuItem editExpectedPtmJMenuItem;
+    private javax.swing.JLabel editModificationsLabel;
     private javax.swing.JPanel enzymeAndFragmentIonsPanel;
     private javax.swing.JComboBox enzymesCmb;
     private javax.swing.JTable expectedModificationsTable;
@@ -1241,9 +1290,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
     /**
      * This method takes the SearchParameters instance and reads the values for
-     * the GUI components from it. Method inspired from searchGUI, would be good
+     * the GUI components from it. Method inspired from SearchGUI, would be good
      * to have a unified panel.
-     *
      */
     public void setScreenProps() {
 
@@ -1692,6 +1740,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog implements PtmD
 
     @Override
     public void updateModifications() {
-        repaintTable();
+        updateModificationLists();
     }
 }
