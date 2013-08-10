@@ -93,35 +93,35 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> ptmTableToolTips;
     /**
-     * The spectrum annotator for the first spectrum
+     * The spectrum annotator for the first spectrum.
      */
     private SpectrumAnnotator annotator = new SpectrumAnnotator();
     /**
-     * The main GUI
+     * The main GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * Map of all peptide keys indexed by their modification status
+     * Map of all peptide keys indexed by their modification status.
      */
     private HashMap<String, ArrayList<String>> peptideMap = new HashMap<String, ArrayList<String>>();
     /**
-     * The modification name for no modification
+     * The modification name for no modification.
      */
     public final static String NO_MODIFICATION = "no modification";
     /**
-     * The displayed identification
+     * The displayed identification.
      */
     private Identification identification;
     /**
-     * The keys of the peptides currently displayed
+     * The keys of the peptides currently displayed.
      */
     private ArrayList<String> displayedPeptides = new ArrayList<String>();
     /**
-     * The keys of the related peptides currently displayed
+     * The keys of the related peptides currently displayed.
      */
     private ArrayList<String> relatedPeptides = new ArrayList<String>();
     /**
-     * boolean indicating whether the related peptide is selected
+     * Boolean indicating whether the related peptide is selected.
      */
     private boolean relatedSelected = false;
     /**

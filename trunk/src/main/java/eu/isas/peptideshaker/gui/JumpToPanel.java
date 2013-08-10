@@ -43,15 +43,15 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<JumpType, ArrayList<String>>();
     /**
-     * currently selected item
+     * Currently selected item.
      */
     private HashMap<JumpType, Integer> currentSelection = new HashMap<JumpType, Integer>();
     /**
-     * the text to display by default.
+     * The text to display by default.
      */
     private HashMap<JumpType, String> lastInput = new HashMap<JumpType, String>();
     /**
-     * the text to display by default.
+     * The text to display by default.
      */
     private HashMap<JumpType, String> lastLabel = new HashMap<JumpType, String>();
     /**
@@ -59,7 +59,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * the text to display by default.
+     * The text to display by default.
      */
     private HashMap<JumpType, String> welcomeText;
     /**
@@ -81,7 +81,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     private int waitingTime = 1000;
 
     /**
-     * Type of item selected
+     * Type of item selected.
      */
     private enum Type {
 
@@ -95,7 +95,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     private HashMap<JumpType, ArrayList<Type>> types = new HashMap<JumpType, ArrayList<Type>>();
 
     /**
-     * Creates a new JumpToPanel
+     * Creates a new JumpToPanel.
      *
      * @param peptideShakerGUI the parent
      */
