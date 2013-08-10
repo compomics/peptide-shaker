@@ -3,6 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.22.6 (August 10. 2013):*
+
+ * FEATURE IMPROVEMENT: Added an edit modifications option to the SearchPreferencesDialog.
+ * FEATURE IMPROVEMENT: Removed spectrum file renaming for Mascot Distiller files. 
+
+ * BUG FIX: Fixed a bug in the handling of missing mgf files.
+
+ * LIBRARY UPDATE: Updated omssa parser to version 1.5.13.
+ * LIBRARY UPDATE: Updated mascotdatfile parser to version 3.4.15.
+ * LIBRARY UPDATE: Updated utilities to version 3.14.19.
+
+----
+
 *Changes in PeptideShaker 0.22.5 (July 14. 2013):*
 
  * FEATURE IMPROVEMENT: Improved the progress display in the Progenesis export.
@@ -14,6 +27,8 @@
  * LIBRARY UPDATE: Updated xtandem parser to version 1.6.2.
  * LIBRARY UPDATE: Updated mascotdatfile parser to version 3.4.14.
  * LIBRARY UPDATE: Updated utilities to version 3.14.16.
+
+Download Count: 115
 
 ----
 
@@ -30,7 +45,7 @@
 
  * LIBRARY UPDATE: Updated utilities to version 3.14.7.
 
-Download Count: 66
+Download Count: 71
 
 ----
 
