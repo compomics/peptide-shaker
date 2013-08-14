@@ -627,6 +627,7 @@ public class NewDialog extends javax.swing.JDialog {
                 editSearchButtonActionPerformed(null);
                 return;
             } else {
+                // set the default enzyme
                 searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             }
         }

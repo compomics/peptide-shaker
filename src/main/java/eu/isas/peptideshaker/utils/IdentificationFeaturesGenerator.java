@@ -1272,6 +1272,7 @@ public class IdentificationFeaturesGenerator {
      * @throws ClassNotFoundException
      */
     public ArrayList<String> getProcessedProteinKeys(WaitingHandler waitingHandler, FilterPreferences filterPreferences) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         if (identificationFeaturesCache.getProteinList() == null) {
             if (waitingHandler != null) {
                 waitingHandler.resetSecondaryProgressCounter();
