@@ -621,10 +621,13 @@ public class NewDialog extends javax.swing.JDialog {
         if (searchTxt.getText().equalsIgnoreCase("Default")) {
             int value = JOptionPane.showConfirmDialog(this,
                     "It seems like you are using the default search parameters without any PTMs.\nContinue anyway?",
-                    "Default Search Parameters?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                    "Default Search Parameters?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-            if (value != JOptionPane.YES_NO_OPTION) {
+            if (value != JOptionPane.YES_OPTION) {
+                editSearchButtonActionPerformed(null);
                 return;
+            } else {
+                searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
             }
         }
 
