@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -1597,6 +1598,7 @@ public class OutputGenerator {
                         writer.write("D-score localization" + SEPARATOR);
                         writer.write("A-score" + SEPARATOR);
                         writer.write("D-score" + SEPARATOR);
+                        writer.write("MD-score" + SEPARATOR);
                         writer.write("# phosphorylations" + SEPARATOR);
                         writer.write("# phosphorylation sites" + SEPARATOR);
                         writer.write("Conflict" + SEPARATOR);
@@ -1716,6 +1718,7 @@ public class OutputGenerator {
                                 String dLocalizations = "";
                                 String aLocalizations = "";
                                 String dScore = "";
+                                String mdScore = "";
                                 String aScore = "";
                                 int conflict = 0;
                                 String[] split = sequence.split("[STY]");
@@ -1759,6 +1762,12 @@ public class OutputGenerator {
                                                 }
                                             }
                                         }
+                                        if (mdScore.equals("")) {
+                                            Double score = PTMLocationScores.getMDScore(spectrumMatch);
+                                            if (score != null) {
+                                                mdScore = score.toString();
+                                            }
+                                        }
                                     }
                                 }
 
@@ -1766,6 +1775,7 @@ public class OutputGenerator {
                                 writer.write(dLocalizations + SEPARATOR);
                                 writer.write(aScore + SEPARATOR);
                                 writer.write(dScore + SEPARATOR);
+                                writer.write(mdScore + SEPARATOR);
                                 writer.write(nPhospho + SEPARATOR);
                                 writer.write(nSites + SEPARATOR);
                                 writer.write(conflict + SEPARATOR);
