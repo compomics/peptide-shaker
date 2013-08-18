@@ -38,6 +38,8 @@ import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.export_graphics.ExportGraphicsDialogParent;
+import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
+import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.IdFilter;
@@ -57,7 +59,6 @@ import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.UserPreferences;
-import com.compomics.util.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.PeptideShakerWrapper;
 import eu.isas.peptideshaker.gui.gettingStarted.GettingStartedDialog;
 import eu.isas.peptideshaker.gui.tabpanels.*;
@@ -102,7 +103,7 @@ import twitter4j.*;
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
-public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent {
+public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGraphicsDialogParent, JavaOptionsDialogParent, SearchSettingsDialogParent {
 
     /**
      * The path to the example dataset.
@@ -329,6 +330,14 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     private boolean isClosing = false;
     /**
+     * The list of the default modifications.
+     */
+    private ArrayList<String> modificationUse = new ArrayList<String>();
+    /**
+     * Default PeptideShaker modifications.
+     */
+    public static final String PEPTIDESHAKER_COMFIGURATION_FILE = "PeptideShaker_configuration.txt";
+    /**
      * The cps parent used to manage the data.
      */
     private CpsParent cpsBean = new CpsParent() {
@@ -494,6 +503,10 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         loadGeneMappings();
         loadEnzymes();
         resetPtmFactory();
+
+        File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
+        File modUseFile = new File(folder, PEPTIDESHAKER_COMFIGURATION_FILE);
+        modificationUse = SearchSettingsDialog.loadModificationsUse(modUseFile);
 
         //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
         IonFactory.getInstance().addDefaultNeutralLoss(NeutralLoss.H2O);
@@ -1828,35 +1841,15 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             setDefaultPreferences();
             searchParameters = getSearchParameters();
         }
-        PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
-        try {
-            ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(getSearchParameters());
-        } catch (Exception e) {
-            catchException(e);
+
+        // set the default enzyme if not set
+        if (searchParameters.getEnzyme() == null) {
+            searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         }
-        SearchPreferencesDialog searchPreferencesDialog =
-                new SearchPreferencesDialog(this, false, searchParameters, ptmToPrideMap,
-                selectedRowHtmlTagFontColor, notSelectedRowHtmlTagFontColor);
 
-        if (!searchPreferencesDialog.isCanceled()) {
-
-            // update only if the new search settings are different from the old ones
-            if (!searchPreferencesDialog.getSearchParameters().equals(searchParameters)) {
-
-                try {
-                    searchPreferencesDialog.updatePtmToPrideMap();
-                } catch (Exception e) {
-                    catchException(e);
-                }
-
-                setSearchParameters(searchPreferencesDialog.getSearchParameters());
-                updateAnnotationPreferencesFromSearchSettings();
-                setSelectedItems();
-                backgroundPanel.revalidate();
-                backgroundPanel.repaint();
-                dataSaved = false;
-            }
-        }
+        new SearchSettingsDialog(this, this, searchParameters,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true, true);
     }//GEN-LAST:event_searchParametersMenuActionPerformed
 
     /**
@@ -3552,8 +3545,18 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      * @param searchParameters the new search parameters
      */
     public void setSearchParameters(SearchParameters searchParameters) {
-        cpsBean.setSearchParameters(searchParameters);
-        PeptideShaker.loadModifications(getSearchParameters());
+
+        // update only if the new search settings are different from the old ones
+        if (!searchParameters.equals(cpsBean.getSearchParameters())) {
+            cpsBean.setSearchParameters(searchParameters);
+            PeptideShaker.loadModifications(getSearchParameters());
+
+            updateAnnotationPreferencesFromSearchSettings();
+            setSelectedItems();
+            backgroundPanel.revalidate();
+            backgroundPanel.repaint();
+            dataSaved = false;
+        }
     }
 
     /**
@@ -4494,6 +4497,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         sequenceFactory.closeFile();
                         GOFactory.getInstance().closeFiles();
                         cpsBean.saveUserPreferences();
+                        saveModificationUsage();
                     }
 
                 } catch (Exception e) {
@@ -4571,6 +4575,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     catchException(e);
                 }
                 progressDialog.setRunFinished();
+                saveModificationUsage();
                 PeptideShakerGUI.this.dispose();
 
                 // @TODO: pass the current project to the new instance of PeptideShaker.
@@ -5059,7 +5064,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
 
                     progressDialog.setTitle("Loading Gene Mappings. Please Wait...");
                     loadGeneMappings(); // have to load the new gene mappings
-                    
+
                     // @TODO: check if the used gene mapping files are available and download if not?
 
                     if (progressDialog.isRunCanceled()) {
@@ -6329,6 +6334,42 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         ((SelfUpdatingTableModel) proteinStructurePanel.getProteinTable().getModel()).fireTableDataChanged();
                     }
                 }
+            }
+        }
+    }
+
+    @Override
+    public File getUserModificationsFile() {
+        return new File(getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
+    }
+
+    @Override
+    public ArrayList<String> getModificationUse() {
+        return modificationUse;
+    }
+
+    /**
+     * This method saves the modification use in the conf folder.
+     */
+    private void saveModificationUsage() {
+
+        File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
+
+        if (!folder.exists()) {
+            JOptionPane.showMessageDialog(this, new String[]{"Unable to find folder: '" + folder.getAbsolutePath() + "'!",
+                "Could not save modification use."}, "Folder Not Found", JOptionPane.WARNING_MESSAGE);
+        } else {
+            File output = new File(folder, PEPTIDESHAKER_COMFIGURATION_FILE);
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+                bw.write("Modification use:" + System.getProperty("line.separator"));
+                bw.write(SearchSettingsDialog.getModificationUseAsString(modificationUse) + System.getProperty("line.separator"));
+                bw.flush();
+                bw.close();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                JOptionPane.showMessageDialog(this, new String[]{"Unable to write file: '" + ioe.getMessage() + "'!",
+                    "Could not save modification use."}, "File Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

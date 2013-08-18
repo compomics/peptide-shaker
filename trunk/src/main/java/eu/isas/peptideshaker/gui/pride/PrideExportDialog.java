@@ -7,8 +7,12 @@ import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewSampleDialog;
 import eu.isas.peptideshaker.gui.pride.annotationdialogs.NewInstrumentDialog;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.gui.error_handlers.HelpDialog;
+import com.compomics.util.gui.ptm.PtmDialog;
+import com.compomics.util.gui.ptm.PtmDialogParent;
 import com.compomics.util.pride.prideobjects.Reference;
 import com.compomics.util.pride.prideobjects.Contact;
 import com.compomics.util.pride.prideobjects.Sample;
@@ -23,7 +27,6 @@ import com.compomics.util.pride.prideobjects.*;
 import com.compomics.util.pride.validation.PrideXmlValidator;
 import eu.isas.peptideshaker.export.PRIDEExport;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -39,7 +42,7 @@ import javax.swing.event.HyperlinkListener;
  *
  * @author Harald Barsnes
  */
-public class PrideExportDialog extends javax.swing.JDialog {
+public class PrideExportDialog extends javax.swing.JDialog implements PtmDialogParent {
 
     /**
      * A simple progress dialog.
@@ -173,7 +176,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
         ArrayList<String> missingMods = checkModifications();
 
         if (!missingMods.isEmpty()) {
-            String report = "PRIDE CV term missing for the following modifications:\n";
+            String report = "PSI-MOD mapping is missing for the following modifications:\n";
             boolean first = true;
             for (String mod : missingMods) {
                 if (first) {
@@ -183,15 +186,13 @@ public class PrideExportDialog extends javax.swing.JDialog {
                 }
                 report += mod;
             }
-            report += ".\nPlease add a CV term by clicking on the corresponding case in the PTM table.";
-            JOptionPane.showMessageDialog(peptideShakerGUI, report, "PTM CV Term(s) Missing.", JOptionPane.WARNING_MESSAGE);
-            SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(peptideShakerGUI, true, searchParameters, ptmToPrideMap, peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
-            if (!searchPreferencesDialog.isCanceled()) {
-                try {
-                    searchPreferencesDialog.updatePtmToPrideMap();
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
+            report += ".";
+            JOptionPane.showMessageDialog(peptideShakerGUI, report, "PTM PSI-MOD Mapping", JOptionPane.WARNING_MESSAGE);
+
+            // have the user add the CV term mappings
+            for (String modName : missingMods) {
+                PTM currentPtm = PTMFactory.getInstance().getPTM(modName);
+                new PtmDialog(this, this, ptmToPrideMap, currentPtm, false);
             }
         }
     }
@@ -1533,5 +1534,10 @@ public class PrideExportDialog extends javax.swing.JDialog {
         prideObjectsFactory.deleteReferenceGroup(referenceGroup);
         insertReferenceOptions();
         referenceGroupsJComboBoxActionPerformed(null);
+    }
+
+    @Override
+    public void updateModifications() {
+        // ignore
     }
 }

@@ -19,6 +19,8 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.experiment.io.massspectrometry.MgfReader;
 import com.compomics.util.gui.protein.SequenceDbDetailsDialog;
+import com.compomics.util.gui.searchsettings.SearchSettingsDialog;
+import com.compomics.util.gui.searchsettings.SearchSettingsDialogParent;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.GenePreferences;
 import com.compomics.util.preferences.IdFilter;
@@ -26,12 +28,10 @@ import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.PeptideShaker;
 import com.compomics.util.preferences.gui.ImportSettingsDialog;
 import com.compomics.util.preferences.gui.ProcessingPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import com.compomics.util.protein.Header.DatabaseType;
-import com.compomics.util.pride.PtmToPrideMap;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -50,7 +50,7 @@ import java.util.Properties;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class NewDialog extends javax.swing.JDialog {
+public class NewDialog extends javax.swing.JDialog implements SearchSettingsDialogParent {
 
     /**
      * The compomics PTM factory.
@@ -1034,30 +1034,20 @@ public class NewDialog extends javax.swing.JDialog {
 }//GEN-LAST:event_browseIdActionPerformed
 
     /**
-     * Open the SearchPreferences dialog.
+     * Open the SearchSettingsDialog dialog.
      *
      * @param evt
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        PtmToPrideMap ptmToPrideMap = new PtmToPrideMap();
-        try {
-            ptmToPrideMap = PtmToPrideMap.loadPtmToPrideMap(searchParameters);
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
+
+        // set the default enzyme if not set
+        if (searchParameters.getEnzyme() == null) {
+            searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
         }
-        SearchPreferencesDialog searchPreferencesDialog = new SearchPreferencesDialog(
-                peptideShakerGUI, true, searchParameters, ptmToPrideMap,
-                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor());
-        if (!searchPreferencesDialog.isCanceled()) {
-            try {
-                searchPreferencesDialog.updatePtmToPrideMap();
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-            }
-            searchParameters = searchPreferencesDialog.getSearchParameters();
-            searchTxt.setText("user defined");
-            validateInput();
-        }
+
+        new SearchSettingsDialog(peptideShakerGUI, this, searchParameters,
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")), true, true);
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
     /**
@@ -1758,5 +1748,37 @@ public class NewDialog extends javax.swing.JDialog {
         ep.setEditable(false);
 
         JOptionPane.showMessageDialog(progressDialog, ep, "Database Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public String getLastSelectedFolder() {
+        return peptideShakerGUI.getLastSelectedFolder();
+    }
+
+    @Override
+    public void setLastSelectedFolder(String lastSelectedFolder) {
+        peptideShakerGUI.setLastSelectedFolder(lastSelectedFolder);
+    }
+
+    @Override
+    public File getUserModificationsFile() {
+        return new File(peptideShakerGUI.getJarFilePath(), PeptideShaker.USER_MODIFICATIONS_FILE);
+    }
+
+    @Override
+    public SearchParameters getSearchParameters() {
+        return searchParameters;
+    }
+
+    @Override
+    public void setSearchParameters(SearchParameters searchParameters) {
+        this.searchParameters = searchParameters;
+        searchTxt.setText("user defined");
+        validateInput();
+    }
+
+    @Override
+    public ArrayList<String> getModificationUse() {
+        return peptideShakerGUI.getModificationUse();
     }
 }
