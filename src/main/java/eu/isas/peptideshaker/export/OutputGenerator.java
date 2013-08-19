@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.ModificationProfile;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -48,7 +49,6 @@ import no.uib.jsparklines.data.XYDataPoint;
 public class OutputGenerator {
 
     // @TODO: this class shall evolve to something gui independent or will disappear
-
     /**
      * The main GUI.
      */
@@ -1595,9 +1595,10 @@ public class OutputGenerator {
                         writer.write("Sequence" + SEPARATOR);
                         writer.write("Modification(s)" + SEPARATOR);
                         writer.write("A-score localization" + SEPARATOR);
-                        writer.write("D-score localization" + SEPARATOR);
                         writer.write("A-score" + SEPARATOR);
+                        writer.write("D-score localization" + SEPARATOR);
                         writer.write("D-score" + SEPARATOR);
+                        writer.write("MD-score localization" + SEPARATOR);
                         writer.write("MD-score" + SEPARATOR);
                         writer.write("# phosphorylations" + SEPARATOR);
                         writer.write("# phosphorylation sites" + SEPARATOR);
@@ -1718,6 +1719,7 @@ public class OutputGenerator {
                                 String dLocalizations = "";
                                 String aLocalizations = "";
                                 String dScore = "";
+                                String mdLocation = "";
                                 String mdScore = "";
                                 String aScore = "";
                                 int conflict = 0;
@@ -1763,18 +1765,47 @@ public class OutputGenerator {
                                             }
                                         }
                                         if (mdScore.equals("")) {
-                                            Double score = PTMLocationScores.getMDScore(spectrumMatch);
-                                            if (score != null) {
-                                                mdScore = score.toString();
+                                            PeptideAssumption mascotAssumption = null;
+                                            double bestScore = 0;
+                                            for (ArrayList<PeptideAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
+                                                for (PeptideAssumption peptideAssumption : peptideAssumptionList) {
+                                                    MascotScore mascotScore = new MascotScore();
+                                                    mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
+                                                    if (mascotScore.getScore() > bestScore) {
+                                                        mascotAssumption = peptideAssumption;
+                                                        bestScore = mascotScore.getScore();
+                                                    }
+                                                }
+                                            }
+                                            if (mascotAssumption != null) {
+                                                Peptide mascotPeptide = mascotAssumption.getPeptide();
+                                                Double score = PTMLocationScores.getMDScore(spectrumMatch, mascotPeptide);
+                                                if (score != null) {
+                                                    mdScore = score.toString();
+                                                }
+                                                ArrayList<Integer> sites = new ArrayList<Integer>();
+                                                for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
+                                                    if (modificationMatch.getTheoreticPtm().contains("phospho")) {
+                                                        sites.add(modificationMatch.getModificationSite());
+                                                    }
+                                                }
+                                                Collections.sort(sites);
+                                                for (int site : sites) {
+                                                    if (!mdLocation.equals("")) {
+                                                        mdLocation += ", ";
+                                                    }
+                                                    mdLocation += site;
+                                                }
                                             }
                                         }
                                     }
                                 }
 
                                 writer.write(aLocalizations + SEPARATOR);
-                                writer.write(dLocalizations + SEPARATOR);
                                 writer.write(aScore + SEPARATOR);
+                                writer.write(dLocalizations + SEPARATOR);
                                 writer.write(dScore + SEPARATOR);
+                                writer.write(mdLocation + SEPARATOR);
                                 writer.write(mdScore + SEPARATOR);
                                 writer.write(nPhospho + SEPARATOR);
                                 writer.write(nSites + SEPARATOR);
