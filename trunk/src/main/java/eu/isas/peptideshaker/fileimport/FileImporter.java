@@ -15,6 +15,7 @@ import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
+import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -26,6 +27,7 @@ import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import com.compomics.util.preferences.ProcessingPreferences;
+import com.compomics.util.preferences.UtilitiesUserPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.InputMap;
@@ -78,18 +80,6 @@ public class FileImporter {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance(30000);
     /**
-     * Peptide to protein map: peptide sequence -> protein accessions.
-     */
-    private HashMap<String, ArrayList<String>> sharedPeptides = new HashMap<String, ArrayList<String>>();
-    /**
-     * Peptide to protein map: peptide sequence -> protein accessions.
-     */
-    private HashMap<String, ArrayList<String>> foundSharedPeptides = new HashMap<String, ArrayList<String>>();
-    /**
-     * db processing disabled if no X!Tandem file is selected.
-     */
-    private boolean needPeptideMap = false;
-    /**
      * If a Mascot dat file is bigger than this size, an indexed parsing will be
      * used.
      */
@@ -104,6 +94,10 @@ public class FileImporter {
      * resolution in X!Tandem result files.
      */
     public static final double ptmMassTolerance = 0.01;
+    /**
+     * The protein tree used to map peptides on protein sequences
+     */
+    public ProteinTree proteinTree;
 
     /**
      * Constructor for the importer.
@@ -177,58 +171,19 @@ public class FileImporter {
             waitingHandler.resetSecondaryProgressCounter();
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
 
-            if (needPeptideMap) {
-                if (sequenceFactory.getNTargetSequences() < 2 * sequenceFactory.getnCache()) {     // @TODO: should this be overrideable by the user!!!
-                    waitingHandler.appendReport("Creating peptide to protein map.", true, true);
-
-                    Enzyme enzyme = searchParameters.getEnzyme();
-                    if (enzyme == null) {
-                        throw new NullPointerException("Enzyme not found");
-                    }
-                    int nMissedCleavages = searchParameters.getnMissedCleavages();
-                    int nMin = idFilter.getMinPepLength();
-                    int nMax = idFilter.getMaxPepLength();
-                    sharedPeptides = new HashMap<String, ArrayList<String>>();
-                    HashMap<String, String> tempMap = new HashMap<String, String>();
-
-                    int numberOfSequences = sequenceFactory.getAccessions().size();
-
-                    waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-                    waitingHandler.setMaxSecondaryProgressCounter(numberOfSequences);
-
-                    for (String proteinKey : sequenceFactory.getAccessions()) {
-
-                        waitingHandler.increaseSecondaryProgressCounter();
-
-                        String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
-
-                        for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
-                            ArrayList<String> proteins = sharedPeptides.get(peptide);
-                            if (proteins != null) {
-                                proteins.add(proteinKey);
-                            } else {
-                                String tempProtein = tempMap.get(peptide);
-                                if (tempProtein != null) {
-                                    ArrayList<String> tempList = new ArrayList<String>(2);
-                                    tempList.add(tempProtein);
-                                    tempList.add(proteinKey);
-                                    sharedPeptides.put(peptide, tempList);
-                                } else {
-                                    tempMap.put(peptide, proteinKey);
-                                }
-                            }
-                        }
-                        if (waitingHandler.isRunCanceled()) {
-                            return;
-                        }
-                    }
-                    tempMap.clear();
-
-                    waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                } else {
-                    waitingHandler.appendReport("The database is too large to be parsed into peptides. Note that X!Tandem peptides might present protein inference issues.", true, true);
-                }
+            UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
+            int memoryPreference = userPreferences.getMemoryPreference();
+            int nGbFree = memoryPreference / 1024;
+            if (nGbFree == 0) {
+                nGbFree = 1;
             }
+            int tagLength = 3;
+            if (sequenceFactory.getNTargetSequences() > 100000) {
+                tagLength = 4;
+            }
+
+            proteinTree = new ProteinTree(nGbFree);
+            proteinTree.initiateTree(tagLength, 500, waitingHandler);
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
             waitingHandler.increasePrimaryProgressCounter();
@@ -239,10 +194,15 @@ public class FileImporter {
             waitingHandler.setRunCanceled();
             waitingHandler.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.", true, true);
         } catch (IOException e) {
-            System.err.println("An error occured while loading " + fastaFile + ".");
+            System.err.println("An error occured while indexing " + fastaFile + ".");
             e.printStackTrace();
             waitingHandler.setRunCanceled();
-            waitingHandler.appendReport("An error occured while loading " + fastaFile + ".", true, true);
+            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ".", true, true);
+        } catch (SQLException e) {
+            System.err.println("An error occured while indexing " + fastaFile + ".");
+            e.printStackTrace();
+            waitingHandler.setRunCanceled();
+            waitingHandler.appendReport("An error occured while indexing " + fastaFile + ".", true, true);
         } catch (InterruptedException e) {
             System.err.println("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
@@ -267,76 +227,6 @@ public class FileImporter {
                     + "Please check the Search Parameters. See the log file for details. "
                     + "If the error persists please let us know at http://peptide-shaker.googlecode.com.", true, true);
         }
-    }
-
-    /**
-     * Returns the list of proteins which contain in their sequence the given
-     * peptide sequence.
-     *
-     * @param peptideSequence the tested peptide sequence
-     * @param waitingHandler the handler displaying feedback to the user
-     * @return a list of corresponding proteins found in the database
-     */
-    private ArrayList<String> getProteins(String peptideSequence, WaitingHandler waitingHandler) {
-
-        // @TODO: the use of contains(...) below is very slow!! using something like suffix trees should be a lot faster
-
-        ArrayList<String> result = foundSharedPeptides.get(peptideSequence);
-
-        if (result == null) {
-            result = sharedPeptides.get(peptideSequence);
-
-            boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
-
-            if (result == null) {
-                result = new ArrayList<String>();
-                if (inspectAll) {
-                    try {
-                        for (String proteinKey : sequenceFactory.getAccessions()) {
-                            if (sequenceFactory.getProtein(proteinKey).getSequence().contains(peptideSequence)) {
-                                if (!result.contains(proteinKey)) {
-                                    result.add(proteinKey);
-                                }
-                            }
-                            if (waitingHandler.isRunCanceled()) {
-                                return new ArrayList<String>();
-                            }
-                        }
-                    } catch (IOException e) {
-                        waitingHandler.appendReport(
-                                "An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete."
-                                + "\nPlease restart the analysis.", true, true);
-                        e.printStackTrace();
-                        waitingHandler.setRunCanceled();
-                    } catch (InterruptedException e) {
-                        waitingHandler.appendReport(
-                                "An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete."
-                                + "\nPlease restart the analysis.", true, true);
-                        e.printStackTrace();
-                        waitingHandler.setRunCanceled();
-                    } catch (ClassNotFoundException e) {
-                        waitingHandler.appendReport(
-                                "An error occured while accessing the FASTA file."
-                                + "\nProtein to peptide link will be incomplete."
-                                + "\nPlease restart the analysis.", true, true);
-                        e.printStackTrace();
-                        waitingHandler.setRunCanceled();
-                    } catch (IllegalArgumentException e) {
-                        waitingHandler.appendReport(e.getLocalizedMessage() + ""
-                                + "\nPlease refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
-                                + "\nProtein to peptide link will be incomplete. Please restart the analysis.", true, true);
-                        e.printStackTrace();
-                        waitingHandler.setRunCanceled();
-                    }
-                    sharedPeptides.put(peptideSequence, result);
-                }
-            } else {
-                foundSharedPeptides.put(peptideSequence, result);
-            }
-        }
-        return result;
     }
 
     /**
@@ -499,14 +389,6 @@ public class FileImporter {
 
             waitingHandler.increasePrimaryProgressCounter();
 
-            for (File idFile : idFiles) {
-                int searchEngine = readerFactory.getSearchEngine(idFile);
-                if (searchEngine == Advocate.XTANDEM) {
-                    needPeptideMap = true;
-                    break;
-                }
-            }
-
             try {
                 importSequences(waitingHandler, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
@@ -556,8 +438,6 @@ public class FileImporter {
                     }
 
                     // clear the objects not needed anymore
-                    sharedPeptides.clear();
-                    foundSharedPeptides.clear();
                     singleProteinList.clear();
 
                     if (nRetained == 0) {
@@ -602,7 +482,7 @@ public class FileImporter {
             } catch (Exception e) {
                 waitingHandler.setRunCanceled();
 
-                 System.out.println("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
+                System.out.println("<CompomicsError> PeptideShaker processing failed. See the PeptideShaker log for details. </CompomicsError>");
 
                 if (e instanceof NullPointerException) {
                     waitingHandler.appendReport("An error occured while loading the identification files.", true, true);
@@ -764,22 +644,14 @@ public class FileImporter {
                             Peptide peptide = assumption.getPeptide();
                             String peptideSequence = peptide.getSequence();
 
-                            // remap the proteins for X!Tandem
-                            if (searchEngine == Advocate.XTANDEM) {
-                                ArrayList<String> proteins = getProteins(peptideSequence, waitingHandler);
-                                if (!proteins.isEmpty()) {
-                                    ArrayList<String> parentProteins = new ArrayList<String>();
-                                    for (String accession : proteins) {
-                                        if (!parentProteins.contains(accession)) { // @TODO: should not be needed, but somewhere along the way the same proteins are added more than once...
-                                            parentProteins.add(accession);
-                                        }
-                                    }
-                                    peptide.setParentProteins(parentProteins);
-                                    if (!idFilter.validateProteins(assumption.getPeptide())) {
-                                        match.removeAssumption(assumption);
-                                        proteinIssue++;
-                                    }
-                                }
+                            // remap the proteins
+                            HashMap<String, ArrayList<Integer>> peptideIndex = proteinTree.getProteinMapping(peptideSequence);
+                            ArrayList<String> proteins = new ArrayList<String>(peptideIndex.keySet());
+                            Collections.sort(proteins);
+                            peptide.setParentProteins(proteins);
+                            if (!idFilter.validateProteins(peptide)) {
+                                match.removeAssumption(assumption);
+                                proteinIssue++;
                             }
 
                             // change the search engine modifications into expected modifications
