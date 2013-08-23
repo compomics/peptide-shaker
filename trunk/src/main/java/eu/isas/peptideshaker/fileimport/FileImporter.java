@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.util.preferences.IdFilter;
 import eu.isas.peptideshaker.gui.MgfFilesNotFoundDialog;
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.*;
