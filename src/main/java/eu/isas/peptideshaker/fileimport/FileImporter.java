@@ -172,16 +172,23 @@ public class FileImporter {
 
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
-            int nGbFree = memoryPreference / 1024;
-            if (nGbFree == 0) {
-                nGbFree = 1;
+            int nGbFree = memoryPreference / 1024,
+                    treeSize = 2;
+            if (nGbFree <4) {
+                treeSize = 1;
+            } else if (sequenceFactory.getNTargetSequences() > 100000 && nGbFree > 7) {
+                // Full power baby
+                treeSize = 4;
             }
+            proteinTree = new ProteinTree(treeSize);
+            
             int tagLength = 3;
             if (sequenceFactory.getNTargetSequences() > 100000) {
-                tagLength = 4;
+                // tagLength = 4;
+                if (nGbFree > 4) {
+                    proteinTree.setCacheSize(100000);
+                }
             }
-
-            proteinTree = new ProteinTree(nGbFree);
             proteinTree.initiateTree(tagLength, 500, waitingHandler);
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
@@ -645,6 +652,9 @@ public class FileImporter {
 
                             // remap the proteins
                             HashMap<String, ArrayList<Integer>> peptideIndex = proteinTree.getProteinMapping(peptideSequence);
+                            if (peptideIndex.isEmpty()) {
+                                throw new IllegalArgumentException("No protein found for peptide " + peptideSequence + ".");
+                            }
                             ArrayList<String> proteins = new ArrayList<String>(peptideIndex.keySet());
                             Collections.sort(proteins);
                             peptide.setParentProteins(proteins);
