@@ -45,16 +45,17 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="inclusionListPanel" max="32767" attributes="3"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="inclusionListPanel" alignment="1" max="32767" attributes="3"/>
                       <Component id="deNovoSearchPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="progenesisPanel" alignment="0" max="32767" attributes="1"/>
                       <Component id="proteinsPanel" alignment="0" max="32767" attributes="3"/>
                       <Component id="spectraPanel" alignment="0" max="32767" attributes="3"/>
+                      <Component id="graphDatabasesPanel" alignment="0" max="32767" attributes="3"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -67,6 +68,8 @@
                   <Component id="proteinsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="progenesisPanel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="graphDatabasesPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="deNovoSearchPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -478,7 +481,7 @@
             <Component class="javax.swing.JLabel" name="deNovoGuiLinkLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;available via &lt;a href=\u005c&quot;http://denovogui.googlecode.com\u005c&quot;&gt;DenovoGUI&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="toolTipText" type="java.lang.String" value="Open the DeNovoGUI home page"/>
               </Properties>
               <Events>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="deNovoGuiLinkLabelMouseEntered"/>
@@ -495,6 +498,71 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseClicked"/>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="exportToPepNovoLinkLabelMouseExited"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="graphDatabasesPanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Graph Databases"/>
+              </Border>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="graphDatabasesLabel" min="-2" pref="160" max="-2" attributes="1"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="graphDatabaseFormat" max="32767" attributes="1"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="graphDatabasetButton" min="-2" pref="180" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="graphDatabaseFormat" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="graphDatabasesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="graphDatabasetButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="graphDatabasesLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Database Format"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="graphDatabaseFormat">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="3">
+                    <StringItem index="0" value="Cytoscape"/>
+                    <StringItem index="1" value="Gephi"/>
+                    <StringItem index="2" value="Neo4j"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="graphDatabasetButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export Database"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="graphDatabasetButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
