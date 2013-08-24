@@ -3,6 +3,8 @@ package eu.isas.peptideshaker.gui.exportdialogs;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -13,9 +15,15 @@ import eu.isas.peptideshaker.followup.SpectrumExporter;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.sql.SQLException;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -54,6 +62,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         proteinExportCmb1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         proteinExportCmb2.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         psmSelectionComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        graphDatabaseFormat.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         this.setLocationRelativeTo(peptideShakerGUI);
 
@@ -98,6 +107,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         recalibrateForDenovoCheck = new javax.swing.JCheckBox();
         deNovoGuiLinkLabel = new javax.swing.JLabel();
         exportToPepNovoLinkLabel = new javax.swing.JLabel();
+        graphDatabasesPanel = new javax.swing.JPanel();
+        graphDatabasesLabel = new javax.swing.JLabel();
+        graphDatabaseFormat = new javax.swing.JComboBox();
+        graphDatabasetButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export - Follow Up Analysis");
@@ -333,7 +346,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         recalibrateForDenovoCheck.setOpaque(false);
 
         deNovoGuiLinkLabel.setText("<html>available via <a href=\\\"http://denovogui.googlecode.com\\\">DenovoGUI</a></html>");
-        deNovoGuiLinkLabel.setToolTipText("");
+        deNovoGuiLinkLabel.setToolTipText("Open the DeNovoGUI home page");
         deNovoGuiLinkLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 deNovoGuiLinkLabelMouseEntered(evt);
@@ -390,18 +403,57 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        graphDatabasesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph Databases"));
+        graphDatabasesPanel.setOpaque(false);
+
+        graphDatabasesLabel.setText("Database Format");
+
+        graphDatabaseFormat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Cytoscape", "Gephi", "Neo4j" }));
+
+        graphDatabasetButton.setText("Export Database");
+        graphDatabasetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                graphDatabasetButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout graphDatabasesPanelLayout = new javax.swing.GroupLayout(graphDatabasesPanel);
+        graphDatabasesPanel.setLayout(graphDatabasesPanelLayout);
+        graphDatabasesPanelLayout.setHorizontalGroup(
+            graphDatabasesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphDatabasesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(graphDatabasesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(graphDatabaseFormat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(graphDatabasetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        graphDatabasesPanelLayout.setVerticalGroup(
+            graphDatabasesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphDatabasesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(graphDatabasesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(graphDatabaseFormat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(graphDatabasesLabel)
+                    .addComponent(graphDatabasetButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(progenesisPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proteinsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(spectraPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -413,6 +465,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(proteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(graphDatabasesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deNovoSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -744,6 +798,179 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_deNovoGuiLinkLabelMouseReleased
 
     /**
+     * Export the data as a graph database.
+     *
+     * @param evt
+     */
+    private void graphDatabasetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphDatabasetButtonActionPerformed
+
+        if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
+                    "Not yet supported.",
+                    "Export Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", peptideShakerGUI.getLastSelectedFolder(), "Database Folder", "Save", false);
+
+        if (selectedFolder != null) {
+
+            peptideShakerGUI.setLastSelectedFolder(selectedFolder.getAbsolutePath());
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Exporting. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+                @Override
+                public void run() {
+
+                    // @TODO: move code below to a gui independent export option!
+
+                    boolean exported = false;
+
+                    // database graph formats info:
+                    // cytoscape: http://cytoscape.org/manual/Cytoscape2_6Manual.html#Import Free-Format Table Files
+                    // gephi: https://gephi.org/users/supported-graph-formats/spreadsheet/
+                    // neo4j: http://blog.neo4j.org/2013/03/importing-data-into-neo4j-spreadsheet.html
+
+                    try {
+                        // write the nodes
+                        Writer nodeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "nodes.txt")));
+                        Writer edgeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "edges.txt")));
+
+                        // write the header
+                        if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Cytoscape")) {
+                            nodeWriter.write("id\tlabel\ttype\tvalidated\tdecoy\n");
+                            edgeWriter.write("source\ttarget\tinteraction\n");
+                        } else if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Gephi")) {
+                            nodeWriter.write("id\tlabel\ttype\tvalidated\tdecoy\n");
+                            edgeWriter.write("source\ttarget\tlabel\n");
+                        } else if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+                            // @TODO: implement me!
+                        }
+
+
+                        // write the protein nodes
+                        progressDialog.setTitle("Getting Protein Details. Please Wait...");
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                        peptideShakerGUI.getIdentification().loadProteinMatches(progressDialog);
+//
+                        // @TODO: the below code couldn't be used as it deals with protein groups and not individual proteins
+//                        progressDialog.setTitle("Writing Protein Details. Please Wait...");
+//                        progressDialog.resetPrimaryProgressCounter();
+//                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+//
+//                        for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+//                            PSParameter probabilities = new PSParameter();
+//                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(proteinKey, probabilities);
+//                            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+//                            nodeWriter.write(proteinKey + "\t" + proteinMatch.getMainMatch() + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+//                            progressDialog.increasePrimaryProgressCounter();
+//                        }
+
+                        // write the peptide nodes
+                        progressDialog.setTitle("Getting Peptide Details. Please Wait...");
+                        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                        peptideShakerGUI.getIdentification().loadPeptideMatches(progressDialog);
+
+                        progressDialog.setTitle("Writing Peptide Details. Please Wait...");
+                        progressDialog.resetPrimaryProgressCounter();
+                        progressDialog.setMaxPrimaryProgressCounter(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+
+                        for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+
+                            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                            PSParameter probabilities = new PSParameter();
+                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities);
+
+                            // write the peptide node
+                            nodeWriter.write(peptideKey + "\t"
+                                    + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false)
+                                    + "\tpeptide" + "\t" + probabilities.isValidated() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy() + "\n"); // @TODO: add more information?
+
+                            // write the peptide to protein edge and the protein nodes
+                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+
+                                // write the peptide to protein edge
+                                edgeWriter.write(peptideKey + "\t" + protein + "\tpeptide_to_protein\n");
+
+                                // write the protein nodes
+                                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(protein);
+                                if (proteinMatch != null) {
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(protein, probabilities);
+                                    nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+                                } else {
+                                    nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + "false" + "\t" + SequenceFactory.getInstance().isDecoyAccession(protein) + "\n"); // @TODO: add more information?
+                                }
+                            }
+
+                            progressDialog.increasePrimaryProgressCounter();
+                        }
+
+
+                        // write the spectrum nodes
+                        // @TODO: implement me
+
+
+                        // @TODO: implement other node types
+
+                        nodeWriter.close();
+                        edgeWriter.close();
+
+                        exported = true;
+                    } catch (IOException e) {
+                        progressDialog.setRunCanceled();
+                        peptideShakerGUI.catchException(e);
+                    } catch (ClassNotFoundException e) {
+                        progressDialog.setRunCanceled();
+                        peptideShakerGUI.catchException(e);
+                    } catch (IllegalArgumentException e) {
+                        progressDialog.setRunCanceled();
+                        peptideShakerGUI.catchException(e);
+                    } catch (SQLException e) {
+                        progressDialog.setRunCanceled();
+                        peptideShakerGUI.catchException(e);
+                    } catch (InterruptedException e) {
+                        progressDialog.setRunCanceled();
+                        peptideShakerGUI.catchException(e);
+                    }
+
+
+                    boolean processCancelled = progressDialog.isRunCanceled();
+                    progressDialog.setRunFinished();
+
+                    if (!processCancelled) {
+
+                        if (exported) {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
+                                    "Graph database saved to folder \'" + selectedFolder.getName() + "\'.",
+                                    "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
+                                    "An error occured during exporting. See resources/PeptideShaker.log for details.",
+                                    "Export Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_graphDatabasetButtonActionPerformed
+
+    /**
      * Export proteins.
      *
      * @param accessionsOnly if true, only accession numbers are exported
@@ -914,10 +1141,18 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel exportToPepNovoLinkLabel;
     private javax.swing.JLabel exportToPepNovoPart1Label;
     private javax.swing.JLabel exportToProgenesisLinkLabel;
+    private javax.swing.JComboBox graphDatabaseFormat;
+    private javax.swing.JLabel graphDatabasesLabel;
+    private javax.swing.JPanel graphDatabasesPanel;
+    private javax.swing.JButton graphDatabasetButton;
     private javax.swing.JLabel includeValidatedPsmsLabel;
+    private javax.swing.JLabel includeValidatedPsmsLabel1;
     private javax.swing.JButton inclusionListButton;
+    private javax.swing.JButton inclusionListButton1;
     private javax.swing.JComboBox inclusionListFormat;
+    private javax.swing.JComboBox inclusionListFormat1;
     private javax.swing.JPanel inclusionListPanel;
+    private javax.swing.JPanel inclusionListPanel1;
     private javax.swing.JPanel progenesisPanel;
     private javax.swing.JComboBox proteinExportCmb1;
     private javax.swing.JComboBox proteinExportCmb2;
