@@ -316,6 +316,10 @@
                     <artifactId>swing-layout</artifactId>
                     <groupId>org.swinglabs</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>sqlite-jdbc</artifactId>
+                    <groupId>org.xerial</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         
