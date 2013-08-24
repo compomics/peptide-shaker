@@ -184,7 +184,7 @@ public class FileImporter {
             
             int tagLength = 3;
             if (sequenceFactory.getNTargetSequences() > 100000) {
-                // tagLength = 4;
+                 tagLength = 4;
                 if (nGbFree > 4) {
                     proteinTree.setCacheSize(100000);
                 }
