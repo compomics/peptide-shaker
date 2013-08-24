@@ -189,7 +189,7 @@ public class FileImporter {
                     proteinTree.setCacheSize(100000);
                 }
             }
-            proteinTree.initiateTree(tagLength, 500, waitingHandler);
+            proteinTree.initiateTree(tagLength, 500, waitingHandler, true);
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
             waitingHandler.increasePrimaryProgressCounter();
