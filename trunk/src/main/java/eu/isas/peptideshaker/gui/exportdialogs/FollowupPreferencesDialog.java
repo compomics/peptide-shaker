@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.sql.SQLException;
+import java.util.HashSet;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -804,13 +805,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void graphDatabasetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_graphDatabasetButtonActionPerformed
 
-        if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-            JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
-                    "Not yet supported.",
-                    "Export Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
         final File selectedFolder = Util.getUserSelectedFolder(this, "Select Result Folder", peptideShakerGUI.getLastSelectedFolder(), "Database Folder", "Save", false);
 
         if (selectedFolder != null) {
@@ -847,10 +841,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     // gephi: https://gephi.org/users/supported-graph-formats/spreadsheet/
                     // neo4j: http://blog.neo4j.org/2013/03/importing-data-into-neo4j-spreadsheet.html
 
+                    // make a list of the proteins added as nodes, as to not add them more than once
+                    HashSet<String> proteinsAdded = new HashSet<String>();
+
                     try {
                         // write the nodes
                         Writer nodeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "nodes.txt")));
                         Writer edgeWriter = new BufferedWriter(new FileWriter(new File(selectedFolder, "edges.txt")));
+
 
                         // write the header
                         if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Cytoscape")) {
@@ -860,9 +858,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             nodeWriter.write("id\tlabel\ttype\tvalidated\tdecoy\n");
                             edgeWriter.write("source\ttarget\tlabel\n");
                         } else if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
-                            // @TODO: implement me!
+                            nodeWriter.write("BEGIN\n");
+                            edgeWriter.write("BEGIN\n");
                         }
-
 
                         // write the protein nodes
                         progressDialog.setTitle("Getting Protein Details. Please Wait...");
@@ -898,27 +896,52 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             probabilities = (PSParameter) peptideShakerGUI.getIdentification().getPeptideMatchParameter(peptideKey, probabilities);
 
                             // write the peptide node
-                            nodeWriter.write(peptideKey + "\t"
-                                    + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false)
-                                    + "\tpeptide" + "\t" + probabilities.isValidated() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy() + "\n"); // @TODO: add more information?
+                            if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+                                nodeWriter.write("create n={id:'" + peptideKey + "', name:'" + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false) + "', type:'Peptide'};\n");
+                            } else {
+                                nodeWriter.write(peptideKey + "\t"
+                                        + peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(peptideShakerGUI.getSearchParameters().getModificationProfile(), false, false, true, false)
+                                        + "\tpeptide" + "\t" + probabilities.isValidated() + "\t" + peptideMatch.getTheoreticPeptide().isDecoy() + "\n"); // @TODO: add more information?
+                            }
 
                             // write the peptide to protein edge and the protein nodes
                             for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
 
-                                // write the peptide to protein edge
-                                edgeWriter.write(peptideKey + "\t" + protein + "\tpeptide_to_protein\n");
+                                // write the protein node
+                                if (!proteinsAdded.contains(protein)) {
+                                    proteinsAdded.add(protein);
+                                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(protein);
+                                    if (proteinMatch != null) {
+                                        probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(protein, probabilities);
 
-                                // write the protein nodes
-                                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(protein);
-                                if (proteinMatch != null) {
-                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getProteinMatchParameter(protein, probabilities);
-                                    nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+                                        if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+                                            nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
+                                        } else {
+                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + probabilities.isValidated() + "\t" + proteinMatch.isDecoy() + "\n"); // @TODO: add more information?
+                                        }
+                                    } else {
+                                        if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+                                            nodeWriter.write("create n={id:'" + protein + "', name:'" + protein + "', type:'Protein'};\n");
+                                        } else {
+                                            nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + "false" + "\t" + SequenceFactory.getInstance().isDecoyAccession(protein) + "\n"); // @TODO: add more information?
+                                        }
+                                    }
+                                }
+
+                                // write the peptide to protein edge
+                                if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+                                    edgeWriter.write("start n1=node:node_auto_index(id='" + peptideKey + "'),n2=node:node_auto_index(id='" + protein + "') create unique n1-[:MAPS_TO]->n2;\n");
                                 } else {
-                                    nodeWriter.write(protein + "\t" + protein + "\tprotein" + "\t" + "false" + "\t" + SequenceFactory.getInstance().isDecoyAccession(protein) + "\n"); // @TODO: add more information?
+                                    edgeWriter.write(peptideKey + "\t" + protein + "\tpeptide_to_protein\n");
                                 }
                             }
 
                             progressDialog.increasePrimaryProgressCounter();
+                        }
+
+                        if (((String) graphDatabaseFormat.getSelectedItem()).equalsIgnoreCase("Neo4j")) {
+                            nodeWriter.write("COMMIT");
+                            edgeWriter.write("COMMIT");
                         }
 
 
@@ -930,6 +953,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                         nodeWriter.close();
                         edgeWriter.close();
+
+                        proteinsAdded.clear();
 
                         exported = true;
                     } catch (IOException e) {
@@ -957,7 +982,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                         if (exported) {
                             JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
-                                    "Graph database saved to folder \'" + selectedFolder.getName() + "\'.",
+                                    "Graph database saved to folder \'" + selectedFolder.getAbsolutePath() + "\'.",
                                     "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(FollowupPreferencesDialog.this,
