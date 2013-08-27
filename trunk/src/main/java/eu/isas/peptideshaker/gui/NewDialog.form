@@ -33,7 +33,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="sampleDetailsPanel" min="-2" max="-2" attributes="0"/>
+          <Component id="sampleDetailsPanel" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -51,18 +51,18 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                          <Component id="aboutButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="peptideShakerHomePageLabel" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                          <Component id="openButton" min="-2" pref="141" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="projectDetailsPanel" alignment="0" max="32767" attributes="2"/>
                       <Component id="inputFilesPanel" alignment="0" max="32767" attributes="2"/>
                       <Component id="processingParametersPanel" alignment="0" max="32767" attributes="2"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                          <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="openButton" min="-2" pref="141" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -77,11 +77,11 @@
                   <Component id="inputFilesPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="processingParametersPanel" min="-2" max="-2" attributes="1"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="openButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="openDialogHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
-                      <Component id="helpLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="aboutButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="peptideShakerHomePageLabel" alignment="2" min="-2" pref="45" max="-2" attributes="0"/>
+                      <Component id="openButton" alignment="2" min="-2" pref="53" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -102,7 +102,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Create!"/>
+            <Property name="text" type="java.lang.String" value="Load Data!"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
@@ -250,16 +250,6 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="helpLabel">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-              <FontInfo relative="true">
-                <Font component="helpLabel" italic="true" property="font" relativeSize="true" size="0"/>
-              </FontInfo>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Insert the required information (*) and click Create to load and view the results."/>
-          </Properties>
-        </Component>
         <Container class="javax.swing.JPanel" name="processingParametersPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -282,13 +272,13 @@
                           </Group>
                           <Component id="importFiltersLabel1" min="-2" pref="131" max="-2" attributes="1"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="importFilterTxt" pref="486" max="32767" attributes="3"/>
                           <Component id="preferencesTxt" pref="486" max="32767" attributes="3"/>
                           <Component id="searchTxt" alignment="1" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="editPreferencesButton" max="32767" attributes="1"/>
                           <Component id="editSearchButton" alignment="1" max="32767" attributes="1"/>
@@ -307,13 +297,13 @@
                           <Component id="searchTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editSearchButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="importFiltersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="importFilterTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editImportFilterButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="importFiltersLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="preferencesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -339,7 +329,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="searchParamsLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Search Parameters"/>
+                <Property name="text" type="java.lang.String" value="Search Settings"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="searchTxt">
@@ -414,9 +404,9 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="spectrumFilesLabel" min="-2" pref="130" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="spectrumFilesTxt" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="browseSpectra" linkSize="4" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="clearSpectra" linkSize="4" min="-2" max="-2" attributes="0"/>
@@ -445,14 +435,14 @@
                           <Component id="clearId" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseId" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="spectrumFilesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="clearSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumFilesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="clearDbButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseDbButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -557,12 +547,12 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="openDialogHelpJButton">
+        <Component class="javax.swing.JButton" name="aboutButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/peptide-shaker-medium-orange-shadow.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Help"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
@@ -570,9 +560,20 @@
             <Property name="contentAreaFilled" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="openDialogHelpJButtonMouseEntered"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="openDialogHelpJButtonMouseExited"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openDialogHelpJButtonActionPerformed"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="aboutButtonMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="aboutButtonMouseExited"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="peptideShakerHomePageLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Please cite PeptideShaker as &lt;a href=&quot;http://peptide-shaker.googlecode.com&quot;&gt;PeptideShaker (http://peptide-shaker.googlecode.com)&lt;/a&gt;.&lt;/html&gt;&#xa;&#xa;"/>
+            <Property name="toolTipText" type="java.lang.String" value="Open the PeptideShaker web page"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerHomePageLabelMouseClicked"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerHomePageLabelMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideShakerHomePageLabelMouseExited"/>
           </Events>
         </Component>
       </SubComponents>
