@@ -256,7 +256,7 @@ public abstract class CpsParent extends UserPreferencesParent {
     }
 
     /**
-     * Loads the FASTA file in the sequence factory
+     * Loads the FASTA file in the sequence factory.
      *
      * @param folder a folder to look into, the user last selected folder for
      * instance, can be null
@@ -265,7 +265,6 @@ public abstract class CpsParent extends UserPreferencesParent {
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
-     *
      * @return a boolean indicating whether the loading was successful
      */
     public boolean loadFastaFile(File folder, WaitingHandler waitingHandler) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -279,15 +278,15 @@ public abstract class CpsParent extends UserPreferencesParent {
         File dataFolder = new File(projectFolder, "data");
 
         if (providedFastaLocation.exists()) {
-            sequenceFactory.loadFastaFile(providedFastaLocation);
+            sequenceFactory.loadFastaFile(providedFastaLocation, waitingHandler);
         } else if (folder != null && new File(folder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(folder, fileName));
+            sequenceFactory.loadFastaFile(new File(folder, fileName), waitingHandler);
             searchParameters.setFastaFile(new File(folder, fileName));
         } else if (new File(projectFolder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(projectFolder, fileName));
+            sequenceFactory.loadFastaFile(new File(projectFolder, fileName), waitingHandler);
             searchParameters.setFastaFile(new File(projectFolder, fileName));
         } else if (new File(dataFolder, fileName).exists()) {
-            sequenceFactory.loadFastaFile(new File(dataFolder, fileName));
+            sequenceFactory.loadFastaFile(new File(dataFolder, fileName), waitingHandler);
             searchParameters.setFastaFile(new File(dataFolder, fileName));
         } else {
             return false;

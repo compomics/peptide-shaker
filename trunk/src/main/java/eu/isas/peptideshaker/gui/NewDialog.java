@@ -1091,7 +1091,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         ImportSettingsDialog importSettingsDialog = new ImportSettingsDialog(this, peptideShakerGUI.getIdFilter(), true);
         IdFilter newFilter = importSettingsDialog.getFilter();
         if (newFilter != null) {
-            idFilesTxt.setText("User defined");
+            idFilesTxt.setText("User Defined");
             peptideShakerGUI.setIdFilter(newFilter);
         }
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
@@ -1109,7 +1109,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else if (!currentFastaFile.equals(sequenceFactory.getCurrentFastaFile())) {
+        } else if (!currentFastaFile.equals(sequenceFactory.getCurrentFastaFile()) && currentFastaFile.exists()) {
             loadFastaFile(currentFastaFile);
         }
         this.setVisible(false);
@@ -1215,15 +1215,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private javax.swing.JLabel spectrumFilesLabel;
     private javax.swing.JTextField spectrumFilesTxt;
     // End of variables declaration//GEN-END:variables
-
-    /**
-     * Sets the search parameters field to the given text.
-     *
-     * @param text
-     */
-    public void updateSearchParamsField(String text) {
-        searchTxt.setText(text);
-    }
 
     /**
      * Validates the input parameters.
@@ -1773,7 +1764,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     @Override
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
-        searchTxt.setText("user defined");
+        if (searchParameters.getParametersFile() != null) {
+            searchTxt.setText(searchParameters.getParametersFile().getName().substring(0, searchParameters.getParametersFile().getName().lastIndexOf(".")));
+        } else {
+             searchTxt.setText("User Defined");
+        }
+        fastaFileTxt.setText(searchParameters.getFastaFile().getName());
         validateInput();
     }
 
