@@ -4,7 +4,6 @@ import com.compomics.util.gui.gene_mapping.SpeciesDialog;
 import com.compomics.util.gui.filehandling.FileSelectionDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.Util;
-import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
@@ -180,7 +179,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         speciesLabel = new javax.swing.JLabel();
         speciesTextField = new javax.swing.JTextField();
         editSpeciesButton = new javax.swing.JButton();
-        helpLabel = new javax.swing.JLabel();
         processingParametersPanel = new javax.swing.JPanel();
         importFilterTxt = new javax.swing.JTextField();
         importFiltersLabel = new javax.swing.JLabel();
@@ -204,7 +202,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         fastaFileTxt = new javax.swing.JTextField();
         browseDbButton = new javax.swing.JButton();
         clearDbButton = new javax.swing.JButton();
-        openDialogHelpJButton = new javax.swing.JButton();
+        aboutButton = new javax.swing.JButton();
+        peptideShakerHomePageLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker - New Project");
@@ -220,7 +219,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         openButton.setBackground(new java.awt.Color(0, 153, 0));
         openButton.setFont(openButton.getFont().deriveFont(openButton.getFont().getStyle() | java.awt.Font.BOLD));
         openButton.setForeground(new java.awt.Color(255, 255, 255));
-        openButton.setText("Create!");
+        openButton.setText("Load Data!");
         openButton.setEnabled(false);
         openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -323,9 +322,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        helpLabel.setFont(helpLabel.getFont().deriveFont((helpLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        helpLabel.setText("Insert the required information (*) and click Create to load and view the results.");
-
         processingParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
         processingParametersPanel.setOpaque(false);
 
@@ -335,7 +331,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         importFiltersLabel.setText("Import Filters");
 
-        searchParamsLabel.setText("Search Parameters");
+        searchParamsLabel.setText("Search Settings");
 
         searchTxt.setEditable(false);
         searchTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -399,12 +395,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     .addComponent(searchParamsLabel)
                     .addComponent(searchTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editSearchButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importFiltersLabel)
                     .addComponent(importFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editImportFilterButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importFiltersLabel1)
                     .addComponent(preferencesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -524,13 +520,13 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     .addComponent(idFilesLabel)
                     .addComponent(clearId)
                     .addComponent(browseId))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(spectrumFilesLabel)
                     .addComponent(clearSpectra)
                     .addComponent(browseSpectra)
                     .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearDbButton)
                     .addComponent(browseDbButton)
@@ -539,22 +535,36 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        openDialogHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        openDialogHelpJButton.setToolTipText("Help");
-        openDialogHelpJButton.setBorder(null);
-        openDialogHelpJButton.setBorderPainted(false);
-        openDialogHelpJButton.setContentAreaFilled(false);
-        openDialogHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker-medium-orange-shadow.png"))); // NOI18N
+        aboutButton.setToolTipText("Open the PeptideShaker web page");
+        aboutButton.setBorder(null);
+        aboutButton.setBorderPainted(false);
+        aboutButton.setContentAreaFilled(false);
+        aboutButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                openDialogHelpJButtonMouseEntered(evt);
+                aboutButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                openDialogHelpJButtonMouseExited(evt);
+                aboutButtonMouseExited(evt);
             }
         });
-        openDialogHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+        aboutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openDialogHelpJButtonActionPerformed(evt);
+                aboutButtonActionPerformed(evt);
+            }
+        });
+
+        peptideShakerHomePageLabel.setText("<html>Please cite PeptideShaker as <a href=\"http://peptide-shaker.googlecode.com\">PeptideShaker (http://peptide-shaker.googlecode.com)</a>.</html>\n\n");
+        peptideShakerHomePageLabel.setToolTipText("Open the PeptideShaker web page");
+        peptideShakerHomePageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                peptideShakerHomePageLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                peptideShakerHomePageLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                peptideShakerHomePageLabelMouseExited(evt);
             }
         });
 
@@ -565,17 +575,17 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(aboutButton)
+                        .addGap(71, 71, 71)
+                        .addComponent(peptideShakerHomePageLabel)
+                        .addGap(44, 44, 44)
+                        .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22))
                     .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inputFilesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(processingParametersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(helpLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17)))
+                    .addComponent(processingParametersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sampleDetailsPanelLayout.setVerticalGroup(
@@ -587,11 +597,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 .addComponent(inputFilesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(processingParametersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(openButton)
-                    .addComponent(openDialogHelpJButton)
-                    .addComponent(helpLabel))
+                    .addComponent(aboutButton)
+                    .addComponent(peptideShakerHomePageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -603,7 +613,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(sampleDetailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(sampleDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -1051,38 +1061,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
     /**
-     * Change the cursor to a hand cursor.
-     *
-     * @param evt
-     */
-    private void openDialogHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-}//GEN-LAST:event_openDialogHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     *
-     * @param evt
-     */
-    private void openDialogHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_openDialogHelpJButtonMouseExited
-
-    /**
-     * Open the help dialog.
-     *
-     * @param evt
-     */
-    private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                "PeptideShaker - Help");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_openDialogHelpJButtonActionPerformed
-
-    /**
      * Open the ImportSettingsDialog.
      *
      * @param evt
@@ -1176,7 +1154,67 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             speciesTextField.setText("(not selected)");
         }
     }//GEN-LAST:event_editSpeciesButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void aboutButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_aboutButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void aboutButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_aboutButtonMouseExited
+
+    /**
+     * Open the PeptideShaker web page.
+     * 
+     * @param evt 
+     */
+    private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_aboutButtonActionPerformed
+
+    /**
+     * Open the PeptideShaker web page.
+     * 
+     * @param evt 
+     */
+    private void peptideShakerHomePageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptideShakerHomePageLabelMouseClicked
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void peptideShakerHomePageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_peptideShakerHomePageLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void peptideShakerHomePageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton aboutButton;
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
     private javax.swing.JButton browseSpectra;
@@ -1189,7 +1227,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private javax.swing.JButton editSearchButton;
     private javax.swing.JButton editSpeciesButton;
     private javax.swing.JTextField fastaFileTxt;
-    private javax.swing.JLabel helpLabel;
     private javax.swing.JLabel idFilesLabel;
     private javax.swing.JTextField idFilesTxt;
     private javax.swing.JTextField importFilterTxt;
@@ -1197,7 +1234,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     private javax.swing.JLabel importFiltersLabel1;
     private javax.swing.JPanel inputFilesPanel;
     private javax.swing.JButton openButton;
-    private javax.swing.JButton openDialogHelpJButton;
+    private javax.swing.JLabel peptideShakerHomePageLabel;
     private javax.swing.JTextField preferencesTxt;
     private javax.swing.JPanel processingParametersPanel;
     private javax.swing.JPanel projectDetailsPanel;

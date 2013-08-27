@@ -50,11 +50,12 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                           <Component id="searchFiltersLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="reshakeButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                       </Group>
                       <Component id="selectedProjectPanel" alignment="0" max="32767" attributes="0"/>
                       <Component id="allProjectsPanel" alignment="0" max="32767" attributes="0"/>
@@ -75,7 +76,7 @@
                   <Component id="selectedProjectPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="reshakeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="reshakeButton" alignment="3" min="-2" pref="53" max="-2" attributes="0"/>
                       <Component id="searchFiltersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
