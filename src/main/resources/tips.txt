@@ -23,3 +23,11 @@ Some modifications are not supported by X!Tandem, like terminal modification at 
 Did you check the enzyme configuration?<br><br>Enzymes are configured in the <i>peptideshaker_enzymes.xml</i> file located in the <i>conf</i> folder. Ensure that the cleavage site is set properly to have accurate coverage and spectrum counting estimations.
 <i>coverage 65% of max 50%</i>, how is that possible?<br><br>The estimation of the maximum coverage does not account for missed cleavages or semi-tryptic peptides!
 How much memory is allocated to <b>PeptideShaker</b>? For the fastest processing allocate as much memory as possible to <b>PeptideShaker</b>. This setting can be optimized in <i>Java Option</i> available in the <i>Edit</i> menu. 
+Official releases are available on our website <a href="http://peptideShaker.googlecode.com">PeptideShaker</a>. Don't trust <a href="https://www.google.no/search?q=peptideshaker+manmademag&oq=peptideshaker+manmademag&aqs=chrome.0.69i59j69i60l2j69i62l2.3488j0&sourceid=chrome&ie=UTF-8>copies</a>!
+Troubles identifying your proteomics data? Check our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
+Already tried <i>de novo</i> sequencing? Check our user friendly <a href="https://code.google.com/p/denovogui/">DenovoGUI</a>!
+Surprisingly large files? Be sure that your data is centroided and not profile! More information on peak-picking available in our <a href="http://compomics.com/bioinformatics-for-proteomics/identification/">free tutorials</a>.
+Database import is slow? The first time you work with a database, PeptideShaker needs to index its peptides. This task is time consuming but will be done only once.
+Did you know it was possible to operate PeptideShaker from <a href="https://usegalaxyp.readthedocs.org/en/latest/sections/peptideshaker.html">Galaxy</a>?
+Unexpected mass deviations? It is possible to export recalibrated spectra via the <i>Export</i>><i>Follow-up</i> menu.
+Need a graphical overview? It is possible to export your data to Cytoscape via the <i>Export</i>><i>Follow-up</i> menu.
