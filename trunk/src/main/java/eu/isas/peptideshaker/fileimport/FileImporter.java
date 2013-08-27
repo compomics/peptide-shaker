@@ -174,7 +174,7 @@ public class FileImporter {
             int memoryPreference = userPreferences.getMemoryPreference();
             int nGbFree = memoryPreference / 1024,
                     treeSize = 2;
-            if (nGbFree <4) {
+            if (nGbFree <5) {
                 treeSize = 1;
             } else if (sequenceFactory.getNTargetSequences() > 100000 && nGbFree > 7) {
                 // Full power baby
