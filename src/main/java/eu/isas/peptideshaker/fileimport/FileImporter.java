@@ -172,19 +172,18 @@ public class FileImporter {
 
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
-            int nGbFree = memoryPreference / 1024,
-                    treeSize = 2;
-            if (nGbFree <5) {
+            int nGbFree = memoryPreference / 1024, treeSize = 2;
+            if (nGbFree < 5) {
                 treeSize = 1;
             } else if (sequenceFactory.getNTargetSequences() > 100000 && nGbFree > 7) {
                 // Full power baby
                 treeSize = 4;
             }
             proteinTree = new ProteinTree(treeSize);
-            
+
             int tagLength = 3;
             if (sequenceFactory.getNTargetSequences() > 100000) {
-                 tagLength = 4;
+                tagLength = 4;
                 if (nGbFree > 4) {
                     proteinTree.setCacheSize(100000);
                 }
