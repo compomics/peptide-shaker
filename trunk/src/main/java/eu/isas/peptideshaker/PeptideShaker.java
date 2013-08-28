@@ -312,6 +312,12 @@ public class PeptideShaker {
         if (waitingHandler.isRunCanceled()) {
             return;
         }
+        waitingHandler.appendReport("Simplifying protein groups.", true, true);
+        removeIrrelevantGroups(searchParameters, waitingHandler);
+        waitingHandler.increasePrimaryProgressCounter();
+        if (waitingHandler.isRunCanceled()) {
+            return;
+        }
         waitingHandler.appendReport("Generating peptide map.", true, true); // slow?
         fillPeptideMaps(waitingHandler);
         peptideMap.cure();
@@ -336,7 +342,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Resolving protein inference issues, inferring peptide and protein PI status.", true, true); // could be slow
-        cleanProteinGroups(waitingHandler);
+        retainBestScoringGroups(searchParameters, waitingHandler);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -550,11 +556,13 @@ public class PeptideShaker {
      * Processes the identifications if a change occured in the psm map.
      *
      * @param waitingHandler the waiting handler
-     * @param processingPreferences
+     * @param processingPreferences the processing preferences
+     * @param searchParameters the parameters used for the search
+     *
      * @throws Exception Exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void spectrumMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws Exception {
+    public void spectrumMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, SearchParameters searchParameters) throws Exception {
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
         attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingHandler);
@@ -565,24 +573,26 @@ public class PeptideShaker {
         fillProteinMap(waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
         attachProteinProbabilities(waitingHandler, processingPreferences);
-        cleanProteinGroups(waitingHandler);
+        retainBestScoringGroups(searchParameters, waitingHandler);
     }
 
     /**
      * Processes the identifications if a change occurred in the peptide map.
      *
      * @param waitingHandler the waiting handler
-     * @param processingPreferences
+     * @param processingPreferences the processing preferences
+     * @param searchParameters the parameters used for the search
+     *
      * @throws Exception Exception thrown whenever it is attempted to attach
      * more than one identification per search engine per spectrum
      */
-    public void peptideMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences) throws Exception {
+    public void peptideMapChanged(WaitingHandler waitingHandler, ProcessingPreferences processingPreferences, SearchParameters searchParameters) throws Exception {
         proteinMap = new ProteinMap();
         attachPeptideProbabilities(waitingHandler);
         fillProteinMap(waitingHandler);
         proteinMap.estimateProbabilities(waitingHandler);
         attachProteinProbabilities(waitingHandler, processingPreferences);
-        cleanProteinGroups(waitingHandler);
+        retainBestScoringGroups(searchParameters, waitingHandler);
     }
 
     /**
@@ -845,7 +855,7 @@ public class PeptideShaker {
      * @param waitingHandler the handler displaying feedback to the user
      * @param searchParameters the search parameters
      * @param annotationPreferences the annotation preferences
-     * @throws Exception 
+     * @throws Exception
      */
     private void fillPsmMap(InputMap inputMap, WaitingHandler waitingHandler, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
 
@@ -2297,7 +2307,194 @@ public class PeptideShaker {
     }
 
     /**
-     * Solves protein inference issues when possible.
+     * Reduce artifact groups due to non-enzymatic mapping or proteins with
+     * little evidence.
+     *
+     * @param searchParameters the search parameters used for the search
+     * @param waitingHandler the handler displaying feedback to the user
+     *
+     * @throws Exception exception thrown whenever it is attempted to attach two
+     * different spectrum matches to the same spectrum from the same search
+     * engine.
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
+    private void removeIrrelevantGroups(SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        ArrayList<String> toRemove = new ArrayList<String>();
+        int max = identification.getProteinIdentification().size();
+
+        identification.loadProteinMatches(waitingHandler);
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Symplifying Protein Groups. Please Wait...");
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+            waitingHandler.setMaxSecondaryProgressCounter(max);
+        }
+
+        ArrayList<String> toDelete = new ArrayList<String>();
+        HashMap<String, String> processedKeys = new HashMap<String, String>();
+
+        for (String proteinSharedKey : identification.getProteinIdentification()) {
+            if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
+                if (!processedKeys.containsKey(proteinSharedKey)) {
+                    String uniqueKey = getSubgroup(identification, proteinSharedKey, processedKeys, toDelete, searchParameters.getEnzyme());
+                    if (uniqueKey != null) {
+                        mergeProteinGroups(identification, proteinSharedKey, uniqueKey, toDelete);
+                        processedKeys.put(proteinSharedKey, uniqueKey);
+                    } else {
+                        processedKeys.put(proteinSharedKey, proteinSharedKey);
+                    }
+                }
+                if (waitingHandler != null) {
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                    waitingHandler.increaseSecondaryProgressCounter();
+                }
+            }
+        }
+
+        if (waitingHandler != null) {
+            waitingHandler.setWaitingText("Deleting mapping artifacts. Please Wait...");
+            waitingHandler.appendReport(toDelete.size() + " irrealistic mappings found.", true, true);
+            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+            waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
+        }
+        for (String proteinKey : toRemove) {
+            identification.removeProteinMatch(proteinKey);
+            if (waitingHandler != null) {
+                if (waitingHandler.isRunCanceled()) {
+                    return;
+                }
+                waitingHandler.increaseSecondaryProgressCounter();
+            }
+        }
+    }
+
+    /**
+     * Returns the best subgroup of a protein key, null if none found. If
+     * intermediate groups are found they will be processed. Processed keys are
+     * stored in processedKeys. Keys to delete are stored in keysToDelete.
+     * Returns null if no simpler group is found.
+     *
+     * @param identification the identification where to get the matches from.
+     * @param sharedKey the key of the group to inspect
+     * @param processedKeys map of already processed keys and their best smaller
+     * key
+     * @param keysToDelete list of keys to delete
+     * @param enzyme the enzyme used for protein digestion
+     *
+     * @return the best smaller group, null if none found.
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, Enzyme enzyme) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+        String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
+        HashMap<Integer, ArrayList<String>> candidateUnique = new HashMap<Integer, ArrayList<String>>();
+        for (String accession : sharedAccessions) {
+            for (String uniqueGroupCandidate : identification.getProteinMap().get(accession)) {
+                if (ProteinMatch.contains(sharedKey, uniqueGroupCandidate)) {
+                    String subGroup = uniqueGroupCandidate;
+                    if (ProteinMatch.getNProteins(uniqueGroupCandidate) > 1) {
+                        String reducedGroup = processedKeys.get(uniqueGroupCandidate);
+                        if (reducedGroup == null) {
+                            reducedGroup = getSubgroup(identification, uniqueGroupCandidate, processedKeys, keysToDelete, enzyme);
+                            if (reducedGroup != null) {
+                                mergeProteinGroups(identification, uniqueGroupCandidate, reducedGroup, keysToDelete);
+                                processedKeys.put(uniqueGroupCandidate, reducedGroup);
+                                subGroup = reducedGroup;
+                            } else {
+                                processedKeys.put(uniqueGroupCandidate, uniqueGroupCandidate);
+                            }
+                        }
+                    }
+                    int nProteins = ProteinMatch.getNProteins(subGroup);
+                    ArrayList<String> keys = candidateUnique.get(nProteins);
+                    if (keys == null) {
+                        keys = new ArrayList<String>();
+                        candidateUnique.put(nProteins, keys);
+                    }
+                    if (!keys.contains(subGroup)) {
+                        keys.add(subGroup);
+                    }
+                }
+            }
+        }
+        ArrayList<Integer> lengths = new ArrayList<Integer>(candidateUnique.keySet());
+        Collections.sort(lengths);
+        String minimalAccession = null;
+        for (int length : lengths) {
+            for (String key1 : candidateUnique.get(length)) {
+                ProteinMatch match1 = identification.getProteinMatch(key1);
+                if (minimalAccession != null) {
+                    keysToDelete.add(key1);
+                    processedKeys.put(key1, minimalAccession);
+                } else {
+                    for (String accession1 : ProteinMatch.getAccessions(key1)) {
+                        if (minimalAccession == null) {
+                            boolean best = true;
+                            for (String key2 : candidateUnique.get(length)) {
+                                if (!key1.equals(key2)) {
+                                    ProteinMatch match2 = identification.getProteinMatch(key2);
+                                    if (best) {
+                                        for (String accession2 : ProteinMatch.getAccessions(key2)) {
+                                            if (isBetterMainProtein(match2, accession2, match1, accession1, enzyme)) {
+                                                best = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (best) {
+                                minimalAccession = key1;
+                                match1.setMainMatch(accession1);
+                                identification.updateProteinMatch(match1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return minimalAccession;
+    }
+
+    /**
+     * Puts the peptide of the shared group in the unique group and adds the
+     * shared group to the list of proteins to delete.
+     *
+     * @param identification the identification wheter to get the matches
+     * @param sharedGroup the key of the shared group
+     * @param uniqueGroup the key of the unique group
+     * @param keysToDelete list of keys to be deleted where sharedGroup will be
+     * added
+     *
+     * @throws IllegalArgumentException
+     * @throws SQLException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void mergeProteinGroups(Identification identification, String sharedGroup, String uniqueGroup, ArrayList<String> keysToDelete) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
+        ProteinMatch sharedMatch = identification.getProteinMatch(sharedGroup);
+        ProteinMatch uniqueMatch = identification.getProteinMatch(uniqueGroup);
+        for (String peptideKey : sharedMatch.getPeptideMatches()) {
+            uniqueMatch.addPeptideMatch(peptideKey);
+        }
+        if (!keysToDelete.contains(sharedGroup)) {
+            keysToDelete.add(sharedGroup);
+        }
+    }
+
+    /**
+     * Retains the best scoring of intricate groups.
      *
      * @param waitingHandler the handler displaying feedback to the user
      * @throws Exception exception thrown whenever it is attempted to attach two
@@ -2307,9 +2504,9 @@ public class PeptideShaker {
      * @throws IllegalArgumentException
      * @throws SQLException
      * @throws ClassNotFoundException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    private void cleanProteinGroups(WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+    private void retainBestScoringGroups(SearchParameters searchParameters, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         waitingHandler.setWaitingText("Cleaning Protein Groups. Please Wait...");
 
@@ -2331,18 +2528,20 @@ public class PeptideShaker {
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinSharedKey, psParameter);
                 double sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
                 boolean better = false;
-                for (String proteinUniqueKey : identification.getProteinIdentification()) {
-                    if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
-                        psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
-                        double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
-                        ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
-                        ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
-                        for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
-                            proteinUnique.addPeptideMatch(sharedPeptideKey);
-                        }
-                        identification.updateProteinMatch(proteinUnique);
-                        if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
-                            better = true;
+                for (String accession : ProteinMatch.getAccessions(proteinSharedKey)) {
+                    for (String proteinUniqueKey : identification.getProteinMap().get(accession)) {
+                        if (ProteinMatch.contains(proteinSharedKey, proteinUniqueKey)) {
+                            psParameter = (PSParameter) identification.getProteinMatchParameter(proteinUniqueKey, psParameter);
+                            double uniqueProteinProbabilityScore = psParameter.getProteinProbabilityScore();
+                            ProteinMatch proteinUnique = identification.getProteinMatch(proteinUniqueKey);
+                            ProteinMatch proteinShared = identification.getProteinMatch(proteinSharedKey);
+                            for (String sharedPeptideKey : proteinShared.getPeptideMatches()) {
+                                proteinUnique.addPeptideMatch(sharedPeptideKey);
+                            }
+                            identification.updateProteinMatch(proteinUnique);
+                            if (uniqueProteinProbabilityScore <= sharedProteinProbabilityScore) {
+                                better = true;
+                            }
                         }
                     }
                 }
@@ -2376,7 +2575,7 @@ public class PeptideShaker {
         PSParameter probabilities = new PSParameter();
         double maxMW = 0;
 
-        //identification.loadProteinMatches(null); // @TODO: already done above?
+        identification.loadProteinMatches(null);
         for (String proteinKey : identification.getProteinIdentification()) {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
 
@@ -2429,7 +2628,7 @@ public class PeptideShaker {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (String accession : accessions) {
-                    if (isBetterMainProtein(mainKey, accession)) {
+                    if (isBetterMainProtein(proteinMatch, mainKey, proteinMatch, accession, searchParameters.getEnzyme())) {
                         mainKey = accession;
                     }
                 }
@@ -2437,7 +2636,7 @@ public class PeptideShaker {
                     for (int j = i + 1; j < accessions.size(); j++) {
                         if (getSimilarity(accessions.get(i), accessions.get(j))) {
                             similarityFound = true;
-                            if (isBetterMainProtein(mainKey, accessions.get(j))) {
+                            if (isBetterMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), searchParameters.getEnzyme())) {
                                 mainKey = accessions.get(i);
                             }
                             break;
@@ -2620,19 +2819,33 @@ public class PeptideShaker {
     }
 
     /**
-     * Checks whether a new main protein (newAccession) is better than another
-     * one main protein (oldAccession). First checks the protein evidence level
-     * (if available) and if not there then checks the protein description.
+     * Checks whether a new main protein (newAccession) of the new protein match
+     * (newProteinMatch) is better than another one main protein (oldAccession)
+     * of another protein match (oldProteinMatch). First checks the protein
+     * evidence level (if available), if not there then checks the protein
+     * description and peptide enzymaticity.
      *
+     * @param oldProteinMatch the protein match of oldAccession
      * @param oldAccession the accession of the old protein
+     * @param newProteinMatch the protein match of newAccession
      * @param newAccession the accession of the new protein
+     * @param enzyme the enzyme used to digest the protein
+     *
      * @return a boolean indicating whether the new protein is a better leading
-     * protein
+     * protein. False if equal.
+     *
      * @throws IOException
      * @throws InterruptedException
      * @throws IllegalArgumentException
      */
-    private boolean isBetterMainProtein(String oldAccession, String newAccession) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+    private boolean isBetterMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, Enzyme enzyme) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+
+        if (enzyme.enzymeCleaves()) {
+            if (newProteinMatch.hasEnzymatic(newAccession, enzyme) && !oldProteinMatch.hasEnzymatic(oldAccession, enzyme)) {
+                return true;
+            }
+        }
+
 
         String evidenceLevelOld = sequenceFactory.getHeader(oldAccession).getProteinEvidence();
         String evidenceLevelNew = sequenceFactory.getHeader(newAccession).getProteinEvidence();
@@ -2643,7 +2856,9 @@ public class PeptideShaker {
             try {
                 Integer levelOld = new Integer(evidenceLevelOld);
                 Integer levelNew = new Integer(evidenceLevelNew);
-                return levelNew < levelOld;
+                if (levelNew < levelOld) {
+                    return true;
+                }
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -2658,15 +2873,21 @@ public class PeptideShaker {
             return false;
         }
 
-        String[] keyWords = {"Uncharacterized", "putative", "like"};
+        boolean oldUncharacterized = false,
+                newUncharacterized = false;
+        String[] keyWords = {"Uncharacterized", "putative"};
         for (String keyWord : keyWords) {
             if (newDescription.toLowerCase().contains(keyWord)) {
-                return false;
+                newUncharacterized = true;
             }
             if (oldDescription.toLowerCase().contains(keyWord)) {
-                return true;
+                oldUncharacterized = true;
             }
         }
+        if (oldUncharacterized && !newUncharacterized) {
+            return true;
+        }
+
         return false;
 
     }
@@ -2814,10 +3035,10 @@ public class PeptideShaker {
         }
         return error;
     }
-    
+
     /**
      * Returns the default experiment file.
-     * 
+     *
      * @return the default experiment file
      */
     public static File getDefaultExperimentFile() {

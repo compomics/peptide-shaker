@@ -655,7 +655,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="1104" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -700,7 +700,7 @@
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="jLabel30" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="sensitivitySlider1" pref="362" max="32767" attributes="2"/>
+                                          <Component id="sensitivitySlider1" pref="370" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -845,7 +845,7 @@
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="jLabel34" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="sensitivitySlider2" pref="362" max="32767" attributes="2"/>
+                                          <Component id="sensitivitySlider2" pref="370" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel35" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -988,7 +988,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" pref="1104" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -1033,7 +1033,7 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel25" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="confidenceSlider" pref="307" max="32767" attributes="2"/>
+                                          <Component id="confidenceSlider" pref="315" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1198,7 +1198,7 @@
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel28" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Component id="fdrSlider1" pref="171" max="32767" attributes="0"/>
+                                              <Component id="fdrSlider1" pref="175" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
                                           </Group>
@@ -1343,7 +1343,7 @@
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                              <Component id="fdrSlider2" pref="172" max="32767" attributes="0"/>
+                                              <Component id="fdrSlider2" pref="176" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                               <Component id="jLabel33" min="-2" max="-2" attributes="0"/>
                                           </Group>

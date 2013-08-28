@@ -858,7 +858,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 7;
+            return 8;
         }
 
         @Override
@@ -879,6 +879,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     return "Chr";
                 case 6:
                     return "Evidence";
+                case 7:
+                    return "Enzymatic";
                 default:
                     return " ";
             }
@@ -931,6 +933,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                         }
 
                         return proteinEvidenceLevel;
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                        return "Database Error";
+                    }
+                case 7:
+                    try {
+                        return inspectedMatch.hasEnzymatic(accessions.get(row), peptideShakerGUI.getSearchParameters().getEnzyme());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
