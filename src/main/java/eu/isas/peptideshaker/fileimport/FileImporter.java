@@ -383,14 +383,7 @@ public class FileImporter {
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             identification.setIsDB(true);
 
-            try {
-                String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
-                identification.establishConnection(dbFolder, true, peptideShaker.getCache());
-            } catch (SQLException e) {
-                e.printStackTrace();
-                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.", true, true);
-                identification.setIsDB(false);
-            }
+            connectToIdDb(identification);
 
             waitingHandler.increasePrimaryProgressCounter();
 
@@ -444,6 +437,9 @@ public class FileImporter {
 
                     // clear the objects not needed anymore
                     singleProteinList.clear();
+
+                    // close connection to the protein tree
+//                    proteinTree.close(); @TODO find a way to do that without killing all connections
 
                     if (nRetained == 0) {
                         waitingHandler.appendReport("No identifications retained.", true, true);
@@ -508,6 +504,22 @@ public class FileImporter {
             }
 
             return 0;
+        }
+
+        /**
+         * Establishes a connection to the identification database
+         *
+         * @param identification
+         */
+        private void connectToIdDb(Identification identification) {
+            try {
+                String dbFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY).getAbsolutePath();
+                identification.establishConnection(dbFolder, true, peptideShaker.getCache());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                waitingHandler.appendReport("The match database could not be created, serialized matches will be used instead. Please contact the developers.", true, true);
+                identification.setIsDB(false);
+            }
         }
 
         /**

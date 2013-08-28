@@ -3591,7 +3591,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences());
+                    miniShaker.spectrumMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                             "Identification Conflict", JOptionPane.WARNING_MESSAGE);
@@ -3639,7 +3639,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
 
                 try {
-                    miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences());
+                    miniShaker.peptideMapChanged(progressDialog, peptideShakerGUI.getProcessingPreferences(), peptideShakerGUI.getSearchParameters());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                             "Identification Conflict", JOptionPane.WARNING_MESSAGE);
