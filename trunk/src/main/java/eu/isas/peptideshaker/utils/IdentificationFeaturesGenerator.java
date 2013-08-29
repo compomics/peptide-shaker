@@ -167,14 +167,19 @@ public class IdentificationFeaturesGenerator {
         String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
         boolean[] result = new boolean[sequence.length() + 1];
 
-        if (searchParameters.getEnzyme().enzymeCleaves()) {
+        if (!searchParameters.getEnzyme().isSemiSpecific()) {
             int pepMax = idFilter.getMaxPepLength();
             Enzyme enzyme = searchParameters.getEnzyme();
             int cleavageAA = 0;
             int lastCleavage = 0;
             while (++cleavageAA < sequence.length() - 2) {
-                if (enzyme.getAminoAcidAfter().contains(sequence.charAt(cleavageAA + 1)) && !enzyme.getRestrictionBefore().contains(sequence.charAt(cleavageAA))
-                        || enzyme.getAminoAcidBefore().contains(sequence.charAt(cleavageAA)) && !enzyme.getRestrictionAfter().contains(sequence.charAt(cleavageAA + 1))) {
+                
+                
+                // @TODO: how to handle this for semi-specific enzymes??
+                
+                
+                if ((enzyme.getAminoAcidAfter().contains(sequence.charAt(cleavageAA + 1)) && !enzyme.getRestrictionBefore().contains(sequence.charAt(cleavageAA)))
+                        || (enzyme.getAminoAcidBefore().contains(sequence.charAt(cleavageAA)) && !enzyme.getRestrictionAfter().contains(sequence.charAt(cleavageAA + 1)))) {
                     if (cleavageAA - lastCleavage <= pepMax) {
                         for (int i = lastCleavage + 1; i <= cleavageAA; i++) {
                             result[i] = true;
@@ -496,10 +501,10 @@ public class IdentificationFeaturesGenerator {
 
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
 
-            if (enzyme.enzymeCleaves()) {
+            if (!enzyme.isSemiSpecific()) {
                 result /= currentProtein.getObservableLength(enzyme, maxPepLength);
             } else {
-                result /= currentProtein.getLength();
+                result /= currentProtein.getLength(); // @TODO: how to handle this for semi-specific??
             }
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
