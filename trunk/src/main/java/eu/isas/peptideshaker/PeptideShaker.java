@@ -152,7 +152,7 @@ public class PeptideShaker {
      */
     private int enzymaticIssue = 0;
     /**
-     * Number of groups deleted  because of protein characterization issues
+     * Number of groups deleted because of protein characterization issues
      */
     private int uncharacterizedIssue = 0;
 
@@ -2437,59 +2437,85 @@ public class PeptideShaker {
                 }
             }
         }
-        ArrayList<String> subKeys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<String>();
         for (String accession : candidateUnique) {
             if (!keysToDelete.contains(accession)) {
-                subKeys.add(accession);
+                keys.add(accession);
             }
         }
         String minimalKey = null;
-        ArrayList<Integer> preferenceReason = new ArrayList<Integer>();
-        for (String key1 : subKeys) {
-            ProteinMatch match1 = identification.getProteinMatch(key1);
-            for (String accession1 : ProteinMatch.getAccessions(key1)) {
-                if (minimalKey == null || ProteinMatch.getNProteins(key1) < ProteinMatch.getNProteins(minimalKey)) {
-                    boolean best = true;
-                    for (String key2 : subKeys) {
-                        if (!key1.equals(key2)) {
-                            ArrayList<String> otherProteins = ProteinMatch.getOtherProteins(key2, key1);
-                            if (!otherProteins.isEmpty()) {
-                                ProteinMatch match2 = identification.getProteinMatch(key2);
-                                if (best) {
-                                    for (String accession2 : otherProteins) {
-                                        int tempPrefernce = compareMainProtein(match2, accession2, match1, accession1, enzyme);
-                                        if (tempPrefernce == 0) {
+        if (keys.size() > 1) {
+            ProteinMatch match = identification.getProteinMatch(sharedKey);
+            HashMap<String, Integer> preferenceReason = new HashMap<String, Integer>();
+            for (String key1 : keys) {
+                for (String accession1 : ProteinMatch.getAccessions(key1)) {
+                    if (minimalKey == null) {
+                        preferenceReason = new HashMap<String, Integer>();
+                        boolean best = true;
+                        for (String key2 : keys) {
+                            if (!best) {
+                                break;
+                            } else if (!key1.equals(key2)) {
+                                if (!ProteinMatch.contains(key1, key2)) {
+                                    if (!ProteinMatch.getCommonProteins(key1, key2).isEmpty()) {
+                                        best = false;
+                                        break;
+                                    }
+                                    for (String accession2 : ProteinMatch.getAccessions(key2)) {
+                                        int tempPrefernce = compareMainProtein(match, accession2, match, accession1, enzyme);
+                                        if (tempPrefernce != 1) {
                                             best = false;
                                             break;
                                         } else {
-                                            preferenceReason.add(tempPrefernce);
+                                            if (preferenceReason.containsKey(accession2)) {
+                                                tempPrefernce = Math.min(preferenceReason.get(accession2), tempPrefernce);
+                                            }
+                                            preferenceReason.put(accession2, tempPrefernce);
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    if (best) {
-                        minimalKey = key1;
-                        match1.setMainMatch(accession1);
-                        identification.updateProteinMatch(match1);
+                        if (best) {
+                            ArrayList<String> accessions = ProteinMatch.getOtherProteins(sharedKey, key1);
+                            for (String accession2 : accessions) {
+                                int tempPrefernce = compareMainProtein(match, accession2, match, accession1, enzyme);
+                                if (tempPrefernce == 0) {
+                                    best = false;
+                                    break;
+                                } else {
+                                    if (preferenceReason.containsKey(accession2)) {
+                                        tempPrefernce = Math.min(preferenceReason.get(accession2), tempPrefernce);
+                                    }
+                                    preferenceReason.put(accession2, tempPrefernce);
+                                }
+                            }
+                            if (best) {
+                                minimalKey = key1;
+                            }
+                        }
+                    } else {
+                        break;
                     }
                 }
-            }
-        }
-        if (minimalKey != null) {
-            for (String key2 : subKeys) {
-                if (!key2.equals(minimalKey)) {
-                    keysToDelete.add(key2);
-                    if (preferenceReason.contains(1)) {
-                        enzymaticIssue++;
+                if (minimalKey != null) {
+                    for (String key2 : keys) {
+                        if (!key2.equals(minimalKey)) {
+                            keysToDelete.add(key2);
+                            for (int reason : preferenceReason.values()) {
+                                if (reason == 1) {
+                                    enzymaticIssue++;
+                                }
+                                if (reason == 2) {
+                                    evidenceIssue++;
+                                }
+                                if (reason == 3) {
+                                    uncharacterizedIssue++;
+                                }
+                            }
+                        }
                     }
-                    if (preferenceReason.contains(2)) {
-                        evidenceIssue++;
-                    }
-                    if (preferenceReason.contains(3)) {
-                        uncharacterizedIssue++;
-                    }
+                    break;
                 }
             }
         }
@@ -2853,7 +2879,7 @@ public class PeptideShaker {
      * of another protein match (oldProteinMatch). First checks the protein
      * evidence level (if available), if not there then checks the protein
      * description and peptide enzymaticity.
-     * 
+     *
      *
      * @param oldProteinMatch the protein match of oldAccession
      * @param oldAccession the accession of the old protein
@@ -2861,7 +2887,8 @@ public class PeptideShaker {
      * @param newAccession the accession of the new protein
      * @param enzyme the enzyme used to digest the protein
      *
-     * @return the product of the comparison: 1 better enzymaticity 2: better evidence 3: better characterization 0: equal or not better
+     * @return the product of the comparison: 1 better enzymaticity 2: better
+     * evidence 3: better characterization 0: equal or not better
      *
      * @throws IOException
      * @throws InterruptedException
