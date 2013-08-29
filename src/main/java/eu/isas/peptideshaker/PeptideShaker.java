@@ -1337,7 +1337,10 @@ public class PeptideShaker {
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
                             // There are still unexplained sites, let's see if we find a related peptide which can help. That is uggly but the results should be cool.
                             for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
-                                if (!enzyme.enzymeCleaves() || enzyme.getNmissedCleavages(sequence) == enzyme.getNmissedCleavages(otherSequence)) {
+                                
+                                // @TODO: are semi-specific, top-down, whole protein and no enzyme handled correctly??
+                                
+                                if (enzyme.isSemiSpecific() || enzyme.getNmissedCleavages(sequence) == enzyme.getNmissedCleavages(otherSequence)) {
                                     if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
                                         for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
                                             SpectrumMatch secondaryMatch = identification.getSpectrumMatch(tempKey);
@@ -2904,7 +2907,10 @@ public class PeptideShaker {
      */
     private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, Enzyme enzyme) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
-        if (enzyme.enzymeCleaves()) {
+        if (!enzyme.isSemiSpecific()) {
+            
+            // @TODO: could semi-specific, top-down, whole protein, and non enzyme be handled better??
+            
             boolean newEnzymatic = newProteinMatch.hasEnzymatic(newAccession, enzyme);
             boolean oldEnzymatic = oldProteinMatch.hasEnzymatic(oldAccession, enzyme);
             if (newEnzymatic && !oldEnzymatic) {
@@ -2913,7 +2919,6 @@ public class PeptideShaker {
                 return 0;
             }
         }
-
 
         String evidenceLevelOld = sequenceFactory.getHeader(oldAccession).getProteinEvidence();
         String evidenceLevelNew = sequenceFactory.getHeader(newAccession).getProteinEvidence();

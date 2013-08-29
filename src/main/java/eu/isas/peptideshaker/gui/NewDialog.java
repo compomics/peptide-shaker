@@ -1512,36 +1512,6 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
         searchTxt.setText(file.getName().substring(0, file.getName().lastIndexOf(".")));
         importFilterTxt.setText(file.getName().substring(0, file.getName().lastIndexOf(".")));
-
-        if (!searchParameters.getEnzyme().enzymeCleaves()) {
-            // create an empty label to put the message in
-            JLabel label = new JLabel();
-
-            // html content 
-            JEditorPane ep = new JEditorPane("text/html", "<html><body bgcolor=\"#" + Util.color2Hex(label.getBackground()) + "\">"
-                    + "The cleavage site of the selected enzyme is not configured.<br><br>"
-                    + "PeptideShaker functionalities will be limited.<br><br>"
-                    + "Edit enzyme configuration in:<br>"
-                    + "<i>peptideshaker_enzymes.xml</i> located in the conf folder.<br><br>"
-                    + "For more information on enzymes, contact us via:<br>"
-                    + "<a href=\"http://groups.google.com/group/peptide-shaker\">http://groups.google.com/group/peptide-shaker</a>."
-                    + "</body></html>");
-
-            // handle link events 
-            ep.addHyperlinkListener(new HyperlinkListener() {
-                @Override
-                public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                        BareBonesBrowserLaunch.openURL(e.getURL().toString());
-                    }
-                }
-            });
-
-            ep.setBorder(null);
-            ep.setEditable(false);
-
-            JOptionPane.showMessageDialog(this, ep, "Enzyme Not Configured", JOptionPane.WARNING_MESSAGE);
-        }
     }
 
     /**
