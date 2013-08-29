@@ -143,6 +143,18 @@ public class PeptideShaker {
      * List of warnings collected while working on the data.
      */
     private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
+    /**
+     * Number of groups deleted because of protein evidence issues
+     */
+    private int evidenceIssue = 0;
+    /**
+     * Number of groups deleted because of enzymatic issues
+     */
+    private int enzymaticIssue = 0;
+    /**
+     * Number of groups deleted  because of protein characterization issues
+     */
+    private int uncharacterizedIssue = 0;
 
     /**
      * Constructor without mass specification. Calculation will be done on new
@@ -2361,7 +2373,10 @@ public class PeptideShaker {
 
         if (waitingHandler != null) {
             waitingHandler.setWaitingText("Deleting mapping artifacts. Please Wait...");
-            waitingHandler.appendReport(toDelete.size() + " irrealistic mappings found.", true, true);
+            int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
+            int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
+            int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
+            waitingHandler.appendReport(toDelete.size() + " irrealistic mappings found. (" + enzymaticPercent + "% non-enzymatic accession, " + evidencePercent + "% lower evidence accessions, " + uncharacterizedPercent + " % not characterized accessions)", true, true);
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
         }
@@ -2398,10 +2413,10 @@ public class PeptideShaker {
      */
     private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, Enzyme enzyme) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
-        HashMap<Integer, ArrayList<String>> candidateUnique = new HashMap<Integer, ArrayList<String>>();
+        ArrayList<String> candidateUnique = new ArrayList<String>();
         for (String accession : sharedAccessions) {
             for (String uniqueGroupCandidate : identification.getProteinMap().get(accession)) {
-                if (ProteinMatch.contains(sharedKey, uniqueGroupCandidate)) {
+                if (ProteinMatch.contains(sharedKey, uniqueGroupCandidate) && !keysToDelete.contains(uniqueGroupCandidate)) {
                     String subGroup = uniqueGroupCandidate;
                     if (ProteinMatch.getNProteins(uniqueGroupCandidate) > 1) {
                         String reducedGroup = processedKeys.get(uniqueGroupCandidate);
@@ -2416,55 +2431,69 @@ public class PeptideShaker {
                             }
                         }
                     }
-                    int nProteins = ProteinMatch.getNProteins(subGroup);
-                    ArrayList<String> keys = candidateUnique.get(nProteins);
-                    if (keys == null) {
-                        keys = new ArrayList<String>();
-                        candidateUnique.put(nProteins, keys);
-                    }
-                    if (!keys.contains(subGroup)) {
-                        keys.add(subGroup);
+                    if (!candidateUnique.contains(subGroup)) {
+                        candidateUnique.add(subGroup);
                     }
                 }
             }
         }
-        ArrayList<Integer> lengths = new ArrayList<Integer>(candidateUnique.keySet());
-        Collections.sort(lengths);
-        String minimalAccession = null;
-        for (int length : lengths) {
-            for (String key1 : candidateUnique.get(length)) {
-                ProteinMatch match1 = identification.getProteinMatch(key1);
-                if (minimalAccession != null) {
-                    keysToDelete.add(key1);
-                    processedKeys.put(key1, minimalAccession);
-                } else {
-                    for (String accession1 : ProteinMatch.getAccessions(key1)) {
-                        if (minimalAccession == null) {
-                            boolean best = true;
-                            for (String key2 : candidateUnique.get(length)) {
-                                if (!key1.equals(key2)) {
-                                    ProteinMatch match2 = identification.getProteinMatch(key2);
-                                    if (best) {
-                                        for (String accession2 : ProteinMatch.getAccessions(key2)) {
-                                            if (isBetterMainProtein(match2, accession2, match1, accession1, enzyme)) {
-                                                best = false;
-                                                break;
-                                            }
+        ArrayList<String> subKeys = new ArrayList<String>();
+        for (String accession : candidateUnique) {
+            if (!keysToDelete.contains(accession)) {
+                subKeys.add(accession);
+            }
+        }
+        String minimalKey = null;
+        ArrayList<Integer> preferenceReason = new ArrayList<Integer>();
+        for (String key1 : subKeys) {
+            ProteinMatch match1 = identification.getProteinMatch(key1);
+            for (String accession1 : ProteinMatch.getAccessions(key1)) {
+                if (minimalKey == null || ProteinMatch.getNProteins(key1) < ProteinMatch.getNProteins(minimalKey)) {
+                    boolean best = true;
+                    for (String key2 : subKeys) {
+                        if (!key1.equals(key2)) {
+                            ArrayList<String> otherProteins = ProteinMatch.getOtherProteins(key2, key1);
+                            if (!otherProteins.isEmpty()) {
+                                ProteinMatch match2 = identification.getProteinMatch(key2);
+                                if (best) {
+                                    for (String accession2 : otherProteins) {
+                                        int tempPrefernce = compareMainProtein(match2, accession2, match1, accession1, enzyme);
+                                        if (tempPrefernce == 0) {
+                                            best = false;
+                                            break;
+                                        } else {
+                                            preferenceReason.add(tempPrefernce);
                                         }
                                     }
                                 }
                             }
-                            if (best) {
-                                minimalAccession = key1;
-                                match1.setMainMatch(accession1);
-                                identification.updateProteinMatch(match1);
-                            }
                         }
+                    }
+                    if (best) {
+                        minimalKey = key1;
+                        match1.setMainMatch(accession1);
+                        identification.updateProteinMatch(match1);
                     }
                 }
             }
         }
-        return minimalAccession;
+        if (minimalKey != null) {
+            for (String key2 : subKeys) {
+                if (!key2.equals(minimalKey)) {
+                    keysToDelete.add(key2);
+                    if (preferenceReason.contains(1)) {
+                        enzymaticIssue++;
+                    }
+                    if (preferenceReason.contains(2)) {
+                        evidenceIssue++;
+                    }
+                    if (preferenceReason.contains(3)) {
+                        uncharacterizedIssue++;
+                    }
+                }
+            }
+        }
+        return minimalKey;
     }
 
     /**
@@ -2628,7 +2657,7 @@ public class PeptideShaker {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (String accession : accessions) {
-                    if (isBetterMainProtein(proteinMatch, mainKey, proteinMatch, accession, searchParameters.getEnzyme())) {
+                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, searchParameters.getEnzyme()) > 0) {
                         mainKey = accession;
                     }
                 }
@@ -2636,7 +2665,7 @@ public class PeptideShaker {
                     for (int j = i + 1; j < accessions.size(); j++) {
                         if (getSimilarity(accessions.get(i), accessions.get(j))) {
                             similarityFound = true;
-                            if (isBetterMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), searchParameters.getEnzyme())) {
+                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), searchParameters.getEnzyme()) > 0) {
                                 mainKey = accessions.get(i);
                             }
                             break;
@@ -2824,6 +2853,7 @@ public class PeptideShaker {
      * of another protein match (oldProteinMatch). First checks the protein
      * evidence level (if available), if not there then checks the protein
      * description and peptide enzymaticity.
+     * 
      *
      * @param oldProteinMatch the protein match of oldAccession
      * @param oldAccession the accession of the old protein
@@ -2831,18 +2861,21 @@ public class PeptideShaker {
      * @param newAccession the accession of the new protein
      * @param enzyme the enzyme used to digest the protein
      *
-     * @return a boolean indicating whether the new protein is a better leading
-     * protein. False if equal.
+     * @return the product of the comparison: 1 better enzymaticity 2: better evidence 3: better characterization 0: equal or not better
      *
      * @throws IOException
      * @throws InterruptedException
      * @throws IllegalArgumentException
      */
-    private boolean isBetterMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, Enzyme enzyme) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, Enzyme enzyme) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
         if (enzyme.enzymeCleaves()) {
-            if (newProteinMatch.hasEnzymatic(newAccession, enzyme) && !oldProteinMatch.hasEnzymatic(oldAccession, enzyme)) {
-                return true;
+            boolean newEnzymatic = newProteinMatch.hasEnzymatic(newAccession, enzyme);
+            boolean oldEnzymatic = oldProteinMatch.hasEnzymatic(oldAccession, enzyme);
+            if (newEnzymatic && !oldEnzymatic) {
+                return 1;
+            } else if (!newEnzymatic && oldEnzymatic) {
+                return 0;
             }
         }
 
@@ -2857,7 +2890,9 @@ public class PeptideShaker {
                 Integer levelOld = new Integer(evidenceLevelOld);
                 Integer levelNew = new Integer(evidenceLevelNew);
                 if (levelNew < levelOld) {
-                    return true;
+                    return 2;
+                } else if (levelOld < levelNew) {
+                    return 0;
                 }
             } catch (NumberFormatException e) {
                 // ignore
@@ -2870,7 +2905,7 @@ public class PeptideShaker {
 
         // note: this most likely means that we have a problem with the parsing of the db, but better than a null pointer...
         if (oldDescription == null) {
-            return false;
+            return 0;
         }
 
         boolean oldUncharacterized = false,
@@ -2885,10 +2920,12 @@ public class PeptideShaker {
             }
         }
         if (oldUncharacterized && !newUncharacterized) {
-            return true;
+            return 3;
+        } else if (!oldUncharacterized && newUncharacterized) {
+            return 0;
         }
 
-        return false;
+        return 0;
 
     }
 
