@@ -144,15 +144,15 @@ public class PeptideShaker {
      */
     private HashMap<String, FeedBack> warnings = new HashMap<String, FeedBack>();
     /**
-     * Number of groups deleted because of protein evidence issues
+     * Number of groups deleted because of protein evidence issues.
      */
     private int evidenceIssue = 0;
     /**
-     * Number of groups deleted because of enzymatic issues
+     * Number of groups deleted because of enzymatic issues.
      */
     private int enzymaticIssue = 0;
     /**
-     * Number of groups deleted because of protein characterization issues
+     * Number of groups deleted because of protein characterization issues.
      */
     private int uncharacterizedIssue = 0;
 
@@ -2411,9 +2411,12 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, Enzyme enzyme) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, Enzyme enzyme)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
+
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
         ArrayList<String> candidateUnique = new ArrayList<String>();
+
         for (String accession : sharedAccessions) {
             for (String uniqueGroupCandidate : identification.getProteinMap().get(accession)) {
                 if (ProteinMatch.contains(sharedKey, uniqueGroupCandidate) && !keysToDelete.contains(uniqueGroupCandidate)) {
@@ -2519,6 +2522,7 @@ public class PeptideShaker {
                 }
             }
         }
+
         return minimalKey;
     }
 
@@ -2526,7 +2530,7 @@ public class PeptideShaker {
      * Puts the peptide of the shared group in the unique group and adds the
      * shared group to the list of proteins to delete.
      *
-     * @param identification the identification wheter to get the matches
+     * @param identification the identification whether to get the matches
      * @param sharedGroup the key of the shared group
      * @param uniqueGroup the key of the unique group
      * @param keysToDelete list of keys to be deleted where sharedGroup will be
@@ -2537,12 +2541,16 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void mergeProteinGroups(Identification identification, String sharedGroup, String uniqueGroup, ArrayList<String> keysToDelete) throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
+    private void mergeProteinGroups(Identification identification, String sharedGroup, String uniqueGroup, ArrayList<String> keysToDelete)
+            throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException {
+
         ProteinMatch sharedMatch = identification.getProteinMatch(sharedGroup);
         ProteinMatch uniqueMatch = identification.getProteinMatch(uniqueGroup);
+
         for (String peptideKey : sharedMatch.getPeptideMatches()) {
             uniqueMatch.addPeptideMatch(peptideKey);
         }
+
         if (!keysToDelete.contains(sharedGroup)) {
             keysToDelete.add(sharedGroup);
         }

@@ -507,7 +507,7 @@ public class FileImporter {
         }
 
         /**
-         * Establishes a connection to the identification database
+         * Establishes a connection to the identification database.
          *
          * @param identification
          */
