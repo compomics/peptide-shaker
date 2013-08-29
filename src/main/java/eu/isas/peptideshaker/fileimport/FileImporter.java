@@ -172,23 +172,22 @@ public class FileImporter {
 
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
-            int nGbFree = memoryPreference / 1024, treeSize = 2;
-            if (nGbFree < 5) {
-                treeSize = 1;
-            } else if (sequenceFactory.getNTargetSequences() > 100000 && nGbFree > 7) {
-                // Full power baby
-                treeSize = 4;
-            }
+            int treeSize = memoryPreference / 4;
             proteinTree = new ProteinTree(treeSize);
 
             int tagLength = 3;
             if (sequenceFactory.getNTargetSequences() > 100000) {
                 tagLength = 4;
-                if (nGbFree > 4) {
+                if (memoryPreference > 4000) {
                     proteinTree.setCacheSize(100000);
                 }
             }
+
             proteinTree.initiateTree(tagLength, 500, waitingHandler, true);
+            if (memoryPreference < 2000) {
+                sequenceFactory.setnCache(5000);
+                proteinTree.setCacheSize(500);
+            }
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
             waitingHandler.increasePrimaryProgressCounter();
@@ -439,6 +438,7 @@ public class FileImporter {
                     singleProteinList.clear();
 
                     // close connection to the protein tree
+                    proteinTree.emptyCache();
 //                    proteinTree.close(); @TODO find a way to do that without killing all connections
 
                     if (nRetained == 0) {
@@ -902,6 +902,7 @@ public class FileImporter {
                         peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                         System.gc();
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
+                        proteinTree.emptyCache();
                     }
                 }
                 projectDetails.addIdentificationFiles(idFile);
