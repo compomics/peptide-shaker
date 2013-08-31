@@ -208,10 +208,9 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         buttonsAndLinksPanelLayout.setVerticalGroup(
             buttonsAndLinksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(backButton, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.CENTER, buttonsAndLinksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                .addComponent(isasButton)
-                .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(probeButton))
+            .addComponent(isasButton, javax.swing.GroupLayout.Alignment.CENTER)
+            .addComponent(nextButton, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(probeButton, javax.swing.GroupLayout.Alignment.CENTER)
             .addComponent(compomicsButton, javax.swing.GroupLayout.Alignment.CENTER)
         );
 
@@ -422,6 +421,7 @@ public class GettingStartedDialog extends javax.swing.JDialog {
             setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_displayPanelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
     private javax.swing.JPanel backgroundPanel;
