@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.*;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.ptm.PtmtableContent;
@@ -290,7 +289,7 @@ public class PtmTable extends JTable {
             try {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                tempContent = PTMLocationScores.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
+                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                         annotationPreferences.getFragmentIonAccuracy(), spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
@@ -469,7 +468,7 @@ public class PtmTable extends JTable {
             try {
                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
                 spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                tempContent = PTMLocationScores.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
+                tempContent = PtmtableContent.getPTMTableContent(peptide, ptm, nPTM, spectrum, annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                         spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                         annotationPreferences.getFragmentIonAccuracy(), spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));

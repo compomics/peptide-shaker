@@ -14,7 +14,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
+import com.compomics.util.experiment.identification.ptm.ptmscores.MDScore;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -1725,9 +1725,11 @@ public class OutputGenerator {
                                 int conflict = 0;
                                 String[] split = sequence.split("[STY]");
                                 int nSites = split.length - 1;
+                                ArrayList<String> phosphoNames = new ArrayList<String>();
 
                                 for (String mod : modList) {
                                     if (mod.contains("phospho")) {
+                                        phosphoNames.add(mod);
                                         if (spectrumMatch.getUrParam(ptmScores) != null) {
                                             ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
                                             if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
@@ -1764,39 +1766,39 @@ public class OutputGenerator {
                                                 }
                                             }
                                         }
-                                        if (mdScore.equals("")) {
-                                            PeptideAssumption mascotAssumption = null;
-                                            double bestScore = 0;
-                                            for (ArrayList<PeptideAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
-                                                for (PeptideAssumption peptideAssumption : peptideAssumptionList) {
-                                                    MascotScore mascotScore = new MascotScore();
-                                                    mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
-                                                    if (mascotScore.getScore() > bestScore) {
-                                                        mascotAssumption = peptideAssumption;
-                                                        bestScore = mascotScore.getScore();
-                                                    }
-                                                }
+                                    }
+                                }
+                                if (!phosphoNames.isEmpty()) {
+                                    PeptideAssumption mascotAssumption = null;
+                                    double bestScore = 0;
+                                    for (ArrayList<PeptideAssumption> peptideAssumptionList : spectrumMatch.getAllAssumptions(Advocate.MASCOT).values()) {
+                                        for (PeptideAssumption peptideAssumption : peptideAssumptionList) {
+                                            MascotScore mascotScore = new MascotScore();
+                                            mascotScore = (MascotScore) peptideAssumption.getUrParam(mascotScore);
+                                            if (mascotScore.getScore() > bestScore) {
+                                                mascotAssumption = peptideAssumption;
+                                                bestScore = mascotScore.getScore();
                                             }
-                                            if (mascotAssumption != null) {
-                                                Peptide mascotPeptide = mascotAssumption.getPeptide();
-                                                Double score = PTMLocationScores.getMDScore(spectrumMatch, mascotPeptide);
-                                                if (score != null) {
-                                                    mdScore = score.toString();
-                                                }
-                                                ArrayList<Integer> sites = new ArrayList<Integer>();
-                                                for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
-                                                    if (modificationMatch.getTheoreticPtm().contains("phospho")) {
-                                                        sites.add(modificationMatch.getModificationSite());
-                                                    }
-                                                }
-                                                Collections.sort(sites);
-                                                for (int site : sites) {
-                                                    if (!mdLocation.equals("")) {
-                                                        mdLocation += ", ";
-                                                    }
-                                                    mdLocation += site;
-                                                }
+                                        }
+                                    }
+                                    if (mascotAssumption != null) {
+                                        Peptide mascotPeptide = mascotAssumption.getPeptide();
+                                        Double score = MDScore.getMDScore(spectrumMatch, mascotPeptide, phosphoNames);
+                                        if (score != null) {
+                                            mdScore = score.toString();
+                                        }
+                                        ArrayList<Integer> sites = new ArrayList<Integer>();
+                                        for (ModificationMatch modificationMatch : mascotPeptide.getModificationMatches()) {
+                                            if (modificationMatch.getTheoreticPtm().contains("phospho")) {
+                                                sites.add(modificationMatch.getModificationSite());
                                             }
+                                        }
+                                        Collections.sort(sites);
+                                        for (int site : sites) {
+                                            if (!mdLocation.equals("")) {
+                                                mdLocation += ", ";
+                                            }
+                                            mdLocation += site;
                                         }
                                     }
                                 }
