@@ -145,7 +145,7 @@
 	</enzyme>
 	<enzyme>
 		<id> 16 </id>
-		<name> semi-Tryptic </name>
+		<name> Semi-Tryptic </name>
 		<aminoAcidBefore> RK </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> </aminoAcidAfter>
@@ -208,7 +208,7 @@
 	</enzyme>
 	<enzyme>
 		<id> 23 </id>
-		<name> semi-Chymotrypsin (FYWL) </name>
+		<name> Semi-Chymotrypsin (FYWL) </name>
 		<aminoAcidBefore> FYWL </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> </aminoAcidAfter>
@@ -217,7 +217,7 @@
 	</enzyme>
 	<enzyme>
 		<id> 24 </id>
-		<name> semi-Glu-C </name>
+		<name> Semi-Glu-C </name>
 		<aminoAcidBefore> E </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> </aminoAcidAfter>
