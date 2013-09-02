@@ -22,6 +22,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import no.uib.jsparklines.renderers.*;
 import org.apache.commons.io.FileUtils;
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.massspectrometry.Charge;
@@ -29,6 +30,7 @@ import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.UtilitiesUserPreferences;
 import com.compomics.util.gui.DummyFrame;
+import com.compomics.util.gui.searchsettings.EnzymeSelectionDialog;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import uk.ac.ebi.pride.jaxb.model.*;
@@ -1438,7 +1440,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         Double fragmentIonMassTolerance = null;
         Double peptideIonMassTolerance = null;
         Integer maxMissedCleavages = null;
-        String enzyme = null;
+        ArrayList<String> enzymes = new ArrayList<String>();
 
         PrideXmlReader prideXmlReader = new PrideXmlReader(currentPrideXmlFile);
 
@@ -1468,7 +1470,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
                 for (CvParam stepCvParam : stepCvParams) {
                     if (stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000160") || stepCvParam.getAccession().equalsIgnoreCase("PRIDE:0000024")) { // enzyme
-                        enzyme = stepCvParam.getValue();
+                        enzymes.add(stepCvParam.getValue());
                     }
                 }
             }
@@ -1630,21 +1632,12 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         // handle the unknown ptms
         if (!unknownPtms.isEmpty()) {
 
-            // @TODO: better handling of unknown PTMs???
-
 //            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 //            dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-//
-//            String unknownPtmLine = "The following PTMs could not be mapped to SearchGUI PTMs:";
 
             for (String unknownPtm : unknownPtms) {
-//                unknownPtmLine += "\n" + unknownPtm;
-                prideParametersReport += "<br>" + unknownPtm + " (unknown ptm) *";
+                prideParametersReport += "<br>" + unknownPtm + " (unknown ptm) *"; // @TODO: have the user select them!!
             }
-
-//            unknownPtmLine += ".\n\nPlease add them manually in SearchGUI.";
-//
-//            JOptionPane.showMessageDialog(this, unknownPtmLine, "Unknown PTMs", JOptionPane.INFORMATION_MESSAGE);
 
             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
@@ -1658,12 +1651,58 @@ public class PrideReshakeGui extends javax.swing.JDialog {
 
         // set the enzyme
         prideParametersReport += "<br><b>Enzyme:</b> ";
-        if (enzyme != null) {
 
-            //prideSearchParameters.setEnzyme(prideEnzyme);  // @TODO: add an enzyme mapping
-            prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-            prideParametersReport += enzyme;
+        if (!enzymes.isEmpty()) {
+            if (enzymes.size() == 1) {
 
+                Enzyme mappedEnzyme = EnzymeFactory.getInstance().getUtilitiesEnzyme(enzymes.get(0));
+
+                // unknown enzyme
+                if (mappedEnzyme == null) {
+
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    // have the user select the enzyme
+                    EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymes.get(0));
+
+                    Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
+                    if (selectedEnzyme != null) {
+                        mappedEnzyme = selectedEnzyme;
+                        prideParametersReport += selectedEnzyme.getName();
+                    } else {
+                        prideParametersReport += enzymes.get(0) + " (unknown)";
+                    }
+                } else {
+                    prideParametersReport += mappedEnzyme.getName();
+                }
+
+                prideSearchParameters.setEnzyme(mappedEnzyme);
+            } else {
+
+                // more than one enzyme given
+                String enzymesAsText = "";
+                for (int i = 0; i < enzymes.size(); i++) {
+                    if (i > 0) {
+                        enzymesAsText += " + ";
+                    }
+                    enzymesAsText += enzymes.get(i);
+                }
+
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                dummyParentFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                // have the user select the enzyme
+                EnzymeSelectionDialog enzymeSelectionDialog = new EnzymeSelectionDialog(this, true, enzymesAsText);
+                Enzyme selectedEnzyme = enzymeSelectionDialog.getEnzyme();
+                if (selectedEnzyme != null) {
+                    prideParametersReport += selectedEnzyme.getName();
+                    prideSearchParameters.setEnzyme(selectedEnzyme);
+                } else {
+                    prideSearchParameters.setEnzyme(null);
+                    prideParametersReport += enzymesAsText + " (unknown)";
+                }
+            }
         } else {
             // try to guess enzyme from the ion types and peptide endings?
             // @TODO: implement me!
@@ -1674,7 +1713,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             //}
 
             prideSearchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
-            prideParametersReport += "Trypsin (default)"; // @TODO: improve!
+            prideParametersReport += "Trypsin (assumed)";
         }
 
         // set the ion types
@@ -1699,7 +1738,7 @@ public class PrideReshakeGui extends javax.swing.JDialog {
         prideParametersReport += "<br><br><b>MGF File Location:</b> " + new File(outputFolder).getAbsolutePath();
 
         if (!unknownPtms.isEmpty()) {
-            prideParametersReport += "<br><br>* Remember to add these PTMs manually in SearchGUI.";
+            prideParametersReport += "<br><br>* Remember to add these PTMs manually in SearchGUI."; // @TODO: this warning should be stronger!!
         }
 
         prideParametersReport += "<br></html>";
@@ -1717,7 +1756,15 @@ public class PrideReshakeGui extends javax.swing.JDialog {
             System.out.println("species: " + speciesForProject.get(prideAccession));
             System.out.println("ptms: " + ptmsForProject.get(prideAccession));
 
-            System.out.println("enzyme: " + enzyme);
+            System.out.print("enzyme(s): ");
+            String enzymesAsText = "";
+            for (int i = 0; i < enzymes.size(); i++) {
+                if (i > 0) {
+                    enzymesAsText += " + ";
+                }
+                enzymesAsText += enzymes.get(i);
+            }
+            System.out.println(enzymesAsText);
             System.out.println("minPrecursorCharge: " + minPrecursorCharge);
             System.out.println("maxPrecursorCharge: " + maxPrecursorCharge);
 
