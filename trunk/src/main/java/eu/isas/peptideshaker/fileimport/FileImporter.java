@@ -183,7 +183,7 @@ public class FileImporter {
                 }
             }
 
-            proteinTree.initiateTree(tagLength, 500, waitingHandler, true);
+                proteinTree.initiateTree(tagLength, 500, 50, waitingHandler, true);
             if (memoryPreference < 2000) {
                 sequenceFactory.setnCache(5000);
                 proteinTree.setCacheSize(500);
