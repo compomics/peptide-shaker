@@ -8,7 +8,6 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.utils.CpsParent;
@@ -218,9 +217,9 @@ public class ReportCLI extends CpsParent {
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("\n==============================" + System.getProperty("line.separator"));
+                lPrintWriter.print("\n===============================================" + System.getProperty("line.separator"));
                 lPrintWriter.print("PeptideShaker Reports Exporter - Command Line" + System.getProperty("line.separator"));
-                lPrintWriter.print("==============================" + System.getProperty("line.separator"));
+                lPrintWriter.print("===============================================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
                 lPrintWriter.print(ReportCLIParams.getOptionsAsString());
                 lPrintWriter.flush();
