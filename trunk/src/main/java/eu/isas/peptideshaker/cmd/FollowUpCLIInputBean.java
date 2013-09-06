@@ -165,7 +165,6 @@ public class FollowUpCLIInputBean {
         if (aLine.hasOption(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id)) {
             inclusionRtWindow = new Double(aLine.getOptionValue(FollowUpCLIParams.INCLUSION_LIST_RT_WINDOW.id));
         }
-
     }
 
     /**
@@ -254,19 +253,19 @@ public class FollowUpCLIInputBean {
     }
 
     /**
-     * Returns the progenesis file. Null if not set.
+     * Returns the Progenesis file. Null if not set.
      *
-     * @return the progenesis file
+     * @return the Progenesis file
      */
     public File getProgenesisExportFile() {
         return progenesisExportFile;
     }
 
     /**
-     * Returns the type of export needed for the progenesis export. 0 by
+     * Returns the type of export needed for the Progenesis export. 0 by
      * default. See the FollowUpCLIParams for detailed description.
      *
-     * @return the type of export needed for the progenesis export
+     * @return the type of export needed for the Progenesis export
      */
     public int getProgenesisExportTypeIndex() {
         return progenesisExportTypeIndex;
@@ -353,8 +352,8 @@ public class FollowUpCLIInputBean {
      * @return the peptide filters to use for inclusion list generation
      */
     public ArrayList<Integer> getInclusionPeptideFilter() {
-        if (inclusionProteinFilter == null) {
-            inclusionProteinFilter = new ArrayList<Integer>();
+        if (inclusionPeptideFilter == null) {
+            inclusionPeptideFilter = new ArrayList<Integer>();
             inclusionPeptideFilter.add(0);
             inclusionPeptideFilter.add(1);
             inclusionPeptideFilter.add(2);

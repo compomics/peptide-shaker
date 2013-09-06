@@ -14,27 +14,26 @@ import org.apache.commons.cli.Options;
 public enum FollowUpCLIParams {
 
     CPS_FILE("in", "PeptideShaker project (.cps file)", true),
-    RECALIBRATION_FOLDER("recalibration_folder", "Folder where recalibrated files shall be exported. Note: existing files will be silently overwritten.", false),
-    RECALIBRATION_MODE("recalibration_mode", "Type of recalibration. 0: precursor and fragment ions (default), 1: precursor only, 2: fragment ions only.", false),
-    SPECTRUM_FOLDER("spectrum_folder", "Folder where to export spectra. Note: existing files will be silently overwritten.", false),
-    PSM_TYPE("psm_type", "When exporting spectra, select a category of PSMs. " + SpectrumExporter.ExportType.getCommandLineOptions(), false),
-    ACCESSIONS_FILE("accessions_file", "File where to export the protein accessions in text format. Note: existing files will be silently overwritten.", false),
+    RECALIBRATION_FOLDER("recalibration_folder", "Output folder for the recalibrated files. (Existing files will be overwritten.)", false),
+    RECALIBRATION_MODE("recalibration_mode", "Recalibration type. 0: precursor and fragment ions (default), 1: precursor only, 2: fragment ions only.", false),
+    SPECTRUM_FOLDER("spectrum_folder", "Output folder for the spectra. (Existing files will be overwritten.)", false),
+    PSM_TYPE("psm_type", "Type of PSMs. " + SpectrumExporter.ExportType.getCommandLineOptions(), false),
+    ACCESSIONS_FILE("accessions_file", "Output file to export the protein accessions in text format. (Existing files will be overwritten.)", false),
     ACCESSIONS_TYPE("accessions_type", "When exporting accessions, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
-    FASTA_FILE("fasta_file", "File where to export the protein details in fasta format. Note: existing files will be silently overwritten.", false),
+    FASTA_FILE("fasta_file", "File where to export the protein details in fasta format. (Existing files will be overwritten.)", false),
     FASTA_TYPE("fasta_type", "When exporting protein details, select a category of proteins. " + FastaExport.ExportType.getCommandLineOptions(), false),
-    PROGENESIS_FILE("progenesis_file", "File where to export the identification results in a Non-Linear Progenesis compatible format. Note: existing files will be silently overwritten.", false),
+    PROGENESIS_FILE("progenesis_file", "Output file for identification results in Progenesis LC-MS compatible format. (Existing files will be overwritten.)", false),
     PROGENESIS_TYPE("progenesis_type", "Type of hits to export to Progenesis. " + ProgenesisExport.ExportType.getCommandLineOptions(), false),
-    PEPNOVO_TRAINING_FOLDER("pepnovo_training_folder", "Folder where to output the pepnovo training files. Note: existing files will be silently overwritten.", false),
+    PEPNOVO_TRAINING_FOLDER("pepnovo_training_folder", "Output folder for PepNovo training files. (Existing files will be overwritten.)", false),
     PEPNOVO_TRAINING_RECALIBRATION("pepnovo_training_recalibration", "Indicate whether the exported mgf files shall be recalibrated. 0: No, 1: Yes (default).", false),
-    PEPNOVO_TRAINING_FDR("pepnovo_training_fdr", "The FDR used for the 'good spectra' export. If not set, the validation FDR will be used.", false),
-    PEPNOVO_TRAINING_FNR("pepnovo_training_fnr", "The FNR used for the 'bad spectra' export. If not set, the same value as for the 'good spectra' FDR will be used.", false),
-    INCLUSION_LIST_FILE("inclusion_list_file", "File where to export an inclusion list of validated hits. Note: existing files will be silently overwritten.", false),
-    INCLUSION_LIST_FORMAT("inclusion_list_format", "Format to use for the inclusion list. " + InclusionListExport.ExportFormat.getCommandLineOptions(), false),
-    INCLUSION_LIST_PROTEIN_FILTERS("inclusion_list_protein_filters", "The protein inference filters to be used for the inclusion list export (comma separated list). " + InclusionListExport.getProteinFiltersCommandLineOptions(), false),
-    INCLUSION_LIST_PEPTIDE_FILTERS("inclusion_list_peptide_filters", "The peptide filters to be used for the inclusion list export (comma separated list). " + InclusionListExport.PeptideFilterType.getCommandLineOptions(), false),
-    INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "The retention time window to be used for the inclusion list export (in seconds).", false);
-    
-    
+    PEPNOVO_TRAINING_FDR("pepnovo_training_fdr", "FDR used for the 'good spectra' export. If not set, the validation FDR will be used.", false),
+    PEPNOVO_TRAINING_FNR("pepnovo_training_fnr", "FNR used for the 'bad spectra' export. If not set, the same value as for the 'good spectra' FDR will be used.", false),
+    INCLUSION_LIST_FILE("inclusion_list_file", "Output file for an inclusion list of validated hits. (Existing files will be overwritten.)", false),
+    INCLUSION_LIST_FORMAT("inclusion_list_format", "Format for the inclusion list. " + InclusionListExport.ExportFormat.getCommandLineOptions(), false),
+    INCLUSION_LIST_PROTEIN_FILTERS("inclusion_list_protein_filters", "Protein inference filters to be used for the inclusion list export (comma separated). " + InclusionListExport.getProteinFiltersCommandLineOptions(), false),
+    INCLUSION_LIST_PEPTIDE_FILTERS("inclusion_list_peptide_filters", "Peptide filters to be used for the inclusion list export (comma separated). " + InclusionListExport.PeptideFilterType.getCommandLineOptions(), false),
+    INCLUSION_LIST_RT_WINDOW("inclusion_list_rt_window", "Retention time window for the inclusion list export (in seconds).", false);
+
     /**
      * Short Id for the CLI parameter.
      */
@@ -107,7 +106,7 @@ public enum FollowUpCLIParams {
         output += "Mandatory parameter:\n\n";
         output += "-" + String.format(formatter, CPS_FILE.id) + CPS_FILE.description + "\n";
 
-        output += "\n\nOptional output parameters:\n\n";
+        output += "\n\nOptional output parameters:\n";
         output += getOutputOptionsAsString();
 
         return output;
@@ -139,7 +138,7 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, ACCESSIONS_FILE.id) + ACCESSIONS_FILE.description + "\n";
         output += "-" + String.format(formatter, ACCESSIONS_TYPE.id) + ACCESSIONS_TYPE.description + "\n";
         
-        output += "\nAccessions export:\n\n";
+        output += "\nFASTA export:\n\n";
         output += "-" + String.format(formatter, FASTA_FILE.id) + FASTA_FILE.description + "\n";
         output += "-" + String.format(formatter, FASTA_TYPE.id) + FASTA_TYPE.description + "\n";
         
@@ -156,7 +155,6 @@ public enum FollowUpCLIParams {
         output += "-" + String.format(formatter, INCLUSION_LIST_PROTEIN_FILTERS.id) + INCLUSION_LIST_PROTEIN_FILTERS.description + "\n";
         output += "-" + String.format(formatter, INCLUSION_LIST_RT_WINDOW.id) + INCLUSION_LIST_RT_WINDOW.description + "\n";
         
-
         return output;
     }
 }

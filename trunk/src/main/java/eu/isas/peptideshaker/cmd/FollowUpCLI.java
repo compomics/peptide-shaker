@@ -2,42 +2,20 @@ package eu.isas.peptideshaker.cmd;
 
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
-import com.compomics.util.db.ObjectsCache;
-import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.annotation.go.GOFactory;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdentificationMethod;
-import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.io.SerializationUtils;
-import com.compomics.util.preferences.AnnotationPreferences;
-import com.compomics.util.preferences.GenePreferences;
-import com.compomics.util.preferences.IdFilter;
-import com.compomics.util.preferences.PTMScoringPreferences;
-import com.compomics.util.preferences.ProcessingPreferences;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.fileimport.CpsFileImporter;
 import eu.isas.peptideshaker.utils.CpsParent;
-import eu.isas.peptideshaker.myparameters.PeptideShakerSettings;
-import eu.isas.peptideshaker.preferences.ProjectDetails;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.preferences.UserPreferences;
-import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import eu.isas.peptideshaker.utils.Metrics;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -185,7 +163,7 @@ public class FollowUpCLI extends CpsParent {
         }
 
         // export protein details
-        if (followUpCLIInputBean.accessionExportNeeded()) {
+        if (followUpCLIInputBean.fastaExportNeeded()) {
             try {
                 CLIMethods.exportFasta(followUpCLIInputBean, identification, identificationFeaturesGenerator, waitingHandler);
                 waitingHandler.appendReport("Protein details export completed.", true, true);
@@ -362,9 +340,9 @@ public class FollowUpCLI extends CpsParent {
 
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
-                lPrintWriter.print("\n==============================" + System.getProperty("line.separator"));
-                lPrintWriter.print("PeptideShaker follow-up - Command Line" + System.getProperty("line.separator"));
-                lPrintWriter.print("==============================" + System.getProperty("line.separator"));
+                lPrintWriter.print("\n========================================" + System.getProperty("line.separator"));
+                lPrintWriter.print("PeptideShaker Follow Up - Command Line" + System.getProperty("line.separator"));
+                lPrintWriter.print("========================================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
                 lPrintWriter.print(FollowUpCLIParams.getOptionsAsString());
                 lPrintWriter.flush();

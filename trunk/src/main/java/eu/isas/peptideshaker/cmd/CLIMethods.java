@@ -5,7 +5,6 @@ import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.IdFilter;
-import com.compomics.util.preferences.ModificationProfile;
 import com.compomics.util.preferences.PTMScoringPreferences;
 import eu.isas.peptideshaker.export.ExportFactory;
 import eu.isas.peptideshaker.export.ExportScheme;
@@ -15,7 +14,6 @@ import eu.isas.peptideshaker.followup.PepnovoTrainingExport;
 import eu.isas.peptideshaker.followup.ProgenesisExport;
 import eu.isas.peptideshaker.followup.RecalibrationExporter;
 import eu.isas.peptideshaker.followup.SpectrumExporter;
-import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -50,6 +48,9 @@ public class CLIMethods {
     public static void recalibrateSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification,
             AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File recalibrationFolder = followUpCLIInputBean.getRecalibrationFolder();
+        if (!recalibrationFolder.exists()) {
+            recalibrationFolder.mkdir();
+        }
         boolean ms1 = true;
         boolean ms2 = true;
         if (followUpCLIInputBean.getRecalibrationMode() == 1) {
@@ -75,6 +76,9 @@ public class CLIMethods {
      */
     public static void exportSpectra(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, MzMLUnmarshallerException, SQLException, ClassNotFoundException, InterruptedException {
         File exportFolder = followUpCLIInputBean.getSpectrumExportFolder();
+        if (!exportFolder.exists()) {
+            exportFolder.mkdir();
+        }
         SpectrumExporter spectrumExporter = new SpectrumExporter(identification);
         spectrumExporter.exportSpectra(exportFolder, waitingHandler, SpectrumExporter.ExportType.getTypeFromIndex(followUpCLIInputBean.getSpectrumExportTypeIndex()));
     }
@@ -93,12 +97,16 @@ public class CLIMethods {
      * @throws InterruptedException
      */
     public static void exportAccessions(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        File destinationFile = followUpCLIInputBean.getAccessionsExportFile();
+        File destinationFileTemp = followUpCLIInputBean.getAccessionsExportFile();
+        if (!destinationFileTemp.exists()) {
+            destinationFileTemp.createNewFile();
+        }
+        File destinationFile = destinationFileTemp;
         FastaExport.exportAccessions(destinationFile, identification, identificationFeaturesGenerator, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getAccessionsExportTypeIndex()), waitingHandler);
     }
 
     /**
-     * Exports the protein details in Fasta format as specified in the follow-up
+     * Exports the protein details in FASTA format as specified in the follow-up
      * input bean.
      *
      * @param followUpCLIInputBean the follow up input bean
@@ -112,12 +120,16 @@ public class CLIMethods {
      * @throws InterruptedException
      */
     public static void exportFasta(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        File destinationFile = followUpCLIInputBean.getFastaExportFile();
+        File destinationFileTemp = followUpCLIInputBean.getFastaExportFile();
+        if (!destinationFileTemp.exists()) {
+            destinationFileTemp.createNewFile();
+        }
+        File destinationFile = destinationFileTemp;
         FastaExport.exportFasta(destinationFile, identification, identificationFeaturesGenerator, FastaExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getFastaExportTypeIndex()), waitingHandler);
     }
 
     /**
-     * Exports the identification in a progenesis compatible format.
+     * Exports the identification in a Progenesis compatible format.
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
@@ -129,12 +141,16 @@ public class CLIMethods {
      * @throws InterruptedException
      */
     public static void exportProgenesis(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
-        File destinationFile = followUpCLIInputBean.getProgenesisExportFile();
+        File destinationFileTemp = followUpCLIInputBean.getProgenesisExportFile();
+        if (!destinationFileTemp.exists()) {
+            destinationFileTemp.createNewFile();
+        }
+        File destinationFile = destinationFileTemp;
         ProgenesisExport.writeProgenesisExport(destinationFile, identification, ProgenesisExport.ExportType.getTypeFromIndex(followUpCLIInputBean.getProgenesisExportTypeIndex()), waitingHandler);
     }
 
     /**
-     * Exports the files needed for the pepnovo training.
+     * Exports the files needed for the PepNovo training.
      *
      * @param followUpCLIInputBean the follow up input bean
      * @param identification the identification
@@ -149,6 +165,9 @@ public class CLIMethods {
      */
     public static void exportPepnovoTrainingFiles(FollowUpCLIInputBean followUpCLIInputBean, Identification identification, AnnotationPreferences annotationPreferences, WaitingHandler waitingHandler) throws IOException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
         File destinationFolder = followUpCLIInputBean.getPepnovoTrainingFolder();
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
         PepnovoTrainingExport.exportPepnovoTrainingFiles(destinationFolder, identification, annotationPreferences, followUpCLIInputBean.getPepnovoTrainingFDR(), followUpCLIInputBean.getPepnovoTrainingFNR(), followUpCLIInputBean.isPepnovoTrainingRecalibrate(), waitingHandler);
     }
 
@@ -173,8 +192,12 @@ public class CLIMethods {
         for (int index : followUpCLIInputBean.getInclusionPeptideFilter()) {
             peptideFilterType.add(InclusionListExport.PeptideFilterType.getTypeFromIndex(index));
         }
-        File detinationFile = followUpCLIInputBean.getInclusionFile();
-        InclusionListExport.exportInclusionList(detinationFile, identification, identificationFeaturesGenerator, followUpCLIInputBean.getInclusionProteinFilter(), peptideFilterType, InclusionListExport.ExportFormat.getTypeFromIndex(followUpCLIInputBean.getInclusionFormat()), searchParameters, followUpCLIInputBean.getInclusionRtWindow(), waitingHandler);
+        File destinationFileTemp = followUpCLIInputBean.getInclusionFile();
+        if (!destinationFileTemp.exists()) {
+            destinationFileTemp.createNewFile();
+        }
+        File destinationFile = destinationFileTemp;
+        InclusionListExport.exportInclusionList(destinationFile, identification, identificationFeaturesGenerator, followUpCLIInputBean.getInclusionProteinFilter(), peptideFilterType, InclusionListExport.ExportFormat.getTypeFromIndex(followUpCLIInputBean.getInclusionFormat()), searchParameters, followUpCLIInputBean.getInclusionRtWindow(), waitingHandler);
     }
 
     /**
@@ -182,6 +205,7 @@ public class CLIMethods {
      * reportCLIInputBean.
      *
      * @param reportCLIInputBean the command line settings
+     * @param reportType the report type
      * @param experiment the experiment of the project
      * @param sample the sample of the project
      * @param replicateNumber the replicate number of the project
@@ -208,13 +232,14 @@ public class CLIMethods {
     public static void exportReport(ReportCLIInputBean reportCLIInputBean, String reportType, String experiment, String sample, int replicateNumber,
             ProjectDetails projectDetails, Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, int nSurroundingAA, IdFilter idFilter,
-            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
+            PTMScoringPreferences ptmcoringPreferences, SpectrumCountingPreferences spectrumCountingPreferences, WaitingHandler waitingHandler) 
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException,
             InterruptedException, MzMLUnmarshallerException {
         ExportFactory exportFactory = ExportFactory.getInstance();
         ExportScheme exportScheme = exportFactory.getExportScheme(reportType);
         File reportFile = new File(reportCLIInputBean.getOutputFolder(), ExportFactory.getDefaultReportName(experiment, sample, replicateNumber, reportType));
-        ExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
-
+        ExportFactory.writeExport(exportScheme, reportFile, experiment, sample, replicateNumber, projectDetails, identification, identificationFeaturesGenerator, 
+                searchParameters, null, null, null, null, nSurroundingAA, annotationPreferences, idFilter, ptmcoringPreferences, spectrumCountingPreferences, waitingHandler);
     }
 
     /**
