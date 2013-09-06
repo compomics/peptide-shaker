@@ -198,6 +198,7 @@ public class ReportCLI extends CpsParent {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -218,7 +219,7 @@ public class ReportCLI extends CpsParent {
             if (!isValidStartup(line)) {
                 PrintWriter lPrintWriter = new PrintWriter(System.out);
                 lPrintWriter.print("\n===============================================" + System.getProperty("line.separator"));
-                lPrintWriter.print("PeptideShaker Reports Exporter - Command Line" + System.getProperty("line.separator"));
+                lPrintWriter.print("PeptideShaker Report Exporter - Command Line" + System.getProperty("line.separator"));
                 lPrintWriter.print("===============================================" + System.getProperty("line.separator"));
                 lPrintWriter.print(getHeader());
                 lPrintWriter.print(ReportCLIParams.getOptionsAsString());
@@ -242,9 +243,7 @@ public class ReportCLI extends CpsParent {
 
     @Override
     public String toString() {
-        return "FollowUpCLI{"
-                + ", cliInputBean=" + reportCLIInputBean
-                + '}';
+        return "FollowUpCLI{" + ", cliInputBean=" + reportCLIInputBean + '}';
     }
 
     /**

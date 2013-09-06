@@ -156,18 +156,15 @@ public enum PeptideShakerCLIParams {
         output += "-" + String.format(formatter, XTANDEM_E_VALUE_MAX.id) + XTANDEM_E_VALUE_MAX.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR.id) + MAX_PRECURSOR_ERROR.description + "\n";
         output += "-" + String.format(formatter, MAX_PRECURSOR_ERROR_TYPE.id) + MAX_PRECURSOR_ERROR_TYPE.description + "\n";
-        output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n\n";
+        output += "-" + String.format(formatter, EXCLUDE_UNKNOWN_PTMS.id) + EXCLUDE_UNKNOWN_PTMS.description + "\n";
 
         output += "\n\nOptional output parameters:\n\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_1.id) + PEPTIDESHAKER_TXT_1.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_TXT_2.id) + PEPTIDESHAKER_TXT_2.description + "\n";
         output += "-" + String.format(formatter, PEPTIDESHAKER_PRIDE.id) + PEPTIDESHAKER_PRIDE.description + "\n";
         
-        output += "\n\nOptional follow-up export:\n\n";
-        output += FollowUpCLIParams.getOutputOptionsAsString();
-        
-        output += "\n\nOptional follow-up export:\n\n";
-        output += ReportCLIParams.getOutputOptionsAsString();
+        output += "\n\n\nFollow up export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.FollowUpCLI\n\n";
+        output += "\nReport export options:\nReplace eu.isas.peptideshaker.cmd.PeptideShakerCLI with eu.isas.peptideshaker.cmd.ReportCLI\n";
         
         return output;
     }

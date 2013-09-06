@@ -116,7 +116,6 @@ public class FastaExport {
                             ArrayList<String> matches = identification.getProteinMap().get(accession);
 
                             if (matches != null) {
-
                                 boolean validated = false;
                                 for (String match : matches) {
                                     psParameter = (PSParameter) identification.getProteinMatchParameter(match, psParameter);
@@ -129,7 +128,6 @@ public class FastaExport {
                                     writeAccession(b, accession, sequenceFactory, accessionOnly);
                                 }
                             }
-
                         }
                         if (waitingHandler != null) {
                             if (waitingHandler.isRunCanceled()) {
@@ -276,9 +274,9 @@ public class FastaExport {
          * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
-            return validated_main_accession.index + ":" + validated_main_accession.description + " (default), "
-                    + validated_all_accessions.index + ":" + validated_all_accessions.description + ", "
-                    + non_validated.index + ":" + non_validated.description + ".";
+            return validated_main_accession.index + ": " + validated_main_accession.description + " (default), "
+                    + validated_all_accessions.index + ": " + validated_all_accessions.description + ", "
+                    + non_validated.index + ": " + non_validated.description + ".";
         }
     }
 }

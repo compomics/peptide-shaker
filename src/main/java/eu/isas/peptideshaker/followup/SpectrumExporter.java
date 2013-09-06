@@ -364,12 +364,12 @@ public class SpectrumExporter {
          * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
-            return non_validated_psms.index + ":" + non_validated_psms.description + " (default), "
-                    + non_validated_peptides.index + ":" + non_validated_peptides.description + ", "
-                    + non_validated_proteins.index + ":" + non_validated_proteins.description + ", "
-                    + validated_psms.index + ":" + validated_psms.description + ", "
-                    + validated_psms_peptides.index + ":" + validated_psms_peptides.description + ", "
-                    + validated_psms_peptides_proteins.index + ":" + validated_psms_peptides_proteins.description + ".";
+            return non_validated_psms.index + ": " + non_validated_psms.description + " (default), "
+                    + non_validated_peptides.index + ": " + non_validated_peptides.description + ", "
+                    + non_validated_proteins.index + ": " + non_validated_proteins.description + ", "
+                    + validated_psms.index + ": " + validated_psms.description + ", "
+                    + validated_psms_peptides.index + ": " + validated_psms_peptides.description + ", "
+                    + validated_psms_peptides_proteins.index + ": " + validated_psms_peptides_proteins.description + ".";
         }
     }
 }
