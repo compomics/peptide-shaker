@@ -96,6 +96,7 @@ public class PeptideSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
+     * @param annotationPreferences the annotation preferences
      * @param keys the keys of the protein matches to output
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
@@ -106,6 +107,7 @@ public class PeptideSection {
      * @throws SQLException
      * @throws ClassNotFoundException
      * @throws InterruptedException
+     * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
             SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAA, String linePrefix, WaitingHandler waitingHandler)
@@ -125,8 +127,8 @@ public class PeptideSection {
         }
 
         PSParameter psParameter = new PSParameter();
-        PeptideMatch peptideMatch = null;
-        String matchKey = "", parameterKey = "";
+        PeptideMatch peptideMatch;
+        String parameterKey = "";
         int line = 1;
 
         if (waitingHandler != null) {
@@ -155,6 +157,8 @@ public class PeptideSection {
                 waitingHandler.increaseSecondaryProgressCounter();
             }
 
+            peptideMatch = identification.getPeptideMatch(peptideKey);
+
             if (indexes) {
                 if (linePrefix != null) {
                     writer.write(linePrefix);
@@ -165,10 +169,7 @@ public class PeptideSection {
                 PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
                 switch (peptideFeature) {
                     case accessions:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
+
                         String proteins = "";
                         ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
                         Collections.sort(accessions);
@@ -188,10 +189,6 @@ public class PeptideSection {
                         writer.write(psParameter.getPeptideConfidence() + separator);
                         break;
                     case decoy:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         if (peptideMatch.getTheoreticPeptide().isDecoy()) {
                             writer.write(1 + separator);
                         } else {
@@ -210,10 +207,6 @@ public class PeptideSection {
                         }
                         break;
                     case localization_confidence:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         writer.write(getPeptideModificationLocations(peptideMatch.getTheoreticPeptide(), peptideMatch, searchParameters.getModificationProfile()) + separator);
                         break;
                     case pi:
@@ -224,10 +217,6 @@ public class PeptideSection {
                         writer.write(psParameter.getProteinInferenceClassAsString() + separator);
                         break;
                     case position:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
                         Collections.sort(accessions);
                         Peptide peptide = peptideMatch.getTheoreticPeptide();
@@ -253,24 +242,12 @@ public class PeptideSection {
                         writer.write(start + separator);
                         break;
                     case psms:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         writer.write(peptideMatch.getSpectrumCount() + separator);
                         break;
                     case variable_ptms:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         writer.write(getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), true) + separator);
                         break;
                     case fixed_ptms:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         writer.write(getPeptideModificationsAsString(peptideMatch.getTheoreticPeptide(), false) + separator);
                         break;
                     case score:
@@ -284,10 +261,6 @@ public class PeptideSection {
                         writer.write(Peptide.getSequence(peptideKey) + separator);
                         break;
                     case modified_sequence:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         writer.write(peptideMatch.getTheoreticPeptide().getTaggedModifiedSequence(searchParameters.getModificationProfile(), false, false, true) + separator);
                         break;
                     case starred:
@@ -302,10 +275,6 @@ public class PeptideSection {
                         }
                         break;
                     case aaBefore:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
                         Collections.sort(accessions);
                         peptide = peptideMatch.getTheoreticPeptide();
@@ -332,10 +301,6 @@ public class PeptideSection {
                         writer.write(subSequence + separator);
                         break;
                     case aaAfter:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
                         Collections.sort(accessions);
                         peptide = peptideMatch.getTheoreticPeptide();
@@ -362,10 +327,6 @@ public class PeptideSection {
                         writer.write(subSequence + separator);
                         break;
                     case unique:
-                        if (!matchKey.equals(peptideKey)) {
-                            peptideMatch = identification.getPeptideMatch(peptideKey);
-                            matchKey = peptideKey;
-                        }
                         peptide = peptideMatch.getTheoreticPeptide();
                         if (identification.isUnique(peptide)) {
                             writer.write(1 + separator);

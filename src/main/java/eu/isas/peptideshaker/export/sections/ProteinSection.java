@@ -98,6 +98,7 @@ public class ProteinSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
+     * @param annotationPreferences the annotation preferences
      * @param keys the keys of the protein matches to output. if null all
      * proteins will be exported.
      * @param nSurroundingAas in case a peptide export is included with
@@ -112,8 +113,8 @@ public class ProteinSection {
      * @throws MzMLUnmarshallerException
      */
     public void writeSection(Identification identification, IdentificationFeaturesGenerator identificationFeaturesGenerator,
-            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler) throws IOException, IllegalArgumentException, SQLException,
-            ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
+            SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ArrayList<String> keys, int nSurroundingAas, WaitingHandler waitingHandler) 
+            throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException, MzMLUnmarshallerException {
 
         if (waitingHandler != null) {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
@@ -172,7 +173,7 @@ public class ProteinSection {
             }
 
             if (indexes) {
-                writer.write(line + separator);
+                writer.write(line + separator); // @TODO: there is something off with the indexes in the Default PSM Report
             }
             for (ExportFeature exportFeature : proteinFeatures) {
                 ProteinFeatures tempProteinFeatures = (ProteinFeatures) exportFeature;
