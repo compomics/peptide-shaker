@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.export.sections;
 
 import com.compomics.util.experiment.biology.Ion;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.biology.ions.PrecursorIon;
 import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
@@ -11,6 +13,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures;
+import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_number;
 import static eu.isas.peptideshaker.export.exportfeatures.FragmentFeatures.fragment_type;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -157,8 +160,25 @@ public class FragmentSection {
                         case fragment_subType:
                             writer.write(ionMatch.ion.getSubTypeAsString() + separator);
                             break;
+                        case fragment_number:
+                            Ion ion = ionMatch.ion;
+                            if (ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION) {
+                                writer.write(((PeptideFragmentIon) ion).getNumber() + "");
+                            }
+                            writer.write(separator);
+                            break;
+                        case fragment_losses:
+                            writer.write(ionMatch.ion.getNeutralLossesAsString() + separator);
+                            break;
                         case fragment_name:
-                            writer.write(ionMatch.ion.getName() + separator);
+                            ion = ionMatch.ion;
+                            String name;
+                            if (ion.getType() == Ion.IonType.PEPTIDE_FRAGMENT_ION) {
+                                name = ((PeptideFragmentIon) ion).getNameWithNumber();
+                            } else {
+                                name = ion.getName();
+                            }
+                            writer.write(name + separator);
                             break;
                         case fragment_charge:
                             writer.write(ionMatch.charge.value + separator);
