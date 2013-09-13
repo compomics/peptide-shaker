@@ -2379,7 +2379,7 @@ public class PeptideShaker {
             int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
             int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
             int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
-            waitingHandler.appendReport(toDelete.size() + " irrealistic mappings found. (" + enzymaticPercent + "% non-enzymatic accession, " + evidencePercent + "% lower evidence accessions, " + uncharacterizedPercent + " % not characterized accessions)", true, true);
+            waitingHandler.appendReport(toDelete.size() + " unlikely mappings found. (" + enzymaticPercent + "% non-enzymatic accession, " + evidencePercent + "% lower evidence accessions, " + uncharacterizedPercent + " % not characterized accessions)", true, true);
             waitingHandler.setSecondaryProgressCounterIndeterminate(false);
             waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
         }

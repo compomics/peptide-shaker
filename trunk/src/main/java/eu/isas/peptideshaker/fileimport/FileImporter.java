@@ -909,7 +909,7 @@ public class FileImporter {
 
                 // inform the user in case more than 75% of the hits were rejected by the filters
                 if (100 * rejected > 75 * numberOfMatches) {
-                    String report = "Warning: more than 75% of the matches were rejected by the loading filters when importing the matches.";
+                    String report = "Warning: More than 75% of the matches were rejected by the loading filters when importing the matches.";
                     double meanRejected = (proteinIssue + peptideIssue + ptmIssue + precursorIssue) / 4;
                     if (proteinIssue > meanRejected) {
                         report += " Apparently your database contains a high share of shared peptides between the target and decoy sequences. Please verify your database";
