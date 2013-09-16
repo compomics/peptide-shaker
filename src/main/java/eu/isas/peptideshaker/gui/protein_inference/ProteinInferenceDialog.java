@@ -939,7 +939,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
-                        return inspectedMatch.hasEnzymatic(accessions.get(row), peptideShakerGUI.getSearchParameters().getEnzyme());
+                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), peptideShakerGUI.getSearchParameters().getEnzyme(), ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";

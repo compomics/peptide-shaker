@@ -5,6 +5,8 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.gui.tablemodels.SelfUpdatingTableModel;
 import com.compomics.util.waiting.WaitingHandler;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -55,7 +57,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
      * @param proteinAccession
      * @param peptideKeys
      */
-    public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) {
+    public PeptideTableModel(PeptideShakerGUI peptideShakerGUI, String proteinAccession, ArrayList<String> peptideKeys) throws IOException, InterruptedException, ClassNotFoundException, IllegalArgumentException, SQLException {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         this.peptideKeys = peptideKeys;
@@ -177,7 +179,7 @@ public class PeptideTableModel extends SelfUpdatingTableModel {
                     }
                     try {
                         Protein currentProtein = sequenceFactory.getProtein(proteinAccession);
-                        indexes = currentProtein.getPeptideStart(Peptide.getSequence(peptideKey));
+                        indexes = currentProtein.getPeptideStart(Peptide.getSequence(peptideKey), ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (IOException e) {
                         peptideShakerGUI.catchException(e);
                         return "IO Exception";

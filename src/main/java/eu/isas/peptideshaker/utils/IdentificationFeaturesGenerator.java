@@ -287,7 +287,7 @@ public class IdentificationFeaturesGenerator {
                 boolean enzymatic = false;
                 for (String accession : ProteinMatch.getAccessions(proteinMatchKey)) {
                     Protein currentProtein = sequenceFactory.getProtein(accession);
-                    if (currentProtein.isEnzymaticPeptide(peptideSequence, enzyme)) {
+                    if (currentProtein.isEnzymaticPeptide(peptideSequence, enzyme, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy())) {
                         enzymatic = true;
                         break;
                     }
@@ -401,7 +401,7 @@ public class IdentificationFeaturesGenerator {
             SpectrumCountingPreferences tempPreferences = new SpectrumCountingPreferences();
             tempPreferences.setSelectedMethod(method);
             return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey, tempPreferences,
-                    searchParameters.getEnzyme(), idFilter.getMaxPepLength());
+                    searchParameters.getEnzyme(), idFilter.getMaxPepLength(), searchParameters.getFragmentIonAccuracy());
         }
     }
 
@@ -426,7 +426,7 @@ public class IdentificationFeaturesGenerator {
     private double estimateSpectrumCounting(String proteinMatchKey) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
         return estimateSpectrumCounting(identification, sequenceFactory, proteinMatchKey,
                 spectrumCountingPreferences, searchParameters.getEnzyme(),
-                idFilter.getMaxPepLength());
+                idFilter.getMaxPepLength(), searchParameters.getFragmentIonAccuracy());
     }
 
     /**
@@ -446,7 +446,7 @@ public class IdentificationFeaturesGenerator {
      * @throws InterruptedException
      */
     public static Double estimateSpectrumCounting(Identification identification, SequenceFactory sequenceFactory, String proteinMatchKey,
-            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
+            SpectrumCountingPreferences spectrumCountingPreferences, Enzyme enzyme, int maxPepLength, double ms2Accuracy) throws IOException, IllegalArgumentException, SQLException, ClassNotFoundException, InterruptedException {
 
         PSParameter pSParameter = new PSParameter();
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
@@ -472,7 +472,7 @@ public class IdentificationFeaturesGenerator {
                                     testMatch = identification.getProteinMatch(proteinKey);
                                     if (testMatch.getPeptideMatches().contains(peptideKey)) {
                                         Protein currentProtein = sequenceFactory.getProtein(testMatch.getMainMatch());
-                                        peptideOccurrence += currentProtein.getPeptideStart(Peptide.getSequence(peptideKey)).size();
+                                        peptideOccurrence += currentProtein.getPeptideStart(Peptide.getSequence(peptideKey), ProteinMatch.MatchingType.string, ms2Accuracy).size();
                                         possibleProteinMatches.add(proteinKey);
                                     }
                                 } catch (Exception e) {
@@ -533,7 +533,7 @@ public class IdentificationFeaturesGenerator {
             }
 
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-            result = Math.pow(10, result / currentProtein.getNPossiblePeptides(enzyme)) - 1;
+            result = Math.pow(10, result / currentProtein.getNCleavageSites(enzyme)) - 1;
 
             if (new Double(result).isInfinite() || new Double(result).isNaN()) {
                 result = 0.0;
