@@ -133,7 +133,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="projectNameIdTxt" pref="484" max="32767" attributes="2"/>
+                          <Component id="projectNameIdTxt" max="32767" attributes="2"/>
                           <Component id="sampleNameIdtxt" max="32767" attributes="2"/>
                           <Component id="speciesTextField" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -274,8 +274,8 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="importFilterTxt" pref="486" max="32767" attributes="3"/>
-                          <Component id="preferencesTxt" pref="486" max="32767" attributes="3"/>
+                          <Component id="importFilterTxt" max="32767" attributes="3"/>
+                          <Component id="preferencesTxt" max="32767" attributes="3"/>
                           <Component id="searchTxt" alignment="1" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -414,7 +414,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="databaseLabel" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="fastaFileTxt" pref="488" max="32767" attributes="0"/>
+                              <Component id="fastaFileTxt" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Component id="browseDbButton" linkSize="5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>

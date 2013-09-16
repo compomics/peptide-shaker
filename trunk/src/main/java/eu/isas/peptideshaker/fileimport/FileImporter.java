@@ -14,6 +14,7 @@ import com.compomics.mascotdatfile.util.io.MascotIdfileReader;
 import com.compomics.software.CompomicsWrapper;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.experiment.identification.ptm.PtmSiteMapping;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -172,22 +173,10 @@ public class FileImporter {
 
             UtilitiesUserPreferences userPreferences = UtilitiesUserPreferences.loadUserPreferences();
             int memoryPreference = userPreferences.getMemoryPreference();
-            int treeSize = memoryPreference / 4;
-            proteinTree = new ProteinTree(treeSize);
-
-            int tagLength = 3;
-            if (sequenceFactory.getNTargetSequences() > 100000) {
-                tagLength = 4;
-                if (memoryPreference > 4000) {
-                    proteinTree.setCacheSize(100000);
-                }
-            }
-
-            proteinTree.initiateTree(tagLength, 500, 50, waitingHandler, true);
             if (memoryPreference < 2000) {
                 sequenceFactory.setnCache(5000);
-                proteinTree.setCacheSize(500);
             }
+            proteinTree = sequenceFactory.getDefaultProteinTree(waitingHandler);
 
             waitingHandler.appendReport("FASTA file import completed.", true, true);
             waitingHandler.increasePrimaryProgressCounter();
@@ -436,10 +425,7 @@ public class FileImporter {
 
                     // clear the objects not needed anymore
                     singleProteinList.clear();
-
-                    // close connection to the protein tree
-                    proteinTree.emptyCache();
-//                    proteinTree.close(); @TODO find a way to do that without killing all connections
+                    sequenceFactory.emptyCache();
 
                     if (nRetained == 0) {
                         waitingHandler.appendReport("No identifications retained.", true, true);
@@ -662,13 +648,21 @@ public class FileImporter {
                             String peptideSequence = peptide.getSequence();
 
                             // remap the proteins
-                            HashMap<String, ArrayList<Integer>> peptideIndex = proteinTree.getProteinMapping(peptideSequence);
-                            if (peptideIndex.isEmpty()) {
+                            //@TODO: let the user choose his favorite matching type?
+                            HashMap<String, HashMap<String, ArrayList<Integer>>> peptideMapping = proteinTree.getProteinMapping(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                            if (peptideMapping.isEmpty()) {
                                 throw new IllegalArgumentException("No protein found for peptide " + peptideSequence + ".");
                             }
-                            ArrayList<String> proteins = new ArrayList<String>(peptideIndex.keySet());
-                            Collections.sort(proteins);
-                            peptide.setParentProteins(proteins);
+                            ArrayList<String> accessions = new ArrayList<String>();
+                            for (HashMap<String, ArrayList<Integer>> indexes : peptideMapping.values()) {
+                                for (String accession : indexes.keySet()) {
+                                    if (!accessions.contains(accession)) {
+                                        accessions.add(accession);
+                                    }
+                                }
+                            }
+                            Collections.sort(accessions);
+                            peptide.setParentProteins(accessions);
                             if (!idFilter.validateProteins(peptide)) {
                                 match.removeAssumption(assumption);
                                 proteinIssue++;
@@ -678,7 +672,7 @@ public class FileImporter {
                             // If there are not enough sites to put them all on the sequence, add an unknown modifcation
                             ModificationProfile modificationProfile = searchParameters.getModificationProfile();
 
-                            ptmFactory.checkFixedModifications(modificationProfile, peptide);
+                            ptmFactory.checkFixedModifications(modificationProfile, peptide, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                             HashMap<Integer, ArrayList<String>> tempNames, expectedNames = new HashMap<Integer, ArrayList<String>>();
                             HashMap<ModificationMatch, ArrayList<String>> modNames = new HashMap<ModificationMatch, ArrayList<String>>();
 
@@ -703,7 +697,7 @@ public class FileImporter {
                                                 }
                                                 omssaName = PTMFactory.unknownPTM.getName();
                                             }
-                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName);
+                                            tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, omssaName, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                                         }
                                     } else if (searchEngine == Advocate.MASCOT || searchEngine == Advocate.XTANDEM) {
                                         String[] parsedName = sePTM.split("@");
@@ -714,7 +708,7 @@ public class FileImporter {
                                             throw new IllegalArgumentException("Impossible to parse \'" + sePTM + "\' as an X!Tandem or Mascot modification.\n"
                                                     + "Error encountered in peptide " + peptideSequence + " spectrum " + spectrumTitle + " in file " + fileName + ".");
                                         }
-                                        tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance);
+                                        tempNames = ptmFactory.getExpectedPTMs(modificationProfile, peptide, seMass, ptmMassTolerance, ProteinMatch.MatchingType.indistiguishibleAminoAcids);
                                     } else {
                                         throw new IllegalArgumentException("PTM mapping not implemented for search engine: " + SearchEngine.getName(searchEngine) + ".");
                                     }
@@ -807,7 +801,7 @@ public class FileImporter {
                             }
 
 
-                            if (idFilter.validateModifications(peptide)) {
+                            if (idFilter.validateModifications(peptide, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy())) {
                                 // Estimate the theoretic mass with the new modifications
                                 peptide.estimateTheoreticMass();
                                 if (!idFilter.validatePrecursor(assumption, spectrumKey, spectrumFactory)) {
@@ -902,7 +896,7 @@ public class FileImporter {
                         peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                         System.gc();
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                        proteinTree.emptyCache();
+                        sequenceFactory.emptyCache();
                     }
                 }
                 projectDetails.addIdentificationFiles(idFile);

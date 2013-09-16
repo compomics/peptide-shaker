@@ -313,7 +313,7 @@ public class PeptideShaker {
             return;
         }
         waitingHandler.appendReport("Resolving peptide inference issues.", true, true);
-        ptmInference(waitingHandler, ptmScoringPreferences, searchParameters.getEnzyme());
+        ptmInference(waitingHandler, ptmScoringPreferences, searchParameters);
         waitingHandler.increasePrimaryProgressCounter();
         if (waitingHandler.isRunCanceled()) {
             return;
@@ -1207,7 +1207,8 @@ public class PeptideShaker {
      *
      * @param waitingHandler waiting handler displaying progress to the user
      * @param ptmScoringPreferences the PTM scoring preferences
-     * @param enzyme the enzyme used
+     * @param searchParameters the search parameters used
+     * 
      * @throws SQLException exception thrown whenever a problem occurred while
      * interacting with the database
      * @throws IOException exception thrown whenever a problem occurred while
@@ -1219,7 +1220,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, Enzyme enzyme) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
+    public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
         waitingHandler.setWaitingText("Solving peptide inference. Please Wait...");
 
@@ -1247,7 +1248,7 @@ public class PeptideShaker {
                     }
                 }
                 if (variableAA) {
-                    ptmInference(spectrumMatch, ptmScoringPreferences);
+                    ptmInference(spectrumMatch, ptmScoringPreferences, searchParameters);
                     boolean confident = true;
                     for (ModificationMatch modMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
                         if (modMatch.isVariable()) {
@@ -1339,7 +1340,7 @@ public class PeptideShaker {
                             for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
                                 
                                 // @TODO: are semi-specific, top-down, whole protein and no enzyme handled correctly??
-                                
+                                Enzyme enzyme = searchParameters.getEnzyme();
                                 if (enzyme.isSemiSpecific() || enzyme.getNmissedCleavages(sequence) == enzyme.getNmissedCleavages(otherSequence)) {
                                     if (!sequence.equals(otherSequence) && sequence.contains(otherSequence)) {
                                         for (String tempKey : confidentPeptideInference.get(modification).get(otherSequence)) {
@@ -1355,7 +1356,7 @@ public class PeptideShaker {
                                                     if (!oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
                                                         newLocalizationCandidates.add(shiftedLocalization);
                                                         PTM ptm = ptmFactory.getPTM(modification);
-                                                        if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
+                                                        if (!peptide.getPotentialModificationSites(ptm, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy()).contains(shiftedLocalization)) {
                                                             throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
                                                         }
                                                     }
@@ -1379,7 +1380,7 @@ public class PeptideShaker {
                                                             && !oldLocalizations.contains(shiftedLocalization) && !newLocalizationCandidates.contains(shiftedLocalization)) {
                                                         newLocalizationCandidates.add(shiftedLocalization);
                                                         PTM ptm = ptmFactory.getPTM(modification);
-                                                        if (!peptide.getPotentialModificationSites(ptm).contains(shiftedLocalization)) {
+                                                        if (!peptide.getPotentialModificationSites(ptm, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy()).contains(shiftedLocalization)) {
                                                             throw new IllegalArgumentException("Wrong PTM site inference: " + modification + " at position " + shiftedLocalization + " on " + sequence + " in spectrum " + spectrumKey + " when using related sequence " + otherSequence + " modified at " + localization + ".");
                                                         }
                                                     }
@@ -1406,7 +1407,7 @@ public class PeptideShaker {
                                 Integer newLocalization = mapping.get(oldLocalization);
                                 if (modificationMatch != null && newLocalization != null) {
                                     PTM ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
-                                    if (!peptide.getPotentialModificationSites(ptm).contains(newLocalization)) {
+                                    if (!peptide.getPotentialModificationSites(ptm, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy()).contains(newLocalization)) {
                                         throw new IllegalArgumentException("Wrong PTM site inference: " + modificationMatch.getTheoreticPtm()
                                                 + " at position " + newLocalization + " on " + sequence + " in spectrum " + spectrumKey + ".");
                                     }
@@ -1436,6 +1437,8 @@ public class PeptideShaker {
      * @param spectrumMatch the spectrum match inspected
      * @param ptmScoringPreferences the PTM scoring preferences as set by the
      * user
+     * @param searchParameters the identification parameters
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * reading a protein sequence
      * @throws IllegalArgumentException exception thrown whenever an error
@@ -1443,7 +1446,7 @@ public class PeptideShaker {
      * @throws InterruptedException exception thrown whenever an error occurred
      * while reading a protein sequence
      */
-    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
+    private void ptmInference(SpectrumMatch spectrumMatch, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws IOException, IllegalArgumentException, InterruptedException, FileNotFoundException, ClassNotFoundException {
 
         Peptide psPeptide = spectrumMatch.getBestAssumption().getPeptide();
 
@@ -1467,7 +1470,7 @@ public class PeptideShaker {
                     PtmScoring ptmScoring = ptmScores.getPtmScoring(modName);
                     if (ptmScoring != null) {
                         PTM ptm = ptmFactory.getPTM(modName);
-                        ArrayList<Integer> possiblePositions = psPeptide.getPotentialModificationSites(ptm);
+                        ArrayList<Integer> possiblePositions = psPeptide.getPotentialModificationSites(ptm, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                         if (possiblePositions.size() < modMatches.get(modName).size()) {
                             throw new IllegalArgumentException("The occurence of " + modName + " (" + modMatches.get(modName).size()
                                     + ") is higher than the number of possible sites on sequence " + psPeptide.getSequence()
@@ -1659,7 +1662,7 @@ public class PeptideShaker {
                     nValidatedProteins++;
                 }
                 if (spectrumCountingPreferences != null) {
-                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength);
+                    tempSpectrumCounting = IdentificationFeaturesGenerator.estimateSpectrumCounting(identification, sequenceFactory, proteinKey, spectrumCountingPreferences, enzyme, maxPepLength, searchParameters.getFragmentIonAccuracy());
                     if (tempSpectrumCounting > maxSpectrumCounting) {
                         maxSpectrumCounting = tempSpectrumCounting;
                     }
@@ -2036,7 +2039,7 @@ public class PeptideShaker {
                             if (modificationProfile.isEmpty()) {
                                 throw new IllegalArgumentException("No PTM localization returned by the A-score for PTM of mass " + ptmMass + " in spectrum " + spectrumMatch.getKey() + ".");
                             }
-                            if (peptide.getPotentialModificationSites(ptm).contains(modificationProfile.get(0))) { //@TODO: implement this more elegantly with a method looking for the pattern in the peptide sequence inside the Peptide class. Will be faster.
+                            if (peptide.getPotentialModificationSites(ptm, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy()).contains(modificationProfile.get(0))) { //@TODO: implement this more elegantly with a method looking for the pattern in the peptide sequence inside the Peptide class. Will be faster.
                                 bestModification = ptm;
                                 break;
                             }
@@ -2357,7 +2360,7 @@ public class PeptideShaker {
         for (String proteinSharedKey : identification.getProteinIdentification()) {
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 if (!processedKeys.containsKey(proteinSharedKey)) {
-                    String uniqueKey = getSubgroup(identification, proteinSharedKey, processedKeys, toDelete, searchParameters.getEnzyme());
+                    String uniqueKey = getSubgroup(identification, proteinSharedKey, processedKeys, toDelete, searchParameters);
                     if (uniqueKey != null) {
                         mergeProteinGroups(identification, proteinSharedKey, uniqueKey, toDelete);
                         processedKeys.put(proteinSharedKey, uniqueKey);
@@ -2405,7 +2408,7 @@ public class PeptideShaker {
      * @param processedKeys map of already processed keys and their best smaller
      * key
      * @param keysToDelete list of keys to delete
-     * @param enzyme the enzyme used for protein digestion
+     * @param searchParameters the search parameters
      *
      * @return the best smaller group, null if none found.
      *
@@ -2414,11 +2417,12 @@ public class PeptideShaker {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, Enzyme enzyme)
+    private String getSubgroup(Identification identification, String sharedKey, HashMap<String, String> processedKeys, ArrayList<String> keysToDelete, SearchParameters searchParameters)
             throws IllegalArgumentException, SQLException, IOException, ClassNotFoundException, InterruptedException {
 
         String[] sharedAccessions = ProteinMatch.getAccessions(sharedKey);
         ArrayList<String> candidateUnique = new ArrayList<String>();
+        Enzyme enzyme = searchParameters.getEnzyme();
 
         for (String accession : sharedAccessions) {
             for (String uniqueGroupCandidate : identification.getProteinMap().get(accession)) {
@@ -2427,7 +2431,7 @@ public class PeptideShaker {
                     if (ProteinMatch.getNProteins(uniqueGroupCandidate) > 1) {
                         String reducedGroup = processedKeys.get(uniqueGroupCandidate);
                         if (reducedGroup == null) {
-                            reducedGroup = getSubgroup(identification, uniqueGroupCandidate, processedKeys, keysToDelete, enzyme);
+                            reducedGroup = getSubgroup(identification, uniqueGroupCandidate, processedKeys, keysToDelete, searchParameters);
                             if (reducedGroup != null) {
                                 mergeProteinGroups(identification, uniqueGroupCandidate, reducedGroup, keysToDelete);
                                 processedKeys.put(uniqueGroupCandidate, reducedGroup);
@@ -2468,7 +2472,7 @@ public class PeptideShaker {
                                         break;
                                     }
                                     for (String accession2 : ProteinMatch.getAccessions(key2)) {
-                                        int tempPrefernce = compareMainProtein(match, accession2, match, accession1, enzyme);
+                                        int tempPrefernce = compareMainProtein(match, accession2, match, accession1, searchParameters);
                                         if (tempPrefernce != 1) {
                                             best = false;
                                             break;
@@ -2485,7 +2489,7 @@ public class PeptideShaker {
                         if (best) {
                             ArrayList<String> accessions = ProteinMatch.getOtherProteins(sharedKey, key1);
                             for (String accession2 : accessions) {
-                                int tempPrefernce = compareMainProtein(match, accession2, match, accession1, enzyme);
+                                int tempPrefernce = compareMainProtein(match, accession2, match, accession1, searchParameters);
                                 if (tempPrefernce == 0) {
                                     best = false;
                                     break;
@@ -2694,7 +2698,7 @@ public class PeptideShaker {
                 boolean allSimilar = false;
                 psParameter = (PSParameter) identification.getProteinMatchParameter(proteinKey, psParameter);
                 for (String accession : accessions) {
-                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, searchParameters.getEnzyme()) > 0) {
+                    if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accession, searchParameters) > 0) {
                         mainKey = accession;
                     }
                 }
@@ -2702,7 +2706,7 @@ public class PeptideShaker {
                     for (int j = i + 1; j < accessions.size(); j++) {
                         if (getSimilarity(accessions.get(i), accessions.get(j))) {
                             similarityFound = true;
-                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), searchParameters.getEnzyme()) > 0) {
+                            if (compareMainProtein(proteinMatch, mainKey, proteinMatch, accessions.get(j), searchParameters) > 0) {
                                 mainKey = accessions.get(i);
                             }
                             break;
@@ -2896,7 +2900,7 @@ public class PeptideShaker {
      * @param oldAccession the accession of the old protein
      * @param newProteinMatch the protein match of newAccession
      * @param newAccession the accession of the new protein
-     * @param enzyme the enzyme used to digest the protein
+     * @param searchParameters  the parameters used for the identification
      *
      * @return the product of the comparison: 1 better enzymaticity 2: better
      * evidence 3: better characterization 0: equal or not better
@@ -2905,14 +2909,15 @@ public class PeptideShaker {
      * @throws InterruptedException
      * @throws IllegalArgumentException
      */
-    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, Enzyme enzyme) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
+    private int compareMainProtein(ProteinMatch oldProteinMatch, String oldAccession, ProteinMatch newProteinMatch, String newAccession, SearchParameters searchParameters) throws IOException, InterruptedException, IllegalArgumentException, ClassNotFoundException {
 
+        Enzyme enzyme = searchParameters.getEnzyme();
         if (!enzyme.isSemiSpecific()) {
             
             // @TODO: could semi-specific, top-down, whole protein, and non enzyme be handled better??
-            
-            boolean newEnzymatic = newProteinMatch.hasEnzymatic(newAccession, enzyme);
-            boolean oldEnzymatic = oldProteinMatch.hasEnzymatic(oldAccession, enzyme);
+            double ms2tolerance = searchParameters.getFragmentIonAccuracy();
+            boolean newEnzymatic = newProteinMatch.hasEnzymaticPeptide(newAccession, enzyme, ProteinMatch.MatchingType.indistiguishibleAminoAcids, ms2tolerance);
+            boolean oldEnzymatic = oldProteinMatch.hasEnzymaticPeptide(oldAccession, enzyme, ProteinMatch.MatchingType.indistiguishibleAminoAcids, ms2tolerance);
             if (newEnzymatic && !oldEnzymatic) {
                 return 1;
             } else if (!newEnzymatic && oldEnzymatic) {

@@ -747,6 +747,9 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
         }
         validateInput();
 }//GEN-LAST:event_clearDbButtonActionPerformed
@@ -1084,6 +1087,9 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             try {
                 sequenceFactory.clearFactory();
             } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
             }
