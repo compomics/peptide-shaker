@@ -5,7 +5,6 @@ import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.protein_inference.proteintree.ProteinTree;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -57,10 +56,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * The other proteins table column header tooltips.
      */
     private ArrayList<String> otherProteinsTableToolTips;
-    /**
-     * The protein tree
-     */
-    private ProteinTree proteinTree;
 
     /**
      * Create a new ProteinInferencePeptideLevelDialog.
@@ -74,8 +69,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideMatchKey, String proteinMatchKey) throws Exception {
 
         super(aPeptideShakerGUI, modal);
-        
-        proteinTree = sequenceFactory.getDefaultProteinTree();
 
         peptideMatch = peptideMatchKey;
 
