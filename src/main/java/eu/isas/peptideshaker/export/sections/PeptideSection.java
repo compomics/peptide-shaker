@@ -10,7 +10,6 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
@@ -225,7 +224,8 @@ public class PeptideSection {
                         String start = "";
                         for (String proteinAccession : accessions) {
                             Protein protein = sequenceFactory.getProtein(proteinAccession);
-                            ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(), ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                            ArrayList<Integer> starts = protein.getPeptideStart(peptide.getSequence(), 
+                                    ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                             Collections.sort(starts);
                             boolean first = true;
                             for (int startAa : starts) {

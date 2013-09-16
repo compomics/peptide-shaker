@@ -133,7 +133,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="plotsTabbedPane" pref="904" max="32767" attributes="0"/>
+                          <Component id="plotsTabbedPane" pref="908" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -142,7 +142,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="plotsTabbedPane" pref="299" max="32767" attributes="0"/>
+                          <Component id="plotsTabbedPane" pref="305" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -179,13 +179,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="mwPlotPanel" alignment="0" pref="899" max="32767" attributes="0"/>
+                              <Component id="mwPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="mwPlotPanel" pref="256" max="32767" attributes="0"/>
+                                  <Component id="mwPlotPanel" pref="266" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -218,13 +218,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="fractionsPlotPanel" alignment="0" pref="899" max="32767" attributes="0"/>
+                              <Component id="fractionsPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="fractionsPlotPanel" pref="256" max="32767" attributes="0"/>
+                                  <Component id="fractionsPlotPanel" pref="266" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -257,18 +257,18 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="899" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="903" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Component id="coverageTableScrollPane" alignment="0" pref="899" max="32767" attributes="0"/>
+                                  <Component id="coverageTableScrollPane" alignment="0" pref="903" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="269" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="277" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="coverageTableScrollPane" pref="256" max="32767" attributes="0"/>
+                                      <Component id="coverageTableScrollPane" pref="266" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -325,13 +325,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="intensityPlotPanel" alignment="0" pref="899" max="32767" attributes="0"/>
+                              <Component id="intensityPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="intensityPlotPanel" pref="256" max="32767" attributes="0"/>
+                                  <Component id="intensityPlotPanel" pref="266" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -364,13 +364,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="spectraPlotPanel" alignment="0" pref="899" max="32767" attributes="0"/>
+                              <Component id="spectraPlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="spectraPlotPanel" pref="256" max="32767" attributes="0"/>
+                                  <Component id="spectraPlotPanel" pref="266" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -403,13 +403,13 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="peptidePlotPanel" alignment="0" pref="899" max="32767" attributes="0"/>
+                              <Component id="peptidePlotPanel" alignment="0" pref="903" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="peptidePlotPanel" pref="256" max="32767" attributes="0"/>
+                                  <Component id="peptidePlotPanel" pref="266" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -567,7 +567,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinTableScrollPane" pref="904" max="32767" attributes="0"/>
+                          <Component id="proteinTableScrollPane" pref="908" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -576,7 +576,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinTableScrollPane" pref="149" max="32767" attributes="0"/>
+                          <Component id="proteinTableScrollPane" pref="155" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

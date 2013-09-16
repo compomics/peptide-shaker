@@ -912,6 +912,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         }
 }//GEN-LAST:event_browseSpectraActionPerformed
 
+    /**
+     * Clear the identification files.
+     *
+     * @param evt
+     */
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
         idFiles = new ArrayList<File>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
@@ -919,6 +924,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         validateInput();
 }//GEN-LAST:event_clearIdActionPerformed
 
+    /**
+     * Open a file chooser for selecting identification files.
+     *
+     * @param evt
+     */
     private void browseIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseIdActionPerformed
 
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
@@ -1028,19 +1038,49 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                     }
                 }
             }
-            if (parameterFile != null) {
-                importSearchParameters(parameterFile);
-            }
-            boolean importSuccessfull = true;
 
-            for (int i = 0; i < folders.size() && importSuccessfull; i++) {
-                File folder = folders.get(i);
-                File inputFile = new File(folder, SEARCHGUI_INPUT);
-                if (inputFile.exists()) {
-                    importSuccessfull = importMgfFiles(inputFile);
+            final ArrayList<File> finalFolders = folders;
+            final File finalParameterFile = parameterFile;
+
+            progressDialog = new ProgressDialogX(this, peptideShakerGUI,
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
+                    Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
+                    true);
+            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+            progressDialog.setTitle("Checking Spectrum Files. Please Wait...");
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        progressDialog.setVisible(true);
+                    } catch (IndexOutOfBoundsException e) {
+                        // ignore
+                    }
                 }
-            }
-            idFilesTxt.setText(idFiles.size() + " file(s) selected");
+            }, "ProgressDialog").start();
+
+            new Thread("importThread") {
+                public void run() {
+
+                    boolean importSuccessfull = true;
+
+                    for (int i = 0; i < finalFolders.size() && importSuccessfull; i++) {
+                        File folder = finalFolders.get(i);
+                        File inputFile = new File(folder, SEARCHGUI_INPUT);
+                        if (inputFile.exists()) {
+                            importSuccessfull = importMgfFiles(inputFile, progressDialog);
+                        }
+                    }
+                    idFilesTxt.setText(idFiles.size() + " file(s) selected");
+
+                    if (finalParameterFile != null) {
+                        importSearchParameters(finalParameterFile, progressDialog);
+                    }
+
+                    progressDialog.setRunFinished();
+                    validateInput();
+                }
+            }.start();
         }
 
         validateInput();
@@ -1094,7 +1134,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                 JOptionPane.showMessageDialog(this, "Failed to clear the sequence factory.", "File Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (!currentFastaFile.equals(sequenceFactory.getCurrentFastaFile()) && currentFastaFile.exists()) {
-            loadFastaFile(currentFastaFile);
+            loadFastaFile(currentFastaFile, null);
         }
         this.setVisible(false);
         this.dispose();
@@ -1163,8 +1203,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void aboutButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1172,8 +1212,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void aboutButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aboutButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1181,8 +1221,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Open the PeptideShaker web page.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1192,8 +1232,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Open the PeptideShaker web page.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void peptideShakerHomePageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseClicked
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1203,8 +1243,8 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void peptideShakerHomePageLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1212,13 +1252,12 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
 
     /**
      * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void peptideShakerHomePageLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerHomePageLabelMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptideShakerHomePageLabelMouseExited
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton aboutButton;
     private javax.swing.JButton browseDbButton;
@@ -1416,8 +1455,11 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * Imports the search parameters from a SearchGUI file.
      *
      * @param file the selected searchGUI file
+     * @param progressDialog the progress dialog
      */
-    public void importSearchParameters(File file) {
+    public void importSearchParameters(File file, ProgressDialogX progressDialog) {
+
+        progressDialog.setTitle("Importing Search Parameters. Please Wait...");
 
         try {
             searchParameters = SearchParameters.getIdentificationParameters(file);
@@ -1503,14 +1545,14 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         File fastaFile = searchParameters.getFastaFile();
         if (fastaFile != null && fastaFile.exists()) {
             fastaFileTxt.setText(fastaFile.getName());
-            loadFastaFile(fastaFile);
+            loadFastaFile(fastaFile, progressDialog);
         } else {
             // try to find it in the same folder as the SearchGUI.properties file
             if (new File(file.getParentFile(), fastaFile.getName()).exists()) {
                 fastaFile = new File(file.getParentFile(), fastaFile.getName());
                 searchParameters.setFastaFile(fastaFile);
                 fastaFileTxt.setText(fastaFile.getName());
-                loadFastaFile(fastaFile);
+                loadFastaFile(fastaFile, progressDialog);
             } else {
                 JOptionPane.showMessageDialog(this, "FASTA file \'" + fastaFile.getName() + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             }
@@ -1546,14 +1588,16 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
     }
 
     /**
-     * Imports the mgf files from a searchGUI file.
+     * Imports the mgf files from a SearchGUI file.
      *
-     * @param searchGUIFile a searchGUI file
+     * @param searchGUIFile a SearchGUI file
      * @returns true of the mgf files were imported successfully
      */
-    private boolean importMgfFiles(File searchGUIFile) {
+    private boolean importMgfFiles(File searchGUIFile, ProgressDialogX progressDialog) {
 
         boolean success = true;
+
+        int mgfFileCounter = 0;
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(searchGUIFile));
@@ -1563,18 +1607,19 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
             for (File file : spectrumFiles) {
                 names.add(file.getName());
             }
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && !progressDialog.isRunCanceled()) {
                 // Skip empty lines.
                 line = line.trim();
-                if (line.equals("")) {
-                } else {
+                if (!line.equals("")) {
                     try {
                         File newFile = new File(line);
                         if (!names.contains(newFile.getName())) {
                             if (newFile.exists()) {
                                 names.add(newFile.getName());
 
-                                String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
+                                progressDialog.setTitle("Checking Spectrum Files. Please Wait... " + ++mgfFileCounter);
+
+                                String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, progressDialog);
 
                                 if (duplicateTitle != null) {
                                     JOptionPane.showMessageDialog(this,
@@ -1591,7 +1636,9 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
                                     newFile = new File(searchGUIFile.getParentFile(), newFile.getName());
                                     names.add(newFile.getName());
 
-                                    String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, null);
+                                    progressDialog.setTitle("Checking Spectrum Files. Please Wait... " + ++mgfFileCounter);
+
+                                    String duplicateTitle = MgfReader.validateSpectrumTitles(newFile, progressDialog);
 
                                     if (duplicateTitle != null) {
                                         JOptionPane.showMessageDialog(this,
@@ -1649,65 +1696,53 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
      * Loads the FASTA file in the factory.
      *
      * @param file the FASTA file
+     * @param progressDialog the progress dialog
      */
-    private void loadFastaFile(File file) {
+    private void loadFastaFile(File file, ProgressDialogX progressDialog) {
 
-        final File finalFile = file;
-
-        progressDialog = new ProgressDialogX(this, peptideShakerGUI,
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
-                Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
-                true);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
-        progressDialog.setTitle("Loading Database. Please Wait...");
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    progressDialog.setVisible(true);
-                } catch (IndexOutOfBoundsException e) {
-                    // ignore
-                }
+        try {
+            if (progressDialog != null) {
+                progressDialog.setTitle("Importing Database. Please Wait...");
+                progressDialog.setPrimaryProgressCounterIndeterminate(false);
             }
-        }, "ProgressDialog").start();
-
-        new Thread("importThread") {
-            public void run() {
-
-                try {
-                    progressDialog.setTitle("Importing Database. Please Wait...");
-                    progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                    sequenceFactory.loadFastaFile(finalFile, progressDialog);
-                    checkFastaFile();
-                } catch (IOException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            new String[]{"FASTA Import Error.", "File " + finalFile.getAbsolutePath() + " not found."},
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            new String[]{"FASTA Import Error.", "File index of " + finalFile.getName() + " could not be imported. Please contact the developers."},
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                } catch (StringIndexOutOfBoundsException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            e.getMessage(),
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                } catch (IllegalArgumentException e) {
-                    progressDialog.setRunFinished();
-                    JOptionPane.showMessageDialog(peptideShakerGUI,
-                            e.getMessage(),
-                            "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
-                    e.printStackTrace();
-                } finally {
-                    progressDialog.setRunFinished();
-                }
+            sequenceFactory.loadFastaFile(file, progressDialog);
+            checkFastaFile();
+            if (progressDialog != null) {
+                progressDialog.setRunFinished();
             }
-        }.start();
+        } catch (IOException e) {
+            if (progressDialog != null) {
+                progressDialog.setRunFinished();
+            }
+            JOptionPane.showMessageDialog(peptideShakerGUI,
+                    new String[]{"FASTA Import Error.", "File " + file.getAbsolutePath() + " not found."},
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            if (progressDialog != null) {
+                progressDialog.setRunFinished();
+            }
+            JOptionPane.showMessageDialog(peptideShakerGUI,
+                    new String[]{"FASTA Import Error.", "File index of " + file.getName() + " could not be imported. Please contact the developers."},
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        } catch (StringIndexOutOfBoundsException e) {
+            if (progressDialog != null) {
+                progressDialog.setRunFinished();
+            }
+            JOptionPane.showMessageDialog(peptideShakerGUI,
+                    e.getMessage(),
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            if (progressDialog != null) {
+                progressDialog.setRunFinished();
+            }
+            JOptionPane.showMessageDialog(peptideShakerGUI,
+                    e.getMessage(),
+                    "FASTA Import Error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -1780,7 +1815,7 @@ public class NewDialog extends javax.swing.JDialog implements SearchSettingsDial
         if (searchParameters.getParametersFile() != null) {
             searchTxt.setText(searchParameters.getParametersFile().getName().substring(0, searchParameters.getParametersFile().getName().lastIndexOf(".")));
         } else {
-             searchTxt.setText("User Defined");
+            searchTxt.setText("User Defined");
         }
         fastaFileTxt.setText(searchParameters.getFastaFile().getName());
         validateInput();

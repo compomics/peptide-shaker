@@ -649,10 +649,13 @@ public class FileImporter {
 
                             // remap the proteins
                             //@TODO: let the user choose his favorite matching type?
-                            HashMap<String, HashMap<String, ArrayList<Integer>>> peptideMapping = proteinTree.getProteinMapping(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
+                            HashMap<String, HashMap<String, ArrayList<Integer>>> peptideMapping =
+                                    proteinTree.getProteinMapping(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
                             if (peptideMapping.isEmpty()) {
                                 throw new IllegalArgumentException("No protein found for peptide " + peptideSequence + ".");
                             }
+
+                            // get the unique protein parents, sort them and re-add to peptide
                             ArrayList<String> accessions = new ArrayList<String>();
                             for (HashMap<String, ArrayList<Integer>> indexes : peptideMapping.values()) {
                                 for (String accession : indexes.keySet()) {
