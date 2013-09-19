@@ -1208,7 +1208,7 @@ public class PeptideShaker {
      * @param waitingHandler waiting handler displaying progress to the user
      * @param ptmScoringPreferences the PTM scoring preferences
      * @param searchParameters the search parameters used
-     * 
+     *
      * @throws SQLException exception thrown whenever a problem occurred while
      * interacting with the database
      * @throws IOException exception thrown whenever a problem occurred while
@@ -1338,7 +1338,7 @@ public class PeptideShaker {
                         if (oldLocalizations.size() + newLocalizationCandidates.size() < nMod) {
                             // There are still unexplained sites, let's see if we find a related peptide which can help. That is uggly but the results should be cool.
                             for (String otherSequence : confidentPeptideInference.get(modification).keySet()) {
-                                
+
                                 // @TODO: are semi-specific, top-down, whole protein and no enzyme handled correctly??
                                 Enzyme enzyme = searchParameters.getEnzyme();
                                 if (enzyme.isSemiSpecific() || enzyme.getNmissedCleavages(sequence) == enzyme.getNmissedCleavages(otherSequence)) {
@@ -1438,7 +1438,7 @@ public class PeptideShaker {
      * @param ptmScoringPreferences the PTM scoring preferences as set by the
      * user
      * @param searchParameters the identification parameters
-     * 
+     *
      * @throws IOException exception thrown whenever an error occurred while
      * reading a protein sequence
      * @throws IllegalArgumentException exception thrown whenever an error
@@ -2377,23 +2377,27 @@ public class PeptideShaker {
             }
         }
 
-        if (waitingHandler != null) {
-            waitingHandler.setWaitingText("Deleting mapping artifacts. Please Wait...");
-            int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
-            int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
-            int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
-            waitingHandler.appendReport(toDelete.size() + " unlikely mappings found. (" + enzymaticPercent + "% non-enzymatic accessions, " 
-                    + evidencePercent + "% lower evidence accessions, " + uncharacterizedPercent + "% not characterized accessions)", true, true);
-            waitingHandler.setSecondaryProgressCounterIndeterminate(false);
-            waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
-        }
-        for (String proteinKey : toRemove) {
-            identification.removeProteinMatch(proteinKey);
+        if (enzymaticIssue + evidenceIssue + uncharacterizedIssue > 0) { // special case to not divide by zero
+
             if (waitingHandler != null) {
-                if (waitingHandler.isRunCanceled()) {
-                    return;
+                waitingHandler.setWaitingText("Deleting mapping artifacts. Please Wait...");
+                int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
+                int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
+                int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
+                waitingHandler.appendReport(toDelete.size() + " unlikely mappings found. (" + enzymaticPercent + "% non-enzymatic accessions, "
+                        + evidencePercent + "% lower evidence accessions, " + uncharacterizedPercent + "% not characterized accessions)", true, true);
+                waitingHandler.setSecondaryProgressCounterIndeterminate(false);
+                waitingHandler.setMaxSecondaryProgressCounter(toRemove.size());
+            }
+
+            for (String proteinKey : toRemove) { // @TODO: nothing is ever added to this map..?
+                identification.removeProteinMatch(proteinKey);
+                if (waitingHandler != null) {
+                    if (waitingHandler.isRunCanceled()) {
+                        return;
+                    }
+                    waitingHandler.increaseSecondaryProgressCounter();
                 }
-                waitingHandler.increaseSecondaryProgressCounter();
             }
         }
     }
@@ -2901,7 +2905,7 @@ public class PeptideShaker {
      * @param oldAccession the accession of the old protein
      * @param newProteinMatch the protein match of newAccession
      * @param newAccession the accession of the new protein
-     * @param searchParameters  the parameters used for the identification
+     * @param searchParameters the parameters used for the identification
      *
      * @return the product of the comparison: 1 better enzymaticity 2: better
      * evidence 3: better characterization 0: equal or not better
@@ -2914,7 +2918,7 @@ public class PeptideShaker {
 
         Enzyme enzyme = searchParameters.getEnzyme();
         if (!enzyme.isSemiSpecific()) {
-            
+
             // @TODO: could semi-specific, top-down, whole protein, and non enzyme be handled better??
             double ms2tolerance = searchParameters.getFragmentIonAccuracy();
             boolean newEnzymatic = newProteinMatch.hasEnzymaticPeptide(newAccession, enzyme, ProteinMatch.MatchingType.indistiguishibleAminoAcids, ms2tolerance);
