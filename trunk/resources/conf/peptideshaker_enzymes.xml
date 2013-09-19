@@ -102,9 +102,9 @@
 		<id> 11 </id>
 		<name> Whole Protein </name> 
 		<aminoAcidBefore> </aminoAcidBefore>
-		<restrictionBefore> </restrictionBefore>
-		<aminoAcidAfter> X </aminoAcidAfter> <!-- is this correct?? -->
-		<restrictionAfter> X </restrictionAfter> <!-- is this correct?? -->
+		<restrictionBefore> X </restrictionBefore>
+		<aminoAcidAfter> </aminoAcidAfter>
+		<restrictionAfter> X </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
 	</enzyme>
 	<enzyme>
@@ -138,9 +138,9 @@
 		<id> 15 </id>
 		<name> Top-Down </name>
 		<aminoAcidBefore> </aminoAcidBefore>
-		<restrictionBefore> </restrictionBefore>
-		<aminoAcidAfter> X </aminoAcidAfter> <!-- is this correct?? -->
-		<restrictionAfter> X </restrictionAfter> <!-- is this correct?? -->
+		<restrictionBefore> X </restrictionBefore>
+		<aminoAcidAfter> </aminoAcidAfter>
+		<restrictionAfter> X </restrictionAfter>
 		<semiSpecific> no </semiSpecific>
 	</enzyme>
 	<enzyme>
@@ -225,3 +225,4 @@
 		<semiSpecific> yes </semiSpecific>
 	</enzyme>
 </xml>
+
