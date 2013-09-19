@@ -12,7 +12,7 @@ There are four main sections to this page:
  * [#C)_FollowUpCLI C) FollowUpCLI] - export for follow up analysis
  * [#D)_General D) General] - general command line help
 
-All command line options have the same overall structure and only differ in the features and the parameters available.
+All command line options have the same overall structure and only differ in the features and parameters available.
 
 ----
 
