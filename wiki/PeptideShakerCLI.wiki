@@ -165,7 +165,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 -out                       Output folder for report files. (Existing files will be overwritten.)
 }}}
 
-*Report options:*
+*Optional report options:*
 
 {{{
 -reports                   Comma separated list of types of report to export. 
@@ -208,8 +208,75 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 *Mandatory parameters:*
 
 {{{
--experiment                Specifies the experiment name.
+-in                        PeptideShaker project (.cps file)
+}}}
 
+*Optional recalibration parameters:*
+
+{{{
+-recalibration_folder      Output folder for the recalibrated files. (Existing files will be overwritten.)
+-recalibration_mode        Recalibration type. 
+                           0: precursor and fragment ions (default), 
+                           1: precursor only, 
+                           2: fragment ions only.
+}}}
+
+*Optional spectrum export parameters:*
+
+{{{
+-spectrum_folder           Output folder for the spectra. (Existing files will be overwritten.)
+-psm_type                  Type of PSMs. 
+                           0: Spectra of Non-Validated PSMs (default),  
+                           1: Spectra of Non-Validated Peptides, 
+                           2: Spectra of Non-Validated Proteins, 
+                           3: Spectra of Validated PSMs, 
+                           4: Spectra of Validated PSMs of Validated Peptides, 
+                           5: Spectra of validated PSMs of Validated Peptides of Validated Proteins.
+}}}
+
+*Optional Progenesis export parameters:*
+
+{{{
+-progenesis_file           Output file for identification results in Progenesis LC-MS compatible format. 
+                           (Existing files will be overwritten.)
+-progenesis_type           Type of hits to export to Progenesis. 
+                           0: Spectra of Validated PSMs of Validated Peptides of Validated Proteins.
+                           1: Spectra of Validated PSMs of Validated Peptides, 
+                           2: Spectra of validated PSMs.
+}}}
+
+*Optional protein accessions export parameters:*
+
+{{{
+-accessions_file           Output file to export the protein accessions in text format. 
+                           (Existing files will be overwritten.)
+-accessions_type           When exporting accessions, select a category of proteins. 
+                           0: Main Accession of Validated Protein Groups (default),
+                           1: All Accessions of Validated Protein Groups, 
+                           2: Non-Validated Accessions.
+}}}
+
+*Optional FASTA export parameters:*
+
+{{{
+-fasta_file                File where to export the protein details in fasta format. 
+                           (Existing files will be overwritten.)
+-fasta_type                When exporting protein details, select a category of proteins. 
+                           0: Main Accession of Validated Protein Groups (default), 
+                           1: All Accessions of Validated Protein Groups, 
+                           2: Non-Validated Accessions.
+}}}
+
+*Optional PepNovo+ training file export parameters:*
+
+{{{
+-pepnovo_training_folder   Output folder for PepNovo training files. (Existing files will be overwritten.)
+-pepnovo_training_recalibration
+                           Indicate whether the exported mgf files shall be recalibrated. 
+                           0: No, 1: Yes (default).
+-pepnovo_training_fdr      FDR used for the 'good spectra' export. If not set, the validation FDR will be used.
+-pepnovo_training_fnr      FNR used for the 'bad spectra' export. If not set, the same value as for 
+                           the 'good spectra' FDR will be used.
 }}}
 
 *FollowUpCLI Example:*
