@@ -330,7 +330,7 @@ public class InclusionListExport {
             return Thermo.index + ": " + Thermo.description + " (default), "
                     + ABI.index + ": " + ABI.description + ", "
                     + Bruker.index + ": " + Bruker.description + ", "
-                    + MassLynx.index + ": " + MassLynx.description + ", ";
+                    + MassLynx.index + ": " + MassLynx.description + ".";
         }
 
         /**
@@ -427,7 +427,7 @@ public class InclusionListExport {
         public static String getCommandLineOptions() {
             return miscleaved.index + ": " + miscleaved.description + ", "
                     + reactive.index + ": " + reactive.description + ", "
-                    + degenerated.index + ": " + degenerated.description;
+                    + degenerated.index + ": " + degenerated.description + ".";
         }
     }
 
@@ -440,6 +440,6 @@ public class InclusionListExport {
     public static String getProteinFiltersCommandLineOptions() {
         return PSParameter.RELATED + ": " + PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED) + ", "
                 + PSParameter.RELATED_AND_UNRELATED + ": " + PSParameter.getProteinInferenceClassAsString(PSParameter.RELATED_AND_UNRELATED) + ", "
-                + PSParameter.UNRELATED + ": " + PSParameter.getProteinInferenceClassAsString(PSParameter.UNRELATED);
+                + PSParameter.UNRELATED + ": " + PSParameter.getProteinInferenceClassAsString(PSParameter.UNRELATED) + ".";
     }
 }

@@ -648,6 +648,7 @@ public class FileImporter {
                             String peptideSequence = peptide.getSequence();
 
                             // remap the proteins
+
                             //@TODO: let the user choose his favorite matching type?
                             HashMap<String, HashMap<String, ArrayList<Integer>>> peptideMapping =
                                     proteinTree.getProteinMapping(peptideSequence, ProteinMatch.MatchingType.indistiguishibleAminoAcids, searchParameters.getFragmentIonAccuracy());
@@ -666,6 +667,7 @@ public class FileImporter {
                             }
                             Collections.sort(accessions);
                             peptide.setParentProteins(accessions);
+
                             if (!idFilter.validateProteins(peptide)) {
                                 match.removeAssumption(assumption);
                                 proteinIssue++;
