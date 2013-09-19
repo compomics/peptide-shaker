@@ -326,7 +326,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum
 ----
 
 
-==General==
+==D) General==
 
 *Comma Separated Lists*
 
