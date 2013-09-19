@@ -1,16 +1,28 @@
-#summary How to use PeptideShaker from the command line - available from version 0.19.0.
+#summary How to use PeptideShaker from the command line
 #labels Featured
 
 =PeptideShaker Command Line Interface=
 
-The command line interface can be used to process identification files and output identification results in various formats. 
+The PeptideShaker command line interface can be used to process identification files and output identification results in various formats.
+
+There are three main sections to this page:
+
+ * [#A)_PeptideShakerCLI A) PeptideShakerCLI] - data processing 
+ * [#B)_ReportCLI B) ReportCLI] - identification results exports
+ * [#C)_FollowUpCLI C) FollowUpCLI] - export for follow up analysis
+ * [#D)_General D) General] - general command line help
+
+All command line options have the same overall structure and only differ in the features and the parameters available.
+
+----
+
+==A) PeptideShakerCLI==
 
 *Standard command line:*
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
-
 
 *Mandatory parameters:*
 
@@ -117,17 +129,9 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 -exclude_unknown_ptms      Exclude unknown PTMs (1: true, 0: false, default is '1').
 }}}
 
-==Comma Separated List==
+*PeptideShakerCLI Example:*
 
-When using comma separated lists as input for the mgf or identification files, please pay attention to the quotes required. Surround the full content of the option in quotes and not the individual items:
-
-{{{
--spectrum_files "C:\..\file_1.mgf, C:\..\file_2.mgf"
-}}}
-
-==Example==
-
-Here is an example for Windows where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+PeptideShakerCLI example for Windows where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 -experiment myExperiment -sample mySample -replicate 1 
@@ -138,7 +142,44 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI
 
 _Note that for readability the command is here split over multiple lines. When used the command should of course be a single line._
 
-==Memory Settings==
+
+----
+
+==B) ReportCLI==
+
+*Standard command line:*
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters]
+}}}
+
+
+
+
+----
+
+==C) FollowUpCLI==
+
+*Standard command line:*
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [parameters]
+}}}
+
+----
+
+==General==
+
+*Comma Separated Lists*
+
+When using comma separated lists as input for the mgf or identification files, please pay attention to the quotes required. Surround the full content of the option in quotes and not the individual items:
+
+{{{
+-spectrum_files "C:\..\file_1.mgf, C:\..\file_2.mgf"
+}}}
+
+
+*Memory Settings*
 
 Remember that big datasets will require more than the default memory provided to the Java virtual machine, so for larger dataset please increase the maximum memory setting. Example, for a maximum of 2GB of memory:
 
@@ -146,7 +187,8 @@ Remember that big datasets will require more than the default memory provided to
 java -Xmx2048M -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
 
-==Opening PeptideShaker Projects==
+
+*Opening PeptideShaker Projects*
 
 To open a PeptideShaker project (a cps file) from the command line use the following command:
 
@@ -154,6 +196,7 @@ To open a PeptideShaker project (a cps file) from the command line use the follo
 java -jar PeptideShaker-X.Y.Z.jar -cps "C:\my folder\myCpsFile.cps"
 }}}
 
-==Help=
+
+*Help*
 
 If you experience any problems with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list].
