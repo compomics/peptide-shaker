@@ -131,7 +131,8 @@ _Note that the search parameters are not strictly mandatory, as a default set of
 
 *PeptideShakerCLI Example:*
 
-PeptideShakerCLI example for Windows where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+PeptideShakerCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI 
 -experiment myExperiment -sample mySample -replicate 1 
@@ -153,8 +154,40 @@ _Note that for readability the command is here split over multiple lines. When u
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters]
 }}}
 
+*Mandatory parameters:*
 
+{{{
+-in                        PeptideShaker project (.cps file)
+-out                       Output folder for report files. (Existing files will be overwritten.)
+}}}
 
+*Report options:*
+
+{{{
+-reports                   Comma separated list of types of report to export. 
+                           0: Certificate of Analysis, 
+                           1: Default PSM Report, 
+                           2: Default Peptide Report, 
+                           3: Default Protein Report, 
+                           4: Default Top Down Report, 
+                           5: MassError
+
+-documentation             Comma separated list of types of report documentation to export. 
+                           0: Certificate of Analysis, 
+                           1: Default PSM Report, 
+                           2: Default Peptide Report, 
+                           3: Default Protein Report, 
+                           4: Default Top Down Report, 
+                           5: MassError
+}}}
+
+*ReportCLI Example:*
+
+ReportCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0, 3"
+}}}
 
 ----
 
@@ -166,13 +199,31 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [parameters]
 }}}
 
+*Mandatory parameters:*
+
+{{{
+-experiment                Specifies the experiment name.
+
+}}}
+
+*FollowUpCLI Example:*
+
+FollowUpCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+
+{{{
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI 
+}}}
+
+_Note that for readability the command is here split over multiple lines. When used the command should of course be a single line._
+
+
 ----
 
 ==General==
 
 *Comma Separated Lists*
 
-When using comma separated lists as input for the mgf or identification files, please pay attention to the quotes required. Surround the full content of the option in quotes and not the individual items:
+When using comma separated lists as input please pay attention to the quotes required. Surround the full content of the option in quotes and not the individual items:
 
 {{{
 -spectrum_files "C:\..\file_1.mgf, C:\..\file_2.mgf"
