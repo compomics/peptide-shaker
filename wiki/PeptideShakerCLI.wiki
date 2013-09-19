@@ -5,7 +5,7 @@
 
 The PeptideShaker command line interface can be used to process identification files and output identification results in various formats.
 
-There are three main sections to this page:
+There are four main sections to this page:
 
  * [#A)_PeptideShakerCLI A) PeptideShakerCLI] - data processing 
  * [#B)_ReportCLI B) ReportCLI] - identification results exports
@@ -181,16 +181,18 @@ When using comma separated lists as input for the mgf or identification files, p
 
 *Memory Settings*
 
-Remember that big datasets will require more than the default memory provided to the Java virtual machine, so for larger dataset please increase the maximum memory setting. Example, for a maximum of 2GB of memory:
+Remember that big datasets require more than the default memory provided to the Java virtual machine, so for larger dataset please increase the maximum memory setting. Example, for a maximum of 2GB of memory:
 
 {{{
 java -Xmx2048M -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI [parameters]
 }}}
 
+See also: [http://code.google.com/p/compomics-utilities/wiki/JavaTroubleShooting JavaTroubleShooting].
+
 
 *Opening PeptideShaker Projects*
 
-To open a PeptideShaker project (a cps file) from the command line use the following command:
+To open a PeptideShaker project (a cps file) from the command line (for display in PetpideShaker) use the following command:
 
 {{{
 java -jar PeptideShaker-X.Y.Z.jar -cps "C:\my folder\myCpsFile.cps"
@@ -199,4 +201,4 @@ java -jar PeptideShaker-X.Y.Z.jar -cps "C:\my folder\myCpsFile.cps"
 
 *Help*
 
-If you experience any problems with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list].
+If you experience any problems with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list] or set up an issue using the [http://code.google.com/p/peptide-shaker/issues/list issue tracking system].
