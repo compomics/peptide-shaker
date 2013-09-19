@@ -4,6 +4,7 @@ import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.ImageIconPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WelcomeDialog;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
@@ -47,6 +48,8 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         displayPanel.add(displayPanels.get(currentDisplayPanelIndex));
         nextButton.setEnabled(currentDisplayPanelIndex < displayPanels.size() - 1);
         backButton.setEnabled(currentDisplayPanelIndex > 0);
+        setFocusable(true);
+        backgroundPanel.requestFocus();
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -82,11 +85,11 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         backgroundPanel = new javax.swing.JPanel();
         displayPanel = new javax.swing.JPanel();
         buttonsAndLinksPanel = new javax.swing.JPanel();
+        compomicsButton = new javax.swing.JButton();
         probeButton = new javax.swing.JButton();
         isasButton = new javax.swing.JButton();
-        nextButton = new javax.swing.JButton();
         backButton = new javax.swing.JButton();
-        compomicsButton = new javax.swing.JButton();
+        nextButton = new javax.swing.JButton();
         jSeparator = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -94,6 +97,11 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        backgroundPanel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                backgroundPanelKeyReleased(evt);
+            }
+        });
 
         displayPanel.setBackground(new java.awt.Color(255, 255, 255));
         displayPanel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -110,6 +118,25 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         displayPanel.setLayout(new javax.swing.BoxLayout(displayPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         buttonsAndLinksPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        compomicsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/compomics.png"))); // NOI18N
+        compomicsButton.setToolTipText("Computational Omics and Systems Biology Group");
+        compomicsButton.setBorder(null);
+        compomicsButton.setBorderPainted(false);
+        compomicsButton.setContentAreaFilled(false);
+        compomicsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                compomicsButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                compomicsButtonMouseExited(evt);
+            }
+        });
+        compomicsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                compomicsButtonActionPerformed(evt);
+            }
+        });
 
         probeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/probe.png"))); // NOI18N
         probeButton.setToolTipText("Proteomics Unit at the University of Bergen");
@@ -149,16 +176,6 @@ public class GettingStartedDialog extends javax.swing.JDialog {
             }
         });
 
-        nextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/helpFiles/images/next_gray.png"))); // NOI18N
-        nextButton.setBorderPainted(false);
-        nextButton.setContentAreaFilled(false);
-        nextButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/helpFiles/images/next.png"))); // NOI18N
-        nextButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextButtonActionPerformed(evt);
-            }
-        });
-
         backButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/helpFiles/images/back_gray.png"))); // NOI18N
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);
@@ -169,22 +186,13 @@ public class GettingStartedDialog extends javax.swing.JDialog {
             }
         });
 
-        compomicsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/compomics.png"))); // NOI18N
-        compomicsButton.setToolTipText("Computational Omics and Systems Biology Group");
-        compomicsButton.setBorder(null);
-        compomicsButton.setBorderPainted(false);
-        compomicsButton.setContentAreaFilled(false);
-        compomicsButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                compomicsButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                compomicsButtonMouseExited(evt);
-            }
-        });
-        compomicsButton.addActionListener(new java.awt.event.ActionListener() {
+        nextButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/helpFiles/images/next_gray.png"))); // NOI18N
+        nextButton.setBorderPainted(false);
+        nextButton.setContentAreaFilled(false);
+        nextButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/helpFiles/images/next.png"))); // NOI18N
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                compomicsButtonActionPerformed(evt);
+                nextButtonActionPerformed(evt);
             }
         });
 
@@ -422,6 +430,22 @@ public class GettingStartedDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_displayPanelMouseClicked
 
+    /**
+     * Enable the left and right keys to be used to move between the slides.
+     *
+     * @param evt
+     */
+    private void backgroundPanelKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_backgroundPanelKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
+            if (backButton.isEnabled()) {
+                backButtonActionPerformed(null);
+            }
+        } else if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (nextButton.isEnabled()) {
+                nextButtonActionPerformed(null);
+            }
+        }
+    }//GEN-LAST:event_backgroundPanelKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
     private javax.swing.JPanel backgroundPanel;
