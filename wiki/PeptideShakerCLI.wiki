@@ -18,6 +18,8 @@ All command line options have the same overall structure and only differ in the 
 
 ==A) PeptideShakerCLI==
 
+Available from PeptideShaker version 0.19.0.
+
 *Standard command line:*
 
 {{{
@@ -148,6 +150,8 @@ _Note that for readability the command is here split over multiple lines. When u
 
 ==B) ReportCLI==
 
+Available from PeptideShaker version 0.23.0.
+
 *Standard command line:*
 
 {{{
@@ -192,6 +196,8 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0
 ----
 
 ==C) FollowUpCLI==
+
+Available from PeptideShaker version 0.23.0.
 
 *Standard command line:*
 
