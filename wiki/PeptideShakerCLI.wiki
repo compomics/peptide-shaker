@@ -162,6 +162,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 
 {{{
 -in                        PeptideShaker project (.cps file)
+
 -out                       Output folder for report files. (Existing files will be overwritten.)
 }}}
 
@@ -187,7 +188,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
 
 *ReportCLI Example:*
 
-ReportCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
+ReportCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker:
 
 {{{
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0, 3"
@@ -215,6 +216,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 
 {{{
 -recalibration_folder      Output folder for the recalibrated files. (Existing files will be overwritten.)
+
 -recalibration_mode        Recalibration type. 
                            0: precursor and fragment ions (default), 
                            1: precursor only, 
@@ -225,6 +227,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 
 {{{
 -spectrum_folder           Output folder for the spectra. (Existing files will be overwritten.)
+
 -psm_type                  Type of PSMs. 
                            0: Spectra of Non-Validated PSMs (default),  
                            1: Spectra of Non-Validated Peptides, 
@@ -239,6 +242,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 {{{
 -progenesis_file           Output file for identification results in Progenesis LC-MS compatible format. 
                            (Existing files will be overwritten.)
+
 -progenesis_type           Type of hits to export to Progenesis. 
                            0: Spectra of Validated PSMs of Validated Peptides of Validated Proteins.
                            1: Spectra of Validated PSMs of Validated Peptides, 
@@ -250,6 +254,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 {{{
 -accessions_file           Output file to export the protein accessions in text format. 
                            (Existing files will be overwritten.)
+
 -accessions_type           When exporting accessions, select a category of proteins. 
                            0: Main Accession of Validated Protein Groups (default),
                            1: All Accessions of Validated Protein Groups, 
@@ -261,6 +266,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 {{{
 -fasta_file                File where to export the protein details in fasta format. 
                            (Existing files will be overwritten.)
+
 -fasta_type                When exporting protein details, select a category of proteins. 
                            0: Main Accession of Validated Protein Groups (default), 
                            1: All Accessions of Validated Protein Groups, 
@@ -271,12 +277,42 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 
 {{{
 -pepnovo_training_folder   Output folder for PepNovo training files. (Existing files will be overwritten.)
+
 -pepnovo_training_recalibration
                            Indicate whether the exported mgf files shall be recalibrated. 
                            0: No, 1: Yes (default).
+
 -pepnovo_training_fdr      FDR used for the 'good spectra' export. If not set, the validation FDR will be used.
+
 -pepnovo_training_fnr      FNR used for the 'bad spectra' export. If not set, the same value as for 
                            the 'good spectra' FDR will be used.
+}}}
+
+*Optional inclusion list generation parameters:*
+
+{{{
+-inclusion_list_file       Output file for an inclusion list of validated hits. 
+                           (Existing files will be overwritten.)
+
+-inclusion_list_format     Format for the inclusion list. 
+                           0: Thermo (default), 
+                           1: ABI, 
+                           2: Bruker, 
+                           3: MassLynx.
+
+-inclusion_list_peptide_filters     
+                           Peptide filters to be used for the inclusion list export (comma separated). 
+                           0: Miscleaved Peptides, 
+                           1: Reactive Peptides, 
+                           2: Degenerated Peptides.
+
+-inclusion_list_protein_filters     
+                           Protein inference filters to be used for the inclusion list export (comma separated). 
+                           1: Related Proteins, 
+                           2: Related and Unrelated Proteins, 
+                           3: Unrelated Proteins.
+
+-inclusion_list_rt_window  Retention time window for the inclusion list export (in seconds).
 }}}
 
 *FollowUpCLI Example:*
@@ -284,13 +320,11 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI [paramete
 FollowUpCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual version of PeptideShaker and _my folder_ by the folder containing the desired files:
 
 {{{
-java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI 
+java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum_folder "C:\my folder" -psm_type 0
 }}}
 
-_Note that for readability the command is here split over multiple lines. When used the command should of course be a single line._
-
-
 ----
+
 
 ==General==
 
