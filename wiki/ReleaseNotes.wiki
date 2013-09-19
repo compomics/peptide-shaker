@@ -3,6 +3,29 @@
 
 ----
 
+*Changes in PeptideShaker 0.23.0 (coming soon...):*
+ * NEW FEATURE: Improved protein inference handling, i.e., peptide to protein mapping.
+ * NEW FEATURE: Added a first version of a basic graph database export for Cytoscape, Gephi and Neo4j to the follow up export dialog.
+
+ * FEATURE IMPROVEMENT: Improved the Search Settings dialog, which is now identical to the one in SearchGUI and also displays the fixed PTMs.
+ * FEATURE IMPROVEMENT: Reshake now supports a default enzyme mapping, and user selection of enzyme if the mapping fails. Also now supports multiple enzymes.
+ * FEATURE IMPROVEMENT: Added MD Score localization to the to the export.
+ * FEATURE IMPROVEMENT: Better support for semi-specific enzymes.
+ * FEATURE IMPROVEMENT: Updated the tips of the day.
+ * FEATURE IMPROVEMENT: Updated the getting started slides.
+ * FEATURE IMPROVEMENT: Added some options to the fragment ion export.
+
+ * BUG FIX: Fixed various bugs in the command line reports and follow up analysis exports.
+ * BUG FIX: Fixed a bug where empty decoy tags were not handled correctly.
+ * BUG FIX: Fixed an issue for the peptide export where shared peptides did not list all parent proteins.
+
+ * LIBRARY UPDATE: Removed sqlite as a transitive dependency.
+ * LIBRARY UPDATE: Updated omssa parser to version 1.6.0.
+ * LIBRARY UPDATE: Updated xtandem parser to version 1.7.1.
+ * LIBRARY UPDATE: Updated utilities to version 3.14.42.
+
+----
+
 *Changes in PeptideShaker 0.22.6 (August 10. 2013):*
 
  * FEATURE IMPROVEMENT: Added an edit modifications option to the SearchPreferencesDialog.
