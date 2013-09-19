@@ -357,9 +357,9 @@ public class ProgenesisExport {
          * @return a description of the command line arguments
          */
         public static String getCommandLineOptions() {
-            return validated_psms_peptides_proteins.index + ": " + validated_psms_peptides_proteins.description + "."
+            return validated_psms_peptides_proteins.index + ": " + validated_psms_peptides_proteins.description + ", "
                     + validated_psms_peptides.index + ": " + validated_psms_peptides.description + ", "
-                    + validated_psms.index + ": " + validated_psms.description + ", ";
+                    + validated_psms.index + ": " + validated_psms.description + ".";
         }
     }
 }
