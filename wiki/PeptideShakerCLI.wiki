@@ -1,7 +1,7 @@
 #summary How to use PeptideShaker from the command line
 #labels Featured
 
-=PeptideShaker Command Line Interface=
+=`PeptideShaker Command Line Interface`=
 
 The PeptideShaker command line interface can be used to process identification files and output identification results in various formats.
 
