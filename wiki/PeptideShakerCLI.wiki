@@ -195,6 +195,8 @@ ReportCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual versi
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI -reports "0, 3"
 }}}
 
+[#PeptideShaker_Command_Line_Interface Go to top of page]
+
 ----
 
 ==C) FollowUpCLI==
@@ -324,6 +326,8 @@ FollowUpCLI example where _X_, _Y_ and _Z_ have to be replaced by the actual ver
 java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.FollowUpCLI -spectrum_folder "C:\my folder" -psm_type 0
 }}}
 
+[#PeptideShaker_Command_Line_Interface Go to top of page]
+
 ----
 
 
@@ -361,3 +365,5 @@ java -jar PeptideShaker-X.Y.Z.jar -cps "C:\my folder\myCpsFile.cps"
 *Help*
 
 If you experience any problems with the command line or have any suggestion please contact us via the [https://groups.google.com/group/peptide-shaker PeptideShaker mailing list] or set up an issue using the [http://code.google.com/p/peptide-shaker/issues/list issue tracking system].
+
+[#PeptideShaker_Command_Line_Interface Go to top of page]
