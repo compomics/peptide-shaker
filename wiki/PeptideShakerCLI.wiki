@@ -145,6 +145,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.PeptideShakerCLI
 
 _Note that for readability the command is here split over multiple lines. When used the command should of course be a single line._
 
+[#PeptideShaker_Command_Line_Interface Go to top of page]
 
 ----
 
