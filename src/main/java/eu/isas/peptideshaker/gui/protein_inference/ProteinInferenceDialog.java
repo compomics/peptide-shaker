@@ -171,6 +171,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("Chr").setMaxWidth(50);
         proteinMatchTable.getColumn("Evidence").setMinWidth(90);
         proteinMatchTable.getColumn("Evidence").setMaxWidth(90);
+        proteinMatchTable.getColumn("Enz").setMinWidth(50);
+        proteinMatchTable.getColumn("Enz").setMaxWidth(50);
 
         // set the preferred size of the accession column
         Integer width = peptideShakerGUI.getPreferredAccessionColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2);
@@ -212,6 +214,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         proteinMatchTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
+        proteinMatchTable.getColumn("Enz").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/selected_green.png")),
+                null,
+                "Enzymatic", "Not Enzymatic"));
 
         uniqueHitsTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(
                 peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -244,6 +250,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         candidateProteinsTableToolTips.add("Gene Name");
         candidateProteinsTableToolTips.add("Chromosome Number");
         candidateProteinsTableToolTips.add("Protein Evidence Level");
+        candidateProteinsTableToolTips.add("Contains Enzymatic Peptides");
 
         uniqueHitsTableToolTips = new ArrayList<String>();
         uniqueHitsTableToolTips.add(null);
@@ -880,7 +887,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 6:
                     return "Evidence";
                 case 7:
-                    return "Enzymatic";
+                    return "Enz";
                 default:
                     return " ";
             }
@@ -939,7 +946,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     }
                 case 7:
                     try {
-                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), peptideShakerGUI.getSearchParameters().getEnzyme(), ProteinMatch.MatchingType.indistiguishibleAminoAcids, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+                        return inspectedMatch.hasEnzymaticPeptide(accessions.get(row), 
+                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
+                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                         return "Database Error";
