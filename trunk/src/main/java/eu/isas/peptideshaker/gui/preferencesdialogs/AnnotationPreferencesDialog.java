@@ -152,9 +152,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         backgroundPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
@@ -176,27 +173,14 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         neutralLossScrollPane = new javax.swing.JScrollPane();
         neutralLossesTable = new javax.swing.JTable();
         peakMatchingPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        fragmentIonAccuracyLabel = new javax.swing.JLabel();
+        fragmentIonAccuracyTypeLabel = new javax.swing.JLabel();
         intensitySpinner = new javax.swing.JSpinner();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        annotationLevelPercentLabel = new javax.swing.JLabel();
+        annotationLevelLabel = new javax.swing.JLabel();
         accuracySpinner = new javax.swing.JSpinner();
         adaptNeutralLossesBox = new javax.swing.JCheckBox();
         automaticAnnotationCheck = new javax.swing.JCheckBox();
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Spectrum Annotation");
@@ -379,20 +363,20 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         peakMatchingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peak Matching"));
         peakMatchingPanel.setOpaque(false);
 
-        jLabel2.setText("Fragment Ion Accuracy:");
-        jLabel2.setToolTipText("Fragment ion annotation accuracy .");
+        fragmentIonAccuracyLabel.setText("Fragment Ion Accuracy");
+        fragmentIonAccuracyLabel.setToolTipText("Fragment ion annotation accuracy .");
 
-        jLabel3.setText("Da");
+        fragmentIonAccuracyTypeLabel.setText("Da");
 
         intensitySpinner.setModel(new javax.swing.SpinnerNumberModel(25, 0, 100, 1));
         intensitySpinner.setToolTipText("<html>\nDisplay a certain percent of the<br>\npossible annotations relative<br>\nto the most intense peak.\n</html>");
 
-        jLabel1.setText("%");
+        annotationLevelPercentLabel.setText("%");
 
-        jLabel4.setText("Annotation Level:");
-        jLabel4.setToolTipText("<html>\nDisplay a certain percent of the<br>\npossible annotations relative<br>\nto the most intense peak.\n</html>");
+        annotationLevelLabel.setText("Annotation Level");
+        annotationLevelLabel.setToolTipText("<html>\nDisplay a certain percent of the<br>\npossible annotations relative<br>\nto the most intense peak.\n</html>");
 
-        accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.0010d));
+        accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.001d));
         accuracySpinner.setToolTipText("Fragment ion annotation accuracy.");
 
         adaptNeutralLossesBox.setSelected(true);
@@ -422,39 +406,39 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             .addGroup(peakMatchingPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4))
+                    .addComponent(fragmentIonAccuracyLabel)
+                    .addComponent(annotationLevelLabel))
                 .addGap(18, 18, 18)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(intensitySpinner)
                     .addComponent(accuracySpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                    .addComponent(fragmentIonAccuracyTypeLabel)
+                    .addComponent(annotationLevelPercentLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(adaptNeutralLossesBox)
                     .addComponent(automaticAnnotationCheck))
                 .addGap(31, 31, 31))
         );
 
-        peakMatchingPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel3});
+        peakMatchingPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {annotationLevelPercentLabel, fragmentIonAccuracyTypeLabel});
 
         peakMatchingPanelLayout.setVerticalGroup(
             peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peakMatchingPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel4)
+                    .addComponent(annotationLevelLabel)
                     .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
+                    .addComponent(annotationLevelPercentLabel)
                     .addComponent(adaptNeutralLossesBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(peakMatchingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel2)
+                    .addComponent(fragmentIonAccuracyLabel)
                     .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
+                    .addComponent(fragmentIonAccuracyTypeLabel)
                     .addComponent(automaticAnnotationCheck))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -653,25 +637,22 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox aBox;
     private javax.swing.JSpinner accuracySpinner;
     private javax.swing.JCheckBox adaptNeutralLossesBox;
+    private javax.swing.JLabel annotationLevelLabel;
+    private javax.swing.JLabel annotationLevelPercentLabel;
     private javax.swing.JButton annotationPreferencesHelpJButton;
     private javax.swing.JCheckBox automaticAnnotationCheck;
     private javax.swing.JCheckBox bBox;
     private javax.swing.JPanel backgroundPanel;
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox cBox;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel chargePanel;
     private javax.swing.JScrollPane chargeScrollPane;
     private javax.swing.JTable chargesTable;
+    private javax.swing.JLabel fragmentIonAccuracyLabel;
+    private javax.swing.JLabel fragmentIonAccuracyTypeLabel;
     private javax.swing.JCheckBox immoniumBox;
     private javax.swing.JSpinner intensitySpinner;
     private javax.swing.JPanel ionsPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JPanel neutralLossPanel;
     private javax.swing.JScrollPane neutralLossScrollPane;
     private javax.swing.JTable neutralLossesTable;
