@@ -21,7 +21,6 @@ import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.pride.prideobjects.*;
 import eu.isas.peptideshaker.PeptideShaker;
-import static eu.isas.peptideshaker.PeptideShaker.MATCHING_TYPE;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -41,13 +40,13 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 /**
  * The class that takes care of converting the data to mzIdentML. (Work in
  * progress...)
- * @TODO: make gui independent
  *
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
 public class MzIdentMLExport {
 
+    // @TODO: make gui independent
     /**
      * The main instance of the GUI.
      */
@@ -195,33 +194,33 @@ public class MzIdentMLExport {
 
         // the mzIdentML start tag
         writeMzIdentMLStartTag();
-        
+
         // write the cv list
         writeCvList();
-        
+
         // write the AnalysisSoftwareList
         writeAnalysisSoftwareList();
-        
+
         // write the Provider details
         writeProviderDetails();
-        
+
         // write the AuditCollection details
         writeAuditCollection();
-        
+
         // write the sequence collection
         writeSequenceCollection();
-        
+
         // write the analyis collection
         writeAnalysisCollection();
-        
+
         // write the analysis protocol
         writeAnalysisProtocol();
-        
+
         // write the data collection
         writeDataCollection();
-        
-        
-        
+
+
+
 
         // the experiment title
         writeTitle();
@@ -292,109 +291,109 @@ public class MzIdentMLExport {
         br.close();
         r.close();
     }
-    
+
     /**
      * Writes the CV list.
-     * 
+     *
      * @throws IOException exception thrown whenever a problem occurred while
      * reading/writing a file
      */
     private void writeCvList() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<cvList xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
-        
-        br.write(getCurrentTabSpace() + 
-                "<cv=id=\"PSI-MS\" "
+
+        br.write(getCurrentTabSpace()
+                + "<cv=id=\"PSI-MS\" "
                 + "uri=\"http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo\" "
                 + "version=\"2.25.0\" "
                 + "fullName=\"PSI-MS\"/>" + System.getProperty("line.separator"));
-        
-        br.write(getCurrentTabSpace() + 
-                "<cv=id=\"UNIMODS\" "
+
+        br.write(getCurrentTabSpace()
+                + "<cv=id=\"UNIMODS\" "
                 + "uri=\"http://www.unimod.org/obo/unimod.obo\" "
                 + "fullName=\"UNIMOD\"/>" + System.getProperty("line.separator"));
-        
-        br.write(getCurrentTabSpace() + 
-                "<cv=id=\"UO\" "
+
+        br.write(getCurrentTabSpace()
+                + "<cv=id=\"UO\" "
                 + "uri=\"http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/phenotype/unit.obo\" "
                 + "fullName=\"UNIT-ONTOLOGY\"/>" + System.getProperty("line.separator"));
 
         // @TODO: add more? perhaps not hardcode?
-        
-        tabCounter--;  
-        br.write(getCurrentTabSpace() + "</cvList>" + System.getProperty("line.separator"));       
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</cvList>" + System.getProperty("line.separator"));
     }
-    
+
     /**
      * Write the software list.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void writeAnalysisSoftwareList() throws IOException {
-        
+
         // @TODO: also add SearchGUI and search engines used
-        
+
         br.write(getCurrentTabSpace() + "<AnalysisSoftware "
                 + "version=\"" + peptideShakerGUI.getVersion() + " "
-                + "name=\"PeptideShaker " 
-                + "id=\"ID_software\">" 
+                + "name=\"PeptideShaker "
+                + "id=\"ID_software\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<SoftwareName>" + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001476 " // @TODO: add PeptideShaker CV term
-                + "cvRef=\"PSI-MS " 
-                + "name=\"PeptideShaker\">" 
+                + "cvRef=\"PSI-MS "
+                + "name=\"PeptideShaker\">"
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</SoftwareName>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</AnalysisSoftware>" + System.getProperty("line.separator"));
     }
-    
+
     /**
      * Write the provider details.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void writeProviderDetails() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<Provider id=PROVIDER xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<ContactRole contact_ref=\"PERSON_DOC_OWNER\">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<Role>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001271 " // @TODO: add PeptideShaker CV term
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "name=\"researcher\">" // @TODO: add the data owner name here!!
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Role>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</ContactRole>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Provider>" + System.getProperty("line.separator"));
     }
-    
+
     /**
      * Write the audit collection.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void writeAuditCollection() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<AuditCollection xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<Person "
                 + "firstName=\"firstname " // @TODO: add from user input
                 + "lastName=\"lastname " // @TODO: add from user input
@@ -402,29 +401,25 @@ public class MzIdentMLExport {
                 + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<Affiliation organization_ref=\"ORG_DOC_OWNER\"/>" + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Person>" + System.getProperty("line.separator"));
-        
+
         br.write(getCurrentTabSpace() + "<Organization name=\"myworkplace\" id=\"ORG_DOC_OWNER\"/>" + System.getProperty("line.separator")); // @TODO: add from user input
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</AuditCollection>" + System.getProperty("line.separator"));
     }
-    
+
     /**
      * Write the sequence collection.
      */
     private void writeSequenceCollection() {
-        
         // <SequenceCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-
         // iterate all the protein sequences
 //        <DBSequence accession="psu|NC_LIV_020800" searchDatabase_ref="SearchDB_1" length="376"
 //            id="dbseq_psu|NC_LIV_020800">
 //            <Seq>MADEEVQALVVDNGSGNVKAGVAGDDAPRAVFPSIVGKPKNPGIMVGMEEKDCYVGDEAQSKRGILTLKYPIEHGIVTNWDDMEKIWHHTFYNELRVAPEEHPVLLTEAPLNPKANRERMTQIMFETFNVPAMYVAIQAVLSLYSSGRTTGIVLDSGDGVSHTVPIYEGYALPHAIMRLDLAGRDLTEYMMKILHERGYGFTTSAEKEIVRDIKEKLCYIALDFDEEMKAAEDSSDIEKSYELPDGNIITVGNERFRCPEALFQPSFLGKEAAGVHRTTFDSIMKCDVDIRKDLYGNVVLSGGTTMYEGIGERLTKELTSLAPSTMKIKVVAPPERKYSVWIGGSILSSLSTFQQMWITKEEYDESGPSIVHRKCF</Seq>
 //        </DBSequence>
-        
-        
         // iterate all the peptides
 //        <Peptide id="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_">
 //            <PeptideSequence>LCYIALDFDEEMKAAEDSSDIEK</PeptideSequence>
@@ -435,90 +430,85 @@ public class MzIdentMLExport {
 //                <cvParam accession="UNIMOD:35" cvRef="UNIMOD" name="Oxidation"/>
 //            </Modification>
 //        </Peptide>
-
-        
         // iterate the peptide evidence
 //        <PeptideEvidence isDecoy="false" post="S" pre="K" end="239" start="217"
 //            peptide_ref="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_"
 //            dBSequence_ref="dbseq_psu|NC_LIV_020800" id="PE1_2_0"/>
-
-        
         // </SequenceCollection>
-          
     }
-    
+
     /**
      * Write the analysis collection.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
-    private void writeAnalysisCollection () throws IOException {
-        
+    private void writeAnalysisCollection() throws IOException {
+
         br.write(getCurrentTabSpace() + "<AnalysisCollection xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<SpectrumIdentification "
                 + "spectrumIdentificationList_ref=\"SII_LIST_1\" " // @TODO: should not be hardcoded?
                 + "spectrumIdentificationProtocol_ref=\"SearchProtocol_1\" " // @TODO: should not be hardcoded?
                 + "id=\"SpecIdent_1\">" // @TODO: should not be hardcoded?
                 + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<InputSpectra spectraData_ref=\"SID_1\"/>" + System.getProperty("line.separator")); // @TODO: should not be hardcoded?
         br.write(getCurrentTabSpace() + "<SearchDatabaseRef searchDatabase_ref=\"SearchDB_1\"/>" + System.getProperty("line.separator")); // @TODO: should not be hardcoded?
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentification>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
-        br.write(getCurrentTabSpace() + "</AnalysisCollection>" + System.getProperty("line.separator"));        
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</AnalysisCollection>" + System.getProperty("line.separator"));
     }
-    
+
     /**
      * Write the analysis protocol.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void writeAnalysisProtocol() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<AnalysisProtocolCollection xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationProtocol "
                 + "analysisSoftware_ref=\"ID_software\" id=\"SearchProtocol_1\">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         // the search type
         br.write(getCurrentTabSpace() + "<SearchType>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001083 "
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "name=\"ms-ms search\">"
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</SearchType>" + System.getProperty("line.separator"));
-        
+
         // the search parameters
         br.write(getCurrentTabSpace() + "<AdditionalSearchParams>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001211 "
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "name=\"parent mass type mono\">"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001256 "
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "name=\"fragment mass type mono\">"
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</AdditionalSearchParams>" + System.getProperty("line.separator"));
-        
+
         // the modifications
         br.write(getCurrentTabSpace() + "<ModificationParams>" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         // @TODO: add the modification mappings
 //        br.write(getCurrentTabSpace() + "<SearchModification>" + System.getProperty("line.separator"));
 //        tabCounter++;
@@ -541,160 +531,156 @@ public class MzIdentMLExport {
 //                + System.getProperty("line.separator"));
 //        tabCounter--;  
 //        br.write(getCurrentTabSpace() + "</SearchModification>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</ModificationParams>" + System.getProperty("line.separator"));
-        
+
         // enzyme
         br.write(getCurrentTabSpace() + "<Enzymes independent=\"false\">" + System.getProperty("line.separator")); // @TODO: what does false mean???
         tabCounter++;
-        
+
         // @TODO: set the enymes from the search params
-        br.write(getCurrentTabSpace() + "<Enzyme " 
+        br.write(getCurrentTabSpace() + "<Enzyme "
                 + "semiSpecific=\"false\" " // @TODO: what does false mean???
                 + "cTermGain=\"OH\" "
                 + "nTermGain=\"H\" "
                 + "id=\"Enz1\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<EnzymeName>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001251 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "name=\"Trypsin\">" // @TODO: set the enymes from the search params
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</EnzymeName>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Enzyme>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Enzymes>" + System.getProperty("line.separator"));
-        
+
         // fragment tolerance
         br.write(getCurrentTabSpace() + "<FragmentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001412 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "unitCvRef=\"UO "
-                + "unitName=\"dalton " 
+                + "unitName=\"dalton "
                 + "unitAccession=\"UO:0000221 "
                 + "value=\"0.8 "
                 + "name=\"search tolerance plus value\">"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001413 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "unitCvRef=\"UO "
-                + "unitName=\"dalton " 
+                + "unitName=\"dalton "
                 + "unitAccession=\"UO:0000221 "
                 + "value=\"0.8 "
                 + "name=\"search tolerance minus value\">"
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</FragmentTolerance>" + System.getProperty("line.separator"));
-        
+
         // precursor tolerance
         br.write(getCurrentTabSpace() + "<ParentTolerance>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001412 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "unitCvRef=\"UO "
-                + "unitName=\"dalton " 
+                + "unitName=\"dalton "
                 + "unitAccession=\"UO:0000221 "
                 + "value=\"1.5 "
                 + "name=\"search tolerance plus value\">"
                 + System.getProperty("line.separator"));
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001413 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "unitCvRef=\"UO "
-                + "unitName=\"dalton " 
+                + "unitName=\"dalton "
                 + "unitAccession=\"UO:0000221 "
                 + "value=\"1.5 "
                 + "name=\"search tolerance minus value\">"
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</ParentTolerance>" + System.getProperty("line.separator"));
-        
+
         // thresholds
         br.write(getCurrentTabSpace() + "<Threshold>" + System.getProperty("line.separator"));
         tabCounter++;
         br.write(getCurrentTabSpace() + "<cvParam "
                 + "accession=\"MS:1001494 " // @TODO: set the enymes from the search params
-                + "cvRef=\"PSI-MS " 
+                + "cvRef=\"PSI-MS "
                 + "name=\"no threshold\">"
                 + System.getProperty("line.separator"));
-        tabCounter--;  
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</Threshold>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationProtocol>" + System.getProperty("line.separator"));
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</AnalysisProtocolCollection>" + System.getProperty("line.separator"));
     }
-    
-    
-    
+
     private void writeDataCollection() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<DataCollection>" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         writeInputFileDetails();
-        
+
         writeDataAnalysis();
-        
-        
-        tabCounter--;  
+
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</DataCollection>" + System.getProperty("line.separator"));
     }
-    
-    
+
     /**
      * Write the data analysis section.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     private void writeDataAnalysis() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<AnalysisData>" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationList id=\"SII_LIST_1\" xmlns=" + mzIdentMLXsd + ">" + System.getProperty("line.separator"));
         tabCounter++;
-        
+
         writeFragmentationTable();
-        
+
         // iterate the psms
         //for (all psms) {
-            writeSpectrumIdentificationResult();
+        writeSpectrumIdentificationResult();
         //}
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</SpectrumIdentificationList>" + System.getProperty("line.separator"));
-        
+
         writeProteinDetectionList();
-        
-        tabCounter--;  
+
+        tabCounter--;
         br.write(getCurrentTabSpace() + "</AnalysisData>" + System.getProperty("line.separator"));
     }
-    
-    
+
     private void writeProteinDetectionList() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<ProteinDetectionList id=\"Protein_groups\">" + System.getProperty("line.separator"));
         tabCounter++;
-        
-        
+
+
         // @TODO: annotate the protein groups
-        
+
 //        <ProteinAmbiguityGroup id="PAG_hit_4" > # not always ambiguity in these groups...
 //            
 //            <ProteinDetectionHypothesis id="protein 1" passThreshold="true"> 
@@ -722,21 +708,20 @@ public class MzIdentMLExport {
 //            </ProteinDetectionHypothesis>
 //            
 //        </ProteinAmbiguityGroup>
-        
 
-        tabCounter--;  
-        br.write(getCurrentTabSpace() + "</ProteinDetectionList>" + System.getProperty("line.separator"));  
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</ProteinDetectionList>" + System.getProperty("line.separator"));
     }
-    
-    
+
     private void writeSpectrumIdentificationResult() throws IOException {
-        
+
         br.write(getCurrentTabSpace() + "<SpectrumIdentificationResult spectraData_ref=\"SID_1\" spectrumID=\"index=12\" id=\"SIR_1\">" + System.getProperty("line.separator"));
         tabCounter++;
-        
-        
+
+
         // @TODO: add the psm data
-        
+
 //        <SpectrumIdentificationItem passThreshold="true" rank="1"
 //                        peptide_ref="LCYIALDFDEEMKAAEDSSDIEK_15.9949@M$228;_57.0215@C$218;_"
 //                        experimentalMassToCharge="2709.148" chargeState="3" id="SII_1_1">
@@ -756,17 +741,14 @@ public class MzIdentMLExport {
 //                        <cvParam accession="MS:1001331" cvRef="PSI-MS" value="79.6" name="xtandem:hyperscore"/>
 //                    </SpectrumIdentificationItem>
 //                    <cvParam accession="MS:1000796" cvRef="PSI-MS" value="55.1074.1074.3.dta" name="spectrum title"/>
- 
-        
-        tabCounter--;  
-        br.write(getCurrentTabSpace() + "</SpectrumIdentificationResult>" + System.getProperty("line.separator")); 
+
+
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</SpectrumIdentificationResult>" + System.getProperty("line.separator"));
     }
-    
- 
+
     private void writeFragmentationTable() {
-        
         // @TODO: add the fragment ion table
-        
 //                <FragmentationTable>
 //                    <Measure id="Measure_MZ">
 //                        <cvParam accession="MS:1001225" cvRef="PSI-MS" unitCvRef="PSI-MS"
@@ -782,12 +764,9 @@ public class MzIdentMLExport {
 //                    </Measure>
 //                </FragmentationTable>
     }
-    
-    
+
     private void writeInputFileDetails() {
-        
         // @TODO: add the file details
-        
 //        <Inputs xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
 //            <SourceFile location="build/classes/resources/55merge_tandem.xml" id="SourceFile_1">
 //                <FileFormat>
@@ -812,16 +791,11 @@ public class MzIdentMLExport {
 //                </SpectrumIDFormat>
 //            </SpectraData>
 //        </Inputs>
-        
     }
-    
 
-    
     /////////////////////////////////////////////
     // the code below this point is pride code
     /////////////////////////////////////////////
-    
-    
     /**
      * Writes all PSMs.
      *
@@ -1824,7 +1798,7 @@ public class MzIdentMLExport {
         br.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator"));
         br.write("MzIdentML xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                 + "xsi:schemaLocation=\"http://www.psidev.info/sites/default/files/mzIdentML1.1.0.xsd\" "
-                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\">" 
+                + "xmlns=\"http://psidev.info/psi/pi/mzIdentML/1.1\" version=\"1.1.0\">"
                 + System.getProperty("line.separator"));
         tabCounter++;
     }

@@ -40,13 +40,13 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The class that takes care of converting the data to PRIDE XML.
- * @TODO: make gui independent
  *
  * @author Harald Barsnes
  * @author Marc Vaudel
  */
 public class PRIDEExport {
 
+    // @TODO: make gui independent
     /**
      * The main instance of the GUI.
      */
@@ -744,7 +744,7 @@ public class PRIDEExport {
 
             // get the modification location
             int modLocation = modMatch.getModificationSite();
-            
+
             // have to handle terminal ptms separatly
             if (ptm.isNTerm()) {
                 modLocation = 0;

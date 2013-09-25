@@ -635,17 +635,16 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 // update protein level PTM scoring
                 PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
                 ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins();
-                ProteinMatch proteinMatch;
-                boolean candidate;
+
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                    candidate = false;
+                    boolean candidate = false;
                     for (String protein : proteins) {
                         if (proteinKey.contains(protein)) {
                             candidate = true;
                         }
                     }
                     if (candidate) {
-                        proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                        ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                         if (proteins.contains(proteinMatch.getMainMatch())) {
                             try {
                                 miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false, peptideShakerGUI.getPtmScoringPreferences());
