@@ -20,6 +20,8 @@ import com.compomics.util.pride.CvTerm;
 import com.compomics.util.pride.PrideObjectsFactory;
 import com.compomics.util.pride.PtmToPrideMap;
 import com.compomics.util.pride.prideobjects.*;
+import eu.isas.peptideshaker.PeptideShaker;
+import static eu.isas.peptideshaker.PeptideShaker.MATCHING_TYPE;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.pride.PrideExportDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -39,6 +41,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 /**
  * The class that takes care of converting the data to mzIdentML. (Work in
  * progress...)
+ * @TODO: make gui independent
  *
  * @author Harald Barsnes
  * @author Marc Vaudel
@@ -1076,7 +1079,7 @@ public class MzIdentMLExport {
                             }
                         }
 
-                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins();
+                        ArrayList<String> peptideParentProteins = tempPeptide.getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                         String peptideProteins = "";
                         for (String accession : peptideParentProteins) {
                             if (!peptideProteins.equals("")) {

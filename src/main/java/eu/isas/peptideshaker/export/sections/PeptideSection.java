@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PeptideFeatures;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -102,6 +103,7 @@ public class PeptideSection {
      * @param nSurroundingAA the number of surrounding amino acids to export
      * @param linePrefix the line prefix to use.
      * @param waitingHandler the waiting handler
+     * 
      * @throws IOException exception thrown whenever an error occurred while
      * writing the file.
      * @throws IllegalArgumentException
@@ -172,7 +174,7 @@ public class PeptideSection {
                     case accessions:
 
                         String proteins = "";
-                        ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
+                        ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);
                         for (String accession : accessions) {
                             if (!proteins.equals("")) {
@@ -218,7 +220,7 @@ public class PeptideSection {
                         writer.write(psParameter.getProteinInferenceClassAsString() + separator);
                         break;
                     case position:
-                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
+                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);
                         Peptide peptide = peptideMatch.getTheoreticPeptide();
                         String start = "";
@@ -275,7 +277,7 @@ public class PeptideSection {
                         }
                         break;
                     case aaBefore:
-                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
+                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);
                         peptide = peptideMatch.getTheoreticPeptide();
                         String subSequence = "";
@@ -301,7 +303,7 @@ public class PeptideSection {
                         writer.write(subSequence + separator);
                         break;
                     case aaAfter:
-                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins();
+                        accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);
                         peptide = peptideMatch.getTheoreticPeptide();
                         subSequence = "";

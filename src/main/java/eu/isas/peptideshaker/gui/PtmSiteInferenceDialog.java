@@ -637,7 +637,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins();
                 ProteinMatch proteinMatch;
                 boolean candidate;
-
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     candidate = false;
                     for (String protein : proteins) {

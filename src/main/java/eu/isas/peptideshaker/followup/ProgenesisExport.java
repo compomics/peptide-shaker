@@ -33,7 +33,7 @@ public class ProgenesisExport {
     public static final String SEPARATOR = "\t";
 
     /**
-     * Writes a file containing the PSMs in a Progenesis compatible format.
+     * Writes a file containing the PSMs in a Progenesis compatible format. Note: proteins must be set for every exported peptide
      *
      * @param destinationFile the destination file
      * @param identification the identification
@@ -190,7 +190,7 @@ public class ProgenesisExport {
 
     /**
      * Writes the lines corresponding to a PSM in the export file in the
-     * Progenesis format.
+     * Progenesis format. Note: proteins must be set for every exported peptide.
      *
      * @param writer the writer
      * @param spectrumKey the key of the PSM to export

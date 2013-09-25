@@ -2702,14 +2702,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
                     if (!probabilities.isHidden()) {
 
-                        ArrayList<String> otherProteins = new ArrayList<String>();
-                        List<String> proteinProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
-                        for (String accession : currentMatch.getTheoreticPeptide().getParentProteins()) {
-                            if (!proteinProteins.contains(accession)) {
-                                otherProteins.add(accession);
-                            }
-                        }
-
                         // find and add the peptide start and end indexes
                         int peptideStart = 0;
                         String peptideSequence = currentMatch.getTheoreticPeptide().getSequence();

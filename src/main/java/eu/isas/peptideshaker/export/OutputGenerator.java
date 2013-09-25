@@ -21,6 +21,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
 import com.compomics.util.preferences.ModificationProfile;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -764,7 +765,7 @@ public class OutputGenerator {
 
                                             if (accession || proteinDescription || surroundings || location || uniqueOnly) {
                                                 if (proteinKey == null) {
-                                                    for (String parentProtein : peptide.getParentProteins()) {
+                                                    for (String parentProtein : peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         ArrayList<String> parentProteins = identification.getProteinMap().get(parentProtein);
                                                         if (parentProteins != null) {
                                                             for (String proteinKey : parentProteins) {
@@ -833,7 +834,7 @@ public class OutputGenerator {
                                                     }
 
                                                     first = true;
-                                                    ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins());
+                                                    ArrayList<String> peptideAccessions = new ArrayList<String>(peptide.getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
                                                     Collections.sort(peptideAccessions);
                                                     for (String key : peptideAccessions) {
                                                         if (shared || !accessions.contains(key)) {
@@ -1268,7 +1269,7 @@ public class OutputGenerator {
                                                     String proteinDescriptions = "";
 
                                                     boolean first = true;
-                                                    for (String protein : bestAssumption.getPeptide().getParentProteins()) {
+                                                    for (String protein : bestAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         if (first) {
                                                             first = false;
                                                         } else {
@@ -1658,7 +1659,7 @@ public class OutputGenerator {
                                 String proteinAccessions = "";
                                 String proteinDescriptions = "";
 
-                                for (String protein : bestAssumption.getPeptide().getParentProteins()) {
+                                for (String protein : bestAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                     if (!proteinAccessions.equals("")) {
                                         proteinAccessions += ", ";
                                         proteinDescriptions += "; ";
@@ -2256,7 +2257,7 @@ public class OutputGenerator {
                                                     String proteinDescriptions = "";
 
                                                     boolean first = true;
-                                                    for (String protein : peptideAssumption.getPeptide().getParentProteins()) {
+                                                    for (String protein : peptideAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy())) {
                                                         if (first) {
                                                             first = false;
                                                         } else {
