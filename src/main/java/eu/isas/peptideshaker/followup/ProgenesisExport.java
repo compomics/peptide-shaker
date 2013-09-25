@@ -33,7 +33,8 @@ public class ProgenesisExport {
     public static final String SEPARATOR = "\t";
 
     /**
-     * Writes a file containing the PSMs in a Progenesis compatible format. Note: proteins must be set for every exported peptide
+     * Writes a file containing the PSMs in a Progenesis compatible format.
+     * Note: proteins must be set for every exported peptide.
      *
      * @param destinationFile the destination file
      * @param identification the identification

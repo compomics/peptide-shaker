@@ -157,7 +157,7 @@ public class PeptideShaker {
      */
     private int uncharacterizedIssue = 0;
     /**
-     * The type of matching used for peptide to protein matching
+     * The type of matching used for peptide to protein matching.
      */
     public final static ProteinMatch.MatchingType MATCHING_TYPE = ProteinMatch.MatchingType.indistiguishibleAminoAcids;
 

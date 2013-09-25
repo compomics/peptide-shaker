@@ -370,7 +370,8 @@ public class TxtExporter {
     }
 
     /**
-     * Exports the peptide match as a line of text. Note: proteins must be set for the peptide.
+     * Exports the peptide match as a line of text. Note: proteins must be set
+     * for the peptide.
      *
      * @param peptideMatch the peptide match to export
      * @return the peptide match as a line of text
@@ -497,7 +498,8 @@ public class TxtExporter {
     }
 
     /**
-     * Exports the spectrum match as a line of text. Note: proteins must be set for the best assumption
+     * Exports the spectrum match as a line of text. Note: proteins must be set
+     * for the best assumption
      *
      * @param spectrumMatch the spectrum match to export
      * @return the spectrum match as a line of text
@@ -796,7 +798,7 @@ public class TxtExporter {
      *
      * @param spectrumMatch the spectrum match to export
      * @param searchParameters the parameters used for the identification
-     * 
+     *
      * @return the peptide assumptions from a peptide spectrum match as lines of
      * text
      */
