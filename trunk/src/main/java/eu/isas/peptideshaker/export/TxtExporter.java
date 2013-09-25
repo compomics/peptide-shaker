@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -18,6 +19,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.waiting.WaitingHandler;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
@@ -368,7 +370,7 @@ public class TxtExporter {
     }
 
     /**
-     * Exports the peptide match as a line of text.
+     * Exports the peptide match as a line of text. Note: proteins must be set for the peptide.
      *
      * @param peptideMatch the peptide match to export
      * @return the peptide match as a line of text
@@ -495,7 +497,7 @@ public class TxtExporter {
     }
 
     /**
-     * Exports the spectrum match as a line of text.
+     * Exports the spectrum match as a line of text. Note: proteins must be set for the best assumption
      *
      * @param spectrumMatch the spectrum match to export
      * @return the spectrum match as a line of text
@@ -793,10 +795,12 @@ public class TxtExporter {
      * text.
      *
      * @param spectrumMatch the spectrum match to export
+     * @param searchParameters the parameters used for the identification
+     * 
      * @return the peptide assumptions from a peptide spectrum match as lines of
      * text
      */
-    private String getAssumptionLines(String spectrumKey) throws Exception {
+    private String getAssumptionLines(String spectrumKey, SearchParameters searchParameters) throws Exception {
 
         // @TODO: would it be faster to send the output directly to the buffered writer than going via a string??
 
@@ -827,7 +831,8 @@ public class TxtExporter {
 
                     line += rank + SEPARATOR;
 
-                    for (String protein : assumption.getPeptide().getParentProteins()) {
+                    ArrayList<String> accessions = assumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                    for (String protein : accessions) {
                         line += protein + " ";
                     }
 

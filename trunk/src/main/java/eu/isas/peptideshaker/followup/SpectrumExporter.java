@@ -173,7 +173,7 @@ public class SpectrumExporter {
 
     /**
      * Indicates whether a spectrum shall be exported according to the export
-     * type number.
+     * type number. Note: proteins must be set for every exported peptide.
      *
      * @param spectrumKey the key of the spectrum
      * @param exportType the export type number
@@ -182,7 +182,7 @@ public class SpectrumExporter {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private boolean shallExport(String spectrumKey, ExportType exportType) throws SQLException, IOException, ClassNotFoundException {
+    private boolean shallExport(String spectrumKey, ExportType exportType) throws SQLException, IOException, ClassNotFoundException, InterruptedException {
         PSParameter psParameter = new PSParameter();
         switch (exportType) {
             case non_validated_psms:

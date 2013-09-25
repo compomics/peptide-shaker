@@ -5,6 +5,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SearchParameters;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.IonMatch;
@@ -53,8 +54,10 @@ import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import com.compomics.util.preferences.AnnotationPreferences;
 import com.compomics.util.preferences.ModificationProfile;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.sections.PeptideSection;
 import eu.isas.peptideshaker.utils.DisplayFeaturesGenerator;
+import java.sql.SQLException;
 
 /**
  * The Spectrum ID panel.
@@ -3008,6 +3011,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             try {
+                
+                SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+                
                 // empty the tables
                 DefaultTableModel dm = (DefaultTableModel) peptideShakerJTable.getModel();
                 dm.getDataVector().removeAllElements();
@@ -3061,7 +3067,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
+                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
 
                                 ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
                                             ++rank,
@@ -3088,7 +3094,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
+                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
 
                                 ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
                                             ++rank,
@@ -3115,7 +3121,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
+                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
 
                                 ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
                                             ++rank,
@@ -3599,14 +3605,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Advocate class
      * @return the contents of the given search engine PSM table as a string
      */
-    private String getSearchEnginePsmTableAsString(SpectrumMatch spectrumMatch, PSParameter probabilities, int advocate) {
+    private String getSearchEnginePsmTableAsString(SpectrumMatch spectrumMatch, PSParameter probabilities, int advocate) throws IOException, SQLException, ClassNotFoundException, InterruptedException {
 
         StringBuilder result = new StringBuilder();
 
         if (spectrumMatch.getAllAssumptions(advocate) != null) {
 
             ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocate).keySet());
-            ModificationProfile modificationProfile = peptideShakerGUI.getSearchParameters().getModificationProfile();
+            SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
+            ModificationProfile modificationProfile = searchParameters.getModificationProfile();
             Collections.sort(eValues);
             int rank = 0;
             for (double eValue : eValues) {
@@ -3616,7 +3623,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     result.append(++rank);
                     result.append("\t");
 
-                    ArrayList<String> parentProteins = currentAssumption.getPeptide().getParentProteins();
+                    ArrayList<String> parentProteins = currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                     result.append(parentProteins.get(0));
 
                     for (int i = 1; i < parentProteins.size(); i++) {

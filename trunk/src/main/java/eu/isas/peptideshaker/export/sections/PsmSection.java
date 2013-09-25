@@ -10,6 +10,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.waiting.WaitingHandler;
 import com.compomics.util.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.ExportFeature;
 import eu.isas.peptideshaker.export.exportfeatures.PsmFeatures;
 import static eu.isas.peptideshaker.export.exportfeatures.PsmFeatures.total_spectrum_intensity;
@@ -348,7 +349,8 @@ public class PsmSection {
                                 matchKey = spectrumKey;
                             }
                             output = "";
-                            for (String accession : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
+                            ArrayList<String> accessions = spectrumMatch.getBestAssumption().getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
+                            for (String accession : accessions) {
                                 if (!output.equals("")) {
                                     output += ", ";
                                 }
