@@ -1154,38 +1154,38 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         overviewJPanel.setOpaque(false);
         overviewJPanel.setPreferredSize(new java.awt.Dimension(900, 800));
         overviewJPanel.setLayout(new javax.swing.BoxLayout(overviewJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("Overview", null, overviewJPanel, "Overview of all proteins, peptides and PSMs");
+        allTabsJTabbedPane.addTab("Overview", overviewJPanel);
 
         spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("Spectrum IDs", null, spectrumJPanel, "Spectrum identifications");
+        allTabsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
 
         proteinFractionsJPanel.setOpaque(false);
         proteinFractionsJPanel.setLayout(new javax.swing.BoxLayout(proteinFractionsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("Fractions", null, proteinFractionsJPanel, "Protein fraction analysis");
+        allTabsJTabbedPane.addTab("Fractions", proteinFractionsJPanel);
 
         ptmJPanel.setOpaque(false);
         ptmJPanel.setLayout(new javax.swing.BoxLayout(ptmJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("Modifications", null, ptmJPanel, "Project wide modification analysis");
+        allTabsJTabbedPane.addTab("Modifications", ptmJPanel);
 
         proteinStructureJPanel.setOpaque(false);
         proteinStructureJPanel.setLayout(new javax.swing.BoxLayout(proteinStructureJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("3D Structures", null, proteinStructureJPanel, "Peptide to protein structure mapping");
+        allTabsJTabbedPane.addTab("3D Structures", proteinStructureJPanel);
 
         annotationsJPanel.setOpaque(false);
         annotationsJPanel.setLayout(new javax.swing.BoxLayout(annotationsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("Annotation", null, annotationsJPanel, "Online protein annotation resources");
+        allTabsJTabbedPane.addTab("Annotation", annotationsJPanel);
 
         goJPanel.setOpaque(false);
         goJPanel.setLayout(new javax.swing.BoxLayout(goJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("GO Analysis", null, goJPanel, "Gene Ontology enrichment analysis");
+        allTabsJTabbedPane.addTab("GO Analysis", goJPanel);
 
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("Validation", null, statsJPanel, "Validate all calculations");
+        allTabsJTabbedPane.addTab("Validation", statsJPanel);
 
         qcJPanel.setOpaque(false);
         qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("QC Plots", null, qcJPanel, "Quality Control metrics and plots");
+        allTabsJTabbedPane.addTab("QC Plots", qcJPanel);
 
         allTabsJTabbedPane.setBounds(0, 0, 1280, 860);
         backgroundLayeredPane.add(allTabsJTabbedPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
