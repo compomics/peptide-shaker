@@ -42,3 +42,6 @@ Reviewing a publication?<br><br>You can reprocess and inspect data from <a href=
 Want to search published data for new modifications?<br><br>You can reprocess and inspect data in <a href="http://www.ebi.ac.uk/pride/">PRIDE</a> with just a few clicks using the <i>Reshake</i> option!
 Teaching bioinformatics?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
 Want to learn more?<br><br>Check out our <a href="http://compomics.com/bioinformatics-for-proteomics/">free tutorials</a>!
+X's in your database?<br><br>X's in protein sequences make it difficult for PeptideShaker to interpret your results. Peptides with more than 75% of X's will be ignored.
+Unexpected peptide-protein mapping?<br><br>PeptideShaker remaps every peptide to your sequence database. The peptide to protein mapping will be different - and more comprehensive - than the one of the search engines.
+Cannot find your peptide in the protein sequence using a text editor?<br><br>PeptideShaker accounts for indistinguishable amino-acids (like I and L) or amino acid groups (like B, J Z or X).
