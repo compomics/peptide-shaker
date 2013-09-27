@@ -922,7 +922,7 @@ public class FileImporter {
         }
 
         /**
-         * Indicates whether we are encountering memory issues
+         * Indicates whether we are encountering memory issues.
          *
          * @return a boolean indicating whether we are encountering memory
          * issues
