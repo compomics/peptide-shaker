@@ -877,9 +877,10 @@ public class FileImporter {
 
                 // Free at least 1GB for the next parser if not anymore available
                 // (not elegant so most likely not optimal)
-                if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
+                if (memoryIssue()) {
+                    sequenceFactory.emptyCache();
                     System.gc();
-                    if (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824) {
+                    if (memoryIssue()) {
                         waitingHandler.appendReport("Reducing Memory Consumption.", true, true);
                         waitingHandler.setSecondaryProgressCounterIndeterminate(false);
                         double share = ((double) 1073741824) / Runtime.getRuntime().totalMemory();
@@ -887,7 +888,6 @@ public class FileImporter {
                         peptideShaker.getCache().reduceMemoryConsumption(share, waitingHandler);
                         System.gc();
                         waitingHandler.setSecondaryProgressCounterIndeterminate(true);
-                        sequenceFactory.emptyCache();
                     }
                 }
                 projectDetails.addIdentificationFiles(idFile);
@@ -919,6 +919,16 @@ public class FileImporter {
                 }
             }
             waitingHandler.increasePrimaryProgressCounter();
+        }
+
+        /**
+         * Indicates whether we are encountering memory issues
+         *
+         * @return a boolean indicating whether we are encountering memory
+         * issues
+         */
+        public boolean memoryIssue() {
+            return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() < 1073741824;
         }
 
         /**
