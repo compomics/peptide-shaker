@@ -3846,8 +3846,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     }
                 }
 
-                // @TODO: rewrite the charge selection below when the new ion selection gui has been implemented!
-
                 double bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
 
                 if (peptideShakerGUI.useRelativeError()) {
@@ -3855,13 +3853,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                 }
 
                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
-                        selectedIndexes,
-                        allAnnotations, annotationPreferences.getFragmentIonTypes(), allSpectra, annotationPreferences.getFragmentIonAccuracy(),
-                        bubbleScale,
-                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)), annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2)),
-                        annotationPreferences.getValidatedCharges().contains(Integer.valueOf(3)) || annotationPreferences.getValidatedCharges().contains(Integer.valueOf(4)),
-                        selectedIndexes.size() == 1, annotationPreferences.showBars(),
-                        peptideShakerGUI.useRelativeError());
+                        selectedIndexes, allAnnotations, allSpectra, annotationPreferences.getFragmentIonAccuracy(),
+                        bubbleScale, selectedIndexes.size() == 1, annotationPreferences.showBars(), peptideShakerGUI.useRelativeError());
 
                 // hide the legend if selecting more than 20 spectra // @TODO: 20 should not be hardcoded here..
                 if (selectedIndexes.size() > 20) {
@@ -4459,19 +4452,13 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             // create the intensity histograms
                             secondarySpectrumPlotsJPanel.add(new IntensityHistogram(
-                                    annotations, annotationPreferences.getFragmentIonTypes(), currentSpectrum,
-                                    peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit(),
-                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)), annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2)),
-                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(3)) || annotationPreferences.getValidatedCharges().contains(Integer.valueOf(4))));
-
-                            // @TODO: rewrite the charge selection above and below when the new ion selection gui has been implemented!
+                                    annotations, currentSpectrum,
+                                    peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit()));
 
                             // create the miniature mass error plot
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
-                                    annotations, annotationPreferences.getFragmentIonTypes(), currentSpectrum,
+                                    annotations, currentSpectrum,
                                     annotationPreferences.getFragmentIonAccuracy(),
-                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(1)), annotationPreferences.getValidatedCharges().contains(Integer.valueOf(2)),
-                                    annotationPreferences.getValidatedCharges().contains(Integer.valueOf(3)) || annotationPreferences.getValidatedCharges().contains(Integer.valueOf(4)),
                                     peptideShakerGUI.useRelativeError());
 
                             if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {

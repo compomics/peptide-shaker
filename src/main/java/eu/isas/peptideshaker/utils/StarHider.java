@@ -371,7 +371,7 @@ public class StarHider {
             if (!validated) {
                 PeptideFilter peptideFilter;
                 if (!filterPreferences.getPeptideStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundModifications());
+                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundVariableModifications()); // @TODO: should also show fixed ptms like iTRAQ? but this breaks the peptide filter...
                     peptideFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPeptideStarFilters().put(peptideFilter.getName(), peptideFilter);
                 } else {
@@ -444,7 +444,7 @@ public class StarHider {
             if (!validated) {
                 PeptideFilter peptideFilter;
                 if (!filterPreferences.getPeptideHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundModifications());
+                    peptideFilter = new PeptideFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getFoundVariableModifications()); // @TODO: should also show fixed ptms like iTRAQ? but this breaks the peptide filter...
                     peptideFilter.setDescription("Manual selection via the graphical interface");
                     filterPreferences.getPeptideHideFilters().put(peptideFilter.getName(), peptideFilter);
                 } else {
