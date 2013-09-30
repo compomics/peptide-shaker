@@ -3255,7 +3255,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
      */
     public ArrayList<Integer> getReporterIons() {
 
-        ArrayList<String> modifications = getFoundModifications();
+        ArrayList<String> modifications = getSearchParameters().getModificationProfile().getAllModifications();
         ArrayList<Integer> reporterIonsSubtypes = new ArrayList<Integer>();
 
         for (String mod : modifications) {
@@ -5055,6 +5055,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     try {
                         cpsBean.loadCpsFile(progressDialog);
                     } catch (SQLException e) {
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occured while reading:\n" + cpsBean.getCpsFile() + ".\n\n"
                                 + "It looks like another instance of PeptideShaker is still connected to the file.\n"
@@ -5086,7 +5087,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                     if (!fileFound && !locateFastaFileManually()) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occured while reading:\n" + getSearchParameters().getFastaFile() + "."
-                                + "\n\nOpen cancelled.",
+                                + "\n\nOpen canceled.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                         clearData(true, true);
                         clearPreferences();
@@ -5551,11 +5552,12 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the modifications found in this project.
+     * Returns the variable modifications found in this project. (Consider 
+     * using the search parameters instead.)
      *
-     * @return the modifications found in this project
+     * @return the variable modifications found in this project
      */
-    public ArrayList<String> getFoundModifications() {
+    public ArrayList<String> getFoundVariableModifications() {
         if (identifiedModifications == null) {
             identifiedModifications = new ArrayList<String>();
             for (String peptideKey : getIdentification().getPeptideIdentification()) {

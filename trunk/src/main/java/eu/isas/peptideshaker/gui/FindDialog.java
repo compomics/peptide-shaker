@@ -215,7 +215,7 @@ public class FindDialog extends javax.swing.JDialog {
         // set table properties
         setUpTables();
 
-        for (String ptm : peptideShakerGUI.getFoundModifications()) {
+        for (String ptm : peptideShakerGUI.getFoundVariableModifications()) { // @TODO: should also show fixed ptms like iTRAQ? but this breaks the peptide filter...
 
             if (ptm.equalsIgnoreCase(PtmPanel.NO_MODIFICATION)) {
                 ((DefaultTableModel) modificationTable.getModel()).addRow(new Object[]{

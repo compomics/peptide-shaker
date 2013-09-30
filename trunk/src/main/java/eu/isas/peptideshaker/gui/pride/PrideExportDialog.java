@@ -205,7 +205,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements PtmDialogP
     private ArrayList<String> checkModifications() {
         ArrayList<String> missingTerm = new ArrayList<String>();
         PtmToPrideMap ptmToPrideMap = prideObjectsFactory.getPtmToPrideMap();
-        for (String modification : peptideShakerGUI.getFoundModifications()) {
+        for (String modification : peptideShakerGUI.getSearchParameters().getModificationProfile().getAllModifications()) {
             if (!modification.equals(PtmPanel.NO_MODIFICATION) && ptmToPrideMap.getCVTerm(modification) == null) {
                 missingTerm.add(modification);
             }
