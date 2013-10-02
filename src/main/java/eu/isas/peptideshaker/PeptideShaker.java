@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -1283,7 +1282,7 @@ public class PeptideShaker {
      */
     public void ptmInference(WaitingHandler waitingHandler, PTMScoringPreferences ptmScoringPreferences, SearchParameters searchParameters) throws SQLException, IOException, ClassNotFoundException, IllegalArgumentException, InterruptedException {
 
-        waitingHandler.setWaitingText("Solving peptide inference. Please Wait...");
+        waitingHandler.setWaitingText("Solving Peptide Inference. Please Wait...");
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -2441,7 +2440,7 @@ public class PeptideShaker {
         if (enzymaticIssue + evidenceIssue + uncharacterizedIssue > 0) { // special case to not divide by zero
 
             if (waitingHandler != null) {
-                waitingHandler.setWaitingText("Deleting mapping artifacts. Please Wait...");
+                waitingHandler.setWaitingText("Deleting Mapping Artifacts. Please Wait...");
                 int enzymaticPercent = 100 * enzymaticIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
                 int evidencePercent = 100 * evidenceIssue / (enzymaticIssue + evidenceIssue + uncharacterizedIssue);
                 int uncharacterizedPercent = 100 - enzymaticPercent - evidencePercent;
