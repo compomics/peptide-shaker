@@ -4537,7 +4537,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
+        progressDialog.getProgressBar().setStringPainted(false);
+        progressDialog.getProgressBar().setIndeterminate(true);
         progressDialog.setTitle("Closing. Please Wait...");
 
         new Thread(new Runnable() {
