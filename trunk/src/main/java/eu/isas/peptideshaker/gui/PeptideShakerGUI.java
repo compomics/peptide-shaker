@@ -4458,8 +4458,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")),
                 Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")),
                 true);
+        progressDialog.getProgressBar().setStringPainted(false);
+        progressDialog.getProgressBar().setIndeterminate(true);
         progressDialog.setTitle("Closing. Please Wait...");
-        progressDialog.setPrimaryProgressCounterIndeterminate(true);
 
         final PeptideShakerGUI finalRef = this;
 
@@ -4477,21 +4478,9 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             @Override
             public void run() {
                 try {
-
                     overviewPanel.deactivateSelfUpdatingTableModels();
 
-                    File serializationFolder = new File(getJarFilePath(), PeptideShaker.SERIALIZATION_DIRECTORY);
-
-                    if (serializationFolder.exists()) {
-                        String[] files = serializationFolder.list();
-
-                        if (files != null) {
-                            progressDialog.setPrimaryProgressCounterIndeterminate(false);
-                            progressDialog.setMaxPrimaryProgressCounter(files.length);
-                        }
-                    }
-
-                    // closeFiles the files and save the user preferences
+                    // close the files and save the user preferences
                     if (!progressDialog.isRunCanceled()) {
                         spectrumFactory.closeFiles();
                         sequenceFactory.closeFile();
@@ -5552,8 +5541,8 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the variable modifications found in this project. (Consider 
-     * using the search parameters instead.)
+     * Returns the variable modifications found in this project. (Consider using
+     * the search parameters instead.)
      *
      * @return the variable modifications found in this project
      */
@@ -5795,7 +5784,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     }
 
     /**
-     * Returns the tips of the day
+     * Returns the tips of the day.
      *
      * @return the tips of the day in an ArrayList
      */
