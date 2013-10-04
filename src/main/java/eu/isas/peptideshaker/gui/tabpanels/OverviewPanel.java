@@ -4349,7 +4349,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
                             double lowerMzZoomRange = 0;
                             double upperMzZoomRange = lastMzMaximum;
-                            if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !newMax) {
+                            if (spectrumPanel != null && spectrumPanel.getXAxisZoomRangeLowerValue() != 0 && !newMax) { // @TODO: sometimes the range is reset when is should not be...
                                 lowerMzZoomRange = spectrumPanel.getXAxisZoomRangeLowerValue();
                                 upperMzZoomRange = spectrumPanel.getXAxisZoomRangeUpperValue();
                             }

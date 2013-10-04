@@ -310,7 +310,7 @@ public class FileImporter {
          */
         private HashMap<String, Integer> proteinCount = new HashMap<String, Integer>();
         /**
-         * Boolean indicating whether we can display GUI stuffs
+         * Boolean indicating whether we can display GUI stuff.
          */
         private boolean hasGUI = false;
 
