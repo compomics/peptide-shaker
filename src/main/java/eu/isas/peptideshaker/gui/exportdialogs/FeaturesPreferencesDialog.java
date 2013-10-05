@@ -8,7 +8,6 @@ import eu.isas.peptideshaker.export.ExportScheme;
 import eu.isas.peptideshaker.export.TxtExporter;
 import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -2201,8 +2200,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     try {
                         String schemeName = (String) reportsTable.getValueAt(reportsTable.getSelectedRow(), 1);
                         ExportScheme exportScheme = exportFactory.getExportScheme(schemeName);
-                        PSMaps pSMaps = new PSMaps();
-                        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
                         progressDialog.setTitle("Exporting. Please Wait...");
                         ExportFactory.writeExport(exportScheme, selectedFile, peptideShakerGUI.getExperiment().getReference(),
                                 peptideShakerGUI.getSample().getReference(), peptideShakerGUI.getReplicateNumber(),

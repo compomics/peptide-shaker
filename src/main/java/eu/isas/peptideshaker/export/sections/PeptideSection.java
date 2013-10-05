@@ -120,7 +120,6 @@ public class PeptideSection {
             waitingHandler.setSecondaryProgressCounterIndeterminate(true);
         }
 
-
         if (header) {
             writeHeader();
         }
@@ -168,11 +167,11 @@ public class PeptideSection {
                 }
                 writer.write(line + separator);
             }
+
             for (ExportFeature exportFeature : peptideFeatures) {
                 PeptideFeatures peptideFeature = (PeptideFeatures) exportFeature;
                 switch (peptideFeature) {
                     case accessions:
-
                         String proteins = "";
                         ArrayList<String> accessions = peptideMatch.getTheoreticPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy());
                         Collections.sort(accessions);

@@ -96,6 +96,7 @@ public class PsmSection {
      * @param identificationFeaturesGenerator the identification features
      * generator of the project
      * @param searchParameters the search parameters of the project
+     * @param annotationPreferences the annotation preferences
      * @param keys the keys of the PSM matches to output
      * @param linePrefix the line prefix
      * @param waitingHandler the waiting handler
@@ -144,7 +145,7 @@ public class PsmSection {
             totalSize += psmMap.get(spectrumFile).size();
         }
 
-        // get the sepctrum keys
+        // get the spectrum keys
         ArrayList<String> spectrumKeys = new ArrayList<String>();
 
         for (String spectrumFile : psmMap.keySet()) {
@@ -190,6 +191,7 @@ public class PsmSection {
                     }
                     writer.write(line + separator);
                 }
+
                 for (ExportFeature exportFeature : psmFeatures) {
                     PsmFeatures psmFeature = (PsmFeatures) exportFeature;
                     switch (psmFeature) {
@@ -202,8 +204,7 @@ public class PsmSection {
                             ArrayList<String> modList = new ArrayList<String>(modMap.keySet());
                             Collections.sort(modList);
 
-                            boolean first = true,
-                             first2;
+                            boolean first = true, first2;
 
                             for (String mod : modList) {
                                 if (first) {
