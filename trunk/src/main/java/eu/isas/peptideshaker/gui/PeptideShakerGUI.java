@@ -336,7 +336,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
     /**
      * Default PeptideShaker modifications.
      */
-    public static final String PEPTIDESHAKER_COMFIGURATION_FILE = "PeptideShaker_configuration.txt";
+    public static final String PEPTIDESHAKER_CONFIGURATION_FILE = "PeptideShaker_configuration.txt";
     /**
      * The cps parent used to manage the data.
      */
@@ -505,7 +505,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         resetPtmFactory();
 
         File folder = new File(getJarFilePath() + File.separator + "resources" + File.separator + "conf" + File.separator);
-        File modUseFile = new File(folder, PEPTIDESHAKER_COMFIGURATION_FILE);
+        File modUseFile = new File(folder, PEPTIDESHAKER_CONFIGURATION_FILE);
         modificationUse = SearchSettingsDialog.loadModificationsUse(modUseFile);
 
         //setDefaultPreferences(); // @TODO: i tried re-adding this but then we get a null pointer, but the two below have to be added or the default neutral losses won't appear
@@ -6351,7 +6351,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
             JOptionPane.showMessageDialog(this, new String[]{"Unable to find folder: '" + folder.getAbsolutePath() + "'!",
                 "Could not save modification use."}, "Folder Not Found", JOptionPane.WARNING_MESSAGE);
         } else {
-            File output = new File(folder, PEPTIDESHAKER_COMFIGURATION_FILE);
+            File output = new File(folder, PEPTIDESHAKER_CONFIGURATION_FILE);
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(output));
                 bw.write("Modification use:" + System.getProperty("line.separator"));
