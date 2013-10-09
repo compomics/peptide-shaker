@@ -333,6 +333,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     peptideShakerGUI.catchException(e);
                 }
 
+                setProteinTableProperties();
+
                 // update the table model
                 if (proteinTable.getModel() instanceof ProteinTableModel) {
                     ((ProteinTableModel) proteinTable.getModel()).updateDataModel(peptideShakerGUI);
@@ -341,11 +343,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                     proteinTable.setModel(proteinTableModel);
                 }
 
-                DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-                dm.fireTableStructureChanged();
-
                 setProteinTableProperties();
                 showSparkLines(peptideShakerGUI.showSparklines());
+                ((DefaultTableModel) proteinTable.getModel()).fireTableDataChanged();
 
                 updateSelection();
                 proteinTable.requestFocus();
@@ -1420,7 +1420,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             String proteinKey = proteinKeys.get(proteinIndex);
 
             // open the gene details dialog
-            if (column == proteinTable.getColumn("Chr").getModelIndex() 
+            if (column == proteinTable.getColumn("Chr").getModelIndex()
                     && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
                 try {
                     new GeneDetailsDialog(peptideShakerGUI, proteinKey);
