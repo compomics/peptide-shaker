@@ -431,8 +431,8 @@ public class OutputGenerator {
                                                     if (peptidePSParameter.isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                                                         if (!isEnzymatic) {
@@ -870,8 +870,8 @@ public class OutputGenerator {
                                                     for (String proteinAccession : orderedProteinsKeys) {
                                                         surroundingAAs.put(proteinAccession,
                                                                 sequenceFactory.getProtein(proteinAccession).getSurroundingAA(peptide.getSequence(),
-                                                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(), 
-                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                                                peptideShakerGUI.getDisplayPreferences().getnAASurroundingPeptides(),
+                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy()));
                                                     }
                                                 }
@@ -933,7 +933,7 @@ public class OutputGenerator {
 
                                                 if (enzymatic) {
                                                     boolean isEnzymatic = sequenceFactory.getProtein(proteinMatch.getMainMatch()).isEnzymaticPeptide(peptide.getSequence(),
-                                                            peptideShakerGUI.getSearchParameters().getEnzyme(), ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                                            peptideShakerGUI.getSearchParameters().getEnzyme(), ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                             peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                                                     writer.write(isEnzymatic + SEPARATOR);
@@ -2156,6 +2156,15 @@ public class OutputGenerator {
                 public void run() {
 
                     try {
+                        if (accession) {
+                            progressDialog.setPrimaryProgressCounterIndeterminate(false);
+                            progressDialog.setWaitingText("Importing peptide to protein mappings");
+                            // Make sure that the tree is available for exporting secondary hit protein mappings
+                            SequenceFactory.getInstance().getDefaultProteinTree();
+                            progressDialog.resetPrimaryProgressCounter();
+                            progressDialog.setPrimaryProgressCounterIndeterminate(true);
+                        }
+
                         if (includeHeader) {
                             writer.write("Search Engine" + SEPARATOR);
                             writer.write("Rank" + SEPARATOR);
@@ -2774,8 +2783,8 @@ public class OutputGenerator {
                                                     if (peptidePSParameter.isValidated()) {
 
                                                         boolean isEnzymatic = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
 
                                                         if (!isEnzymatic) {
