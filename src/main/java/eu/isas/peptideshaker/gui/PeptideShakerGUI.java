@@ -2149,6 +2149,7 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
         getDisplayPreferences().showScores(scoresJCheckBoxMenuItem.isSelected());
         overviewPanel.updateScores();
         proteinStructurePanel.updateScores();
+        proteinFractionsPanel.updateScores();
 
         // make sure that the jsparklines are showing correctly
         sparklinesJCheckBoxMenuItemActionPerformed(null);
@@ -5860,7 +5861,6 @@ public class PeptideShakerGUI extends JFrame implements ClipboardOwner, ExportGr
                         e.printStackTrace();
                     }
                 }
-
             }
         }.start();
     }

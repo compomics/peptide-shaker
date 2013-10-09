@@ -1,11 +1,13 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.annotation.gene.GeneFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.gui.GeneDetailsDialog;
 import com.compomics.util.gui.GuiUtilities;
 import com.compomics.util.gui.error_handlers.HelpDialog;
 import com.compomics.util.gui.waiting.waitinghandlers.ProgressDialogX;
@@ -33,6 +35,7 @@ import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.ChartPanelTableCellRenderer;
+import no.uib.jsparklines.extra.ChromosomeTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
@@ -92,6 +95,10 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * The default line width for the line plots.
      */
     private final int LINE_WIDTH = 4;
+    /**
+     * The gene factory.
+     */
+    private GeneFactory geneFactory = GeneFactory.getInstance();
 
     /**
      * Indexes for the three main data tables.
@@ -150,6 +157,7 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
+        proteinTableToolTips.add("Chromosome Number");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
         proteinTableToolTips.add("Number of Peptides (Validated / Total)");
         proteinTableToolTips.add("Number of Spectra (Validated / Total)");
@@ -186,6 +194,9 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         // the index column
         proteinTable.getColumn(" ").setMaxWidth(50);
         proteinTable.getColumn(" ").setMinWidth(50);
+
+        proteinTable.getColumn("Chr").setMaxWidth(50);
+        proteinTable.getColumn("Chr").setMinWidth(50);
 
         try {
             proteinTable.getColumn("Confidence").setMaxWidth(90);
@@ -233,6 +244,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("MW").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+        proteinTable.getColumn("Chr").setCellRenderer(new ChromosomeTableCellRenderer());
 
         try {
             proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
@@ -452,13 +465,13 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
                                         includePeptide = true;
                                     } else if (coverageShowEnzymaticPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                     } else if (coverageShowTruncatedPeptidesOnlyJRadioButtonMenuItem.isSelected()) {
                                         includePeptide = !currentProtein.isEnzymaticPeptide(peptideSequence,
-                                                peptideShakerGUI.getSearchParameters().getEnzyme(), 
-                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids, 
+                                                peptideShakerGUI.getSearchParameters().getEnzyme(),
+                                                ProteinMatch.MatchingType.indistiguishibleAminoAcids,
                                                 peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
                                     }
 
@@ -1404,6 +1417,18 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
 
         if (evt != null && evt.getButton() == MouseEvent.BUTTON1 && proteinIndex != -1) {
 
+            String proteinKey = proteinKeys.get(proteinIndex);
+
+            // open the gene details dialog
+            if (column == proteinTable.getColumn("Chr").getModelIndex() 
+                    && evt.getButton() == MouseEvent.BUTTON1 && geneFactory.isMappingFileOpen()) {
+                try {
+                    new GeneDetailsDialog(peptideShakerGUI, proteinKey);
+                } catch (Exception ex) {
+                    peptideShakerGUI.catchException(ex);
+                }
+            }
+
             // open protein link in web browser
             if (column == proteinTable.getColumn("Accession").getModelIndex()
                     && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
@@ -1466,6 +1491,8 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
+        } else if (column == proteinTable.getColumn("Chr").getModelIndex() && proteinTable.getValueAt(row, column) != null && geneFactory.isMappingFileOpen()) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             if (GuiUtilities.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
                 proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
@@ -1789,14 +1816,16 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
      * displayed or hidden
      */
     public void showSparkLines(boolean showSparkLines) {
-
-        updateProteinTableSparklines();
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
 
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
-        } catch (NullPointerException e) {
-            // ignore
+        } catch (IllegalArgumentException e) {
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         }
 
         proteinTable.revalidate();
@@ -1884,25 +1913,43 @@ public class ProteinFractionsPanel extends javax.swing.JPanel implements Protein
     }
 
     /**
-     * Updates the protein table sparklines.
+     * Update the protein table cell renderers.
      */
-    private void updateProteinTableSparklines() {
+    private void updateProteinTableCellRenderers() {
 
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+        if (peptideShakerGUI.getIdentification() != null) {
 
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
-        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra());
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
+            ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
+            ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra());
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxMW());
 
-        try {
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
-        } catch (IllegalArgumentException e) {
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!peptideShakerGUI.showSparklines());
+            try {
+                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
+            } catch (IllegalArgumentException e) {
+                ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
+            }
         }
+    }
+
+    /**
+     * Hides or displays the score column in the protein table.
+     */
+    public void updateScores() {
+
+        ((DefaultTableModel) proteinTable.getModel()).fireTableStructureChanged();
+        setProteinTableProperties();
+
+        if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.PROTEIN_FRACTIONS_TAB_INDEX) {
+            this.updateSelection();
+        }
+
+        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Score");
+        } else {
+            proteinTableToolTips.set(proteinTable.getColumnCount() - 2, "Protein Confidence");
+        }
+
+        updateProteinTableCellRenderers();
     }
 }
