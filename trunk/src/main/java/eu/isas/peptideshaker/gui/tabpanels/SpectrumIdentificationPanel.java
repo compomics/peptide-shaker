@@ -323,17 +323,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTooltipMap.put(PARTIALLY_MISSING, "First Hit(s) Missing");
 
         peptideShakerJTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineColorMap, searchEngineTooltipMap));
-        peptideShakerJTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         peptideShakerJTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         peptideShakerJTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-
-        omssaTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        xTandemTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        mascotTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         omssaTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -430,7 +425,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         omssaTableToolTips = new ArrayList<String>();
         omssaTableToolTips.add("Search Engine Peptide Rank");
-        omssaTableToolTips.add("Mapping Protein(s)");
         omssaTableToolTips.add("Peptide Sequence");
         omssaTableToolTips.add("Precursor Charge");
         omssaTableToolTips.add("Peptide e-value");
@@ -438,7 +432,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         xTandemTableToolTips = new ArrayList<String>();
         xTandemTableToolTips.add("Search Engine Peptide Rank");
-        xTandemTableToolTips.add("Mapping Protein(s)");
         xTandemTableToolTips.add("Peptide Sequence");
         xTandemTableToolTips.add("Precursor Charge");
         xTandemTableToolTips.add("Peptide e-value");
@@ -446,7 +439,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         mascotTableToolTips = new ArrayList<String>();
         mascotTableToolTips.add("Search Engine Peptide Rank");
-        mascotTableToolTips.add("Mapping Protein(s)");
         mascotTableToolTips.add("Peptide Sequence");
         mascotTableToolTips.add("Precursor Charge");
         mascotTableToolTips.add("Peptide e-value");
@@ -692,14 +684,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchEnginesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1115, Short.MAX_VALUE)
+                    .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1109, Short.MAX_VALUE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                     .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap()))
         );
         searchEnginesPanelLayout.setVerticalGroup(
             searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 127, Short.MAX_VALUE)
+            .addGap(0, 131, Short.MAX_VALUE)
             .addGroup(searchEnginesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchEnginesPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -842,14 +834,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Sequence", "Charge", "e-value", "Confidence"
+                " ", "Sequence", "Charge", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -914,14 +906,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Sequence", "Charge", "e-value", "Confidence"
+                " ", "Sequence", "Charge", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -968,7 +960,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(xTandemPanelLayout.createSequentialGroup()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
+                .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
         );
 
         mascotPanel.setOpaque(false);
@@ -984,14 +976,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Sequence", "Charge", "e-value", "Confidence"
+                " ", "Sequence", "Charge", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1053,7 +1045,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addGroup(psmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1298, Short.MAX_VALUE)
+                        .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1294, Short.MAX_VALUE)
                         .addComponent(jLabel1)
                         .addGroup(psmsPanelLayout.createSequentialGroup()
                             .addComponent(omssaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1065,7 +1057,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         );
         psmsPanelLayout.setVerticalGroup(
             psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 277, Short.MAX_VALUE)
+            .addGap(0, 275, Short.MAX_VALUE)
             .addGroup(psmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(psmsPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -1202,19 +1194,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addGroup(spectrumSelectionPanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE)
+                        .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
                         .addComponent(fileNamesCmb, 0, 658, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         spectrumSelectionPanelLayout.setVerticalGroup(
             spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+            .addGap(0, 325, Short.MAX_VALUE)
             .addGroup(spectrumSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumSelectionPanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1288,7 +1280,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumSelectionJPanelLayout.setHorizontalGroup(
             spectrumSelectionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumSelectionJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 690, Short.MAX_VALUE)
+                .addComponent(spectrumSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
                 .addContainerGap())
         );
         spectrumSelectionJPanelLayout.setVerticalGroup(
@@ -1352,7 +1344,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         slidersPanelLayout.setHorizontalGroup(
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, slidersPanelLayout.createSequentialGroup()
-                .addContainerGap(17, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(accuracySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1362,9 +1354,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, slidersPanelLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                 .addGap(30, 30, 30)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1390,14 +1382,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         spectrumJPanel1Layout.setVerticalGroup(
             spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanel1Layout.createSequentialGroup()
-                .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1410,7 +1402,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(slidersSplitPane)
+                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
                 .addContainerGap())
         );
         spectrumPanelLayout.setVerticalGroup(
@@ -1487,7 +1479,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumJPanel.setLayout(spectrumJPanelLayout);
         spectrumJPanelLayout.setHorizontalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spectrumLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
+            .addComponent(spectrumLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1933,19 +1925,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         if (omssaTable.getValueAt(row, column) != null) {
 
-            if (column == omssaTable.getColumn("Protein(s)").getModelIndex()) {
-
-                String tempValue = (String) omssaTable.getValueAt(row, column);
-
-                if (tempValue.lastIndexOf("a href=") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                }
-
-                omssaTable.setToolTipText(null);
-
-            } else if (column == omssaTable.getColumn("Sequence").getModelIndex()) {
+            if (column == omssaTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 omssaTable.setToolTipText(omssaTablePeptideTooltips.get((Integer) omssaTable.getValueAt(row, 0)));
             } else {
@@ -1970,19 +1950,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         if (xTandemTable.getValueAt(row, column) != null) {
 
-            if (column == xTandemTable.getColumn("Protein(s)").getModelIndex()) {
-
-                String tempValue = (String) xTandemTable.getValueAt(row, column);
-
-                if (tempValue.lastIndexOf("a href=") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                }
-
-                xTandemTable.setToolTipText(null);
-
-            } else if (column == xTandemTable.getColumn("Sequence").getModelIndex()) {
+            if (column == xTandemTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 xTandemTable.setToolTipText(xTandemTablePeptideTooltips.get((Integer) xTandemTable.getValueAt(row, 0)));
             } else {
@@ -2007,19 +1975,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         if (mascotTable.getValueAt(row, column) != null) {
 
-            if (column == mascotTable.getColumn("Protein(s)").getModelIndex()) {
-
-                String tempValue = (String) mascotTable.getValueAt(row, column);
-
-                if (tempValue.lastIndexOf("a href=") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                }
-
-                mascotTable.setToolTipText(null);
-
-            } else if (column == mascotTable.getColumn("Sequence").getModelIndex()) {
+            if (column == mascotTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 mascotTable.setToolTipText(mascotTablePeptideTooltips.get((Integer) mascotTable.getValueAt(row, 0)));
             } else {
@@ -3067,11 +3023,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
-
+                                
                                 ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
                                             ++rank,
-                                            proteins,
                                             displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getScore(),
@@ -3094,11 +3048,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
-
+                                
                                 ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
                                             ++rank,
-                                            proteins,
                                             displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getScore(),
@@ -3121,11 +3073,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = displayFeaturesGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins(PeptideShaker.MATCHING_TYPE, searchParameters.getFragmentIonAccuracy()));
-
+                                
                                 ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
                                             ++rank,
-                                            proteins,
                                             displayFeaturesGenerator.getTaggedPeptideSequence(currentAssumption.getPeptide(), true, true, true),
                                             currentAssumption.getIdentificationCharge().value,
                                             currentAssumption.getScore(),
