@@ -176,7 +176,7 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
                            2: Default Peptide Report, 
                            3: Default Protein Report, 
                            4: Default Top Down Report, 
-                           5: MassError
+                           5-n: Your own custom reports.
 
 -documentation             Comma separated list of types of report documentation to export. 
                            0: Certificate of Analysis, 
@@ -184,8 +184,10 @@ java -cp PeptideShaker-X.Y.Z.jar eu.isas.peptideshaker.cmd.ReportCLI [parameters
                            2: Default Peptide Report, 
                            3: Default Protein Report, 
                            4: Default Top Down Report, 
-                           5: MassError
+                           5-n: Your own custom reports.
 }}}
+
+To add custom reports see Export > Identification Features > Custom in PeptideShaker.
 
 *ReportCLI Example:*
 
